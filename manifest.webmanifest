@@ -4,9 +4,11 @@
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0A0F14",
-  "theme_color": "#0A0F14",
+  "theme_color": "#00E0FF",
+  "description": "Premi e Jamo decide per te cosa fare, adesso.",
   "icons": [
-    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }
