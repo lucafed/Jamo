@@ -2,138 +2,92 @@
 <html lang="it">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#00E0FF" />
   <title>Jamo</title>
 
-  <meta name="theme-color" content="#0A0F14" />
-  <link rel="manifest" href="manifest.webmanifest" />
-  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/icons/icon-192.png">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
 
-  <style>
-    :root{
-      --bg:#0A0F14;
-      --surface:#141C22;
-      --text:#FFFFFF;
-      --muted:#A0B2BA;
-      --accent:#00E0FF;
-      --accent2:#1AFFD5;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: radial-gradient(1200px 800px at 30% -10%, rgba(0,224,255,.18), transparent 55%),
-                  radial-gradient(900px 700px at 110% 10%, rgba(26,255,213,.12), transparent 45%),
-                  var(--bg);
-      color:var(--text);
-      min-height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:24px;
-    }
-    .card{
-      width:min(520px, 100%);
-      background:rgba(20,28,34,.92);
-      border:1px solid rgba(160,178,186,.18);
-      border-radius:18px;
-      padding:22px;
-      backdrop-filter: blur(8px);
-    }
-    h1{margin:0 0 6px 0; font-size:28px; letter-spacing:.2px}
-    p{margin:0 0 18px 0; color:var(--muted); line-height:1.4}
-    .btn{
-      width:100%;
-      border:0;
-      padding:16px 14px;
-      border-radius:14px;
-      font-weight:700;
-      font-size:16px;
-      color:#001016;
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
-      cursor:pointer;
-      box-shadow: 0 10px 30px rgba(0,224,255,.18);
-    }
-    .box{
-      margin-top:14px;
-      border-radius:14px;
-      padding:14px;
-      background:rgba(10,15,20,.55);
-      border:1px solid rgba(160,178,186,.14);
-      min-height:64px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      text-align:center;
-      color:var(--text);
-    }
-    .small{
-      margin-top:12px;
-      font-size:12px;
-      color:var(--muted);
-      text-align:center;
-    }
-    .link{
-      color:var(--accent);
-      text-decoration:none;
-    }
-  </style>
+  <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
-  <main class="card">
-    <h1>Jamo</h1>
-    <p>Premi e Jamo decide per te cosa fare, adesso.</p>
+  <main class="wrap">
+    <section class="card">
+      <header class="head">
+        <h1>Jamo</h1>
+        <p class="sub">Premi e Jamo decide per te cosa fare, adesso.</p>
+      </header>
 
-    <button class="btn" id="decidi">🎰 DECIDI PER ME</button>
+      <section class="filters">
+        <div class="row">
+          <label>
+            Tempo
+            <select id="f_time">
+              <option value="any">Qualsiasi</option>
+              <option value="10">10–20 min</option>
+              <option value="30">30–60 min</option>
+              <option value="120">1–3 ore</option>
+              <option value="240">Mezza giornata</option>
+              <option value="480">Giornata intera</option>
+            </select>
+          </label>
 
-    <div class="box" id="risultato">Pronto quando vuoi.</div>
+          <label>
+            Mood
+            <select id="f_mood">
+              <option value="any">Qualsiasi</option>
+              <option value="chill">Chill</option>
+              <option value="social">Social</option>
+              <option value="active">Attivo</option>
+              <option value="focus">Focus</option>
+              <option value="romantic">Romantico</option>
+              <option value="wild">Caotico</option>
+            </select>
+          </label>
+        </div>
 
-    <div class="small">
-      Versione 0.1 • <a class="link" href="#" id="installa">Installa</a>
-    </div>
+        <div class="row">
+          <label>
+            Budget
+            <select id="f_budget">
+              <option value="any">Qualsiasi</option>
+              <option value="0">€0</option>
+              <option value="10">≤ €10</option>
+              <option value="30">≤ €30</option>
+              <option value="100">≤ €100</option>
+            </select>
+          </label>
+
+          <label>
+            Dove
+            <select id="f_place">
+              <option value="any">Qualsiasi</option>
+              <option value="indoor">Indoor</option>
+              <option value="outdoor">Outdoor</option>
+            </select>
+          </label>
+        </div>
+      </section>
+
+      <button id="btn" class="btn">
+        <span class="icon">🎰</span>
+        <span>DECIDI PER ME</span>
+      </button>
+
+      <section class="result">
+        <div id="slot" class="slot" aria-live="polite">Pronto quando vuoi.</div>
+        <div id="meta" class="meta"></div>
+      </section>
+
+      <footer class="foot">
+        <span class="ver">Versione <span id="ver">0.1</span></span>
+        <button id="installBtn" class="link" hidden>Installa</button>
+      </footer>
+    </section>
   </main>
 
-  <script>
-    const idee = [
-      "Fai una passeggiata di 15 minuti e ascolta 3 canzoni.",
-      "Scrivi a una persona che non senti da tempo.",
-      "Bevi un bicchiere d’acqua e sistema una cosa piccola.",
-      "Allenamento rapido: 20 squat + 10 piegamenti (o versione facile).",
-      "Scegli un obiettivo: 25 minuti di focus (timer) su una cosa sola.",
-      "Esci a prendere un caffè e osserva 5 dettagli nuovi.",
-      "Decluttering: butta via 5 cose inutili o riordina un cassetto.",
-      "Guarda un video breve su un argomento che ti ispira e prendi 1 appunto."
-    ];
-
-    const out = document.getElementById("risultato");
-    document.getElementById("decidi").addEventListener("click", () => {
-      const pick = idee[Math.floor(Math.random() * idee.length)];
-      out.textContent = pick;
-      navigator.vibrate?.(30);
-    });
-
-    // PWA install prompt
-    let deferredPrompt = null;
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-    });
-
-    document.getElementById("installa").addEventListener("click", async (e) => {
-      e.preventDefault();
-      if (!deferredPrompt) {
-        alert("Se sei su Android: apri il menu del browser → 'Aggiungi a schermata Home'.");
-        return;
-      }
-      deferredPrompt.prompt();
-      await deferredPrompt.userChoice;
-      deferredPrompt = null;
-    });
-
-    // Register service worker
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js').catch(()=>{});
-    }
-  </script>
+  <script src="/app.js"></script>
 </body>
 </html>
