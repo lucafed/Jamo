@@ -19,7 +19,7 @@
     <section class="card">
       <header class="head">
         <h1>Jamo</h1>
-        <p class="sub">Non sai dove andare o cosa fare? Premi e decide Jamo.</p>
+        <p class="sub">“Andiamo da qualche parte?” → Chiedi a Jamo. Decide lui.</p>
       </header>
 
       <!-- FILTRI -->
@@ -29,7 +29,7 @@
             Tempo che hai
             <select id="f_time">
               <option value="any">Qualsiasi</option>
-              <option value="30">10–60 min</option>
+              <option value="60">Fino a 1 ora</option>
               <option value="120">1–3 ore</option>
               <option value="240">Mezza giornata</option>
               <option value="480">Giornata intera</option>
@@ -75,25 +75,18 @@
         </div>
       </section>
 
-      <!-- BOTTONI PRINCIPALI -->
-      <div class="actions">
-        <button id="btnTrip" class="btn primary">
-          <span class="icon">🎰</span>
-          <span>DOVE ANDIAMO?</span>
-        </button>
-
-        <button id="btnLocal" class="btn secondary">
-          <span class="icon">🏠</span>
-          <span>COSA FACCIO QUI VICINO?</span>
-        </button>
-      </div>
+      <!-- BOTTONE UNICO -->
+      <button id="btnTrip" class="btn primary">
+        <span class="icon">🎰</span>
+        <span>DOVE ANDIAMO?</span>
+      </button>
 
       <!-- RISULTATO -->
       <section class="result">
-        <div id="slot" class="slot" aria-live="polite">Pronto quando vuoi.</div>
-
+        <div id="slot" class="slot" aria-live="polite">Dimmi quanto tempo hai e come ti muovi. Poi premi.</div>
         <div id="meta" class="meta"></div>
 
+        <!-- CTA: compaiono solo dopo la scelta -->
         <div id="cta" class="cta" hidden>
           <a id="mapsLink" class="pill" href="#" target="_blank" rel="noopener">🗺️ Apri in Maps</a>
           <a id="ticketsLink" class="pill" href="#" target="_blank" rel="noopener">🎟 Biglietti</a>
@@ -102,7 +95,7 @@
 
       <!-- FOOTER -->
       <footer class="foot">
-        <span class="ver">Versione <span id="ver">0.1</span></span>
+        <span class="ver">Versione <span id="ver">0.3</span></span>
         <button id="installBtn" class="link" hidden>Installa</button>
       </footer>
     </section>
