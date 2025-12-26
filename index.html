@@ -2,32 +2,34 @@
 <html lang="it">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="theme-color" content="#00E0FF" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>Jamo</title>
 
-  <link rel="manifest" href="/manifest.webmanifest">
-  <link rel="icon" href="/icons/icon-192.png">
-  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <!-- PWA -->
+  <meta name="theme-color" content="#00E0FF" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="icon" href="/icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="/icons/icon-192.png" />
 
   <link rel="stylesheet" href="/style.css" />
 </head>
+
 <body>
   <main class="wrap">
     <section class="card">
       <header class="head">
         <h1>Jamo</h1>
-        <p class="sub">Premi e Jamo decide per te cosa fare, adesso.</p>
+        <p class="sub">Non sai dove andare o cosa fare? Premi e decide Jamo.</p>
       </header>
 
+      <!-- FILTRI -->
       <section class="filters">
         <div class="row">
           <label>
-            Tempo
+            Tempo che hai
             <select id="f_time">
               <option value="any">Qualsiasi</option>
-              <option value="10">10–20 min</option>
-              <option value="30">30–60 min</option>
+              <option value="30">10–60 min</option>
               <option value="120">1–3 ore</option>
               <option value="240">Mezza giornata</option>
               <option value="480">Giornata intera</option>
@@ -35,22 +37,33 @@
           </label>
 
           <label>
-            Mood
-            <select id="f_mood">
+            Come ti muovi
+            <select id="f_mode">
               <option value="any">Qualsiasi</option>
-              <option value="chill">Chill</option>
-              <option value="social">Social</option>
-              <option value="active">Attivo</option>
-              <option value="focus">Focus</option>
-              <option value="romantic">Romantico</option>
-              <option value="wild">Caotico</option>
+              <option value="car">🚗 Auto</option>
+              <option value="train">🚆 Treno</option>
+              <option value="bus">🚌 Bus</option>
+              <option value="plane">✈️ Aereo</option>
             </select>
           </label>
         </div>
 
         <div class="row">
           <label>
-            Budget
+            Che vibe vuoi?
+            <select id="f_vibe">
+              <option value="any">Qualsiasi</option>
+              <option value="natura">🌿 Natura</option>
+              <option value="borghi">🏘️ Borghi</option>
+              <option value="cibo">🍝 Cibo</option>
+              <option value="cultura">🏛️ Cultura</option>
+              <option value="relax">🧘 Relax</option>
+              <option value="party">🎉 Party</option>
+            </select>
+          </label>
+
+          <label>
+            Budget massimo
             <select id="f_budget">
               <option value="any">Qualsiasi</option>
               <option value="0">€0</option>
@@ -59,28 +72,35 @@
               <option value="100">≤ €100</option>
             </select>
           </label>
-
-          <label>
-            Dove
-            <select id="f_place">
-              <option value="any">Qualsiasi</option>
-              <option value="indoor">Indoor</option>
-              <option value="outdoor">Outdoor</option>
-            </select>
-          </label>
         </div>
       </section>
 
-      <button id="btn" class="btn">
-        <span class="icon">🎰</span>
-        <span>DECIDI PER ME</span>
-      </button>
+      <!-- BOTTONI PRINCIPALI -->
+      <div class="actions">
+        <button id="btnTrip" class="btn primary">
+          <span class="icon">🎰</span>
+          <span>DOVE ANDIAMO?</span>
+        </button>
 
+        <button id="btnLocal" class="btn secondary">
+          <span class="icon">🏠</span>
+          <span>COSA FACCIO QUI VICINO?</span>
+        </button>
+      </div>
+
+      <!-- RISULTATO -->
       <section class="result">
         <div id="slot" class="slot" aria-live="polite">Pronto quando vuoi.</div>
+
         <div id="meta" class="meta"></div>
+
+        <div id="cta" class="cta" hidden>
+          <a id="mapsLink" class="pill" href="#" target="_blank" rel="noopener">🗺️ Apri in Maps</a>
+          <a id="ticketsLink" class="pill" href="#" target="_blank" rel="noopener">🎟 Biglietti</a>
+        </div>
       </section>
 
+      <!-- FOOTER -->
       <footer class="foot">
         <span class="ver">Versione <span id="ver">0.1</span></span>
         <button id="installBtn" class="link" hidden>Installa</button>
