@@ -2,105 +2,202 @@
 <html lang="it">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Jamo</title>
 
-  <!-- PWA -->
-  <meta name="theme-color" content="#00E0FF" />
-  <link rel="manifest" href="/manifest.webmanifest" />
-  <link rel="icon" href="/icons/icon-192.png" />
-  <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+  <!-- (Opzionale) Se hai già manifest e icone -->
+  <!-- <link rel="manifest" href="/manifest.json"> -->
+  <!-- <meta name="theme-color" content="#00E0FF"> -->
 
-  <link rel="stylesheet" href="/style.css" />
+  <style>
+    :root{
+      --bg:#0A0F14;
+      --surface:#141C22;
+      --text:#FFFFFF;
+      --muted:#A0B2BA;
+      --accent:#00E0FF;
+      --accent2:#1AFFD5;
+      --danger:#ff4d4d;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(1200px 700px at 50% -20%, rgba(0,224,255,.25), transparent 60%),
+                  radial-gradient(900px 600px at 20% 0%, rgba(26,255,213,.12), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+    }
+    .card{
+      width:min(520px, 100%);
+      background:rgba(20,28,34,.82);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:20px;
+      padding:18px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 20px 60px rgba(0,0,0,.45);
+    }
+    .title{
+      font-size:40px;
+      font-weight:800;
+      margin:2px 0 6px;
+      letter-spacing:.2px;
+    }
+    .subtitle{
+      color:var(--muted);
+      margin:0 0 16px;
+      line-height:1.4;
+    }
+
+    .row{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px;}
+    .field{
+      flex:1;
+      min-width: 150px;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:14px;
+      padding:10px;
+    }
+    label{display:block; font-size:12px; color:var(--muted); margin-bottom:6px;}
+    select, input{
+      width:100%;
+      background:transparent;
+      border:none;
+      outline:none;
+      color:var(--text);
+      font-size:16px;
+    }
+    option{color:#000}
+    .btn{
+      width:100%;
+      border:none;
+      border-radius:16px;
+      padding:14px 16px;
+      font-weight:800;
+      font-size:18px;
+      cursor:pointer;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      color:#001018;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      box-shadow: 0 12px 30px rgba(0,224,255,.18);
+    }
+    .btn:disabled{
+      opacity:.55;
+      cursor:not-allowed;
+      box-shadow:none;
+    }
+
+    .panel{
+      margin-top:14px;
+      background:rgba(0,0,0,.18);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:16px;
+      padding:14px;
+    }
+    .panel h3{margin:0 0 8px; font-size:16px;}
+    .muted{color:var(--muted)}
+    .error{color:var(--danger)}
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 10px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.04);
+      border-radius:999px;
+      font-size:12px;
+      color:var(--muted);
+      margin:6px 0 0;
+    }
+
+    .dest{
+      margin-top:10px;
+      padding:12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.04);
+    }
+    .dest .name{font-weight:800; font-size:18px; margin:0 0 2px}
+    .dest .meta{color:var(--muted); font-size:13px; margin:0}
+    .dest .actions{
+      margin-top:10px;
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .smallbtn{
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      font-weight:700;
+      cursor:pointer;
+    }
+    .smallbtn:active{transform:translateY(1px)}
+    .divider{height:1px; background:rgba(255,255,255,.08); margin:12px 0;}
+    .footer{
+      margin-top:10px;
+      text-align:center;
+      color:var(--muted);
+      font-size:12px;
+    }
+  </style>
 </head>
-
 <body>
-  <main class="wrap">
-    <section class="card">
-      <header class="head">
-        <h1>Jamo</h1>
-        <p class="sub">“Andiamo da qualche parte?” → Chiedi a Jamo. Decide lui.</p>
-      </header>
+  <main class="card">
+    <div class="title">Jamo</div>
+    <p class="subtitle">Premi e Jamo ti suggerisce <b>dove andare</b> (1 meta + alternative). Poi ti dice <b>cosa fare lì</b>.</p>
 
-      <!-- FILTRI -->
-      <section class="filters">
-        <div class="row">
-          <label>
-            Tempo che hai
-            <select id="f_time">
-              <option value="any">Qualsiasi</option>
-              <option value="60">Fino a 1 ora</option>
-              <option value="120">1–3 ore</option>
-              <option value="240">Mezza giornata</option>
-              <option value="480">Giornata intera</option>
-            </select>
-          </label>
+    <div class="row">
+      <div class="field">
+        <label>Raggio ricerca (km)</label>
+        <select id="radiusKm">
+          <option value="5">5 km</option>
+          <option value="10" selected>10 km</option>
+          <option value="20">20 km</option>
+          <option value="40">40 km</option>
+          <option value="80">80 km</option>
+          <option value="150">150 km</option>
+        </select>
+      </div>
 
-          <label>
-            Come ti muovi
-            <select id="f_mode">
-              <option value="any">Qualsiasi</option>
-              <option value="car">🚗 Auto</option>
-              <option value="train">🚆 Treno</option>
-              <option value="bus">🚌 Bus</option>
-              <option value="plane">✈️ Aereo</option>
-            </select>
-          </label>
-        </div>
+      <div class="field">
+        <label>Mezzo</label>
+        <select id="mode">
+          <option value="car" selected>Auto</option>
+          <option value="train">Treno</option>
+          <option value="bus">Bus</option>
+          <option value="walk">A piedi</option>
+          <option value="bike">Bici</option>
+        </select>
+      </div>
 
-        <div class="row">
-          <label>
-            Che vibe vuoi?
-            <select id="f_vibe">
-              <option value="any">Qualsiasi</option>
-              <option value="natura">🌿 Natura</option>
-              <option value="borghi">🏘️ Borghi</option>
-              <option value="cibo">🍝 Cibo</option>
-              <option value="cultura">🏛️ Cultura</option>
-              <option value="relax">🧘 Relax</option>
-              <option value="party">🎉 Party</option>
-            </select>
-          </label>
+      <div class="field">
+        <label>Budget massimo (€)</label>
+        <input id="budget" type="number" inputmode="numeric" min="0" placeholder="es. 25" />
+      </div>
+    </div>
 
-          <label>
-            Budget massimo
-            <select id="f_budget">
-              <option value="any">Qualsiasi</option>
-              <option value="0">€0</option>
-              <option value="10">≤ €10</option>
-              <option value="30">≤ €30</option>
-              <option value="100">≤ €100</option>
-            </select>
-          </label>
-        </div>
-      </section>
+    <button id="btnGo" class="btn">
+      🎲 DOVE ANDIAMO?
+    </button>
 
-      <!-- BOTTONE UNICO -->
-      <button id="btnTrip" class="btn primary">
-        <span class="icon">🎰</span>
-        <span>DOVE ANDIAMO?</span>
-      </button>
-
-      <!-- RISULTATO -->
-      <section class="result">
-        <div id="slot" class="slot" aria-live="polite">Dimmi quanto tempo hai e come ti muovi. Poi premi.</div>
-        <div id="meta" class="meta"></div>
-
-        <!-- CTA: compaiono solo dopo la scelta -->
-        <div id="cta" class="cta" hidden>
-          <a id="mapsLink" class="pill" href="#" target="_blank" rel="noopener">🗺️ Apri in Maps</a>
-          <a id="ticketsLink" class="pill" href="#" target="_blank" rel="noopener">🎟 Biglietti</a>
-        </div>
-      </section>
-
-      <!-- FOOTER -->
-      <footer class="foot">
-        <span class="ver">Versione <span id="ver">0.3</span></span>
-        <button id="installBtn" class="link" hidden>Installa</button>
-      </footer>
-    </section>
+    <div class="panel">
+      <div id="status" class="muted">Pronto. Premendo il bottone ti chiederà il GPS.</div>
+      <div id="results"></div>
+      <div class="footer">Versione 0.2 • dati: OpenStreetMap (Overpass) • stime tempi/costi = indicative</div>
+    </div>
   </main>
 
-  <script src="/app.js"></script>
+  <script src="./app.js"></script>
 </body>
 </html>
