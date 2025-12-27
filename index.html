@@ -40,7 +40,7 @@
     h1{margin:0 0 8px; font-size:38px; letter-spacing:.2px}
     .lead{margin:0 0 18px; color:var(--muted); font-size:16px; line-height:1.4}
 
-    .row{display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin:12px 0 10px}
+    .row{display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end; margin:12px 0 10px}
     label{color:var(--muted); font-size:14px}
     select{
       appearance:none;
@@ -60,7 +60,7 @@
       border-radius: 18px;
       padding: 16px 18px;
       font-size:18px;
-      font-weight:700;
+      font-weight:800;
       color:#001018;
       background: linear-gradient(90deg, var(--accent), var(--accent2));
       cursor:pointer;
@@ -90,8 +90,8 @@
     }
     .hidden{display:none}
 
-    .place-title{font-size:22px; font-weight:800; margin:0 0 6px}
-    .meta{color:var(--muted); font-size:14px; margin:0 0 10px}
+    .place-title{font-size:22px; font-weight:900; margin:0 0 6px}
+    .meta{color:var(--muted); font-size:14px; margin:0 0 10px; white-space:pre-wrap}
     .actions{display:flex; gap:10px; flex-wrap:wrap}
     .linkbtn{
       display:inline-flex; align-items:center; justify-content:center;
@@ -101,7 +101,7 @@
       color:var(--text);
       text-decoration:none;
       background: rgba(255,255,255,.06);
-      font-weight:600;
+      font-weight:700;
     }
     .check{
       display:inline-flex; align-items:center; gap:8px;
@@ -110,11 +110,10 @@
       border:1px solid rgba(255,255,255,.12);
       background: rgba(255,255,255,.06);
       color:var(--text);
-      font-weight:600;
+      font-weight:800;
       cursor:pointer;
     }
-    .alts{margin-top:14px}
-    .alts h2{margin:10px 0 8px; font-size:18px}
+    .sectionTitle{margin:14px 0 8px; font-size:18px; font-weight:900}
     .alt-item{
       padding:10px 12px;
       border-radius:14px;
@@ -122,7 +121,8 @@
       background: rgba(255,255,255,.04);
       margin-bottom:8px;
     }
-    .alt-item .name{font-weight:800}
+    .alt-item .name{font-weight:900}
+    .mini{color:var(--muted); font-size:13px; margin-top:4px; line-height:1.35}
     .footer{
       margin-top:14px;
       color:rgba(160,178,186,.8);
@@ -134,7 +134,7 @@
 <body>
   <main class="card">
     <h1>Jamo</h1>
-    <p class="lead">Scegli il tempo disponibile e premi: ti propongo un <b>luogo reale</b> dove andare (con alternative).</p>
+    <p class="lead">Scegli tempo, mezzo e stile: ti propongo un <b>luogo reale</b> dove andare (con alternative) + <b>cosa vedere</b>.</p>
 
     <div class="row">
       <div>
@@ -158,6 +158,15 @@
           <option value="bike">Bici</option>
         </select>
       </div>
+
+      <div>
+        <label for="styleSelect">Stile mete</label><br/>
+        <select id="styleSelect">
+          <option value="famous" selected>Famosi</option>
+          <option value="mix">Mix (famosi + chicche)</option>
+          <option value="hidden">Chicche (meno noti)</option>
+        </select>
+      </div>
     </div>
 
     <button id="goBtn" class="btn">🎲 DOVE ANDIAMO?</button>
@@ -167,18 +176,17 @@
     <section id="result" class="result hidden">
       <div class="place-title" id="placeName"></div>
       <div class="meta" id="placeMeta"></div>
+
       <div class="actions">
         <a class="linkbtn" id="mapsLink" href="#" target="_blank" rel="noopener">Apri su Google Maps</a>
         <button class="check" id="visitedBtn">✅ Segna come “già visitato”</button>
       </div>
 
-      <div class="alts">
-        <h2>Alternative</h2>
-        <div id="altList"></div>
-      </div>
+      <div class="sectionTitle">Alternative</div>
+      <div id="altList"></div>
     </section>
 
-    <div class="footer" id="footerInfo">Versione 2.0 • Luoghi reali (OSM) • Routing: ORS quando possibile</div>
+    <div class="footer" id="footerInfo">Versione 2.1 • Luoghi (OSM) + POI • ORS quando possibile</div>
   </main>
 
   <script src="app.js"></script>
