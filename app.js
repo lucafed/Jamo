@@ -7,8 +7,9 @@ const btnGo = $("btnGo");
 const radiusEl = $("radiusKm");
 const modeEl = $("mode");
 const budgetEl = $("budget");
-const maxTimeEl = $("maxTime");
-const activityEl = $("activity");
+const maxTravelEl = $("maxTravelMin");
+const placeTypeEl = $("placeType");
+const vibeEl = $("vibe");
 
 btnGo.addEventListener("click", async () => {
   try {
@@ -21,51 +22,62 @@ btnGo.addEventListener("click", async () => {
 
     const radiusMeters = Number(radiusEl.value) * 1000;
     const mode = modeEl.value;
-    const budget = parseOptionalNumber(budgetEl.value);
-    const maxTime = parseOptionalNumber(maxTimeEl.value);
-    const activity = activityEl.value;
 
-    setStatus(`Ok. Cerco mete entro ${radiusEl.value} km…`);
-    const destinations = await fetchDestinations(user.lat, user.lon, radiusMeters, activity);
+    const budget = parseOptionalNumber(budgetEl.value);
+    const maxTravelMin = parseOptionalNumber(maxTravelEl.value); // qui è il “max 2h volo” ecc.
+    const placeType = placeTypeEl.value;
+    const vibe = vibeEl.value;
+
+    setStatus(`Cerco mete (${placeType}) entro ${radiusEl.value} km…`);
+    const destinations = await fetchDestinations(user.lat, user.lon, radiusMeters, placeType);
 
     if (!destinations.length) {
-      setStatus("Non ho trovato mete. Prova ad aumentare il raggio o cambia attività.", true);
+      setStatus("Non ho trovato mete. Aumenta il raggio o cambia tipo meta.", true);
       return;
     }
 
-    // Score + stime
+    // stime + score
     let scored = destinations
       .map((d) => ({
         ...d,
         distanceKm: haversineKm(user.lat, user.lon, d.lat, d.lon),
       }))
-      .map((d) => ({
-        ...d,
-        score: scoreDestination(d, activity),
-        est: estimateTrip(d.distanceKm, mode),
-      }))
+      .map((d) => {
+        const est = estimateTrip(d.distanceKm, mode); // minuti/costo stimati per mezzo
+        return {
+          ...d,
+          est,
+          score: scoreDestination(d, placeType, vibe),
+        };
+      })
       .sort((a, b) => b.score - a.score);
 
-    // Applico filtri
-    const filtered = applyFilters(scored, { budget, maxTime });
+    // filtri “intelligenti”:
+    // 1) max tempo di viaggio (in min) -> vale per ogni mezzo
+    // 2) budget
+    const filtered = scored.filter((d) => {
+      if (maxTravelMin != null && d.est.minutes > maxTravelMin) return false;
+      if (budget != null && d.est.cost > budget) return false;
+      return true;
+    });
 
-    // Fallback intelligente se filtri tagliano tutto
-    if (!filtered.length) {
-      setStatus("Con questi filtri non esce nulla: ti mostro risultati ignorando budget/tempo (puoi regolarli).", true);
-    }
-
+    // fallback se tagli tutto
     const finalList = filtered.length ? filtered : scored;
+
+    if (!filtered.length) {
+      setStatus("Con questi filtri non esce nulla: ti mostro comunque le migliori mete (prova ad aumentare max tempo o raggio).", true);
+    } else {
+      setStatus("Fatto ✅");
+    }
 
     const main = finalList[0];
     const alternatives = finalList.slice(1, 4);
 
-    renderSuggestions(main, alternatives);
-
-    setStatus("Fatto ✅ Scegli una meta o apri Maps. Vuoi vedere cosa fare lì?");
+    renderSuggestions(main, alternatives, { mode, maxTravelMin, budget, placeType, vibe });
 
   } catch (err) {
     console.error(err);
-    if (String(err).includes("denied")) setStatus("GPS negato. Attiva la posizione e consenti l’accesso al sito.", true);
+    if (String(err).includes("denied")) setStatus("GPS negato. Attiva la posizione e consenti l’accesso.", true);
     else setStatus("Errore: " + (err?.message || String(err)), true);
   } finally {
     btnGo.disabled = false;
@@ -83,21 +95,11 @@ function parseOptionalNumber(v) {
   return n;
 }
 
-function applyFilters(list, { budget, maxTime }) {
-  return list.filter((d) => {
-    if (budget != null && d.est.cost > budget) return false;
-    if (maxTime != null && d.est.minutes > maxTime) return false;
-    return true;
-  });
-}
-
 /* ===================== DESTINATIONS (Overpass) ===================== */
 
-async function fetchDestinations(lat, lon, radiusMeters, activity) {
+async function fetchDestinations(lat, lon, radiusMeters, placeType) {
   const overpassUrl = "https://overpass-api.de/api/interpreter";
-
-  // Base query a seconda dell’attività
-  const block = buildActivityQuery(activity, lat, lon, radiusMeters);
+  const block = buildPlaceTypeQuery(placeType, lat, lon, radiusMeters);
 
   const query = `
 [out:json][timeout:25];
@@ -147,42 +149,80 @@ out center tags;
   return out;
 }
 
-function buildActivityQuery(activity, lat, lon, r) {
-  // nwr = node/way/relation
-  if (activity === "culture") {
+function buildPlaceTypeQuery(placeType, lat, lon, r) {
+  // NB: “events” è beta: OSM non è perfetto per eventi live. Per eventi veri servirà un’API (Ticketmaster ecc.)
+  if (placeType === "city") {
     return `
-nwr(around:${r},${lat},${lon})["tourism"~"museum|gallery|attraction|information"];
+nwr(around:${r},${lat},${lon})["place"~"city|town|village"];
+nwr(around:${r},${lat},${lon})["tourism"~"attraction|museum|gallery"];
 nwr(around:${r},${lat},${lon})["historic"];
 `;
   }
-  if (activity === "nature") {
+  if (placeType === "sea") {
     return `
-nwr(around:${r},${lat},${lon})["natural"~"peak|beach|spring|wood|cave|waterfall|bay"];
-nwr(around:${r},${lat},${lon})["leisure"~"park|nature_reserve|garden"];
-nwr(around:${r},${lat},${lon})["tourism"~"viewpoint"];
+nwr(around:${r},${lat},${lon})["natural"="beach"];
+nwr(around:${r},${lat},${lon})["tourism"="viewpoint"];
 `;
   }
-  if (activity === "food") {
+  if (placeType === "mountain") {
+    return `
+nwr(around:${r},${lat},${lon})["natural"="peak"];
+nwr(around:${r},${lat},${lon})["route"="hiking"];
+nwr(around:${r},${lat},${lon})["tourism"="viewpoint"];
+`;
+  }
+  if (placeType === "nature") {
+    return `
+nwr(around:${r},${lat},${lon})["leisure"~"park|nature_reserve|garden"];
+nwr(around:${r},${lat},${lon})["natural"~"peak|wood|spring|cave|waterfall|bay|beach"];
+nwr(around:${r},${lat},${lon})["tourism"="viewpoint"];
+`;
+  }
+  if (placeType === "culture") {
+    return `
+nwr(around:${r},${lat},${lon})["tourism"~"museum|gallery|attraction"];
+nwr(around:${r},${lat},${lon})["historic"];
+`;
+  }
+  if (placeType === "food") {
     return `
 nwr(around:${r},${lat},${lon})["amenity"~"cafe|bar|restaurant|pub"];
 `;
   }
-  if (activity === "mix") {
+  if (placeType === "relax") {
     return `
-nwr(around:${r},${lat},${lon})["tourism"~"attraction|museum|gallery|zoo|theme_park|viewpoint|information"];
-nwr(around:${r},${lat},${lon})["historic"];
-nwr(around:${r},${lat},${lon})["natural"~"peak|beach|spring|wood|cave|waterfall|bay"];
-nwr(around:${r},${lat},${lon})["leisure"~"park|nature_reserve|garden"];
-nwr(around:${r},${lat},${lon})["amenity"~"cafe|bar|restaurant|pub"];
+nwr(around:${r},${lat},${lon})["amenity"="spa"];
+nwr(around:${r},${lat},${lon})["leisure"="spa"];
+nwr(around:${r},${lat},${lon})["amenity"="sauna"];
+nwr(around:${r},${lat},${lon})["tourism"="hotel"];
 `;
   }
+  if (placeType === "family") {
+    return `
+nwr(around:${r},${lat},${lon})["tourism"~"zoo|theme_park"];
+nwr(around:${r},${lat},${lon})["leisure"="park"];
+`;
+  }
+  if (placeType === "night") {
+    return `
+nwr(around:${r},${lat},${lon})["amenity"~"bar|pub|nightclub"];
+`;
+  }
+  if (placeType === "events") {
+    return `
+nwr(around:${r},${lat},${lon})["amenity"~"theatre|cinema"];
+nwr(around:${r},${lat},${lon})["tourism"="attraction"];
+`;
+  }
+
   // any
   return `
-nwr(around:${r},${lat},${lon})["tourism"~"attraction|museum|gallery|zoo|theme_park|viewpoint|information"];
+nwr(around:${r},${lat},${lon})["place"~"city|town|village"];
+nwr(around:${r},${lat},${lon})["tourism"~"attraction|museum|gallery|zoo|theme_park|viewpoint"];
 nwr(around:${r},${lat},${lon})["historic"];
 nwr(around:${r},${lat},${lon})["natural"~"peak|beach|spring|wood|cave|waterfall|bay"];
 nwr(around:${r},${lat},${lon})["leisure"~"park|nature_reserve|garden"];
-nwr(around:${r},${lat},${lon})["amenity"~"cafe|bar|restaurant|pub"];
+nwr(around:${r},${lat},${lon})["amenity"~"cafe|bar|restaurant|pub|nightclub"];
 `;
 }
 
@@ -192,7 +232,11 @@ function inferType(tags) {
   const h = tags.historic;
   const l = tags.leisure;
   const a = tags.amenity;
+  const p = tags.place;
 
+  if (p === "city") return "Città";
+  if (p === "town") return "Cittadina";
+  if (p === "village") return "Borgo";
   if (t === "museum") return "Museo";
   if (t === "gallery") return "Galleria";
   if (t === "zoo") return "Zoo";
@@ -210,35 +254,47 @@ function inferType(tags) {
   if (a === "cafe") return "Caffè";
   if (a === "bar") return "Bar";
   if (a === "pub") return "Pub";
-  return "Luogo da visitare";
+  if (a === "nightclub") return "Locale";
+  if (a === "spa") return "Spa";
+  return "Meta";
 }
 
 /* ===================== SCORE + ESTIMATES ===================== */
 
-function scoreDestination(d, activity) {
+function scoreDestination(d, placeType, vibe) {
   let s = 0;
   const km = d.distanceKm ?? 0;
-
-  // preferenze distanza
-  if (km <= 5) s += 9;
-  else if (km <= 15) s += 10;
-  else if (km <= 40) s += 7;
-  else if (km <= 150) s += 5;
-  else s += 3;
-
   const tags = d.tags || {};
+
+  // Qualità info
   if (tags.wikipedia) s += 4;
   if (tags.website) s += 2;
   if (tags.opening_hours) s += 1;
-
-  // boost per coerenza attività
-  if (activity === "culture" && (tags.tourism === "museum" || tags.historic)) s += 5;
-  if (activity === "nature" && (tags.natural || tags.leisure)) s += 5;
-  if (activity === "food" && tags.amenity) s += 5;
-
   if (d.name && d.name !== d.typeLabel) s += 2;
-  s += Math.random() * 1.2;
 
+  // Preferenze “vibe”
+  if (vibe === "quick") {
+    if (km <= 20) s += 9; else if (km <= 80) s += 5; else s += 1;
+  } else if (vibe === "chill") {
+    if (km <= 80) s += 7; else s += 3;
+  } else if (vibe === "adventure") {
+    if (tags.natural || tags.route === "hiking" || tags.tourism === "viewpoint") s += 6;
+    s += km <= 150 ? 3 : 5;
+  } else if (vibe === "romantic") {
+    if (tags.tourism === "viewpoint" || tags.place === "village" || tags.place === "town") s += 6;
+  } else {
+    // default: leggero bias per non troppo lontano
+    if (km <= 15) s += 7; else if (km <= 80) s += 5; else s += 2;
+  }
+
+  // Coerenza “tipo meta”
+  if (placeType === "sea" && tags.natural === "beach") s += 8;
+  if (placeType === "mountain" && (tags.natural === "peak" || tags.route === "hiking")) s += 8;
+  if (placeType === "culture" && (tags.tourism === "museum" || tags.historic)) s += 8;
+  if (placeType === "food" && tags.amenity) s += 8;
+  if (placeType === "night" && (tags.amenity === "nightclub" || tags.amenity === "pub" || tags.amenity === "bar")) s += 8;
+
+  s += Math.random() * 1.1;
   return s;
 }
 
@@ -253,11 +309,11 @@ function estimateTrip(distanceKm, mode) {
   };
 
   if (mode === "plane") {
-    // overhead aeroporto + volo
+    // “max 2h di volo” -> noi stimiamo volo + overhead
     const flightMinutes = Math.round((distanceKm / speeds.plane) * 60);
-    const minutes = 120 + flightMinutes; // check-in + security + transfer
-    const cost = Math.round((30 + distanceKm * 0.12) * 100) / 100; // stima
-    return { minutes, cost };
+    const minutes = 120 + flightMinutes; // overhead aeroporto (indicativo)
+    const cost = round2(30 + distanceKm * 0.12);
+    return { minutes, cost, flightMinutes };
   }
 
   const speed = speeds[mode] || 50;
@@ -269,14 +325,23 @@ function estimateTrip(distanceKm, mode) {
   else if (mode === "bus") cost = 2.2 + distanceKm * 0.06;
   else cost = 0;
 
-  cost = Math.round(cost * 100) / 100;
-  return { minutes, cost };
+  return { minutes, cost: round2(cost) };
 }
+
+function round2(x){ return Math.round(x * 100) / 100; }
 
 /* ===================== RENDER ===================== */
 
-function renderSuggestions(main, alternatives) {
+function renderSuggestions(main, alternatives, ctx) {
   resultsEl.innerHTML = "";
+
+  const summary = document.createElement("div");
+  summary.className = "pill";
+  const timeTxt = ctx.maxTravelMin ? `⏱ max ${ctx.maxTravelMin} min` : "⏱ senza max tempo";
+  const budTxt = ctx.budget ? `€ max ${ctx.budget}` : "€ senza budget";
+  summary.textContent = `${modeLabel(ctx.mode)} • ${timeTxt} • ${budTxt} • ${typeLabel(ctx.placeType)} • ${vibeLabel(ctx.vibe)}`;
+  resultsEl.appendChild(summary);
+
   resultsEl.appendChild(buildDestinationCard("Meta consigliata", main, true));
 
   if (alternatives.length) {
@@ -311,7 +376,9 @@ function buildDestinationCard(title, d, isMain) {
 
   const meta = document.createElement("p");
   meta.className = "meta";
-  meta.textContent = `${d.typeLabel} • ${d.distanceKm.toFixed(1)} km • ~${d.est.minutes} min • ~€${d.est.cost}`;
+
+  const extraPlane = d.est.flightMinutes != null ? ` (volo ~${d.est.flightMinutes} min)` : "";
+  meta.textContent = `${d.typeLabel} • ${d.distanceKm.toFixed(1)} km • ~${d.est.minutes} min${extraPlane} • ~€${d.est.cost}`;
   wrap.appendChild(meta);
 
   const actions = document.createElement("div");
@@ -334,11 +401,26 @@ function buildDestinationCard(title, d, isMain) {
   if (isMain) {
     const hint = document.createElement("div");
     hint.className = "pill";
-    hint.textContent = "Tip: se non ti piace, scegli una alternativa 👇";
+    hint.textContent = "Se non ti convince, prova una alternativa 👇";
     wrap.appendChild(hint);
   }
 
   return wrap;
+}
+
+function modeLabel(m){
+  return ({
+    car:"🚗 Auto", train:"🚆 Treno", bus:"🚌 Bus", bike:"🚲 Bici", walk:"🚶 A piedi", plane:"✈️ Aereo"
+  })[m] || m;
+}
+function typeLabel(t){
+  return ({
+    any:"🎯 Tutto", city:"🏙️ Città", sea:"🏖️ Mare", mountain:"🏔️ Montagna", nature:"🌿 Natura", culture:"🏛️ Cultura",
+    food:"🍝 Cibo", relax:"🧖 Relax", family:"👨‍👩‍👧 Famiglia", night:"🌙 Notte", events:"🎫 Eventi"
+  })[t] || t;
+}
+function vibeLabel(v){
+  return ({ any:"✨ Qualsiasi", quick:"⚡ Mordi e fuggi", chill:"🧘 Chill", adventure:"🧗 Avventura", romantic:"💘 Romantica" })[v] || v;
 }
 
 function openInMaps(d) {
@@ -351,13 +433,14 @@ function openInMaps(d) {
 async function showThingsToDoNear(dest) {
   try {
     setStatus(`Cerco cosa fare vicino a “${dest.name}”…`);
-    const items = await fetchNearbyPOI(dest.lat, dest.lon, 1500);
+    const items = await fetchNearbyPOI(dest.lat, dest.lon, 2000);
 
     const section = document.createElement("div");
     section.className = "panel";
     section.style.marginTop = "12px";
 
-    const h3 = document.createElement("h3");
+    const h3 = document.createElement("div");
+    h3.className = "pill";
     h3.textContent = `Cosa fare vicino a ${dest.name}`;
     section.appendChild(h3);
 
@@ -406,9 +489,9 @@ async function fetchNearbyPOI(lat, lon, radiusMeters) {
   const query = `
 [out:json][timeout:25];
 (
-  nwr(around:${radiusMeters},${lat},${lon})["amenity"~"cafe|bar|restaurant|pub"];
-  nwr(around:${radiusMeters},${lat},${lon})["tourism"~"attraction|museum|viewpoint"];
-  nwr(around:${radiusMeters},${lat},${lon})["leisure"~"park|garden"];
+  nwr(around:${radiusMeters},${lat},${lon})["amenity"~"cafe|bar|restaurant|pub|nightclub"];
+  nwr(around:${radiusMeters},${lat},${lon})["tourism"~"attraction|museum|viewpoint|gallery|zoo|theme_park"];
+  nwr(around:${radiusMeters},${lat},${lon})["leisure"~"park|garden|spa"];
 );
 out center tags;
 `;
@@ -437,7 +520,6 @@ out center tags;
     };
   }).filter(Boolean);
 
-  // dedup
   const seen = new Set();
   const out = [];
   for (const p of parsed) {
