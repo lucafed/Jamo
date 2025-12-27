@@ -1,211 +1,214 @@
-/* app.js — Jamo v2 (compatibile con il tuo index.html)
-   IDs usati:
-   - #goBtn, #timeSelect, #modeSelect
-   - #status, #result (hidden), #placeName, #placeMeta
-   - #mapsLink, #visitedBtn, #altList
-*/
+// ======= Helpers DOM =======
+const $ = (id) => document.getElementById(id);
 
-const OVERPASS_ENDPOINTS = [
-  "https://overpass-api.de/api/interpreter",
-  "https://overpass.kumi.systems/api/interpreter",
-  "https://overpass.openstreetmap.fr/api/interpreter",
-  "https://overpass.nchc.org.tw/api/interpreter",
-];
-
-const VISITED_KEY = "jamo_visited_v1";
-
-function $(id){ return document.getElementById(id); }
-function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
-
-function setStatus(msg, kind="") {
+function setStatus(msg, type = "") {
   const el = $("status");
-  if (!el) return;
-  el.classList.remove("err","ok");
-  if (kind) el.classList.add(kind);
   el.textContent = msg;
-}
-
-function showResult(show=true){
-  const el = $("result");
-  if (!el) return;
-  el.classList.toggle("hidden", !show);
-}
-
-function getVisitedSet() {
-  try { return new Set(JSON.parse(localStorage.getItem(VISITED_KEY) || "[]")); }
-  catch { return new Set(); }
-}
-function saveVisitedSet(set) {
-  localStorage.setItem(VISITED_KEY, JSON.stringify([...set]));
-}
-
-function toGoogleMapsLink(lat, lon, label="") {
-  const q = label ? `${lat},${lon} (${encodeURIComponent(label)})` : `${lat},${lon}`;
-  return `https://www.google.com/maps/search/?api=1&query=${q}`;
-}
-
-async function getUserLocation() {
-  return new Promise((resolve, reject) => {
-    if (!navigator.geolocation) return reject(new Error("Geolocalizzazione non supportata"));
-    navigator.geolocation.getCurrentPosition(
-      pos => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
-      err => reject(err),
-      { enableHighAccuracy: true, timeout: 12000, maximumAge: 60000 }
-    );
-  });
-}
-
-/** ===== Isochrone API (Vercel) =====
- * Adatta questo endpoint se il tuo file serverless ha un path diverso.
- * Deve tornare un GeoJSON FeatureCollection.
- */
-async function fetchIsochroneGeoJSON({ lat, lon, mode, seconds }) {
-  const url = `/api/isochrone?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}&mode=${encodeURIComponent(mode)}&seconds=${encodeURIComponent(seconds)}`;
-  const r = await fetch(url);
-  const t = await r.text();
-  if (!r.ok) throw new Error(`Isochrone API error (${r.status}): ${t.slice(0,220)}`);
-  try { return JSON.parse(t); } catch { throw new Error("Isochrone: risposta non JSON"); }
-}
-
-function bboxFromGeoJSON(geojson) {
-  let minLat =  90, minLon =  180, maxLat = -90, maxLon = -180;
-
-  const walkCoords = (coords) => {
-    if (!coords) return;
-    if (typeof coords[0] === "number") {
-      const [lon, lat] = coords;
-      minLat = Math.min(minLat, lat);
-      minLon = Math.min(minLon, lon);
-      maxLat = Math.max(maxLat, lat);
-      maxLon = Math.max(maxLon, lon);
-      return;
-    }
-    for (const c of coords) walkCoords(c);
-  };
-
-  if (geojson.type === "FeatureCollection") {
-    geojson.features.forEach(f => walkCoords(f.geometry?.coordinates));
-  } else if (geojson.type === "Feature") {
-    walkCoords(geojson.geometry?.coordinates);
-  } else {
-    walkCoords(geojson.coordinates);
-  }
-
-  return { minLat, minLon, maxLat, maxLon };
-}
-
-function expandBbox(b, factor = 1.6) {
-  const latMid = (b.minLat + b.maxLat) / 2;
-  const lonMid = (b.minLon + b.maxLon) / 2;
-  const latHalf = (b.maxLat - b.minLat) / 2 * factor;
-  const lonHalf = (b.maxLon - b.minLon) / 2 * factor;
-  return {
-    minLat: latMid - latHalf,
-    maxLat: latMid + latHalf,
-    minLon: lonMid - lonHalf,
-    maxLon: lonMid + lonHalf
-  };
-}
-
-/** Overpass robust (multi-endpoint + retry) */
-async function overpassQuery(query, { tries = 4 } = {}) {
-  let lastErr = null;
-
-  for (let attempt = 0; attempt < tries; attempt++) {
-    const ep = OVERPASS_ENDPOINTS[attempt % OVERPASS_ENDPOINTS.length];
-    try {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 25000);
-
-      const res = await fetch(ep, {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
-        body: "data=" + encodeURIComponent(query),
-        signal: controller.signal
-      });
-
-      clearTimeout(timeout);
-
-      if (!res.ok) {
-        const txt = await res.text().catch(() => "");
-        throw new Error(`Overpass ${res.status}: ${txt.slice(0,200)}`);
-      }
-
-      return await res.json();
-    } catch (e) {
-      lastErr = e;
-      await sleep(700 * Math.pow(2, attempt)); // backoff
-    }
-  }
-
-  throw lastErr || new Error("Overpass error");
+  el.className = "status" + (type ? " " + type : "");
 }
 
 function haversineKm(a, b) {
   const R = 6371;
-  const dLat = (b.lat - a.lat) * Math.PI/180;
-  const dLon = (b.lon - a.lon) * Math.PI/180;
-  const lat1 = a.lat * Math.PI/180;
-  const lat2 = b.lat * Math.PI/180;
-  const x = Math.sin(dLat/2)**2 + Math.cos(lat1)*Math.cos(lat2)*Math.sin(dLon/2)**2;
+  const dLat = (b.lat - a.lat) * Math.PI / 180;
+  const dLon = (b.lon - a.lon) * Math.PI / 180;
+  const la1 = a.lat * Math.PI / 180;
+  const la2 = b.lat * Math.PI / 180;
+  const x = Math.sin(dLat/2)**2 + Math.cos(la1)*Math.cos(la2)*Math.sin(dLon/2)**2;
   return 2 * R * Math.asin(Math.sqrt(x));
 }
 
-/** Mete “sensate”: città/paesi + villaggi SOLO se noti (wiki/wd) + wow naturali con wiki/wd */
+function choiceWeighted(items) {
+  // items: [{score,...}]
+  const total = items.reduce((s,i)=>s+Math.max(0.01,i.score),0);
+  let r = Math.random() * total;
+  for (const it of items) {
+    r -= Math.max(0.01,it.score);
+    if (r <= 0) return it;
+  }
+  return items[0];
+}
+
+// ======= Visited (localStorage) =======
+const VISITED_KEY = "jamo_visited_v2";
+
+function getVisitedSet() {
+  try {
+    const arr = JSON.parse(localStorage.getItem(VISITED_KEY) || "[]");
+    return new Set(arr);
+  } catch {
+    return new Set();
+  }
+}
+
+function saveVisitedSet(set) {
+  localStorage.setItem(VISITED_KEY, JSON.stringify([...set]));
+}
+
+function markVisited(idKey) {
+  const s = getVisitedSet();
+  s.add(idKey);
+  saveVisitedSet(s);
+}
+
+// ======= Geo =======
+function getGPS() {
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) return reject(new Error("Geolocalizzazione non supportata"));
+    navigator.geolocation.getCurrentPosition(
+      (pos) => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
+      (err) => reject(err),
+      { enableHighAccuracy: true, timeout: 12000, maximumAge: 30000 }
+    );
+  });
+}
+
+// ======= Routing / Isochrone strategy =======
+// ORS time range spesso max 60 min. Quindi:
+// - fino a 60 min: ORS Isochrone TIME
+// - sopra 60 min: fallback veloce a "bbox da velocità media" (molto stabile)
+// Inoltre: per bici a volte ORS ok, ma Overpass può crollare se bbox enorme.
+const SPEED_KMH = {
+  car: 70,   // media “reale” includendo semafori
+  bike: 16,
+  walk: 4.5,
+};
+
+function estimateMaxDistanceKm(mode, minutes) {
+  const kmh = SPEED_KMH[mode] || 50;
+  return (kmh * minutes) / 60;
+}
+
+function bboxFromCircle(origin, radiusKm) {
+  // approx (ok per ricerca luoghi)
+  const lat = origin.lat;
+  const lon = origin.lon;
+  const dLat = radiusKm / 110.574;
+  const dLon = radiusKm / (111.320 * Math.cos(lat * Math.PI / 180));
+  return {
+    minLat: lat - dLat,
+    maxLat: lat + dLat,
+    minLon: lon - dLon,
+    maxLon: lon + dLon,
+  };
+}
+
+// ======= Overpass Query: luoghi + borghi + natura + parchi + punti famosi =======
 function buildDestinationsQueryFromBbox(b) {
   const { minLat, minLon, maxLat, maxLon } = b;
-  return `
-[out:json][timeout:20];
-(
-  node["place"~"^(city|town)$"](${minLat},${minLon},${maxLat},${maxLon});
-  node["place"="village"]["wikipedia"](${minLat},${minLon},${maxLat},${maxLon});
-  node["place"="village"]["wikidata"](${minLat},${minLon},${maxLat},${maxLon});
 
-  node["natural"="waterfall"]["wikipedia"](${minLat},${minLon},${maxLat},${maxLon});
-  node["natural"="waterfall"]["wikidata"](${minLat},${minLon},${maxLat},${maxLon});
-  node["natural"="peak"]["wikipedia"](${minLat},${minLon},${maxLat},${maxLon});
-  node["natural"="peak"]["wikidata"](${minLat},${minLon},${maxLat},${maxLon});
-  node["natural"="cave_entrance"]["wikipedia"](${minLat},${minLon},${maxLat},${maxLon});
-  node["natural"="cave_entrance"]["wikidata"](${minLat},${minLon},${maxLat},${maxLon});
+  return `
+[out:json][timeout:25];
+(
+  // --- Borghi / città ---
+  node["place"~"^(city|town|village)$"]["name"](${minLat},${minLon},${maxLat},${maxLon});
+  way ["place"~"^(city|town|village)$"]["name"](${minLat},${minLon},${maxLat},${maxLon});
+  rel ["place"~"^(city|town|village)$"]["name"](${minLat},${minLon},${maxLat},${maxLon});
+
+  // --- Natura da gita ---
+  node["natural"~"^(waterfall|peak|cave_entrance|spring|beach)$"]["name"](${minLat},${minLon},${maxLat},${maxLon});
+  way ["natural"~"^(waterfall|peak|cave_entrance|spring|beach)$"]["name"](${minLat},${minLon},${maxLat},${maxLon});
+  rel ["natural"~"^(waterfall|peak|cave_entrance|spring|beach)$"]["name"](${minLat},${minLon},${maxLat},${maxLon});
+
+  // --- Laghi / fiumi / riserve ---
+  node["water"~"^(lake|reservoir)$"]["name"](${minLat},${minLon},${maxLat},${maxLon});
+  way ["water"~"^(lake|reservoir)$"]["name"](${minLat},${minLon},${maxLat},${maxLon});
+  rel ["water"~"^(lake|reservoir)$"]["name"](${minLat},${minLon},${maxLat},${maxLon});
+
+  // --- Parchi / aree protette ---
+  node["boundary"="national_park"]["name"](${minLat},${minLon},${maxLat},${maxLon});
+  way ["boundary"="national_park"]["name"](${minLat},${minLon},${maxLat},${maxLon});
+  rel ["boundary"="national_park"]["name"](${minLat},${minLon},${maxLat},${maxLon});
+
+  node["leisure"~"^(park|nature_reserve|garden)$"]["name"](${minLat},${minLon},${maxLat},${maxLon});
+  way ["leisure"~"^(park|nature_reserve|garden)$"]["name"](${minLat},${minLon},${maxLat},${maxLon});
+  rel ["leisure"~"^(park|nature_reserve|garden)$"]["name"](${minLat},${minLon},${maxLat},${maxLon});
+
+  // --- Famosi / turistici / storici ---
+  node["tourism"~"^(attraction|viewpoint|museum)$"]["name"](${minLat},${minLon},${maxLat},${maxLon});
+  way ["tourism"~"^(attraction|viewpoint|museum)$"]["name"](${minLat},${minLon},${maxLat},${maxLon});
+  rel ["tourism"~"^(attraction|viewpoint|museum)$"]["name"](${minLat},${minLon},${maxLat},${maxLon});
+
+  node["historic"]["name"](${minLat},${minLon},${maxLat},${maxLon});
+  way ["historic"]["name"](${minLat},${minLon},${maxLat},${maxLon});
+  rel ["historic"]["name"](${minLat},${minLon},${maxLat},${maxLon});
 );
-out body;
+out center;
 `;
 }
 
 function normalizeDestinations(overpassJson, origin) {
   const visited = getVisitedSet();
-  const nodes = (overpassJson.elements || []).filter(e => e.type === "node" && e.tags);
+  const els = (overpassJson.elements || []).filter(e => e.tags);
 
-  const scored = nodes.map(n => {
-    const t = n.tags || {};
-    const name = t.name || t["name:it"] || "Senza nome";
-    const place = t.place || "";
-    const isNatural = !!t.natural;
+  function getLatLon(e){
+    if (e.type === "node") return { lat: e.lat, lon: e.lon };
+    if (e.center && typeof e.center.lat === "number") return { lat: e.center.lat, lon: e.center.lon };
+    return null;
+  }
 
-    // punteggio “fama”
-    const base =
-      (t.wikipedia ? 3 : 0) +
-      (t.wikidata ? 2 : 0) +
-      (place === "city" ? 3 : place === "town" ? 2 : place === "village" ? 1 : 0) +
-      (isNatural ? 2 : 0);
+  function isBadCandidate(tags){
+    if (tags.place === "suburb" || tags.place === "neighbourhood" || tags.place === "hamlet") return true;
+    if (tags.highway || tags.railway || tags.aeroway) return true;
+    if (tags.amenity === "parking") return true;
+    return false;
+  }
 
-    const dist = haversineKm(origin, { lat: n.lat, lon: n.lon });
-    const nearBonus = Math.max(0, 3 - dist / 50);
-    const score = base + nearBonus;
+  const scored = els.map(e => {
+    const t = e.tags || {};
+    if (isBadCandidate(t)) return null;
 
-    const idKey = t.wikidata ? `wd:${t.wikidata}` : `osmnode:${n.id}`;
+    const ll = getLatLon(e);
+    if (!ll) return null;
+
+    const name = t.name || t["name:it"];
+    if (!name) return null;
+
+    const kind =
+      t.place ? "Borgo/Città" :
+      t.natural ? "Natura" :
+      t.water ? "Lago" :
+      t.boundary === "national_park" ? "Parco" :
+      t.leisure ? "Parco" :
+      t.historic ? "Storico" :
+      t.tourism ? "Da vedere" : "Luogo";
+
+    // "Famosità": wikipedia/wikidata + categorie
+    let score = 0;
+    if (t.wikipedia) score += 6;
+    if (t.wikidata) score += 4;
+
+    if (t.place === "city") score += 4;
+    if (t.place === "town") score += 3;
+    if (t.place === "village") score += 2;
+
+    if (t.natural === "waterfall") score += 6;
+    if (t.natural === "peak") score += 4;
+    if (t.natural === "cave_entrance") score += 5;
+    if (t.boundary === "national_park") score += 4;
+    if (t.tourism === "attraction") score += 4;
+    if (t.tourism === "viewpoint") score += 3;
+    if (t.historic) score += 3;
+
+    const dist = haversineKm(origin, ll);
+    // troppo vicino spesso è “a caso”
+    if (dist < 2) score -= 2;
+    // un po’ di bonus per vicino, ma non troppo
+    score += Math.max(0, 3 - dist / 50);
+
+    const idKey = t.wikidata ? `wd:${t.wikidata}` : `${e.type}:${e.id}`;
 
     return {
       idKey,
       name,
-      lat: n.lat,
-      lon: n.lon,
+      lat: ll.lat,
+      lon: ll.lon,
       tags: t,
+      kind,
       distKm: Math.round(dist * 10) / 10,
       score,
       visited: visited.has(idKey)
     };
-  });
+  }).filter(Boolean);
 
   // dedupe
   const uniq = [];
@@ -217,242 +220,187 @@ function normalizeDestinations(overpassJson, origin) {
     uniq.push(d);
   }
 
+  // ordina: non visitati prima, poi score
   uniq.sort((a,b) => {
     if (a.visited !== b.visited) return a.visited ? 1 : -1;
     return b.score - a.score;
   });
 
-  return uniq.slice(0, 25);
+  return uniq;
 }
 
-/** “Cosa vedere” vicino alla meta */
-function buildThingsToSeeQuery(lat, lon) {
-  const R = 7000;
-  return `
-[out:json][timeout:20];
-(
-  node["tourism"~"^(attraction|museum|gallery|viewpoint)$"](around:${R},${lat},${lon});
-  node["historic"](around:${R},${lat},${lon});
-  node["natural"~"^(waterfall|peak|cave_entrance|spring|bay|beach|wood)$"](around:${R},${lat},${lon});
-  node["leisure"~"^(park|garden)$"](around:${R},${lat},${lon});
-);
-out body 80;
-`;
+// ======= API Calls =======
+async function fetchOverpass(query) {
+  const r = await fetch("/api/overpass", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ query })
+  });
+  const text = await r.text();
+  if (!r.ok) throw new Error(`Overpass error (${r.status}): ${text.slice(0, 300)}`);
+  return JSON.parse(text);
 }
 
-function normalizeThings(overpassJson) {
-  const nodes = (overpassJson.elements || []).filter(e => e.type === "node" && e.tags);
-  const items = nodes.map(n => {
-    const t = n.tags || {};
-    const name = t.name || t["name:it"];
-    if (!name) return null;
-
-    let p = 0;
-    if (t.tourism === "museum" || t.tourism === "attraction" || t.tourism === "viewpoint") p += 4;
-    if (t.natural) p += 3;
-    if (t.historic) p += 2;
-    if (t.leisure === "park" || t.leisure === "garden") p += 1;
-    if (t.wikipedia) p += 2;
-    if (t.wikidata) p += 1;
-
-    return { name, lat: n.lat, lon: n.lon, priority: p };
-  }).filter(Boolean);
-
-  const seen = new Set();
-  const uniq = [];
-  for (const it of items) {
-    const k = it.name.toLowerCase();
-    if (seen.has(k)) continue;
-    seen.add(k);
-    uniq.push(it);
-  }
-  uniq.sort((a,b) => b.priority - a.priority);
-  return uniq.slice(0, 8);
+async function fetchIsochroneORS(profile, minutes, origin) {
+  // ORS Isochrone time: max 60 min
+  const r = await fetch("/api/ors-isochrone", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      profile,
+      minutes,
+      lat: origin.lat,
+      lon: origin.lon,
+      rangeType: "time"
+    })
+  });
+  const text = await r.text();
+  if (!r.ok) throw new Error(`Isochrone API error (${r.status}): ${text.slice(0, 300)}`);
+  return JSON.parse(text);
 }
 
-/** Stima minuti coerente (veloce, senza prezzi) */
-function estimateTravelMinutes(mode, distKm) {
-  const speed = { car: 70, bike: 16, walk: 4.5 }[mode] || 60;
-  const roadFactor = mode === "car" ? 1.25 : mode === "bike" ? 1.15 : 1.10;
-  const hours = (distKm * roadFactor) / speed;
-  return Math.max(10, Math.round(hours * 60));
-}
+function bboxFromORSGeojson(geojson) {
+  const feat = geojson.features && geojson.features[0];
+  const coords = feat && feat.geometry && feat.geometry.coordinates;
+  if (!coords) return null;
 
-/** ORS spesso limita isochrones a 3600s: clamp */
-function clampSecondsForORS(seconds) {
-  return Math.min(seconds, 3600);
-}
-
-/** Crea sezione “Cosa vedere” se manca nel tuo HTML */
-function ensureThingsSection() {
-  const result = $("result");
-  if (!result) return;
-
-  let sec = $("thingsSection");
-  if (sec) return;
-
-  sec = document.createElement("div");
-  sec.id = "thingsSection";
-  sec.style.marginTop = "14px";
-  sec.innerHTML = `
-    <div style="font-weight:800; font-size:18px; margin:10px 0 8px">Cosa vedere lì</div>
-    <div id="thingsList"></div>
-  `;
-
-  // Inseriscilo prima del blocco Alternative, così resta ordinato
-  const altsBlock = result.querySelector(".alts");
-  if (altsBlock) result.insertBefore(sec, altsBlock);
-  else result.appendChild(sec);
-}
-
-function renderAltItem(d, minutes) {
-  const link = toGoogleMapsLink(d.lat, d.lon, d.name);
-  return `
-    <div class="alt-item">
-      <div class="name">${d.name}</div>
-      <div class="meta">⏱️ ~${minutes} min · 📍 ${d.distKm} km</div>
-      <a class="linkbtn" href="${link}" target="_blank" rel="noopener">Apri su Maps</a>
-    </div>
-  `;
-}
-
-function renderThingsList(things) {
-  const el = $("thingsList");
-  if (!el) return;
-  if (!things.length) {
-    el.innerHTML = `<div style="color:rgba(160,178,186,.9)">Niente di rilevante trovato nelle vicinanze (OSM). Riprova o cambia meta.</div>`;
-    return;
-  }
-  el.innerHTML = things.map(t => `
-    <div class="alt-item">
-      <div class="name">${t.name}</div>
-      <a class="linkbtn" href="${toGoogleMapsLink(t.lat,t.lon,t.name)}" target="_blank" rel="noopener">Apri</a>
-    </div>
-  `).join("");
-}
-
-/** ===== MAIN ===== */
-async function runJamo() {
-  const btn = $("goBtn");
-  try {
-    btn && (btn.disabled = true);
-    showResult(false);
-    setStatus("📍 Sto prendendo la posizione…");
-
-    const origin = await getUserLocation();
-
-    const minutes = parseInt($("timeSelect")?.value || "60", 10);
-    const totalSeconds = minutes * 60;
-
-    const modeSel = $("modeSelect")?.value || "car";
-    const orsProfile = modeSel === "car" ? "driving-car" : modeSel === "bike" ? "cycling-regular" : "foot-walking";
-    const modeLabel = modeSel === "car" ? "Auto" : modeSel === "bike" ? "Bici" : "A piedi";
-
-    // 1) Isochrone clamp per evitare errori tipo "range out of range"
-    const orsSeconds = clampSecondsForORS(totalSeconds);
-
-    setStatus(`🧠 Calcolo area raggiungibile (${modeLabel})…`);
-    const iso = await fetchIsochroneGeoJSON({
-      lat: origin.lat, lon: origin.lon, mode: orsProfile, seconds: orsSeconds
-    });
-
-    let bbox = bboxFromGeoJSON(iso);
-
-    // se utente chiede più di 1h, espandi bbox (moderato per non far esplodere Overpass)
-    if (totalSeconds > orsSeconds) {
-      const factor = modeSel === "car" ? 2.2 : modeSel === "bike" ? 1.45 : 1.35;
-      bbox = expandBbox(bbox, factor);
-    }
-
-    // 2) Query mete “sensate”
-    setStatus("🔎 Cerco mete reali e interessanti (non posti a caso)…");
-    const q = buildDestinationsQueryFromBbox(bbox);
-    let destJson = await overpassQuery(q);
-    let dests = normalizeDestinations(destJson, origin);
-
-    // fallback se poche mete
-    if (dests.length < 6) {
-      const bbox2 = expandBbox(bbox, modeSel === "car" ? 1.35 : 1.18);
-      const q2 = buildDestinationsQueryFromBbox(bbox2);
-      destJson = await overpassQuery(q2);
-      dests = normalizeDestinations(destJson, origin);
-    }
-
-    if (!dests.length) {
-      setStatus("❌ Non ho trovato mete “note” in quest’area. Aumenta il tempo o usa Auto.", "err");
+  // ORS polygon: [ [ [lon,lat], ... ] ] oppure MultiPolygon
+  const flat = [];
+  const dig = (arr) => {
+    if (!Array.isArray(arr)) return;
+    if (arr.length === 2 && typeof arr[0] === "number") {
+      flat.push(arr);
       return;
     }
+    for (const x of arr) dig(x);
+  };
+  dig(coords);
 
-    // 3) Selezione meta + alternative
-    const main = dests[0];
-    const alternatives = dests.slice(1, 4);
+  if (!flat.length) return null;
 
-    const estMin = estimateTravelMinutes(modeSel, main.distKm);
+  let minLat=  90, maxLat=-90, minLon= 180, maxLon=-180;
+  for (const [lon, lat] of flat) {
+    if (lat < minLat) minLat = lat;
+    if (lat > maxLat) maxLat = lat;
+    if (lon < minLon) minLon = lon;
+    if (lon > maxLon) maxLon = lon;
+  }
+  return { minLat, minLon, maxLat, maxLon };
+}
 
-    $("placeName").textContent = main.name;
+// ======= UI render =======
+function renderResult(main, alts, modeLabel, minutes) {
+  $("result").classList.remove("hidden");
+  $("placeName").textContent = main.name;
 
-    const wikiBadge = (main.tags.wikipedia || main.tags.wikidata) ? " · 📚 luogo noto" : "";
-    $("placeMeta").textContent = `⏱️ ~${estMin} min · 📍 ${main.distKm} km (aria) · ${modeLabel}${wikiBadge}`;
+  const wikiBadge = main.tags.wikipedia || main.tags.wikidata ? " • ⭐ famoso" : "";
+  $("placeMeta").textContent =
+    `🏷️ ${main.kind}${wikiBadge} • 📍 ~${main.distKm} km (aria) • ⏱️ entro ~${minutes} min (${modeLabel})`;
 
-    const maps = $("mapsLink");
-    if (maps) maps.href = toGoogleMapsLink(main.lat, main.lon, main.name);
+  $("mapsLink").href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(main.name)}&query_place_id=`;
 
-    // visited toggle
-    const visitedBtn = $("visitedBtn");
-    const visited = getVisitedSet();
-    const isVisited = visited.has(main.idKey);
+  $("visitedBtn").onclick = () => {
+    markVisited(main.idKey);
+    setStatus(`Segnato come già visitato: ${main.name}`, "ok");
+  };
 
-    if (visitedBtn) {
-      visitedBtn.textContent = isVisited ? "✅ Già visitato (tocca per annullare)" : "✅ Segna come “già visitato”";
-      visitedBtn.onclick = () => {
-        const v = getVisitedSet();
-        const nowVisited = v.has(main.idKey);
-        if (nowVisited) v.delete(main.idKey);
-        else v.add(main.idKey);
-        saveVisitedSet(v);
-        const after = v.has(main.idKey);
-        visitedBtn.textContent = after ? "✅ Già visitato (tocca per annullare)" : "✅ Segna come “già visitato”";
-        setStatus(after ? "Salvato: verrà evitato nelle prossime proposte." : "Ok: rimosso dai visitati.", "ok");
-      };
-    }
-
-    // alternatives UI
-    const altList = $("altList");
-    if (altList) {
-      altList.innerHTML = alternatives.map(d => renderAltItem(d, estimateTravelMinutes(modeSel, d.distKm))).join("");
-    }
-
-    // show result
-    showResult(true);
-    setStatus("✅ Fatto. Se vuoi, ripremi per un’altra proposta.", "ok");
-
-    // 4) Cosa vedere lì
-    ensureThingsSection();
-    setStatus(`✨ Cerco cosa vedere a ${main.name}… (OSM)`);
-    const tq = buildThingsToSeeQuery(main.lat, main.lon);
-    const thingJson = await overpassQuery(tq);
-    const things = normalizeThings(thingJson);
-    renderThingsList(things);
-    setStatus("✅ Pronto: meta + cosa vedere.", "ok");
-
-  } catch (e) {
-    const msg = e?.message ? e.message : String(e);
-
-    // error friendly: evidenzia Overpass
-    if (/Overpass/i.test(msg) || /504/.test(msg)) {
-      setStatus("❌ Overpass è occupato (server OSM). Riprova tra 10–20 secondi.", "err");
-    } else {
-      setStatus(`❌ Errore: ${msg}`, "err");
-    }
-    showResult(false);
-  } finally {
-    const btn = $("goBtn");
-    btn && (btn.disabled = false);
+  const list = $("altList");
+  list.innerHTML = "";
+  for (const a of alts) {
+    const div = document.createElement("div");
+    div.className = "alt-item";
+    const wiki = a.tags.wikipedia || a.tags.wikidata ? " ⭐" : "";
+    div.innerHTML = `<div class="name">${a.name}${wiki}</div>
+                     <div style="color:var(--muted);font-size:13px;margin-top:4px">
+                       ${a.kind} • ~${a.distKm} km
+                     </div>`;
+    div.onclick = () => {
+      renderResult(a, alts.filter(x=>x.idKey!==a.idKey).slice(0,3), modeLabel, minutes);
+    };
+    list.appendChild(div);
   }
 }
 
-window.addEventListener("DOMContentLoaded", () => {
-  const btn = $("goBtn");
-  if (btn) btn.addEventListener("click", runJamo);
-  setStatus("Pronto. Premi il bottone: Jamo userà il GPS.");
-});
+// ======= Main flow =======
+async function runJamo() {
+  $("goBtn").disabled = true;
+  $("result").classList.add("hidden");
+
+  try {
+    setStatus("📍 Sto leggendo il GPS…");
+    const origin = await getGPS();
+
+    const minutes = Number($("timeSelect").value);
+    const mode = $("modeSelect").value;
+
+    // Limiti pratici per non far esplodere Overpass:
+    // camminata e bici oltre certi minuti spesso = 504
+    let safeMinutes = minutes;
+    if (mode === "walk") safeMinutes = Math.min(minutes, 120);
+    if (mode === "bike") safeMinutes = Math.min(minutes, 180);
+
+    const modeLabel = mode === "car" ? "Auto" : mode === "bike" ? "Bici" : "A piedi";
+
+    // 1) bbox: ORS se possibile (solo <=60), altrimenti fallback veloce
+    let bbox = null;
+
+    if (safeMinutes <= 60) {
+      setStatus("🧭 Calcolo area raggiungibile (ORS)…");
+      const profile = mode === "car" ? "driving-car" : mode === "bike" ? "cycling-regular" : "foot-walking";
+
+      const ors = await fetchIsochroneORS(profile, safeMinutes, origin);
+      bbox = bboxFromORSGeojson(ors);
+      if (!bbox) throw new Error("Isochrone OK ma bbox non trovata");
+    } else {
+      // fallback veloce e stabile
+      const radiusKm = estimateMaxDistanceKm(mode, safeMinutes);
+      bbox = bboxFromCircle(origin, radiusKm);
+    }
+
+    // 2) Overpass: prendo luoghi
+    setStatus("🗺️ Cerco luoghi reali (OSM)…");
+    const q = buildDestinationsQueryFromBbox(bbox);
+    const data = await fetchOverpass(q);
+
+    const all = normalizeDestinations(data, origin);
+
+    // filtro per distanza plausibile (aria) rispetto al tempo scelto
+    const maxKm = estimateMaxDistanceKm(mode, safeMinutes) * 1.15; // tolleranza
+    const candidates = all.filter(x => x.distKm <= maxKm);
+
+    if (candidates.length < 5) {
+      // fallback: allarga un pelo (solo se pochi)
+      const wider = all.filter(x => x.distKm <= maxKm * 1.5);
+      if (wider.length < 3) {
+        throw new Error("Non trovo abbastanza mete. Prova ad aumentare tempo o cambia mezzo.");
+      }
+      candidates.length = 0;
+      candidates.push(...wider);
+    }
+
+    // 3) scegli meta: prendi top 40, poi scegli random pesato
+    const top = candidates.slice(0, 40);
+
+    // preferisci non visitati, ma se tutti visitati ok lo stesso
+    const nonVisited = top.filter(x => !x.visited);
+    const pool = nonVisited.length >= 5 ? nonVisited : top;
+
+    const main = choiceWeighted(pool);
+    const alts = pool.filter(x => x.idKey !== main.idKey).slice(0, 6);
+
+    setStatus(`✅ Trovato: ${main.name}`, "ok");
+    renderResult(main, alts, modeLabel, safeMinutes);
+
+  } catch (e) {
+    setStatus(`❌ Errore: ${String(e.message || e)}`, "err");
+  } finally {
+    $("goBtn").disabled = false;
+  }
+}
+
+$("goBtn").addEventListener("click", runJamo);
+
+// SW
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("sw.js").catch(()=>{});
+}
