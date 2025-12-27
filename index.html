@@ -4,269 +4,30 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Jamo</title>
-  <meta name="theme-color" content="#0A0F14" />
-
-  <style>
-    :root{
-      --bg:#0A0F14; --surface:#141C22; --text:#fff; --muted:#A0B2BA;
-      --accent:#00E0FF; --accent2:#00B5CC; --hi:#1AFFD5;
-      --danger:#ff5c5c;
-      --radius:18px;
-    }
-    *{ box-sizing:border-box; }
-    body{
-      margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: radial-gradient(1200px 800px at 20% 0%, #0e2a33, var(--bg));
-      color:var(--text);
-      min-height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:18px;
-    }
-    .card{
-      width:min(860px, 100%);
-      background: rgba(20,28,34,.92);
-      border: 1px solid rgba(255,255,255,.06);
-      border-radius: 22px;
-      box-shadow: 0 20px 60px rgba(0,0,0,.45);
-      padding: 20px 18px;
-      backdrop-filter: blur(10px);
-    }
-    h1{ margin:0 0 6px; font-size: 34px; letter-spacing:.2px; }
-    .sub{ color: var(--muted); margin:0 0 16px; line-height:1.35; }
-
-    .grid{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-    @media (max-width:760px){
-      .grid{ grid-template-columns: 1fr; }
-    }
-
-    .field{
-      background: rgba(0,0,0,.18);
-      border:1px solid rgba(255,255,255,.08);
-      border-radius: var(--radius);
-      padding: 12px;
-    }
-    .label{
-      display:flex; align-items:center; justify-content:space-between;
-      font-size: 13px; color: var(--muted); margin-bottom: 8px;
-    }
-    select, input[type="range"]{
-      width:100%;
-      border-radius: 12px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(10,15,20,.75);
-      color: var(--text);
-      padding: 12px;
-      outline:none;
-      font-size: 15px;
-    }
-    input[type="range"]{ padding: 0; height: 34px; }
-
-    .row{
-      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
-    }
-
-    .btn{
-      width:100%;
-      margin-top: 12px;
-      border:0;
-      border-radius: 16px;
-      background: linear-gradient(90deg, var(--accent2), var(--accent));
-      color:#001017;
-      font-weight: 800;
-      font-size: 16px;
-      padding: 14px 16px;
-      cursor:pointer;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:10px;
-      box-shadow: 0 10px 26px rgba(0,224,255,.22);
-    }
-    .btn:disabled{ opacity:.5; cursor:not-allowed; }
-
-    .note{
-      color: var(--muted);
-      font-size: 13px;
-      margin-top: 10px;
-      line-height:1.35;
-    }
-
-    .results{
-      margin-top: 16px;
-      display:grid;
-      gap: 12px;
-    }
-    .result{
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: 18px;
-      background: rgba(0,0,0,.18);
-      padding: 14px;
-    }
-    .result h2{
-      margin:0 0 6px;
-      font-size: 20px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-    }
-    .meta{
-      color: var(--muted);
-      font-size: 13px;
-      line-height:1.35;
-    }
-    .pill{
-      font-size: 12px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.12);
-      color: var(--muted);
-      white-space: nowrap;
-    }
-    .pill.ok{ color:#001017; border:0; background: rgba(26,255,213,.95); font-weight:700; }
-    .pill.bad{ color:#fff; border:0; background: rgba(255,92,92,.9); font-weight:700; }
-
-    .actions{
-      margin-top: 10px;
-      display:flex; gap: 10px; flex-wrap:wrap;
-    }
-    .smallbtn{
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(10,15,20,.55);
-      color: var(--text);
-      border-radius: 999px;
-      padding: 9px 12px;
-      font-size: 13px;
-      cursor:pointer;
-    }
-    .smallbtn:hover{ border-color: rgba(0,224,255,.45); }
-    .smallbtn.primary{
-      border:0;
-      background: rgba(0,224,255,.20);
-      color: var(--accent);
-      font-weight:700;
-    }
-    .alts{
-      margin-top: 10px;
-      display:grid;
-      gap: 10px;
-    }
-    .alt{
-      padding: 12px;
-      border-radius: 16px;
-      border: 1px solid rgba(255,255,255,.08);
-      background: rgba(0,0,0,.14);
-    }
-    .altTitle{
-      font-weight: 700;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      margin-bottom: 4px;
-    }
-    .muted{ color: var(--muted); }
-    .footer{
-      margin-top: 10px;
-      display:flex;
-      justify-content:space-between;
-      gap:12px;
-      color: var(--muted);
-      font-size: 12px;
-      flex-wrap:wrap;
-    }
-    a{ color: var(--accent); text-decoration: none; }
-    a:hover{ text-decoration: underline; }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
-  <div class="card">
+  <main class="wrap">
     <h1>Jamo</h1>
-    <p class="sub">Scegli mezzo, tempo e distanza. Jamo ti propone <b>un luogo dove andare</b> + alternative. Poi, in step 2, aggiungiamo “cosa fare lì”.</p>
+    <p class="muted">Scegli il tempo disponibile e premi: ti propongo un luogo reale dove andare.</p>
 
-    <div class="grid">
-      <div class="field">
-        <div class="label"><span>Mezzo</span><span class="pill" id="modeHint">stima tempi</span></div>
-        <select id="mode">
-          <option value="walk">🚶 A piedi</option>
-          <option value="bike">🚲 Bici</option>
-          <option value="car" selected>🚗 Auto</option>
-          <option value="bus">🚌 Bus</option>
-          <option value="train">🚆 Treno</option>
-          <option value="plane">✈️ Aereo</option>
-        </select>
-      </div>
-
-      <div class="field">
-        <div class="label"><span>Tempo disponibile</span><span class="pill" id="timePill">—</span></div>
-        <select id="time">
-          <option value="30">30 min</option>
-          <option value="60">1 ora</option>
-          <option value="120">2 ore</option>
-          <option value="240">4 ore</option>
-          <option value="480" selected>8 ore</option>
-          <option value="720">12 ore</option>
-          <option value="1440">1 giorno</option>
-          <option value="2880">2 giorni</option>
-        </select>
-      </div>
-
-      <div class="field">
-        <div class="label">
-          <span>Distanza max (km)</span>
-          <span class="pill" id="distPill">150 km</span>
-        </div>
-        <input id="dist" type="range" min="10" max="800" step="10" value="150" />
-        <div class="note">Suggerimento: alza oltre 150 km per trovare più borghi/città.</div>
-      </div>
-
-      <div class="field">
-        <div class="label"><span>Budget</span><span class="pill">stima base</span></div>
-        <select id="budget">
-          <option value="any" selected>Nessun limite</option>
-          <option value="low">€ (basso)</option>
-          <option value="mid">€€ (medio)</option>
-          <option value="high">€€€ (alto)</option>
-        </select>
-        <div class="note">Per ora lo usiamo come filtro “soft”. Dopo lo rendiamo più reale (costi mezzi).</div>
-      </div>
-
-      <div class="field" style="grid-column: 1 / -1;">
-        <div class="row">
-          <label class="row" style="gap:8px; cursor:pointer;">
-            <input type="checkbox" id="showVisited" />
-            <span class="muted">Mostra anche luoghi già visitati</span>
-          </label>
-
-          <label class="row" style="gap:8px; cursor:pointer;">
-            <input type="checkbox" id="preferFamous" checked />
-            <span class="muted">Preferisci luoghi “famosi” (wikipedia / population)</span>
-          </label>
-        </div>
-
-        <button class="btn" id="goBtn">
-          🎲 DOVE ANDIAMO?
-        </button>
-
-        <div class="note" id="status">Pronto. Premi il bottone: useremo il GPS.</div>
-      </div>
+    <div class="row">
+      <label>Tempo</label>
+      <select id="timeSelect">
+        <option value="30">30 min</option>
+        <option value="60" selected>1 ora</option>
+        <option value="90">1h 30</option>
+        <option value="120">2 ore</option>
+        <option value="180">3 ore</option>
+        <option value="240">4 ore</option>
+      </select>
     </div>
 
-    <div class="results" id="results"></div>
+    <button id="goBtn" class="btn">🎲 DOVE ANDIAMO?</button>
 
-    <div class="footer">
-      <span id="version">Versione 0.2 • Luoghi + alternative • Visitati ✅</span>
-      <span class="muted">Suggerimento: se Treno/Aereo non trovano, prova Auto oppure aumenta km.</span>
-    </div>
-  </div>
+    <section id="results" class="results"></section>
+  </main>
 
-  <script src="./app.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
