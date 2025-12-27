@@ -1,40 +1,76 @@
-// ======= Helpers DOM =======
-const $ = (id) => document.getElementById(id);
+/* Jamo - app.js (v2)
+   - GPS -> isochrone via /api/isochrone (ORS)
+   - fallback Overpass radius-based when ORS limit/errors or >60min
+   - place suggestions (city/town/village/hamlet/suburb)
+   - prioritizes famous places (wikipedia/wikidata)
+   - visited toggle stored in localStorage
+   - shows alternatives + "cosa vedere lì"
+*/
 
-function setStatus(msg, type = "") {
-  const el = $("status");
-  el.textContent = msg;
-  el.className = "status" + (type ? " " + type : "");
+const UI = {
+  timeSelect: document.getElementById("timeSelect"),
+  modeSelect: document.getElementById("modeSelect"),
+  goBtn: document.getElementById("goBtn"),
+  status: document.getElementById("status"),
+  result: document.getElementById("result"),
+  placeName: document.getElementById("placeName"),
+  placeMeta: document.getElementById("placeMeta"),
+  mapsLink: document.getElementById("mapsLink"),
+  visitedBtn: document.getElementById("visitedBtn"),
+  altList: document.getElementById("altList"),
+  footerInfo: document.getElementById("footerInfo"),
+};
+
+const VERSION = "2.1";
+const VISITED_KEY = "jamo_visited_places_v1";
+
+// Overpass endpoints (fallback if one is slow)
+const OVERPASS_ENDPOINTS = [
+  "https://overpass-api.de/api/interpreter",
+  "https://overpass.kumi.systems/api/interpreter",
+  "https://overpass.nchc.org.tw/api/interpreter",
+];
+
+// ORS supports these profiles for isochrones
+function orsProfileForMode(mode) {
+  // UI values: car, walk, bike
+  if (mode === "car") return "driving-car";
+  if (mode === "walk") return "foot-walking";
+  if (mode === "bike") return "cycling-regular";
+  return "driving-car";
 }
 
-function haversineKm(a, b) {
-  const R = 6371;
-  const dLat = (b.lat - a.lat) * Math.PI / 180;
-  const dLon = (b.lon - a.lon) * Math.PI / 180;
-  const la1 = a.lat * Math.PI / 180;
-  const la2 = b.lat * Math.PI / 180;
-  const x = Math.sin(dLat/2)**2 + Math.cos(la1)*Math.cos(la2)*Math.sin(dLon/2)**2;
-  return 2 * R * Math.asin(Math.sqrt(x));
+// Fallback speed (km/h) for plausible radius when ORS not available / >60min
+function speedForMode(mode) {
+  if (mode === "car") return 70;   // average mixed roads
+  if (mode === "bike") return 15;
+  if (mode === "walk") return 5;
+  return 60;
 }
 
-function choiceWeighted(items) {
-  // items: [{score,...}]
-  const total = items.reduce((s,i)=>s+Math.max(0.01,i.score),0);
-  let r = Math.random() * total;
-  for (const it of items) {
-    r -= Math.max(0.01,it.score);
-    if (r <= 0) return it;
-  }
-  return items[0];
+// Convert minutes -> radius meters (fallback)
+function radiusMetersFallback(mode, minutes) {
+  const km = (speedForMode(mode) * (minutes / 60));
+  return Math.max(1000, Math.round(km * 1000));
 }
 
-// ======= Visited (localStorage) =======
-const VISITED_KEY = "jamo_visited_v2";
+function setStatus(text, type = "") {
+  UI.status.classList.remove("err", "ok");
+  if (type === "err") UI.status.classList.add("err");
+  if (type === "ok") UI.status.classList.add("ok");
+  UI.status.textContent = text;
+}
+
+function showResult(show) {
+  UI.result.classList.toggle("hidden", !show);
+}
 
 function getVisitedSet() {
   try {
-    const arr = JSON.parse(localStorage.getItem(VISITED_KEY) || "[]");
-    return new Set(arr);
+    const raw = localStorage.getItem(VISITED_KEY);
+    if (!raw) return new Set();
+    const arr = JSON.parse(raw);
+    return new Set(Array.isArray(arr) ? arr : []);
   } catch {
     return new Set();
   }
@@ -44,363 +80,494 @@ function saveVisitedSet(set) {
   localStorage.setItem(VISITED_KEY, JSON.stringify([...set]));
 }
 
-function markVisited(idKey) {
-  const s = getVisitedSet();
-  s.add(idKey);
-  saveVisitedSet(s);
+// Stable ID for a place
+function placeId(p) {
+  // Overpass elements have: type + id, OR sometimes "osm_id"
+  return p?.idKey || `${p.type || "node"}:${p.id || p.osm_id || p.name || Math.random()}`;
 }
 
-// ======= Geo =======
-function getGPS() {
+function formatDistanceKm(m) {
+  if (m < 1000) return `${Math.round(m)} m`;
+  return `${(m / 1000).toFixed(m >= 10000 ? 0 : 1)} km`;
+}
+
+function haversineMeters(lat1, lon1, lat2, lon2) {
+  const R = 6371000;
+  const toRad = (d) => d * Math.PI / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a =
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R * c;
+}
+
+function googleMapsLink(lat, lon, name = "") {
+  const q = encodeURIComponent(name ? `${name}` : `${lat},${lon}`);
+  return `https://www.google.com/maps/search/?api=1&query=${q}`;
+}
+
+// --- Fetch helpers with timeout ---
+async function fetchWithTimeout(url, options = {}, timeoutMs = 15000) {
+  const controller = new AbortController();
+  const t = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const res = await fetch(url, { ...options, signal: controller.signal });
+    return res;
+  } finally {
+    clearTimeout(t);
+  }
+}
+
+async function fetchJson(url, options = {}, timeoutMs = 15000) {
+  const r = await fetchWithTimeout(url, options, timeoutMs);
+  const text = await r.text();
+  if (!r.ok) {
+    throw new Error(`HTTP ${r.status}: ${text.slice(0, 400)}`);
+  }
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw new Error(`Bad JSON: ${text.slice(0, 400)}`);
+  }
+}
+
+// --- GPS ---
+function getCurrentPosition() {
   return new Promise((resolve, reject) => {
-    if (!navigator.geolocation) return reject(new Error("Geolocalizzazione non supportata"));
-    navigator.geolocation.getCurrentPosition(
-      (pos) => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
-      (err) => reject(err),
-      { enableHighAccuracy: true, timeout: 12000, maximumAge: 30000 }
-    );
+    if (!navigator.geolocation) return reject(new Error("GPS non supportato dal browser."));
+    navigator.geolocation.getCurrentPosition(resolve, reject, {
+      enableHighAccuracy: true,
+      timeout: 12000,
+      maximumAge: 60000
+    });
   });
 }
 
-// ======= Routing / Isochrone strategy =======
-// ORS time range spesso max 60 min. Quindi:
-// - fino a 60 min: ORS Isochrone TIME
-// - sopra 60 min: fallback veloce a "bbox da velocità media" (molto stabile)
-// Inoltre: per bici a volte ORS ok, ma Overpass può crollare se bbox enorme.
-const SPEED_KMH = {
-  car: 70,   // media “reale” includendo semafori
-  bike: 16,
-  walk: 4.5,
-};
+// --- ORS Isochrone via Vercel API ---
+async function getIsochroneGeoJSON({ lat, lon, mode, minutes }) {
+  const profile = orsProfileForMode(mode);
+  const r = await fetch("/api/isochrone", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ profile, minutes, lat, lon, rangeType: "time" })
+  });
 
-function estimateMaxDistanceKm(mode, minutes) {
-  const kmh = SPEED_KMH[mode] || 50;
-  return (kmh * minutes) / 60;
+  const txt = await r.text();
+  if (!r.ok) {
+    // Make it readable
+    throw new Error(`Isochrone API error (${r.status}): ${txt.slice(0, 400)}`);
+  }
+  return JSON.parse(txt);
 }
 
-function bboxFromCircle(origin, radiusKm) {
-  // approx (ok per ricerca luoghi)
-  const lat = origin.lat;
-  const lon = origin.lon;
-  const dLat = radiusKm / 110.574;
-  const dLon = radiusKm / (111.320 * Math.cos(lat * Math.PI / 180));
+// --- Overpass queries ---
+function buildOverpassPlacesInBBoxQuery(bbox) {
+  // bbox: [south, west, north, east]
+  const [s, w, n, e] = bbox;
+  // Places, not attractions.
+  // We prioritize famous ones later, but we fetch all place types.
+  return `
+    [out:json][timeout:25];
+    (
+      node["place"~"^(city|town|village|hamlet|suburb)$"](${s},${w},${n},${e});
+      way["place"~"^(city|town|village|hamlet|suburb)$"](${s},${w},${n},${e});
+      relation["place"~"^(city|town|village|hamlet|suburb)$"](${s},${w},${n},${e});
+    );
+    out center tags;
+  `;
+}
+
+function buildOverpassPlacesAroundQuery(lat, lon, radiusMeters) {
+  return `
+    [out:json][timeout:25];
+    (
+      node["place"~"^(city|town|village|hamlet|suburb)$"](around:${radiusMeters},${lat},${lon});
+      way["place"~"^(city|town|village|hamlet|suburb)$"](around:${radiusMeters},${lat},${lon});
+      relation["place"~"^(city|town|village|hamlet|suburb)$"](around:${radiusMeters},${lat},${lon});
+    );
+    out center tags;
+  `;
+}
+
+function buildOverpassThingsToDoAroundQuery(lat, lon, radiusMeters = 4000) {
+  // “cosa vedere/fare” (POI): tourism/historic/natural + viewpoints + museums
+  return `
+    [out:json][timeout:25];
+    (
+      node["tourism"~"^(attraction|museum|viewpoint)$"](around:${radiusMeters},${lat},${lon});
+      way["tourism"~"^(attraction|museum|viewpoint)$"](around:${radiusMeters},${lat},${lon});
+      relation["tourism"~"^(attraction|museum|viewpoint)$"](around:${radiusMeters},${lat},${lon});
+
+      node["historic"](around:${radiusMeters},${lat},${lon});
+      way["historic"](around:${radiusMeters},${lat},${lon});
+      relation["historic"](around:${radiusMeters},${lat},${lon});
+
+      node["natural"~"^(peak|waterfall|spring|cave)$"](around:${radiusMeters},${lat},${lon});
+      way["natural"~"^(peak|waterfall|spring|cave)$"](around:${radiusMeters},${lat},${lon});
+      relation["natural"~"^(peak|waterfall|spring|cave)$"](around:${radiusMeters},${lat},${lon});
+    );
+    out center tags;
+  `;
+}
+
+function elementToPlace(el) {
+  const tags = el.tags || {};
+  const name = tags.name || tags["name:it"] || tags["name:en"] || null;
+
+  // center for ways/relations
+  const lat = el.lat ?? el.center?.lat;
+  const lon = el.lon ?? el.center?.lon;
+
+  if (!name || typeof lat !== "number" || typeof lon !== "number") return null;
+
+  const isFamous = Boolean(tags.wikipedia || tags.wikidata);
+  const population = tags.population ? parseInt(String(tags.population).replace(/\D/g, ""), 10) : 0;
+
   return {
-    minLat: lat - dLat,
-    maxLat: lat + dLat,
-    minLon: lon - dLon,
-    maxLon: lon + dLon,
+    id: el.id,
+    type: el.type,
+    idKey: `${el.type}:${el.id}`,
+    name,
+    place: tags.place || "",
+    lat,
+    lon,
+    tags,
+    isFamous,
+    population: Number.isFinite(population) ? population : 0,
   };
 }
 
-// ======= Overpass Query: luoghi + borghi + natura + parchi + punti famosi =======
-function buildDestinationsQueryFromBbox(b) {
-  const { minLat, minLon, maxLat, maxLon } = b;
+async function overpassRequest(query) {
+  // Try endpoints one by one
+  let lastErr = null;
 
-  return `
-[out:json][timeout:25];
-(
-  // --- Borghi / città ---
-  node["place"~"^(city|town|village)$"]["name"](${minLat},${minLon},${maxLat},${maxLon});
-  way ["place"~"^(city|town|village)$"]["name"](${minLat},${minLon},${maxLat},${maxLon});
-  rel ["place"~"^(city|town|village)$"]["name"](${minLat},${minLon},${maxLat},${maxLon});
+  for (const endpoint of OVERPASS_ENDPOINTS) {
+    try {
+      const body = new URLSearchParams({ data: query });
+      const r = await fetchWithTimeout(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
+        body: body.toString(),
+      }, 20000);
 
-  // --- Natura da gita ---
-  node["natural"~"^(waterfall|peak|cave_entrance|spring|beach)$"]["name"](${minLat},${minLon},${maxLat},${maxLon});
-  way ["natural"~"^(waterfall|peak|cave_entrance|spring|beach)$"]["name"](${minLat},${minLon},${maxLat},${maxLon});
-  rel ["natural"~"^(waterfall|peak|cave_entrance|spring|beach)$"]["name"](${minLat},${minLon},${maxLat},${maxLon});
+      const text = await r.text();
+      if (!r.ok) throw new Error(`Overpass ${r.status}: ${text.slice(0, 200)}`);
 
-  // --- Laghi / fiumi / riserve ---
-  node["water"~"^(lake|reservoir)$"]["name"](${minLat},${minLon},${maxLat},${maxLon});
-  way ["water"~"^(lake|reservoir)$"]["name"](${minLat},${minLon},${maxLat},${maxLon});
-  rel ["water"~"^(lake|reservoir)$"]["name"](${minLat},${minLon},${maxLat},${maxLon});
-
-  // --- Parchi / aree protette ---
-  node["boundary"="national_park"]["name"](${minLat},${minLon},${maxLat},${maxLon});
-  way ["boundary"="national_park"]["name"](${minLat},${minLon},${maxLat},${maxLon});
-  rel ["boundary"="national_park"]["name"](${minLat},${minLon},${maxLat},${maxLon});
-
-  node["leisure"~"^(park|nature_reserve|garden)$"]["name"](${minLat},${minLon},${maxLat},${maxLon});
-  way ["leisure"~"^(park|nature_reserve|garden)$"]["name"](${minLat},${minLon},${maxLat},${maxLon});
-  rel ["leisure"~"^(park|nature_reserve|garden)$"]["name"](${minLat},${minLon},${maxLat},${maxLon});
-
-  // --- Famosi / turistici / storici ---
-  node["tourism"~"^(attraction|viewpoint|museum)$"]["name"](${minLat},${minLon},${maxLat},${maxLon});
-  way ["tourism"~"^(attraction|viewpoint|museum)$"]["name"](${minLat},${minLon},${maxLat},${maxLon});
-  rel ["tourism"~"^(attraction|viewpoint|museum)$"]["name"](${minLat},${minLon},${maxLat},${maxLon});
-
-  node["historic"]["name"](${minLat},${minLon},${maxLat},${maxLon});
-  way ["historic"]["name"](${minLat},${minLon},${maxLat},${maxLon});
-  rel ["historic"]["name"](${minLat},${minLon},${maxLat},${maxLon});
-);
-out center;
-`;
-}
-
-function normalizeDestinations(overpassJson, origin) {
-  const visited = getVisitedSet();
-  const els = (overpassJson.elements || []).filter(e => e.tags);
-
-  function getLatLon(e){
-    if (e.type === "node") return { lat: e.lat, lon: e.lon };
-    if (e.center && typeof e.center.lat === "number") return { lat: e.center.lat, lon: e.center.lon };
-    return null;
+      const json = JSON.parse(text);
+      return json;
+    } catch (e) {
+      lastErr = e;
+    }
   }
-
-  function isBadCandidate(tags){
-    if (tags.place === "suburb" || tags.place === "neighbourhood" || tags.place === "hamlet") return true;
-    if (tags.highway || tags.railway || tags.aeroway) return true;
-    if (tags.amenity === "parking") return true;
-    return false;
-  }
-
-  const scored = els.map(e => {
-    const t = e.tags || {};
-    if (isBadCandidate(t)) return null;
-
-    const ll = getLatLon(e);
-    if (!ll) return null;
-
-    const name = t.name || t["name:it"];
-    if (!name) return null;
-
-    const kind =
-      t.place ? "Borgo/Città" :
-      t.natural ? "Natura" :
-      t.water ? "Lago" :
-      t.boundary === "national_park" ? "Parco" :
-      t.leisure ? "Parco" :
-      t.historic ? "Storico" :
-      t.tourism ? "Da vedere" : "Luogo";
-
-    // "Famosità": wikipedia/wikidata + categorie
-    let score = 0;
-    if (t.wikipedia) score += 6;
-    if (t.wikidata) score += 4;
-
-    if (t.place === "city") score += 4;
-    if (t.place === "town") score += 3;
-    if (t.place === "village") score += 2;
-
-    if (t.natural === "waterfall") score += 6;
-    if (t.natural === "peak") score += 4;
-    if (t.natural === "cave_entrance") score += 5;
-    if (t.boundary === "national_park") score += 4;
-    if (t.tourism === "attraction") score += 4;
-    if (t.tourism === "viewpoint") score += 3;
-    if (t.historic) score += 3;
-
-    const dist = haversineKm(origin, ll);
-    // troppo vicino spesso è “a caso”
-    if (dist < 2) score -= 2;
-    // un po’ di bonus per vicino, ma non troppo
-    score += Math.max(0, 3 - dist / 50);
-
-    const idKey = t.wikidata ? `wd:${t.wikidata}` : `${e.type}:${e.id}`;
-
-    return {
-      idKey,
-      name,
-      lat: ll.lat,
-      lon: ll.lon,
-      tags: t,
-      kind,
-      distKm: Math.round(dist * 10) / 10,
-      score,
-      visited: visited.has(idKey)
-    };
-  }).filter(Boolean);
-
-  // dedupe
-  const uniq = [];
-  const seen = new Set();
-  for (const d of scored) {
-    const k = `${d.name.toLowerCase()}_${d.lat.toFixed(3)}_${d.lon.toFixed(3)}`;
-    if (seen.has(k)) continue;
-    seen.add(k);
-    uniq.push(d);
-  }
-
-  // ordina: non visitati prima, poi score
-  uniq.sort((a,b) => {
-    if (a.visited !== b.visited) return a.visited ? 1 : -1;
-    return b.score - a.score;
-  });
-
-  return uniq;
+  throw lastErr || new Error("Overpass error");
 }
 
-// ======= API Calls =======
-async function fetchOverpass(query) {
-  const r = await fetch("/api/overpass", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ query })
-  });
-  const text = await r.text();
-  if (!r.ok) throw new Error(`Overpass error (${r.status}): ${text.slice(0, 300)}`);
-  return JSON.parse(text);
-}
+// --- Isochrone geometry -> bbox ---
+function bboxFromGeoJSON(geojson) {
+  // expects FeatureCollection with Polygon/MultiPolygon in features[0].geometry
+  const feat = geojson?.features?.[0];
+  const geom = feat?.geometry;
+  if (!geom) return null;
 
-async function fetchIsochroneORS(profile, minutes, origin) {
-  // ORS Isochrone time: max 60 min
-  const r = await fetch("/api/ors-isochrone", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      profile,
-      minutes,
-      lat: origin.lat,
-      lon: origin.lon,
-      rangeType: "time"
-    })
-  });
-  const text = await r.text();
-  if (!r.ok) throw new Error(`Isochrone API error (${r.status}): ${text.slice(0, 300)}`);
-  return JSON.parse(text);
-}
+  const coords = geom.type === "Polygon"
+    ? geom.coordinates
+    : (geom.type === "MultiPolygon" ? geom.coordinates.flat() : null);
 
-function bboxFromORSGeojson(geojson) {
-  const feat = geojson.features && geojson.features[0];
-  const coords = feat && feat.geometry && feat.geometry.coordinates;
   if (!coords) return null;
 
-  // ORS polygon: [ [ [lon,lat], ... ] ] oppure MultiPolygon
-  const flat = [];
-  const dig = (arr) => {
-    if (!Array.isArray(arr)) return;
-    if (arr.length === 2 && typeof arr[0] === "number") {
-      flat.push(arr);
-      return;
+  let minLat = 90, maxLat = -90, minLon = 180, maxLon = -180;
+
+  for (const ring of coords) {
+    for (const [lon, lat] of ring) {
+      minLat = Math.min(minLat, lat);
+      maxLat = Math.max(maxLat, lat);
+      minLon = Math.min(minLon, lon);
+      maxLon = Math.max(maxLon, lon);
     }
-    for (const x of arr) dig(x);
-  };
-  dig(coords);
-
-  if (!flat.length) return null;
-
-  let minLat=  90, maxLat=-90, minLon= 180, maxLon=-180;
-  for (const [lon, lat] of flat) {
-    if (lat < minLat) minLat = lat;
-    if (lat > maxLat) maxLat = lat;
-    if (lon < minLon) minLon = lon;
-    if (lon > maxLon) maxLon = lon;
   }
-  return { minLat, minLon, maxLat, maxLon };
+  return [minLat, minLon, maxLat, maxLon]; // [south, west, north, east]
 }
 
-// ======= UI render =======
-function renderResult(main, alts, modeLabel, minutes) {
-  $("result").classList.remove("hidden");
-  $("placeName").textContent = main.name;
+// --- Pick best places ---
+function scorePlace(p, origin) {
+  // We want: famous + bigger + not too close + not too far
+  const d = haversineMeters(origin.lat, origin.lon, p.lat, p.lon);
+  const famousBonus = p.isFamous ? 50 : 0;
+  const popBonus = Math.min(50, Math.log10((p.population || 1) + 1) * 12); // soft
+  const distancePenalty = d < 3000 ? 30 : 0; // avoid super-near
+  const nameLenPenalty = p.name.length < 3 ? 10 : 0;
 
-  const wikiBadge = main.tags.wikipedia || main.tags.wikidata ? " • ⭐ famoso" : "";
-  $("placeMeta").textContent =
-    `🏷️ ${main.kind}${wikiBadge} • 📍 ~${main.distKm} km (aria) • ⏱️ entro ~${minutes} min (${modeLabel})`;
+  // small noise so it feels “random” but stable-ish
+  const noise = Math.random() * 10;
 
-  $("mapsLink").href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(main.name)}&query_place_id=`;
+  return famousBonus + popBonus - distancePenalty - nameLenPenalty + noise;
+}
 
-  $("visitedBtn").onclick = () => {
-    markVisited(main.idKey);
-    setStatus(`Segnato come già visitato: ${main.name}`, "ok");
-  };
+function pickMainAndAlternatives(candidates, origin, visitedSet, takeMain = 1, takeAlt = 3) {
+  // filter visited
+  const filtered = candidates.filter(p => !visitedSet.has(placeId(p)));
 
-  const list = $("altList");
-  list.innerHTML = "";
+  // If everything visited, allow repeats but mark them
+  const pool = filtered.length ? filtered : candidates;
+
+  // Score + sort desc
+  const ranked = pool
+    .map(p => ({ p, score: scorePlace(p, origin) }))
+    .sort((a, b) => b.score - a.score)
+    .map(x => x.p);
+
+  const main = ranked.slice(0, takeMain);
+  const alts = ranked.slice(takeMain, takeMain + takeAlt);
+
+  return { main: main[0] || null, alts };
+}
+
+function dedupePlaces(list) {
+  const seen = new Set();
+  const out = [];
+  for (const p of list) {
+    const key = placeId(p);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(p);
+  }
+  return out;
+}
+
+// --- "Cosa vedere lì" ---
+function poiLabel(tags) {
+  const n = tags.name || tags["name:it"] || tags["name:en"];
+  if (!n) return null;
+
+  if (tags.tourism) return `${n} (tourism: ${tags.tourism})`;
+  if (tags.historic) return `${n} (storico)`;
+  if (tags.natural) return `${n} (natura: ${tags.natural})`;
+  return n;
+}
+
+async function getThingsToDo(placeLat, placeLon) {
+  const q = buildOverpassThingsToDoAroundQuery(placeLat, placeLon, 5000);
+  const json = await overpassRequest(q);
+
+  const items = (json.elements || [])
+    .map(el => {
+      const tags = el.tags || {};
+      const name = tags.name || tags["name:it"] || tags["name:en"];
+      const lat = el.lat ?? el.center?.lat;
+      const lon = el.lon ?? el.center?.lon;
+      if (!name || typeof lat !== "number" || typeof lon !== "number") return null;
+
+      const isNice = Boolean(tags.wikipedia || tags.wikidata) ? 1 : 0;
+      const score = isNice * 2 + (tags.tourism ? 1 : 0) + (tags.historic ? 1 : 0) + (tags.natural ? 1 : 0);
+
+      return {
+        name,
+        lat,
+        lon,
+        label: poiLabel(tags),
+        score,
+      };
+    })
+    .filter(Boolean)
+    .sort((a, b) => (b.score - a.score));
+
+  // dedupe by name
+  const seen = new Set();
+  const out = [];
+  for (const it of items) {
+    const key = it.name.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(it);
+    if (out.length >= 6) break;
+  }
+  return out;
+}
+
+// --- Main flow ---
+async function findPlaces({ origin, mode, minutes }) {
+  const visited = getVisitedSet();
+
+  // 1) Try ORS isochrone (only works reliably for <=60 min on many free keys)
+  let geo = null;
+  let used = "ORS";
+  try {
+    geo = await getIsochroneGeoJSON({ lat: origin.lat, lon: origin.lon, mode, minutes });
+  } catch (e) {
+    used = "FALLBACK";
+  }
+
+  // If ORS ok but bbox fails, fallback
+  let candidates = [];
+  if (geo) {
+    const bbox = bboxFromGeoJSON(geo);
+    if (!bbox) {
+      used = "FALLBACK";
+    } else {
+      // Fetch places within bbox (fast)
+      try {
+        const q = buildOverpassPlacesInBBoxQuery(bbox);
+        const json = await overpassRequest(q);
+        candidates = (json.elements || []).map(elementToPlace).filter(Boolean);
+      } catch (e) {
+        used = "FALLBACK";
+      }
+    }
+  }
+
+  // 2) Fallback: radius around origin based on speed
+  if (!candidates.length) {
+    const radius = radiusMetersFallback(mode, minutes);
+    const q = buildOverpassPlacesAroundQuery(origin.lat, origin.lon, radius);
+    const json = await overpassRequest(q);
+    candidates = (json.elements || []).map(elementToPlace).filter(Boolean);
+    used = "OVERPASS_RADIUS";
+  }
+
+  candidates = dedupePlaces(candidates);
+
+  // If still nothing, widen a bit
+  if (!candidates.length) {
+    const radius = Math.round(radiusMetersFallback(mode, minutes) * 1.5);
+    const q = buildOverpassPlacesAroundQuery(origin.lat, origin.lon, radius);
+    const json = await overpassRequest(q);
+    candidates = (json.elements || []).map(elementToPlace).filter(Boolean);
+    candidates = dedupePlaces(candidates);
+    used = "OVERPASS_RADIUS_WIDE";
+  }
+
+  if (!candidates.length) {
+    return { used, main: null, alts: [], visited };
+  }
+
+  const { main, alts } = pickMainAndAlternatives(candidates, origin, visited, 1, 3);
+
+  return { used, main, alts, visited };
+}
+
+function renderAlternatives(alts, origin) {
+  UI.altList.innerHTML = "";
+  if (!alts.length) {
+    UI.altList.innerHTML = `<div class="alt-item">Nessuna alternativa trovata.</div>`;
+    return;
+  }
+
   for (const a of alts) {
+    const d = haversineMeters(origin.lat, origin.lon, a.lat, a.lon);
     const div = document.createElement("div");
     div.className = "alt-item";
-    const wiki = a.tags.wikipedia || a.tags.wikidata ? " ⭐" : "";
-    div.innerHTML = `<div class="name">${a.name}${wiki}</div>
-                     <div style="color:var(--muted);font-size:13px;margin-top:4px">
-                       ${a.kind} • ~${a.distKm} km
-                     </div>`;
-    div.onclick = () => {
-      renderResult(a, alts.filter(x=>x.idKey!==a.idKey).slice(0,3), modeLabel, minutes);
-    };
-    list.appendChild(div);
+    div.innerHTML = `
+      <div class="name">${escapeHtml(a.name)}</div>
+      <div style="color: var(--muted); font-size: 13px; margin-top:4px">
+        Tipo: ${escapeHtml(a.place || "place")} • distanza ~ ${formatDistanceKm(d)}
+      </div>
+      <div style="margin-top:8px">
+        <a class="linkbtn" href="${googleMapsLink(a.lat, a.lon, a.name)}" target="_blank" rel="noopener">Apri</a>
+      </div>
+    `;
+    UI.altList.appendChild(div);
   }
 }
 
-// ======= Main flow =======
-async function runJamo() {
-  $("goBtn").disabled = true;
-  $("result").classList.add("hidden");
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, (m) => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;"
+  }[m]));
+}
+
+async function renderMain(main, origin, mode, minutes, used, visitedSet) {
+  if (!main) {
+    showResult(false);
+    setStatus("Non ho trovato luoghi. Prova ad aumentare il tempo o riprova tra poco.", "err");
+    UI.footerInfo.textContent = `Versione ${VERSION} • ${mode.toUpperCase()} • ${used}`;
+    return;
+  }
+
+  showResult(true);
+
+  const d = haversineMeters(origin.lat, origin.lon, main.lat, main.lon);
+
+  UI.placeName.textContent = main.name;
+  UI.placeMeta.textContent =
+    `Tipo: ${main.place || "place"} • distanza ~ ${formatDistanceKm(d)} • tempo selezionato: ${minutes} min`;
+
+  UI.mapsLink.href = googleMapsLink(main.lat, main.lon, main.name);
+
+  // visited button state
+  const id = placeId(main);
+  const already = visitedSet.has(id);
+  UI.visitedBtn.textContent = already ? "✅ Già visitato (clicca per annullare)" : "✅ Segna come “già visitato”";
+
+  UI.visitedBtn.onclick = () => {
+    const set = getVisitedSet();
+    if (set.has(id)) set.delete(id);
+    else set.add(id);
+    saveVisitedSet(set);
+
+    const now = set.has(id);
+    UI.visitedBtn.textContent = now ? "✅ Già visitato (clicca per annullare)" : "✅ Segna come “già visitato”";
+  };
+
+  // Things to do (best-effort)
+  const base = `Trovato con: ${used}`;
+  setStatus(`Ok. ${base}\nCarico anche “cosa vedere lì”…`, "ok");
 
   try {
-    setStatus("📍 Sto leggendo il GPS…");
-    const origin = await getGPS();
+    const pois = await getThingsToDo(main.lat, main.lon);
 
-    const minutes = Number($("timeSelect").value);
-    const mode = $("modeSelect").value;
-
-    // Limiti pratici per non far esplodere Overpass:
-    // camminata e bici oltre certi minuti spesso = 504
-    let safeMinutes = minutes;
-    if (mode === "walk") safeMinutes = Math.min(minutes, 120);
-    if (mode === "bike") safeMinutes = Math.min(minutes, 180);
-
-    const modeLabel = mode === "car" ? "Auto" : mode === "bike" ? "Bici" : "A piedi";
-
-    // 1) bbox: ORS se possibile (solo <=60), altrimenti fallback veloce
-    let bbox = null;
-
-    if (safeMinutes <= 60) {
-      setStatus("🧭 Calcolo area raggiungibile (ORS)…");
-      const profile = mode === "car" ? "driving-car" : mode === "bike" ? "cycling-regular" : "foot-walking";
-
-      const ors = await fetchIsochroneORS(profile, safeMinutes, origin);
-      bbox = bboxFromORSGeojson(ors);
-      if (!bbox) throw new Error("Isochrone OK ma bbox non trovata");
+    // add under meta (append)
+    if (pois.length) {
+      const lines = pois
+        .slice(0, 6)
+        .map(p => `• ${p.label || p.name}`)
+        .join("\n");
+      setStatus(`Ok. ${base}\nCosa vedere lì (≈5 km):\n${lines}`, "ok");
     } else {
-      // fallback veloce e stabile
-      const radiusKm = estimateMaxDistanceKm(mode, safeMinutes);
-      bbox = bboxFromCircle(origin, radiusKm);
+      setStatus(`Ok. ${base}\nNon ho trovato POI vicini in OSM (può capitare).`, "ok");
     }
+  } catch (e) {
+    setStatus(`Ok. ${base}\nPOI non disponibili ora (Overpass lento).`, "ok");
+  }
 
-    // 2) Overpass: prendo luoghi
-    setStatus("🗺️ Cerco luoghi reali (OSM)…");
-    const q = buildDestinationsQueryFromBbox(bbox);
-    const data = await fetchOverpass(q);
+  UI.footerInfo.textContent = `Versione ${VERSION} • Luoghi reali (OSM) • Mezzo: ${mode} • ${used}`;
+}
 
-    const all = normalizeDestinations(data, origin);
+// --- UI handler ---
+UI.goBtn.addEventListener("click", async () => {
+  UI.goBtn.disabled = true;
+  showResult(false);
 
-    // filtro per distanza plausibile (aria) rispetto al tempo scelto
-    const maxKm = estimateMaxDistanceKm(mode, safeMinutes) * 1.15; // tolleranza
-    const candidates = all.filter(x => x.distKm <= maxKm);
+  const minutes = parseInt(UI.timeSelect.value, 10);
+  const mode = UI.modeSelect.value;
 
-    if (candidates.length < 5) {
-      // fallback: allarga un pelo (solo se pochi)
-      const wider = all.filter(x => x.distKm <= maxKm * 1.5);
-      if (wider.length < 3) {
-        throw new Error("Non trovo abbastanza mete. Prova ad aumentare tempo o cambia mezzo.");
-      }
-      candidates.length = 0;
-      candidates.push(...wider);
-    }
+  setStatus("📍 Prendo la posizione GPS…");
 
-    // 3) scegli meta: prendi top 40, poi scegli random pesato
-    const top = candidates.slice(0, 40);
+  try {
+    const pos = await getCurrentPosition();
+    const origin = {
+      lat: pos.coords.latitude,
+      lon: pos.coords.longitude
+    };
 
-    // preferisci non visitati, ma se tutti visitati ok lo stesso
-    const nonVisited = top.filter(x => !x.visited);
-    const pool = nonVisited.length >= 5 ? nonVisited : top;
+    setStatus("🔎 Cerco luoghi coerenti col tempo/mezzo…");
 
-    const main = choiceWeighted(pool);
-    const alts = pool.filter(x => x.idKey !== main.idKey).slice(0, 6);
+    // ORS note: if minutes > 60, ORS likely fails -> fallback automatic
+    const { used, main, alts, visited } = await findPlaces({ origin, mode, minutes });
 
-    setStatus(`✅ Trovato: ${main.name}`, "ok");
-    renderResult(main, alts, modeLabel, safeMinutes);
+    // render
+    renderAlternatives(alts, origin);
+    await renderMain(main, origin, mode, minutes, used, visited);
 
   } catch (e) {
-    setStatus(`❌ Errore: ${String(e.message || e)}`, "err");
+    setStatus(`Errore: ${String(e.message || e)}`, "err");
   } finally {
-    $("goBtn").disabled = false;
+    UI.goBtn.disabled = false;
   }
-}
+});
 
-$("goBtn").addEventListener("click", runJamo);
-
-// SW
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("sw.js").catch(()=>{});
-}
+// Initial
+setStatus("Pronto. Premi il bottone: Jamo userà il GPS.");
+UI.footerInfo.textContent = `Versione ${VERSION} • Luoghi reali (OSM)`;
