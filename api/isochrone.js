@@ -1,57 +1,63 @@
 export default async function handler(req, res) {
   try {
     if (req.method !== "POST") {
+      res.setHeader("Allow", "POST");
       return res.status(405).json({ error: "Method not allowed" });
     }
 
-    const ORS_API_KEY = process.env.ORS_API_KEY;
-    if (!ORS_API_KEY) {
-      return res.status(500).json({ error: "Missing ORS_API_KEY env var" });
+    const key = process.env.ORS_API_KEY;
+    if (!key) return res.status(500).json({ error: "Missing ORS_API_KEY env var" });
+
+    const { profile, minutes, lat, lon, rangeType } = req.body || {};
+    if (!profile || typeof minutes !== "number" || typeof lat !== "number" || typeof lon !== "number") {
+      return res.status(400).json({ error: "Bad request", details: "profile, minutes, lat, lon required" });
     }
 
-    const { lat, lon, profile, minutes } = req.body || {};
-    if (
-      typeof lat !== "number" ||
-      typeof lon !== "number" ||
-      !profile ||
-      typeof minutes !== "number"
-    ) {
-      return res.status(400).json({ error: "Invalid payload" });
+    // ORS profiles validi
+    const allowed = new Set(["driving-car", "cycling-regular", "foot-walking"]);
+    if (!allowed.has(profile)) {
+      return res.status(400).json({ error: "Bad request", details: "Invalid profile" });
     }
 
-    // ORS expects seconds for isochrones range
-    const rangeSeconds = Math.max(60, Math.round(minutes * 60));
+    // Molte key ORS limitano range_time a 3600s (60 min)
+    const seconds = Math.round(minutes * 60);
+    const finalRangeType = rangeType === "distance" ? "distance" : "time";
 
-    const url = `https://api.openrouteservice.org/v2/isochrones/${encodeURIComponent(
-      profile
-    )}`;
-
-    const orsRes = await fetch(url, {
-      method: "POST",
-      headers: {
-        Authorization: ORS_API_KEY,
-        "Content-Type": "application/json",
-        Accept: "application/geo+json",
-      },
-      body: JSON.stringify({
-        locations: [[lon, lat]],
-        range: [rangeSeconds],
-        // migliora la qualità della forma
-        smoothing: 0.9,
-        attributes: ["area"],
-      }),
-    });
-
-    const text = await orsRes.text();
-    if (!orsRes.ok) {
-      return res.status(orsRes.status).json({
-        error: "ORS error",
-        status: orsRes.status,
-        details: text,
+    if (finalRangeType === "time" && seconds > 3600) {
+      return res.status(400).json({
+        error: "ORS limit",
+        details: "time range > 3600s not allowed on this key. Use fallback for >60 min."
       });
     }
 
-    // text è GeoJSON
+    // Se range_type=time -> seconds; se distance -> meters
+    const rangeValue = finalRangeType === "time" ? seconds : Math.round(minutes);
+
+    const url = `https://api.openrouteservice.org/v2/isochrones/${profile}`;
+
+    const body = {
+      locations: [[lon, lat]],
+      range: [rangeValue],
+      range_type: finalRangeType,
+      attributes: ["area"]
+    };
+
+    const r = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: key,
+        "Content-Type": "application/json",
+        Accept: "application/geo+json, application/json"
+      },
+      body: JSON.stringify(body)
+    });
+
+    const text = await r.text();
+    if (!r.ok) {
+      return res.status(r.status).json({ error: "ORS error", status: r.status, details: text });
+    }
+
+    res.setHeader("Content-Type", "application/json");
     return res.status(200).send(text);
   } catch (e) {
     return res.status(500).json({ error: "Server error", details: String(e) });
