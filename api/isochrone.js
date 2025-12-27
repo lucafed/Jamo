@@ -1,38 +1,41 @@
-export default async function handler(req, res) {
-  const { lat, lon, minutes = 60, profile = "driving-car" } = req.query;
+module.exports = async (req, res) => {
+  const { lat, lon, minutes = "60", profile = "driving-car" } = req.query;
 
-  if (!lat || !lon) {
-    return res.status(400).json({ error: "Missing lat or lon" });
-  }
+  if (!lat || !lon) return res.status(400).json({ error: "Missing lat or lon" });
 
   const ORS_KEY = process.env.ORS_API_KEY;
+  if (!ORS_KEY) return res.status(500).json({ error: "Missing ORS_API_KEY in Vercel env vars" });
 
   const url = `https://api.openrouteservice.org/v2/isochrones/${profile}`;
 
   try {
-    const response = await fetch(url, {
+    const r = await fetch(url, {
       method: "POST",
       headers: {
         "Authorization": ORS_KEY,
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "Accept": "application/json"
       },
       body: JSON.stringify({
-        locations: [[parseFloat(lon), parseFloat(lat)]],
-        range: [parseInt(minutes) * 60]
+        locations: [[Number(lon), Number(lat)]],
+        range: [Number(minutes) * 60]
       })
     });
 
-    const data = await response.json();
+    const text = await r.text(); // così vediamo SEMPRE cosa torna
+    let data;
+    try { data = JSON.parse(text); } catch { data = { raw: text }; }
 
-    if (!response.ok) {
-      return res.status(response.status).json({
+    if (!r.ok) {
+      return res.status(r.status).json({
         error: "ORS error",
+        status: r.status,
         details: data
       });
     }
 
-    res.status(200).json(data);
-  } catch (err) {
-    res.status(500).json({ error: "Server error", details: err.message });
+    return res.status(200).json(data);
+  } catch (e) {
+    return res.status(500).json({ error: "Server error", details: e.message });
   }
-}
+};
