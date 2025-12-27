@@ -1,9 +1,15 @@
 /**
- * JAMO v0.6 – SOLO LUOGHI (NO attrazioni)
- * - Cerca place=city|town|village|hamlet da OpenStreetMap (Overpass)
- * - Filtri: raggio km + tempo max + budget max + mezzo
- * - Aereo: impone distanza minima (non ti propone “casa tua”)
- * - 1 luogo + 3 alternative
+ * JAMO v0.8 – DESTINAZIONI = BORGI + LUOGHI FAMOSI (naturali/landmark)
+ *
+ * 1) Trova DESTINAZIONI di due tipi:
+ *    A) place: city/town/village/hamlet/locality/suburb
+ *    B) landmark: waterfall/peak/cave/viewpoint/nature_reserve/attraction
+ *
+ * 2) Filtra per raggio km, tempo max, budget max e mezzo.
+ * 3) Mostra 1 destinazione + alternative.
+ * 4) Sotto alla destinazione: “Cosa vedere/fare” (POI) vicino al posto scelto.
+ *
+ * Nota: dipende dai dati su OpenStreetMap. Se un posto non è mappato/etichettato, non potrà uscire.
  */
 
 const $ = (id) => document.getElementById(id);
@@ -41,52 +47,47 @@ btnGo.addEventListener("click", async () => {
     const timeBudgetMin = parseOptionalNumber(timeEl.value);
     const budgetMax = parseOptionalNumber(budgetEl.value);
 
-    const placeType = placeTypeEl.value; // any/city/town/village/mix
+    const placeType = placeTypeEl.value; // any/city/town/village/mix (non cambia molto qui)
     const vibe = vibeEl.value;
 
-    // Aereo: ha senso cercare più largo
+    // Aereo: raggio più grande e distanza minima
     if (mode === "plane" && radiusKm < 500) {
       radiusKm = 500;
       radiusMeters = 500 * 1000;
     }
 
-    // distanza minima: per aereo non vogliamo roba sotto casa
-    const minDistanceKm = (mode === "plane") ? 120 : 3;
+    const minDistanceKm = (mode === "plane") ? 120 : 2.5;
 
-    setStatus(`🔎 Cerco luoghi entro ${radiusKm} km…`);
+    setStatus(`🔎 Cerco destinazioni (borghi + luoghi famosi) entro ${radiusKm} km…`);
 
-    let places = await fetchPlaces(user.lat, user.lon, radiusMeters, placeType);
+    // 1) prendi BORGI + LANDMARK insieme
+    let destinations = await fetchDestinations(user.lat, user.lon, radiusMeters);
 
-    // fallback 1: se niente, prova mix
-    if (!places.length && placeType !== "mix") {
-      setStatus("Nessun risultato con questo tipo. Provo MIX…");
-      places = await fetchPlaces(user.lat, user.lon, radiusMeters, "mix");
-    }
-
-    // fallback 2: se ancora niente, aumenta raggio a 150km minimo
-    if (!places.length) {
+    // fallback: se niente, aumenta raggio minimo 150km
+    if (!destinations.length) {
       const emergencyKm = Math.max(radiusKm, 150);
       setStatus(`Ancora nulla. Aumento il raggio a ${emergencyKm} km…`);
-      places = await fetchPlaces(user.lat, user.lon, emergencyKm * 1000, "mix");
+      destinations = await fetchDestinations(user.lat, user.lon, emergencyKm * 1000);
       radiusKm = emergencyKm;
+      radiusMeters = emergencyKm * 1000;
     }
 
-    if (!places.length) {
-      setStatus("Non trovo luoghi (Overpass può essere lento). Riprova tra poco o aumenta il raggio.", true);
+    if (!destinations.length) {
+      setStatus("Non trovo destinazioni (Overpass può essere lento). Riprova tra poco o aumenta il raggio.", true);
       return;
     }
 
-    // calcola distanze + stime
-    let scored = places
-      .map((p) => ({
-        ...p,
-        distanceKm: haversineKm(user.lat, user.lon, p.lat, p.lon),
+    // 2) distanze + stime + score
+    let scored = destinations
+      .map((d) => ({
+        ...d,
+        distanceKm: haversineKm(user.lat, user.lon, d.lat, d.lon),
       }))
-      .filter((p) => p.distanceKm >= minDistanceKm) // scarta troppo vicini
-      .map((p) => {
-        const est = estimateTrip(p.distanceKm, mode);
-        const score = scorePlace(p, vibe, mode);
-        return { ...p, est, score };
+      .filter((d) => d.distanceKm >= minDistanceKm)
+      .map((d) => {
+        const est = estimateTrip(d.distanceKm, mode);
+        const score = scoreDestination(d, vibe, mode);
+        return { ...d, est, score };
       })
       .sort((a, b) => b.score - a.score);
 
@@ -95,17 +96,17 @@ btnGo.addEventListener("click", async () => {
       return;
     }
 
-    // filtri tempo/budget
-    const filtered = scored.filter((p) => {
-      if (timeBudgetMin != null && p.est.minutes > timeBudgetMin) return false;
-      if (budgetMax != null && p.est.cost > budgetMax) return false;
+    // 3) filtri tempo/budget
+    const filtered = scored.filter((d) => {
+      if (timeBudgetMin != null && d.est.minutes > timeBudgetMin) return false;
+      if (budgetMax != null && d.est.cost > budgetMax) return false;
       return true;
     });
 
     const finalList = filtered.length ? filtered : scored;
 
     if (!filtered.length) {
-      setStatus("⚠️ Con tempo/budget scelti non esce nulla: ti mostro comunque i migliori luoghi (aumenta tempo/budget).", true);
+      setStatus("⚠️ Con tempo/budget scelti non esce nulla: ti mostro comunque le migliori destinazioni (aumenta tempo/budget).", true);
     } else {
       setStatus("✅ Fatto.");
     }
@@ -118,6 +119,9 @@ btnGo.addEventListener("click", async () => {
       timeBudgetMin, budgetMax, minDistanceKm
     });
 
+    // Auto-show “cosa fare” sul principale
+    await showThingsToDoForDestination(main);
+
   } catch (err) {
     console.error(err);
     if (String(err).includes("denied")) setStatus("GPS negato. Attiva la posizione e consenti l’accesso.", true);
@@ -127,16 +131,20 @@ btnGo.addEventListener("click", async () => {
   }
 });
 
-/* ===================== PLACES (Overpass) ===================== */
+/* ===================== DESTINATIONS = places + landmarks ===================== */
 
-async function fetchPlaces(lat, lon, radiusMeters, placeType) {
-  const placeRegex = toPlaceRegex(placeType);
-
-  // Importante: prendiamo solo "place" (luoghi), niente tourism/amenity
+async function fetchDestinations(lat, lon, radiusMeters) {
   const query = `
 [out:json][timeout:25];
 (
-  nwr(around:${radiusMeters},${lat},${lon})["place"~"${placeRegex}"];
+  // A) BORGI / CITTA' (aggiungo locality e suburb per non perdere roba)
+  nwr(around:${radiusMeters},${lat},${lon})["place"~"city|town|village|hamlet|locality|suburb"];
+
+  // B) LUOGHI FAMOSI / NATURALI (Gran Sasso, cascate, grotte, belvedere…)
+  nwr(around:${radiusMeters},${lat},${lon})["natural"~"peak|waterfall|cave|bay|beach|wood"];
+  nwr(around:${radiusMeters},${lat},${lon})["tourism"~"attraction|viewpoint"];
+  nwr(around:${radiusMeters},${lat},${lon})["leisure"~"nature_reserve|park"];
+  nwr(around:${radiusMeters},${lat},${lon})["historic"~"castle|ruins|monument|archaeological_site"];
 );
 out center tags;
 `;
@@ -151,52 +159,149 @@ out center tags;
     const cLon = e.lon ?? e.center?.lon;
     if (!cLat || !cLon) return null;
 
-    const place = tags.place || "place";
-    const typeLabel = placeLabel(place);
+    const kind = inferDestinationKind(tags);
+    const typeLabel = inferDestinationLabel(tags);
+
+    // Se NON ha nome e sembra troppo generico, lo scarto per evitare roba inutile
+    if (!name && kind === "landmark" && typeLabel === "Luogo") return null;
 
     return {
       id: `${e.type}/${e.id}`,
       name: name || typeLabel,
-      place,
-      typeLabel,
+      kind,       // "place" o "landmark"
+      typeLabel,  // "Borgo", "Cascata", "Vetta", ecc.
       lat: cLat,
       lon: cLon,
       tags
     };
   }).filter(Boolean);
 
-  // dedup
+  // dedup forte
+  const seen = new Set();
+  const out = [];
+  for (const d of parsed) {
+    const key = `${d.name}|${d.lat.toFixed(4)}|${d.lon.toFixed(4)}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(d);
+  }
+
+  // limite per performance
+  return out.slice(0, 600);
+}
+
+function inferDestinationKind(tags) {
+  if (tags.place) return "place";
+  return "landmark";
+}
+
+function inferDestinationLabel(tags) {
+  // places
+  if (tags.place === "city") return "Città";
+  if (tags.place === "town") return "Paese";
+  if (tags.place === "village") return "Borgo";
+  if (tags.place === "hamlet") return "Località";
+  if (tags.place === "locality") return "Località";
+  if (tags.place === "suburb") return "Zona";
+
+  // landmarks
+  if (tags.natural === "waterfall") return "Cascata";
+  if (tags.natural === "peak") return "Vetta";
+  if (tags.natural === "cave") return "Grotta";
+  if (tags.natural === "beach") return "Spiaggia";
+  if (tags.tourism === "viewpoint") return "Belvedere";
+  if (tags.tourism === "attraction") return "Luogo famoso";
+  if (tags.leisure === "nature_reserve") return "Riserva naturale";
+  if (tags.leisure === "park") return "Parco";
+  if (tags.historic) return "Luogo storico";
+
+  return "Luogo";
+}
+
+/* ===================== POI = cosa vedere/fare vicino alla destinazione ===================== */
+
+async function fetchThingsToDo(lat, lon, radiusMeters) {
+  const query = `
+[out:json][timeout:25];
+(
+  nwr(around:${radiusMeters},${lat},${lon})["tourism"~"attraction|museum|gallery|viewpoint|zoo|theme_park"];
+  nwr(around:${radiusMeters},${lat},${lon})["historic"];
+  nwr(around:${radiusMeters},${lat},${lon})["leisure"~"park|garden|nature_reserve"];
+  nwr(around:${radiusMeters},${lat},${lon})["natural"~"beach|peak|waterfall|cave|spring|wood"];
+  nwr(around:${radiusMeters},${lat},${lon})["amenity"~"restaurant|cafe|bar|pub"];
+);
+out center tags;
+`;
+  const json = await fetchOverpass(query);
+  const els = Array.isArray(json.elements) ? json.elements : [];
+
+  const parsed = els.map((e) => {
+    const tags = e.tags || {};
+    const name = tags.name || tags["name:it"] || null;
+    const cLat = e.lat ?? e.center?.lat;
+    const cLon = e.lon ?? e.center?.lon;
+    if (!cLat || !cLon) return null;
+
+    return {
+      id: `${e.type}/${e.id}`,
+      name: name || inferPoiType(tags),
+      typeLabel: inferPoiType(tags),
+      lat: cLat,
+      lon: cLon,
+      tags
+    };
+  }).filter(Boolean);
+
   const seen = new Set();
   const out = [];
   for (const p of parsed) {
-    const key = `${p.name}|${p.lat.toFixed(4)}|${p.lon.toFixed(4)}`;
+    const key = `${p.name}|${p.lat.toFixed(5)}|${p.lon.toFixed(5)}`;
     if (seen.has(key)) continue;
     seen.add(key);
     out.push(p);
   }
 
-  // riduci se troppi
-  return out.slice(0, 400);
+  out.sort((a, b) => poiRank(b.tags) - poiRank(a.tags));
+  return out.slice(0, 15);
 }
 
-function toPlaceRegex(placeType) {
-  // city/town/village/hamlet
-  if (placeType === "city") return "city";
-  if (placeType === "town") return "town";
-  if (placeType === "village") return "village|hamlet";
-  if (placeType === "mix") return "city|town|village|hamlet";
-  return "city|town|village|hamlet";
+function inferPoiType(tags) {
+  const t = tags.tourism;
+  const h = tags.historic;
+  const l = tags.leisure;
+  const n = tags.natural;
+  const a = tags.amenity;
+
+  if (t === "museum") return "Museo";
+  if (t === "gallery") return "Galleria";
+  if (t === "viewpoint") return "Belvedere";
+  if (t === "attraction") return "Attrazione";
+  if (t === "zoo") return "Zoo";
+  if (t === "theme_park") return "Parco divertimenti";
+  if (h) return "Luogo storico";
+  if (l === "park") return "Parco";
+  if (l === "garden") return "Giardino";
+  if (l === "nature_reserve") return "Riserva naturale";
+  if (n === "beach") return "Spiaggia";
+  if (n === "peak") return "Vetta";
+  if (n === "waterfall") return "Cascata";
+  if (n === "cave") return "Grotta";
+  if (a === "restaurant") return "Ristorante";
+  if (a === "cafe") return "Caffè";
+  if (a === "bar") return "Bar";
+  if (a === "pub") return "Pub";
+  return "Punto d’interesse";
 }
 
-function placeLabel(place) {
-  if (place === "city") return "Città";
-  if (place === "town") return "Paese";
-  if (place === "village") return "Borgo";
-  if (place === "hamlet") return "Località";
-  return "Luogo";
+function poiRank(tags) {
+  if (tags.tourism === "attraction" || tags.tourism === "museum" || tags.historic) return 5;
+  if (tags.tourism === "viewpoint" || tags.natural) return 4;
+  if (tags.leisure) return 3;
+  if (tags.amenity) return 2;
+  return 1;
 }
 
-/* ===================== Overpass fetch with fallback ===================== */
+/* ===================== Overpass with fallback ===================== */
 
 async function fetchOverpass(query) {
   let lastErr = null;
@@ -223,7 +328,7 @@ function estimateTrip(distanceKm, mode) {
 
   if (mode === "plane") {
     const flightMinutes = Math.round((distanceKm / speeds.plane) * 60);
-    const overhead = 120; // aeroporto (indicativo)
+    const overhead = 120;
     const minutes = overhead + flightMinutes;
     const cost = round2(35 + distanceKm * 0.12);
     return { minutes, cost, flightMinutes };
@@ -241,33 +346,37 @@ function estimateTrip(distanceKm, mode) {
   return { minutes, cost: round2(cost) };
 }
 
-function scorePlace(p, vibe, mode) {
+function scoreDestination(d, vibe, mode) {
   let s = 0;
-  const km = p.distanceKm ?? 0;
+  const km = d.distanceKm ?? 0;
 
-  // per aereo: premia medio-lontano
+  // boost “luogo famoso”
+  if (d.kind === "landmark") s += 4;
+
+  // boost se ha nome vero
+  if (d.name && d.name.length >= 4) s += 2;
+
+  // bilanciamento distanza
   if (mode === "plane") {
     if (km < 150) s -= 20;
     else if (km <= 400) s += 10;
     else if (km <= 900) s += 7;
     else s += 3;
   } else {
-    // altri: vicino è meglio
     if (km <= 20) s += 9;
     else if (km <= 60) s += 7;
     else if (km <= 150) s += 5;
     else s += 2;
   }
 
-  // tipo luogo (città un po' più “sicura” come meta)
-  if (p.place === "city") s += 3;
-  if (p.place === "town") s += 2;
-
   // vibe
   if (vibe === "quick") { if (km <= 40) s += 4; else s -= 2; }
   if (vibe === "chill") { if (km <= 120) s += 2; }
-  if (vibe === "adventure") { if (km >= 30 && km <= 200) s += 3; }
-  if (vibe === "romantic") { if (p.place === "village" || p.place === "town") s += 2; }
+  if (vibe === "adventure") { if (km >= 20 && km <= 200) s += 3; }
+  if (vibe === "romantic") {
+    if (d.typeLabel === "Borgo" || d.typeLabel === "Paese") s += 2;
+    if (d.typeLabel === "Belvedere") s += 2;
+  }
 
   s += Math.random() * 1.1;
   return s;
@@ -275,7 +384,7 @@ function scorePlace(p, vibe, mode) {
 
 function round2(x){ return Math.round(x * 100) / 100; }
 
-/* ===================== UI render ===================== */
+/* ===================== UI ===================== */
 
 function render(main, alternatives, ctx) {
   resultsEl.innerHTML = "";
@@ -284,10 +393,10 @@ function render(main, alternatives, ctx) {
   summary.className = "pill";
   const timeTxt = ctx.timeBudgetMin ? `⏱ ${ctx.timeBudgetMin} min` : "⏱ no limite";
   const budTxt = ctx.budgetMax ? `💶 €${ctx.budgetMax}` : "💶 no limite";
-  summary.textContent = `${labelMode(ctx.mode)} • ${timeTxt} • ${budTxt} • raggio ${ctx.radiusKm}km • min dist ${ctx.minDistanceKm}km • ${labelPlaceType(ctx.placeType)} • ${labelVibe(ctx.vibe)}`;
+  summary.textContent = `${labelMode(ctx.mode)} • ${timeTxt} • ${budTxt} • raggio ${ctx.radiusKm}km • min dist ${ctx.minDistanceKm}km • ${labelVibe(ctx.vibe)}`;
   resultsEl.appendChild(summary);
 
-  resultsEl.appendChild(card("Luogo consigliato", main, true));
+  resultsEl.appendChild(destCard("Meta consigliata", main, true));
 
   if (alternatives.length) {
     const div = document.createElement("div");
@@ -299,13 +408,14 @@ function render(main, alternatives, ctx) {
     pill.textContent = "Alternative";
     resultsEl.appendChild(pill);
 
-    alternatives.forEach((a) => resultsEl.appendChild(card("", a, false)));
+    alternatives.forEach((a) => resultsEl.appendChild(destCard("", a, false)));
   }
 }
 
-function card(title, p, isMain) {
+function destCard(title, d, isMain) {
   const wrap = document.createElement("div");
   wrap.className = "dest";
+  wrap.dataset.destId = d.id;
 
   if (title) {
     const pill = document.createElement("div");
@@ -316,13 +426,13 @@ function card(title, p, isMain) {
 
   const name = document.createElement("p");
   name.className = "name";
-  name.textContent = p.name;
+  name.textContent = d.name;
   wrap.appendChild(name);
 
   const meta = document.createElement("p");
   meta.className = "meta";
-  const extraPlane = p.est.flightMinutes != null ? ` (volo ~${p.est.flightMinutes} min)` : "";
-  meta.textContent = `${p.typeLabel} • ${p.distanceKm.toFixed(1)} km • ~${p.est.minutes} min${extraPlane} • ~€${p.est.cost}`;
+  const extraPlane = d.est.flightMinutes != null ? ` (volo ~${d.est.flightMinutes} min)` : "";
+  meta.textContent = `${d.typeLabel} • ${d.distanceKm.toFixed(1)} km • ~${d.est.minutes} min${extraPlane} • ~€${d.est.cost}`;
   wrap.appendChild(meta);
 
   const actions = document.createElement("div");
@@ -331,19 +441,99 @@ function card(title, p, isMain) {
   const btnMaps = document.createElement("button");
   btnMaps.className = "smallbtn";
   btnMaps.textContent = "Apri in Maps";
-  btnMaps.onclick = () => openInMaps(p.lat, p.lon);
+  btnMaps.onclick = () => openInMaps(d.lat, d.lon);
   actions.appendChild(btnMaps);
 
+  const btnThings = document.createElement("button");
+  btnThings.className = "smallbtn";
+  btnThings.textContent = "Cosa vedere/fare";
+  btnThings.onclick = async () => showThingsToDoForDestination(d, wrap);
+  actions.appendChild(btnThings);
+
   wrap.appendChild(actions);
+
+  // box POI
+  const box = document.createElement("div");
+  box.className = "panel";
+  box.style.marginTop = "10px";
+  box.style.display = "none";
+  box.dataset.poiBox = "1";
+  wrap.appendChild(box);
 
   if (isMain) {
     const hint = document.createElement("div");
     hint.className = "pill";
-    hint.textContent = "Se non ti convince, scegli una alternativa 👇";
+    hint.textContent = "Sotto trovi cosa vedere/fare. Se non ti convince, prova una alternativa 👇";
     wrap.appendChild(hint);
   }
 
   return wrap;
+}
+
+async function showThingsToDoForDestination(dest, cardEl = null) {
+  const wrap = cardEl || findCard(dest.id);
+  if (!wrap) return;
+
+  const box = wrap.querySelector('[data-poi-box="1"]');
+  if (!box) return;
+
+  box.style.display = "block";
+  box.innerHTML = `<div class="muted">🔎 Cerco cosa vedere/fare vicino a <b>${escapeHtml(dest.name)}</b>…</div>`;
+
+  try {
+    const poiRadius = (dest.typeLabel === "Città" || dest.typeLabel === "Paese") ? 5000 : 4000;
+    const items = await fetchThingsToDo(dest.lat, dest.lon, poiRadius);
+
+    if (!items.length) {
+      box.innerHTML = `<div class="muted">Non ho trovato molto vicino a ${escapeHtml(dest.name)}. (Dipende dai dati OSM)</div>`;
+      return;
+    }
+
+    box.innerHTML = "";
+    const header = document.createElement("div");
+    header.className = "pill";
+    header.textContent = `Cosa vedere/fare vicino a ${dest.name}`;
+    box.appendChild(header);
+
+    items.forEach((it) => {
+      const row = document.createElement("div");
+      row.className = "dest";
+      row.style.marginTop = "10px";
+
+      const nm = document.createElement("p");
+      nm.className = "name";
+      nm.style.fontSize = "16px";
+      nm.textContent = it.name;
+      row.appendChild(nm);
+
+      const mt = document.createElement("p");
+      mt.className = "meta";
+      mt.textContent = it.typeLabel;
+      row.appendChild(mt);
+
+      const act = document.createElement("div");
+      act.className = "actions";
+
+      const b = document.createElement("button");
+      b.className = "smallbtn";
+      b.textContent = "Apri in Maps";
+      b.onclick = () => openInMaps(it.lat, it.lon);
+      act.appendChild(b);
+
+      row.appendChild(act);
+      box.appendChild(row);
+    });
+
+  } catch (e) {
+    console.error(e);
+    box.innerHTML = `<div class="error">Errore nel cercare cosa vedere/fare. Riprova tra poco.</div>`;
+  }
+}
+
+function findCard(id) {
+  const cards = resultsEl.querySelectorAll(".dest");
+  for (const c of cards) if (c.dataset.destId === id) return c;
+  return null;
 }
 
 function openInMaps(lat, lon) {
@@ -353,9 +543,6 @@ function openInMaps(lat, lon) {
 
 function labelMode(m){
   return ({car:"🚗 Auto",train:"🚆 Treno",bus:"🚌 Bus",bike:"🚲 Bici",walk:"🚶 A piedi",plane:"✈️ Aereo"})[m] || m;
-}
-function labelPlaceType(t){
-  return ({any:"🎯 Qualsiasi",city:"🏙️ Città",town:"🏘️ Paese",village:"🌿 Borgo",mix:"✨ Mix"})[t] || t;
 }
 function labelVibe(v){
   return ({any:"✨ Qualsiasi",quick:"⚡ Vicino e veloce",chill:"🧘 Tranquillo",adventure:"🧗 Fuori porta",romantic:"💘 Romantico"})[v] || v;
@@ -391,3 +578,12 @@ function haversineKm(lat1, lon1, lat2, lon2) {
   return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
 }
 function deg2rad(deg) { return deg * (Math.PI / 180); }
+
+function escapeHtml(str) {
+  return String(str)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
