@@ -4,30 +4,63 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Jamo</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="/styles.css" />
 </head>
 <body>
   <main class="wrap">
-    <h1>Jamo</h1>
-    <p class="muted">Scegli il tempo disponibile e premi: ti propongo un luogo reale dove andare.</p>
+    <section class="card">
+      <h1>Jamo</h1>
+      <p class="subtitle">Scegli il tempo disponibile e premi: ti propongo un <b>luogo reale</b> dove andare.</p>
 
-    <div class="row">
-      <label>Tempo</label>
-      <select id="timeSelect">
-        <option value="30">30 min</option>
-        <option value="60" selected>1 ora</option>
-        <option value="90">1h 30</option>
-        <option value="120">2 ore</option>
-        <option value="180">3 ore</option>
-        <option value="240">4 ore</option>
-      </select>
-    </div>
+      <div class="controls">
+        <label class="field">
+          <span>Tempo</span>
+          <select id="timeSelect">
+            <option value="30">30 min</option>
+            <option value="45">45 min</option>
+            <option value="60">1 ora</option>
+            <option value="90">1h 30m</option>
+            <option value="120" selected>2 ore</option>
+            <option value="180">3 ore</option>
+            <option value="240">4 ore</option>
+          </select>
+        </label>
 
-    <button id="goBtn" class="btn">🎲 DOVE ANDIAMO?</button>
+        <button id="goBtn" class="primary">
+          🎲 DOVE ANDIAMO?
+        </button>
+      </div>
 
-    <section id="results" class="results"></section>
+      <div id="status" class="status"></div>
+
+      <section id="result" class="result hidden">
+        <div class="resultHead">
+          <h2 id="placeName">—</h2>
+          <div class="badges">
+            <span class="badge" id="badgeTime">—</span>
+            <span class="badge" id="badgeKm">—</span>
+          </div>
+        </div>
+
+        <p id="placeWhy" class="why"></p>
+
+        <div class="actionsRow">
+          <a id="mapsLink" class="linkBtn" target="_blank" rel="noopener">Apri su Google Maps</a>
+          <button id="visitedBtn" class="ghost">✅ Segna come “già visitato”</button>
+        </div>
+
+        <div class="alts">
+          <h3>Alternative</h3>
+          <ul id="altList"></ul>
+        </div>
+      </section>
+
+      <footer class="foot">
+        <span>Versione 2.0 • Auto • Luoghi reali (OSM)</span>
+      </footer>
+    </section>
   </main>
 
-  <script src="app.js"></script>
+  <script src="/app.js"></script>
 </body>
 </html>
