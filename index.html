@@ -86,25 +86,10 @@
   <main class="card">
     <div class="title">Jamo</div>
     <p class="subtitle">
-      Jamo suggerisce <b>dove andare</b> (1 meta + alternative) e poi <b>cosa fare lì</b>.
+      Dimmi <b>come</b> vuoi muoverti e <b>quanto tempo</b> hai: Jamo ti propone <b>dove andare</b>.
     </p>
 
     <div class="row">
-      <div class="field">
-        <label>Raggio ricerca (km)</label>
-        <select id="radiusKm">
-          <option value="5">5</option>
-          <option value="10" selected>10</option>
-          <option value="20">20</option>
-          <option value="40">40</option>
-          <option value="80">80</option>
-          <option value="150">150</option>
-          <option value="300">300</option>
-          <option value="500">500</option>
-          <option value="1000">1000</option>
-        </select>
-      </div>
-
       <div class="field">
         <label>Mezzo</label>
         <select id="mode">
@@ -118,6 +103,11 @@
       </div>
 
       <div class="field">
+        <label>Max tempo di viaggio (min)</label>
+        <input id="maxTravelMin" type="number" inputmode="numeric" min="1" placeholder="es. 60 (treno) / 120 (aereo)" />
+      </div>
+
+      <div class="field">
         <label>Budget massimo (€) (opzionale)</label>
         <input id="budget" type="number" inputmode="numeric" min="0" placeholder="es. 25" />
       </div>
@@ -125,28 +115,55 @@
 
     <div class="row">
       <div class="field">
-        <label>Tempo massimo (min) (opzionale)</label>
-        <input id="maxTime" type="number" inputmode="numeric" min="0" placeholder="es. 90" />
+        <label>Raggio ricerca (km)</label>
+        <select id="radiusKm">
+          <option value="10" selected>10</option>
+          <option value="20">20</option>
+          <option value="40">40</option>
+          <option value="80">80</option>
+          <option value="150">150</option>
+          <option value="300">300</option>
+          <option value="500">500</option>
+          <option value="1000">1000</option>
+          <option value="2000">2000</option>
+        </select>
       </div>
 
       <div class="field">
-        <label>Attività / Mete</label>
-        <select id="activity">
+        <label>Tipo meta</label>
+        <select id="placeType">
           <option value="any" selected>Tutto</option>
-          <option value="culture">Cultura (musei/monumenti)</option>
-          <option value="nature">Natura (parchi/punti panoramici)</option>
-          <option value="food">Cibo & Drink (bar/ristoranti)</option>
-          <option value="mix">Mix (un po’ di tutto)</option>
+          <option value="city">Città / centro</option>
+          <option value="sea">Mare / spiagge</option>
+          <option value="mountain">Montagna / trekking</option>
+          <option value="nature">Natura (parchi / belvedere)</option>
+          <option value="culture">Cultura (musei / storia)</option>
+          <option value="food">Cibo & drink</option>
+          <option value="relax">Relax (terme / spa)</option>
+          <option value="family">Famiglia (zoo / parchi)</option>
+          <option value="night">Vita notturna</option>
+          <option value="events">Eventi (beta)</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Stile giornata</label>
+        <select id="vibe">
+          <option value="any" selected>Qualsiasi</option>
+          <option value="quick">Mordi e fuggi</option>
+          <option value="chill">Chill / lenta</option>
+          <option value="adventure">Avventura</option>
+          <option value="romantic">Romantica</option>
         </select>
       </div>
     </div>
 
-    <button id="btnGo" class="btn">🎲 DOVE ANDIAMO?</button>
+    <button id="btnGo" class="btn">🧭 DOVE ANDIAMO?</button>
 
     <div class="panel">
-      <div id="status" class="muted">Pronto. Premendo il bottone ti chiederà il GPS.</div>
+      <div id="status" class="muted">Pronto.</div>
       <div id="results"></div>
-      <div class="footer">Versione 0.2.1 • OpenStreetMap/Overpass • stime tempo/costo indicative</div>
+      <div class="footer">Versione 0.3 • OpenStreetMap/Overpass • stime tempo/costo indicative</div>
     </div>
   </main>
 
