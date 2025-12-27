@@ -1,466 +1,341 @@
-/* Jamo - app.js (v0.2) - Solo LUOGHI + alternative + visitati
-   - Usa GPS
-   - Chiama /api/overpass (serverless Vercel) per prendere candidati da OpenStreetMap
-   - Filtra e stima tempi in client
-*/
-
 const $ = (id) => document.getElementById(id);
 
-const els = {
-  mode: $("mode"),
-  time: $("time"),
-  dist: $("dist"),
-  budget: $("budget"),
-  goBtn: $("goBtn"),
-  status: $("status"),
-  results: $("results"),
-  distPill: $("distPill"),
-  timePill: $("timePill"),
-  showVisited: $("showVisited"),
-  preferFamous: $("preferFamous"),
-  modeHint: $("modeHint"),
+const modeEl = $("mode");
+const timeEl = $("time");
+const distEl = $("dist");
+const goBtn = $("goBtn");
+const statusEl = $("status");
+const resultsEl = $("results");
+
+const showVisitedEl = $("showVisited");
+const preferFamousEl = $("preferFamous");
+
+const VISITED_KEY = "jamo.visited.v1";
+
+const SPEED = { // km/h plausibili “di tratta”
+  train: 95,
+  bus: 65,
+  plane: 700,
 };
 
-const VISITED_KEY = "jamo.visited.v1"; // localStorage: array di osmIds string
-const lastState = {
-  lastResult: null,
+const OVERHEAD = { // minuti plausibili
+  train_wait: 15,    // attesa/trasferimenti minimi
+  bus_wait: 10,
+  airport: 105,      // check-in + security + boarding (media)
+  airport_exit: 25,  // uscita + bagagli (media)
+  flight_extra: 20,  // taxi/decollo/atterraggio
 };
 
 function loadVisitedSet() {
-  try {
-    const raw = localStorage.getItem(VISITED_KEY);
-    const arr = raw ? JSON.parse(raw) : [];
-    return new Set(arr);
-  } catch {
-    return new Set();
-  }
+  try { return new Set(JSON.parse(localStorage.getItem(VISITED_KEY) || "[]")); }
+  catch { return new Set(); }
 }
 function saveVisitedSet(set) {
   localStorage.setItem(VISITED_KEY, JSON.stringify([...set]));
 }
 
-function haversineKm(aLat, aLon, bLat, bLon) {
-  const R = 6371;
-  const toRad = (d) => (d * Math.PI) / 180;
-  const dLat = toRad(bLat - aLat);
-  const dLon = toRad(bLon - aLon);
-  const lat1 = toRad(aLat);
-  const lat2 = toRad(bLat);
-  const s =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2;
-  return 2 * R * Math.asin(Math.sqrt(s));
+function formatMin(m){
+  if (!isFinite(m)) return "—";
+  if (m < 60) return `${Math.round(m)} min`;
+  const h = Math.floor(m/60);
+  const mm = Math.round(m%60);
+  return mm ? `${h}h ${mm}m` : `${h}h`;
 }
 
-// velocità semplici (km/h) per stime iniziali
-const SPEEDS = {
-  walk: 4.5,
-  bike: 16,
-  car: 70,
-  bus: 55,
-  train: 95,
-  plane: 700,
-};
-
-function minutesFor(mode, distanceKm) {
-  if (mode === "plane") {
-    // overhead minimo: raggiungere aeroporto + check-in + boarding (semplificato)
-    const overhead = 90; // min
-    const flight = (distanceKm / SPEEDS.plane) * 60;
-    return overhead + flight;
-  }
-  const speed = SPEEDS[mode] ?? 60;
-  return (distanceKm / speed) * 60;
+function haversineKm(aLat, aLon, bLat, bLon){
+  const R=6371, toRad=(d)=>d*Math.PI/180;
+  const dLat=toRad(bLat-aLat), dLon=toRad(bLon-aLon);
+  const lat1=toRad(aLat), lat2=toRad(bLat);
+  const s=Math.sin(dLat/2)**2 + Math.cos(lat1)*Math.cos(lat2)*Math.sin(dLon/2)**2;
+  return 2*R*Math.asin(Math.sqrt(s));
 }
 
-function formatMinutes(min) {
-  if (!isFinite(min)) return "—";
-  if (min < 60) return `${Math.round(min)} min`;
-  const h = Math.floor(min / 60);
-  const m = Math.round(min % 60);
-  return m ? `${h}h ${m}m` : `${h}h`;
+function pickRadiusKm(mode, timeMin){
+  // raggio candidati coerente col tempo (per non chiedere “mondo intero”)
+  if (mode === "walk") return Math.min(25, 2 + timeMin/30 * 2);
+  if (mode === "bike") return Math.min(120, 10 + timeMin/30 * 6);
+  if (mode === "car")  return Math.min(600, 30 + timeMin/30 * 18);
+  if (mode === "bus")  return Math.min(700, 40 + timeMin/30 * 16);
+  if (mode === "train")return Math.min(900, 50 + timeMin/30 * 20);
+  if (mode === "plane")return Math.min(1200, 200 + timeMin/30 * 60);
+  return 200;
 }
 
-function getTimeAvailableMin() {
-  return Number(els.time.value);
-}
-function getDistanceMaxKm() {
-  return Number(els.dist.value);
-}
-
-function updatePills() {
-  els.distPill.textContent = `${getDistanceMaxKm()} km`;
-  els.timePill.textContent = `${formatMinutes(getTimeAvailableMin())}`;
-  const m = els.mode.value;
-  els.modeHint.textContent =
-    m === "plane" ? "include overhead" :
-    m === "train" ? "stima media" :
-    "stima tempi";
-}
-els.dist.addEventListener("input", updatePills);
-els.time.addEventListener("change", updatePills);
-els.mode.addEventListener("change", updatePills);
-updatePills();
-
-function geoGetPosition() {
-  return new Promise((resolve, reject) => {
-    if (!navigator.geolocation) return reject(new Error("Geolocalizzazione non supportata"));
-    navigator.geolocation.getCurrentPosition(
-      (pos) => resolve(pos),
-      (err) => reject(err),
-      { enableHighAccuracy: true, timeout: 12000, maximumAge: 30000 }
-    );
+async function geoPos(){
+  return new Promise((resolve,reject)=>{
+    navigator.geolocation.getCurrentPosition(resolve,reject,{enableHighAccuracy:true,timeout:12000,maximumAge:30000});
   });
 }
 
-async function fetchCandidates({ lat, lon, radiusKm }) {
-  const url = `/api/overpass?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}&radiusKm=${encodeURIComponent(radiusKm)}`;
-  const res = await fetch(url, { headers: { "Accept": "application/json" } });
-  if (!res.ok) {
-    const text = await res.text().catch(() => "");
-    throw new Error(`Errore API (${res.status}): ${text || "request failed"}`);
-  }
-  return res.json();
+async function apiDestinations(lat, lon, radiusKm){
+  const r = await fetch(`/api/destinations?lat=${lat}&lon=${lon}&radiusKm=${radiusKm}`);
+  if(!r.ok) throw new Error(`Destinations API ${r.status}`);
+  return r.json();
 }
 
-function scoreCandidate(c, preferFamous) {
-  // Heuristica semplice:
-  // - wikipedia = bonus
-  // - population alta = bonus
-  // - place city/town = bonus
-  // - natura (waterfall/peak/park) = bonus medio
-  let s = 0;
-
-  const tags = c.tags || {};
-  const place = tags.place || "";
-  const natural = tags.natural || "";
-  const waterway = tags.waterway || "";
-  const boundary = tags.boundary || "";
-  const leisure = tags.leisure || "";
-
-  const hasWiki = Boolean(tags.wikipedia || tags.wikidata);
-  const pop = Number(tags.population || 0);
-
-  if (place === "city") s += 40;
-  else if (place === "town") s += 28;
-  else if (place === "village") s += 18;
-
-  if (natural === "peak") s += 22;
-  if (waterway === "waterfall") s += 24;
-  if (boundary === "national_park" || leisure === "nature_reserve") s += 20;
-
-  if (hasWiki) s += 26;
-  if (pop) s += Math.min(22, Math.log10(pop + 1) * 6);
-
-  // se non preferFamous, riduci peso wikipedia/pop e premia un po' varietà
-  if (!preferFamous) {
-    s = s * 0.75;
-    s += (natural || waterway || boundary || leisure) ? 6 : 0;
-  }
-  // leggera randomizzazione per non essere sempre identico
-  s += Math.random() * 6;
-
-  return s;
+async function apiHubs(lat, lon, radiusKm){
+  const r = await fetch(`/api/hubs?lat=${lat}&lon=${lon}&radiusKm=${radiusKm}`);
+  if(!r.ok) throw new Error(`Hubs API ${r.status}`);
+  return r.json();
 }
 
-function normalizeCandidates(raw, userLat, userLon) {
-  // raw.elements -> uniformiamo in oggetti
-  const elems = raw?.elements || [];
+async function apiRoute(fromLonLat, toLonLat, profile){
+  const r = await fetch(`/api/route`, {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({ from: fromLonLat, to: toLonLat, profile })
+  });
+  if(!r.ok) throw new Error(`Route API ${r.status}`);
+  return r.json();
+}
+
+function normalizeElementsToPoints(osm){
+  const els = osm?.elements || [];
   const out = [];
-  for (const el of elems) {
-    if (!el || !el.lat || !el.lon) continue;
-    const tags = el.tags || {};
+  for(const e of els){
+    if(!e || !e.lat || !e.lon) continue;
+    const tags = e.tags || {};
     const name = tags.name || tags["name:it"] || tags["name:en"];
-    if (!name) continue;
-
-    const id = `${el.type}/${el.id}`;
-    const distanceKm = haversineKm(userLat, userLon, el.lat, el.lon);
-
+    if(!name) continue;
     out.push({
-      id,
-      lat: el.lat,
-      lon: el.lon,
-      tags,
+      id:`${e.type}/${e.id}`,
+      lat:e.lat, lon:e.lon,
       name,
-      kind: tags.place ? `place:${tags.place}` :
-            tags.waterway === "waterfall" ? "waterfall" :
-            tags.natural === "peak" ? "peak" :
-            (tags.boundary === "national_park" || tags.leisure === "nature_reserve") ? "park" :
-            "place",
-      distanceKm,
+      tags
     });
   }
-  // dedup per nome+approx posizione
-  const seen = new Set();
-  return out.filter((c) => {
-    const k = `${c.name.toLowerCase()}|${Math.round(c.lat*100)}|${Math.round(c.lon*100)}`;
-    if (seen.has(k)) return false;
-    seen.add(k);
-    return true;
+  // dedup
+  const seen=new Set();
+  return out.filter(p=>{
+    const k = `${p.name.toLowerCase()}|${Math.round(p.lat*100)}|${Math.round(p.lon*100)}`;
+    if(seen.has(k)) return false;
+    seen.add(k); return true;
   });
 }
 
-function applyModeConstraints(cands, mode) {
-  // NOTE: in questa v0.2 NON facciamo routing reale.
-  // Per treno/aereo facciamo un filtro plausibile:
-  // - train: solo city/town/village (già) + bonus se "railway station" vicino lo farà l'API (v0.3)
-  // - plane: solo city/town (non cascate/peak) e distanza minima > 80km per evitare "stai a L'Aquila -> L'Aquila"
-  if (mode === "plane") {
-    return cands.filter(c => (c.tags.place === "city" || c.tags.place === "town") && c.distanceKm >= 80);
+function nearest(point, hubs){
+  let best=null, bestD=Infinity;
+  for(const h of hubs){
+    const d = haversineKm(point.lat, point.lon, h.lat, h.lon);
+    if(d < bestD){ bestD=d; best={...h, distKm:d}; }
   }
-  if (mode === "train") {
-    return cands.filter(c => c.tags.place === "city" || c.tags.place === "town" || c.tags.place === "village");
-  }
-  return cands;
+  return best;
 }
 
-function applyBudgetSoft(cands, budget, mode) {
-  // Per ora “soft”: limita distanze molto alte se budget basso, ecc.
-  if (budget === "any") return cands;
-
-  return cands.filter(c => {
-    const d = c.distanceKm;
-    if (budget === "low") {
-      if (mode === "plane") return d <= 450; // "vicino"
-      return d <= 180;
-    }
-    if (budget === "mid") {
-      if (mode === "plane") return d <= 900;
-      return d <= 350;
-    }
-    if (budget === "high") return true;
-    return true;
-  });
-}
-
-function pickMainAndAlternatives(cands, visitedSet, showVisited, preferFamous) {
-  const scored = cands
-    .map(c => ({
-      ...c,
-      score: scoreCandidate(c, preferFamous),
-      visited: visitedSet.has(c.id),
-    }))
-    .filter(c => showVisited ? true : !c.visited)
-    .sort((a,b) => b.score - a.score);
-
-  if (!scored.length) return { main: null, alts: [] };
-
-  const main = scored[0];
-  const alts = scored.slice(1, 4);
-  return { main, alts };
-}
-
-function googleMapsLink(lat, lon) {
-  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(lat + "," + lon)}`;
-}
-
-function renderResult({ main, alts }, mode, timeAvailMin) {
-  els.results.innerHTML = "";
-
-  if (!main) {
-    els.results.innerHTML = `
-      <div class="result">
-        <h2>Nessun luogo trovato <span class="pill bad">0 risultati</span></h2>
-        <div class="meta">
-          Prova così:
-          <ul>
-            <li>aumenta la distanza (es. 250–500 km)</li>
-            <li>cambia mezzo (Auto è il più affidabile)</li>
-            <li>attiva “Mostra anche visitati”</li>
-          </ul>
-        </div>
-      </div>
-    `;
-    return;
-  }
-
-  const mainTime = minutesFor(mode, main.distanceKm);
-  const okTime = mainTime <= timeAvailMin;
-
-  els.results.insertAdjacentHTML("beforeend", `
-    <div class="result" id="mainResult">
-      <h2>
-        <span>🎯 ${escapeHtml(main.name)}</span>
-        <span class="pill ${okTime ? "ok" : "bad"}">${okTime ? "ok col tempo" : "troppo lontano"}</span>
-      </h2>
-      <div class="meta">
-        <div>Tipo: <b>${describeKind(main)}</b></div>
-        <div>Distanza: <b>${main.distanceKm.toFixed(1)} km</b> • Tempo stimato: <b>${formatMinutes(mainTime)}</b> • Mezzo: <b>${modeLabel(mode)}</b></div>
-        <div class="muted">${main.tags.wikipedia ? "📚 Ha wikipedia: " + escapeHtml(main.tags.wikipedia) : ""}</div>
-      </div>
-      <div class="actions">
-        <button class="smallbtn primary" data-open="${googleMapsLink(main.lat, main.lon)}">📍 Apri su Maps</button>
-        <button class="smallbtn" data-toggle-visited="${main.id}">
-          ${main.visited ? "✅ Già visitato" : "☑️ Segna come visitato"}
-        </button>
-        <button class="smallbtn" id="rerollBtn">🎲 Cambia meta</button>
-      </div>
-
-      <div class="alts" id="alts">
-        <div class="muted" style="margin:6px 2px;">Alternative</div>
-        ${alts.map(a => altHtml(a, mode, timeAvailMin)).join("")}
-      </div>
-    </div>
-  `);
-
-  // bind buttons
-  els.results.querySelectorAll("[data-open]").forEach(btn => {
-    btn.addEventListener("click", () => window.open(btn.getAttribute("data-open"), "_blank"));
-  });
-  els.results.querySelectorAll("[data-toggle-visited]").forEach(btn => {
-    btn.addEventListener("click", () => toggleVisited(btn.getAttribute("data-toggle-visited")));
-  });
-  const rerollBtn = $("rerollBtn");
-  if (rerollBtn) rerollBtn.addEventListener("click", () => reroll(mode, timeAvailMin));
-}
-
-function reroll(mode, timeAvailMin) {
-  // “Reroll” = scegli un altro main dalle alternative + nuovi
-  // Semplice: rimescola e riprendi dall’ultimo dataset, ricominciando dalla selezione
-  if (!lastState.lastResult) return;
-  // aggiungi randomizzazione: ricalcoliamo score e repick
-  const visitedSet = loadVisitedSet();
-  const showVisited = els.showVisited.checked;
-  const preferFamous = els.preferFamous.checked;
-
-  const repicked = pickMainAndAlternatives(lastState.lastResult, visitedSet, showVisited, preferFamous);
-  renderResult(repicked, mode, timeAvailMin);
-}
-
-function toggleVisited(osmId) {
-  const set = loadVisitedSet();
-  if (set.has(osmId)) set.delete(osmId);
-  else set.add(osmId);
-  saveVisitedSet(set);
-
-  // ricarica UI mantenendo lo stesso dataset
-  const mode = els.mode.value;
-  const timeAvailMin = getTimeAvailableMin();
-  reroll(mode, timeAvailMin);
-}
-
-function escapeHtml(s) {
-  return String(s).replace(/[&<>"']/g, (m) => ({
-    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;"
-  }[m]));
-}
-
-function modeLabel(mode){
-  return ({
-    walk:"A piedi", bike:"Bici", car:"Auto", bus:"Bus", train:"Treno", plane:"Aereo"
-  })[mode] || mode;
-}
-function describeKind(c){
-  const k = c.kind || "";
-  if (k.startsWith("place:")) {
-    const p = k.split(":")[1];
-    return p === "city" ? "Città" : p === "town" ? "Paese" : p === "village" ? "Borgo" : "Luogo";
-  }
-  if (k === "waterfall") return "Cascata";
-  if (k === "peak") return "Montagna / cima";
-  if (k === "park") return "Parco / riserva";
+function describeDestinationTags(tags){
+  if(tags.place === "city") return "Città";
+  if(tags.place === "town") return "Paese";
+  if(tags.place === "village") return "Borgo";
+  if(tags.waterway === "waterfall") return "Cascata";
+  if(tags.natural === "peak") return "Montagna";
+  if(tags.boundary === "national_park" || tags.leisure === "nature_reserve") return "Parco/Riserva";
   return "Luogo";
 }
 
-function altHtml(a, mode, timeAvailMin){
-  const t = minutesFor(mode, a.distanceKm);
-  const ok = t <= timeAvailMin;
-  return `
-    <div class="alt">
-      <div class="altTitle">
-        <span>➡️ ${escapeHtml(a.name)}</span>
-        <span class="pill ${ok ? "ok" : "bad"}">${ok ? "ok" : "lontano"}</span>
-      </div>
+async function computeDoorToDoor(user, dest, mode){
+  // ritorna { totalMin, breakdown: { accessMin, lineMin, egressMin, notes[] }, feasible }
+  const notes = [];
+  if (mode === "car" || mode === "bike" || mode === "walk") {
+    const profile = mode === "car" ? "driving-car" : mode === "bike" ? "cycling-regular" : "foot-walking";
+    const data = await apiRoute([user.lon,user.lat],[dest.lon,dest.lat], profile);
+    const sec = data?.features?.[0]?.properties?.summary?.duration;
+    if(!sec) return { feasible:false, totalMin:Infinity, breakdown:{notes:["Routing non disponibile"]} };
+    return {
+      feasible:true,
+      totalMin: sec/60,
+      breakdown:{ accessMin: sec/60, lineMin: 0, egressMin: 0, notes }
+    };
+  }
+
+  // HUBS: per treno/bus cerchiamo stazioni; per aereo aeroporti
+  const isPlane = mode === "plane";
+  const hubRadiusUser = isPlane ? 120 : 60;      // quanto lontano cerchiamo hub
+  const hubRadiusDest = isPlane ? 120 : 60;
+
+  const hubsUserRaw = await apiHubs(user.lat, user.lon, hubRadiusUser);
+  const hubsDestRaw = await apiHubs(dest.lat, dest.lon, hubRadiusDest);
+
+  const hubsUserAll = normalizeElementsToPoints(hubsUserRaw);
+  const hubsDestAll = normalizeElementsToPoints(hubsDestRaw);
+
+  const hubsUser = hubsUserAll.filter(h => isPlane ? (h.tags.aeroway === "aerodrome" || h.tags.aeroway === "airport") : (h.tags.railway === "station" || h.tags.public_transport === "station"));
+  const hubsDest = hubsDestAll.filter(h => isPlane ? (h.tags.aeroway === "aerodrome" || h.tags.aeroway === "airport") : (h.tags.railway === "station" || h.tags.public_transport === "station"));
+
+  if (!hubsUser.length) {
+    notes.push(isPlane ? "Nessun aeroporto vicino alla tua posizione." : "Nessuna stazione vicino alla tua posizione.");
+    return { feasible:false, totalMin:Infinity, breakdown:{notes} };
+  }
+  if (!hubsDest.length) {
+    notes.push(isPlane ? "Nessun aeroporto vicino alla destinazione." : "Nessuna stazione vicino alla destinazione.");
+    return { feasible:false, totalMin:Infinity, breakdown:{notes} };
+  }
+
+  const hubFrom = nearest(user, hubsUser);
+  const hubTo = nearest(dest, hubsDest);
+
+  // 1) ACCESS: user -> hubFrom (routing reale in auto; se vuoi a piedi, si può cambiare)
+  const accessRoute = await apiRoute([user.lon,user.lat],[hubFrom.lon,hubFrom.lat],"driving-car");
+  const accessSec = accessRoute?.features?.[0]?.properties?.summary?.duration;
+  const accessMin = accessSec ? accessSec/60 : hubFrom.distKm/50*60;
+
+  // 2) EGRESS: hubTo -> dest (routing reale in auto)
+  const egressRoute = await apiRoute([hubTo.lon,hubTo.lat],[dest.lon,dest.lat],"driving-car");
+  const egressSec = egressRoute?.features?.[0]?.properties?.summary?.duration;
+  const egressMin = egressSec ? egressSec/60 : hubTo.distKm/50*60;
+
+  // 3) LINEHAUL: hubFrom -> hubTo (stima plausibile)
+  const airKm = haversineKm(hubFrom.lat, hubFrom.lon, hubTo.lat, hubTo.lon);
+
+  let lineMin = 0;
+  if (mode === "train") lineMin = (airKm / SPEED.train) * 60 + OVERHEAD.train_wait;
+  else if (mode === "bus") lineMin = (airKm / SPEED.bus) * 60 + OVERHEAD.bus_wait;
+  else if (mode === "plane") lineMin = (airKm / SPEED.plane) * 60 + OVERHEAD.flight_extra + OVERHEAD.airport + OVERHEAD.airport_exit;
+
+  // note informative “come arrivi a prenderlo”
+  notes.push(isPlane ? `Aeroporto partenza: ${hubFrom.name}` : `Stazione partenza: ${hubFrom.name}`);
+  notes.push(isPlane ? `Aeroporto arrivo: ${hubTo.name}` : `Stazione arrivo: ${hubTo.name}`);
+
+  const totalMin = accessMin + lineMin + egressMin;
+
+  return {
+    feasible:true,
+    totalMin,
+    breakdown:{
+      accessMin,
+      lineMin,
+      egressMin,
+      hubFrom,
+      hubTo,
+      airKm,
+      notes
+    }
+  };
+}
+
+function renderChoice(main, alts, timeLimitMin){
+  resultsEl.innerHTML = "";
+
+  const mk = (x) => `
+    <div class="result">
+      <h2>
+        <span>🎯 ${escapeHtml(x.dest.name)}</span>
+        <span class="pill ${x.totalMin <= timeLimitMin ? "ok" : "bad"}">${x.totalMin <= timeLimitMin ? "ok" : "troppo"}</span>
+      </h2>
       <div class="meta">
-        ${describeKind(a)} • <b>${a.distanceKm.toFixed(1)} km</b> • <b>${formatMinutes(t)}</b>
+        Tipo: <b>${escapeHtml(describeDestinationTags(x.dest.tags))}</b><br/>
+        Tempo totale: <b>${formatMin(x.totalMin)}</b><br/>
+        Breakdown: access <b>${formatMin(x.breakdown.accessMin||0)}</b> +
+        tratta <b>${formatMin(x.breakdown.lineMin||0)}</b> +
+        arrivo <b>${formatMin(x.breakdown.egressMin||0)}</b>
+        ${x.breakdown.notes?.length ? `<div class="muted" style="margin-top:6px">${x.breakdown.notes.map(n=>`• ${escapeHtml(n)}`).join("<br/>")}</div>` : ""}
       </div>
       <div class="actions">
-        <button class="smallbtn primary" data-open="${googleMapsLink(a.lat, a.lon)}">📍 Maps</button>
-        <button class="smallbtn" data-toggle-visited="${a.id}">
-          ${a.visited ? "✅ Già visitato" : "☑️ Visitato"}
-        </button>
+        <button class="smallbtn primary" data-open="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(x.dest.lat + "," + x.dest.lon)}">📍 Maps</button>
+        <button class="smallbtn" data-visit="${x.dest.id}">${x.visited ? "✅ Già visitato" : "☑️ Segna visitato"}</button>
       </div>
     </div>
   `;
-}
 
-function filterByTimeAndDistance(cands, mode, timeAvailMin, distMaxKm) {
-  // Prima filtro distanza, poi tempo stimato
-  return cands.filter(c => {
-    if (c.distanceKm > distMaxKm) return false;
-    const t = minutesFor(mode, c.distanceKm);
-    // per “plane/train” non tagliamo troppo stretto: lasciamo un 10% di tolleranza
-    const tol = (mode === "plane" || mode === "train") ? 1.1 : 1.0;
-    return t <= timeAvailMin * tol;
+  resultsEl.insertAdjacentHTML("beforeend", mk(main));
+
+  if (alts.length) {
+    resultsEl.insertAdjacentHTML("beforeend", `<div class="pill">Alternative</div>`);
+    for (const a of alts) resultsEl.insertAdjacentHTML("beforeend", mk(a));
+  }
+
+  resultsEl.querySelectorAll("[data-open]").forEach(b=>{
+    b.onclick = ()=> window.open(b.getAttribute("data-open"), "_blank");
+  });
+  resultsEl.querySelectorAll("[data-visit]").forEach(b=>{
+    b.onclick = ()=>{
+      const set = loadVisitedSet();
+      const id = b.getAttribute("data-visit");
+      if(set.has(id)) set.delete(id); else set.add(id);
+      saveVisitedSet(set);
+      b.textContent = set.has(id) ? "✅ Già visitato" : "☑️ Segna visitato";
+    };
   });
 }
 
-async function onGo() {
-  els.goBtn.disabled = true;
-  els.status.textContent = "📍 Sto leggendo il GPS…";
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
 
+goBtn.onclick = async () => {
   try {
-    const pos = await geoGetPosition();
-    const lat = pos.coords.latitude;
-    const lon = pos.coords.longitude;
+    goBtn.disabled = true;
+    statusEl.textContent = "📍 GPS…";
 
-    const mode = els.mode.value;
-    const timeAvailMin = getTimeAvailableMin();
-    const distMaxKm = getDistanceMaxKm();
-    const budget = els.budget.value;
+    const pos = await geoPos();
+    const user = { lat: pos.coords.latitude, lon: pos.coords.longitude };
 
-    // raggio query API: un po’ più grande della distanza max per avere candidati sufficienti
-    // (poi filtriamo in client)
-    const radiusKm = Math.min(1200, Math.max(distMaxKm * 1.3, 50));
+    const mode = modeEl.value;
+    const timeLimitMin = Number(timeEl.value);
+    const distMaxKm = Number(distEl.value);
 
-    els.status.textContent = `🔎 Cerco luoghi entro ~${Math.round(radiusKm)} km…`;
+    // raggio “coerente col tempo”, ma non più basso del distMax scelto
+    const radiusKm = Math.max(distMaxKm, pickRadiusKm(mode, timeLimitMin));
 
-    const raw = await fetchCandidates({ lat, lon, radiusKm });
+    statusEl.textContent = "🔎 Cerco luoghi…";
+    const raw = await apiDestinations(user.lat, user.lon, radiusKm);
+    let dests = normalizeElementsToPoints(raw).map(d => ({
+      ...d,
+      distKm: haversineKm(user.lat, user.lon, d.lat, d.lon)
+    }));
 
-    let cands = normalizeCandidates(raw, lat, lon);
-    cands = applyModeConstraints(cands, mode);
-    cands = applyBudgetSoft(cands, budget, mode);
-    cands = filterByTimeAndDistance(cands, mode, timeAvailMin, distMaxKm);
+    // primo filtro: distanza “a volo” per non calcolare routing su troppi
+    dests = dests.filter(d => d.distKm <= radiusKm).slice(0, 30);
 
-    // se troppo pochi, prova un rilassamento automatico (ma senza impazzire)
-    if (cands.length < 6 && distMaxKm < 800) {
-      const relaxed = normalizeCandidates(raw, lat, lon);
-      cands = applyModeConstraints(relaxed, mode);
-      cands = applyBudgetSoft(cands, budget, mode);
-      // rilassa solo tempo, non distanza
-      cands = cands.filter(c => c.distanceKm <= distMaxKm);
+    // escludi visitati se non vuoi mostrarli
+    const visitedSet = loadVisitedSet();
+    const showVisited = showVisitedEl?.checked ?? false;
+    if (!showVisited) dests = dests.filter(d => !visitedSet.has(d.id));
+
+    if (!dests.length) {
+      statusEl.textContent = "⚠️ Nessun luogo trovato. Aumenta km.";
+      resultsEl.innerHTML = "";
+      return;
     }
 
-    lastState.lastResult = cands;
+    statusEl.textContent = "⏱ Calcolo tempi porta-a-porta…";
 
-    const visitedSet = loadVisitedSet();
-    const showVisited = els.showVisited.checked;
-    const preferFamous = els.preferFamous.checked;
+    // Calcoliamo door-to-door sui migliori N candidati (veloce)
+    const scored = [];
+    for (const d of dests) {
+      try {
+        const r = await computeDoorToDoor(user, d, mode);
+        if (!r.feasible) continue;
+        scored.push({
+          dest: d,
+          totalMin: r.totalMin,
+          breakdown: r.breakdown,
+          visited: visitedSet.has(d.id),
+        });
+      } catch {
+        // se una rotta fallisce, salta candidato
+      }
+      // limitiamo per velocità: basta una dozzina calcolate
+      if (scored.length >= 12) break;
+    }
 
-    const pick = pickMainAndAlternatives(cands, visitedSet, showVisited, preferFamous);
+    if (!scored.length) {
+      statusEl.textContent = "⚠️ Nessuna meta coerente col mezzo (mancano hub). Prova Auto o aumenta raggio.";
+      resultsEl.innerHTML = "";
+      return;
+    }
 
-    // aggiorna visited flag negli oggetti (per UI)
-    if (pick.main) pick.main.visited = visitedSet.has(pick.main.id);
-    pick.alts.forEach(a => a.visited = visitedSet.has(a.id));
+    // filtro tempo totale <= tempo disponibile
+    const ok = scored.filter(x => x.totalMin <= timeLimitMin);
+    const final = (ok.length ? ok : scored).sort((a,b)=> a.totalMin - b.totalMin);
 
-    renderResult(pick, mode, timeAvailMin);
+    const main = final[0];
+    const alts = final.slice(1, 4);
 
-    els.status.textContent =
-      pick.main
-        ? `✅ Trovati ${cands.length} luoghi candidati.`
-        : `⚠️ Nessun risultato con questi filtri. Prova ad aumentare km o cambiare mezzo.`;
+    renderChoice(main, alts, timeLimitMin);
 
-  } catch (err) {
-    els.status.textContent = `❌ ${err.message || "Errore sconosciuto"}`;
-    els.results.innerHTML = `
-      <div class="result">
-        <h2>Errore</h2>
-        <div class="meta">${escapeHtml(err.message || String(err))}</div>
-      </div>
-    `;
+    statusEl.textContent = `✅ Meta scelta con tempo totale ${formatMin(main.totalMin)}.`;
+
+  } catch (e) {
+    statusEl.textContent = "❌ Errore: " + (e?.message || String(e));
   } finally {
-    els.goBtn.disabled = false;
+    goBtn.disabled = false;
   }
-}
-
-els.goBtn.addEventListener("click", onGo);
+};
