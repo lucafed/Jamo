@@ -1,36 +1,57 @@
 export default async function handler(req, res) {
   try {
     const key = process.env.ORS_API_KEY;
-    if (!key) return res.status(500).json({ error: "Missing ORS_API_KEY on server" });
+    if (!key) {
+      return res.status(500).json({ error: "ORS_API_KEY missing" });
+    }
 
-    const { lat, lon, profile = "driving-car", minutes = 60 } = req.query;
+    const { lat, lon, minutes = 60, profile = "driving-car" } = req.query;
 
-    if (!lat || !lon) return res.status(400).json({ error: "Missing lat/lon" });
+    if (!lat || !lon) {
+      return res.status(400).json({ error: "Missing lat/lon" });
+    }
 
-    const url = `https://api.openrouteservice.org/v2/isochrones/${encodeURIComponent(profile)}`;
+    const allowedProfiles = [
+      "driving-car",
+      "cycling-regular",
+      "foot-walking",
+    ];
 
-    const body = {
-      locations: [[Number(lon), Number(lat)]],
-      range: [Number(minutes) * 60], // secondi
-      range_type: "time",
-    };
+    if (!allowedProfiles.includes(profile)) {
+      return res.status(400).json({ error: "Profile not supported" });
+    }
 
-    const r = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Authorization": key,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
-    });
+    const response = await fetch(
+      `https://api.openrouteservice.org/v2/isochrones/${profile}`,
+      {
+        method: "POST",
+        headers: {
+          "Authorization": key,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          locations: [[Number(lon), Number(lat)]],
+          range: [Number(minutes) * 60],
+          range_type: "time",
+        }),
+      }
+    );
 
-    const text = await r.text();
-    if (!r.ok) {
-      return res.status(r.status).json({ error: "ORS error", status: r.status, details: text });
+    const text = await response.text();
+
+    if (!response.ok) {
+      return res.status(response.status).json({
+        error: "ORS error",
+        status: response.status,
+        details: text,
+      });
     }
 
     return res.status(200).json(JSON.parse(text));
-  } catch (e) {
-    return res.status(500).json({ error: "Server error", details: String(e) });
+  } catch (err) {
+    return res.status(500).json({
+      error: "Server error",
+      details: String(err),
+    });
   }
 }
