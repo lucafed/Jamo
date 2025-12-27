@@ -1,17 +1,12 @@
 /**
- * JAMO v0.9 – Destinazioni + Cosa fare + “Già visitato”
- *
- * - Destinazioni: borghi + luoghi famosi (OSM Overpass)
- * - Dopo la meta: POI (cosa vedere/fare)
- * - “Segna come visitato”: salva su localStorage del telefono
- * - In future ricerche: per default NON propone i visitati
- *
- * Impostazione:
- *   EXCLUDE_VISITED = true  -> non li propone
- *   EXCLUDE_VISITED = false -> li mostra con badge “Già visitato”
+ * JAMO v1.0 – FAST SEARCH
+ * - 2 step: (A) places, (B) landmarks solo se serve
+ * - Limiti e abort per non “impallare” su mobile
+ * - Overpass fallback 2 server
+ * - Visitati (localStorage) incluso
  */
 
-const EXCLUDE_VISITED = true;
+const EXCLUDE_VISITED = true; // true = non mostra i visitati
 
 const $ = (id) => document.getElementById(id);
 
@@ -23,7 +18,6 @@ const radiusEl = $("radiusKm");
 const modeEl = $("mode");
 const timeEl = $("timeBudgetMin");
 const budgetEl = $("budget");
-const placeTypeEl = $("placeType");
 const vibeEl = $("vibe");
 
 const OVERPASS_ENDPOINTS = [
@@ -49,10 +43,9 @@ btnGo.addEventListener("click", async () => {
     const mode = modeEl.value;
     const timeBudgetMin = parseOptionalNumber(timeEl.value);
     const budgetMax = parseOptionalNumber(budgetEl.value);
-
     const vibe = vibeEl.value;
 
-    // Aereo: raggio più grande e distanza minima
+    // Aereo: raggio più sensato
     if (mode === "plane" && radiusKm < 500) {
       radiusKm = 500;
       radiusMeters = 500 * 1000;
@@ -60,28 +53,39 @@ btnGo.addEventListener("click", async () => {
 
     const minDistanceKm = (mode === "plane") ? 120 : 2.5;
 
-    setStatus(`🔎 Cerco destinazioni entro ${radiusKm} km…`);
+    setStatus(`🔎 Step 1/2: cerco LUOGHI entro ${radiusKm} km…`);
+    let destinations = await fetchPlacesFast(user.lat, user.lon, radiusMeters);
 
-    // 1) destinazioni
-    let destinations = await fetchDestinations(user.lat, user.lon, radiusMeters);
+    // Se luoghi pochi, aggiungiamo landmarks (Marmore, Gran Sasso, Stiffe…)
+    if (destinations.length < 30) {
+      setStatus("🔎 Step 2/2: aggiungo LUOGHI FAMOSI (cascate, vette, grotte)…");
+      const landmarks = await fetchLandmarksFast(user.lat, user.lon, radiusMeters);
+      destinations = mergeDedup(destinations, landmarks);
+    }
 
-    // fallback: se niente, aumenta raggio minimo 150km
+    // fallback se zero: aumenta raggio una volta
     if (!destinations.length) {
       const emergencyKm = Math.max(radiusKm, 150);
-      setStatus(`Ancora nulla. Aumento il raggio a ${emergencyKm} km…`);
-      destinations = await fetchDestinations(user.lat, user.lon, emergencyKm * 1000);
+      setStatus(`Niente trovato. Aumento raggio a ${emergencyKm} km…`);
+      const emMeters = emergencyKm * 1000;
+
+      let places = await fetchPlacesFast(user.lat, user.lon, emMeters);
+      let landmarks = [];
+      if (places.length < 30) landmarks = await fetchLandmarksFast(user.lat, user.lon, emMeters);
+
+      destinations = mergeDedup(places, landmarks);
       radiusKm = emergencyKm;
-      radiusMeters = emergencyKm * 1000;
+      radiusMeters = emMeters;
     }
 
     if (!destinations.length) {
-      setStatus("Non trovo destinazioni (Overpass può essere lento). Riprova tra poco o aumenta il raggio.", true);
+      setStatus("Ancora nulla. Overpass può essere intasato: riprova tra 1 minuto o cambia raggio.", true);
       return;
     }
 
-    // 2) distanze + stime
     const visited = loadVisited();
 
+    // Score + filtri
     let scored = destinations
       .map((d) => ({
         ...d,
@@ -98,13 +102,10 @@ btnGo.addEventListener("click", async () => {
       .sort((a, b) => b.score - a.score);
 
     if (!scored.length) {
-      setStatus(EXCLUDE_VISITED
-        ? "Hai già visitato tutto quello che rientra nei filtri 😄 Prova ad aumentare raggio/tempo o disattivare esclusione visitati (lo faremo dopo)."
-        : "Tutto troppo vicino per i filtri scelti. Aumenta il raggio.", true);
+      setStatus("Con questi filtri non resta nulla (o sono tutti visitati). Prova ad aumentare raggio/tempo.", true);
       return;
     }
 
-    // 3) filtri tempo/budget
     const filtered = scored.filter((d) => {
       if (timeBudgetMin != null && d.est.minutes > timeBudgetMin) return false;
       if (budgetMax != null && d.est.cost > budgetMax) return false;
@@ -114,7 +115,7 @@ btnGo.addEventListener("click", async () => {
     const finalList = filtered.length ? filtered : scored;
 
     if (!filtered.length) {
-      setStatus("⚠️ Con tempo/budget scelti non esce nulla: ti mostro comunque le migliori destinazioni (aumenta tempo/budget).", true);
+      setStatus("⚠️ Tempo/Budget troppo stretti: ti mostro comunque le migliori (aumenta tempo/budget).", true);
     } else {
       setStatus("✅ Fatto.");
     }
@@ -122,12 +123,9 @@ btnGo.addEventListener("click", async () => {
     const main = finalList[0];
     const alternatives = finalList.slice(1, 4);
 
-    render(main, alternatives, {
-      mode, radiusKm, vibe,
-      timeBudgetMin, budgetMax, minDistanceKm
-    });
+    render(main, alternatives, { mode, radiusKm, vibe, timeBudgetMin, budgetMax, minDistanceKm });
 
-    // Auto-show “cosa fare” sul principale
+    // POI sotto al luogo principale
     await showThingsToDoForDestination(main);
 
   } catch (err) {
@@ -139,63 +137,39 @@ btnGo.addEventListener("click", async () => {
   }
 });
 
-/* ===================== VISITED (localStorage) ===================== */
+/* ===================== FAST QUERIES ===================== */
 
-function loadVisited() {
-  try {
-    const raw = localStorage.getItem(VISITED_KEY);
-    if (!raw) return {};
-    const obj = JSON.parse(raw);
-    return (obj && typeof obj === "object") ? obj : {};
-  } catch {
-    return {};
-  }
-}
-
-function saveVisited(map) {
-  localStorage.setItem(VISITED_KEY, JSON.stringify(map));
-}
-
-function visitedId(dest) {
-  // id stabile: nome + coordinate (arrotondate)
-  const name = (dest.name || "").trim().toLowerCase();
-  return `${name}|${dest.lat.toFixed(5)}|${dest.lon.toFixed(5)}`;
-}
-
-function isVisited(dest, visitedMap) {
-  return !!visitedMap[visitedId(dest)];
-}
-
-function toggleVisited(dest) {
-  const visited = loadVisited();
-  const id = visitedId(dest);
-  if (visited[id]) delete visited[id];
-  else visited[id] = { name: dest.name, lat: dest.lat, lon: dest.lon, ts: Date.now() };
-  saveVisited(visited);
-  return !(!visited[id]); // true se ora è visitato
-}
-
-/* ===================== DESTINATIONS = places + landmarks ===================== */
-
-async function fetchDestinations(lat, lon, radiusMeters) {
+// Step A: Places (veloce)
+async function fetchPlacesFast(lat, lon, radiusMeters) {
   const query = `
-[out:json][timeout:25];
+[out:json][timeout:15];
 (
-  // A) BORGI / CITTA'
   nwr(around:${radiusMeters},${lat},${lon})["place"~"city|town|village|hamlet|locality|suburb"];
+);
+out center qt 250;
+`;
+  const json = await fetchOverpassFast(query, 12000);
+  return normalizeDestinations(json, "place");
+}
 
-  // B) LUOGHI FAMOSI / NATURALI
-  nwr(around:${radiusMeters},${lat},${lon})["natural"~"peak|waterfall|cave|bay|beach|wood"];
+// Step B: Landmarks (solo se serve)
+async function fetchLandmarksFast(lat, lon, radiusMeters) {
+  const query = `
+[out:json][timeout:15];
+(
+  nwr(around:${radiusMeters},${lat},${lon})["natural"~"waterfall|peak|cave|beach|spring|wood"];
   nwr(around:${radiusMeters},${lat},${lon})["tourism"~"attraction|viewpoint"];
   nwr(around:${radiusMeters},${lat},${lon})["leisure"~"nature_reserve|park"];
   nwr(around:${radiusMeters},${lat},${lon})["historic"~"castle|ruins|monument|archaeological_site"];
 );
-out center tags;
+out center qt 250;
 `;
+  const json = await fetchOverpassFast(query, 12000);
+  return normalizeDestinations(json, "landmark");
+}
 
-  const json = await fetchOverpass(query);
+function normalizeDestinations(json, kindDefault) {
   const els = Array.isArray(json.elements) ? json.elements : [];
-
   const parsed = els.map((e) => {
     const tags = e.tags || {};
     const name = tags.name || tags["name:it"] || null;
@@ -203,9 +177,10 @@ out center tags;
     const cLon = e.lon ?? e.center?.lon;
     if (!cLat || !cLon) return null;
 
-    const kind = tags.place ? "place" : "landmark";
-    const typeLabel = inferDestinationLabel(tags);
+    const kind = tags.place ? "place" : kindDefault;
+    const typeLabel = inferLabel(tags);
 
+    // scarta roba senza nome troppo generica
     if (!name && kind === "landmark" && typeLabel === "Luogo") return null;
 
     return {
@@ -219,20 +194,10 @@ out center tags;
     };
   }).filter(Boolean);
 
-  // dedup
-  const seen = new Set();
-  const out = [];
-  for (const d of parsed) {
-    const key = `${d.name}|${d.lat.toFixed(4)}|${d.lon.toFixed(4)}`;
-    if (seen.has(key)) continue;
-    seen.add(key);
-    out.push(d);
-  }
-
-  return out.slice(0, 700);
+  return dedupByNameAndCoords(parsed).slice(0, 400);
 }
 
-function inferDestinationLabel(tags) {
+function inferLabel(tags) {
   // places
   if (tags.place === "city") return "Città";
   if (tags.place === "town") return "Paese";
@@ -255,21 +220,67 @@ function inferDestinationLabel(tags) {
   return "Luogo";
 }
 
-/* ===================== POI = cosa vedere/fare vicino ===================== */
+function mergeDedup(a, b) {
+  return dedupByNameAndCoords([...(a || []), ...(b || [])]);
+}
+
+function dedupByNameAndCoords(list) {
+  const seen = new Set();
+  const out = [];
+  for (const d of list) {
+    const key = `${(d.name || "").toLowerCase()}|${d.lat.toFixed(4)}|${d.lon.toFixed(4)}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(d);
+  }
+  return out;
+}
+
+/* ===================== OVERPASS FAST (abort + fallback server) ===================== */
+
+async function fetchOverpassFast(query, abortMs = 12000) {
+  let lastErr = null;
+
+  for (const url of OVERPASS_ENDPOINTS) {
+    const controller = new AbortController();
+    const t = setTimeout(() => controller.abort(), abortMs);
+
+    try {
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" },
+        body: "data=" + encodeURIComponent(query),
+        signal: controller.signal
+      });
+      clearTimeout(t);
+
+      if (!res.ok) throw new Error(`Overpass ${url} status ${res.status}`);
+      return await res.json();
+    } catch (e) {
+      clearTimeout(t);
+      lastErr = e;
+      // prova il prossimo endpoint
+    }
+  }
+
+  throw lastErr || new Error("Overpass non disponibile");
+}
+
+/* ===================== POI “cosa vedere/fare” ===================== */
 
 async function fetchThingsToDo(lat, lon, radiusMeters) {
   const query = `
-[out:json][timeout:25];
+[out:json][timeout:15];
 (
-  nwr(around:${radiusMeters},${lat},${lon})["tourism"~"attraction|museum|gallery|viewpoint|zoo|theme_park"];
+  nwr(around:${radiusMeters},${lat},${lon})["tourism"~"attraction|museum|gallery|viewpoint"];
   nwr(around:${radiusMeters},${lat},${lon})["historic"];
   nwr(around:${radiusMeters},${lat},${lon})["leisure"~"park|garden|nature_reserve"];
-  nwr(around:${radiusMeters},${lat},${lon})["natural"~"beach|peak|waterfall|cave|spring|wood"];
+  nwr(around:${radiusMeters},${lat},${lon})["natural"~"waterfall|peak|cave|beach|spring|wood"];
   nwr(around:${radiusMeters},${lat},${lon})["amenity"~"restaurant|cafe|bar|pub"];
 );
-out center tags;
+out center qt 40;
 `;
-  const json = await fetchOverpass(query);
+  const json = await fetchOverpassFast(query, 12000);
   const els = Array.isArray(json.elements) ? json.elements : [];
 
   const parsed = els.map((e) => {
@@ -289,76 +300,62 @@ out center tags;
     };
   }).filter(Boolean);
 
-  const seen = new Set();
-  const out = [];
-  for (const p of parsed) {
-    const key = `${p.name}|${p.lat.toFixed(5)}|${p.lon.toFixed(5)}`;
-    if (seen.has(key)) continue;
-    seen.add(key);
-    out.push(p);
-  }
-
-  out.sort((a, b) => poiRank(b.tags) - poiRank(a.tags));
-  return out.slice(0, 15);
+  return dedupByNameAndCoords(parsed).slice(0, 15);
 }
 
 function inferPoiType(tags) {
-  const t = tags.tourism;
-  const h = tags.historic;
-  const l = tags.leisure;
-  const n = tags.natural;
-  const a = tags.amenity;
-
-  if (t === "museum") return "Museo";
-  if (t === "gallery") return "Galleria";
-  if (t === "viewpoint") return "Belvedere";
-  if (t === "attraction") return "Attrazione";
-  if (t === "zoo") return "Zoo";
-  if (t === "theme_park") return "Parco divertimenti";
-  if (h) return "Luogo storico";
-  if (l === "park") return "Parco";
-  if (l === "garden") return "Giardino";
-  if (l === "nature_reserve") return "Riserva naturale";
-  if (n === "beach") return "Spiaggia";
-  if (n === "peak") return "Vetta";
-  if (n === "waterfall") return "Cascata";
-  if (n === "cave") return "Grotta";
-  if (a === "restaurant") return "Ristorante";
-  if (a === "cafe") return "Caffè";
-  if (a === "bar") return "Bar";
-  if (a === "pub") return "Pub";
+  if (tags.tourism === "museum") return "Museo";
+  if (tags.tourism === "gallery") return "Galleria";
+  if (tags.tourism === "viewpoint") return "Belvedere";
+  if (tags.tourism === "attraction") return "Attrazione";
+  if (tags.historic) return "Luogo storico";
+  if (tags.natural === "waterfall") return "Cascata";
+  if (tags.natural === "peak") return "Vetta";
+  if (tags.natural === "cave") return "Grotta";
+  if (tags.leisure === "park") return "Parco";
+  if (tags.amenity === "restaurant") return "Ristorante";
+  if (tags.amenity === "cafe") return "Caffè";
+  if (tags.amenity === "bar") return "Bar";
+  if (tags.amenity === "pub") return "Pub";
   return "Punto d’interesse";
 }
 
-function poiRank(tags) {
-  if (tags.tourism === "attraction" || tags.tourism === "museum" || tags.historic) return 5;
-  if (tags.tourism === "viewpoint" || tags.natural) return 4;
-  if (tags.leisure) return 3;
-  if (tags.amenity) return 2;
-  return 1;
-}
+/* ===================== VISITED ===================== */
 
-/* ===================== Overpass with fallback ===================== */
-
-async function fetchOverpass(query) {
-  let lastErr = null;
-  for (const url of OVERPASS_ENDPOINTS) {
-    try {
-      const res = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" },
-        body: "data=" + encodeURIComponent(query),
-      });
-      if (!res.ok) throw new Error(`Overpass ${url} status ${res.status}`);
-      return await res.json();
-    } catch (e) {
-      lastErr = e;
-    }
+function loadVisited() {
+  try {
+    const raw = localStorage.getItem(VISITED_KEY);
+    if (!raw) return {};
+    const obj = JSON.parse(raw);
+    return (obj && typeof obj === "object") ? obj : {};
+  } catch {
+    return {};
   }
-  throw lastErr || new Error("Overpass non disponibile");
 }
 
-/* ===================== Estimates + scoring ===================== */
+function saveVisited(map) {
+  localStorage.setItem(VISITED_KEY, JSON.stringify(map));
+}
+
+function visitedId(dest) {
+  const name = (dest.name || "").trim().toLowerCase();
+  return `${name}|${dest.lat.toFixed(5)}|${dest.lon.toFixed(5)}`;
+}
+
+function isVisited(dest, visitedMap) {
+  return !!visitedMap[visitedId(dest)];
+}
+
+function toggleVisited(dest) {
+  const visited = loadVisited();
+  const id = visitedId(dest);
+  if (visited[id]) delete visited[id];
+  else visited[id] = { name: dest.name, lat: dest.lat, lon: dest.lon, ts: Date.now() };
+  saveVisited(visited);
+  return !!visited[id];
+}
+
+/* ===================== ESTIMATES + SCORE ===================== */
 
 function estimateTrip(distanceKm, mode) {
   const speeds = { car:55, train:75, bus:40, walk:4.5, bike:14, plane:650 };
@@ -378,7 +375,6 @@ function estimateTrip(distanceKm, mode) {
   if (mode === "car") cost = distanceKm * 0.20;
   else if (mode === "train") cost = 3 + distanceKm * 0.10;
   else if (mode === "bus") cost = 2.2 + distanceKm * 0.06;
-  else cost = 0;
 
   return { minutes, cost: round2(cost) };
 }
@@ -390,6 +386,7 @@ function scoreDestination(d, vibe, mode) {
   if (d.kind === "landmark") s += 4;
   if (d.name && d.name.length >= 4) s += 2;
 
+  // distanza
   if (mode === "plane") {
     if (km < 150) s -= 20;
     else if (km <= 400) s += 10;
@@ -402,15 +399,12 @@ function scoreDestination(d, vibe, mode) {
     else s += 2;
   }
 
+  // vibe
   if (vibe === "quick") { if (km <= 40) s += 4; else s -= 2; }
   if (vibe === "chill") { if (km <= 120) s += 2; }
   if (vibe === "adventure") { if (km >= 20 && km <= 200) s += 3; }
-  if (vibe === "romantic") {
-    if (d.typeLabel === "Borgo" || d.typeLabel === "Paese") s += 2;
-    if (d.typeLabel === "Belvedere") s += 2;
-  }
 
-  s += Math.random() * 1.1;
+  s += Math.random() * 0.8;
   return s;
 }
 
@@ -459,13 +453,6 @@ function destCard(title, d, isMain) {
     wrap.appendChild(pill);
   }
 
-  if (!EXCLUDE_VISITED && already) {
-    const pillV = document.createElement("div");
-    pillV.className = "pill";
-    pillV.textContent = "✅ Già visitato";
-    wrap.appendChild(pillV);
-  }
-
   const name = document.createElement("p");
   name.className = "name";
   name.textContent = d.name;
@@ -498,7 +485,6 @@ function destCard(title, d, isMain) {
   btnVisited.onclick = () => {
     const nowVisited = toggleVisited(d);
     btnVisited.textContent = nowVisited ? "↩️ Rimuovi visitato" : "✅ Segna visitato";
-    // se EXCLUDE_VISITED è true e lo segni visitato, lo togliamo dalla UI subito
     if (EXCLUDE_VISITED && nowVisited) {
       wrap.remove();
       setStatus("✅ Segnato come visitato. Nelle prossime ricerche non verrà proposto.");
@@ -508,7 +494,6 @@ function destCard(title, d, isMain) {
 
   wrap.appendChild(actions);
 
-  // box POI
   const box = document.createElement("div");
   box.className = "panel";
   box.style.marginTop = "10px";
@@ -519,7 +504,7 @@ function destCard(title, d, isMain) {
   if (isMain) {
     const hint = document.createElement("div");
     hint.className = "pill";
-    hint.textContent = "Segna visitato per non rivederlo in futuro 👇";
+    hint.textContent = "Sotto trovi cosa vedere/fare. Se non ti convince, prova una alternativa 👇";
     wrap.appendChild(hint);
   }
 
@@ -604,22 +589,25 @@ function labelVibe(v){
   return ({any:"✨ Qualsiasi",quick:"⚡ Vicino e veloce",chill:"🧘 Tranquillo",adventure:"🧗 Fuori porta",romantic:"💘 Romantico"})[v] || v;
 }
 
-/* ===================== Utils ===================== */
+/* ===================== UTILS ===================== */
 
 function setStatus(text, isError = false) {
   statusEl.textContent = text;
   statusEl.className = isError ? "error" : "muted";
 }
+
 function parseOptionalNumber(v) {
   const n = Number(String(v || "").trim());
   if (!Number.isFinite(n) || n <= 0) return null;
   return n;
 }
+
 function getCurrentPosition(options) {
   return new Promise((resolve, reject) => {
     navigator.geolocation.getCurrentPosition(resolve, reject, options);
   });
 }
+
 function haversineKm(lat1, lon1, lat2, lon2) {
   const R = 6371;
   const dLat = deg2rad(lat2 - lat1);
@@ -631,6 +619,7 @@ function haversineKm(lat1, lon1, lat2, lon2) {
   return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
 }
 function deg2rad(deg) { return deg * (Math.PI / 180); }
+
 function escapeHtml(str) {
   return String(str)
     .replaceAll("&", "&amp;")
