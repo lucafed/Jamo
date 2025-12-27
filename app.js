@@ -1,126 +1,172 @@
-const goBtn = document.getElementById("goBtn");
 const timeSelect = document.getElementById("timeSelect");
-const statusEl = document.getElementById("status");
+const modeSelect = document.getElementById("modeSelect");
+const goBtn = document.getElementById("goBtn");
 
+const statusEl = document.getElementById("status");
 const resultEl = document.getElementById("result");
 const placeNameEl = document.getElementById("placeName");
-const placeWhyEl = document.getElementById("placeWhy");
-const badgeTimeEl = document.getElementById("badgeTime");
-const badgeKmEl = document.getElementById("badgeKm");
+const placeMetaEl = document.getElementById("placeMeta");
 const mapsLinkEl = document.getElementById("mapsLink");
-const visitedBtn = document.getElementById("visitedBtn");
 const altListEl = document.getElementById("altList");
+const visitedBtn = document.getElementById("visitedBtn");
+const footerInfo = document.getElementById("footerInfo");
 
-const VISITED_KEY = "jamo_visited_places_v1";
+let lastTop = null;
 
-function getVisitedSet() {
-  try {
-    const raw = localStorage.getItem(VISITED_KEY);
-    const arr = raw ? JSON.parse(raw) : [];
-    return new Set(arr);
-  } catch {
-    return new Set();
-  }
+// --- storage "già visitato"
+const VISITED_KEY = "jamo_visited_v1";
+function loadVisited() {
+  try { return JSON.parse(localStorage.getItem(VISITED_KEY) || "[]"); }
+  catch { return []; }
 }
-function saveVisitedSet(set) {
-  localStorage.setItem(VISITED_KEY, JSON.stringify([...set]));
+function saveVisited(list) {
+  localStorage.setItem(VISITED_KEY, JSON.stringify(list.slice(0, 500)));
+}
+function markVisited(placeId) {
+  const v = new Set(loadVisited());
+  v.add(placeId);
+  saveVisited([...v]);
+}
+function isVisited(placeId) {
+  return new Set(loadVisited()).has(placeId);
 }
 
-function setStatus(msg = "", isError = true) {
-  statusEl.style.color = isError ? "#ff8080" : "#A0B2BA";
+// --- UI helpers
+function setStatus(msg, isErr=false, isOk=false){
   statusEl.textContent = msg;
+  statusEl.classList.toggle("err", !!isErr);
+  statusEl.classList.toggle("ok", !!isOk);
+}
+function setLoading(loading){
+  goBtn.disabled = loading;
+  goBtn.textContent = loading ? "⏳ Cerco un posto..." : "🎲 DOVE ANDIAMO?";
+}
+function hideResult(){
+  resultEl.classList.add("hidden");
+  lastTop = null;
+}
+function showResult(){
+  resultEl.classList.remove("hidden");
 }
 
-function getGPS() {
+// --- Geo
+function getPosition(){
   return new Promise((resolve, reject) => {
-    if (!navigator.geolocation) return reject(new Error("GPS non supportato dal browser."));
-    navigator.geolocation.getCurrentPosition(
-      (pos) => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-      (err) => reject(err),
-      { enableHighAccuracy: true, timeout: 12000, maximumAge: 30000 }
-    );
+    if (!navigator.geolocation) return reject(new Error("Geolocalizzazione non supportata."));
+    navigator.geolocation.getCurrentPosition(resolve, reject, {
+      enableHighAccuracy: true,
+      timeout: 12000,
+      maximumAge: 30000
+    });
   });
 }
 
-function kmFromMeters(m) {
-  return Math.round((m / 1000) * 10) / 10;
+function fmtKm(km){
+  if (km == null) return "";
+  if (km < 10) return km.toFixed(1) + " km";
+  return Math.round(km) + " km";
+}
+function fmtMin(min){
+  if (min == null) return "";
+  if (min < 60) return `${Math.round(min)} min`;
+  const h = Math.floor(min/60);
+  const m = Math.round(min%60);
+  return m ? `${h}h ${m}m` : `${h}h`;
 }
 
-function googleMapsLink(lat, lng, label) {
-  const q = encodeURIComponent(label ? `${label}` : `${lat},${lng}`);
-  return `https://www.google.com/maps/search/?api=1&query=${q}&query_place_id=`;
-}
-
-function renderResult(payload) {
-  resultEl.classList.remove("hidden");
+function renderResult(payload){
+  // GUARDIA (evita "— —")
+  if (!payload || !payload.top) {
+    hideResult();
+    return;
+  }
 
   const top = payload.top;
-  placeNameEl.textContent = top.name;
-  badgeTimeEl.textContent = `⏱️ ${top.eta_minutes} min`;
-  badgeKmEl.textContent = `📍 ${top.distance_km} km`;
+  lastTop = top;
 
-  placeWhyEl.textContent = top.reason;
+  const visited = isVisited(top.id);
+  const visitedTag = visited ? " • (già visitato)" : "";
 
-  mapsLinkEl.href = googleMapsLink(top.lat, top.lng, top.name);
+  placeNameEl.textContent = top.name + visitedTag;
+  placeMetaEl.textContent = `${fmtKm(top.distance_km)} • ${fmtMin(top.eta_min)} • mezzo: ${payload.mode}`;
 
-  // visited handling
-  const visited = getVisitedSet();
-  const key = top.id;
-  const isVisited = visited.has(key);
-  visitedBtn.textContent = isVisited ? "✅ Già segnato come visitato" : "✅ Segna come “già visitato”";
-  visitedBtn.disabled = isVisited;
+  mapsLinkEl.href = top.maps_url;
 
-  visitedBtn.onclick = () => {
-    const v = getVisitedSet();
-    v.add(key);
-    saveVisitedSet(v);
-    visitedBtn.textContent = "✅ Già segnato come visitato";
-    visitedBtn.disabled = true;
-  };
-
-  // alternatives
+  // Alternative
   altListEl.innerHTML = "";
-  for (const alt of payload.alternatives || []) {
-    const li = document.createElement("li");
-    const a = document.createElement("a");
-    a.href = googleMapsLink(alt.lat, alt.lng, alt.name);
-    a.target = "_blank";
-    a.rel = "noopener";
-    a.textContent = `${alt.name} — ${alt.eta_minutes} min • ${alt.distance_km} km`;
-    li.appendChild(a);
-    altListEl.appendChild(li);
-  }
+  (payload.alternatives || []).forEach((a) => {
+    const div = document.createElement("div");
+    div.className = "alt-item";
+    const v = isVisited(a.id) ? " • (già visitato)" : "";
+    div.innerHTML = `
+      <div class="name">${a.name}${v}</div>
+      <div class="meta">${fmtKm(a.distance_km)} • ${fmtMin(a.eta_min)}</div>
+      <a class="linkbtn" href="${a.maps_url}" target="_blank" rel="noopener">Apri</a>
+    `;
+    altListEl.appendChild(div);
+  });
+
+  visitedBtn.textContent = visited ? "✅ Già segnato" : "✅ Segna come “già visitato”";
+  visitedBtn.disabled = visited;
+
+  showResult();
 }
 
+visitedBtn.addEventListener("click", () => {
+  if (!lastTop) return;
+  markVisited(lastTop.id);
+  visitedBtn.textContent = "✅ Già segnato";
+  visitedBtn.disabled = true;
+  placeNameEl.textContent = lastTop.name + " • (già visitato)";
+});
+
 goBtn.addEventListener("click", async () => {
+  setLoading(true);
+  hideResult();
+  setStatus("📍 Prendo il GPS...", false);
+
   try {
-    setStatus("");
-    resultEl.classList.add("hidden");
-    goBtn.disabled = true;
+    const pos = await getPosition();
+    const lat = pos.coords.latitude;
+    const lng = pos.coords.longitude;
 
-    setStatus("📍 Prendo la tua posizione…", false);
-    const { lat, lng } = await getGPS();
+    const minutes = parseInt(timeSelect.value, 10);
+    const mode = modeSelect.value;
 
-    const minutes = Number(timeSelect.value);
+    setStatus("🧠 Calcolo zona raggiungibile e cerco luoghi reali...", false);
 
-    setStatus("🔎 Cerco un luogo reale coerente col tempo…", false);
+    const visited = loadVisited();
 
-    const res = await fetch(`/api/suggest?lat=${encodeURIComponent(lat)}&lng=${encodeURIComponent(lng)}&minutes=${encodeURIComponent(minutes)}`, {
-      method: "GET",
-      headers: { "Accept": "application/json" }
-    });
+    const url = `/api/suggest?lat=${encodeURIComponent(lat)}&lng=${encodeURIComponent(lng)}&minutes=${encodeURIComponent(minutes)}&mode=${encodeURIComponent(mode)}&visited=${encodeURIComponent(visited.join(","))}`;
 
+    const res = await fetch(url, { method: "GET" });
     const data = await res.json().catch(() => ({}));
 
     if (!res.ok) {
-      throw new Error(data?.error || `Errore API (${res.status})`);
+      const msg = data?.details?.error || data?.error || `Errore API (${res.status}).`;
+      setStatus("❌ " + msg, true);
+      hideResult();
+      return;
     }
 
+    // FIX CHIAVE: se top è null, NON renderizzare “— —”
+    if (!data.top) {
+      setStatus(
+        "⚠️ Nessun luogo trovato con questo tempo.\nProva ad aumentare i minuti o cambia mezzo.",
+        true
+      );
+      hideResult();
+      return;
+    }
+
+    setStatus("✅ Trovato!", false, true);
+    footerInfo.textContent = `Versione 2.0 • ${data.engine} • ${data.source}`;
     renderResult(data);
-    setStatus("", false);
+
   } catch (e) {
-    setStatus(`❌ ${e.message || e}`, true);
+    setStatus("❌ " + (e?.message || "Errore sconosciuto"), true);
+    hideResult();
   } finally {
-    goBtn.disabled = false;
+    setLoading(false);
   }
 });
