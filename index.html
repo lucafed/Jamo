@@ -19,7 +19,7 @@
       color:var(--text); min-height:100vh; display:flex; align-items:center; justify-content:center; padding:18px;
     }
     .card{
-      width:min(560px, 100%);
+      width:min(600px, 100%);
       background:rgba(20,28,34,.82);
       border:1px solid rgba(255,255,255,.08);
       border-radius:20px; padding:18px;
@@ -30,13 +30,13 @@
     .subtitle{color:var(--muted); margin:0 0 16px; line-height:1.4;}
     .row{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px;}
     .field{
-      flex:1; min-width: 160px;
+      flex:1; min-width: 170px;
       background:rgba(255,255,255,.04);
       border:1px solid rgba(255,255,255,.08);
       border-radius:14px; padding:10px;
     }
     label{display:block; font-size:12px; color:var(--muted); margin-bottom:6px;}
-    select, input{
+    select{
       width:100%; background:transparent; border:none; outline:none; color:var(--text); font-size:16px;
     }
     option{color:#000}
@@ -69,7 +69,7 @@
       background:rgba(255,255,255,.04);
     }
     .dest .name{font-weight:800; font-size:18px; margin:0 0 2px}
-    .dest .meta{color:var(--muted); font-size:13px; margin:0}
+    .dest .meta{color:var(--muted); font-size:13px; margin:0; white-space:pre-line}
     .dest .actions{margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;}
     .smallbtn{
       border:1px solid rgba(255,255,255,.12);
@@ -86,30 +86,51 @@
   <main class="card">
     <div class="title">Jamo</div>
     <p class="subtitle">
-      Dimmi <b>come</b> vuoi muoverti e <b>quanto tempo</b> hai: Jamo ti propone <b>dove andare</b>.
+      Scegli <b>mezzo</b>, <b>tempo</b>, <b>budget</b> e <b>tipo meta</b>. Jamo decide <b>dove andare</b> (1 + alternative) e poi <b>cosa fare lì</b>.
     </p>
 
     <div class="row">
       <div class="field">
         <label>Mezzo</label>
         <select id="mode">
-          <option value="car" selected>Auto</option>
-          <option value="train">Treno</option>
-          <option value="bus">Bus</option>
-          <option value="bike">Bici</option>
-          <option value="walk">A piedi</option>
-          <option value="plane">Aereo</option>
+          <option value="car" selected>🚗 Auto</option>
+          <option value="train">🚆 Treno</option>
+          <option value="bus">🚌 Bus</option>
+          <option value="bike">🚲 Bici</option>
+          <option value="walk">🚶 A piedi</option>
+          <option value="plane">✈️ Aereo</option>
         </select>
       </div>
 
       <div class="field">
-        <label>Max tempo di viaggio (min)</label>
-        <input id="maxTravelMin" type="number" inputmode="numeric" min="1" placeholder="es. 60 (treno) / 120 (aereo)" />
+        <label>Tempo a disposizione</label>
+        <select id="timeBudgetMin">
+          <option value="">Nessun limite</option>
+          <option value="30">30 min</option>
+          <option value="45">45 min</option>
+          <option value="60">1 ora</option>
+          <option value="90">1h 30m</option>
+          <option value="120">2 ore</option>
+          <option value="180">3 ore</option>
+          <option value="240">4 ore</option>
+          <option value="360">6 ore</option>
+          <option value="480">8 ore</option>
+          <option value="720">12 ore</option>
+        </select>
       </div>
 
       <div class="field">
-        <label>Budget massimo (€) (opzionale)</label>
-        <input id="budget" type="number" inputmode="numeric" min="0" placeholder="es. 25" />
+        <label>Budget massimo</label>
+        <select id="budget">
+          <option value="">Nessun limite</option>
+          <option value="10">€10</option>
+          <option value="20">€20</option>
+          <option value="30">€30</option>
+          <option value="50">€50</option>
+          <option value="80">€80</option>
+          <option value="120">€120</option>
+          <option value="200">€200</option>
+        </select>
       </div>
     </div>
 
@@ -132,28 +153,28 @@
       <div class="field">
         <label>Tipo meta</label>
         <select id="placeType">
-          <option value="any" selected>Tutto</option>
-          <option value="city">Città / centro</option>
-          <option value="sea">Mare / spiagge</option>
-          <option value="mountain">Montagna / trekking</option>
-          <option value="nature">Natura (parchi / belvedere)</option>
-          <option value="culture">Cultura (musei / storia)</option>
-          <option value="food">Cibo & drink</option>
-          <option value="relax">Relax (terme / spa)</option>
-          <option value="family">Famiglia (zoo / parchi)</option>
-          <option value="night">Vita notturna</option>
-          <option value="events">Eventi (beta)</option>
+          <option value="any" selected>🎯 Tutto</option>
+          <option value="city">🏙️ Città / centro</option>
+          <option value="sea">🏖️ Mare / spiagge</option>
+          <option value="mountain">🏔️ Montagna / trekking</option>
+          <option value="nature">🌿 Natura (parchi / belvedere)</option>
+          <option value="culture">🏛️ Cultura (musei / storia)</option>
+          <option value="food">🍝 Cibo & drink</option>
+          <option value="relax">🧖 Relax (spa / terme)</option>
+          <option value="family">👨‍👩‍👧 Famiglia (zoo / parchi)</option>
+          <option value="night">🌙 Vita notturna</option>
+          <option value="events">🎫 Eventi (beta)</option>
         </select>
       </div>
 
       <div class="field">
-        <label>Stile giornata</label>
+        <label>Stile</label>
         <select id="vibe">
-          <option value="any" selected>Qualsiasi</option>
-          <option value="quick">Mordi e fuggi</option>
-          <option value="chill">Chill / lenta</option>
-          <option value="adventure">Avventura</option>
-          <option value="romantic">Romantica</option>
+          <option value="any" selected>✨ Qualsiasi</option>
+          <option value="quick">⚡ Mordi e fuggi</option>
+          <option value="chill">🧘 Chill</option>
+          <option value="adventure">🧗 Avventura</option>
+          <option value="romantic">💘 Romantica</option>
         </select>
       </div>
     </div>
@@ -161,9 +182,9 @@
     <button id="btnGo" class="btn">🧭 DOVE ANDIAMO?</button>
 
     <div class="panel">
-      <div id="status" class="muted">Pronto.</div>
+      <div id="status" class="muted">Pronto. Premi il bottone: Jamo userà il GPS.</div>
       <div id="results"></div>
-      <div class="footer">Versione 0.3 • OpenStreetMap/Overpass • stime tempo/costo indicative</div>
+      <div class="footer">Versione 0.4 • OpenStreetMap/Overpass • tempi/costi stimati (gratis)</div>
     </div>
   </main>
 
