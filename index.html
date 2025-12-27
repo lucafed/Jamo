@@ -4,63 +4,183 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Jamo</title>
-  <link rel="stylesheet" href="/styles.css" />
+  <meta name="theme-color" content="#0A0F14" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icons/icon-192.png" />
+
+  <style>
+    :root{
+      --bg:#0A0F14; --surface:#141C22; --text:#fff; --muted:#A0B2BA;
+      --accent:#00E0FF; --accent2:#00B5CC;
+      --danger:#ff4d4d; --ok:#23d18b;
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(1000px 700px at 20% 10%, rgba(0,224,255,.22), transparent 60%),
+                  radial-gradient(900px 600px at 80% 20%, rgba(26,255,213,.14), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+    }
+    .card{
+      width:min(720px, 100%);
+      background: rgba(20,28,34,.88);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius: 24px;
+      padding: 22px;
+      box-shadow: 0 18px 60px rgba(0,0,0,.45);
+      backdrop-filter: blur(10px);
+    }
+    h1{margin:0 0 8px; font-size:38px; letter-spacing:.2px}
+    .lead{margin:0 0 18px; color:var(--muted); font-size:16px; line-height:1.4}
+
+    .row{display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin:12px 0 10px}
+    label{color:var(--muted); font-size:14px}
+    select{
+      appearance:none;
+      border-radius:14px;
+      padding:12px 14px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.22);
+      color:var(--text);
+      min-width:160px;
+      outline:none;
+    }
+
+    .btn{
+      width:100%;
+      margin-top:10px;
+      border:0;
+      border-radius: 18px;
+      padding: 16px 18px;
+      font-size:18px;
+      font-weight:700;
+      color:#001018;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      cursor:pointer;
+      box-shadow: 0 12px 35px rgba(0,224,255,.22);
+    }
+    .btn:disabled{opacity:.55; cursor:not-allowed}
+
+    .status{
+      margin-top:12px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(0,0,0,.25);
+      border:1px solid rgba(255,255,255,.09);
+      color: var(--muted);
+      font-size:14px;
+      white-space: pre-wrap;
+    }
+    .status.err{border-color: rgba(255,77,77,.35); color:#ffd1d1}
+    .status.ok{border-color: rgba(35,209,139,.35); color:#c9ffe7}
+
+    .result{
+      margin-top:14px;
+      padding:14px;
+      border-radius: 18px;
+      background: rgba(0,0,0,.25);
+      border:1px solid rgba(255,255,255,.09);
+    }
+    .hidden{display:none}
+
+    .place-title{font-size:22px; font-weight:800; margin:0 0 6px}
+    .meta{color:var(--muted); font-size:14px; margin:0 0 10px}
+    .actions{display:flex; gap:10px; flex-wrap:wrap}
+    .linkbtn{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:10px 12px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.12);
+      color:var(--text);
+      text-decoration:none;
+      background: rgba(255,255,255,.06);
+      font-weight:600;
+    }
+    .check{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      font-weight:600;
+      cursor:pointer;
+    }
+    .alts{margin-top:14px}
+    .alts h2{margin:10px 0 8px; font-size:18px}
+    .alt-item{
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      margin-bottom:8px;
+    }
+    .alt-item .name{font-weight:800}
+    .footer{
+      margin-top:14px;
+      color:rgba(160,178,186,.8);
+      font-size:12px;
+      text-align:center;
+    }
+  </style>
 </head>
 <body>
-  <main class="wrap">
-    <section class="card">
-      <h1>Jamo</h1>
-      <p class="subtitle">Scegli il tempo disponibile e premi: ti propongo un <b>luogo reale</b> dove andare.</p>
+  <main class="card">
+    <h1>Jamo</h1>
+    <p class="lead">Scegli il tempo disponibile e premi: ti propongo un <b>luogo reale</b> dove andare (con alternative).</p>
 
-      <div class="controls">
-        <label class="field">
-          <span>Tempo</span>
-          <select id="timeSelect">
-            <option value="30">30 min</option>
-            <option value="45">45 min</option>
-            <option value="60">1 ora</option>
-            <option value="90">1h 30m</option>
-            <option value="120" selected>2 ore</option>
-            <option value="180">3 ore</option>
-            <option value="240">4 ore</option>
-          </select>
-        </label>
-
-        <button id="goBtn" class="primary">
-          🎲 DOVE ANDIAMO?
-        </button>
+    <div class="row">
+      <div>
+        <label for="timeSelect">Tempo</label><br/>
+        <select id="timeSelect">
+          <option value="30">30 min</option>
+          <option value="45">45 min</option>
+          <option value="60" selected>1 ora</option>
+          <option value="90">1 ora e 30</option>
+          <option value="120">2 ore</option>
+          <option value="180">3 ore</option>
+          <option value="240">4 ore</option>
+        </select>
       </div>
 
-      <div id="status" class="status"></div>
+      <div>
+        <label for="modeSelect">Mezzo</label><br/>
+        <select id="modeSelect">
+          <option value="car" selected>Auto</option>
+          <option value="walk">A piedi</option>
+          <option value="bike">Bici</option>
+        </select>
+      </div>
+    </div>
 
-      <section id="result" class="result hidden">
-        <div class="resultHead">
-          <h2 id="placeName">—</h2>
-          <div class="badges">
-            <span class="badge" id="badgeTime">—</span>
-            <span class="badge" id="badgeKm">—</span>
-          </div>
-        </div>
+    <button id="goBtn" class="btn">🎲 DOVE ANDIAMO?</button>
 
-        <p id="placeWhy" class="why"></p>
+    <div id="status" class="status">Pronto. Premi il bottone: Jamo userà il GPS.</div>
 
-        <div class="actionsRow">
-          <a id="mapsLink" class="linkBtn" target="_blank" rel="noopener">Apri su Google Maps</a>
-          <button id="visitedBtn" class="ghost">✅ Segna come “già visitato”</button>
-        </div>
+    <section id="result" class="result hidden">
+      <div class="place-title" id="placeName"></div>
+      <div class="meta" id="placeMeta"></div>
+      <div class="actions">
+        <a class="linkbtn" id="mapsLink" href="#" target="_blank" rel="noopener">Apri su Google Maps</a>
+        <button class="check" id="visitedBtn">✅ Segna come “già visitato”</button>
+      </div>
 
-        <div class="alts">
-          <h3>Alternative</h3>
-          <ul id="altList"></ul>
-        </div>
-      </section>
-
-      <footer class="foot">
-        <span>Versione 2.0 • Auto • Luoghi reali (OSM)</span>
-      </footer>
+      <div class="alts">
+        <h2>Alternative</h2>
+        <div id="altList"></div>
+      </div>
     </section>
+
+    <div class="footer" id="footerInfo">Versione 2.0 • Luoghi reali (OSM) • Routing: ORS quando possibile</div>
   </main>
 
-  <script src="/app.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
