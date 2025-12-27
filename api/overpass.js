@@ -1,53 +1,67 @@
-// /api/overpass.js
-// Proxy + cache per Overpass (più veloce e stabile da mobile)
+// api/overpass.js - Vercel Serverless
+// Ritorna SOLO LUOGHI (città/paesi/borghi + natura rilevante)
+// - place=city|town|village
+// - natural=peak
+// - waterway=waterfall
+// - boundary=national_park OR leisure=nature_reserve
+//
+// IMPORTANT: Overpass a volte è lento. Qui:
+// - timeout ragionevole
+// - user-agent
+// - cache header (CDN)
 
 export default async function handler(req, res) {
-  // CORS (così funziona anche se apri il sito ovunque)
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-
-  if (req.method === "OPTIONS") return res.status(200).end();
-  if (req.method !== "POST") return res.status(405).json({ error: "Use POST" });
-
   try {
-    const { query } = req.body || {};
-    if (!query || typeof query !== "string") {
-      return res.status(400).json({ error: "Missing query" });
+    const lat = Number(req.query.lat);
+    const lon = Number(req.query.lon);
+    const radiusKm = Math.min(1200, Math.max(10, Number(req.query.radiusKm || 150)));
+
+    if (!isFinite(lat) || !isFinite(lon)) {
+      res.status(400).send("Missing/invalid lat/lon");
+      return;
     }
 
-    const endpoints = [
-      "https://overpass-api.de/api/interpreter",
-      "https://overpass.kumi.systems/api/interpreter"
-    ];
+    const radiusM = Math.round(radiusKm * 1000);
 
-    // Cache Vercel (CDN): 10 minuti “fresh”, poi può servire stale mentre aggiorna
-    res.setHeader("Cache-Control", "s-maxage=600, stale-while-revalidate=3600");
+    // Query Overpass: cerchiamo per "around" raggio metri
+    // Usiamo out center; per nodes/ways relations prendiamo center.
+    // (Per semplicità, privilegiamo nodes: molti place/natural hanno node)
+    const query = `
+      [out:json][timeout:25];
+      (
+        node["place"~"^(city|town|village)$"](around:${radiusM},${lat},${lon});
+        node["waterway"="waterfall"](around:${radiusM},${lat},${lon});
+        node["natural"="peak"](around:${radiusM},${lat},${lon});
+        node["boundary"="national_park"](around:${radiusM},${lat},${lon});
+        node["leisure"="nature_reserve"](around:${radiusM},${lat},${lon});
+      );
+      out tags;
+    `;
 
-    let lastErr = null;
+    const overpassUrl = "https://overpass-api.de/api/interpreter";
 
-    for (const url of endpoints) {
-      try {
-        const r = await fetch(url, {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" },
-          body: "data=" + encodeURIComponent(query),
-        });
+    const r = await fetch(overpassUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+        "Accept": "application/json",
+        "User-Agent": "Jamo/0.2 (Vercel Serverless) - contact: none",
+      },
+      body: "data=" + encodeURIComponent(query),
+    });
 
-        if (!r.ok) {
-          lastErr = `Overpass ${url} status ${r.status}`;
-          continue;
-        }
-
-        const data = await r.json();
-        return res.status(200).json(data);
-      } catch (e) {
-        lastErr = String(e);
-      }
+    if (!r.ok) {
+      const text = await r.text().catch(() => "");
+      res.status(502).send(text || `Overpass error ${r.status}`);
+      return;
     }
 
-    return res.status(502).json({ error: "Overpass failed", details: lastErr });
+    const data = await r.json();
+
+    // Cache: 10 min CDN, stale-while-revalidate 1h
+    res.setHeader("Cache-Control", "public, s-maxage=600, stale-while-revalidate=3600");
+    res.status(200).json(data);
   } catch (e) {
-    return res.status(500).json({ error: "Server error", details: String(e) });
+    res.status(500).send(e?.message || "Server error");
   }
 }
