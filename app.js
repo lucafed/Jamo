@@ -1,630 +1,466 @@
-/**
- * JAMO v1.0 – FAST SEARCH
- * - 2 step: (A) places, (B) landmarks solo se serve
- * - Limiti e abort per non “impallare” su mobile
- * - Overpass fallback 2 server
- * - Visitati (localStorage) incluso
- */
-
-const EXCLUDE_VISITED = true; // true = non mostra i visitati
+/* Jamo - app.js (v0.2) - Solo LUOGHI + alternative + visitati
+   - Usa GPS
+   - Chiama /api/overpass (serverless Vercel) per prendere candidati da OpenStreetMap
+   - Filtra e stima tempi in client
+*/
 
 const $ = (id) => document.getElementById(id);
 
-const statusEl = $("status");
-const resultsEl = $("results");
-const btnGo = $("btnGo");
+const els = {
+  mode: $("mode"),
+  time: $("time"),
+  dist: $("dist"),
+  budget: $("budget"),
+  goBtn: $("goBtn"),
+  status: $("status"),
+  results: $("results"),
+  distPill: $("distPill"),
+  timePill: $("timePill"),
+  showVisited: $("showVisited"),
+  preferFamous: $("preferFamous"),
+  modeHint: $("modeHint"),
+};
 
-const radiusEl = $("radiusKm");
-const modeEl = $("mode");
-const timeEl = $("timeBudgetMin");
-const budgetEl = $("budget");
-const vibeEl = $("vibe");
+const VISITED_KEY = "jamo.visited.v1"; // localStorage: array di osmIds string
+const lastState = {
+  lastResult: null,
+};
 
-const OVERPASS_ENDPOINTS = [
-  "https://overpass-api.de/api/interpreter",
-  "https://overpass.kumi.systems/api/interpreter"
-];
-
-const VISITED_KEY = "jamo_visited_v1";
-
-btnGo.addEventListener("click", async () => {
-  resultsEl.innerHTML = "";
-
-  try {
-    btnGo.disabled = true;
-    setStatus("📍 Richiedo il GPS…");
-
-    const pos = await getCurrentPosition({ enableHighAccuracy: true, timeout: 12000, maximumAge: 30000 });
-    const user = { lat: pos.coords.latitude, lon: pos.coords.longitude };
-
-    let radiusKm = Number(radiusEl.value);
-    let radiusMeters = radiusKm * 1000;
-
-    const mode = modeEl.value;
-    const timeBudgetMin = parseOptionalNumber(timeEl.value);
-    const budgetMax = parseOptionalNumber(budgetEl.value);
-    const vibe = vibeEl.value;
-
-    // Aereo: raggio più sensato
-    if (mode === "plane" && radiusKm < 500) {
-      radiusKm = 500;
-      radiusMeters = 500 * 1000;
-    }
-
-    const minDistanceKm = (mode === "plane") ? 120 : 2.5;
-
-    setStatus(`🔎 Step 1/2: cerco LUOGHI entro ${radiusKm} km…`);
-    let destinations = await fetchPlacesFast(user.lat, user.lon, radiusMeters);
-
-    // Se luoghi pochi, aggiungiamo landmarks (Marmore, Gran Sasso, Stiffe…)
-    if (destinations.length < 30) {
-      setStatus("🔎 Step 2/2: aggiungo LUOGHI FAMOSI (cascate, vette, grotte)…");
-      const landmarks = await fetchLandmarksFast(user.lat, user.lon, radiusMeters);
-      destinations = mergeDedup(destinations, landmarks);
-    }
-
-    // fallback se zero: aumenta raggio una volta
-    if (!destinations.length) {
-      const emergencyKm = Math.max(radiusKm, 150);
-      setStatus(`Niente trovato. Aumento raggio a ${emergencyKm} km…`);
-      const emMeters = emergencyKm * 1000;
-
-      let places = await fetchPlacesFast(user.lat, user.lon, emMeters);
-      let landmarks = [];
-      if (places.length < 30) landmarks = await fetchLandmarksFast(user.lat, user.lon, emMeters);
-
-      destinations = mergeDedup(places, landmarks);
-      radiusKm = emergencyKm;
-      radiusMeters = emMeters;
-    }
-
-    if (!destinations.length) {
-      setStatus("Ancora nulla. Overpass può essere intasato: riprova tra 1 minuto o cambia raggio.", true);
-      return;
-    }
-
-    const visited = loadVisited();
-
-    // Score + filtri
-    let scored = destinations
-      .map((d) => ({
-        ...d,
-        distanceKm: haversineKm(user.lat, user.lon, d.lat, d.lon),
-        visited: isVisited(d, visited)
-      }))
-      .filter((d) => d.distanceKm >= minDistanceKm)
-      .filter((d) => (EXCLUDE_VISITED ? !d.visited : true))
-      .map((d) => {
-        const est = estimateTrip(d.distanceKm, mode);
-        const score = scoreDestination(d, vibe, mode);
-        return { ...d, est, score };
-      })
-      .sort((a, b) => b.score - a.score);
-
-    if (!scored.length) {
-      setStatus("Con questi filtri non resta nulla (o sono tutti visitati). Prova ad aumentare raggio/tempo.", true);
-      return;
-    }
-
-    const filtered = scored.filter((d) => {
-      if (timeBudgetMin != null && d.est.minutes > timeBudgetMin) return false;
-      if (budgetMax != null && d.est.cost > budgetMax) return false;
-      return true;
-    });
-
-    const finalList = filtered.length ? filtered : scored;
-
-    if (!filtered.length) {
-      setStatus("⚠️ Tempo/Budget troppo stretti: ti mostro comunque le migliori (aumenta tempo/budget).", true);
-    } else {
-      setStatus("✅ Fatto.");
-    }
-
-    const main = finalList[0];
-    const alternatives = finalList.slice(1, 4);
-
-    render(main, alternatives, { mode, radiusKm, vibe, timeBudgetMin, budgetMax, minDistanceKm });
-
-    // POI sotto al luogo principale
-    await showThingsToDoForDestination(main);
-
-  } catch (err) {
-    console.error(err);
-    if (String(err).includes("denied")) setStatus("GPS negato. Attiva la posizione e consenti l’accesso.", true);
-    else setStatus("Errore: " + (err?.message || String(err)), true);
-  } finally {
-    btnGo.disabled = false;
-  }
-});
-
-/* ===================== FAST QUERIES ===================== */
-
-// Step A: Places (veloce)
-async function fetchPlacesFast(lat, lon, radiusMeters) {
-  const query = `
-[out:json][timeout:15];
-(
-  nwr(around:${radiusMeters},${lat},${lon})["place"~"city|town|village|hamlet|locality|suburb"];
-);
-out center qt 250;
-`;
-  const json = await fetchOverpassFast(query, 12000);
-  return normalizeDestinations(json, "place");
-}
-
-// Step B: Landmarks (solo se serve)
-async function fetchLandmarksFast(lat, lon, radiusMeters) {
-  const query = `
-[out:json][timeout:15];
-(
-  nwr(around:${radiusMeters},${lat},${lon})["natural"~"waterfall|peak|cave|beach|spring|wood"];
-  nwr(around:${radiusMeters},${lat},${lon})["tourism"~"attraction|viewpoint"];
-  nwr(around:${radiusMeters},${lat},${lon})["leisure"~"nature_reserve|park"];
-  nwr(around:${radiusMeters},${lat},${lon})["historic"~"castle|ruins|monument|archaeological_site"];
-);
-out center qt 250;
-`;
-  const json = await fetchOverpassFast(query, 12000);
-  return normalizeDestinations(json, "landmark");
-}
-
-function normalizeDestinations(json, kindDefault) {
-  const els = Array.isArray(json.elements) ? json.elements : [];
-  const parsed = els.map((e) => {
-    const tags = e.tags || {};
-    const name = tags.name || tags["name:it"] || null;
-    const cLat = e.lat ?? e.center?.lat;
-    const cLon = e.lon ?? e.center?.lon;
-    if (!cLat || !cLon) return null;
-
-    const kind = tags.place ? "place" : kindDefault;
-    const typeLabel = inferLabel(tags);
-
-    // scarta roba senza nome troppo generica
-    if (!name && kind === "landmark" && typeLabel === "Luogo") return null;
-
-    return {
-      id: `${e.type}/${e.id}`,
-      name: name || typeLabel,
-      kind,
-      typeLabel,
-      lat: cLat,
-      lon: cLon,
-      tags
-    };
-  }).filter(Boolean);
-
-  return dedupByNameAndCoords(parsed).slice(0, 400);
-}
-
-function inferLabel(tags) {
-  // places
-  if (tags.place === "city") return "Città";
-  if (tags.place === "town") return "Paese";
-  if (tags.place === "village") return "Borgo";
-  if (tags.place === "hamlet") return "Località";
-  if (tags.place === "locality") return "Località";
-  if (tags.place === "suburb") return "Zona";
-
-  // landmarks
-  if (tags.natural === "waterfall") return "Cascata";
-  if (tags.natural === "peak") return "Vetta";
-  if (tags.natural === "cave") return "Grotta";
-  if (tags.natural === "beach") return "Spiaggia";
-  if (tags.tourism === "viewpoint") return "Belvedere";
-  if (tags.tourism === "attraction") return "Luogo famoso";
-  if (tags.leisure === "nature_reserve") return "Riserva naturale";
-  if (tags.leisure === "park") return "Parco";
-  if (tags.historic) return "Luogo storico";
-
-  return "Luogo";
-}
-
-function mergeDedup(a, b) {
-  return dedupByNameAndCoords([...(a || []), ...(b || [])]);
-}
-
-function dedupByNameAndCoords(list) {
-  const seen = new Set();
-  const out = [];
-  for (const d of list) {
-    const key = `${(d.name || "").toLowerCase()}|${d.lat.toFixed(4)}|${d.lon.toFixed(4)}`;
-    if (seen.has(key)) continue;
-    seen.add(key);
-    out.push(d);
-  }
-  return out;
-}
-
-/* ===================== OVERPASS FAST (abort + fallback server) ===================== */
-
-async function fetchOverpassFast(query, abortMs = 12000) {
-  let lastErr = null;
-
-  for (const url of OVERPASS_ENDPOINTS) {
-    const controller = new AbortController();
-    const t = setTimeout(() => controller.abort(), abortMs);
-
-    try {
-      const res = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" },
-        body: "data=" + encodeURIComponent(query),
-        signal: controller.signal
-      });
-      clearTimeout(t);
-
-      if (!res.ok) throw new Error(`Overpass ${url} status ${res.status}`);
-      return await res.json();
-    } catch (e) {
-      clearTimeout(t);
-      lastErr = e;
-      // prova il prossimo endpoint
-    }
-  }
-
-  throw lastErr || new Error("Overpass non disponibile");
-}
-
-/* ===================== POI “cosa vedere/fare” ===================== */
-
-async function fetchThingsToDo(lat, lon, radiusMeters) {
-  const query = `
-[out:json][timeout:15];
-(
-  nwr(around:${radiusMeters},${lat},${lon})["tourism"~"attraction|museum|gallery|viewpoint"];
-  nwr(around:${radiusMeters},${lat},${lon})["historic"];
-  nwr(around:${radiusMeters},${lat},${lon})["leisure"~"park|garden|nature_reserve"];
-  nwr(around:${radiusMeters},${lat},${lon})["natural"~"waterfall|peak|cave|beach|spring|wood"];
-  nwr(around:${radiusMeters},${lat},${lon})["amenity"~"restaurant|cafe|bar|pub"];
-);
-out center qt 40;
-`;
-  const json = await fetchOverpassFast(query, 12000);
-  const els = Array.isArray(json.elements) ? json.elements : [];
-
-  const parsed = els.map((e) => {
-    const tags = e.tags || {};
-    const name = tags.name || tags["name:it"] || null;
-    const cLat = e.lat ?? e.center?.lat;
-    const cLon = e.lon ?? e.center?.lon;
-    if (!cLat || !cLon) return null;
-
-    return {
-      id: `${e.type}/${e.id}`,
-      name: name || inferPoiType(tags),
-      typeLabel: inferPoiType(tags),
-      lat: cLat,
-      lon: cLon,
-      tags
-    };
-  }).filter(Boolean);
-
-  return dedupByNameAndCoords(parsed).slice(0, 15);
-}
-
-function inferPoiType(tags) {
-  if (tags.tourism === "museum") return "Museo";
-  if (tags.tourism === "gallery") return "Galleria";
-  if (tags.tourism === "viewpoint") return "Belvedere";
-  if (tags.tourism === "attraction") return "Attrazione";
-  if (tags.historic) return "Luogo storico";
-  if (tags.natural === "waterfall") return "Cascata";
-  if (tags.natural === "peak") return "Vetta";
-  if (tags.natural === "cave") return "Grotta";
-  if (tags.leisure === "park") return "Parco";
-  if (tags.amenity === "restaurant") return "Ristorante";
-  if (tags.amenity === "cafe") return "Caffè";
-  if (tags.amenity === "bar") return "Bar";
-  if (tags.amenity === "pub") return "Pub";
-  return "Punto d’interesse";
-}
-
-/* ===================== VISITED ===================== */
-
-function loadVisited() {
+function loadVisitedSet() {
   try {
     const raw = localStorage.getItem(VISITED_KEY);
-    if (!raw) return {};
-    const obj = JSON.parse(raw);
-    return (obj && typeof obj === "object") ? obj : {};
+    const arr = raw ? JSON.parse(raw) : [];
+    return new Set(arr);
   } catch {
-    return {};
+    return new Set();
   }
 }
-
-function saveVisited(map) {
-  localStorage.setItem(VISITED_KEY, JSON.stringify(map));
+function saveVisitedSet(set) {
+  localStorage.setItem(VISITED_KEY, JSON.stringify([...set]));
 }
 
-function visitedId(dest) {
-  const name = (dest.name || "").trim().toLowerCase();
-  return `${name}|${dest.lat.toFixed(5)}|${dest.lon.toFixed(5)}`;
+function haversineKm(aLat, aLon, bLat, bLon) {
+  const R = 6371;
+  const toRad = (d) => (d * Math.PI) / 180;
+  const dLat = toRad(bLat - aLat);
+  const dLon = toRad(bLon - aLon);
+  const lat1 = toRad(aLat);
+  const lat2 = toRad(bLat);
+  const s =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(s));
 }
 
-function isVisited(dest, visitedMap) {
-  return !!visitedMap[visitedId(dest)];
-}
+// velocità semplici (km/h) per stime iniziali
+const SPEEDS = {
+  walk: 4.5,
+  bike: 16,
+  car: 70,
+  bus: 55,
+  train: 95,
+  plane: 700,
+};
 
-function toggleVisited(dest) {
-  const visited = loadVisited();
-  const id = visitedId(dest);
-  if (visited[id]) delete visited[id];
-  else visited[id] = { name: dest.name, lat: dest.lat, lon: dest.lon, ts: Date.now() };
-  saveVisited(visited);
-  return !!visited[id];
-}
-
-/* ===================== ESTIMATES + SCORE ===================== */
-
-function estimateTrip(distanceKm, mode) {
-  const speeds = { car:55, train:75, bus:40, walk:4.5, bike:14, plane:650 };
-
+function minutesFor(mode, distanceKm) {
   if (mode === "plane") {
-    const flightMinutes = Math.round((distanceKm / speeds.plane) * 60);
-    const overhead = 120;
-    const minutes = overhead + flightMinutes;
-    const cost = round2(35 + distanceKm * 0.12);
-    return { minutes, cost, flightMinutes };
+    // overhead minimo: raggiungere aeroporto + check-in + boarding (semplificato)
+    const overhead = 90; // min
+    const flight = (distanceKm / SPEEDS.plane) * 60;
+    return overhead + flight;
   }
-
-  const speed = speeds[mode] || 50;
-  const minutes = Math.round((distanceKm / speed) * 60);
-
-  let cost = 0;
-  if (mode === "car") cost = distanceKm * 0.20;
-  else if (mode === "train") cost = 3 + distanceKm * 0.10;
-  else if (mode === "bus") cost = 2.2 + distanceKm * 0.06;
-
-  return { minutes, cost: round2(cost) };
+  const speed = SPEEDS[mode] ?? 60;
+  return (distanceKm / speed) * 60;
 }
 
-function scoreDestination(d, vibe, mode) {
-  let s = 0;
-  const km = d.distanceKm ?? 0;
-
-  if (d.kind === "landmark") s += 4;
-  if (d.name && d.name.length >= 4) s += 2;
-
-  // distanza
-  if (mode === "plane") {
-    if (km < 150) s -= 20;
-    else if (km <= 400) s += 10;
-    else if (km <= 900) s += 7;
-    else s += 3;
-  } else {
-    if (km <= 20) s += 9;
-    else if (km <= 60) s += 7;
-    else if (km <= 150) s += 5;
-    else s += 2;
-  }
-
-  // vibe
-  if (vibe === "quick") { if (km <= 40) s += 4; else s -= 2; }
-  if (vibe === "chill") { if (km <= 120) s += 2; }
-  if (vibe === "adventure") { if (km >= 20 && km <= 200) s += 3; }
-
-  s += Math.random() * 0.8;
-  return s;
+function formatMinutes(min) {
+  if (!isFinite(min)) return "—";
+  if (min < 60) return `${Math.round(min)} min`;
+  const h = Math.floor(min / 60);
+  const m = Math.round(min % 60);
+  return m ? `${h}h ${m}m` : `${h}h`;
 }
 
-function round2(x){ return Math.round(x * 100) / 100; }
-
-/* ===================== UI ===================== */
-
-function render(main, alternatives, ctx) {
-  resultsEl.innerHTML = "";
-
-  const summary = document.createElement("div");
-  summary.className = "pill";
-  const timeTxt = ctx.timeBudgetMin ? `⏱ ${ctx.timeBudgetMin} min` : "⏱ no limite";
-  const budTxt = ctx.budgetMax ? `💶 €${ctx.budgetMax}` : "💶 no limite";
-  summary.textContent = `${labelMode(ctx.mode)} • ${timeTxt} • ${budTxt} • raggio ${ctx.radiusKm}km • min dist ${ctx.minDistanceKm}km • ${labelVibe(ctx.vibe)}`;
-  resultsEl.appendChild(summary);
-
-  resultsEl.appendChild(destCard("Meta consigliata", main, true));
-
-  if (alternatives.length) {
-    const div = document.createElement("div");
-    div.className = "divider";
-    resultsEl.appendChild(div);
-
-    const pill = document.createElement("div");
-    pill.className = "pill";
-    pill.textContent = "Alternative";
-    resultsEl.appendChild(pill);
-
-    alternatives.forEach((a) => resultsEl.appendChild(destCard("", a, false)));
-  }
+function getTimeAvailableMin() {
+  return Number(els.time.value);
+}
+function getDistanceMaxKm() {
+  return Number(els.dist.value);
 }
 
-function destCard(title, d, isMain) {
-  const wrap = document.createElement("div");
-  wrap.className = "dest";
-  wrap.dataset.destId = d.id;
-
-  const visited = loadVisited();
-  const already = isVisited(d, visited);
-
-  if (title) {
-    const pill = document.createElement("div");
-    pill.className = "pill";
-    pill.textContent = title;
-    wrap.appendChild(pill);
-  }
-
-  const name = document.createElement("p");
-  name.className = "name";
-  name.textContent = d.name;
-  wrap.appendChild(name);
-
-  const meta = document.createElement("p");
-  meta.className = "meta";
-  const extraPlane = d.est.flightMinutes != null ? ` (volo ~${d.est.flightMinutes} min)` : "";
-  meta.textContent = `${d.typeLabel} • ${d.distanceKm.toFixed(1)} km • ~${d.est.minutes} min${extraPlane} • ~€${d.est.cost}`;
-  wrap.appendChild(meta);
-
-  const actions = document.createElement("div");
-  actions.className = "actions";
-
-  const btnMaps = document.createElement("button");
-  btnMaps.className = "smallbtn";
-  btnMaps.textContent = "Apri in Maps";
-  btnMaps.onclick = () => openInMaps(d.lat, d.lon);
-  actions.appendChild(btnMaps);
-
-  const btnThings = document.createElement("button");
-  btnThings.className = "smallbtn";
-  btnThings.textContent = "Cosa vedere/fare";
-  btnThings.onclick = async () => showThingsToDoForDestination(d, wrap);
-  actions.appendChild(btnThings);
-
-  const btnVisited = document.createElement("button");
-  btnVisited.className = "smallbtn";
-  btnVisited.textContent = already ? "↩️ Rimuovi visitato" : "✅ Segna visitato";
-  btnVisited.onclick = () => {
-    const nowVisited = toggleVisited(d);
-    btnVisited.textContent = nowVisited ? "↩️ Rimuovi visitato" : "✅ Segna visitato";
-    if (EXCLUDE_VISITED && nowVisited) {
-      wrap.remove();
-      setStatus("✅ Segnato come visitato. Nelle prossime ricerche non verrà proposto.");
-    }
-  };
-  actions.appendChild(btnVisited);
-
-  wrap.appendChild(actions);
-
-  const box = document.createElement("div");
-  box.className = "panel";
-  box.style.marginTop = "10px";
-  box.style.display = "none";
-  box.dataset.poiBox = "1";
-  wrap.appendChild(box);
-
-  if (isMain) {
-    const hint = document.createElement("div");
-    hint.className = "pill";
-    hint.textContent = "Sotto trovi cosa vedere/fare. Se non ti convince, prova una alternativa 👇";
-    wrap.appendChild(hint);
-  }
-
-  return wrap;
+function updatePills() {
+  els.distPill.textContent = `${getDistanceMaxKm()} km`;
+  els.timePill.textContent = `${formatMinutes(getTimeAvailableMin())}`;
+  const m = els.mode.value;
+  els.modeHint.textContent =
+    m === "plane" ? "include overhead" :
+    m === "train" ? "stima media" :
+    "stima tempi";
 }
+els.dist.addEventListener("input", updatePills);
+els.time.addEventListener("change", updatePills);
+els.mode.addEventListener("change", updatePills);
+updatePills();
 
-async function showThingsToDoForDestination(dest, cardEl = null) {
-  const wrap = cardEl || findCard(dest.id);
-  if (!wrap) return;
-
-  const box = wrap.querySelector('[data-poi-box="1"]');
-  if (!box) return;
-
-  box.style.display = "block";
-  box.innerHTML = `<div class="muted">🔎 Cerco cosa vedere/fare vicino a <b>${escapeHtml(dest.name)}</b>…</div>`;
-
-  try {
-    const poiRadius = (dest.typeLabel === "Città" || dest.typeLabel === "Paese") ? 5000 : 4000;
-    const items = await fetchThingsToDo(dest.lat, dest.lon, poiRadius);
-
-    if (!items.length) {
-      box.innerHTML = `<div class="muted">Non ho trovato molto vicino a ${escapeHtml(dest.name)}. (Dipende dai dati OSM)</div>`;
-      return;
-    }
-
-    box.innerHTML = "";
-    const header = document.createElement("div");
-    header.className = "pill";
-    header.textContent = `Cosa vedere/fare vicino a ${dest.name}`;
-    box.appendChild(header);
-
-    items.forEach((it) => {
-      const row = document.createElement("div");
-      row.className = "dest";
-      row.style.marginTop = "10px";
-
-      const nm = document.createElement("p");
-      nm.className = "name";
-      nm.style.fontSize = "16px";
-      nm.textContent = it.name;
-      row.appendChild(nm);
-
-      const mt = document.createElement("p");
-      mt.className = "meta";
-      mt.textContent = it.typeLabel;
-      row.appendChild(mt);
-
-      const act = document.createElement("div");
-      act.className = "actions";
-
-      const b = document.createElement("button");
-      b.className = "smallbtn";
-      b.textContent = "Apri in Maps";
-      b.onclick = () => openInMaps(it.lat, it.lon);
-      act.appendChild(b);
-
-      row.appendChild(act);
-      box.appendChild(row);
-    });
-
-  } catch (e) {
-    console.error(e);
-    box.innerHTML = `<div class="error">Errore nel cercare cosa vedere/fare. Riprova tra poco.</div>`;
-  }
-}
-
-function findCard(id) {
-  const cards = resultsEl.querySelectorAll(".dest");
-  for (const c of cards) if (c.dataset.destId === id) return c;
-  return null;
-}
-
-function openInMaps(lat, lon) {
-  const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(lat + "," + lon)}`;
-  window.open(url, "_blank");
-}
-
-function labelMode(m){
-  return ({car:"🚗 Auto",train:"🚆 Treno",bus:"🚌 Bus",bike:"🚲 Bici",walk:"🚶 A piedi",plane:"✈️ Aereo"})[m] || m;
-}
-function labelVibe(v){
-  return ({any:"✨ Qualsiasi",quick:"⚡ Vicino e veloce",chill:"🧘 Tranquillo",adventure:"🧗 Fuori porta",romantic:"💘 Romantico"})[v] || v;
-}
-
-/* ===================== UTILS ===================== */
-
-function setStatus(text, isError = false) {
-  statusEl.textContent = text;
-  statusEl.className = isError ? "error" : "muted";
-}
-
-function parseOptionalNumber(v) {
-  const n = Number(String(v || "").trim());
-  if (!Number.isFinite(n) || n <= 0) return null;
-  return n;
-}
-
-function getCurrentPosition(options) {
+function geoGetPosition() {
   return new Promise((resolve, reject) => {
-    navigator.geolocation.getCurrentPosition(resolve, reject, options);
+    if (!navigator.geolocation) return reject(new Error("Geolocalizzazione non supportata"));
+    navigator.geolocation.getCurrentPosition(
+      (pos) => resolve(pos),
+      (err) => reject(err),
+      { enableHighAccuracy: true, timeout: 12000, maximumAge: 30000 }
+    );
   });
 }
 
-function haversineKm(lat1, lon1, lat2, lon2) {
-  const R = 6371;
-  const dLat = deg2rad(lat2 - lat1);
-  const dLon = deg2rad(lon2 - lon1);
-  const a =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-    Math.sin(dLon / 2) ** 2;
-  return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+async function fetchCandidates({ lat, lon, radiusKm }) {
+  const url = `/api/overpass?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}&radiusKm=${encodeURIComponent(radiusKm)}`;
+  const res = await fetch(url, { headers: { "Accept": "application/json" } });
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new Error(`Errore API (${res.status}): ${text || "request failed"}`);
+  }
+  return res.json();
 }
-function deg2rad(deg) { return deg * (Math.PI / 180); }
 
-function escapeHtml(str) {
-  return String(str)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
+function scoreCandidate(c, preferFamous) {
+  // Heuristica semplice:
+  // - wikipedia = bonus
+  // - population alta = bonus
+  // - place city/town = bonus
+  // - natura (waterfall/peak/park) = bonus medio
+  let s = 0;
+
+  const tags = c.tags || {};
+  const place = tags.place || "";
+  const natural = tags.natural || "";
+  const waterway = tags.waterway || "";
+  const boundary = tags.boundary || "";
+  const leisure = tags.leisure || "";
+
+  const hasWiki = Boolean(tags.wikipedia || tags.wikidata);
+  const pop = Number(tags.population || 0);
+
+  if (place === "city") s += 40;
+  else if (place === "town") s += 28;
+  else if (place === "village") s += 18;
+
+  if (natural === "peak") s += 22;
+  if (waterway === "waterfall") s += 24;
+  if (boundary === "national_park" || leisure === "nature_reserve") s += 20;
+
+  if (hasWiki) s += 26;
+  if (pop) s += Math.min(22, Math.log10(pop + 1) * 6);
+
+  // se non preferFamous, riduci peso wikipedia/pop e premia un po' varietà
+  if (!preferFamous) {
+    s = s * 0.75;
+    s += (natural || waterway || boundary || leisure) ? 6 : 0;
+  }
+  // leggera randomizzazione per non essere sempre identico
+  s += Math.random() * 6;
+
+  return s;
 }
+
+function normalizeCandidates(raw, userLat, userLon) {
+  // raw.elements -> uniformiamo in oggetti
+  const elems = raw?.elements || [];
+  const out = [];
+  for (const el of elems) {
+    if (!el || !el.lat || !el.lon) continue;
+    const tags = el.tags || {};
+    const name = tags.name || tags["name:it"] || tags["name:en"];
+    if (!name) continue;
+
+    const id = `${el.type}/${el.id}`;
+    const distanceKm = haversineKm(userLat, userLon, el.lat, el.lon);
+
+    out.push({
+      id,
+      lat: el.lat,
+      lon: el.lon,
+      tags,
+      name,
+      kind: tags.place ? `place:${tags.place}` :
+            tags.waterway === "waterfall" ? "waterfall" :
+            tags.natural === "peak" ? "peak" :
+            (tags.boundary === "national_park" || tags.leisure === "nature_reserve") ? "park" :
+            "place",
+      distanceKm,
+    });
+  }
+  // dedup per nome+approx posizione
+  const seen = new Set();
+  return out.filter((c) => {
+    const k = `${c.name.toLowerCase()}|${Math.round(c.lat*100)}|${Math.round(c.lon*100)}`;
+    if (seen.has(k)) return false;
+    seen.add(k);
+    return true;
+  });
+}
+
+function applyModeConstraints(cands, mode) {
+  // NOTE: in questa v0.2 NON facciamo routing reale.
+  // Per treno/aereo facciamo un filtro plausibile:
+  // - train: solo city/town/village (già) + bonus se "railway station" vicino lo farà l'API (v0.3)
+  // - plane: solo city/town (non cascate/peak) e distanza minima > 80km per evitare "stai a L'Aquila -> L'Aquila"
+  if (mode === "plane") {
+    return cands.filter(c => (c.tags.place === "city" || c.tags.place === "town") && c.distanceKm >= 80);
+  }
+  if (mode === "train") {
+    return cands.filter(c => c.tags.place === "city" || c.tags.place === "town" || c.tags.place === "village");
+  }
+  return cands;
+}
+
+function applyBudgetSoft(cands, budget, mode) {
+  // Per ora “soft”: limita distanze molto alte se budget basso, ecc.
+  if (budget === "any") return cands;
+
+  return cands.filter(c => {
+    const d = c.distanceKm;
+    if (budget === "low") {
+      if (mode === "plane") return d <= 450; // "vicino"
+      return d <= 180;
+    }
+    if (budget === "mid") {
+      if (mode === "plane") return d <= 900;
+      return d <= 350;
+    }
+    if (budget === "high") return true;
+    return true;
+  });
+}
+
+function pickMainAndAlternatives(cands, visitedSet, showVisited, preferFamous) {
+  const scored = cands
+    .map(c => ({
+      ...c,
+      score: scoreCandidate(c, preferFamous),
+      visited: visitedSet.has(c.id),
+    }))
+    .filter(c => showVisited ? true : !c.visited)
+    .sort((a,b) => b.score - a.score);
+
+  if (!scored.length) return { main: null, alts: [] };
+
+  const main = scored[0];
+  const alts = scored.slice(1, 4);
+  return { main, alts };
+}
+
+function googleMapsLink(lat, lon) {
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(lat + "," + lon)}`;
+}
+
+function renderResult({ main, alts }, mode, timeAvailMin) {
+  els.results.innerHTML = "";
+
+  if (!main) {
+    els.results.innerHTML = `
+      <div class="result">
+        <h2>Nessun luogo trovato <span class="pill bad">0 risultati</span></h2>
+        <div class="meta">
+          Prova così:
+          <ul>
+            <li>aumenta la distanza (es. 250–500 km)</li>
+            <li>cambia mezzo (Auto è il più affidabile)</li>
+            <li>attiva “Mostra anche visitati”</li>
+          </ul>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  const mainTime = minutesFor(mode, main.distanceKm);
+  const okTime = mainTime <= timeAvailMin;
+
+  els.results.insertAdjacentHTML("beforeend", `
+    <div class="result" id="mainResult">
+      <h2>
+        <span>🎯 ${escapeHtml(main.name)}</span>
+        <span class="pill ${okTime ? "ok" : "bad"}">${okTime ? "ok col tempo" : "troppo lontano"}</span>
+      </h2>
+      <div class="meta">
+        <div>Tipo: <b>${describeKind(main)}</b></div>
+        <div>Distanza: <b>${main.distanceKm.toFixed(1)} km</b> • Tempo stimato: <b>${formatMinutes(mainTime)}</b> • Mezzo: <b>${modeLabel(mode)}</b></div>
+        <div class="muted">${main.tags.wikipedia ? "📚 Ha wikipedia: " + escapeHtml(main.tags.wikipedia) : ""}</div>
+      </div>
+      <div class="actions">
+        <button class="smallbtn primary" data-open="${googleMapsLink(main.lat, main.lon)}">📍 Apri su Maps</button>
+        <button class="smallbtn" data-toggle-visited="${main.id}">
+          ${main.visited ? "✅ Già visitato" : "☑️ Segna come visitato"}
+        </button>
+        <button class="smallbtn" id="rerollBtn">🎲 Cambia meta</button>
+      </div>
+
+      <div class="alts" id="alts">
+        <div class="muted" style="margin:6px 2px;">Alternative</div>
+        ${alts.map(a => altHtml(a, mode, timeAvailMin)).join("")}
+      </div>
+    </div>
+  `);
+
+  // bind buttons
+  els.results.querySelectorAll("[data-open]").forEach(btn => {
+    btn.addEventListener("click", () => window.open(btn.getAttribute("data-open"), "_blank"));
+  });
+  els.results.querySelectorAll("[data-toggle-visited]").forEach(btn => {
+    btn.addEventListener("click", () => toggleVisited(btn.getAttribute("data-toggle-visited")));
+  });
+  const rerollBtn = $("rerollBtn");
+  if (rerollBtn) rerollBtn.addEventListener("click", () => reroll(mode, timeAvailMin));
+}
+
+function reroll(mode, timeAvailMin) {
+  // “Reroll” = scegli un altro main dalle alternative + nuovi
+  // Semplice: rimescola e riprendi dall’ultimo dataset, ricominciando dalla selezione
+  if (!lastState.lastResult) return;
+  // aggiungi randomizzazione: ricalcoliamo score e repick
+  const visitedSet = loadVisitedSet();
+  const showVisited = els.showVisited.checked;
+  const preferFamous = els.preferFamous.checked;
+
+  const repicked = pickMainAndAlternatives(lastState.lastResult, visitedSet, showVisited, preferFamous);
+  renderResult(repicked, mode, timeAvailMin);
+}
+
+function toggleVisited(osmId) {
+  const set = loadVisitedSet();
+  if (set.has(osmId)) set.delete(osmId);
+  else set.add(osmId);
+  saveVisitedSet(set);
+
+  // ricarica UI mantenendo lo stesso dataset
+  const mode = els.mode.value;
+  const timeAvailMin = getTimeAvailableMin();
+  reroll(mode, timeAvailMin);
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, (m) => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;"
+  }[m]));
+}
+
+function modeLabel(mode){
+  return ({
+    walk:"A piedi", bike:"Bici", car:"Auto", bus:"Bus", train:"Treno", plane:"Aereo"
+  })[mode] || mode;
+}
+function describeKind(c){
+  const k = c.kind || "";
+  if (k.startsWith("place:")) {
+    const p = k.split(":")[1];
+    return p === "city" ? "Città" : p === "town" ? "Paese" : p === "village" ? "Borgo" : "Luogo";
+  }
+  if (k === "waterfall") return "Cascata";
+  if (k === "peak") return "Montagna / cima";
+  if (k === "park") return "Parco / riserva";
+  return "Luogo";
+}
+
+function altHtml(a, mode, timeAvailMin){
+  const t = minutesFor(mode, a.distanceKm);
+  const ok = t <= timeAvailMin;
+  return `
+    <div class="alt">
+      <div class="altTitle">
+        <span>➡️ ${escapeHtml(a.name)}</span>
+        <span class="pill ${ok ? "ok" : "bad"}">${ok ? "ok" : "lontano"}</span>
+      </div>
+      <div class="meta">
+        ${describeKind(a)} • <b>${a.distanceKm.toFixed(1)} km</b> • <b>${formatMinutes(t)}</b>
+      </div>
+      <div class="actions">
+        <button class="smallbtn primary" data-open="${googleMapsLink(a.lat, a.lon)}">📍 Maps</button>
+        <button class="smallbtn" data-toggle-visited="${a.id}">
+          ${a.visited ? "✅ Già visitato" : "☑️ Visitato"}
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function filterByTimeAndDistance(cands, mode, timeAvailMin, distMaxKm) {
+  // Prima filtro distanza, poi tempo stimato
+  return cands.filter(c => {
+    if (c.distanceKm > distMaxKm) return false;
+    const t = minutesFor(mode, c.distanceKm);
+    // per “plane/train” non tagliamo troppo stretto: lasciamo un 10% di tolleranza
+    const tol = (mode === "plane" || mode === "train") ? 1.1 : 1.0;
+    return t <= timeAvailMin * tol;
+  });
+}
+
+async function onGo() {
+  els.goBtn.disabled = true;
+  els.status.textContent = "📍 Sto leggendo il GPS…";
+
+  try {
+    const pos = await geoGetPosition();
+    const lat = pos.coords.latitude;
+    const lon = pos.coords.longitude;
+
+    const mode = els.mode.value;
+    const timeAvailMin = getTimeAvailableMin();
+    const distMaxKm = getDistanceMaxKm();
+    const budget = els.budget.value;
+
+    // raggio query API: un po’ più grande della distanza max per avere candidati sufficienti
+    // (poi filtriamo in client)
+    const radiusKm = Math.min(1200, Math.max(distMaxKm * 1.3, 50));
+
+    els.status.textContent = `🔎 Cerco luoghi entro ~${Math.round(radiusKm)} km…`;
+
+    const raw = await fetchCandidates({ lat, lon, radiusKm });
+
+    let cands = normalizeCandidates(raw, lat, lon);
+    cands = applyModeConstraints(cands, mode);
+    cands = applyBudgetSoft(cands, budget, mode);
+    cands = filterByTimeAndDistance(cands, mode, timeAvailMin, distMaxKm);
+
+    // se troppo pochi, prova un rilassamento automatico (ma senza impazzire)
+    if (cands.length < 6 && distMaxKm < 800) {
+      const relaxed = normalizeCandidates(raw, lat, lon);
+      cands = applyModeConstraints(relaxed, mode);
+      cands = applyBudgetSoft(cands, budget, mode);
+      // rilassa solo tempo, non distanza
+      cands = cands.filter(c => c.distanceKm <= distMaxKm);
+    }
+
+    lastState.lastResult = cands;
+
+    const visitedSet = loadVisitedSet();
+    const showVisited = els.showVisited.checked;
+    const preferFamous = els.preferFamous.checked;
+
+    const pick = pickMainAndAlternatives(cands, visitedSet, showVisited, preferFamous);
+
+    // aggiorna visited flag negli oggetti (per UI)
+    if (pick.main) pick.main.visited = visitedSet.has(pick.main.id);
+    pick.alts.forEach(a => a.visited = visitedSet.has(a.id));
+
+    renderResult(pick, mode, timeAvailMin);
+
+    els.status.textContent =
+      pick.main
+        ? `✅ Trovati ${cands.length} luoghi candidati.`
+        : `⚠️ Nessun risultato con questi filtri. Prova ad aumentare km o cambiare mezzo.`;
+
+  } catch (err) {
+    els.status.textContent = `❌ ${err.message || "Errore sconosciuto"}`;
+    els.results.innerHTML = `
+      <div class="result">
+        <h2>Errore</h2>
+        <div class="meta">${escapeHtml(err.message || String(err))}</div>
+      </div>
+    `;
+  } finally {
+    els.goBtn.disabled = false;
+  }
+}
+
+els.goBtn.addEventListener("click", onGo);
