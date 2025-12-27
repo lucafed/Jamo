@@ -13,7 +13,6 @@
       --bg:#0A0F14; --surface:#141C22; --text:#fff; --muted:#A0B2BA;
       --accent:#00E0FF; --accent2:#00B5CC;
       --danger:#ff4d4d; --ok:#23d18b;
-      --radius:18px;
     }
     *{box-sizing:border-box}
     body{
@@ -60,7 +59,7 @@
       border-radius: 18px;
       padding: 16px 18px;
       font-size:18px;
-      font-weight:800;
+      font-weight:900;
       color:#001018;
       background: linear-gradient(90deg, var(--accent), var(--accent2));
       cursor:pointer;
@@ -101,7 +100,7 @@
       color:var(--text);
       text-decoration:none;
       background: rgba(255,255,255,.06);
-      font-weight:700;
+      font-weight:800;
     }
     .check{
       display:inline-flex; align-items:center; gap:8px;
@@ -110,7 +109,7 @@
       border:1px solid rgba(255,255,255,.12);
       background: rgba(255,255,255,.06);
       color:var(--text);
-      font-weight:800;
+      font-weight:900;
       cursor:pointer;
     }
     .sectionTitle{margin:14px 0 8px; font-size:18px; font-weight:900}
@@ -134,7 +133,7 @@
 <body>
   <main class="card">
     <h1>Jamo</h1>
-    <p class="lead">Scegli tempo, mezzo e stile: ti propongo un <b>luogo reale</b> dove andare (con alternative) + <b>cosa vedere</b>.</p>
+    <p class="lead">Scegli tempo e mezzo: Jamo propone un <b>luogo reale</b> dove andare + <b>cosa vedere</b>.</p>
 
     <div class="row">
       <div>
@@ -162,9 +161,8 @@
       <div>
         <label for="styleSelect">Stile mete</label><br/>
         <select id="styleSelect">
-          <option value="famous" selected>Famosi</option>
-          <option value="mix">Mix (famosi + chicche)</option>
-          <option value="hidden">Chicche (meno noti)</option>
+          <option value="known" selected>Più conosciuti</option>
+          <option value="hidden">Chicche</option>
         </select>
       </div>
     </div>
@@ -186,7 +184,7 @@
       <div id="altList"></div>
     </section>
 
-    <div class="footer" id="footerInfo">Versione 2.1 • Luoghi (OSM) + POI • ORS quando possibile</div>
+    <div class="footer" id="footerInfo">Versione 2.2 • Più conosciuti + Chicche • POI inclusi</div>
   </main>
 
   <script src="app.js"></script>
