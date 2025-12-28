@@ -1,5 +1,7 @@
 // /api/suggest.js  (Node / Vercel)
-// NOTE: richiede env ORS_API_KEY
+// Richiede env ORS_API_KEY (opzionale: se manca, usa solo stime)
+// Supporta: car, walk, bike, train, bus, plane
+// Supporta type: mix | places | nature
 
 const ORS_BASE = "https://api.openrouteservice.org";
 const OVERPASS = "https://overpass-api.de/api/interpreter";
@@ -36,26 +38,48 @@ function uniqBy(arr, keyFn) {
 
 function mapsUrl(lat, lng, name) {
   const q = encodeURIComponent(name || `${lat},${lng}`);
-  return `https://www.google.com/maps/search/?api=1&query=${q}&query_place_id=`;
+  return `https://www.google.com/maps/search/?api=1&query=${q}`;
 }
 
 function makeId(name, lat, lng) {
   return `${(name||"place").toLowerCase().replace(/\s+/g,"_")}@${lat.toFixed(5)},${lng.toFixed(5)}`;
 }
 
+/* -----------------------
+   MODE: profiles + speed
+   ----------------------- */
+
 function modeProfile(mode) {
-  // ORS profiles
   if (mode === "walk") return "foot-walking";
   if (mode === "bike") return "cycling-regular";
+  // per train/bus/plane usiamo comunque driving-car per eventuale ORS check
   return "driving-car";
 }
 
 function avgSpeedKmh(mode) {
   if (mode === "walk") return 4.5;
   if (mode === "bike") return 15;
-  return 70; // auto media (stima)
+  if (mode === "car") return 70;
+
+  // PLAUSIBILE (non orari reali):
+  if (mode === "train") return 95;
+  if (mode === "bus") return 65;
+  if (mode === "plane") return 650;
+
+  return 70;
 }
 
+// Buffer porta-a-porta (minuti): accesso + attese
+function modeBufferMin(mode) {
+  if (mode === "train") return 18;
+  if (mode === "bus") return 12;
+  if (mode === "plane") return 90;
+  return 0;
+}
+
+/* -----------------------
+   fetch helper
+   ----------------------- */
 async function fetchJson(url, opts) {
   const r = await fetch(url, opts);
   const text = await r.text();
@@ -64,15 +88,13 @@ async function fetchJson(url, opts) {
   return { ok: r.ok, status: r.status, data };
 }
 
+/* -----------------------
+   ORS isochrone (optional)
+   ----------------------- */
 async function orsIsochronePolygon(lat, lng, seconds, profile, apiKey) {
-  // ORS isochrones range max (nel tuo screenshot): 3600 sec
   const range = clamp(seconds, 60, 3600);
-
   const url = `${ORS_BASE}/v2/isochrones/${profile}`;
-  const body = {
-    locations: [[lng, lat]],
-    range: [range],
-  };
+  const body = { locations: [[lng, lat]], range: [range] };
 
   const { ok, status, data } = await fetchJson(url, {
     method: "POST",
@@ -88,37 +110,57 @@ async function orsIsochronePolygon(lat, lng, seconds, profile, apiKey) {
     const err = data?.error || data?.message || data?.details || "ORS error";
     throw new Error(`${err} (status ${status})`);
   }
-  // ritorna geojson con polygon
   return data;
 }
 
-async function overpassPlacesAround(lat, lng, radiusMeters) {
-  // cerchiamo LUOGHI (non attrazioni)
-  // place=city|town|village|hamlet|suburb|neighbourhood
+/* -----------------------
+   Overpass query by type
+   ----------------------- */
+function buildOverpassQuery(type, lat, lng, radiusMeters) {
   const r = Math.round(radiusMeters);
 
-  const query = `
-    [out:json][timeout:25];
+  const qPlaces = `
     (
-      node["place"~"^(city|town|village|hamlet|suburb|neighbourhood)$"](around:${r},${lat},${lng});
-      way["place"~"^(city|town|village|hamlet|suburb|neighbourhood)$"](around:${r},${lat},${lng});
-      relation["place"~"^(city|town|village|hamlet|suburb|neighbourhood)$"](around:${r},${lat},${lng});
+      node["place"~"^(city|town|village|hamlet)$"](around:${r},${lat},${lng});
+      way["place"~"^(city|town|village|hamlet)$"](around:${r},${lat},${lng});
+      relation["place"~"^(city|town|village|hamlet)$"](around:${r},${lat},${lng});
     );
-    out center 120;
-  `.trim();
+  `;
 
+  const qNature = `
+    (
+      node["waterway"="waterfall"](around:${r},${lat},${lng});
+      node["natural"="peak"](around:${r},${lat},${lng});
+      way["boundary"="national_park"](around:${r},${lat},${lng});
+      relation["boundary"="national_park"](around:${r},${lat},${lng});
+      node["leisure"="nature_reserve"](around:${r},${lat},${lng});
+      way["leisure"="nature_reserve"](around:${r},${lat},${lng});
+      relation["leisure"="nature_reserve"](around:${r},${lat},${lng});
+    );
+  `;
+
+  const qMix = `(${qPlaces} ${qNature});`;
+
+  const pick = (type === "places") ? qPlaces : (type === "nature") ? qNature : qMix;
+
+  return `
+    [out:json][timeout:25];
+    ${pick}
+    out center 220;
+  `.trim();
+}
+
+async function overpassFetch(type, lat, lng, radiusMeters) {
+  const query = buildOverpassQuery(type, lat, lng, radiusMeters);
   const { ok, status, data } = await fetchJson(OVERPASS, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" },
     body: "data=" + encodeURIComponent(query)
   });
-
-  if (!ok) {
-    throw new Error(`Overpass error (status ${status})`);
-  }
+  if (!ok) throw new Error(`Overpass error (status ${status})`);
 
   const elements = data?.elements || [];
-  const places = [];
+  const out = [];
 
   for (const el of elements) {
     const name = el.tags?.name;
@@ -130,38 +172,38 @@ async function overpassPlacesAround(lat, lng, radiusMeters) {
 
     if (!c) continue;
 
-    places.push({
+    out.push({
       name,
       lat: c.lat,
       lng: c.lon,
-      place: el.tags?.place || "place"
+      tags: el.tags || {}
     });
   }
 
-  // pulizia / unici
-  return uniqBy(places, p => `${p.name.toLowerCase()}_${p.lat.toFixed(3)}_${p.lng.toFixed(3)}`);
+  return uniqBy(out, p => `${p.name.toLowerCase()}_${p.lat.toFixed(3)}_${p.lng.toFixed(3)}`);
 }
 
+/* -----------------------
+   pick best + alts
+   ----------------------- */
 function chooseTopAndAlternatives(candidates, targetMinutes) {
-  // punteggio: preferisco vicino al tempo target (né troppo vicino né troppo lontano)
   const scored = candidates.map(c => {
     const diff = Math.abs(c.eta_min - targetMinutes);
-    const penaltyTooClose = c.eta_min < Math.max(10, targetMinutes*0.35) ? 18 : 0;
-    const score = diff + penaltyTooClose;
-    return { ...c, score };
+
+    // NON buttiamo via troppo vicino: solo una lieve penalità
+    const tooClose = c.eta_min < Math.max(10, targetMinutes * 0.25) ? 6 : 0;
+
+    return { ...c, score: diff + tooClose };
   }).sort((a,b)=>a.score-b.score);
 
   const top = scored[0] || null;
-
-  // alternative: prendo le successive ma non troppo simili
   const alternatives = [];
   for (let i=1; i<scored.length && alternatives.length<3; i++){
     const a = scored[i];
     if (!top) break;
-    if (Math.abs(a.eta_min - top.eta_min) < 8) continue;
+    if (Math.abs(a.eta_min - top.eta_min) < 6) continue;
     alternatives.push(a);
   }
-
   return { top, alternatives };
 }
 
@@ -171,6 +213,7 @@ module.exports = async (req, res) => {
     const lng = parseFloat(req.query.lng);
     const minutes = parseInt(req.query.minutes || "60", 10);
     const mode = (req.query.mode || "car").toLowerCase();
+    const type = (req.query.type || "mix").toLowerCase(); // <-- supporto tipo meta
     const visitedRaw = (req.query.visited || "").trim();
     const visited = visitedRaw ? visitedRaw.split(",").map(s=>s.trim()).filter(Boolean) : [];
 
@@ -182,85 +225,102 @@ module.exports = async (req, res) => {
     const targetSeconds = mins * 60;
 
     const speed = avgSpeedKmh(mode);
+    const buffer = modeBufferMin(mode);
     const profile = modeProfile(mode);
 
     let engine = "ESTIMATE";
-    let radiusKm = (mins * speed) / 60; // stima raggio
+    let radiusKm = (mins * speed) / 60; // stima raggio “grezzo”
 
-    // ORS solo fino a 60 minuti (limite range 3600)
+    // se ho buffer, riduco raggio utile (tempo disponibile per il viaggio vero)
+    const usable = Math.max(10, mins - buffer);
+    radiusKm = (usable * speed) / 60;
+
+    // ORS solo fino a 60 minuti (range 3600), opzionale
     const apiKey = process.env.ORS_API_KEY;
-    if (apiKey && targetSeconds <= 3600) {
+    if (apiKey && targetSeconds <= 3600 && (mode === "car" || mode === "walk" || mode === "bike")) {
       try {
         await orsIsochronePolygon(lat, lng, targetSeconds, profile, apiKey);
-        // (per ora usiamo ORS per validare che la key funzioni e che il profilo sia ok)
         engine = "ORS_OK";
-      } catch (e) {
-        // se ORS fallisce, continuiamo con estimate
+      } catch {
         engine = "ESTIMATE_FALLBACK";
       }
     } else {
-      engine = apiKey ? "ORS_LIMIT_FALLBACK" : "NO_ORS_KEY";
+      engine = apiKey ? "ORS_LIMIT_OR_MODE" : "NO_ORS_KEY";
     }
 
-    // raggio metri: metto un minimo e un max ragionevole
-    const radiusMeters = clamp(radiusKm * 1000, 5000, 250000); // 5 km - 250 km
+    // radius: min/max
+    let radiusMeters = clamp(radiusKm * 1000, 7000, 300000);
 
-    // prendo luoghi da Overpass
-    const places = await overpassPlacesAround(lat, lng, radiusMeters);
+    // 1) prima query
+    let places = await overpassFetch(type, lat, lng, radiusMeters);
 
-    // trasformo in candidates con distanza + eta (stima)
+    // 2) fallback se pochi
+    if (places.length < 25) {
+      radiusMeters = clamp(radiusMeters * 1.4, 7000, 300000);
+      const more = await overpassFetch(type, lat, lng, radiusMeters);
+      places = uniqBy([...places, ...more], p => `${p.name.toLowerCase()}_${p.lat.toFixed(3)}_${p.lng.toFixed(3)}`);
+    }
+
+    // 3) se ancora pochi, forzo MIX (così non è mai vuoto)
+    if (places.length < 10 && type !== "mix") {
+      const mix = await overpassFetch("mix", lat, lng, radiusMeters);
+      places = uniqBy([...places, ...mix], p => `${p.name.toLowerCase()}_${p.lat.toFixed(3)}_${p.lng.toFixed(3)}`);
+    }
+
+    // candidates con eta plausibile
     let candidates = places.map(p => {
       const d = haversineKm(lat, lng, p.lat, p.lng);
-      const eta = (d / speed) * 60;
+      const etaTravel = (d / speed) * 60;
+      const etaTotal = etaTravel + buffer;
+
       return {
         id: makeId(p.name, p.lat, p.lng),
         name: p.name,
         lat: p.lat,
         lng: p.lng,
         distance_km: d,
-        eta_min: eta,
+        eta_min: etaTotal,
         maps_url: mapsUrl(p.lat, p.lng, p.name),
+        tags: p.tags
       };
     });
 
-    // filtro: coerenti col tempo (con tolleranza)
-    const maxMin = mins * 1.15;
-    const minMin = Math.max(8, mins * 0.35);
+    // filtro “morbido”
+    const maxMin = mins * 1.35;
+    const minMin = 8;
 
     candidates = candidates
       .filter(c => c.eta_min <= maxMin && c.eta_min >= minMin)
-      .filter(c => !visited.includes(c.id))
-      .sort((a,b)=>a.eta_min-b.eta_min);
+      .filter(c => !visited.includes(c.id));
 
-    // se troppo pochi, allargo tolleranza (senza impazzire)
-    if (candidates.length < 4) {
-      const relaxedMax = mins * 1.35;
+    // se zero candidati, allargo ancora (ultima chance)
+    if (!candidates.length) {
       candidates = places.map(p => {
         const d = haversineKm(lat, lng, p.lat, p.lng);
-        const eta = (d / speed) * 60;
+        const etaTravel = (d / speed) * 60;
+        const etaTotal = etaTravel + buffer;
         return {
           id: makeId(p.name, p.lat, p.lng),
           name: p.name,
           lat: p.lat,
           lng: p.lng,
           distance_km: d,
-          eta_min: eta,
+          eta_min: etaTotal,
           maps_url: mapsUrl(p.lat, p.lng, p.name),
+          tags: p.tags
         };
-      })
-      .filter(c => c.eta_min <= relaxedMax && c.eta_min >= 8)
-      .filter(c => !visited.includes(c.id));
+      }).filter(c => c.eta_min >= 6).filter(c => !visited.includes(c.id));
     }
 
-    // niente candidati -> risposta pulita (no crash in UI)
     if (!candidates.length) {
       return json(res, 200, {
         top: null,
         alternatives: [],
         mode,
+        type,
         engine,
-        source: "Overpass(place=*)",
-        message: "Nessun luogo raggiungibile col tempo selezionato."
+        source: "Overpass",
+        message: "Nessun luogo trovato. Prova ad aumentare il tempo."
       });
     }
 
@@ -271,8 +331,9 @@ module.exports = async (req, res) => {
       top,
       alternatives,
       mode,
+      type,
       engine,
-      source: "Overpass(place=city|town|village|hamlet|suburb|neighbourhood)"
+      source: "Overpass (places+nature, fallback attivo)"
     });
 
   } catch (e) {
