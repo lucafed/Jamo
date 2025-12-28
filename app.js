@@ -1,243 +1,350 @@
 /* =========================
-   JAMO — app.js (STABILE)
+   JAMO — app.js (v2 STABILE)
+   Usa /api/suggest + /api/geocode + /api/places (opzionale)
    ========================= */
 
 const API = {
   geocode: "/api/geocode",
-  destinations: "/api/destinations",
-  places: "/api/places"
+  suggest: "/api/suggest",
+  places: "/api/places" // opzionale (POI). Se non esiste, non rompe.
 };
 
-const statusEl = document.getElementById("status");
-const resultEl = document.getElementById("result");
-const placeNameEl = document.getElementById("placeName");
-const placeMetaEl = document.getElementById("placeMeta");
-const mapsLinkEl = document.getElementById("mapsLink");
-const altListEl = document.getElementById("altList");
-const poiListEl = document.getElementById("poiList");
+const $ = (id) => document.getElementById(id);
 
-const goBtn = document.getElementById("goBtn");
-const gpsBtn = document.getElementById("gpsBtn");
-const rerollBtn = document.getElementById("rerollBtn");
+const statusEl = $("status");
+const resultEl = $("result");
+const placeNameEl = $("placeName");
+const placeMetaEl = $("placeMeta");
+const mapsLinkEl = $("mapsLink");
+const altListEl = $("altList");
 
-let lastResults = [];
-let currentOrigin = null;
+const poiListEl = $("poiList");      // opzionale
+const visitedBtn = $("visitedBtn");  // opzionale
+const rerollBtn = $("rerollBtn");    // opzionale
+
+const goBtn = $("goBtn");
+const gpsBtn = $("gpsBtn");
+
+const LS_VISITED_KEY = "jamo_visited_v1";
+
+let lastResponse = null;     // { top, alternatives, ... }
+let currentOrigin = null;    // { lat, lng }
+let lastMode = "car";
+let lastMinutes = 60;
 
 /* =========================
-   UTIL
+   UI helpers
    ========================= */
 
 function setStatus(msg, type = "") {
+  if (!statusEl) return;
   statusEl.textContent = msg;
   statusEl.className = "status" + (type ? " " + type : "");
 }
 
-function kmBetween(a, b) {
-  const R = 6371;
-  const dLat = (b.lat - a.lat) * Math.PI / 180;
-  const dLon = (b.lon - a.lon) * Math.PI / 180;
-  const la1 = a.lat * Math.PI / 180;
-  const la2 = b.lat * Math.PI / 180;
-
-  const x = Math.sin(dLat / 2) ** 2 +
-            Math.sin(dLon / 2) ** 2 * Math.cos(la1) * Math.cos(la2);
-  return R * 2 * Math.atan2(Math.sqrt(x), Math.sqrt(1 - x));
+function showResultBox(show) {
+  if (!resultEl) return;
+  resultEl.classList.toggle("hidden", !show);
 }
 
-function shuffle(arr) {
-  return arr.sort(() => Math.random() - 0.5);
+function safeNumber(n, fallback = null) {
+  const x = Number(n);
+  return Number.isFinite(x) ? x : fallback;
 }
 
 /* =========================
-   ORIGINE
+   Visited (localStorage)
+   ========================= */
+
+function getVisitedSet() {
+  try {
+    const raw = localStorage.getItem(LS_VISITED_KEY);
+    if (!raw) return new Set();
+    const arr = JSON.parse(raw);
+    return new Set(Array.isArray(arr) ? arr : []);
+  } catch {
+    return new Set();
+  }
+}
+
+function saveVisitedSet(set) {
+  try {
+    localStorage.setItem(LS_VISITED_KEY, JSON.stringify([...set]));
+  } catch {}
+}
+
+function markVisited(id) {
+  const set = getVisitedSet();
+  set.add(id);
+  saveVisitedSet(set);
+}
+
+/* =========================
+   Origin: input OR GPS
    ========================= */
 
 async function getOrigin() {
-  const input = document.getElementById("startInput").value.trim();
+  const input = $("startInput")?.value?.trim() || "";
 
+  // 1) Partenza manuale -> geocode
   if (input) {
     setStatus("Cerco la partenza…");
     const r = await fetch(`${API.geocode}?q=${encodeURIComponent(input)}`);
     if (!r.ok) throw new Error("Geocoding fallito");
-    return await r.json();
+    const data = await r.json();
+
+    // Normalizzo {lat,lon} o {lat,lng}
+    const lat = safeNumber(data.lat);
+    const lng = safeNumber(data.lng ?? data.lon);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+      throw new Error("Geocode: coordinate non valide");
+    }
+    return { lat, lng, label: data.label || input };
   }
 
+  // 2) GPS
+  setStatus("Uso il GPS…");
   return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) return reject(new Error("GPS non supportato"));
     navigator.geolocation.getCurrentPosition(
-      p => resolve({ lat: p.coords.latitude, lon: p.coords.longitude }),
+      (p) => resolve({ lat: p.coords.latitude, lng: p.coords.longitude, label: "La tua posizione" }),
       () => reject(new Error("GPS non disponibile"))
     );
   });
 }
 
 /* =========================
-   TEMPO → DISTANZA (STIMA)
+   Suggest (server)
    ========================= */
 
-function maxKm(timeMin, mode) {
-  const speeds = {
-    walk: 4,
-    bike: 15,
-    car: 60,
-    train: 90,
-    bus: 70,
-    plane: 500
-  };
-  return (timeMin / 60) * (speeds[mode] || 50);
-}
-
-/* =========================
-   CORE
-   ========================= */
-
-async function loadDestinations(origin, radiusKm, type) {
+async function fetchSuggest({ lat, lng, minutes, mode, visitedCsv }) {
   const url =
-    `${API.destinations}?lat=${origin.lat}&lon=${origin.lon}` +
-    `&radiusKm=${Math.round(radiusKm)}&type=${type}`;
+    `${API.suggest}?lat=${encodeURIComponent(lat)}&lng=${encodeURIComponent(lng)}` +
+    `&minutes=${encodeURIComponent(minutes)}&mode=${encodeURIComponent(mode)}` +
+    (visitedCsv ? `&visited=${encodeURIComponent(visitedCsv)}` : "");
 
   const r = await fetch(url);
-  if (!r.ok) throw new Error("Errore caricamento mete");
-  const data = await r.json();
-  return data.elements || [];
-}
-
-function scorePlace(p, style) {
-  const tags = p.tags || {};
-  let score = 0;
-
-  if (style === "known") {
-    if (tags.place === "city") score += 3;
-    if (tags.place === "town") score += 2;
-    if (tags.population) score += 1;
-    if (tags.tourism) score += 2;
-  } else {
-    if (tags.place === "village") score += 2;
-    if (tags.natural || tags.waterway) score += 3;
+  if (!r.ok) {
+    const txt = await r.text().catch(() => "");
+    throw new Error(`Errore API suggest (${r.status}) ${txt}`.slice(0, 200));
   }
-  return score;
-}
-
-async function findPlaces() {
-  setStatus("Sto cercando una meta adatta…");
-
-  const time = Number(document.getElementById("timeSelect").value);
-  const mode = document.getElementById("modeSelect").value;
-  const style = document.getElementById("styleSelect").value;
-  const type = document.getElementById("typeSelect").value;
-
-  currentOrigin = await getOrigin();
-
-  const radius = maxKm(time, mode);
-
-  let results = [];
-  const typesToTry =
-    type === "mix" ? ["places", "nature"] : [type];
-
-  for (const t of typesToTry) {
-    const raw = await loadDestinations(currentOrigin, radius, t);
-    results.push(...raw);
-  }
-
-  if (!results.length) throw new Error("NESSUNA_META");
-
-  results.forEach(p => {
-    p._score = scorePlace(p, style);
-    p._dist = kmBetween(currentOrigin, {
-      lat: p.lat,
-      lon: p.lon
-    });
-  });
-
-  results = results
-    .filter(p => p._dist <= radius * 1.1)
-    .sort((a, b) => b._score - a._score);
-
-  if (!results.length) throw new Error("NESSUNA_META");
-
-  lastResults = shuffle(results);
-  showResult(lastResults[0]);
+  return await r.json();
 }
 
 /* =========================
-   UI
+   POI (opzionale)
    ========================= */
 
-async function showResult(p) {
-  resultEl.classList.remove("hidden");
-
-  const name =
-    p.tags?.name ||
-    p.tags?.["name:it"] ||
-    "Luogo interessante";
-
-  placeNameEl.textContent = name;
-
-  placeMetaEl.textContent =
-    `${Math.round(p._dist)} km · ${p.tags.place || p.tags.natural || "luogo"}`;
-
-  mapsLinkEl.href =
-    `https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lon}`;
-
-  altListEl.innerHTML = "";
+async function loadPOI(lat, lng) {
+  if (!poiListEl) return;
   poiListEl.innerHTML = "";
 
-  lastResults.slice(1, 4).forEach(a => {
-    const div = document.createElement("div");
-    div.className = "alt-item";
-    div.innerHTML = `
-      <div class="name">${a.tags?.name || "Alternativa"}</div>
-      <div class="small">${Math.round(a._dist)} km</div>
-    `;
-    altListEl.appendChild(div);
-  });
-
-  loadPOI(p.lat, p.lon);
-  setStatus("Meta trovata ✔", "ok");
-}
-
-async function loadPOI(lat, lon) {
   try {
-    const r = await fetch(`${API.places}?lat=${lat}&lon=${lon}`);
+    const r = await fetch(`${API.places}?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lng)}`);
     if (!r.ok) return;
 
     const data = await r.json();
-    (data.elements || []).slice(0, 5).forEach(p => {
+    const els = data?.elements || [];
+    if (!els.length) {
       const d = document.createElement("div");
       d.className = "alt-item";
-      d.textContent = p.tags?.name || "Punto di interesse";
+      d.textContent = "Nessun punto di interesse trovato.";
+      poiListEl.appendChild(d);
+      return;
+    }
+
+    els.slice(0, 6).forEach((p) => {
+      const name = p.tags?.name || p.tags?.["name:it"] || "Punto di interesse";
+      const d = document.createElement("div");
+      d.className = "alt-item";
+      d.innerHTML = `<div class="name">${escapeHtml(name)}</div>`;
       poiListEl.appendChild(d);
     });
-  } catch {}
+  } catch {
+    // silenzioso
+  }
 }
 
 /* =========================
-   EVENTI
+   Rendering
+   ========================= */
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, (c) => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
+
+function renderPlace(place) {
+  if (!place) return;
+
+  const name = place.name || "Luogo consigliato";
+  placeNameEl.textContent = name;
+
+  const km = Number.isFinite(place.distance_km) ? `${place.distance_km.toFixed(0)} km` : "";
+  const eta = Number.isFinite(place.eta_min) ? `${Math.round(place.eta_min)} min` : "";
+  const line = [eta, km].filter(Boolean).join(" · ");
+
+  placeMetaEl.textContent = line || "Meta trovata";
+
+  mapsLinkEl.href = place.maps_url || `https://www.google.com/maps/search/?api=1&query=${place.lat},${place.lng}`;
+
+  // Visited button
+  if (visitedBtn) {
+    visitedBtn.onclick = () => {
+      if (place.id) {
+        markVisited(place.id);
+        setStatus("Segnato come già visitato ✅", "ok");
+      }
+    };
+  }
+
+  // Alternative
+  altListEl.innerHTML = "";
+  const alts = (lastResponse?.alternatives || []).slice(0, 3);
+  if (!alts.length) {
+    const div = document.createElement("div");
+    div.className = "alt-item";
+    div.innerHTML = `<div class="name">Nessuna alternativa trovata</div>`;
+    altListEl.appendChild(div);
+  } else {
+    alts.forEach((a) => {
+      const div = document.createElement("div");
+      div.className = "alt-item";
+      div.innerHTML = `
+        <div class="name">${escapeHtml(a.name || "Alternativa")}</div>
+        <div class="small">${Math.round(a.eta_min || 0)} min · ${(a.distance_km || 0).toFixed(0)} km</div>
+      `;
+      div.onclick = () => {
+        // clic su alternativa = la porto sopra
+        lastResponse = {
+          ...lastResponse,
+          top: a,
+          alternatives: [lastResponse.top, ...alts.filter(x => x.id !== a.id)].filter(Boolean).slice(0,3)
+        };
+        renderPlace(lastResponse.top);
+        loadPOI(lastResponse.top.lat, lastResponse.top.lng);
+      };
+      altListEl.appendChild(div);
+    });
+  }
+
+  // POI (opzionale)
+  loadPOI(place.lat, place.lng);
+}
+
+function applyStylePreference(data, style) {
+  // Il server oggi non usa "style". Facciamo una selezione client:
+  // known = preferisco più "lontano verso target" e posti con nome "importante" (heuristic: più lungo / contiene spazi)
+  // gems  = preferisco un po' più vicini e nomi più "piccoli"
+  if (!data || !data.top) return data;
+  if (!style) return data;
+
+  const all = [data.top, ...(data.alternatives || [])].filter(Boolean);
+
+  const score = (p) => {
+    const n = (p.name || "").trim();
+    const len = n.length;
+    const words = n.split(/\s+/).filter(Boolean).length;
+    const eta = Number.isFinite(p.eta_min) ? p.eta_min : 999;
+
+    if (style === "known") {
+      return (words * 2) + (len * 0.05) + (eta * 0.02);
+    } else { // gems
+      return (words * -1) + (len * -0.03) + (eta * -0.01);
+    }
+  };
+
+  const sorted = all.slice().sort((a, b) => score(b) - score(a));
+  const top = sorted[0];
+  const alternatives = sorted.slice(1, 4);
+  return { ...data, top, alternatives };
+}
+
+/* =========================
+   Main action
+   ========================= */
+
+async function run() {
+  showResultBox(false);
+
+  const time = Number($("timeSelect")?.value || 60);
+  const mode = ($("modeSelect")?.value || "car").toLowerCase();
+  const style = ($("styleSelect")?.value || "known").toLowerCase();
+
+  lastMode = mode;
+  lastMinutes = time;
+
+  // visited list
+  const visitedSet = getVisitedSet();
+  const visitedCsv = [...visitedSet].slice(0, 150).join(",");
+
+  setStatus("Calcolo la meta migliore…");
+
+  currentOrigin = await getOrigin();
+
+  setStatus("Cerco mete reali vicino a te…");
+
+  const raw = await fetchSuggest({
+    lat: currentOrigin.lat,
+    lng: currentOrigin.lng,
+    minutes: time,
+    mode,
+    visitedCsv
+  });
+
+  // Se il server ritorna top=null
+  if (!raw?.top) {
+    setStatus(
+      raw?.message || "Non trovo mete con questi filtri. Aumenta il tempo o cambia mezzo.",
+      "err"
+    );
+    return;
+  }
+
+  // Applico preferenza stile (known/gems) lato client
+  const data = applyStylePreference(raw, style);
+
+  lastResponse = data;
+
+  showResultBox(true);
+  renderPlace(data.top);
+
+  setStatus("Meta trovata ✔", "ok");
+}
+
+/* =========================
+   Events
    ========================= */
 
 goBtn.onclick = async () => {
-  resultEl.classList.add("hidden");
+  goBtn.disabled = true;
   try {
-    await findPlaces();
+    await run();
   } catch (e) {
-    if (e.message === "NESSUNA_META") {
-      setStatus(
-        "Non trovo mete con questi filtri.\nProva Mix o aumenta il tempo.",
-        "err"
-      );
-    } else {
-      setStatus("Errore: " + e.message, "err");
-    }
+    setStatus("Errore: " + (e?.message || String(e)), "err");
+  } finally {
+    goBtn.disabled = false;
   }
 };
 
 gpsBtn.onclick = () => {
-  document.getElementById("startInput").value = "";
-  setStatus("Userò il GPS quando premi il bottone.");
+  if ($("startInput")) $("startInput").value = "";
+  setStatus("Ok: userò il GPS quando premi “DOVE ANDIAMO?”");
 };
 
-rerollBtn?.addEventListener("click", () => {
-  if (lastResults.length > 1) {
-    lastResults.push(lastResults.shift());
-    showResult(lastResults[0]);
-  }
-});
+if (rerollBtn) {
+  rerollBtn.onclick = () => {
+    if (!lastResponse?.alternatives?.length) return;
+    const next = lastResponse.alternatives[0];
+    const rest = lastResponse.alternatives.slice(1);
+    lastResponse = {
+      ...lastResponse,
+      alternatives: [lastResponse.top, ...rest].filter(Boolean).slice(0,3),
+      top: next
+    };
+    renderPlace(lastResponse.top);
+    loadPOI(lastResponse.top.lat, lastResponse.top.lng);
+    setStatus("Ok, cambio meta 🎲", "ok");
+  };
+}
