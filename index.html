@@ -6,7 +6,8 @@
   <title>Jamo</title>
 
   <meta name="theme-color" content="#0b1220" />
-  <link rel="manifest" href="manifest.json" />
+  <!-- FIX: nel repo hai manifest.webmanifest -->
+  <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" href="icons/icon-192.png" />
 
   <style>
@@ -138,7 +139,7 @@
     <main class="card">
       <p class="headline">“Andiamo da qualche parte?” → “Ok, ma dove?”</p>
       <p class="sub">
-        Scegli <b>tempo</b>, <b>mezzo</b>, <b>tipo meta</b> e stile. Jamo ti propone un luogo reale + alternative.
+        Scegli <b>tempo</b>, <b>mezzo</b>, <b>tipo</b> e <b>categoria</b>. Jamo ti propone un luogo reale + alternative.
         Se non vuoi usare il GPS, inserisci tu la partenza.
       </p>
 
@@ -187,13 +188,29 @@
               </select>
             </div>
 
+            <!-- NO MIX: solo scelta chiara -->
             <div style="flex:1; min-width:170px">
               <select id="typeSelect">
-                <option value="mix" selected>Mix (luoghi + natura)</option>
-                <option value="places">Luoghi (città/borghi)</option>
-                <option value="nature">Natura (cascate/monti/parchi)</option>
+                <option value="places" selected>Luoghi (città/borghi)</option>
+                <option value="nature">Natura (monti/parchi/cascate)</option>
               </select>
             </div>
+
+            <!-- CATEGORIA: mare/montagna/bambini ecc. -->
+            <div style="flex:1; min-width:170px">
+              <select id="categorySelect">
+                <option value="" selected>Categoria: Qualsiasi</option>
+                <option value="sea">Mare</option>
+                <option value="mountain">Montagna</option>
+                <option value="city">Città</option>
+                <option value="villages">Borghi</option>
+                <option value="kids">Bambini</option>
+                <option value="relax">Relax</option>
+                <option value="food">Cibo</option>
+                <option value="culture">Cultura</option>
+              </select>
+            </div>
+
           </div>
         </div>
 
