@@ -1,0 +1,248 @@
+{
+  "version": "1.0",
+  "updated": "2025-03-09",
+  "regions": ["EU", "UK"],
+  "places": [
+
+    /* =========================
+       METE CONOSCIUTE
+       ========================= */
+
+    {
+      "id": "rome_it_city",
+      "name": "Roma",
+      "country": "IT",
+      "type": "città",
+      "visibility": "conosciuta",
+      "tags": [
+        "iconica",
+        "romantica",
+        "pioggia_ok",
+        "giornata_intera",
+        "weekend",
+        "coppia",
+        "amici",
+        "medio",
+        "treno_ok",
+        "aereo_ok"
+      ],
+      "what_to_do": [
+        "Colosseo e Fori Imperiali",
+        "Trastevere",
+        "Musei Vaticani",
+        "Cucina romana"
+      ]
+    },
+
+    {
+      "id": "paris_fr_city",
+      "name": "Parigi",
+      "country": "FR",
+      "type": "città",
+      "visibility": "conosciuta",
+      "tags": [
+        "iconica",
+        "romantica",
+        "pioggia_ok",
+        "weekend",
+        "coppia",
+        "amici",
+        "medio",
+        "treno_ok",
+        "aereo_ok"
+      ],
+      "what_to_do": [
+        "Tour Eiffel",
+        "Montmartre",
+        "Museo del Louvre",
+        "Caffè parigini"
+      ]
+    },
+
+    {
+      "id": "barcelona_es_city",
+      "name": "Barcellona",
+      "country": "ES",
+      "type": "città",
+      "visibility": "conosciuta",
+      "tags": [
+        "iconica",
+        "mare",
+        "sole_ok",
+        "weekend",
+        "amici",
+        "medio",
+        "aereo_ok"
+      ],
+      "what_to_do": [
+        "Sagrada Familia",
+        "Barceloneta",
+        "Quartiere Gotico",
+        "Tapas"
+      ]
+    },
+
+    {
+      "id": "london_uk_city",
+      "name": "Londra",
+      "country": "UK",
+      "type": "città",
+      "visibility": "conosciuta",
+      "tags": [
+        "iconica",
+        "pioggia_ok",
+        "weekend",
+        "coppia",
+        "amici",
+        "costoso",
+        "treno_ok",
+        "aereo_ok"
+      ],
+      "what_to_do": [
+        "British Museum",
+        "Camden Market",
+        "Hyde Park",
+        "Pub storici"
+      ]
+    },
+
+    {
+      "id": "amsterdam_nl_city",
+      "name": "Amsterdam",
+      "country": "NL",
+      "type": "città",
+      "visibility": "conosciuta",
+      "tags": [
+        "romantica",
+        "pioggia_ok",
+        "weekend",
+        "coppia",
+        "amici",
+        "medio",
+        "treno_ok"
+      ],
+      "what_to_do": [
+        "Canali",
+        "Museo Van Gogh",
+        "Quartiere Jordaan",
+        "Bici in città"
+      ]
+    },
+
+    /* =========================
+       CHICCHE (ALTA QUALITÀ)
+       ========================= */
+
+    {
+      "id": "civita_bagnoregio_it",
+      "name": "Civita di Bagnoregio",
+      "country": "IT",
+      "type": "borgo",
+      "visibility": "chicca",
+      "tags": [
+        "panoramica",
+        "romantica",
+        "sole_ok",
+        "mezza_giornata",
+        "coppia",
+        "slow",
+        "economico",
+        "auto_ok"
+      ],
+      "what_to_do": [
+        "Passeggiata nel borgo",
+        "Belvedere",
+        "Cucina locale"
+      ]
+    },
+
+    {
+      "id": "hallstatt_at",
+      "name": "Hallstatt",
+      "country": "AT",
+      "type": "borgo",
+      "visibility": "chicca",
+      "tags": [
+        "panoramica",
+        "instagrammabile",
+        "sole_ok",
+        "giornata_intera",
+        "coppia",
+        "medio",
+        "auto_ok"
+      ],
+      "what_to_do": [
+        "Lago di Hallstatt",
+        "Passeggiata nel villaggio",
+        "Miniere di sale"
+      ]
+    },
+
+    {
+      "id": "giethoorn_nl",
+      "name": "Giethoorn",
+      "country": "NL",
+      "type": "borgo",
+      "visibility": "chicca",
+      "tags": [
+        "romantica",
+        "slow",
+        "sole_ok",
+        "mezza_giornata",
+        "coppia",
+        "economico",
+        "auto_ok"
+      ],
+      "what_to_do": [
+        "Canali in barca",
+        "Passeggiata tra i ponti",
+        "Caffè sul canale"
+      ]
+    },
+
+    {
+      "id": "sintra_pt",
+      "name": "Sintra",
+      "country": "PT",
+      "type": "natura",
+      "visibility": "chicca",
+      "tags": [
+        "panoramica",
+        "romantica",
+        "sole_ok",
+        "giornata_intera",
+        "coppia",
+        "medio",
+        "treno_ok"
+      ],
+      "what_to_do": [
+        "Palácio da Pena",
+        "Castello dei Mori",
+        "Giardini storici"
+      ]
+    },
+
+    {
+      "id": "lake_bled_si",
+      "name": "Lago di Bled",
+      "country": "SI",
+      "type": "natura",
+      "visibility": "chicca",
+      "tags": [
+        "panoramica",
+        "romantica",
+        "sole_ok",
+        "giornata_intera",
+        "coppia",
+        "medio",
+        "auto_ok"
+      ],
+      "what_to_do": [
+        "Lago e isola",
+        "Castello di Bled",
+        "Dolce tipico kremšnita"
+      ]
+    }
+
+  ]
+}
