@@ -1,7 +1,4 @@
-// /api/suggest.js (Vercel Node)
-// ORS_API_KEY opzionale. Overpass come sorgente luoghi.
-// category FACOLTATIVA: se vuota/non presente -> nessun filtro extra.
-
+// /api/suggest.js (Vercel Node) — SEA SMART
 const ORS_BASE = "https://api.openrouteservice.org";
 const OVERPASS = "https://overpass-api.de/api/interpreter";
 
@@ -98,12 +95,9 @@ async function orsIsochronePolygon(lat, lng, seconds, profile, apiKey) {
 }
 
 /* -----------------------
-   Overpass query builder
-   type: places|nature
-   category (opzionale)
+   Overpass query blocks
    ----------------------- */
 
-// blocco base "places"
 function qPlaces(r, lat, lng) {
   return `
   (
@@ -113,7 +107,6 @@ function qPlaces(r, lat, lng) {
   );`;
 }
 
-// blocco base "nature"
 function qNature(r, lat, lng) {
   return `
   (
@@ -127,17 +120,18 @@ function qNature(r, lat, lng) {
   );`;
 }
 
-// filtri extra per category (opzionali) – li aggiungiamo COME AMPLIAMENTO, non come unica fonte,
-// così non “sparisce tutto” se OSM è povero in zona.
+// extra category (opzionale)
 function qCategoryExtra(category, r, lat, lng) {
   const c = String(category || "").toLowerCase().trim();
-  if (!c) return ""; // facoltativa
+  if (!c) return "";
 
   if (c === "sea") {
+    // primo livello: cose marittime dirette
     return `
     (
-      node["natural"~"^(beach|coastline)$"](around:${r},${lat},${lng});
-      way["natural"~"^(beach|coastline)$"](around:${r},${lat},${lng});
+      node["natural"="beach"](around:${r},${lat},${lng});
+      way["natural"="beach"](around:${r},${lat},${lng});
+      way["natural"="coastline"](around:${r},${lat},${lng});
       node["place"~"^(town|village|city)$"]["seaside"="yes"](around:${r},${lat},${lng});
     );`;
   }
@@ -191,10 +185,10 @@ function qCategoryExtra(category, r, lat, lng) {
   if (c === "food") {
     return `
     (
-      node["amenity"~"^(restaurant|cafe|fast_food)$"](around:${r},${lat},${lng});
-      way["amenity"~"^(restaurant|cafe|fast_food)$"](around:${r},${lat},${lng});
       node["tourism"="winery"](around:${r},${lat},${lng});
       way["tourism"="winery"](around:${r},${lat},${lng});
+      node["amenity"~"^(restaurant|cafe)$"](around:${r},${lat},${lng});
+      way["amenity"~"^(restaurant|cafe)$"](around:${r},${lat},${lng});
     );`;
   }
 
@@ -211,13 +205,24 @@ function qCategoryExtra(category, r, lat, lng) {
   return "";
 }
 
+// SEA SMART fallback: se l’utente vuole mare e vicino non c’è,
+// faccio una query “solo mare” più aggressiva con raggio più grande.
+function qSeaOnly(r, lat, lng) {
+  return `
+  (
+    node["natural"="beach"](around:${r},${lat},${lng});
+    way["natural"="beach"](around:${r},${lat},${lng});
+    way["natural"="coastline"](around:${r},${lat},${lng});
+    node["place"~"^(town|village|city)$"]["seaside"="yes"](around:${r},${lat},${lng});
+    node["tourism"="attraction"]["attraction"="beach"](around:${r},${lat},${lng});
+  );`;
+}
+
 function buildOverpassQuery(type, category, lat, lng, radiusMeters) {
   const r = Math.round(radiusMeters);
-
   const base = (type === "nature") ? qNature(r, lat, lng) : qPlaces(r, lat, lng);
   const extra = qCategoryExtra(category, r, lat, lng);
 
-  // Importante: extra è un "plus", non sostituisce base (così non rimani a 0).
   return `
     [out:json][timeout:25];
     (
@@ -228,20 +233,16 @@ function buildOverpassQuery(type, category, lat, lng, radiusMeters) {
   `.trim();
 }
 
-async function overpassFetch(type, category, lat, lng, radiusMeters) {
-  const query = buildOverpassQuery(type, category, lat, lng, radiusMeters);
-
+async function overpassFetchQuery(query) {
   const { ok, status, data } = await fetchJson(OVERPASS, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" },
     body: "data=" + encodeURIComponent(query)
   });
-
   if (!ok) throw new Error(`Overpass error (status ${status})`);
 
   const elements = data?.elements || [];
   const out = [];
-
   for (const el of elements) {
     const name = el.tags?.name;
     if (!name) continue;
@@ -252,19 +253,19 @@ async function overpassFetch(type, category, lat, lng, radiusMeters) {
 
     if (!c) continue;
 
-    out.push({
-      name,
-      lat: c.lat,
-      lng: c.lon,
-      tags: el.tags || {}
-    });
+    out.push({ name, lat: c.lat, lng: c.lon, tags: el.tags || {} });
   }
 
   return uniqBy(out, p => `${p.name.toLowerCase()}_${p.lat.toFixed(3)}_${p.lng.toFixed(3)}`);
 }
 
+async function overpassFetch(type, category, lat, lng, radiusMeters) {
+  const query = buildOverpassQuery(type, category, lat, lng, radiusMeters);
+  return await overpassFetchQuery(query);
+}
+
 /* -----------------------
-   pick best + alts
+   choose best + alts
    ----------------------- */
 
 function chooseTopAndAlternatives(candidates, targetMinutes) {
@@ -286,10 +287,6 @@ function chooseTopAndAlternatives(candidates, targetMinutes) {
   return { top, alternatives };
 }
 
-/* -----------------------
-   handler
-   ----------------------- */
-
 module.exports = async (req, res) => {
   try {
     const lat = parseFloat(req.query.lat);
@@ -299,7 +296,8 @@ module.exports = async (req, res) => {
     const mode = String(req.query.mode || "car").toLowerCase();
     const typeRaw = String(req.query.type || "places").toLowerCase();
     const type = (typeRaw === "nature") ? "nature" : "places"; // NO MIX
-    const category = String(req.query.category || "").toLowerCase().trim(); // FACOLTATIVA
+
+    const category = String(req.query.category || "").toLowerCase().trim(); // facoltativa
 
     const visitedRaw = String(req.query.visited || "").trim();
     const visited = visitedRaw ? visitedRaw.split(",").map(s=>s.trim()).filter(Boolean) : [];
@@ -319,7 +317,6 @@ module.exports = async (req, res) => {
     const usable = Math.max(10, mins - buffer);
     let radiusKm = (usable * speed) / 60;
 
-    // ORS opzionale: solo walk/bike/car entro 60 min
     const apiKey = process.env.ORS_API_KEY;
     if (apiKey && targetSeconds <= 3600 && (mode === "car" || mode === "walk" || mode === "bike")) {
       try {
@@ -332,9 +329,10 @@ module.exports = async (req, res) => {
       engine = apiKey ? "ORS_LIMIT_OR_MODE" : "NO_ORS_KEY";
     }
 
+    // raggio base
     let radiusMeters = clamp(radiusKm * 1000, 7000, 300000);
 
-    // 1) fetch base+extra (category è extra e facoltativa)
+    // 1) fetch normale
     let places = await overpassFetch(type, category, lat, lng, radiusMeters);
 
     // 2) fallback: allarga se pochi
@@ -343,7 +341,43 @@ module.exports = async (req, res) => {
       places = uniqBy([...places, ...more], p => `${p.name.toLowerCase()}_${p.lat.toFixed(3)}_${p.lng.toFixed(3)}`);
     }
 
-    // candidates con ETA porta-a-porta
+    // 3) SEA SMART: se category=sea e ancora pochi risultati “marini”, faccio un tentativo aggressivo
+    let seaHint = null;
+    if (category === "sea") {
+      // cerco quanti “marini” ho (euristica: beach/coastline/seaside)
+      const seaish = places.filter(p => {
+        const t = p.tags || {};
+        return t.natural === "beach" || t.natural === "coastline" || t.seaside === "yes";
+      });
+
+      if (seaish.length < 6) {
+        // aumento il raggio ma con limite massimo coerente col tempo
+        const seaRadiusMeters = clamp(radiusMeters * 2.2, 25000, 500000);
+
+        const seaQuery = `
+          [out:json][timeout:25];
+          ${qSeaOnly(Math.round(seaRadiusMeters), lat, lng)}
+          out center 240;
+        `.trim();
+
+        const seaPlaces = await overpassFetchQuery(seaQuery);
+        places = uniqBy([...places, ...seaPlaces], p => `${p.name.toLowerCase()}_${p.lat.toFixed(3)}_${p.lng.toFixed(3)}`);
+
+        // se anche così non ho roba da mare, dico chiaramente che il mare è lontano
+        const afterSea = places.filter(p => {
+          const t = p.tags || {};
+          return t.natural === "beach" || t.natural === "coastline" || t.seaside === "yes";
+        });
+
+        if (afterSea.length === 0) {
+          // stima minima: ipotizzo che il mare più vicino sia ~150km (euristica)
+          const approxMinHours = Math.max(2, Math.round((150 / 70) * 10) / 10);
+          seaHint = `Per il mare, da qui spesso servono ~${approxMinHours}h in auto. Prova ad aumentare il tempo.`;
+        }
+      }
+    }
+
+    // candidates
     let candidates = places.map(p => {
       const d = haversineKm(lat, lng, p.lat, p.lng);
       const etaTravel = (d / speed) * 60;
@@ -361,8 +395,8 @@ module.exports = async (req, res) => {
       };
     });
 
-    // filtro morbido
     const maxMin = mins * 1.35;
+
     candidates = candidates
       .filter(c => c.eta_min <= maxMin && c.eta_min >= 6)
       .filter(c => !visited.includes(c.id));
@@ -393,7 +427,7 @@ module.exports = async (req, res) => {
         mode, type, category,
         engine,
         source: "Overpass",
-        message: "Nessun luogo trovato. Prova ad aumentare il tempo."
+        message: seaHint || "Nessun luogo trovato. Prova ad aumentare il tempo."
       });
     }
 
@@ -404,7 +438,7 @@ module.exports = async (req, res) => {
       alternatives,
       mode, type, category,
       engine,
-      source: "Overpass (type + category facoltativa)"
+      source: "Overpass (SEA SMART attivo)"
     });
 
   } catch (e) {
