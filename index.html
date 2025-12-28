@@ -4,188 +4,401 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Jamo</title>
-  <meta name="theme-color" content="#0A0F14" />
+
+  <meta name="theme-color" content="#0B5FFF" />
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="icons/icon-192.png" />
 
   <style>
     :root{
-      --bg:#0A0F14; --surface:#141C22; --text:#fff; --muted:#A0B2BA;
-      --accent:#00E0FF; --accent2:#00B5CC;
-      --danger:#ff4d4d; --ok:#23d18b;
+      /* NEW THEME: Clean Travel */
+      --bg1:#F6F8FC;
+      --bg2:#EEF3FF;
+
+      --surface:#FFFFFF;
+      --surface2:#F7FAFF;
+
+      --text:#0F172A;       /* slate-900 */
+      --muted:#475569;      /* slate-600 */
+
+      --primary:#0B5FFF;    /* blue */
+      --primary2:#2B8CFF;   /* lighter blue */
+      --accent:#00C2FF;     /* cyan accent */
+
+      --border: rgba(15,23,42,.10);
+      --shadow: rgba(2,6,23,.10);
+
+      --ok:#16A34A;
+      --danger:#DC2626;
+
+      --r-xl: 26px;
+      --r-lg: 18px;
+      --r-md: 14px;
     }
+
     *{box-sizing:border-box}
+    html,body{height:100%}
     body{
-      margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: radial-gradient(1000px 700px at 20% 10%, rgba(0,224,255,.22), transparent 60%),
-                  radial-gradient(900px 600px at 80% 20%, rgba(26,255,213,.14), transparent 55%),
-                  var(--bg);
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       color:var(--text);
-      min-height:100vh;
+      background:
+        radial-gradient(900px 600px at 15% 20%, rgba(11,95,255,.18), transparent 55%),
+        radial-gradient(800px 560px at 85% 15%, rgba(0,194,255,.14), transparent 55%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
       display:flex;
       align-items:center;
       justify-content:center;
-      padding:24px;
+      padding:22px;
     }
-    .card{
-      width:min(720px, 100%);
-      background: rgba(20,28,34,.88);
-      border:1px solid rgba(255,255,255,.08);
-      border-radius: 24px;
-      padding: 22px;
-      box-shadow: 0 18px 60px rgba(0,0,0,.45);
-      backdrop-filter: blur(10px);
-    }
-    h1{margin:0 0 8px; font-size:38px; letter-spacing:.2px}
-    .lead{margin:0 0 18px; color:var(--muted); font-size:16px; line-height:1.4}
 
-    .row{display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end; margin:12px 0 10px}
-    label{color:var(--muted); font-size:14px}
-    select{
-      appearance:none;
+    .wrap{ width:min(820px, 100%); }
+
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:14px;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width:0;
+    }
+    .logo{
+      width:42px; height:42px;
       border-radius:14px;
-      padding:12px 14px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.22);
-      color:var(--text);
-      min-width:160px;
-      outline:none;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      box-shadow: 0 12px 28px rgba(11,95,255,.22);
+      position:relative;
+      flex:0 0 auto;
+    }
+    .logo:after{
+      content:"";
+      position:absolute;
+      inset:10px;
+      border-radius:10px;
+      background: rgba(255,255,255,.35);
+      filter: blur(0.2px);
+    }
+    .brand h1{
+      margin:0;
+      font-size:32px;
+      letter-spacing:.2px;
+      line-height:1;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .pill{
+      font-size:12px;
+      font-weight:800;
+      padding:7px 11px;
+      border-radius:999px;
+      background: rgba(11,95,255,.12);
+      color: var(--primary);
+      border:1px solid rgba(11,95,255,.18);
+      flex:0 0 auto;
     }
 
+    .card{
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      box-shadow: 0 18px 60px var(--shadow);
+      overflow:hidden;
+    }
+
+    .header{
+      padding:18px 18px 14px;
+      background: linear-gradient(180deg, rgba(11,95,255,.08), transparent);
+      border-bottom: 1px solid rgba(15,23,42,.06);
+    }
+
+    .lead{
+      margin:0;
+      color: var(--muted);
+      font-size:15px;
+      line-height:1.45;
+    }
+    .lead b{ color: var(--text); }
+
+    .body{
+      padding:16px 18px 18px;
+    }
+
+    .controls{
+      display:grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap:12px;
+      margin-top:10px;
+    }
+    @media (max-width: 680px){
+      .controls{ grid-template-columns: 1fr; }
+    }
+
+    .field{
+      border:1px solid rgba(15,23,42,.10);
+      background: var(--surface2);
+      border-radius: var(--r-lg);
+      padding:12px;
+    }
+    .field label{
+      display:block;
+      color: rgba(71,85,105,.95);
+      font-size:12px;
+      margin-bottom:8px;
+      letter-spacing:.2px;
+      font-weight:700;
+    }
+
+    .select-wrap{ position:relative; }
+    select{
+      width:100%;
+      appearance:none;
+      border:1px solid rgba(15,23,42,.10);
+      background: #fff;
+      color: var(--text);
+      border-radius: 14px;
+      padding:12px 42px 12px 12px;
+      font-size:15px;
+      font-weight:800;
+      outline:none;
+      box-shadow: 0 1px 0 rgba(0,0,0,.02);
+    }
+    .chev{
+      position:absolute;
+      right:12px;
+      top:50%;
+      transform:translateY(-50%);
+      pointer-events:none;
+      width:18px;
+      height:18px;
+      opacity:.85;
+    }
+
+    .cta{ margin-top:12px; }
     .btn{
       width:100%;
-      margin-top:10px;
       border:0;
       border-radius: 18px;
       padding: 16px 18px;
       font-size:18px;
-      font-weight:900;
-      color:#001018;
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      font-weight:1000;
+      color:#fff;
+      background: linear-gradient(90deg, var(--primary), var(--primary2));
       cursor:pointer;
-      box-shadow: 0 12px 35px rgba(0,224,255,.22);
+      box-shadow: 0 14px 32px rgba(11,95,255,.22);
+      position:relative;
+      overflow:hidden;
     }
     .btn:disabled{opacity:.55; cursor:not-allowed}
+    .btn:after{
+      content:"";
+      position:absolute;
+      inset:-60%;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.40), transparent 50%);
+      transform: rotate(12deg);
+      opacity:.35;
+    }
 
     .status{
       margin-top:12px;
-      padding: 10px 12px;
-      border-radius: 14px;
-      background: rgba(0,0,0,.25);
-      border:1px solid rgba(255,255,255,.09);
+      padding: 12px 12px;
+      border-radius: var(--r-lg);
+      background: #fff;
+      border:1px solid rgba(15,23,42,.10);
       color: var(--muted);
       font-size:14px;
       white-space: pre-wrap;
+      line-height:1.35;
     }
-    .status.err{border-color: rgba(255,77,77,.35); color:#ffd1d1}
-    .status.ok{border-color: rgba(35,209,139,.35); color:#c9ffe7}
+    .status.err{
+      border-color: rgba(220,38,38,.30);
+      color: #7f1d1d;
+      background: rgba(220,38,38,.06);
+    }
+    .status.ok{
+      border-color: rgba(22,163,74,.30);
+      color:#14532d;
+      background: rgba(22,163,74,.06);
+    }
 
     .result{
       margin-top:14px;
       padding:14px;
-      border-radius: 18px;
-      background: rgba(0,0,0,.25);
-      border:1px solid rgba(255,255,255,.09);
+      border-radius: var(--r-xl);
+      background: #fff;
+      border:1px solid rgba(15,23,42,.10);
     }
     .hidden{display:none}
 
-    .place-title{font-size:22px; font-weight:900; margin:0 0 6px}
-    .meta{color:var(--muted); font-size:14px; margin:0 0 10px; white-space:pre-wrap}
-    .actions{display:flex; gap:10px; flex-wrap:wrap}
+    .place-title{
+      font-size:22px;
+      font-weight:1000;
+      margin:0 0 8px;
+      letter-spacing:.2px;
+    }
+    .meta{
+      margin:0 0 12px;
+      color: var(--muted);
+      font-size:14px;
+      line-height:1.45;
+      white-space:pre-wrap;
+    }
+
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
     .linkbtn{
-      display:inline-flex; align-items:center; justify-content:center;
-      padding:10px 12px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:11px 12px;
       border-radius: 14px;
-      border:1px solid rgba(255,255,255,.12);
-      color:var(--text);
+      border:1px solid rgba(15,23,42,.12);
+      color: var(--text);
       text-decoration:none;
-      background: rgba(255,255,255,.06);
-      font-weight:800;
+      background: rgba(11,95,255,.06);
+      font-weight:900;
     }
     .check{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:10px 12px;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:11px 12px;
       border-radius:14px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
-      color:var(--text);
-      font-weight:900;
+      border:1px solid rgba(15,23,42,.12);
+      background: rgba(0,0,0,.03);
+      color: var(--text);
+      font-weight:1000;
       cursor:pointer;
     }
-    .sectionTitle{margin:14px 0 8px; font-size:18px; font-weight:900}
-    .alt-item{
-      padding:10px 12px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      margin-bottom:8px;
+
+    .sectionTitle{
+      margin:14px 0 8px;
+      font-size:16px;
+      font-weight:1000;
+      color: var(--text);
+      letter-spacing:.2px;
     }
-    .alt-item .name{font-weight:900}
-    .mini{color:var(--muted); font-size:13px; margin-top:4px; line-height:1.35}
+
+    .alt-item{
+      padding:12px;
+      border-radius: var(--r-lg);
+      border:1px solid rgba(15,23,42,.10);
+      background: rgba(11,95,255,.04);
+      margin-bottom:10px;
+    }
+    .alt-item .name{ font-weight:1000; }
+    .mini{ color: var(--muted); font-size:13px; margin-top:6px; line-height:1.35; }
+
     .footer{
-      margin-top:14px;
-      color:rgba(160,178,186,.8);
+      margin:14px 4px 0;
+      color: rgba(71,85,105,.9);
       font-size:12px;
       text-align:center;
     }
   </style>
 </head>
+
 <body>
-  <main class="card">
-    <h1>Jamo</h1>
-    <p class="lead">Scegli tempo e mezzo: Jamo propone un <b>luogo reale</b> dove andare + <b>cosa vedere</b>.</p>
-
-    <div class="row">
-      <div>
-        <label for="timeSelect">Tempo</label><br/>
-        <select id="timeSelect">
-          <option value="30">30 min</option>
-          <option value="45">45 min</option>
-          <option value="60" selected>1 ora</option>
-          <option value="90">1 ora e 30</option>
-          <option value="120">2 ore</option>
-          <option value="180">3 ore</option>
-          <option value="240">4 ore</option>
-        </select>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <h1>Jamo</h1>
       </div>
-
-      <div>
-        <label for="modeSelect">Mezzo</label><br/>
-        <select id="modeSelect">
-          <option value="car" selected>Auto</option>
-          <option value="walk">A piedi</option>
-          <option value="bike">Bici</option>
-        </select>
-      </div>
-
-      <div>
-        <label for="styleSelect">Stile mete</label><br/>
-        <select id="styleSelect">
-          <option value="known" selected>Più conosciuti</option>
-          <option value="hidden">Chicche</option>
-        </select>
-      </div>
+      <div class="pill">Travel Assistant</div>
     </div>
 
-    <button id="goBtn" class="btn">🎲 DOVE ANDIAMO?</button>
-
-    <div id="status" class="status">Pronto. Premi il bottone: Jamo userà il GPS.</div>
-
-    <section id="result" class="result hidden">
-      <div class="place-title" id="placeName"></div>
-      <div class="meta" id="placeMeta"></div>
-
-      <div class="actions">
-        <a class="linkbtn" id="mapsLink" href="#" target="_blank" rel="noopener">Apri su Google Maps</a>
-        <button class="check" id="visitedBtn">✅ Segna come “già visitato”</button>
+    <main class="card">
+      <div class="header">
+        <p class="lead">
+          <b>“Andiamo da qualche parte?”</b> → <b>“Sì, ma dove?”</b><br>
+          Jamo decide in base a <b>tempo</b> e <b>mezzo</b>. Poi ti dice anche <b>cosa vedere</b>.
+        </p>
       </div>
 
-      <div class="sectionTitle">Alternative</div>
-      <div id="altList"></div>
-    </section>
+      <div class="body">
+        <div class="controls">
+          <div class="field">
+            <label for="timeSelect">Tempo disponibile</label>
+            <div class="select-wrap">
+              <select id="timeSelect">
+                <option value="30">30 min</option>
+                <option value="45">45 min</option>
+                <option value="60" selected>1 ora</option>
+                <option value="90">1 ora e 30</option>
+                <option value="120">2 ore</option>
+                <option value="180">3 ore</option>
+                <option value="240">4 ore</option>
+              </select>
+              <svg class="chev" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M6 9l6 6 6-6" stroke="rgba(15,23,42,.7)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+          </div>
 
-    <div class="footer" id="footerInfo">Versione 2.2 • Più conosciuti + Chicche • POI inclusi</div>
-  </main>
+          <div class="field">
+            <label for="modeSelect">Mezzo</label>
+            <div class="select-wrap">
+              <select id="modeSelect">
+                <option value="car" selected>Auto</option>
+                <option value="walk">A piedi</option>
+                <option value="bike">Bici</option>
+                <option value="train">Treno</option>
+                <option value="bus">Bus</option>
+                <option value="plane">Aereo</option>
+              </select>
+              <svg class="chev" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M6 9l6 6 6-6" stroke="rgba(15,23,42,.7)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="styleSelect">Stile mete</label>
+            <div class="select-wrap">
+              <select id="styleSelect">
+                <option value="known" selected>Più conosciuti</option>
+                <option value="hidden">Chicche</option>
+              </select>
+              <svg class="chev" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M6 9l6 6 6-6" stroke="rgba(15,23,42,.7)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="cta">
+          <button id="goBtn" class="btn">🎲 DOVE ANDIAMO?</button>
+        </div>
+
+        <div id="status" class="status">Pronto. Premi il bottone: Jamo userà il GPS.</div>
+
+        <section id="result" class="result hidden">
+          <div class="place-title" id="placeName"></div>
+          <div class="meta" id="placeMeta"></div>
+
+          <div class="actions">
+            <a class="linkbtn" id="mapsLink" href="#" target="_blank" rel="noopener">Apri su Google Maps</a>
+            <button class="check" id="visitedBtn">✅ Segna come “già visitato”</button>
+          </div>
+
+          <div class="sectionTitle">Alternative</div>
+          <div id="altList"></div>
+        </section>
+
+        <div class="footer" id="footerInfo">Jamo • Interfaccia PRO • Clean Travel Theme</div>
+      </div>
+    </main>
+  </div>
 
   <script src="app.js"></script>
 </body>
