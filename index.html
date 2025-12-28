@@ -43,17 +43,47 @@
     .wrap{width:min(860px, 100%); padding: 16px 16px 28px;}
     .topbar{display:flex; align-items:center; justify-content:space-between; gap:12px; padding: 10px 4px 14px;}
     .brand{display:flex; align-items:center; gap:10px;}
-    .logo{width:38px; height:38px; border-radius:12px; background: linear-gradient(135deg, var(--accent1), var(--accent2)); box-shadow: 0 14px 40px rgba(0,212,255,.18);}
+    .logo{
+      width:38px; height:38px; border-radius:12px;
+      background: linear-gradient(135deg, var(--accent1), var(--accent2));
+      box-shadow: 0 14px 40px rgba(0,212,255,.18);
+      flex:0 0 auto;
+    }
     .brand h1{margin:0; font-size:22px; letter-spacing:.2px;}
-    .pill{font-size:12px; color:rgba(255,255,255,.78); border:1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.04); padding:8px 10px; border-radius: 999px; white-space:nowrap;}
+    .pill{
+      font-size:12px; color:rgba(255,255,255,.78);
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      padding:8px 10px; border-radius: 999px;
+      white-space:nowrap;
+    }
 
-    .card{background: var(--card); border: 1px solid var(--stroke); border-radius: var(--radius); padding: 16px; box-shadow: 0 18px 70px rgba(0,0,0,.45); backdrop-filter: blur(12px);}
-    .headline{margin: 0 0 4px; font-size: 18px; line-height:1.25; font-weight: 800;}
+    .card{
+      background: var(--card);
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: 0 18px 70px rgba(0,0,0,.45);
+      backdrop-filter: blur(12px);
+    }
+    .headline{margin: 0 0 4px; font-size: 18px; line-height:1.25; font-weight: 900;}
     .sub{margin: 0 0 14px; color: var(--muted); line-height:1.45; font-size: 14px;}
 
     .grid{display:grid; grid-template-columns: 1fr; gap: 12px;}
-    .field{border:1px solid rgba(255,255,255,.10); background: rgba(0,0,0,.18); border-radius: 18px; padding: 12px;}
-    .field label{display:block; color: rgba(255,255,255,.72); font-size: 12px; margin-bottom: 8px; letter-spacing:.2px;}
+
+    .field{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      border-radius: 18px;
+      padding: 12px;
+    }
+    .field label{
+      display:block;
+      color: rgba(255,255,255,.72);
+      font-size: 12px;
+      margin-bottom: 8px;
+      letter-spacing:.2px;
+    }
     .row{display:flex; gap:10px; flex-wrap:wrap;}
 
     select, input{
@@ -74,7 +104,7 @@
       border-radius: 18px;
       padding: 15px 16px;
       font-size: 16px;
-      font-weight: 900;
+      font-weight: 950;
       color:#04101c;
       background: linear-gradient(90deg, var(--accent1), var(--accent2));
       cursor:pointer;
@@ -85,11 +115,11 @@
     .btn2{
       border:1px solid rgba(255,255,255,.14);
       background: rgba(255,255,255,.06);
-      color: rgba(255,255,255,.9);
+      color: rgba(255,255,255,.92);
       padding: 10px 12px;
       border-radius: 14px;
       cursor:pointer;
-      font-weight: 800;
+      font-weight: 900;
       font-size: 13px;
       white-space:nowrap;
     }
@@ -100,26 +130,44 @@
       border-radius: 16px;
       border:1px solid rgba(255,255,255,.10);
       background: rgba(0,0,0,.20);
-      color: rgba(255,255,255,.74);
+      color: rgba(255,255,255,.78);
       font-size: 13px;
       white-space: pre-wrap;
     }
     .status.err{border-color: rgba(255,77,77,.35); color:#ffd1d1}
     .status.ok{border-color: rgba(32,209,139,.35); color:#c9ffe7}
 
-    .result{margin-top: 14px; border-radius: 18px; border:1px solid rgba(255,255,255,.10); background: rgba(0,0,0,.20); padding: 14px;}
+    .result{
+      margin-top: 14px;
+      border-radius: 18px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.20);
+      padding: 14px;
+    }
     .hidden{display:none}
-    .place-title{margin:0 0 6px; font-size: 20px; font-weight: 900;}
+    .place-title{margin:0 0 6px; font-size: 20px; font-weight: 950;}
     .meta{margin:0 0 10px; color: rgba(255,255,255,.70); font-size: 13px; line-height: 1.4;}
 
     .actions{display:flex; gap:10px; flex-wrap:wrap; margin-top: 10px;}
-    .linkbtn{display:inline-flex; align-items:center; justify-content:center; padding: 10px 12px; border-radius: 14px; border:1px solid rgba(255,255,255,.12); color:var(--text); text-decoration:none; background: rgba(255,255,255,.06); font-weight:900; font-size: 13px;}
+    .linkbtn{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding: 10px 12px; border-radius: 14px;
+      border:1px solid rgba(255,255,255,.12);
+      color:var(--text); text-decoration:none;
+      background: rgba(255,255,255,.06);
+      font-weight:950; font-size: 13px;
+    }
 
     .alts h2{margin: 14px 0 8px; font-size: 15px; letter-spacing:.2px; color: rgba(255,255,255,.92);}
-    .alt-item{padding: 10px 12px; border-radius: 14px; border:1px solid rgba(255,255,255,.10); background: rgba(255,255,255,.04); margin-bottom: 8px;}
-    .alt-item .name{font-weight:900}
+    .alt-item{
+      padding: 10px 12px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      margin-bottom: 8px;
+    }
+    .alt-item .name{font-weight:950}
     .alt-item .small{color:rgba(255,255,255,.68); font-size:12px; margin-top:2px}
-    .alt-item.clickable{cursor:pointer}
 
     .footer{margin-top: 14px; text-align:center; color: rgba(255,255,255,.55); font-size: 12px;}
     .tiny{font-size: 12px; color: rgba(255,255,255,.60); margin-top: 8px; line-height:1.35;}
@@ -133,14 +181,14 @@
         <div class="logo"></div>
         <h1>Jamo</h1>
       </div>
-      <div class="pill">v3 • Mete reali</div>
+      <div class="pill">v3 • Mete curate + meteo</div>
     </div>
 
     <main class="card">
       <p class="headline">“Andiamo da qualche parte?” → “Ok, ma dove?”</p>
       <p class="sub">
         Scegli <b>tempo</b>, <b>mezzo</b>, <b>stile</b> e <b>categoria</b>.
-        Jamo ti propone una meta reale + alternative, e sotto trovi cosa vedere/fare.
+        Jamo ti propone una meta (con alternative) e sotto trovi cosa vedere/fare.
         Se non vuoi usare il GPS, inserisci la partenza.
       </p>
 
@@ -189,15 +237,22 @@
               </select>
             </div>
 
+            <!-- ✅ IMPORTANT: app.js cerca typeSelect e i value DEVONO combaciare con curated.json -->
             <div style="flex:1; min-width:200px">
-              <select id="categorySelect">
-                <option value="any" selected>Categoria: Qualsiasi</option>
-                <option value="city">Città / Borghi</option>
-                <option value="sea">Mare</option>
-                <option value="mountain">Montagna / Natura</option>
-                <option value="kids">Per bambini</option>
+              <select id="typeSelect">
+                <option value="città" selected>Città</option>
+                <option value="borgo">Borghi</option>
+                <option value="mare">Mare</option>
+                <option value="montagna">Montagna</option>
+                <option value="natura">Natura</option>
+                <option value="relax">Relax / Terme</option>
+                <option value="bambini">Per bambini</option>
               </select>
             </div>
+          </div>
+
+          <div class="tiny">
+            Suggerimento: se scegli “Chicche”, Jamo preferisce mete speciali e meno ovvie (ma belle).
           </div>
         </div>
 
@@ -228,7 +283,7 @@
         </section>
       </div>
 
-      <div class="footer" id="footerInfo">Jamo • PWA • Dati: OpenStreetMap (Overpass)</div>
+      <div class="footer" id="footerInfo">Jamo • PWA • Mete curate + fallback locale • Meteo: Open-Meteo</div>
     </main>
   </div>
 
