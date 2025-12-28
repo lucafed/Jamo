@@ -1,49 +1,36 @@
-// /api/suggest.js  (Node / Vercel)
-// Ultra-stabile: Overpass pool + retry + shrink radius + Fallback Wikidata (posti "conosciuti" veri)
+// /api/suggest.js (Vercel / Node)
+// GET /api/suggest?lat=..&lng=..&minutes=60&mode=car&style=known|gems&category=any|city|sea|mountain|kids&visited=...
 
-const ORS_BASE = "https://api.openrouteservice.org";
-
-// Overpass pool esteso (più possibilità che almeno uno risponda)
 const OVERPASS_POOL = [
   "https://overpass-api.de/api/interpreter",
   "https://overpass.kumi.systems/api/interpreter",
-  "https://overpass.nchc.org.tw/api/interpreter",
   "https://overpass.openstreetmap.fr/api/interpreter",
+  "https://overpass.nchc.org.tw/api/interpreter",
   "https://overpass.private.coffee/api/interpreter"
 ];
-
-const WIKIDATA_SPARQL = "https://query.wikidata.org/sparql";
 
 function json(res, status, body) {
   res.statusCode = status;
   res.setHeader("Content-Type", "application/json; charset=utf-8");
-  res.setHeader("Cache-Control", "public, s-maxage=120, stale-while-revalidate=900");
+  res.setHeader("Cache-Control", "no-store");
   res.end(JSON.stringify(body));
 }
 
-function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
-
-function haversineKm(lat1, lon1, lat2, lon2) {
-  const R = 6371;
-  const toRad = (x) => (x * Math.PI) / 180;
-  const dLat = toRad(lat2 - lat1);
-  const dLon = toRad(lon2 - lon1);
-  const a =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
-  return 2 * R * Math.asin(Math.sqrt(a));
+function clamp(n, a, b) {
+  n = Number(n);
+  if (!Number.isFinite(n)) return a;
+  return Math.max(a, Math.min(b, n));
 }
 
-function uniqBy(arr, keyFn) {
-  const seen = new Set();
-  const out = [];
-  for (const x of arr) {
-    const k = keyFn(x);
-    if (seen.has(k)) continue;
-    seen.add(k);
-    out.push(x);
-  }
-  return out;
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function toRad(x) { return (x * Math.PI) / 180; }
+function haversineKm(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
+  return 2 * R * Math.asin(Math.sqrt(a));
 }
 
 function mapsUrl(lat, lng, name) {
@@ -52,255 +39,198 @@ function mapsUrl(lat, lng, name) {
 }
 
 function makeId(name, lat, lng) {
-  return `${(name || "place").toLowerCase().replace(/\s+/g, "_")}@${lat.toFixed(5)},${lng.toFixed(5)}`;
-}
-
-function modeProfile(mode) {
-  if (mode === "walk") return "foot-walking";
-  if (mode === "bike") return "cycling-regular";
-  return "driving-car";
+  return `${(name||"place").toLowerCase().replace(/\s+/g,"_")}@${lat.toFixed(5)},${lng.toFixed(5)}`;
 }
 
 function avgSpeedKmh(mode) {
   if (mode === "walk") return 4.5;
   if (mode === "bike") return 15;
-  if (mode === "bus") return 70;
-  if (mode === "train") return 95;
-  if (mode === "plane") return 550; // solo stima raggio (non routing)
-  return 65;
+  if (mode === "bus") return 55;
+  if (mode === "train") return 90;
+  if (mode === "plane") return 500;
+  return 70; // car
 }
-
-async function fetchText(url, opts) {
-  const r = await fetch(url, opts);
-  const text = await r.text();
-  return { ok: r.ok, status: r.status, text };
-}
-
-async function fetchJson(url, opts) {
-  const r = await fetch(url, opts);
-  const text = await r.text();
-  let data = null;
-  try { data = JSON.parse(text); } catch { data = text; }
-  return { ok: r.ok, status: r.status, data, text };
-}
-
-async function orsIsochroneCheck(lat, lng, seconds, profile, apiKey) {
-  const range = clamp(seconds, 60, 3600);
-  const url = `${ORS_BASE}/v2/isochrones/${profile}`;
-  const body = { locations: [[lng, lat]], range: [range] };
-
-  const { ok, status, data } = await fetchJson(url, {
-    method: "POST",
-    headers: {
-      "Authorization": apiKey,
-      "Content-Type": "application/json",
-      "Accept": "application/json"
-    },
-    body: JSON.stringify(body)
-  });
-
-  if (!ok) throw new Error(`${data?.error || "ORS error"} (status ${status})`);
-  return true;
-}
-
-/* =========================
-   OVERPASS: fallback + retry
-   ========================= */
 
 async function overpassRequest(query, attempts = 2) {
   for (let a = 0; a < attempts; a++) {
     for (const base of OVERPASS_POOL) {
       try {
-        const { ok, status, text } = await fetchText(base, {
+        const ctrl = new AbortController();
+        const t = setTimeout(() => ctrl.abort(), 12000);
+        const r = await fetch(base, {
           method: "POST",
           headers: { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" },
-          body: "data=" + encodeURIComponent(query)
-        });
+          body: "data=" + encodeURIComponent(query),
+          signal: ctrl.signal
+        }).finally(() => clearTimeout(t));
 
-        if (!ok) {
-          const retryable = [429, 502, 503, 504].includes(status);
-          if (retryable) continue;
-          throw new Error(`Overpass error (status ${status})`);
+        const text = await r.text();
+        if (!r.ok) {
+          if ([429,502,503,504].includes(r.status)) continue;
+          throw new Error(`Overpass error (${r.status})`);
         }
-
         return JSON.parse(text);
       } catch {
         continue;
       }
     }
-    await new Promise(r => setTimeout(r, 250 * (a + 1)));
+    await sleep(250 * (a + 1));
   }
-  throw new Error("Overpass error (status 504)");
+  const err = new Error("Overpass error (status 504)");
+  err.code = 504;
+  throw err;
 }
 
-/* =========================
-   WIKIDATA fallback (posti noti)
-   ========================= */
+// Costruiamo query SOLO "mete" (no ristoranti, no POI)
+// + in base alla category aggiungiamo filtri “tema” senza mix
+function buildDestQuery({ lat, lng, radiusM, category }) {
+  const r = Math.round(radiusM);
 
-function wikidataQuery(lat, lng, radiusKm) {
-  // Posti abitati: city/town/village (Q515) + label in italiano, popolazione se presente.
-  // Ordina per popolazione (desc) -> "più conosciuti" veri
-  const r = clamp(radiusKm, 5, 250);
+  // mete principali SEMPRE: place
+  const places = `
+    node(around:${r},${lat},${lng})["place"~"^(city|town|village)$"];
+    way(around:${r},${lat},${lng})["place"~"^(city|town|village)$"];
+    relation(around:${r},${lat},${lng})["place"~"^(city|town|village)$"];
+  `;
+
+  // “tema”: serve solo a filtrare zone coerenti, ma la meta resta “place”
+  // NB: non scegliamo “spiaggia” come meta, scegliamo un paese/città vicino al mare ecc.
+  const theme = {
+    any: ``,
+    city: ``,
+    sea: `
+      node(around:${r},${lat},${lng})["natural"="beach"];
+      way(around:${r},${lat},${lng})["natural"="beach"];
+    `,
+    mountain: `
+      node(around:${r},${lat},${lng})["natural"="peak"];
+      node(around:${r},${lat},${lng})["waterway"="waterfall"];
+      way(around:${r},${lat},${lng})["leisure"="nature_reserve"];
+      relation(around:${r},${lat},${lng})["boundary"="national_park"];
+    `,
+    kids: `
+      node(around:${r},${lat},${lng})["leisure"="playground"];
+      node(around:${r},${lat},${lng})["tourism"="theme_park"];
+      node(around:${r},${lat},${lng})["amenity"="zoo"];
+      node(around:${r},${lat},${lng})["amenity"="aquarium"];
+    `
+  };
+
+  const extra = theme[category] || theme.any;
+
+  // Nota: facciamo 2 gruppi: theme markers e places.
+  // Se c’è theme, filtriamo places restituendo solo quelli vicini ai marker (post-processing).
   return `
-SELECT ?item ?itemLabel ?lat ?lon ?pop WHERE {
-  SERVICE wikibase:around {
-    ?item wdt:P625 ?coord .
-    bd:serviceParam wikibase:center "Point(${lng} ${lat})"^^geo:wktLiteral .
-    bd:serviceParam wikibase:radius "${r}" .
-  }
-  ?item wdt:P31/wdt:P279* wd:Q515 .
-  OPTIONAL { ?item wdt:P1082 ?pop . }
-  BIND(geof:latitude(?coord) AS ?lat)
-  BIND(geof:longitude(?coord) AS ?lon)
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "it,en". }
-}
-ORDER BY DESC(?pop)
-LIMIT 40
-`.trim();
-}
-
-async function wikidataPlaces(lat, lng, radiusKm) {
-  const q = wikidataQuery(lat, lng, radiusKm);
-  const url = `${WIKIDATA_SPARQL}?format=json&query=${encodeURIComponent(q)}`;
-
-  const { ok, status, data } = await fetchJson(url, {
-    headers: {
-      "Accept": "application/sparql-results+json",
-      "User-Agent": "Jamo/1.0 (Vercel; contact: none)"
-    }
-  });
-
-  if (!ok) throw new Error(`Wikidata error (status ${status})`);
-
-  const rows = data?.results?.bindings || [];
-  return rows
-    .map(r => ({
-      name: r.itemLabel?.value,
-      lat: Number(r.lat?.value),
-      lng: Number(r.lon?.value),
-      pop: Number(r.pop?.value || 0)
-    }))
-    .filter(x => x.name && Number.isFinite(x.lat) && Number.isFinite(x.lng));
-}
-
-/* =========================
-   Query builder Overpass (leggero)
-   ========================= */
-
-function buildOverpassQuery({ lat, lng, radiusMeters, type, style }) {
-  const r = Math.round(radiusMeters);
-  const t = (type || "places").toLowerCase();
-  const s = (style || "known").toLowerCase();
-
-  // Query molto più leggera: solo node (più veloce)
-  // Known: city/town (+ village solo se wikidata/wikipedia)
-  // Gems: town/village con wiki (più “vero”)
-  let inner = "";
-
-  if (t === "places") {
-    if (s === "gems") {
-      inner = `
+[out:json][timeout:22];
 (
-  node["place"~"^(town|village)$"][("wikidata"|"wikipedia")](around:${r},${lat},${lng});
+  ${places}
+  ${extra}
 );
-`.trim();
-    } else {
-      inner = `
-(
-  node["place"~"^(city|town)$"](around:${r},${lat},${lng});
-  node["place"="village"][("wikidata"|"wikipedia"|"population")](around:${r},${lat},${lng});
-);
-`.trim();
-    }
-  } else {
-    // natura generica (veloce)
-    inner = `
-(
-  node["natural"="beach"](around:${r},${lat},${lng});
-  node["waterway"="waterfall"](around:${r},${lat},${lng});
-  node["natural"="peak"](around:${r},${lat},${lng});
-  node["tourism"="viewpoint"](around:${r},${lat},${lng});
-  node["leisure"="nature_reserve"](around:${r},${lat},${lng});
-);
-`.trim();
-  }
-
-  return `
-[out:json][timeout:18];
-${inner}
-out tags qt 70;
+out center tags 400;
 `.trim();
 }
 
-function extractCandidates(data) {
-  const elements = data?.elements || [];
+function normalizeElements(data) {
+  const els = data?.elements || [];
   const out = [];
-
-  for (const el of elements) {
+  for (const el of els) {
     const tags = el.tags || {};
     const name = tags.name || tags["name:it"];
     if (!name) continue;
-    if (el.type !== "node") continue;
+
+    // coordinate:
+    const c =
+      el.type === "node"
+        ? { lat: el.lat, lng: el.lon }
+        : el.center
+          ? { lat: el.center.lat, lng: el.center.lon }
+          : null;
+    if (!c) continue;
 
     out.push({
+      type: el.type,
       name,
-      lat: el.lat,
-      lng: el.lon,
+      lat: c.lat,
+      lng: c.lng,
       tags
     });
   }
-
-  return uniqBy(out, p => `${p.name.toLowerCase()}_${p.lat.toFixed(3)}_${p.lng.toFixed(3)}`);
+  return out;
 }
 
-function rankCandidates(cands, { style, type }) {
-  const s = (style || "known").toLowerCase();
-  const t = (type || "places").toLowerCase();
+function isPlace(el) {
+  const p = el.tags?.place;
+  return p === "city" || p === "town" || p === "village";
+}
 
-  const score = (p) => {
-    const tags = p.tags || {};
-    const hasWiki = !!(tags.wikidata || tags.wikipedia);
-    const pop = Number(tags.population || 0) || 0;
-    const place = tags.place || "";
+function isThemeMarker(el, category) {
+  const t = el.tags || {};
+  if (category === "sea") return t.natural === "beach";
+  if (category === "mountain") return t.natural === "peak" || t.waterway === "waterfall" || t.leisure === "nature_reserve" || t.boundary === "national_park";
+  if (category === "kids") return t.leisure === "playground" || t.tourism === "theme_park" || t.amenity === "zoo" || t.amenity === "aquarium";
+  return false;
+}
 
-    let base = 0;
-
-    if (t === "places") {
-      if (place === "city") base += 60;
-      else if (place === "town") base += 45;
-      else if (place === "village") base += 25;
-      else base += 5;
-
-      if (hasWiki) base += 35;
-      if (pop > 0) base += Math.min(25, Math.log10(pop + 1) * 6);
-
-      if (s === "gems") {
-        if (place === "city") base -= 25;
-        if (place === "village") base += 12;
-        if (pop > 250000) base -= 20;
-      }
-    } else {
-      if (tags.natural === "beach") base += 55;
-      if (tags.waterway === "waterfall") base += 60;
-      if (tags.natural === "peak") base += 55;
-      if (tags.tourism === "viewpoint") base += 45;
-      if (hasWiki) base += 8;
+// dedup forte: stesso nome (case-insensitive) o troppo vicini (<2km)
+function dedupStrong(arr) {
+  const out = [];
+  for (const x of arr) {
+    const nameKey = x.name.trim().toLowerCase();
+    let dup = false;
+    for (const y of out) {
+      if (y.name.trim().toLowerCase() === nameKey) { dup = true; break; }
+      const d = haversineKm(x.lat, x.lng, y.lat, y.lng);
+      if (d < 2.0) { dup = true; break; }
     }
-
-    return base;
-  };
-
-  return cands
-    .map(p => ({ ...p, _rank: score(p) }))
-    .sort((a, b) => b._rank - a._rank);
+    if (!dup) out.push(x);
+  }
+  return out;
 }
 
-function chooseTopAndAlternatives(candidates, targetMinutes) {
-  const scored = candidates.map(c => {
-    const diff = Math.abs(c.eta_min - targetMinutes);
-    const tooClose = c.eta_min < Math.max(10, targetMinutes * 0.35) ? 18 : 0;
-    return { ...c, _fit: diff + tooClose };
-  }).sort((a, b) => a._fit - b._fit);
+// ranking “conosciuti” vs “chicche”
+function scorePlace(place, style) {
+  const t = place.tags || {};
+  const placeType = t.place || "";
+  const pop = Number(t.population || 0);
+  const hasWiki = !!(t.wikidata || t.wikipedia);
+
+  let s = 0;
+
+  if (style === "known") {
+    // più conosciuti: city/town + popolazione + wiki
+    if (placeType === "city") s += 60;
+    if (placeType === "town") s += 40;
+    if (placeType === "village") s += 10;
+    if (hasWiki) s += 35;
+    if (pop) s += Math.min(40, Math.log10(pop + 1) * 10);
+  } else {
+    // chicche: village/town piccoli + wiki/natura nei tag “is_in” non affidabile,
+    // quindi facciamo preferire: village + wiki + no city
+    if (placeType === "village") s += 55;
+    if (placeType === "town") s += 20;
+    if (placeType === "city") s -= 20;
+    if (hasWiki) s += 30;
+    if (pop) s += Math.min(15, Math.log10(pop + 1) * 4);
+  }
+
+  // bonus nome “non generico”
+  if ((place.name || "").length > 4) s += 5;
+
+  return s;
+}
+
+function pickTopAndAlternatives(cands, minutes) {
+  // preferisco eta vicina al target ma non troppo corta
+  const target = minutes;
+  const minOk = Math.max(10, target * 0.35);
+  const maxOk = target * 1.25;
+
+  const scored = cands.map(c => {
+    const diff = Math.abs(c.eta_min - target);
+    const tooClose = c.eta_min < minOk ? 25 : 0;
+    const tooFar = c.eta_min > maxOk ? 20 : 0;
+    return { ...c, _fit: diff + tooClose + tooFar };
+  }).sort((a,b) => a._fit - b._fit);
 
   const top = scored[0] || null;
   const alternatives = [];
@@ -313,10 +243,6 @@ function chooseTopAndAlternatives(candidates, targetMinutes) {
   return { top, alternatives };
 }
 
-/* =========================
-   Handler
-   ========================= */
-
 module.exports = async (req, res) => {
   try {
     const lat = parseFloat(req.query.lat);
@@ -324,8 +250,8 @@ module.exports = async (req, res) => {
     const minutes = parseInt(req.query.minutes || "60", 10);
 
     const mode = String(req.query.mode || "car").toLowerCase();
-    const style = String(req.query.style || "known").toLowerCase();
-    const type = String(req.query.type || "places").toLowerCase(); // places | nature
+    const style = String(req.query.style || "known").toLowerCase(); // known|gems
+    const category = String(req.query.category || "any").toLowerCase(); // any|city|sea|mountain|kids
 
     const visitedRaw = String(req.query.visited || "").trim();
     const visited = visitedRaw ? visitedRaw.split(",").map(s => s.trim()).filter(Boolean) : [];
@@ -337,168 +263,87 @@ module.exports = async (req, res) => {
     const mins = clamp(minutes, 15, 360);
     const speed = avgSpeedKmh(mode);
 
-    // raggio stimato (cap forte per non uccidere gli endpoint)
-    let radiusKm = clamp((mins * speed) / 60, 8, mode === "plane" ? 180 : 140);
+    // raggio stimato (non ORS): più stabile
+    const radiusKm = (mins * speed) / 60;
+    const radiusM = clamp(radiusKm * 1000, 8000, 350000); // 8 km - 350 km
 
-    let engine = "ESTIMATE";
-    const apiKey = process.env.ORS_API_KEY;
-    const routableMode = ["car", "walk", "bike"].includes(mode);
+    const q = buildDestQuery({ lat, lng, radiusM, category });
+    const data = await overpassRequest(q, 2);
 
-    if (apiKey && routableMode && mins * 60 <= 3600) {
-      try {
-        await orsIsochroneCheck(lat, lng, mins * 60, modeProfile(mode), apiKey);
-        engine = "ORS_OK";
-      } catch {
-        engine = "ORS_FALLBACK";
-      }
-    } else {
-      engine = apiKey ? "ORS_LIMIT_FALLBACK" : "NO_ORS_KEY";
-    }
+    const all = normalizeElements(data);
 
-    // Tentativi: shrink radius se Overpass è lento
-    const radiusSteps = [1.0, 0.75, 0.55, 0.4];
-    let data = null;
+    const places = all.filter(isPlace);
 
-    for (const k of radiusSteps) {
-      const rM = clamp(Math.round(radiusKm * 1000 * k), 6000, 180000);
-      const query = buildOverpassQuery({ lat, lng, radiusMeters: rM, type, style });
-      try {
-        data = await overpassRequest(query, 2);
-        break;
-      } catch {
-        data = null;
-      }
-    }
-
-    // ✅ Fallback: se Overpass KO e type=places -> Wikidata (molto stabile)
-    if (!data && type === "places") {
-      try {
-        const wd = await wikidataPlaces(lat, lng, radiusKm);
-        if (!wd.length) {
-          return json(res, 200, {
-            top: null, alternatives: [],
-            mode, style, type,
-            engine,
-            source: "Wikidata",
-            message: "Non ho trovato mete in Wikidata con questi filtri."
-          });
-        }
-
-        // Trasforma in candidates
-        let candidates = wd.map(p => {
-          const d = haversineKm(lat, lng, p.lat, p.lng);
-          const eta = (d / speed) * 60;
-          return {
-            id: makeId(p.name, p.lat, p.lng),
-            name: p.name,
-            lat: p.lat,
-            lng: p.lng,
-            distance_km: d,
-            eta_min: eta,
-            maps_url: mapsUrl(p.lat, p.lng, p.name),
-            _rank: Math.log10((p.pop || 1) + 10) * 10 // ranking by pop
-          };
-        });
-
-        const maxMin = mins * 1.25;
-        const minMin = Math.max(8, mins * 0.35);
-
-        candidates = candidates
-          .filter(c => c.eta_min <= maxMin && c.eta_min >= minMin)
-          .filter(c => !visited.includes(c.id))
-          .sort((a, b) => (b._rank - a._rank));
-
-        if (!candidates.length) {
-          return json(res, 200, {
-            top: null, alternatives: [],
-            mode, style, type,
-            engine,
-            source: "Wikidata",
-            message: "Nessuna meta valida con questi filtri. Aumenta tempo o cambia mezzo."
-          });
-        }
-
-        const { top, alternatives } = chooseTopAndAlternatives(candidates.slice(0, 50), mins);
-
-        return json(res, 200, {
-          top, alternatives,
-          mode, style, type,
-          engine,
-          source: "Wikidata(fallback)"
-        });
-
-      } catch {
-        // se pure Wikidata fallisce
-        return json(res, 200, {
-          top: null,
-          alternatives: [],
-          mode, style, type,
-          engine,
-          source: "Overpass+Wikidata",
-          message: "Servizi esterni lenti/giù. Riprova tra poco."
+    // se category != any/city: teniamo solo places “vicini” ai marker tema
+    let filteredPlaces = places;
+    if (category !== "any" && category !== "city") {
+      const markers = all.filter(el => isThemeMarker(el, category));
+      if (markers.length) {
+        filteredPlaces = places.filter(p => {
+          // almeno un marker entro 18km dal place (aggiustabile)
+          for (const m of markers) {
+            const d = haversineKm(p.lat, p.lng, m.lat, m.lng);
+            if (d <= 18) return true;
+          }
+          return false;
         });
       }
+      // se nessun marker trovato, NON blocco tutto: torno ai places normali
     }
 
-    // Se Overpass KO e non posso usare fallback
-    if (!data) {
-      return json(res, 200, {
-        top: null,
-        alternatives: [],
-        mode, style, type,
-        engine,
-        source: "Overpass(pool)",
-        message: "Overpass è lento/giù in questo momento (504). Riprova tra poco o cambia filtri."
-      });
-    }
-
-    // Overpass OK
-    let places = extractCandidates(data);
-    places = rankCandidates(places, { style, type });
-
-    let candidates = places.map(p => {
+    // candidates con eta + score + filtri visited
+    let candidates = filteredPlaces.map(p => {
       const d = haversineKm(lat, lng, p.lat, p.lng);
       const eta = (d / speed) * 60;
+      const id = makeId(p.name, p.lat, p.lng);
       return {
-        id: makeId(p.name, p.lat, p.lng),
+        id,
         name: p.name,
         lat: p.lat,
         lng: p.lng,
         distance_km: d,
         eta_min: eta,
         maps_url: mapsUrl(p.lat, p.lng, p.name),
-        _rank: p._rank
+        _score: scorePlace(p, style)
       };
-    });
+    })
+    .filter(c => !visited.includes(c.id))
+    .filter(c => c.eta_min >= Math.max(8, mins * 0.30) && c.eta_min <= mins * 1.35)
+    .sort((a,b) => b._score - a._score);
 
-    const maxMin = mins * 1.20;
-    const minMin = Math.max(8, mins * 0.35);
-
-    candidates = candidates
-      .filter(c => c.eta_min <= maxMin && c.eta_min >= minMin)
-      .filter(c => !visited.includes(c.id))
-      .sort((a, b) => (b._rank - a._rank));
+    // dedup forte + taglio top N
+    candidates = dedupStrong(candidates).slice(0, 60);
 
     if (!candidates.length) {
       return json(res, 200, {
-        top: null, alternatives: [],
-        mode, style, type,
-        engine,
-        source: "Overpass(pool)",
-        message: "Nessuna meta valida con questi filtri. Aumenta tempo o cambia filtri."
+        top: null,
+        alternatives: [],
+        mode, style, category,
+        engine: "OVERPASS",
+        message: "Nessuna meta trovata con questi filtri. Prova ad aumentare il tempo o cambia categoria."
       });
     }
 
-    const { top, alternatives } = chooseTopAndAlternatives(candidates.slice(0, 60), mins);
+    const { top, alternatives } = pickTopAndAlternatives(candidates, mins);
 
     return json(res, 200, {
-      top, alternatives,
-      mode, style, type,
-      engine,
-      source: "Overpass(pool)"
+      top,
+      alternatives,
+      mode, style, category,
+      engine: "OVERPASS",
+      source: "Overpass(place=city|town|village)"
     });
 
   } catch (e) {
-    return json(res, 500, { error: "Server error", details: { error: e.message } });
+    // messaggio più amichevole per 504
+    const msg = String(e?.message || e);
+    if (msg.includes("504")) {
+      return json(res, 200, {
+        top: null,
+        alternatives: [],
+        message: "Overpass è lento/giù in questo momento (504). Riprova tra poco o cambia filtri."
+      });
+    }
+    return json(res, 500, { error: "Server error", details: { error: msg } });
   }
 };
