@@ -1,11 +1,21 @@
-// /api/suggest.js (Vercel Node) — SEA SMART
+// /api/suggest.js  (Node / Vercel)
+// STABILE: fallback Overpass + retry + query leggere + known/gems + categorie
+// Richiede: (facoltativo) env ORS_API_KEY (solo per check profili <= 60min)
+
 const ORS_BASE = "https://api.openrouteservice.org";
-const OVERPASS = "https://overpass-api.de/api/interpreter";
+
+// Pool Overpass (se uno va giù, prova gli altri)
+const OVERPASS_POOL = [
+  "https://overpass-api.de/api/interpreter",
+  "https://overpass.kumi.systems/api/interpreter",
+  "https://overpass.nchc.org.tw/api/interpreter"
+];
 
 function json(res, status, body) {
   res.statusCode = status;
   res.setHeader("Content-Type", "application/json; charset=utf-8");
-  res.setHeader("Cache-Control", "no-store");
+  // cache breve per non stressare Overpass
+  res.setHeader("Cache-Control", "public, s-maxage=60, stale-while-revalidate=600");
   res.end(JSON.stringify(body));
 }
 
@@ -14,9 +24,11 @@ function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
 function haversineKm(lat1, lon1, lat2, lon2) {
   const R = 6371;
   const toRad = (x) => (x * Math.PI) / 180;
-  const dLat = toRad(lat2-lat1);
-  const dLon = toRad(lon2-lon1);
-  const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
   return 2 * R * Math.asin(Math.sqrt(a));
 }
 
@@ -38,7 +50,7 @@ function mapsUrl(lat, lng, name) {
 }
 
 function makeId(name, lat, lng) {
-  return `${(name||"place").toLowerCase().replace(/\s+/g,"_")}@${lat.toFixed(5)},${lng.toFixed(5)}`;
+  return `${(name || "place").toLowerCase().replace(/\s+/g, "_")}@${lat.toFixed(5)},${lng.toFixed(5)}`;
 }
 
 function modeProfile(mode) {
@@ -48,20 +60,19 @@ function modeProfile(mode) {
 }
 
 function avgSpeedKmh(mode) {
+  // Nota: treno/bus/aereo qui sono "stima raggio" (non routing reale)
   if (mode === "walk") return 4.5;
   if (mode === "bike") return 15;
-  if (mode === "car") return 70;
+  if (mode === "bus") return 70;
   if (mode === "train") return 95;
-  if (mode === "bus") return 65;
-  if (mode === "plane") return 650;
-  return 70;
+  if (mode === "plane") return 550;
+  return 65; // auto
 }
 
-function modeBufferMin(mode) {
-  if (mode === "train") return 18;
-  if (mode === "bus") return 12;
-  if (mode === "plane") return 90;
-  return 0;
+async function fetchText(url, opts) {
+  const r = await fetch(url, opts);
+  const text = await r.text();
+  return { ok: r.ok, status: r.status, text };
 }
 
 async function fetchJson(url, opts) {
@@ -69,10 +80,11 @@ async function fetchJson(url, opts) {
   const text = await r.text();
   let data = null;
   try { data = JSON.parse(text); } catch { data = text; }
-  return { ok: r.ok, status: r.status, data };
+  return { ok: r.ok, status: r.status, data, text };
 }
 
-async function orsIsochronePolygon(lat, lng, seconds, profile, apiKey) {
+async function orsIsochroneCheck(lat, lng, seconds, profile, apiKey) {
+  // solo check fino a 3600 sec (limite ORS)
   const range = clamp(seconds, 60, 3600);
   const url = `${ORS_BASE}/v2/isochrones/${profile}`;
   const body = { locations: [[lng, lat]], range: [range] };
@@ -84,208 +96,273 @@ async function orsIsochronePolygon(lat, lng, seconds, profile, apiKey) {
       "Content-Type": "application/json",
       "Accept": "application/json"
     },
-    body: JSON.stringify(body),
+    body: JSON.stringify(body)
   });
 
-  if (!ok) {
-    const err = data?.error || data?.message || data?.details || "ORS error";
-    throw new Error(`${err} (status ${status})`);
-  }
-  return data;
+  if (!ok) throw new Error(`${data?.error || "ORS error"} (status ${status})`);
+  return true;
 }
 
-/* -----------------------
-   Overpass query blocks
-   ----------------------- */
+/* =========================
+   OVERPASS: fallback + retry
+   ========================= */
 
-function qPlaces(r, lat, lng) {
+async function overpassRequest(query, attempts = 3) {
+  // Prova endpoint diversi + retry con backoff
+  for (let a = 0; a < attempts; a++) {
+    for (const base of OVERPASS_POOL) {
+      try {
+        const { ok, status, text } = await fetchText(base, {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" },
+          body: "data=" + encodeURIComponent(query)
+        });
+
+        // 504/429 -> consideriamo "ritentabile"
+        if (!ok) {
+          const retryable = status === 504 || status === 429 || status === 502 || status === 503;
+          if (retryable) continue;
+          throw new Error(`Overpass error (status ${status})`);
+        }
+
+        const data = JSON.parse(text);
+        return data;
+      } catch (e) {
+        // prova prossimo endpoint
+        continue;
+      }
+    }
+    // backoff
+    await new Promise(r => setTimeout(r, 250 * (a + 1)));
+  }
+  throw new Error("Overpass error (status 504)");
+}
+
+/* =========================
+   QUERY BUILDER (type + category + style)
+   ========================= */
+
+function qPlacesKnown(r, lat, lng, hard = false) {
+  // "Conosciuti": city/town + (village solo se wiki/wikidata/population)
+  // hard=true (treno/aereo/bus) => ancora più stretti
+  const villageCond = hard
+    ? `["place"="village"]["wikidata"]`
+    : `["place"="village"][("wikidata"|"wikipedia"|"population")]`;
+
   return `
-  (
-    node["place"~"^(city|town|village|hamlet)$"](around:${r},${lat},${lng});
-    way["place"~"^(city|town|village|hamlet)$"](around:${r},${lat},${lng});
-    relation["place"~"^(city|town|village|hamlet)$"](around:${r},${lat},${lng});
-  );`;
+(
+  node["place"~"^(city|town)$"](around:${r},${lat},${lng});
+  way["place"~"^(city|town)$"](around:${r},${lat},${lng});
+  relation["place"~"^(city|town)$"](around:${r},${lat},${lng});
+
+  node${villageCond}(around:${r},${lat},${lng});
+  way${villageCond}(around:${r},${lat},${lng});
+  relation${villageCond}(around:${r},${lat},${lng});
+);
+`.trim();
 }
 
-function qNature(r, lat, lng) {
+function qPlacesGems(r, lat, lng) {
+  // "Chicche": village/town con wikidata/wikipedia oppure piccoli luoghi interessanti
+  // Evitiamo hamlet/suburb/neighbourhood perché troppo random
   return `
-  (
-    node["waterway"="waterfall"](around:${r},${lat},${lng});
-    node["natural"~"^(peak|wood|heath|scrub)$"](around:${r},${lat},${lng});
-    way["boundary"="national_park"](around:${r},${lat},${lng});
-    relation["boundary"="national_park"](around:${r},${lat},${lng});
-    node["leisure"="nature_reserve"](around:${r},${lat},${lng});
-    way["leisure"="nature_reserve"](around:${r},${lat},${lng});
-    relation["leisure"="nature_reserve"](around:${r},${lat},${lng});
-  );`;
+(
+  node["place"~"^(town|village)$"][("wikidata"|"wikipedia")](around:${r},${lat},${lng});
+  way["place"~"^(town|village)$"][("wikidata"|"wikipedia")](around:${r},${lat},${lng});
+  relation["place"~"^(town|village)$"][("wikidata"|"wikipedia")](around:${r},${lat},${lng});
+);
+`.trim();
 }
 
-// extra category (opzionale)
-function qCategoryExtra(category, r, lat, lng) {
-  const c = String(category || "").toLowerCase().trim();
-  if (!c) return "";
+function qNatureByCategory(r, lat, lng, category) {
+  // categorie natura/esperienza
+  switch ((category || "").toLowerCase()) {
+    case "mare":
+      return `
+(
+  node["natural"="beach"](around:${r},${lat},${lng});
+  way["natural"="beach"](around:${r},${lat},${lng});
+  node["tourism"="beach_resort"](around:${r},${lat},${lng});
+  node["man_made"="lighthouse"](around:${r},${lat},${lng});
+  node["tourism"="viewpoint"](around:${r},${lat},${lng});
+);
+`.trim();
 
-  if (c === "sea") {
-    // primo livello: cose marittime dirette
-    return `
-    (
-      node["natural"="beach"](around:${r},${lat},${lng});
-      way["natural"="beach"](around:${r},${lat},${lng});
-      way["natural"="coastline"](around:${r},${lat},${lng});
-      node["place"~"^(town|village|city)$"]["seaside"="yes"](around:${r},${lat},${lng});
-    );`;
+    case "montagna":
+      return `
+(
+  node["natural"="peak"](around:${r},${lat},${lng});
+  node["tourism"="viewpoint"](around:${r},${lat},${lng});
+  node["tourism"="alpine_hut"](around:${r},${lat},${lng});
+  way["natural"="ridge"](around:${r},${lat},${lng});
+);
+`.trim();
+
+    case "bambini":
+      return `
+(
+  node["tourism"="theme_park"](around:${r},${lat},${lng});
+  node["tourism"="zoo"](around:${r},${lat},${lng});
+  node["leisure"="playground"](around:${r},${lat},${lng});
+  node["tourism"="aquarium"](around:${r},${lat},${lng});
+  node["leisure"="park"](around:${r},${lat},${lng});
+);
+`.trim();
+
+    case "citta":
+      // “città” è places (non natura)
+      return "";
+
+    default:
+      // natura generica
+      return `
+(
+  node["waterway"="waterfall"](around:${r},${lat},${lng});
+  node["natural"="peak"](around:${r},${lat},${lng});
+  node["tourism"="viewpoint"](around:${r},${lat},${lng});
+  node["boundary"="national_park"](around:${r},${lat},${lng});
+  node["leisure"="nature_reserve"](around:${r},${lat},${lng});
+);
+`.trim();
   }
-
-  if (c === "mountain") {
-    return `
-    (
-      node["natural"="peak"](around:${r},${lat},${lng});
-      node["place"~"^(town|village|city)$"]["ele"~"^[0-9]{3,}$"](around:${r},${lat},${lng});
-    );`;
-  }
-
-  if (c === "city") {
-    return `
-    (
-      node["place"~"^(city|town)$"](around:${r},${lat},${lng});
-      way["place"~"^(city|town)$"](around:${r},${lat},${lng});
-      relation["place"~"^(city|town)$"](around:${r},${lat},${lng});
-    );`;
-  }
-
-  if (c === "villages") {
-    return `
-    (
-      node["place"~"^(village|hamlet)$"](around:${r},${lat},${lng});
-      way["place"~"^(village|hamlet)$"](around:${r},${lat},${lng});
-      relation["place"~"^(village|hamlet)$"](around:${r},${lat},${lng});
-    );`;
-  }
-
-  if (c === "kids") {
-    return `
-    (
-      node["tourism"~"^(zoo|theme_park)$"](around:${r},${lat},${lng});
-      way["tourism"~"^(zoo|theme_park)$"](around:${r},${lat},${lng});
-      node["leisure"~"^(park|playground|water_park)$"](around:${r},${lat},${lng});
-      way["leisure"~"^(park|playground|water_park)$"](around:${r},${lat},${lng});
-    );`;
-  }
-
-  if (c === "relax") {
-    return `
-    (
-      node["leisure"="park"](around:${r},${lat},${lng});
-      way["leisure"="park"](around:${r},${lat},${lng});
-      node["tourism"="spa"](around:${r},${lat},${lng});
-      way["tourism"="spa"](around:${r},${lat},${lng});
-    );`;
-  }
-
-  if (c === "food") {
-    return `
-    (
-      node["tourism"="winery"](around:${r},${lat},${lng});
-      way["tourism"="winery"](around:${r},${lat},${lng});
-      node["amenity"~"^(restaurant|cafe)$"](around:${r},${lat},${lng});
-      way["amenity"~"^(restaurant|cafe)$"](around:${r},${lat},${lng});
-    );`;
-  }
-
-  if (c === "culture") {
-    return `
-    (
-      node["tourism"~"^(museum|gallery|attraction)$"](around:${r},${lat},${lng});
-      way["tourism"~"^(museum|gallery|attraction)$"](around:${r},${lat},${lng});
-      node["historic"](around:${r},${lat},${lng});
-      way["historic"](around:${r},${lat},${lng});
-    );`;
-  }
-
-  return "";
 }
 
-// SEA SMART fallback: se l’utente vuole mare e vicino non c’è,
-// faccio una query “solo mare” più aggressiva con raggio più grande.
-function qSeaOnly(r, lat, lng) {
-  return `
-  (
-    node["natural"="beach"](around:${r},${lat},${lng});
-    way["natural"="beach"](around:${r},${lat},${lng});
-    way["natural"="coastline"](around:${r},${lat},${lng});
-    node["place"~"^(town|village|city)$"]["seaside"="yes"](around:${r},${lat},${lng});
-    node["tourism"="attraction"]["attraction"="beach"](around:${r},${lat},${lng});
-  );`;
-}
-
-function buildOverpassQuery(type, category, lat, lng, radiusMeters) {
+function buildOverpassQuery({ lat, lng, radiusMeters, type, category, style, hardKnown }) {
   const r = Math.round(radiusMeters);
-  const base = (type === "nature") ? qNature(r, lat, lng) : qPlaces(r, lat, lng);
-  const extra = qCategoryExtra(category, r, lat, lng);
+  const t = (type || "places").toLowerCase();
+  const s = (style || "known").toLowerCase();
+  const c = (category || "").toLowerCase();
+
+  // Query leggera e veloce (timeout basso + output limit)
+  // NB: out center per way/relation, out per node
+  let inner = "";
+
+  if (t === "nature") {
+    inner = qNatureByCategory(r, lat, lng, c);
+  } else {
+    // places
+    if (s === "gems") inner = qPlacesGems(r, lat, lng);
+    else inner = qPlacesKnown(r, lat, lng, hardKnown);
+  }
+
+  if (!inner.trim()) {
+    // fallback safe
+    inner = qPlacesKnown(r, lat, lng, hardKnown);
+  }
 
   return `
-    [out:json][timeout:25];
-    (
-      ${base}
-      ${extra}
-    );
-    out center 220;
-  `.trim();
+[out:json][timeout:20];
+${inner}
+out tags center qt 90;
+`.trim();
 }
 
-async function overpassFetchQuery(query) {
-  const { ok, status, data } = await fetchJson(OVERPASS, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" },
-    body: "data=" + encodeURIComponent(query)
-  });
-  if (!ok) throw new Error(`Overpass error (status ${status})`);
+/* =========================
+   Parsing + Ranking
+   ========================= */
 
+function extractCandidates(data) {
   const elements = data?.elements || [];
   const out = [];
+
   for (const el of elements) {
-    const name = el.tags?.name;
+    const tags = el.tags || {};
+    const name = tags.name || tags["name:it"];
     if (!name) continue;
 
-    const c = el.type === "node"
-      ? { lat: el.lat, lon: el.lon }
-      : el.center ? { lat: el.center.lat, lon: el.center.lon } : null;
+    const c =
+      el.type === "node"
+        ? { lat: el.lat, lon: el.lon }
+        : el.center
+          ? { lat: el.center.lat, lon: el.center.lon }
+          : null;
 
     if (!c) continue;
 
-    out.push({ name, lat: c.lat, lng: c.lon, tags: el.tags || {} });
+    out.push({
+      name,
+      lat: c.lat,
+      lng: c.lon,
+      tags
+    });
   }
 
   return uniqBy(out, p => `${p.name.toLowerCase()}_${p.lat.toFixed(3)}_${p.lng.toFixed(3)}`);
 }
 
-async function overpassFetch(type, category, lat, lng, radiusMeters) {
-  const query = buildOverpassQuery(type, category, lat, lng, radiusMeters);
-  return await overpassFetchQuery(query);
+function rankCandidates(cands, { style, type }) {
+  const s = (style || "known").toLowerCase();
+  const t = (type || "places").toLowerCase();
+
+  const score = (p) => {
+    const tags = p.tags || {};
+    const hasWiki = !!(tags.wikidata || tags.wikipedia);
+    const pop = Number(tags.population || 0) || 0;
+    const place = tags.place || "";
+
+    let base = 0;
+
+    if (t === "places") {
+      // gerarchia place
+      if (place === "city") base += 60;
+      else if (place === "town") base += 45;
+      else if (place === "village") base += 25;
+      else base += 5;
+
+      if (hasWiki) base += 35;
+      if (pop > 0) base += Math.min(25, Math.log10(pop + 1) * 6); // pop “soft”
+    } else {
+      // natura: viewpoint/peak/waterfall ecc.
+      if (tags.waterway === "waterfall") base += 60;
+      if (tags.natural === "peak") base += 55;
+      if (tags.tourism === "viewpoint") base += 45;
+      if (tags.natural === "beach") base += 55;
+      if (tags.tourism === "theme_park") base += 55;
+      if (tags.tourism === "zoo") base += 50;
+      if (tags.leisure === "playground") base += 35;
+      if (hasWiki) base += 10;
+    }
+
+    // stile:
+    // known => spingo wiki + city/town
+    // gems  => preferisco village/town con wiki (e non city enormi)
+    if (s === "gems") {
+      if (place === "city") base -= 20;
+      if (place === "village") base += 12;
+      if (hasWiki) base += 10;
+      if (pop > 250000) base -= 20;
+    }
+
+    return base;
+  };
+
+  return cands
+    .map(p => ({ ...p, _rank: score(p) }))
+    .sort((a, b) => b._rank - a._rank);
 }
 
-/* -----------------------
-   choose best + alts
-   ----------------------- */
-
 function chooseTopAndAlternatives(candidates, targetMinutes) {
+  // preferisco vicino al tempo target (ma non troppo vicini)
   const scored = candidates.map(c => {
     const diff = Math.abs(c.eta_min - targetMinutes);
-    const tooClose = c.eta_min < Math.max(10, targetMinutes * 0.25) ? 6 : 0;
-    return { ...c, score: diff + tooClose };
-  }).sort((a,b)=>a.score-b.score);
+    const tooClose = c.eta_min < Math.max(10, targetMinutes * 0.35) ? 18 : 0;
+    return { ...c, _fit: diff + tooClose };
+  }).sort((a, b) => a._fit - b._fit);
 
   const top = scored[0] || null;
-
   const alternatives = [];
-  for (let i=1; i<scored.length && alternatives.length<3; i++){
+  for (let i = 1; i < scored.length && alternatives.length < 3; i++) {
     const a = scored[i];
     if (!top) break;
-    if (Math.abs(a.eta_min - top.eta_min) < 6) continue;
+    if (Math.abs(a.eta_min - top.eta_min) < 8) continue;
     alternatives.push(a);
   }
   return { top, alternatives };
 }
+
+/* =========================
+   Handler
+   ========================= */
 
 module.exports = async (req, res) => {
   try {
@@ -294,151 +371,159 @@ module.exports = async (req, res) => {
     const minutes = parseInt(req.query.minutes || "60", 10);
 
     const mode = String(req.query.mode || "car").toLowerCase();
-    const typeRaw = String(req.query.type || "places").toLowerCase();
-    const type = (typeRaw === "nature") ? "nature" : "places"; // NO MIX
-
-    const category = String(req.query.category || "").toLowerCase().trim(); // facoltativa
+    const style = String(req.query.style || "known").toLowerCase();
+    const type = String(req.query.type || "places").toLowerCase(); // places | nature
+    const category = String(req.query.category || "").toLowerCase(); // mare | montagna | bambini | citta ...
 
     const visitedRaw = String(req.query.visited || "").trim();
-    const visited = visitedRaw ? visitedRaw.split(",").map(s=>s.trim()).filter(Boolean) : [];
+    const visited = visitedRaw ? visitedRaw.split(",").map(s => s.trim()).filter(Boolean) : [];
 
     if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
       return json(res, 400, { error: "Parametri mancanti: lat,lng" });
     }
 
     const mins = clamp(minutes, 15, 360);
-    const targetSeconds = mins * 60;
-
     const speed = avgSpeedKmh(mode);
-    const buffer = modeBufferMin(mode);
-    const profile = modeProfile(mode);
+
+    // raggio stimato
+    let radiusKm = (mins * speed) / 60;
+
+    // cap “ragionevole” per evitare query enormi
+    // (aereo a 1h => 550km sarebbe distruttivo per Overpass)
+    radiusKm = clamp(radiusKm, 8, mode === "plane" ? 180 : 140);
 
     let engine = "ESTIMATE";
-    const usable = Math.max(10, mins - buffer);
-    let radiusKm = (usable * speed) / 60;
-
     const apiKey = process.env.ORS_API_KEY;
-    if (apiKey && targetSeconds <= 3600 && (mode === "car" || mode === "walk" || mode === "bike")) {
+
+    // ORS check SOLO se <= 60 min e mode in [car/walk/bike]
+    const routableMode = ["car", "walk", "bike"].includes(mode);
+    if (apiKey && routableMode && mins * 60 <= 3600) {
       try {
-        await orsIsochronePolygon(lat, lng, targetSeconds, profile, apiKey);
+        await orsIsochroneCheck(lat, lng, mins * 60, modeProfile(mode), apiKey);
         engine = "ORS_OK";
       } catch {
-        engine = "ESTIMATE_FALLBACK";
+        engine = "ORS_FALLBACK";
       }
     } else {
-      engine = apiKey ? "ORS_LIMIT_OR_MODE" : "NO_ORS_KEY";
+      engine = apiKey ? "ORS_LIMIT_FALLBACK" : "NO_ORS_KEY";
     }
 
-    // raggio base
-    let radiusMeters = clamp(radiusKm * 1000, 7000, 300000);
+    // Per train/bus/plane e per known: "hardKnown" per evitare paesini random
+    const hardKnown = (style === "known") && (mode === "train" || mode === "bus" || mode === "plane");
 
-    // 1) fetch normale
-    let places = await overpassFetch(type, category, lat, lng, radiusMeters);
+    // Tentativi Overpass: se 504 -> riduci raggio e riprova
+    let radiusMeters = Math.round(radiusKm * 1000);
+    const radiusSteps = [1.0, 0.8, 0.65, 0.5]; // riduzione progressiva
 
-    // 2) fallback: allarga se pochi
-    if (places.length < 25) {
-      const more = await overpassFetch(type, category, lat, lng, clamp(radiusMeters * 1.4, 7000, 300000));
-      places = uniqBy([...places, ...more], p => `${p.name.toLowerCase()}_${p.lat.toFixed(3)}_${p.lng.toFixed(3)}`);
-    }
+    let data = null;
+    let lastErr = null;
 
-    // 3) SEA SMART: se category=sea e ancora pochi risultati “marini”, faccio un tentativo aggressivo
-    let seaHint = null;
-    if (category === "sea") {
-      // cerco quanti “marini” ho (euristica: beach/coastline/seaside)
-      const seaish = places.filter(p => {
-        const t = p.tags || {};
-        return t.natural === "beach" || t.natural === "coastline" || t.seaside === "yes";
+    for (const k of radiusSteps) {
+      const rM = clamp(radiusMeters * k, 6000, 200000); // 6km..200km
+      const query = buildOverpassQuery({
+        lat, lng,
+        radiusMeters: rM,
+        type,
+        category,
+        style,
+        hardKnown
       });
 
-      if (seaish.length < 6) {
-        // aumento il raggio ma con limite massimo coerente col tempo
-        const seaRadiusMeters = clamp(radiusMeters * 2.2, 25000, 500000);
-
-        const seaQuery = `
-          [out:json][timeout:25];
-          ${qSeaOnly(Math.round(seaRadiusMeters), lat, lng)}
-          out center 240;
-        `.trim();
-
-        const seaPlaces = await overpassFetchQuery(seaQuery);
-        places = uniqBy([...places, ...seaPlaces], p => `${p.name.toLowerCase()}_${p.lat.toFixed(3)}_${p.lng.toFixed(3)}`);
-
-        // se anche così non ho roba da mare, dico chiaramente che il mare è lontano
-        const afterSea = places.filter(p => {
-          const t = p.tags || {};
-          return t.natural === "beach" || t.natural === "coastline" || t.seaside === "yes";
-        });
-
-        if (afterSea.length === 0) {
-          // stima minima: ipotizzo che il mare più vicino sia ~150km (euristica)
-          const approxMinHours = Math.max(2, Math.round((150 / 70) * 10) / 10);
-          seaHint = `Per il mare, da qui spesso servono ~${approxMinHours}h in auto. Prova ad aumentare il tempo.`;
-        }
+      try {
+        data = await overpassRequest(query, 2);
+        radiusMeters = rM;
+        break;
+      } catch (e) {
+        lastErr = e;
+        data = null;
       }
     }
 
-    // candidates
+    if (!data) {
+      // Niente crash UI: ritorno 200 con top=null
+      return json(res, 200, {
+        top: null,
+        alternatives: [],
+        mode, style, type, category,
+        engine,
+        source: "Overpass(pool)",
+        message: "Overpass è lento/giù in questo momento (504). Riprova tra poco o cambia filtri."
+      });
+    }
+
+    // Candidati + ranking
+    let places = extractCandidates(data);
+    places = rankCandidates(places, { style, type });
+
+    // Trasforma in candidates con distanza + eta
     let candidates = places.map(p => {
       const d = haversineKm(lat, lng, p.lat, p.lng);
-      const etaTravel = (d / speed) * 60;
-      const etaTotal = etaTravel + buffer;
-
+      const eta = (d / speed) * 60;
       return {
         id: makeId(p.name, p.lat, p.lng),
         name: p.name,
         lat: p.lat,
         lng: p.lng,
         distance_km: d,
-        eta_min: etaTotal,
+        eta_min: eta,
         maps_url: mapsUrl(p.lat, p.lng, p.name),
-        tags: p.tags
+        _rank: p._rank
       };
     });
 
-    const maxMin = mins * 1.35;
+    // filtro tempo (tolleranza)
+    const maxMin = mins * 1.20;
+    const minMin = Math.max(8, mins * 0.35);
 
     candidates = candidates
-      .filter(c => c.eta_min <= maxMin && c.eta_min >= 6)
-      .filter(c => !visited.includes(c.id));
+      .filter(c => c.eta_min <= maxMin && c.eta_min >= minMin)
+      .filter(c => !visited.includes(c.id))
+      // ranking prima, poi “fit”
+      .sort((a, b) => (b._rank - a._rank));
 
-    // ultima chance: niente filtro max
-    if (!candidates.length) {
+    // se pochi, allenta (ma senza esplodere)
+    if (candidates.length < 5) {
+      const relaxedMax = mins * 1.45;
       candidates = places.map(p => {
         const d = haversineKm(lat, lng, p.lat, p.lng);
-        const etaTravel = (d / speed) * 60;
-        const etaTotal = etaTravel + buffer;
+        const eta = (d / speed) * 60;
         return {
           id: makeId(p.name, p.lat, p.lng),
           name: p.name,
           lat: p.lat,
           lng: p.lng,
           distance_km: d,
-          eta_min: etaTotal,
+          eta_min: eta,
           maps_url: mapsUrl(p.lat, p.lng, p.name),
-          tags: p.tags
+          _rank: p._rank
         };
-      }).filter(c => c.eta_min >= 6).filter(c => !visited.includes(c.id));
+      })
+      .filter(c => c.eta_min <= relaxedMax && c.eta_min >= 8)
+      .filter(c => !visited.includes(c.id))
+      .sort((a, b) => (b._rank - a._rank));
     }
 
     if (!candidates.length) {
       return json(res, 200, {
         top: null,
         alternatives: [],
-        mode, type, category,
+        mode, style, type, category,
         engine,
-        source: "Overpass",
-        message: seaHint || "Nessun luogo trovato. Prova ad aumentare il tempo."
+        source: "Overpass(pool)",
+        message: "Nessuna meta valida con questi filtri. Aumenta tempo o cambia categoria."
       });
     }
 
-    const { top, alternatives } = chooseTopAndAlternatives(candidates, mins);
+    // scegli top + alternative vicino al target time
+    const { top, alternatives } = chooseTopAndAlternatives(candidates.slice(0, 60), mins);
 
     return json(res, 200, {
       top,
       alternatives,
-      mode, type, category,
+      mode, style, type, category,
       engine,
-      source: "Overpass (SEA SMART attivo)"
+      source: "Overpass(pool)",
+      radius_km_used: Math.round(radiusMeters / 1000)
     });
 
   } catch (e) {
