@@ -6,8 +6,7 @@
   <title>Jamo</title>
 
   <meta name="theme-color" content="#0b1220" />
-  <!-- FIX: nel repo hai manifest.webmanifest -->
-  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="icons/icon-192.png" />
 
   <style>
@@ -90,8 +89,8 @@
       padding: 10px 12px;
       border-radius: 14px;
       cursor:pointer;
-      font-weight: 700;
-      font-size: 14px;
+      font-weight: 800;
+      font-size: 13px;
       white-space:nowrap;
     }
 
@@ -114,12 +113,13 @@
     .meta{margin:0 0 10px; color: rgba(255,255,255,.70); font-size: 13px; line-height: 1.4;}
 
     .actions{display:flex; gap:10px; flex-wrap:wrap; margin-top: 10px;}
-    .linkbtn{display:inline-flex; align-items:center; justify-content:center; padding: 10px 12px; border-radius: 14px; border:1px solid rgba(255,255,255,.12); color:var(--text); text-decoration:none; background: rgba(255,255,255,.06); font-weight:800; font-size: 13px;}
+    .linkbtn{display:inline-flex; align-items:center; justify-content:center; padding: 10px 12px; border-radius: 14px; border:1px solid rgba(255,255,255,.12); color:var(--text); text-decoration:none; background: rgba(255,255,255,.06); font-weight:900; font-size: 13px;}
 
-    .alts h2{margin: 14px 0 8px; font-size: 15px; letter-spacing:.2px; color: rgba(255,255,255,.9);}
+    .alts h2{margin: 14px 0 8px; font-size: 15px; letter-spacing:.2px; color: rgba(255,255,255,.92);}
     .alt-item{padding: 10px 12px; border-radius: 14px; border:1px solid rgba(255,255,255,.10); background: rgba(255,255,255,.04); margin-bottom: 8px;}
     .alt-item .name{font-weight:900}
     .alt-item .small{color:rgba(255,255,255,.68); font-size:12px; margin-top:2px}
+    .alt-item.clickable{cursor:pointer}
 
     .footer{margin-top: 14px; text-align:center; color: rgba(255,255,255,.55); font-size: 12px;}
     .tiny{font-size: 12px; color: rgba(255,255,255,.60); margin-top: 8px; line-height:1.35;}
@@ -133,32 +133,33 @@
         <div class="logo"></div>
         <h1>Jamo</h1>
       </div>
-      <div class="pill">v2 • Luoghi reali</div>
+      <div class="pill">v3 • Mete reali</div>
     </div>
 
     <main class="card">
       <p class="headline">“Andiamo da qualche parte?” → “Ok, ma dove?”</p>
       <p class="sub">
-        Scegli <b>tempo</b>, <b>mezzo</b>, <b>tipo</b> e <b>categoria</b>. Jamo ti propone un luogo reale + alternative.
-        Se non vuoi usare il GPS, inserisci tu la partenza.
+        Scegli <b>tempo</b>, <b>mezzo</b>, <b>stile</b> e <b>categoria</b>.
+        Jamo ti propone una meta reale + alternative, e sotto trovi cosa vedere/fare.
+        Se non vuoi usare il GPS, inserisci la partenza.
       </p>
 
       <div class="grid">
         <!-- PARTENZA -->
         <div class="field">
-          <label>Partenza</label>
+          <label>Partenza (opzionale)</label>
           <div class="row">
             <button id="gpsBtn" class="btn2" type="button">📍 Usa la mia posizione</button>
             <input id="startInput" type="text" placeholder="Es: Via Roma 12, L’Aquila / Roma Termini / Perugia" />
           </div>
-          <div class="tiny">Se scrivi una partenza, Jamo userà quella. Se lasci vuoto, prova col GPS.</div>
+          <div class="tiny">Se scrivi una partenza, Jamo userà quella. Se lasci vuoto, usa il GPS.</div>
         </div>
 
         <!-- FILTRI -->
         <div class="field">
           <label>Filtri</label>
           <div class="row">
-            <div style="flex:1; min-width:150px">
+            <div style="flex:1; min-width:140px">
               <select id="timeSelect">
                 <option value="30">30 min</option>
                 <option value="45">45 min</option>
@@ -188,29 +189,15 @@
               </select>
             </div>
 
-            <!-- NO MIX: solo scelta chiara -->
-            <div style="flex:1; min-width:170px">
-              <select id="typeSelect">
-                <option value="places" selected>Luoghi (città/borghi)</option>
-                <option value="nature">Natura (monti/parchi/cascate)</option>
-              </select>
-            </div>
-
-            <!-- CATEGORIA: mare/montagna/bambini ecc. -->
-            <div style="flex:1; min-width:170px">
+            <div style="flex:1; min-width:200px">
               <select id="categorySelect">
-                <option value="" selected>Categoria: Qualsiasi</option>
+                <option value="any" selected>Categoria: Qualsiasi</option>
+                <option value="city">Città / Borghi</option>
                 <option value="sea">Mare</option>
-                <option value="mountain">Montagna</option>
-                <option value="city">Città</option>
-                <option value="villages">Borghi</option>
-                <option value="kids">Bambini</option>
-                <option value="relax">Relax</option>
-                <option value="food">Cibo</option>
-                <option value="culture">Cultura</option>
+                <option value="mountain">Montagna / Natura</option>
+                <option value="kids">Per bambini</option>
               </select>
             </div>
-
           </div>
         </div>
 
@@ -241,7 +228,7 @@
         </section>
       </div>
 
-      <div class="footer" id="footerInfo">Jamo • Interfaccia PWA • Dati: OSM • Routing: ORS quando possibile</div>
+      <div class="footer" id="footerInfo">Jamo • PWA • Dati: OpenStreetMap (Overpass)</div>
     </main>
   </div>
 
