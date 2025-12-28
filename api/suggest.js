@@ -1,7 +1,6 @@
-// /api/suggest.js  (Node / Vercel)
-// Richiede env ORS_API_KEY (opzionale: se manca, usa solo stime)
-// Supporta: car, walk, bike, train, bus, plane
-// Supporta type: mix | places | nature
+// /api/suggest.js (Vercel Node)
+// ORS_API_KEY opzionale. Overpass come sorgente luoghi.
+// category FACOLTATIVA: se vuota/non presente -> nessun filtro extra.
 
 const ORS_BASE = "https://api.openrouteservice.org";
 const OVERPASS = "https://overpass-api.de/api/interpreter";
@@ -45,14 +44,9 @@ function makeId(name, lat, lng) {
   return `${(name||"place").toLowerCase().replace(/\s+/g,"_")}@${lat.toFixed(5)},${lng.toFixed(5)}`;
 }
 
-/* -----------------------
-   MODE: profiles + speed
-   ----------------------- */
-
 function modeProfile(mode) {
   if (mode === "walk") return "foot-walking";
   if (mode === "bike") return "cycling-regular";
-  // per train/bus/plane usiamo comunque driving-car per eventuale ORS check
   return "driving-car";
 }
 
@@ -60,16 +54,12 @@ function avgSpeedKmh(mode) {
   if (mode === "walk") return 4.5;
   if (mode === "bike") return 15;
   if (mode === "car") return 70;
-
-  // PLAUSIBILE (non orari reali):
   if (mode === "train") return 95;
   if (mode === "bus") return 65;
   if (mode === "plane") return 650;
-
   return 70;
 }
 
-// Buffer porta-a-porta (minuti): accesso + attese
 function modeBufferMin(mode) {
   if (mode === "train") return 18;
   if (mode === "bus") return 12;
@@ -77,9 +67,6 @@ function modeBufferMin(mode) {
   return 0;
 }
 
-/* -----------------------
-   fetch helper
-   ----------------------- */
 async function fetchJson(url, opts) {
   const r = await fetch(url, opts);
   const text = await r.text();
@@ -88,9 +75,6 @@ async function fetchJson(url, opts) {
   return { ok: r.ok, status: r.status, data };
 }
 
-/* -----------------------
-   ORS isochrone (optional)
-   ----------------------- */
 async function orsIsochronePolygon(lat, lng, seconds, profile, apiKey) {
   const range = clamp(seconds, 60, 3600);
   const url = `${ORS_BASE}/v2/isochrones/${profile}`;
@@ -114,49 +98,145 @@ async function orsIsochronePolygon(lat, lng, seconds, profile, apiKey) {
 }
 
 /* -----------------------
-   Overpass query by type
+   Overpass query builder
+   type: places|nature
+   category (opzionale)
    ----------------------- */
-function buildOverpassQuery(type, lat, lng, radiusMeters) {
+
+// blocco base "places"
+function qPlaces(r, lat, lng) {
+  return `
+  (
+    node["place"~"^(city|town|village|hamlet)$"](around:${r},${lat},${lng});
+    way["place"~"^(city|town|village|hamlet)$"](around:${r},${lat},${lng});
+    relation["place"~"^(city|town|village|hamlet)$"](around:${r},${lat},${lng});
+  );`;
+}
+
+// blocco base "nature"
+function qNature(r, lat, lng) {
+  return `
+  (
+    node["waterway"="waterfall"](around:${r},${lat},${lng});
+    node["natural"~"^(peak|wood|heath|scrub)$"](around:${r},${lat},${lng});
+    way["boundary"="national_park"](around:${r},${lat},${lng});
+    relation["boundary"="national_park"](around:${r},${lat},${lng});
+    node["leisure"="nature_reserve"](around:${r},${lat},${lng});
+    way["leisure"="nature_reserve"](around:${r},${lat},${lng});
+    relation["leisure"="nature_reserve"](around:${r},${lat},${lng});
+  );`;
+}
+
+// filtri extra per category (opzionali) – li aggiungiamo COME AMPLIAMENTO, non come unica fonte,
+// così non “sparisce tutto” se OSM è povero in zona.
+function qCategoryExtra(category, r, lat, lng) {
+  const c = String(category || "").toLowerCase().trim();
+  if (!c) return ""; // facoltativa
+
+  if (c === "sea") {
+    return `
+    (
+      node["natural"~"^(beach|coastline)$"](around:${r},${lat},${lng});
+      way["natural"~"^(beach|coastline)$"](around:${r},${lat},${lng});
+      node["place"~"^(town|village|city)$"]["seaside"="yes"](around:${r},${lat},${lng});
+    );`;
+  }
+
+  if (c === "mountain") {
+    return `
+    (
+      node["natural"="peak"](around:${r},${lat},${lng});
+      node["place"~"^(town|village|city)$"]["ele"~"^[0-9]{3,}$"](around:${r},${lat},${lng});
+    );`;
+  }
+
+  if (c === "city") {
+    return `
+    (
+      node["place"~"^(city|town)$"](around:${r},${lat},${lng});
+      way["place"~"^(city|town)$"](around:${r},${lat},${lng});
+      relation["place"~"^(city|town)$"](around:${r},${lat},${lng});
+    );`;
+  }
+
+  if (c === "villages") {
+    return `
+    (
+      node["place"~"^(village|hamlet)$"](around:${r},${lat},${lng});
+      way["place"~"^(village|hamlet)$"](around:${r},${lat},${lng});
+      relation["place"~"^(village|hamlet)$"](around:${r},${lat},${lng});
+    );`;
+  }
+
+  if (c === "kids") {
+    return `
+    (
+      node["tourism"~"^(zoo|theme_park)$"](around:${r},${lat},${lng});
+      way["tourism"~"^(zoo|theme_park)$"](around:${r},${lat},${lng});
+      node["leisure"~"^(park|playground|water_park)$"](around:${r},${lat},${lng});
+      way["leisure"~"^(park|playground|water_park)$"](around:${r},${lat},${lng});
+    );`;
+  }
+
+  if (c === "relax") {
+    return `
+    (
+      node["leisure"="park"](around:${r},${lat},${lng});
+      way["leisure"="park"](around:${r},${lat},${lng});
+      node["tourism"="spa"](around:${r},${lat},${lng});
+      way["tourism"="spa"](around:${r},${lat},${lng});
+    );`;
+  }
+
+  if (c === "food") {
+    return `
+    (
+      node["amenity"~"^(restaurant|cafe|fast_food)$"](around:${r},${lat},${lng});
+      way["amenity"~"^(restaurant|cafe|fast_food)$"](around:${r},${lat},${lng});
+      node["tourism"="winery"](around:${r},${lat},${lng});
+      way["tourism"="winery"](around:${r},${lat},${lng});
+    );`;
+  }
+
+  if (c === "culture") {
+    return `
+    (
+      node["tourism"~"^(museum|gallery|attraction)$"](around:${r},${lat},${lng});
+      way["tourism"~"^(museum|gallery|attraction)$"](around:${r},${lat},${lng});
+      node["historic"](around:${r},${lat},${lng});
+      way["historic"](around:${r},${lat},${lng});
+    );`;
+  }
+
+  return "";
+}
+
+function buildOverpassQuery(type, category, lat, lng, radiusMeters) {
   const r = Math.round(radiusMeters);
 
-  const qPlaces = `
-    (
-      node["place"~"^(city|town|village|hamlet)$"](around:${r},${lat},${lng});
-      way["place"~"^(city|town|village|hamlet)$"](around:${r},${lat},${lng});
-      relation["place"~"^(city|town|village|hamlet)$"](around:${r},${lat},${lng});
-    );
-  `;
+  const base = (type === "nature") ? qNature(r, lat, lng) : qPlaces(r, lat, lng);
+  const extra = qCategoryExtra(category, r, lat, lng);
 
-  const qNature = `
-    (
-      node["waterway"="waterfall"](around:${r},${lat},${lng});
-      node["natural"="peak"](around:${r},${lat},${lng});
-      way["boundary"="national_park"](around:${r},${lat},${lng});
-      relation["boundary"="national_park"](around:${r},${lat},${lng});
-      node["leisure"="nature_reserve"](around:${r},${lat},${lng});
-      way["leisure"="nature_reserve"](around:${r},${lat},${lng});
-      relation["leisure"="nature_reserve"](around:${r},${lat},${lng});
-    );
-  `;
-
-  const qMix = `(${qPlaces} ${qNature});`;
-
-  const pick = (type === "places") ? qPlaces : (type === "nature") ? qNature : qMix;
-
+  // Importante: extra è un "plus", non sostituisce base (così non rimani a 0).
   return `
     [out:json][timeout:25];
-    ${pick}
+    (
+      ${base}
+      ${extra}
+    );
     out center 220;
   `.trim();
 }
 
-async function overpassFetch(type, lat, lng, radiusMeters) {
-  const query = buildOverpassQuery(type, lat, lng, radiusMeters);
+async function overpassFetch(type, category, lat, lng, radiusMeters) {
+  const query = buildOverpassQuery(type, category, lat, lng, radiusMeters);
+
   const { ok, status, data } = await fetchJson(OVERPASS, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" },
     body: "data=" + encodeURIComponent(query)
   });
+
   if (!ok) throw new Error(`Overpass error (status ${status})`);
 
   const elements = data?.elements || [];
@@ -186,17 +266,16 @@ async function overpassFetch(type, lat, lng, radiusMeters) {
 /* -----------------------
    pick best + alts
    ----------------------- */
+
 function chooseTopAndAlternatives(candidates, targetMinutes) {
   const scored = candidates.map(c => {
     const diff = Math.abs(c.eta_min - targetMinutes);
-
-    // NON buttiamo via troppo vicino: solo una lieve penalità
     const tooClose = c.eta_min < Math.max(10, targetMinutes * 0.25) ? 6 : 0;
-
     return { ...c, score: diff + tooClose };
   }).sort((a,b)=>a.score-b.score);
 
   const top = scored[0] || null;
+
   const alternatives = [];
   for (let i=1; i<scored.length && alternatives.length<3; i++){
     const a = scored[i];
@@ -207,14 +286,22 @@ function chooseTopAndAlternatives(candidates, targetMinutes) {
   return { top, alternatives };
 }
 
+/* -----------------------
+   handler
+   ----------------------- */
+
 module.exports = async (req, res) => {
   try {
     const lat = parseFloat(req.query.lat);
     const lng = parseFloat(req.query.lng);
     const minutes = parseInt(req.query.minutes || "60", 10);
-    const mode = (req.query.mode || "car").toLowerCase();
-    const type = (req.query.type || "mix").toLowerCase(); // <-- supporto tipo meta
-    const visitedRaw = (req.query.visited || "").trim();
+
+    const mode = String(req.query.mode || "car").toLowerCase();
+    const typeRaw = String(req.query.type || "places").toLowerCase();
+    const type = (typeRaw === "nature") ? "nature" : "places"; // NO MIX
+    const category = String(req.query.category || "").toLowerCase().trim(); // FACOLTATIVA
+
+    const visitedRaw = String(req.query.visited || "").trim();
     const visited = visitedRaw ? visitedRaw.split(",").map(s=>s.trim()).filter(Boolean) : [];
 
     if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
@@ -229,13 +316,10 @@ module.exports = async (req, res) => {
     const profile = modeProfile(mode);
 
     let engine = "ESTIMATE";
-    let radiusKm = (mins * speed) / 60; // stima raggio “grezzo”
-
-    // se ho buffer, riduco raggio utile (tempo disponibile per il viaggio vero)
     const usable = Math.max(10, mins - buffer);
-    radiusKm = (usable * speed) / 60;
+    let radiusKm = (usable * speed) / 60;
 
-    // ORS solo fino a 60 minuti (range 3600), opzionale
+    // ORS opzionale: solo walk/bike/car entro 60 min
     const apiKey = process.env.ORS_API_KEY;
     if (apiKey && targetSeconds <= 3600 && (mode === "car" || mode === "walk" || mode === "bike")) {
       try {
@@ -248,26 +332,18 @@ module.exports = async (req, res) => {
       engine = apiKey ? "ORS_LIMIT_OR_MODE" : "NO_ORS_KEY";
     }
 
-    // radius: min/max
     let radiusMeters = clamp(radiusKm * 1000, 7000, 300000);
 
-    // 1) prima query
-    let places = await overpassFetch(type, lat, lng, radiusMeters);
+    // 1) fetch base+extra (category è extra e facoltativa)
+    let places = await overpassFetch(type, category, lat, lng, radiusMeters);
 
-    // 2) fallback se pochi
+    // 2) fallback: allarga se pochi
     if (places.length < 25) {
-      radiusMeters = clamp(radiusMeters * 1.4, 7000, 300000);
-      const more = await overpassFetch(type, lat, lng, radiusMeters);
+      const more = await overpassFetch(type, category, lat, lng, clamp(radiusMeters * 1.4, 7000, 300000));
       places = uniqBy([...places, ...more], p => `${p.name.toLowerCase()}_${p.lat.toFixed(3)}_${p.lng.toFixed(3)}`);
     }
 
-    // 3) se ancora pochi, forzo MIX (così non è mai vuoto)
-    if (places.length < 10 && type !== "mix") {
-      const mix = await overpassFetch("mix", lat, lng, radiusMeters);
-      places = uniqBy([...places, ...mix], p => `${p.name.toLowerCase()}_${p.lat.toFixed(3)}_${p.lng.toFixed(3)}`);
-    }
-
-    // candidates con eta plausibile
+    // candidates con ETA porta-a-porta
     let candidates = places.map(p => {
       const d = haversineKm(lat, lng, p.lat, p.lng);
       const etaTravel = (d / speed) * 60;
@@ -285,15 +361,13 @@ module.exports = async (req, res) => {
       };
     });
 
-    // filtro “morbido”
+    // filtro morbido
     const maxMin = mins * 1.35;
-    const minMin = 8;
-
     candidates = candidates
-      .filter(c => c.eta_min <= maxMin && c.eta_min >= minMin)
+      .filter(c => c.eta_min <= maxMin && c.eta_min >= 6)
       .filter(c => !visited.includes(c.id));
 
-    // se zero candidati, allargo ancora (ultima chance)
+    // ultima chance: niente filtro max
     if (!candidates.length) {
       candidates = places.map(p => {
         const d = haversineKm(lat, lng, p.lat, p.lng);
@@ -316,24 +390,21 @@ module.exports = async (req, res) => {
       return json(res, 200, {
         top: null,
         alternatives: [],
-        mode,
-        type,
+        mode, type, category,
         engine,
         source: "Overpass",
         message: "Nessun luogo trovato. Prova ad aumentare il tempo."
       });
     }
 
-    // scelgo top + alternative
     const { top, alternatives } = chooseTopAndAlternatives(candidates, mins);
 
     return json(res, 200, {
       top,
       alternatives,
-      mode,
-      type,
+      mode, type, category,
       engine,
-      source: "Overpass (places+nature, fallback attivo)"
+      source: "Overpass (type + category facoltativa)"
     });
 
   } catch (e) {
