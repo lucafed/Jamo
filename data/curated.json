@@ -1,248 +1,274 @@
 {
-  "version": "1.0",
-  "updated": "2025-03-09",
+  "version": "1.1",
+  "updated": "2025-12-28",
   "regions": ["EU", "UK"],
   "places": [
-
-    /* =========================
-       METE CONOSCIUTE
-       ========================= */
-
     {
       "id": "rome_it_city",
       "name": "Roma",
       "country": "IT",
       "type": "città",
       "visibility": "conosciuta",
-      "tags": [
-        "iconica",
-        "romantica",
-        "pioggia_ok",
-        "giornata_intera",
-        "weekend",
-        "coppia",
-        "amici",
-        "medio",
-        "treno_ok",
-        "aereo_ok"
-      ],
-      "what_to_do": [
-        "Colosseo e Fori Imperiali",
-        "Trastevere",
-        "Musei Vaticani",
-        "Cucina romana"
-      ]
+      "lat": 41.9028,
+      "lng": 12.4964,
+      "tags": ["iconica", "romantica", "pioggia_ok", "giornata_intera", "weekend", "coppia", "amici", "medio", "treno_ok", "aereo_ok"],
+      "what_to_do": ["Colosseo e Fori Imperiali", "Trastevere", "Pantheon e Piazza Navona", "Cucina romana (carbonara/amatriciana)"]
     },
-
     {
       "id": "paris_fr_city",
       "name": "Parigi",
       "country": "FR",
       "type": "città",
       "visibility": "conosciuta",
-      "tags": [
-        "iconica",
-        "romantica",
-        "pioggia_ok",
-        "weekend",
-        "coppia",
-        "amici",
-        "medio",
-        "treno_ok",
-        "aereo_ok"
-      ],
-      "what_to_do": [
-        "Tour Eiffel",
-        "Montmartre",
-        "Museo del Louvre",
-        "Caffè parigini"
-      ]
+      "lat": 48.8566,
+      "lng": 2.3522,
+      "tags": ["iconica", "romantica", "pioggia_ok", "weekend", "coppia", "amici", "medio", "treno_ok", "aereo_ok"],
+      "what_to_do": ["Tour Eiffel", "Montmartre", "Louvre o Musée d'Orsay", "Passeggiata lungo la Senna"]
     },
-
     {
       "id": "barcelona_es_city",
       "name": "Barcellona",
       "country": "ES",
       "type": "città",
       "visibility": "conosciuta",
-      "tags": [
-        "iconica",
-        "mare",
-        "sole_ok",
-        "weekend",
-        "amici",
-        "medio",
-        "aereo_ok"
-      ],
-      "what_to_do": [
-        "Sagrada Familia",
-        "Barceloneta",
-        "Quartiere Gotico",
-        "Tapas"
-      ]
+      "lat": 41.3851,
+      "lng": 2.1734,
+      "tags": ["iconica", "instagrammabile", "sole_ok", "weekend", "amici", "medio", "aereo_ok"],
+      "what_to_do": ["Sagrada Familia", "Parc Güell", "Barceloneta", "Tapas (El Born)"]
     },
-
     {
       "id": "london_uk_city",
       "name": "Londra",
       "country": "UK",
       "type": "città",
       "visibility": "conosciuta",
-      "tags": [
-        "iconica",
-        "pioggia_ok",
-        "weekend",
-        "coppia",
-        "amici",
-        "costoso",
-        "treno_ok",
-        "aereo_ok"
-      ],
-      "what_to_do": [
-        "British Museum",
-        "Camden Market",
-        "Hyde Park",
-        "Pub storici"
-      ]
+      "lat": 51.5072,
+      "lng": -0.1276,
+      "tags": ["iconica", "pioggia_ok", "weekend", "coppia", "amici", "costoso", "treno_ok", "aereo_ok"],
+      "what_to_do": ["British Museum", "Camden Market", "South Bank (London Eye)", "Pub e quartieri (Soho/Covent Garden)"]
     },
-
     {
       "id": "amsterdam_nl_city",
       "name": "Amsterdam",
       "country": "NL",
       "type": "città",
       "visibility": "conosciuta",
-      "tags": [
-        "romantica",
-        "pioggia_ok",
-        "weekend",
-        "coppia",
-        "amici",
-        "medio",
-        "treno_ok"
-      ],
-      "what_to_do": [
-        "Canali",
-        "Museo Van Gogh",
-        "Quartiere Jordaan",
-        "Bici in città"
-      ]
+      "lat": 52.3676,
+      "lng": 4.9041,
+      "tags": ["romantica", "pioggia_ok", "weekend", "coppia", "amici", "medio", "treno_ok"],
+      "what_to_do": ["Canali + Jordaan", "Museo Van Gogh o Rijksmuseum", "Vondelpark", "Bici e cafè"]
+    },
+    {
+      "id": "edinburgh_uk_city",
+      "name": "Edimburgo",
+      "country": "UK",
+      "type": "città",
+      "visibility": "conosciuta",
+      "lat": 55.9533,
+      "lng": -3.1883,
+      "tags": ["autentica", "cultura", "pioggia_ok", "weekend", "coppia", "solo", "medio", "aereo_ok"],
+      "what_to_do": ["Royal Mile", "Edinburgh Castle", "Calton Hill", "Pub e whisky"]
     },
 
-    /* =========================
-       CHICCHE (ALTA QUALITÀ)
-       ========================= */
-
     {
-      "id": "civita_bagnoregio_it",
+      "id": "civita_bagnoregio_it_borgo",
       "name": "Civita di Bagnoregio",
       "country": "IT",
       "type": "borgo",
       "visibility": "chicca",
-      "tags": [
-        "panoramica",
-        "romantica",
-        "sole_ok",
-        "mezza_giornata",
-        "coppia",
-        "slow",
-        "economico",
-        "auto_ok"
-      ],
-      "what_to_do": [
-        "Passeggiata nel borgo",
-        "Belvedere",
-        "Cucina locale"
-      ]
+      "lat": 42.6277,
+      "lng": 12.1169,
+      "tags": ["panoramica", "instagrammabile", "sole_ok", "mezza_giornata", "coppia", "slow", "medio", "auto_ok"],
+      "what_to_do": ["Passeggiata nel borgo", "Belvedere", "Foto al tramonto", "Pranzo tipico in zona"]
     },
-
     {
-      "id": "hallstatt_at",
-      "name": "Hallstatt",
-      "country": "AT",
+      "id": "san_gimignano_it_borgo",
+      "name": "San Gimignano",
+      "country": "IT",
       "type": "borgo",
-      "visibility": "chicca",
-      "tags": [
-        "panoramica",
-        "instagrammabile",
-        "sole_ok",
-        "giornata_intera",
-        "coppia",
-        "medio",
-        "auto_ok"
-      ],
-      "what_to_do": [
-        "Lago di Hallstatt",
-        "Passeggiata nel villaggio",
-        "Miniere di sale"
-      ]
+      "visibility": "conosciuta",
+      "lat": 43.4673,
+      "lng": 11.0437,
+      "tags": ["iconica", "instagrammabile", "sole_ok", "giornata_intera", "coppia", "amici", "medio", "auto_ok"],
+      "what_to_do": ["Torre Grossa e centro storico", "Gelato premiato", "Degustazione Vernaccia", "Belvederi"]
     },
-
     {
-      "id": "giethoorn_nl",
-      "name": "Giethoorn",
-      "country": "NL",
+      "id": "matera_it_city",
+      "name": "Matera",
+      "country": "IT",
+      "type": "città",
+      "visibility": "conosciuta",
+      "lat": 40.6663,
+      "lng": 16.6043,
+      "tags": ["iconica", "autentica", "pioggia_ok", "weekend", "coppia", "amici", "medio", "auto_ok"],
+      "what_to_do": ["Sassi di Matera", "Punti panoramici", "Cena tipica lucana", "Visita chiese rupestri"]
+    },
+    {
+      "id": "alberobello_it_borgo",
+      "name": "Alberobello",
+      "country": "IT",
       "type": "borgo",
+      "visibility": "conosciuta",
+      "lat": 40.7840,
+      "lng": 17.2360,
+      "tags": ["iconica", "instagrammabile", "sole_ok", "mezza_giornata", "famiglia", "medio", "auto_ok"],
+      "what_to_do": ["Trulli (Rione Monti)", "Passeggiata tra le botteghe", "Museo del Trullo", "Prodotti pugliesi"]
+    },
+    {
+      "id": "procida_it_mare",
+      "name": "Procida",
+      "country": "IT",
+      "type": "mare",
       "visibility": "chicca",
-      "tags": [
-        "romantica",
-        "slow",
-        "sole_ok",
-        "mezza_giornata",
-        "coppia",
-        "economico",
-        "auto_ok"
-      ],
-      "what_to_do": [
-        "Canali in barca",
-        "Passeggiata tra i ponti",
-        "Caffè sul canale"
-      ]
+      "lat": 40.7656,
+      "lng": 14.0266,
+      "tags": ["autentica", "romantica", "sole_ok", "giornata_intera", "coppia", "amici", "medio", "auto_ok"],
+      "what_to_do": ["Marina Corricella", "Spiagge e calette", "Giro dell'isola", "Pesce e limoncello"]
     },
 
     {
-      "id": "sintra_pt",
+      "id": "cascate_marmore_it_natura",
+      "name": "Cascata delle Marmore",
+      "country": "IT",
+      "type": "natura",
+      "visibility": "conosciuta",
+      "lat": 42.5536,
+      "lng": 12.7176,
+      "tags": ["panoramica", "avventura", "sole_ok", "giornata_intera", "famiglia", "medio", "auto_ok"],
+      "what_to_do": ["Sentieri panoramici", "Belvederi della cascata", "Rafting (se disponibile)", "Picnic o pranzo in zona"]
+    },
+    {
+      "id": "grotte_stiffe_it_natura",
+      "name": "Grotte di Stiffe",
+      "country": "IT",
+      "type": "natura",
+      "visibility": "chicca",
+      "lat": 42.1786,
+      "lng": 13.5924,
+      "tags": ["autentica", "pioggia_ok", "mezza_giornata", "famiglia", "economico", "auto_ok"],
+      "what_to_do": ["Visita guidata in grotta", "Percorso fresco (ottimo se fa caldo)", "Borghetti nei dintorni", "Merenda/gelato post-visita"]
+    },
+    {
+      "id": "gran_sasso_it_montagna",
+      "name": "Gran Sasso (Campo Imperatore)",
+      "country": "IT",
+      "type": "montagna",
+      "visibility": "conosciuta",
+      "lat": 42.4415,
+      "lng": 13.6700,
+      "tags": ["panoramica", "avventura", "sole_ok", "giornata_intera", "amici", "famiglia", "medio", "auto_ok"],
+      "what_to_do": ["Belvederi e altopiano", "Escursioni semplici", "Rifugi e arrosticini", "Foto al tramonto"]
+    },
+    {
+      "id": "lago_braies_it_natura",
+      "name": "Lago di Braies",
+      "country": "IT",
+      "type": "natura",
+      "visibility": "conosciuta",
+      "lat": 46.6941,
+      "lng": 12.0843,
+      "tags": ["panoramica", "instagrammabile", "sole_ok", "giornata_intera", "coppia", "famiglia", "medio", "auto_ok"],
+      "what_to_do": ["Giro del lago a piedi", "Punti foto iconici", "Relax in riva", "Rifugio/ristoro"]
+    },
+    {
+      "id": "val_dorcia_it_natura",
+      "name": "Val d'Orcia",
+      "country": "IT",
+      "type": "natura",
+      "visibility": "conosciuta",
+      "lat": 43.0290,
+      "lng": 11.6150,
+      "tags": ["panoramica", "romantica", "sole_ok", "weekend", "coppia", "slow", "medio", "auto_ok"],
+      "what_to_do": ["Strade panoramiche e foto", "Pienza e pecorino", "Bagni termali (se vuoi)", "Tramonto tra le colline"]
+    },
+    {
+      "id": "cinque_terre_it_mare",
+      "name": "Cinque Terre",
+      "country": "IT",
+      "type": "mare",
+      "visibility": "conosciuta",
+      "lat": 44.1270,
+      "lng": 9.7090,
+      "tags": ["iconica", "instagrammabile", "sole_ok", "weekend", "coppia", "amici", "medio", "treno_ok"],
+      "what_to_do": ["Sentiero panoramico (tratti aperti)", "Borghi sul mare", "Pesto e focaccia", "Tramonto a Manarola"]
+    },
+    {
+      "id": "terme_saturnia_it_relax",
+      "name": "Terme di Saturnia",
+      "country": "IT",
+      "type": "relax",
+      "visibility": "conosciuta",
+      "lat": 42.6559,
+      "lng": 11.5164,
+      "tags": ["romantica", "freddo_ok", "pioggia_ok", "giornata_intera", "coppia", "medio", "auto_ok"],
+      "what_to_do": ["Cascate del Mulino", "Relax in acqua calda", "Cena in agriturismo", "Passeggiata nel borgo"]
+    },
+    {
+      "id": "gardaland_it_bambini",
+      "name": "Gardaland",
+      "country": "IT",
+      "type": "bambini",
+      "visibility": "conosciuta",
+      "lat": 45.4544,
+      "lng": 10.7124,
+      "tags": ["iconica", "sole_ok", "pioggia_ok", "giornata_intera", "famiglia", "costoso", "auto_ok"],
+      "what_to_do": ["Attrazioni per tutte le età", "Area bimbi", "Spettacoli e parate", "Giornata completa"]
+    },
+
+    {
+      "id": "sintra_pt_natura",
       "name": "Sintra",
       "country": "PT",
       "type": "natura",
       "visibility": "chicca",
-      "tags": [
-        "panoramica",
-        "romantica",
-        "sole_ok",
-        "giornata_intera",
-        "coppia",
-        "medio",
-        "treno_ok"
-      ],
-      "what_to_do": [
-        "Palácio da Pena",
-        "Castello dei Mori",
-        "Giardini storici"
-      ]
+      "lat": 38.8029,
+      "lng": -9.3817,
+      "tags": ["panoramica", "romantica", "sole_ok", "giornata_intera", "coppia", "medio", "treno_ok"],
+      "what_to_do": ["Palácio da Pena", "Castello dei Mori", "Giardini", "Centro storico"]
     },
-
     {
-      "id": "lake_bled_si",
+      "id": "hallstatt_at_borgo",
+      "name": "Hallstatt",
+      "country": "AT",
+      "type": "borgo",
+      "visibility": "chicca",
+      "lat": 47.5622,
+      "lng": 13.6481,
+      "tags": ["panoramica", "instagrammabile", "sole_ok", "giornata_intera", "coppia", "medio", "auto_ok"],
+      "what_to_do": ["Passeggiata nel villaggio", "Lago e punti foto", "Miniere di sale (se vuoi)", "Caffè vista lago"]
+    },
+    {
+      "id": "giethoorn_nl_borgo",
+      "name": "Giethoorn",
+      "country": "NL",
+      "type": "borgo",
+      "visibility": "chicca",
+      "lat": 52.7400,
+      "lng": 6.0830,
+      "tags": ["romantica", "slow", "sole_ok", "mezza_giornata", "coppia", "medio", "auto_ok"],
+      "what_to_do": ["Giro in barca sui canali", "Passeggiata tra i ponti", "Pranzo sul canale", "Foto tra le casette"]
+    },
+    {
+      "id": "lake_bled_si_natura",
       "name": "Lago di Bled",
       "country": "SI",
       "type": "natura",
       "visibility": "chicca",
-      "tags": [
-        "panoramica",
-        "romantica",
-        "sole_ok",
-        "giornata_intera",
-        "coppia",
-        "medio",
-        "auto_ok"
-      ],
-      "what_to_do": [
-        "Lago e isola",
-        "Castello di Bled",
-        "Dolce tipico kremšnita"
-      ]
+      "lat": 46.3636,
+      "lng": 14.0938,
+      "tags": ["panoramica", "romantica", "instagrammabile", "sole_ok", "giornata_intera", "coppia", "medio", "auto_ok"],
+      "what_to_do": ["Giro del lago", "Isola in barca", "Castello di Bled", "Dolce tipico kremšnita"]
+    },
+    {
+      "id": "plockton_uk_borgo",
+      "name": "Plockton",
+      "country": "UK",
+      "type": "borgo",
+      "visibility": "chicca",
+      "lat": 57.3357,
+      "lng": -5.6529,
+      "tags": ["autentica", "panoramica", "pioggia_ok", "sole_ok", "giornata_intera", "coppia", "medio", "auto_ok"],
+      "what_to_do": ["Passeggiata sul waterfront", "Panorami delle Highlands", "Seafood/piccoli pub", "Foto al tramonto"]
     }
-
   ]
 }
