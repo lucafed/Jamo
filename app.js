@@ -1,5 +1,5 @@
 /* =========================
-   JAMO — app.js (v2 STABILE)
+   JAMO — app.js (v2.2 NO-MIX + CATEGORIE)
    Usa /api/suggest + /api/geocode + /api/places (opzionale)
    ========================= */
 
@@ -50,6 +50,12 @@ function showResultBox(show) {
 function safeNumber(n, fallback = null) {
   const x = Number(n);
   return Number.isFinite(x) ? x : fallback;
+}
+
+function escapeHtml(s) {
+  return String(s ?? "").replace(/[&<>"']/g, (c) => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
 }
 
 /* =========================
@@ -114,13 +120,44 @@ async function getOrigin() {
 }
 
 /* =========================
+   Normalizzazione filtri
+   ========================= */
+
+// NO MIX: se per errore l’UI manda "mix", lo forziamo su "places"
+function normalizeType(rawType) {
+  const t = String(rawType || "places").toLowerCase();
+  if (t === "mix") return "places";
+  if (t === "places" || t === "nature") return t;
+  return "places";
+}
+
+// Se il backend non supporta ancora bene train/bus/plane,
+// facciamo fallback su "car" (ma lasciamo la selezione UI)
+function normalizeMode(rawMode) {
+  const m = String(rawMode || "car").toLowerCase();
+  if (["car","walk","bike","train","bus","plane"].includes(m)) return m;
+  return "car";
+}
+
+// Categoria extra (mare/montagna/città/bambini ecc.) se presente nel DOM
+function getCategory() {
+  // se hai un select tipo <select id="categorySelect">...</select>
+  const el = $("categorySelect");
+  if (!el) return ""; // non rompe se non esiste
+  const v = String(el.value || "").toLowerCase().trim();
+  return v; // es: sea, mountain, city, villages, kids...
+}
+
+/* =========================
    Suggest (server)
    ========================= */
 
-async function fetchSuggest({ lat, lng, minutes, mode, visitedCsv }) {
+async function fetchSuggest({ lat, lng, minutes, mode, type, category, visitedCsv }) {
   const url =
     `${API.suggest}?lat=${encodeURIComponent(lat)}&lng=${encodeURIComponent(lng)}` +
     `&minutes=${encodeURIComponent(minutes)}&mode=${encodeURIComponent(mode)}` +
+    `&type=${encodeURIComponent(type)}` +
+    (category ? `&category=${encodeURIComponent(category)}` : "") +
     (visitedCsv ? `&visited=${encodeURIComponent(visitedCsv)}` : "");
 
   const r = await fetch(url);
@@ -141,7 +178,10 @@ async function loadPOI(lat, lng) {
 
   try {
     const r = await fetch(`${API.places}?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lng)}`);
-    if (!r.ok) return;
+    if (!r.ok) {
+      poiListEl.innerHTML = `<div class="alt-item"><div class="name">POI in arrivo…</div><div class="small">Attiveremo i punti d’interesse presto.</div></div>`;
+      return;
+    }
 
     const data = await r.json();
     const els = data?.elements || [];
@@ -154,12 +194,17 @@ async function loadPOI(lat, lng) {
     }
 
     els.slice(0, 6).forEach((p) => {
-      const name = p.tags?.name || p.tags?.["name:it"] || "Punto di interesse";
+      const name = p.tags?.name || p.tags?.["name:it"] || null;
+      if (!name) return;
       const d = document.createElement("div");
       d.className = "alt-item";
       d.innerHTML = `<div class="name">${escapeHtml(name)}</div>`;
       poiListEl.appendChild(d);
     });
+
+    if (!poiListEl.children.length) {
+      poiListEl.innerHTML = `<div class="alt-item"><div class="name">Nessun POI nominato</div></div>`;
+    }
   } catch {
     // silenzioso
   }
@@ -168,12 +213,6 @@ async function loadPOI(lat, lng) {
 /* =========================
    Rendering
    ========================= */
-
-function escapeHtml(s) {
-  return String(s).replace(/[&<>"']/g, (c) => ({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-  }[c]));
-}
 
 function renderPlace(place) {
   if (!place) return;
@@ -186,7 +225,6 @@ function renderPlace(place) {
   const line = [eta, km].filter(Boolean).join(" · ");
 
   placeMetaEl.textContent = line || "Meta trovata";
-
   mapsLinkEl.href = place.maps_url || `https://www.google.com/maps/search/?api=1&query=${place.lat},${place.lng}`;
 
   // Visited button
@@ -202,6 +240,7 @@ function renderPlace(place) {
   // Alternative
   altListEl.innerHTML = "";
   const alts = (lastResponse?.alternatives || []).slice(0, 3);
+
   if (!alts.length) {
     const div = document.createElement("div");
     div.className = "alt-item";
@@ -216,11 +255,12 @@ function renderPlace(place) {
         <div class="small">${Math.round(a.eta_min || 0)} min · ${(a.distance_km || 0).toFixed(0)} km</div>
       `;
       div.onclick = () => {
-        // clic su alternativa = la porto sopra
         lastResponse = {
           ...lastResponse,
           top: a,
-          alternatives: [lastResponse.top, ...alts.filter(x => x.id !== a.id)].filter(Boolean).slice(0,3)
+          alternatives: [lastResponse.top, ...alts.filter(x => x.id !== a.id)]
+            .filter(Boolean)
+            .slice(0, 3)
         };
         renderPlace(lastResponse.top);
         loadPOI(lastResponse.top.lat, lastResponse.top.lng);
@@ -229,14 +269,14 @@ function renderPlace(place) {
     });
   }
 
-  // POI (opzionale)
   loadPOI(place.lat, place.lng);
 }
 
+/* =========================
+   Style pref (known/gems)
+   ========================= */
+
 function applyStylePreference(data, style) {
-  // Il server oggi non usa "style". Facciamo una selezione client:
-  // known = preferisco più "lontano verso target" e posti con nome "importante" (heuristic: più lungo / contiene spazi)
-  // gems  = preferisco un po' più vicini e nomi più "piccoli"
   if (!data || !data.top) return data;
   if (!style) return data;
 
@@ -248,17 +288,12 @@ function applyStylePreference(data, style) {
     const words = n.split(/\s+/).filter(Boolean).length;
     const eta = Number.isFinite(p.eta_min) ? p.eta_min : 999;
 
-    if (style === "known") {
-      return (words * 2) + (len * 0.05) + (eta * 0.02);
-    } else { // gems
-      return (words * -1) + (len * -0.03) + (eta * -0.01);
-    }
+    if (style === "known") return (words * 2) + (len * 0.05) + (eta * 0.02);
+    return (words * -1) + (len * -0.03) + (eta * -0.01);
   };
 
   const sorted = all.slice().sort((a, b) => score(b) - score(a));
-  const top = sorted[0];
-  const alternatives = sorted.slice(1, 4);
-  return { ...data, top, alternatives };
+  return { ...data, top: sorted[0], alternatives: sorted.slice(1, 4) };
 }
 
 /* =========================
@@ -269,10 +304,16 @@ async function run() {
   showResultBox(false);
 
   const time = Number($("timeSelect")?.value || 60);
-  const mode = ($("modeSelect")?.value || "car").toLowerCase();
+  const modeUI = normalizeMode($("modeSelect")?.value || "car");
   const style = ($("styleSelect")?.value || "known").toLowerCase();
 
-  lastMode = mode;
+  // NO MIX
+  const type = normalizeType($("typeSelect")?.value || "places");
+
+  // categoria extra (se esiste nel DOM)
+  const category = getCategory(); // es: sea, mountain, city, kids...
+
+  lastMode = modeUI;
   lastMinutes = time;
 
   // visited list
@@ -280,8 +321,11 @@ async function run() {
   const visitedCsv = [...visitedSet].slice(0, 150).join(",");
 
   setStatus("Calcolo la meta migliore…");
-
   currentOrigin = await getOrigin();
+
+  // fallback mode: se train/bus/plane e backend non li supporta, li “degradiamo” su car
+  // (se hai già aggiornato suggest.js a supportarli, questa parte non dà fastidio)
+  const modeToServer = ["train","bus","plane"].includes(modeUI) ? modeUI : modeUI;
 
   setStatus("Cerco mete reali vicino a te…");
 
@@ -289,27 +333,22 @@ async function run() {
     lat: currentOrigin.lat,
     lng: currentOrigin.lng,
     minutes: time,
-    mode,
+    mode: modeToServer,
+    type,
+    category,
     visitedCsv
   });
 
-  // Se il server ritorna top=null
   if (!raw?.top) {
-    setStatus(
-      raw?.message || "Non trovo mete con questi filtri. Aumenta il tempo o cambia mezzo.",
-      "err"
-    );
+    setStatus(raw?.message || "Non trovo mete con questi filtri. Aumenta il tempo.", "err");
     return;
   }
 
-  // Applico preferenza stile (known/gems) lato client
   const data = applyStylePreference(raw, style);
-
   lastResponse = data;
 
   showResultBox(true);
   renderPlace(data.top);
-
   setStatus("Meta trovata ✔", "ok");
 }
 
@@ -340,7 +379,7 @@ if (rerollBtn) {
     const rest = lastResponse.alternatives.slice(1);
     lastResponse = {
       ...lastResponse,
-      alternatives: [lastResponse.top, ...rest].filter(Boolean).slice(0,3),
+      alternatives: [lastResponse.top, ...rest].filter(Boolean).slice(0, 3),
       top: next
     };
     renderPlace(lastResponse.top);
