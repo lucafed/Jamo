@@ -7,7 +7,9 @@ function loadJSON(relPath) {
   return JSON.parse(fs.readFileSync(p, "utf8"));
 }
 
-function toRad(x) { return (x * Math.PI) / 180; }
+function toRad(x) {
+  return (x * Math.PI) / 180;
+}
 
 // Haversine distance in km
 function haversineKm(aLat, aLon, bLat, bLon) {
@@ -16,23 +18,31 @@ function haversineKm(aLat, aLon, bLat, bLon) {
   const dLon = toRad(bLon - aLon);
   const lat1 = toRad(aLat);
   const lat2 = toRad(bLat);
+
   const s =
     Math.sin(dLat / 2) ** 2 +
     Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2;
+
   return 2 * R * Math.asin(Math.sqrt(s));
 }
 
 function nearestHub(hubs, lat, lon) {
   let best = null;
   let bestKm = Infinity;
+
   for (const h of hubs) {
     const km = haversineKm(lat, lon, h.lat, h.lon);
-    if (km < bestKm) { bestKm = km; best = h; }
+    if (km < bestKm) {
+      bestKm = km;
+      best = h;
+    }
   }
   return { hub: best, km: bestKm };
 }
 
-function clamp(n, min, max) { return Math.max(min, Math.min(max, n)); }
+function clamp(n, min, max) {
+  return Math.max(min, Math.min(max, n));
+}
 
 function estAccessMinutes(km, speedKmh, minM = 10, maxM = 240) {
   // +10 min buffer
@@ -63,8 +73,10 @@ function estMainMinutes(mode, km) {
 }
 
 function buildRoute({ mode, origin, dest, airports, stations }) {
-  const oLat = origin.lat, oLon = origin.lon;
-  const dLat = dest.lat, dLon = dest.lon;
+  const oLat = origin.lat,
+    oLon = origin.lon;
+  const dLat = dest.lat,
+    dLon = dest.lon;
 
   if (mode === "plane") {
     const oA = nearestHub(airports, oLat, oLon);
@@ -83,10 +95,10 @@ function buildRoute({ mode, origin, dest, airports, stations }) {
       segments: [
         { kind: "access", label: `Verso ${oA.hub.name} (${oA.hub.code})`, minutes: accessMin },
         { kind: "main", label: `Volo ${oA.hub.code} → ${dA.hub.code}`, minutes: flightMin },
-        { kind: "egress", label: `Dall’aeroporto a ${dest.name}`, minutes: egressMin }
+        { kind: "egress", label: `Dall’aeroporto a ${dest.name}`, minutes: egressMin },
       ],
       totalMinutes,
-      confidence: "estimated"
+      confidence: "estimated",
     };
   }
 
@@ -107,11 +119,15 @@ function buildRoute({ mode, origin, dest, airports, stations }) {
     destinationHub: { ...dS.hub },
     segments: [
       { kind: "access", label: `Verso ${oS.hub.name}`, minutes: accessMin },
-      { kind: "main", label: `${mode === "train" ? "Treno" : "Bus"} ${oS.hub.name} → ${dS.hub.name}`, minutes: mainMin },
-      { kind: "egress", label: `Dalla stazione a ${dest.name}`, minutes: egressMin }
+      {
+        kind: "main",
+        label: `${mode === "train" ? "Treno" : "Bus"} ${oS.hub.name} → ${dS.hub.name}`,
+        minutes: mainMin,
+      },
+      { kind: "egress", label: `Dalla stazione a ${dest.name}`, minutes: egressMin },
     ],
     totalMinutes,
-    confidence: "estimated"
+    confidence: "estimated",
   };
 }
 
@@ -124,21 +140,26 @@ export default async function handler(req, res) {
     if (!origin || !maxMinutes || !mode) {
       return res.status(400).json({
         error: "Missing fields",
-        needed: ["origin", "maxMinutes", "mode"]
+        needed: ["origin", "maxMinutes", "mode"],
       });
     }
 
-    // origin deve essere { lat, lon, label? } (per ora)
-    if (typeof origin !== "object" || typeof origin.lat !== "number" || typeof origin.lon !== "number") {
+    // origin deve essere { lat, lon, label? }
+    if (
+      typeof origin !== "object" ||
+      typeof origin.lat !== "number" ||
+      typeof origin.lon !== "number"
+    ) {
       return res.status(400).json({
         error: "origin must be {lat:number, lon:number, label?:string}",
-        got: origin
+        got: origin,
       });
     }
 
-    const airports = loadJSON("data/curated_airports_eu_uk.json");
-    const stations = loadJSON("data/curated_stations_eu_uk.json");
-    const destinations = loadJSON("data/curated_destinations_eu_uk.json");
+    // ✅ FIX: i file stanno in public/data
+    const airports = loadJSON("public/data/curated_airports_eu_uk.json");
+    const stations = loadJSON("public/data/curated_stations_eu_uk.json");
+    const destinations = loadJSON("public/data/curated_destinations_eu_uk.json");
 
     const allowedModes = ["plane", "train", "bus"];
     if (!allowedModes.includes(mode)) {
@@ -156,25 +177,38 @@ export default async function handler(req, res) {
       if (kmToDest < 5) continue;
 
       const route = buildRoute({ mode, origin, dest, airports, stations });
+
       if (route.totalMinutes <= maxM) {
         scored.push({
-          destination: { id: dest.id, name: dest.name, country: dest.country, lat: dest.lat, lon: dest.lon, tags: dest.tags },
-          route
+          destination: {
+            id: dest.id,
+            name: dest.name,
+            country: dest.country,
+            lat: dest.lat,
+            lon: dest.lon,
+            tags: dest.tags,
+          },
+          route,
         });
       }
     }
 
     scored.sort((a, b) => a.route.totalMinutes - b.route.totalMinutes);
 
-    const results = scored.slice(0, clamp(Number(limit) || 8, 1, 20)).map((r) => ({
+    const safeLimit = clamp(Number(limit) || 8, 1, 20);
+
+    const results = scored.slice(0, safeLimit).map((r) => ({
       destination: r.destination,
       originHub: r.route.originHub,
       destinationHub: r.route.destinationHub,
       segments: r.route.segments,
       totalMinutes: r.route.totalMinutes,
       confidence: r.route.confidence,
-      // riga pronta da stampare in UI:
-      summary: `${mode.toUpperCase()}: ${r.route.originHub.name}${r.route.originHub.code ? ` (${r.route.originHub.code})` : ""} → ${r.route.destinationHub.name}${r.route.destinationHub.code ? ` (${r.route.destinationHub.code})` : ""} • ${r.route.totalMinutes} min`
+      summary: `${mode.toUpperCase()}: ${r.route.originHub.name}${
+        r.route.originHub.code ? ` (${r.route.originHub.code})` : ""
+      } → ${r.route.destinationHub.name}${
+        r.route.destinationHub.code ? ` (${r.route.destinationHub.code})` : ""
+      } • ${r.route.totalMinutes} min`,
     }));
 
     return res.status(200).json({
@@ -182,7 +216,7 @@ export default async function handler(req, res) {
       input: { origin: { ...origin, label: originLabel }, maxMinutes: maxM, mode },
       results,
       note:
-        "Stime (MVP): hub corretti + tempi plausibili. Step successivo: provider orari reali (quando vuoi)."
+        "Stime (MVP): hub corretti + tempi plausibili. Step successivo: provider orari reali (quando vuoi).",
     });
   } catch (e) {
     return res.status(500).json({ error: String(e?.message || e) });
