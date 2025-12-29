@@ -1,13 +1,9 @@
 /* =========================
-   JAMO — public/app.js (v4 STABILE FIX COMPLETO)
-   - Auto/Walk/Bike: curated (public/data/curated.json)
-   - Plane/Train/Bus: /api/plan (hub reali + tempi coerenti)
-   - Categoria: separata + mapping (montagna+natura)
-   - Normalizzazione accenti: città == citta
-   - Stile: known/gems
-   - Meteo: Open-Meteo (gratis)
-   - Visited + daily anti-repeat
-   - POI: curated what_to_do (fallback opzionale /api/places)
+   JAMO — public/app.js (v4 STABILE + DEBUG)
+   - Fix accenti: città == citta
+   - Fix categorie: montagna include natura
+   - Debug contatori quando non trova
+   - Reset storage via URL: ?reset=1
    ========================= */
 
 const API = {
@@ -18,7 +14,6 @@ const API = {
 };
 
 const CURATED_URL = "/data/curated.json";
-
 const $ = (id) => document.getElementById(id);
 
 // UI refs
@@ -38,12 +33,11 @@ const visitedBtn  = $("visitedBtn");
 const LS_VISITED_KEY = "jamo_visited_v1";
 const LS_DAILY_KEY   = "jamo_daily_reco_v1";
 
-// state
 let lastPicks = { top: null, alternatives: [] };
 let lastWeatherLabel = "";
 
 /* -------------------------
-   Utils (UI + normalize)
+   Helpers
 ------------------------- */
 function setStatus(msg, type = "") {
   if (!statusEl) return;
@@ -59,27 +53,46 @@ function escapeHtml(s) {
     "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
   }[c]));
 }
-function normalizeText(s) {
+function norm(s) {
   return String(s ?? "")
     .toLowerCase()
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "") // rimuove accenti
+    .replace(/[\u0300-\u036f]/g, "")
     .trim();
 }
+function clamp(n,a,b){ return Math.max(a, Math.min(b,n)); }
+
+/* -------------------------
+   Reset locale (debug)
+   apri: https://tuosito.vercel.app/?reset=1
+------------------------- */
+(function maybeReset(){
+  try {
+    const qs = new URLSearchParams(location.search);
+    if (qs.get("reset") === "1") {
+      localStorage.removeItem(LS_VISITED_KEY);
+      localStorage.removeItem(LS_DAILY_KEY);
+      // ripulisci query e ricarica
+      const clean = location.origin + location.pathname;
+      history.replaceState(null, "", clean);
+      setStatus("Reset completato ✅ Ricarico…", "ok");
+      setTimeout(()=>location.reload(), 300);
+    }
+  } catch {}
+})();
 
 /* -------------------------
    Category mapping
-   - UI "montagna" include anche "natura"
-   - tutto il resto è 1:1
 ------------------------- */
 function allowedTypesForCategory(categoryValue) {
-  const c = normalizeText(categoryValue);
+  const c = norm(categoryValue);
+  // se in UI hai "montagna" ma i dati usano anche "natura"
   if (c === "montagna") return new Set(["montagna", "natura"]);
   return new Set([c]);
 }
 
 /* -------------------------
-   Storage: visited + daily
+   Storage
 ------------------------- */
 function todayKey() {
   const d = new Date();
@@ -148,14 +161,13 @@ async function getOrigin() {
 }
 
 /* -------------------------
-   Meteo: Open-Meteo (gratis)
+   Meteo
 ------------------------- */
 async function getWeather(lat, lon) {
   const url =
     `https://api.open-meteo.com/v1/forecast?latitude=${encodeURIComponent(lat)}` +
     `&longitude=${encodeURIComponent(lon)}` +
     `&daily=weathercode,precipitation_probability_max&forecast_days=1&timezone=auto`;
-
   try {
     const r = await fetch(url);
     if (!r.ok) return { cls: "cloudy", label: "nuvoloso" };
@@ -172,7 +184,7 @@ async function getWeather(lat, lon) {
 }
 
 /* -------------------------
-   Curated load (auto/walk/bike)
+   Curated load
 ------------------------- */
 async function loadCurated() {
   const r = await fetch(CURATED_URL, { cache: "no-store" });
@@ -195,7 +207,7 @@ async function loadCurated() {
 }
 
 /* -------------------------
-   Distance & time estimate (auto/walk/bike only)
+   Distance & time estimate
 ------------------------- */
 function toRad(x){ return x * Math.PI / 180; }
 function haversineKm(lat1, lon1, lat2, lon2) {
@@ -219,19 +231,18 @@ function estimateAutoLike(origin, lat, lng, mode) {
 }
 
 /* -------------------------
-   Scoring known vs gems + time fit
+   Scoring
 ------------------------- */
-function clamp(n,a,b){ return Math.max(a, Math.min(b,n)); }
 function timeFit(etaMin, targetMin) {
-  const minOk = 0;                 // ✅ non scartiamo mete vicine
-  const maxOk = targetMin * 1.15;  // ✅ finestra leggermente più larga
+  const minOk = 0;
+  const maxOk = targetMin * 1.15;
   if (etaMin < minOk || etaMin > maxOk) return 0;
   const diff = Math.abs(etaMin - targetMin);
-  const normv = clamp(1 - (diff / (targetMin * 0.65)), 0, 1);
-  return 0.55 + normv * 0.45;
+  const n = clamp(1 - (diff / (targetMin * 0.65)), 0, 1);
+  return 0.55 + n * 0.45;
 }
 function styleFit(visibility, style) {
-  const v = normalizeText(visibility);
+  const v = norm(visibility);
   if (style === "known") return v === "conosciuta" ? 1.0 : 0.55;
   return v === "chicca" ? 1.0 : 0.55;
 }
@@ -244,7 +255,7 @@ function finalScore(p, targetMin, style, dailySet, visitedSet) {
 }
 
 /* -------------------------
-   /api/plan call for plane/train/bus
+   /api/plan
 ------------------------- */
 async function fetchPlan({ origin, maxMinutes, mode }) {
   const r = await fetch(API.plan, {
@@ -370,9 +381,9 @@ async function run() {
   showResultBox(false);
 
   const minutes     = Number($("timeSelect")?.value || 60);
-  const mode        = normalizeText($("modeSelect")?.value || "car");
-  const style       = normalizeText($("styleSelect")?.value || "known");
-  const categoryVal = $("categorySelect")?.value || "città";
+  const mode        = norm($("modeSelect")?.value || "car");
+  const style       = norm($("styleSelect")?.value || "known");
+  const categoryVal = $("categorySelect")?.value || "citta";
 
   const allowedTypes = allowedTypesForCategory(categoryVal);
 
@@ -386,10 +397,9 @@ async function run() {
   const weather = await getWeather(origin.lat, origin.lon);
   lastWeatherLabel = weather.label || "";
 
-  // ✅ MEZZI PUBBLICI
+  // mezzi pubblici
   if (mode === "plane" || mode === "train" || mode === "bus") {
     setStatus(`Cerco mete con ${mode.toUpperCase()}…`);
-
     const plan = await fetchPlan({
       origin: { lat: origin.lat, lon: origin.lon, label: origin.label },
       maxMinutes: minutes,
@@ -428,35 +438,48 @@ async function run() {
     return;
   }
 
-  // ✅ AUTO/WALK/BIKE
+  // auto/walk/bike
   setStatus("Cerco tra le mete curate…");
   const curated = await loadCurated();
 
-  let candidates = curated
-    .filter(p => allowedTypes.has(normalizeText(p.type)))
-    .map(p => ({ ...p, ...estimateAutoLike(origin, p.lat, p.lng, mode) }));
+  const totalLoaded = curated.length;
 
-  // filtro tempo: solo massimo, minimo 0
+  // 1) filtro categoria
+  let byType = curated.filter(p => allowedTypes.has(norm(p.type)));
+
+  // 2) stima tempi
+  let withEta = byType.map(p => ({ ...p, ...estimateAutoLike(origin, p.lat, p.lng, mode) }));
+
+  // 3) filtro tempo
   const maxMin = minutes * 1.15;
-  candidates = candidates.filter(p => p.eta_min <= maxMin);
+  let byTime = withEta.filter(p => p.eta_min <= maxMin);
 
-  candidates.forEach(p => p._score = finalScore(p, minutes, style, dailySet, visitedSet));
-  candidates = candidates.filter(p => p._score > -100).sort((a,b)=>b._score - a._score);
+  // 4) scoring
+  let scored = byTime.map(p => ({ ...p, _score: finalScore(p, minutes, style, dailySet, visitedSet) }));
+  const removedBySeen = scored.filter(p => p._score <= -100).length;
 
-  if (!candidates.length) {
-    const typesInData = [...new Set(curated.map(p => normalizeText(p.type)))].sort().join(", ");
+  scored = scored.filter(p => p._score > -100).sort((a,b)=>b._score - a._score);
+
+  if (!scored.length) {
+    const typesInData = [...new Set(curated.map(p => norm(p.type)))].sort().join(", ");
     setStatus(
       "Non trovo mete con questi filtri.\n" +
-      `• Categoria richiesta: ${categoryVal}\n` +
+      `• Categoria richiesta: ${norm(categoryVal)}\n` +
       `• Tipi disponibili nel JSON: ${typesInData}\n` +
-      "Prova ad aumentare il tempo o cambia categoria.",
+      "\nDEBUG:\n" +
+      `• Mete caricate: ${totalLoaded}\n` +
+      `• Dopo categoria: ${byType.length}\n` +
+      `• Dopo tempo (<= ${Math.round(maxMin)} min): ${byTime.length}\n` +
+      `• Rimosse da visited/daily: ${removedBySeen}\n` +
+      "\nProva ad aumentare il tempo o cambia categoria.\n" +
+      "Tip: apri /?reset=1 se hai segnato troppe mete come visitate.",
       "err"
     );
     return;
   }
 
-  const top = candidates[0];
-  const alternatives = candidates.slice(1, 3);
+  const top = scored[0];
+  const alternatives = scored.slice(1, 3);
 
   addDailyReco(top.id);
   lastPicks = { top, alternatives };
@@ -485,4 +508,4 @@ if (gpsBtn) {
     if ($("startInput")) $("startInput").value = "";
     setStatus("Ok: userò il GPS quando premi “DOVE ANDIAMO?”");
   };
-}
+                    }
