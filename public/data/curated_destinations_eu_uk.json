@@ -1,0 +1,55 @@
+[
+  { "id":"rome", "name":"Roma", "country":"IT", "lat":41.9028, "lon":12.4964, "tags":["city"] },
+  { "id":"milan", "name":"Milano", "country":"IT", "lat":45.4642, "lon":9.1900, "tags":["city"] },
+  { "id":"florence", "name":"Firenze", "country":"IT", "lat":43.7696, "lon":11.2558, "tags":["city"] },
+  { "id":"venice", "name":"Venezia", "country":"IT", "lat":45.4408, "lon":12.3155, "tags":["city"] },
+  { "id":"bologna", "name":"Bologna", "country":"IT", "lat":44.4949, "lon":11.3426, "tags":["city"] },
+  { "id":"naples", "name":"Napoli", "country":"IT", "lat":40.8518, "lon":14.2681, "tags":["city"] },
+  { "id":"turin", "name":"Torino", "country":"IT", "lat":45.0703, "lon":7.6869, "tags":["city"] },
+  { "id":"pisa", "name":"Pisa", "country":"IT", "lat":43.7228, "lon":10.4017, "tags":["city"] },
+  { "id":"verona", "name":"Verona", "country":"IT", "lat":45.4384, "lon":10.9916, "tags":["city"] },
+  { "id":"genoa", "name":"Genova", "country":"IT", "lat":44.4056, "lon":8.9463, "tags":["city"] },
+  { "id":"bari", "name":"Bari", "country":"IT", "lat":41.1171, "lon":16.8719, "tags":["city"] },
+  { "id":"palermo", "name":"Palermo", "country":"IT", "lat":38.1157, "lon":13.3615, "tags":["city"] },
+  { "id":"catania", "name":"Catania", "country":"IT", "lat":37.5079, "lon":15.0830, "tags":["city"] },
+  { "id":"alberobello", "name":"Alberobello", "country":"IT", "lat":40.7836, "lon":17.2395, "tags":["city","gems"] },
+
+  { "id":"london", "name":"Londra", "country":"UK", "lat":51.5072, "lon":-0.1276, "tags":["city"] },
+  { "id":"manchester", "name":"Manchester", "country":"UK", "lat":53.4808, "lon":-2.2426, "tags":["city"] },
+  { "id":"edinburgh", "name":"Edimburgo", "country":"UK", "lat":55.9533, "lon":-3.1883, "tags":["city"] },
+  { "id":"glasgow", "name":"Glasgow", "country":"UK", "lat":55.8642, "lon":-4.2518, "tags":["city"] },
+  { "id":"bristol", "name":"Bristol", "country":"UK", "lat":51.4545, "lon":-2.5879, "tags":["city"] },
+
+  { "id":"paris", "name":"Parigi", "country":"FR", "lat":48.8566, "lon":2.3522, "tags":["city"] },
+  { "id":"nice", "name":"Nizza", "country":"FR", "lat":43.7102, "lon":7.2620, "tags":["sea","city"] },
+  { "id":"lyon", "name":"Lione", "country":"FR", "lat":45.7640, "lon":4.8357, "tags":["city"] },
+
+  { "id":"barcelona", "name":"Barcellona", "country":"ES", "lat":41.3874, "lon":2.1686, "tags":["sea","city"] },
+  { "id":"madrid", "name":"Madrid", "country":"ES", "lat":40.4168, "lon":-3.7038, "tags":["city"] },
+  { "id":"valencia", "name":"Valencia", "country":"ES", "lat":39.4699, "lon":-0.3763, "tags":["sea","city"] },
+
+  { "id":"lisbon", "name":"Lisbona", "country":"PT", "lat":38.7223, "lon":-9.1393, "tags":["city"] },
+  { "id":"porto", "name":"Porto", "country":"PT", "lat":41.1579, "lon":-8.6291, "tags":["city"] },
+
+  { "id":"amsterdam", "name":"Amsterdam", "country":"NL", "lat":52.3676, "lon":4.9041, "tags":["city"] },
+  { "id":"brussels", "name":"Bruxelles", "country":"BE", "lat":50.8503, "lon":4.3517, "tags":["city"] },
+
+  { "id":"berlin", "name":"Berlino", "country":"DE", "lat":52.5200, "lon":13.4050, "tags":["city"] },
+  { "id":"munich", "name":"Monaco di Baviera", "country":"DE", "lat":48.1351, "lon":11.5820, "tags":["city"] },
+  { "id":"frankfurt", "name":"Francoforte", "country":"DE", "lat":50.1109, "lon":8.6821, "tags":["city"] },
+
+  { "id":"zurich", "name":"Zurigo", "country":"CH", "lat":47.3769, "lon":8.5417, "tags":["city"] },
+  { "id":"geneva", "name":"Ginevra", "country":"CH", "lat":46.2044, "lon":6.1432, "tags":["city"] },
+
+  { "id":"vienna", "name":"Vienna", "country":"AT", "lat":48.2082, "lon":16.3738, "tags":["city"] },
+  { "id":"prague", "name":"Praga", "country":"CZ", "lat":50.0755, "lon":14.4378, "tags":["city"] },
+  { "id":"budapest", "name":"Budapest", "country":"HU", "lat":47.4979, "lon":19.0402, "tags":["city"] },
+
+  { "id":"copenhagen", "name":"Copenaghen", "country":"DK", "lat":55.6761, "lon":12.5683, "tags":["city"] },
+  { "id":"stockholm", "name":"Stoccolma", "country":"SE", "lat":59.3293, "lon":18.0686, "tags":["city"] },
+  { "id":"oslo", "name":"Oslo", "country":"NO", "lat":59.9139, "lon":10.7522, "tags":["city"] },
+
+  { "id":"dublin", "name":"Dublino", "country":"IE", "lat":53.3498, "lon":-6.2603, "tags":["city"] },
+
+  { "id":"athens", "name":"Atene", "country":"GR", "lat":37.9838, "lon":23.7275, "tags":["city"] }
+]
