@@ -3,30 +3,22 @@ export const config = { runtime: "nodejs" };
 
 import fs from "fs";
 import path from "path";
-import { fileURLToPath } from "url";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// carica una volta (cache in memoria della function)
 let CACHE = null;
 
-function readJson(relPath) {
-  const roots = [
-    process.cwd(),
-    path.resolve(__dirname, ".."),
-    __dirname
-  ];
+function readJsonTrying(relPaths) {
   const tried = [];
-  for (const root of roots) {
-    const p = path.resolve(root, relPath);
+  for (const rel of relPaths) {
+    const p = path.resolve(process.cwd(), rel);
     tried.push(p);
     try {
       const raw = fs.readFileSync(p, "utf8");
       return { data: JSON.parse(raw), usedPath: p, tried };
-    } catch {}
+    } catch (e) {
+      // continue
+    }
   }
-  const err = new Error(`Missing JSON: ${relPath}`);
+  const err = new Error("JSON file not found in any known path");
   err.tried = tried;
   throw err;
 }
@@ -34,30 +26,54 @@ function readJson(relPath) {
 function loadAll() {
   if (CACHE) return CACHE;
 
-  const airportsPack = readJson("public/data/curated_airports_eu_uk.json");
-  const stationsPack = readJson("public/data/curated_stations_eu_uk.json");
-  const destinationsPack = readJson("public/data/curated_destinations_eu_uk.json");
+  const airportsPack = readJsonTrying([
+    "public/data/curated_airports_eu_uk.json",
+    "data/curated_airports_eu_uk.json"
+  ]);
+  const stationsPack = readJsonTrying([
+    "public/data/curated_stations_eu_uk.json",
+    "data/curated_stations_eu_uk.json"
+  ]);
+  const destinationsPack = readJsonTrying([
+    "public/data/curated_destinations_eu_uk.json",
+    "data/curated_destinations_eu_uk.json"
+  ]);
 
   const airports = airportsPack.data;
   const stations = stationsPack.data;
   const destinations = destinationsPack.data;
 
   if (!Array.isArray(airports) || !Array.isArray(stations) || !Array.isArray(destinations)) {
-    throw new Error("JSON format error: expected arrays");
+    const e = new Error("JSON format error: expected arrays");
+    e.debug = {
+      airportsIsArray: Array.isArray(airports),
+      stationsIsArray: Array.isArray(stations),
+      destinationsIsArray: Array.isArray(destinations),
+      usedPaths: {
+        airports: airportsPack.usedPath,
+        stations: stationsPack.usedPath,
+        destinations: destinationsPack.usedPath
+      }
+    };
+    throw e;
   }
 
   CACHE = {
-    airports, stations, destinations,
+    airports,
+    stations,
+    destinations,
     usedPaths: {
       airports: airportsPack.usedPath,
       stations: stationsPack.usedPath,
       destinations: destinationsPack.usedPath
     }
   };
+
   return CACHE;
 }
 
 function toRad(x) { return (x * Math.PI) / 180; }
+
 function haversineKm(aLat, aLon, bLat, bLon) {
   const R = 6371;
   const dLat = toRad(bLat - aLat);
@@ -69,6 +85,7 @@ function haversineKm(aLat, aLon, bLat, bLon) {
     Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2;
   return 2 * R * Math.asin(Math.sqrt(s));
 }
+
 function nearestHub(hubs, lat, lon) {
   let best = null;
   let bestKm = Infinity;
@@ -81,17 +98,31 @@ function nearestHub(hubs, lat, lon) {
   }
   return { hub: best, km: bestKm };
 }
+
 function clamp(n, min, max) { return Math.max(min, Math.min(max, n)); }
+
 function estAccessMinutes(km, speedKmh, minM = 10, maxM = 240) {
   const m = (km / speedKmh) * 60 + 10;
   return Math.round(clamp(m, minM, maxM));
 }
+
 function estMainMinutes(mode, km) {
-  if (mode === "plane") return Math.round(clamp((km / 820) * 60 + 50, 45, 2400));
-  if (mode === "train") return Math.round(clamp((km / 145) * 60 + 10, 25, 2400));
-  if (mode === "bus")   return Math.round(clamp((km / 90)  * 60 + 10, 30, 3000));
-  return Math.round((km / 70) * 60);
+  if (mode === "plane") {
+    const m = (km / 820) * 60 + 50;
+    return Math.round(clamp(m, 45, 2400));
+  }
+  if (mode === "train") {
+    const m = (km / 145) * 60 + 10;
+    return Math.round(clamp(m, 25, 2400));
+  }
+  if (mode === "bus") {
+    const m = (km / 90) * 60 + 10;
+    return Math.round(clamp(m, 30, 3000));
+  }
+  const m = (km / 70) * 60;
+  return Math.round(clamp(m, 10, 5000));
 }
+
 function buildRoute({ mode, origin, dest, airports, stations }) {
   const oLat = origin.lat, oLon = origin.lon;
   const dLat = dest.lat, dLon = dest.lon;
@@ -109,16 +140,17 @@ function buildRoute({ mode, origin, dest, airports, stations }) {
     return {
       originHub: { ...oA.hub },
       destinationHub: { ...dA.hub },
-      totalMinutes: accessMin + flightMin + egressMin,
       segments: [
         { kind: "access", label: `Verso ${oA.hub.name} (${oA.hub.code || "?"})`, minutes: accessMin },
         { kind: "main", label: `Volo ${(oA.hub.code || "?")} → ${(dA.hub.code || "?")}`, minutes: flightMin },
         { kind: "egress", label: `Dall’aeroporto a ${dest.name}`, minutes: egressMin }
       ],
+      totalMinutes: accessMin + flightMin + egressMin,
       confidence: "estimated"
     };
   }
 
+  // train/bus usano stations
   const oS = nearestHub(stations, oLat, oLon);
   const dS = nearestHub(stations, dLat, dLon);
   if (!oS.hub || !dS.hub) return null;
@@ -131,37 +163,46 @@ function buildRoute({ mode, origin, dest, airports, stations }) {
   return {
     originHub: { ...oS.hub },
     destinationHub: { ...dS.hub },
-    totalMinutes: accessMin + mainMin + egressMin,
     segments: [
       { kind: "access", label: `Verso ${oS.hub.name}`, minutes: accessMin },
       { kind: "main", label: `${mode === "train" ? "Treno" : "Bus"} ${oS.hub.name} → ${dS.hub.name}`, minutes: mainMin },
       { kind: "egress", label: `Dalla stazione a ${dest.name}`, minutes: egressMin }
     ],
+    totalMinutes: accessMin + mainMin + egressMin,
     confidence: "estimated"
   };
 }
 
-export default function handler(req, res) {
+export default async function handler(req, res) {
   try {
-    if (req.method !== "POST") return res.status(405).json({ error: "Use POST" });
+    if (req.method !== "POST") {
+      return res.status(405).json({ ok: false, error: "Use POST" });
+    }
 
     const { origin, maxMinutes, mode, limit = 8 } = req.body || {};
-    if (!origin || !maxMinutes || !mode) {
-      return res.status(400).json({ error: "Missing fields", needed: ["origin", "maxMinutes", "mode"] });
-    }
-    if (typeof origin !== "object" || typeof origin.lat !== "number" || typeof origin.lon !== "number") {
-      return res.status(400).json({ error: "origin must be {lat:number, lon:number}" });
+    if (!origin || typeof origin.lat !== "number" || typeof origin.lon !== "number") {
+      return res.status(400).json({
+        ok: false,
+        error: "origin must be {lat:number, lon:number}",
+        got: origin
+      });
     }
 
-    const allowedModes = ["plane", "train", "bus"];
-    if (!allowedModes.includes(mode)) {
-      return res.status(400).json({ error: "mode must be one of: plane, train, bus" });
+    const allowed = ["plane", "train", "bus"];
+    if (!allowed.includes(mode)) {
+      return res.status(400).json({
+        ok: false,
+        error: "mode must be one of plane/train/bus",
+        got: mode
+      });
+    }
+
+    const maxM = Number(maxMinutes);
+    if (!Number.isFinite(maxM) || maxM <= 0) {
+      return res.status(400).json({ ok: false, error: "maxMinutes must be a positive number" });
     }
 
     const { airports, stations, destinations, usedPaths } = loadAll();
-
-    const maxM = Number(maxMinutes);
-    const safeLimit = clamp(Number(limit) || 8, 1, 20);
 
     const scored = [];
     for (const d of destinations) {
@@ -175,30 +216,42 @@ export default function handler(req, res) {
       };
       if (!dest.id || !dest.name || !Number.isFinite(dest.lat) || !Number.isFinite(dest.lon)) continue;
 
+      const kmToDest = haversineKm(origin.lat, origin.lon, dest.lat, dest.lon);
+      if (kmToDest < 5) continue;
+
       const route = buildRoute({ mode, origin, dest, airports, stations });
       if (!route) continue;
 
-      if (route.totalMinutes <= maxM) scored.push({ destination: dest, route });
+      if (route.totalMinutes <= maxM) {
+        scored.push({ destination: dest, route });
+      }
     }
 
     scored.sort((a, b) => a.route.totalMinutes - b.route.totalMinutes);
+    const safeLimit = clamp(Number(limit) || 8, 1, 20);
+
+    const results = scored.slice(0, safeLimit).map((r) => ({
+      destination: r.destination,
+      originHub: r.route.originHub,
+      destinationHub: r.route.destinationHub,
+      segments: r.route.segments,
+      totalMinutes: r.route.totalMinutes,
+      confidence: r.route.confidence
+    }));
 
     return res.status(200).json({
       ok: true,
-      debug: { usedPaths },
-      results: scored.slice(0, safeLimit).map(r => ({
-        destination: r.destination,
-        originHub: r.route.originHub,
-        destinationHub: r.route.destinationHub,
-        segments: r.route.segments,
-        totalMinutes: r.route.totalMinutes,
-        confidence: r.route.confidence
-      }))
+      input: { origin, maxMinutes: maxM, mode },
+      debug: { usedPaths, found: results.length },
+      results
     });
   } catch (e) {
+    // ✅ SEMPRE JSON (così app.js non crasha mai su json())
     return res.status(500).json({
+      ok: false,
       error: String(e?.message || e),
-      tried: e?.tried
+      tried: e?.tried,
+      debug: e?.debug
     });
   }
 }
