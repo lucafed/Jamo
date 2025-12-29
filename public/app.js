@@ -1,9 +1,10 @@
 /* =========================
-   JAMO — app.js (v7 NEAR+ALTS+ANTI-SAME)
-   - Categoria: gestisce accenti + "Città / Borghi" correttamente
-   - Auto/Walk/Bike: vicino per davvero (max distance coerente col tempo) + fallback progressivo
-   - Plane/Train/Bus: score + filtri anti "stessa città", anti "troppo vicino", anti "stesso hub"
-   - Alternative: cerca sempre 2 alternative (anche con fallback controllato)
+   JAMO — app.js (v8 WHY+EAT+MERGE)
+   - Categoria: accenti + "Città / Borghi"
+   - Auto/Walk/Bike: vicino davvero + fallback controllato
+   - Plane/Train/Bus: anti-same-city + score + MERGE con curated (type/why/what_to_do/what_to_eat)
+   - Alternative: punta ad averne sempre 2
+   - Motivazioni: genera "Perché te la consiglio" (whyComputed)
    ========================= */
 
 const API = {
@@ -23,6 +24,10 @@ const placeMetaEl = $("placeMeta");
 const mapsLinkEl  = $("mapsLink");
 const altListEl   = $("altList");
 const poiListEl   = $("poiList");
+
+// (Step C: in index aggiungeremo anche questi due)
+const whyListEl   = $("whyList");     // opzionale
+const eatListEl   = $("eatList");     // opzionale
 
 const goBtn       = $("goBtn");
 const gpsBtn      = $("gpsBtn");
@@ -63,7 +68,6 @@ function norm(s) {
     .trim();
 }
 function normName(s) {
-  // per confronti "verona" == "verona, it"
   return norm(s).replace(/[^a-z0-9]+/g, " ").trim();
 }
 
@@ -175,14 +179,15 @@ async function getWeather(lat, lon) {
 }
 
 /* -------------------------
-   Curated load
+   Curated load + index per merge
 ------------------------- */
 async function loadCurated() {
   const r = await fetch(CURATED_URL, { cache: "no-store" });
-  if (!r.ok) return [];
+  if (!r.ok) return { places: [], byKey: new Map() };
   const d = await r.json();
   const items = Array.isArray(d?.places) ? d.places : [];
-  return items
+
+  const places = items
     .map(x => ({
       id: x.id,
       name: x.name,
@@ -192,9 +197,22 @@ async function loadCurated() {
       lat: Number(x.lat),
       lng: Number(x.lng),
       tags: Array.isArray(x.tags) ? x.tags : [],
-      what_to_do: Array.isArray(x.what_to_do) ? x.what_to_do : []
+      vibes: Array.isArray(x.vibes) ? x.vibes : [],
+      best_when: Array.isArray(x.best_when) ? x.best_when : [],
+      why: Array.isArray(x.why) ? x.why : [],
+      what_to_do: Array.isArray(x.what_to_do) ? x.what_to_do : [],
+      what_to_eat: Array.isArray(x.what_to_eat) ? x.what_to_eat : []
     }))
     .filter(p => p.id && p.name && Number.isFinite(p.lat) && Number.isFinite(p.lng));
+
+  // key: "name|country" normalizzato
+  const byKey = new Map();
+  for (const p of places) {
+    const key = `${normName(p.name)}|${norm(p.country)}`;
+    if (!byKey.has(key)) byKey.set(key, p);
+  }
+
+  return { places, byKey };
 }
 
 /* -------------------------
@@ -224,54 +242,42 @@ function estimateAutoLike(origin, lat, lng, mode) {
 }
 
 /* -------------------------
-   Categoria: mapping robusto
-   (accetta valori tipo "città", "citta", "Città / Borghi", "citta_borghi", "borghi", ecc.)
+   Categoria mapping robusto
 ------------------------- */
 function allowedTypesFromCategory(categoryRaw) {
   const c = norm(categoryRaw);
-  // combo città/borghi
   if (c.includes("borgh") && c.includes("citt")) return ["citta","borgo"];
   if (c === "citta_borghi" || c === "citta/borghi" || c === "citta / borghi") return ["citta","borgo"];
-
-  // singoli
   if (c === "citta" || c === "city" || c === "città") return ["citta"];
   if (c === "borgo" || c === "borghi") return ["borgo"];
-
-  // altro
-  return [c]; // mare, montagna, natura, relax, bambini...
+  return [c];
 }
 function typeMatches(placeType, allowedTypes) {
   const t = norm(placeType);
-  // qualche alias utile
   if (t === "montagna/natura") return allowedTypes.includes("montagna") || allowedTypes.includes("natura");
   return allowedTypes.includes(t);
 }
 
 /* -------------------------
-   Scoring AUTO (vicino per davvero)
+   Scoring AUTO (vicino davvero)
 ------------------------- */
 function styleFit(visibility, style) {
   const v = norm(visibility);
   if (style === "known") return v === "conosciuta" ? 1.0 : 0.70;
   return v === "chicca" ? 1.0 : 0.70;
 }
-
-// “coerenza tempo”: più vicino a target, meglio
 function timeFit(etaMin, targetMin) {
   const diff = Math.abs(etaMin - targetMin);
   const denom = Math.max(15, targetMin * 0.8);
   return clamp(1 - (diff / denom), 0, 1);
 }
-
-// score finale: molto peso al "vicino"
-// (così non ti pesca Roma sempre se sei lontano)
 function autoScore(p, targetMin, style, dailySet, visitedSet) {
   if (visitedSet.has(p.id)) return -999;
   if (dailySet.has(p.id)) return -999;
 
-  const sStyle = styleFit(p.visibility, style);     // 0.7..1
-  const sTime  = timeFit(p.eta_min, targetMin);     // 0..1
-  const sNear  = clamp(1 - (p.eta_min / (targetMin * 1.2)), 0, 1); // 0..1 forte vicino
+  const sStyle = styleFit(p.visibility, style);
+  const sTime  = timeFit(p.eta_min, targetMin);
+  const sNear  = clamp(1 - (p.eta_min / (targetMin * 1.2)), 0, 1);
 
   return (0.50 * sNear) + (0.30 * sTime) + (0.20 * sStyle);
 }
@@ -283,7 +289,7 @@ async function fetchPlan({ origin, maxMinutes, mode }) {
   const r = await fetch(API.plan, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ origin, maxMinutes, mode, limit: 20 })
+    body: JSON.stringify({ origin, maxMinutes, mode, limit: 30 })
   });
 
   const text = await r.text().catch(() => "");
@@ -297,8 +303,92 @@ async function fetchPlan({ origin, maxMinutes, mode }) {
 }
 
 /* -------------------------
-   POI render
+   Motivazioni (whyComputed)
 ------------------------- */
+function buildWhy(place, { mode, minutes, weatherLabel, style }) {
+  const out = [];
+
+  // 1) tempo coerente
+  if (Number.isFinite(place.eta_min) && Number.isFinite(minutes)) {
+    const d = Math.abs(place.eta_min - minutes);
+    if (d <= Math.max(12, minutes * 0.18)) out.push("Ci stai perfettamente nel tempo che hai.");
+    else if (place.eta_min < minutes) out.push("È comoda: ti avanza tempo per godertela senza stress.");
+    else out.push("È un po’ tirata ma fattibile: perfetta se vuoi una mini-avventura.");
+  }
+
+  // 2) meteo
+  if (weatherLabel) {
+    if (weatherLabel === "pioggia") {
+      if (place.best_when?.includes("pioggia_ok")) out.push("Con la pioggia regge bene: non è una scelta “buttata”.");
+      else out.push("Oggi piove: ti conviene puntare su centro/musei/terme o indoor.");
+    } else if (weatherLabel === "sole") {
+      if (place.type === "mare" || place.type === "natura" || place.type === "montagna") out.push("Con il sole rende tantissimo (panorami/aria aperta).");
+      else out.push("Con il sole è perfetta per camminare e fare foto.");
+    }
+  }
+
+  // 3) stile
+  if (style === "known") out.push(place.visibility === "conosciuta" ? "È una meta super affidabile (classicone)." : "È una chicca, ma comunque tranquilla e gestibile.");
+  if (style === "gems")  out.push(place.visibility === "chicca" ? "È una chicca vera: meno ovvia, più soddisfazione." : "È conosciuta, ma ci sta se vuoi andare sul sicuro.");
+
+  // 4) se il JSON ha già why, usali prima
+  const preset = Array.isArray(place.why) ? place.why : [];
+  const merged = [...preset, ...out].filter(Boolean);
+
+  // max 3, senza duplicati semplici
+  const seen = new Set();
+  const final = [];
+  for (const s of merged) {
+    const k = normName(s);
+    if (!k || seen.has(k)) continue;
+    seen.add(k);
+    final.push(s);
+    if (final.length >= 3) break;
+  }
+  return final;
+}
+
+/* -------------------------
+   POI render (+ eat + why se presenti in index)
+------------------------- */
+function renderWhy(place) {
+  if (!whyListEl) return;
+  whyListEl.innerHTML = "";
+  const arr = Array.isArray(place.whyComputed) && place.whyComputed.length ? place.whyComputed : [];
+  if (!arr.length) {
+    const div = document.createElement("div");
+    div.className = "alt-item";
+    div.innerHTML = `<div class="name">Perché?</div><div class="small">Sto imparando a motivare meglio le scelte 🙂</div>`;
+    whyListEl.appendChild(div);
+    return;
+  }
+  arr.slice(0,3).forEach((t) => {
+    const div = document.createElement("div");
+    div.className = "alt-item";
+    div.innerHTML = `<div class="name">${escapeHtml(t)}</div>`;
+    whyListEl.appendChild(div);
+  });
+}
+
+function renderEat(place) {
+  if (!eatListEl) return;
+  eatListEl.innerHTML = "";
+  const arr = Array.isArray(place.what_to_eat) ? place.what_to_eat : [];
+  if (!arr.length) {
+    const div = document.createElement("div");
+    div.className = "alt-item";
+    div.innerHTML = `<div class="name">Consigli food in arrivo…</div><div class="small">Aggiungeremo cosa mangiare lì.</div>`;
+    eatListEl.appendChild(div);
+    return;
+  }
+  arr.slice(0,6).forEach((t) => {
+    const div = document.createElement("div");
+    div.className = "alt-item";
+    div.innerHTML = `<div class="name">${escapeHtml(t)}</div>`;
+    eatListEl.appendChild(div);
+  });
+}
+
 async function renderPOI(place) {
   if (!poiListEl) return;
   poiListEl.innerHTML = "";
@@ -335,6 +425,7 @@ function renderResult(top, alternatives) {
   placeMetaEl.textContent = [eta, km].filter(Boolean).join(" · ") + w + extra;
   mapsLinkEl.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(top.name)}`;
 
+  // alternative
   altListEl.innerHTML = "";
   if (!alternatives.length) {
     const div = document.createElement("div");
@@ -354,7 +445,9 @@ function renderResult(top, alternatives) {
         const newAlts = [top, ...alternatives.filter(x => x.id !== a.id)].slice(0, 2);
         lastPicks = { top: newTop, alternatives: newAlts };
         renderResult(newTop, newAlts);
+        renderWhy(newTop);
         renderPOI(newTop);
+        renderEat(newTop);
         setStatus("Ok, cambio meta 🎲", "ok");
       };
       altListEl.appendChild(div);
@@ -375,21 +468,45 @@ function renderResult(top, alternatives) {
       const rest = lastPicks.alternatives.slice(1);
       lastPicks = { top: next, alternatives: [top, ...rest].slice(0, 2) };
       renderResult(lastPicks.top, lastPicks.alternatives);
+      renderWhy(lastPicks.top);
       renderPOI(lastPicks.top);
+      renderEat(lastPicks.top);
       setStatus("Ok, nuova proposta 🎲", "ok");
     };
   }
 
+  // extra sections
+  renderWhy(top);
   renderPOI(top);
+  renderEat(top);
 }
 
 /* -------------------------
-   Helpers: take best + ensure alternatives
+   Helpers
 ------------------------- */
 function pickTopAndAlts(list, wantedAlts = 2) {
   const top = list[0];
   const alts = list.slice(1, 1 + wantedAlts);
   return { top, alternatives: alts };
+}
+
+function mergeFromCurated(candidate, curatedByKey) {
+  const key = `${normName(candidate.name.split(",")[0])}|${norm(candidate.country || "")}`;
+  const c = curatedByKey.get(key);
+  if (!c) return candidate;
+
+  return {
+    ...candidate,
+    // eredita
+    type: c.type,
+    visibility: c.visibility,
+    tags: c.tags,
+    vibes: c.vibes,
+    best_when: c.best_when,
+    why: c.why,
+    what_to_do: (candidate.what_to_do?.length ? candidate.what_to_do : c.what_to_do),
+    what_to_eat: c.what_to_eat
+  };
 }
 
 /* -------------------------
@@ -413,10 +530,13 @@ async function run() {
   const weather = await getWeather(origin.lat, origin.lon);
   lastWeatherLabel = weather.label || "";
 
+  // carica curated una volta (serve anche per merge plan→curated)
+  const curatedPack = await loadCurated();
+  const curated = curatedPack.places;
+  const curatedByKey = curatedPack.byKey;
+
   /* =========================
      PLANE / TRAIN / BUS
-     - preferisce mete "sensate"
-     - evita stessa città / troppo vicino / stesso hub
   ========================= */
   if (mode === "plane" || mode === "train" || mode === "bus") {
     setStatus(`Cerco mete con ${mode.toUpperCase()}…`);
@@ -435,7 +555,6 @@ async function run() {
 
     const originLabelNorm = normName(origin.label || "");
 
-    // costruisci candidates + km, filtri anti-cavolate
     let candidates = results.map((r) => {
       const dest = r.destination || {};
       const id = dest.id || `${dest.name || "dest"}_${dest.country || ""}`.toLowerCase().replace(/[^a-z0-9]+/g,"_");
@@ -449,6 +568,7 @@ async function run() {
       return {
         id,
         name: nameFull,
+        country: dest.country || "",
         lat: dest.lat,
         lng: dest.lon,
         eta_min: Number(r.totalMinutes),
@@ -456,18 +576,31 @@ async function run() {
         originHub: r.originHub,
         destinationHub: r.destinationHub,
         hubSummary: `${r.originHub?.code || r.originHub?.name} → ${r.destinationHub?.code || r.destinationHub?.name}`,
+        // questi arrivano poi dal merge se presenti
+        type: "",
+        visibility: "",
+        tags: [],
+        vibes: [],
+        best_when: [],
+        why: [],
         what_to_do: [],
+        what_to_eat: [],
         _nameNorm: nameNorm,
         _originLabelNorm: originLabelNorm
       };
     });
 
-    // filtri: troppo vicino / stessa città / stesso hub
+    // filtri anti-cavolate
     candidates = candidates.filter(c => {
       if (!Number.isFinite(c.eta_min)) return false;
-      if (Number.isFinite(c.distance_km) && c.distance_km < 35) return false; // niente "Verona → Verona"
+
+      // niente stessa città
       if (c._nameNorm && originLabelNorm && c._nameNorm === originLabelNorm) return false;
 
+      // niente troppo vicino (es. "Verona → Verona" o comuni vicini)
+      if (Number.isFinite(c.distance_km) && c.distance_km < 35) return false;
+
+      // niente stesso hub
       const oh = c.originHub?.code || c.originHub?.name || "";
       const dh = c.destinationHub?.code || c.destinationHub?.name || "";
       if (norm(oh) && norm(dh) && norm(oh) === norm(dh)) return false;
@@ -475,29 +608,50 @@ async function run() {
       return true;
     });
 
-    // score: preferisce vicino + tempo coerente
-    // (non sempre il più "corto" in minuti è il più vicino/sensato)
+    // merge con curated se esiste (così abbiamo type/why/food)
+    candidates = candidates.map(c => mergeFromCurated(c, curatedByKey));
+
+    // se l’utente ha scelto categoria specifica e il candidate ha type (da merge), filtriamo
+    const wantsFilter = allowedTypes.length && !(allowedTypes.length === 2 && allowedTypes.includes("citta") && allowedTypes.includes("borgo"));
+    if (wantsFilter) {
+      const filteredByType = candidates.filter(c => c.type && typeMatches(c.type, allowedTypes));
+      if (filteredByType.length >= 3) candidates = filteredByType;
+    }
+
+    // score: tempo coerente + distanza ragionevole
     const target = minutes;
     candidates.forEach(c => {
       const tScore = clamp(1 - (Math.abs(c.eta_min - target) / Math.max(20, target * 0.9)), 0, 1);
-      const kScore = Number.isFinite(c.distance_km) ? clamp(1 - (c.distance_km / 1800), 0, 1) : 0.4; // più vicino meglio
-      // un filo di penalità se ETA è troppo "sotto" (es. 20 min in aereo = sospetto)
-      const tooShortPenalty = c.eta_min < Math.max(40, target * 0.35) ? 0.25 : 0;
-      c._score = (0.60 * tScore) + (0.40 * kScore) - tooShortPenalty;
+      const kScore = Number.isFinite(c.distance_km) ? clamp(1 - (c.distance_km / 1600), 0, 1) : 0.4;
+      const tooShortPenalty = c.eta_min < Math.max(45, target * 0.35) ? 0.25 : 0;
+      c._score = (0.62 * tScore) + (0.38 * kScore) - tooShortPenalty;
     });
 
-    // filtra visited/daily ma se restano pochi, fai fallback
-    let filtered = candidates.filter(c => !visitedSet.has(c.id) && !dailySet.has(c.id));
-    if (filtered.length < 3) filtered = candidates.filter(c => !visitedSet.has(c.id));
-    if (filtered.length < 3) filtered = candidates; // ultima spiaggia: mostra qualcosa
+    // filtri visited/daily con fallback
+    let list = candidates.filter(c => !visitedSet.has(c.id) && !dailySet.has(c.id));
+    if (list.length < 3) list = candidates.filter(c => !visitedSet.has(c.id));
+    if (list.length < 3) list = candidates;
 
-    filtered.sort((a,b)=>b._score - a._score);
+    list.sort((a,b)=>b._score - a._score);
 
-    const { top, alternatives } = pickTopAndAlts(filtered, 2);
+    // ensure 2 alts: se mancano, prendiamo anche mete un po’ più “lontane” come ultima chance
+    if (list.length < 3) {
+      const extra = candidates.slice().sort((a,b)=>a.eta_min - b.eta_min);
+      for (const e of extra) {
+        if (list.find(x => x.id === e.id)) continue;
+        list.push(e);
+        if (list.length >= 3) break;
+      }
+    }
+
+    const { top, alternatives } = pickTopAndAlts(list, 2);
     if (!top) {
-      setStatus("Non trovo mete valide (troppo filtri o dataset).", "err");
+      setStatus("Non trovo mete valide (dataset troppo piccolo o filtri troppo stretti).", "err");
       return;
     }
+
+    // motivazioni
+    top.whyComputed = buildWhy(top, { mode, minutes, weatherLabel: lastWeatherLabel, style });
 
     addDailyReco(top.id);
     lastPicks = { top, alternatives };
@@ -508,59 +662,44 @@ async function run() {
 
   /* =========================
      AUTO / WALK / BIKE
-     - vicino per davvero
-     - finestra tempo coerente
-     - fallback progressivo per avere sempre 2 alternative
   ========================= */
   setStatus("Cerco tra le mete…");
-  const curated = await loadCurated();
 
-  // categoria
   let base = curated
     .filter(p => typeMatches(p.type, allowedTypes))
     .map(p => ({ ...p, ...estimateAutoLike(origin, p.lat, p.lng, mode) }));
 
-  // se categoria combo città/borghi e non trovi niente, prova comunque città+brog.
-  if (!base.length && allowedTypes.length === 1 && allowedTypes[0] === "citta") {
-    base = curated
-      .filter(p => ["citta","borgo"].includes(norm(p.type)))
-      .map(p => ({ ...p, ...estimateAutoLike(origin, p.lat, p.lng, mode) }));
-  }
-
-  // max distanza coerente col tempo (evita mete lontane “a caso”)
-  // distanza max = velocità * ore * fattore (haversine sottostima le strade)
+  // max distanza coerente col tempo (evita lontanissimo)
   const speed = avgSpeedKmh(mode);
   const maxKmCoerenti = (speed * (minutes / 60)) * 1.35;
 
-  // (1) filtro "vicinanza"
+  // (1) filtro vicinanza
   let candidates = base.filter(p => p.distance_km <= Math.max(8, maxKmCoerenti));
 
-  // (2) finestra tempo: abbastanza larga per non restare vuoto
+  // (2) finestra tempo
   const minMin = Math.max(8, minutes * 0.22);
   const maxMin = minutes * 1.30;
   let windowed = candidates.filter(p => p.eta_min >= minMin && p.eta_min <= maxMin);
 
-  // (3) se pochi: allarga progressivo (ma sempre dentro maxKmCoerenti)
+  // (3) fallback controllato per avere almeno 3 (top + 2 alt)
   if (windowed.length < 3) {
     const maxMin2 = minutes * 1.55;
     windowed = candidates.filter(p => p.eta_min >= 5 && p.eta_min <= maxMin2);
   }
   if (windowed.length < 3) {
-    // ultima: prendi i 40 più vicini (sempre dentro maxKmCoerenti)
-    windowed = [...candidates].sort((a,b)=>a.eta_min - b.eta_min).slice(0, 40);
+    windowed = [...candidates].sort((a,b)=>a.eta_min - b.eta_min).slice(0, 60);
   }
 
   // score + filtri daily/visited
   windowed.forEach(p => p._score = autoScore(p, minutes, style, dailySet, visitedSet));
   let scored = windowed.filter(p => p._score > -100).sort((a,b)=>b._score - a._score);
 
-  // se restano < 3, rilassa daily (ma rispetta visited)
+  // fallback: rilassa daily se servono alternative
   if (scored.length < 3) {
     scored = windowed
       .filter(p => !visitedSet.has(p.id))
       .sort((a,b)=>a.eta_min - b.eta_min);
   }
-  // se ancora < 3, rilassa tutto
   if (scored.length < 3) {
     scored = windowed.sort((a,b)=>a.eta_min - b.eta_min);
   }
@@ -578,8 +717,10 @@ async function run() {
     return;
   }
 
-  // top + alternatives (sempre 2 se possibile)
   const { top, alternatives } = pickTopAndAlts(scored, 2);
+
+  // motivazioni (usa anche preset JSON)
+  top.whyComputed = buildWhy(top, { mode, minutes, weatherLabel: lastWeatherLabel, style });
 
   addDailyReco(top.id);
   lastPicks = { top, alternatives };
