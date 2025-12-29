@@ -1,19 +1,33 @@
 // /api/plan.js
 import fs from "fs";
 import path from "path";
+import { fileURLToPath } from "url";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Risolve file da più "root" possibili (cwd + root del progetto + api dir)
 function readJsonTrying(relPaths) {
   const tried = [];
+  const roots = [
+    process.cwd(),
+    path.resolve(__dirname, ".."), // project root (di solito)
+    __dirname                      // /api
+  ];
+
   for (const rel of relPaths) {
-    const p = path.join(process.cwd(), rel);
-    tried.push(p);
-    try {
-      const raw = fs.readFileSync(p, "utf8");
-      return { data: JSON.parse(raw), usedPath: p, tried };
-    } catch (e) {
-      // continue
+    for (const root of roots) {
+      const p = path.resolve(root, rel);
+      tried.push(p);
+      try {
+        const raw = fs.readFileSync(p, "utf8");
+        return { data: JSON.parse(raw), usedPath: p, tried };
+      } catch {
+        // continue
+      }
     }
   }
+
   const err = new Error("JSON file not found in any known path");
   err.tried = tried;
   throw err;
@@ -141,18 +155,18 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "mode must be one of: plane, train, bus" });
     }
 
-    // ✅ prova più path possibili (Vercel-proof)
+    // ✅ percorsi che vogliamo supportare
     const airportsPack = readJsonTrying([
-      "data/curated_airports_eu_uk.json",
-      "public/data/curated_airports_eu_uk.json"
+      "public/data/curated_airports_eu_uk.json",
+      "data/curated_airports_eu_uk.json"
     ]);
     const stationsPack = readJsonTrying([
-      "data/curated_stations_eu_uk.json",
-      "public/data/curated_stations_eu_uk.json"
+      "public/data/curated_stations_eu_uk.json",
+      "data/curated_stations_eu_uk.json"
     ]);
     const destinationsPack = readJsonTrying([
-      "data/curated_destinations_eu_uk.json",
-      "public/data/curated_destinations_eu_uk.json"
+      "public/data/curated_destinations_eu_uk.json",
+      "data/curated_destinations_eu_uk.json"
     ]);
 
     const airports = airportsPack.data;
@@ -163,10 +177,11 @@ export default async function handler(req, res) {
       return res.status(500).json({
         error: "JSON format error: expected arrays",
         debug: {
-          airportsType: typeof airports,
-          stationsType: typeof stations,
-          destinationsType: typeof destinations,
-          used: { airports: airportsPack.usedPath, stations: stationsPack.usedPath, destinations: destinationsPack.usedPath }
+          used: {
+            airports: airportsPack.usedPath,
+            stations: stationsPack.usedPath,
+            destinations: destinationsPack.usedPath
+          }
         }
       });
     }
