@@ -1,17 +1,18 @@
 /* =========================
-   JAMO — app.js (v3 STABILE + PLAN HUBS)
-   - Car/Walk/Bike: curated.json + fallback /api/suggest
-   - Plane/Train/Bus: /api/plan (hub partenza/arrivo + segmenti + tempo)
+   JAMO — app.js (v3 STABILE + PLAN per train/bus/plane)
+   - Car/Walk/Bike: curated.json + stima
+   - Train/Bus/Plane: /api/plan (hub + segments + totalMinutes)
+   - Filtri: timeSelect, modeSelect, styleSelect, categorySelect (NO mix)
    - Meteo: Open-Meteo (gratis)
-   - Daily no-repeat + visited localStorage
-   - POI: curated what_to_do; fallback /api/places (opzionale)
+   - Visited + daily anti-ripetizione
+   - POI: curated what_to_do, fallback /api/places (opzionale)
    ========================= */
 
 const API = {
   geocode: "/api/geocode",
   suggest: "/api/suggest",
-  plan: "/api/plan",
-  places: "/api/places" // opzionale
+  places: "/api/places",
+  plan: "/api/plan"
 };
 
 const CURATED_URL = "/data/curated.json";
@@ -35,8 +36,8 @@ const visitedBtn  = $("visitedBtn");
 const LS_VISITED_KEY = "jamo_visited_v1";
 const LS_DAILY_KEY   = "jamo_daily_reco_v1"; // { "YYYY-MM-DD": ["id1","id2"] }
 
-// State
 let lastPicks = { top: null, alternatives: [] };
+let lastWeatherLabel = "";
 
 /* -------------------------
    Helpers: UI
@@ -126,14 +127,19 @@ async function getOrigin() {
     const lng = Number(data.lng ?? data.lon);
     if (!Number.isFinite(lat) || !Number.isFinite(lng)) throw new Error("Geocode: coordinate non valide");
 
-    return { lat, lng, label: data.label || input };
+    // NORMALIZZO: restituisco sia lng che lon per compatibilità backend
+    return { lat, lng, lon: lng, label: data.label || input };
   }
 
   setStatus("Uso il GPS…");
   return new Promise((resolve, reject) => {
     if (!navigator.geolocation) return reject(new Error("GPS non supportato"));
     navigator.geolocation.getCurrentPosition(
-      (p) => resolve({ lat: p.coords.latitude, lng: p.coords.longitude, label: "La tua posizione" }),
+      (p) => {
+        const lat = p.coords.latitude;
+        const lng = p.coords.longitude;
+        resolve({ lat, lng, lon: lng, label: "La tua posizione" });
+      },
       () => reject(new Error("GPS non disponibile"))
     );
   });
@@ -165,7 +171,7 @@ async function getWeather(originLat, originLng) {
 }
 
 /* -------------------------
-   Curated load (local)
+   Curated load
 ------------------------- */
 async function loadCurated() {
   try {
@@ -179,8 +185,8 @@ async function loadCurated() {
         id: x.id,
         name: x.name,
         country: x.country,
-        type: x.type,                 // es: "città" | "mare" | "montagna" | "bambini"
-        visibility: x.visibility,     // "conosciuta" | "chicca"
+        type: x.type,               // es: "città" "mare" "montagna" "bambini"
+        visibility: x.visibility,   // "conosciuta" | "chicca"
         lat: Number(x.lat),
         lng: Number(x.lng),
         tags: Array.isArray(x.tags) ? x.tags : [],
@@ -194,11 +200,12 @@ async function loadCurated() {
 }
 
 /* -------------------------
-   Distance (for car/walk/bike paths)
+   Distance & estimate for car/walk/bike only
 ------------------------- */
+function toRad(x) { return (x * Math.PI) / 180; }
+
 function haversineKm(lat1, lon1, lat2, lon2) {
   const R = 6371;
-  const toRad = (x) => (x * Math.PI) / 180;
   const dLat = toRad(lat2 - lat1);
   const dLon = toRad(lon2 - lon1);
   const a =
@@ -213,15 +220,15 @@ function avgSpeedKmh(mode) {
   return 80; // car
 }
 
-function estimateCarWalkBike(origin, lat, lng, mode) {
-  const d = haversineKm(origin.lat, origin.lng, lat, lng);
+function estimate(origin, lat, lng, mode) {
+  const d = haversineKm(origin.lat, origin.lon, lat, lng);
   const v = avgSpeedKmh(mode);
   const eta = (d / v) * 60;
   return { distance_km: d, eta_min: eta };
 }
 
 /* -------------------------
-   Scoring (KNOWN vs GEMS real)
+   Scoring (KNOWN vs GEMS)
 ------------------------- */
 function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
 
@@ -236,151 +243,35 @@ function timeFit(etaMin, targetMin) {
 }
 
 function styleFit(visibility, style) {
-  // style: known | gems
   if (style === "known") return visibility === "conosciuta" ? 1.0 : 0.55;
   return visibility === "chicca" ? 1.0 : 0.55;
 }
 
-function weatherFit(tags, weatherCls) {
-  const t = new Set(tags || []);
-  if (weatherCls === "rain") {
-    if (t.has("pioggia_ok")) return 1.0;
-    if (t.has("sole_ok")) return 0.25;
-    return 0.55;
-  }
-  if (weatherCls === "sunny") {
-    if (t.has("sole_ok")) return 1.0;
-    if (t.has("pioggia_ok")) return 0.70;
-    return 0.80;
-  }
-  return t.has("pioggia_ok") ? 0.85 : 0.75; // cloudy
-}
-
-function finalScore(p, targetMin, style, weatherCls, dailySet, visitedSet) {
+function finalScore(p, targetMin, style, dailySet, visitedSet) {
   if (visitedSet.has(p.id)) return -999;
   if (dailySet.has(p.id)) return -999;
 
   const a = timeFit(p.eta_min, targetMin);
   const b = styleFit(p.visibility, style);
-  const c = weatherFit(p.tags, weatherCls);
 
-  // Pesi: tempo (0.5), stile (0.3), meteo (0.2)
-  return (0.50 * a) + (0.30 * b) + (0.20 * c);
+  // Pesi: tempo 0.65, stile 0.35 (qui niente meteo per non complicare)
+  return (0.65 * a) + (0.35 * b);
 }
 
-/* -------------------------
-   Nearby types (no mix)
-------------------------- */
-function nearbyTypes(type) {
-  const map = {
-    "città": ["borgo", "relax"],
-    "borgo": ["città", "natura"],
-    "mare": ["natura", "relax"],
-    "montagna": ["natura", "borgo"],
-    "natura": ["montagna", "borgo"],
-    "relax": ["città", "natura"],
-    "bambini": ["città", "relax"]
-  };
-  return map[type] || ["città", "borgo"];
-}
-
-/* -------------------------
-   Fallback locale: /api/suggest (solo car/walk/bike)
-------------------------- */
-async function fetchLocalFallback(origin, minutes, mode, visitedCsv) {
-  const url =
-    `${API.suggest}?lat=${encodeURIComponent(origin.lat)}&lng=${encodeURIComponent(origin.lng)}` +
-    `&minutes=${encodeURIComponent(minutes)}&mode=${encodeURIComponent(mode)}` +
-    (visitedCsv ? `&visited=${encodeURIComponent(visitedCsv)}` : "");
-
-  const r = await fetch(url);
-  if (!r.ok) return [];
-
-  const data = await r.json();
-  const out = [];
-
-  const push = (x) => {
-    if (!x?.id || !x?.name) return;
-    out.push({
-      id: x.id,
-      name: x.name,
-      lat: Number(x.lat),
-      lng: Number(x.lng),
-      eta_min: Number(x.eta_min),
-      distance_km: Number(x.distance_km),
-      tags: [],
-      visibility: "chicca",
-      type: "borgo",
-      what_to_do: [],
-      source: "local"
-    });
-  };
-
-  if (data?.top) push(data.top);
-  (data?.alternatives || []).forEach(push);
-
+function dedupById(arr) {
   const seen = new Set();
-  return out.filter(x => x.id && !seen.has(x.id) && seen.add(x.id));
-}
-
-/* -------------------------
-   PLAN: plane/train/bus (hub + segments + totalMinutes)
-------------------------- */
-async function fetchPlan(origin, minutes, mode) {
-  const body = {
-    origin: { lat: origin.lat, lon: origin.lng, label: origin.label || "Partenza" },
-    maxMinutes: minutes,
-    mode: mode
-  };
-
-  const r = await fetch(API.plan, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body)
-  });
-
-  if (!r.ok) {
-    const t = await r.text().catch(() => "");
-    throw new Error(`PLAN error ${r.status}: ${t}`.slice(0, 180));
+  const out = [];
+  for (const x of arr) {
+    if (!x?.id) continue;
+    if (seen.has(x.id)) continue;
+    seen.add(x.id);
+    out.push(x);
   }
-
-  const data = await r.json();
-  const results = Array.isArray(data?.results) ? data.results : [];
-
-  // Normalizza in “candidates” compatibili con il resto della app
-  return results.map((x) => {
-    const dest = x.destination || {};
-    const oh = x.originHub || {};
-    const dh = x.destinationHub || {};
-    return {
-      id: dest.id || `${(dest.name||"dest").toLowerCase().replace(/\s+/g,"_")}_${mode}`,
-      name: dest.name || "Meta",
-      country: dest.country || "",
-      lat: Number(dest.lat),
-      lng: Number(dest.lon),
-      tags: Array.isArray(dest.tags) ? dest.tags : [],
-
-      // qui facciamo “eta = totalMinutes” così il filtro è coerente
-      eta_min: Number(x.totalMinutes),
-      distance_km: NaN,
-
-      // info hub
-      hub_from: oh.name ? `${oh.name}${oh.code ? ` (${oh.code})` : ""}` : "",
-      hub_to: dh.name ? `${dh.name}${dh.code ? ` (${dh.code})` : ""}` : "",
-      segments: Array.isArray(x.segments) ? x.segments : [],
-      plan_summary: x.summary || "",
-
-      // styling / scoring: se non hai visibility nel plan, la stimiamo
-      visibility: "conosciuta",
-      type: "città",
-      what_to_do: [],
-      source: "plan"
-    };
-  }).filter(p => p.name && Number.isFinite(p.lat) && Number.isFinite(p.lng) && Number.isFinite(p.eta_min));
+  return out;
 }
 
 /* -------------------------
-   POI: curated what_to_do; fallback /api/places
+   POI rendering
 ------------------------- */
 async function renderPOI(place) {
   if (!poiListEl) return;
@@ -396,6 +287,7 @@ async function renderPOI(place) {
     return;
   }
 
+  // fallback opzionale
   try {
     const r = await fetch(`${API.places}?lat=${encodeURIComponent(place.lat)}&lon=${encodeURIComponent(place.lng)}`);
     if (!r.ok) throw new Error("no places");
@@ -413,30 +305,26 @@ async function renderPOI(place) {
   } catch {
     const div = document.createElement("div");
     div.className = "alt-item";
-    div.innerHTML = `<div class="name">Consigli in arrivo…</div><div class="small">Per questa meta aggiungeremo cosa fare/mangiare.</div>`;
+    div.innerHTML = `<div class="name">Consigli in arrivo…</div><div class="small">Aggiungeremo cosa fare/mangiare.</div>`;
     poiListEl.appendChild(div);
   }
 }
 
 /* -------------------------
-   Render result (top + 2 alts)
+   Render
 ------------------------- */
-function renderResult(top, alternatives, weatherLabel) {
+function renderResult(top, alternatives) {
   showResultBox(true);
 
   placeNameEl.textContent = top.name;
 
   const eta = Number.isFinite(top.eta_min) ? `${Math.round(top.eta_min)} min` : "";
-  const hub = (top.hub_from && top.hub_to) ? ` · ${top.hub_from} → ${top.hub_to}` : "";
-  const w   = weatherLabel ? ` · meteo: ${weatherLabel}` : "";
+  const km  = Number.isFinite(top.distance_km) ? `${top.distance_km.toFixed(0)} km` : "";
+  const w   = lastWeatherLabel ? ` · meteo: ${lastWeatherLabel}` : "";
 
-  // Meta: tempo + hub (se plan) + meteo
-  placeMetaEl.textContent = [eta].filter(Boolean).join("") + hub + w;
-
-  // Maps: search by name
+  placeMetaEl.textContent = [eta, km].filter(Boolean).join(" · ") + w;
   mapsLinkEl.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(top.name)}`;
 
-  // Alternatives
   altListEl.innerHTML = "";
   if (!alternatives.length) {
     const div = document.createElement("div");
@@ -447,16 +335,15 @@ function renderResult(top, alternatives, weatherLabel) {
     alternatives.slice(0, 2).forEach((a) => {
       const div = document.createElement("div");
       div.className = "alt-item clickable";
-      const hub2 = (a.hub_from && a.hub_to) ? `${a.hub_from} → ${a.hub_to}` : "";
       div.innerHTML = `
         <div class="name">${escapeHtml(a.name)}</div>
-        <div class="small">${Math.round(a.eta_min || 0)} min${hub2 ? ` · ${escapeHtml(hub2)}` : ""}</div>
+        <div class="small">${Math.round(a.eta_min || 0)} min · ${(a.distance_km || 0).toFixed(0)} km</div>
       `;
       div.onclick = () => {
         const newTop = a;
         const newAlts = [top, ...alternatives.filter(x => x.id !== a.id)].slice(0, 2);
         lastPicks = { top: newTop, alternatives: newAlts };
-        renderResult(newTop, newAlts, weatherLabel);
+        renderResult(newTop, newAlts);
         renderPOI(newTop);
         setStatus("Ok, cambio meta 🎲", "ok");
       };
@@ -477,7 +364,7 @@ function renderResult(top, alternatives, weatherLabel) {
       const next = lastPicks.alternatives[0];
       const rest = lastPicks.alternatives.slice(1);
       lastPicks = { top: next, alternatives: [top, ...rest].slice(0, 2) };
-      renderResult(lastPicks.top, lastPicks.alternatives, weatherLabel);
+      renderResult(lastPicks.top, lastPicks.alternatives);
       renderPOI(lastPicks.top);
       setStatus("Ok, nuova proposta 🎲", "ok");
     };
@@ -487,18 +374,27 @@ function renderResult(top, alternatives, weatherLabel) {
 }
 
 /* -------------------------
-   Dedup
+   PLAN call for plane/train/bus
 ------------------------- */
-function dedupById(arr) {
-  const seen = new Set();
-  const out = [];
-  for (const x of arr) {
-    if (!x?.id) continue;
-    if (seen.has(x.id)) continue;
-    seen.add(x.id);
-    out.push(x);
+async function fetchPlan(origin, maxMinutes, mode) {
+  const body = {
+    origin: { lat: origin.lat, lon: origin.lon, label: origin.label },
+    maxMinutes: Number(maxMinutes),
+    mode,
+    limit: 8
+  };
+
+  const r = await fetch(API.plan, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  });
+
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) {
+    throw new Error(data?.error || "Errore plan");
   }
-  return out;
+  return data;
 }
 
 /* -------------------------
@@ -510,127 +406,138 @@ async function run() {
   const minutes  = Number($("timeSelect")?.value || 60);
   const mode     = ($("modeSelect")?.value || "car").toLowerCase();
   const style    = ($("styleSelect")?.value || "known").toLowerCase(); // known|gems
-
-  // il tuo index usa typeSelect (se invece hai categorySelect, cambia qui)
-  const typeSel = $("typeSelect") ? "typeSelect" : ($("categorySelect") ? "categorySelect" : null);
-  const type    = (typeSel ? ($(typeSel)?.value || "città") : "città").toLowerCase();
+  const category = ($("categorySelect")?.value || "città").toLowerCase();
 
   const visitedSet = getVisitedSet();
   const dailySet   = getDailyRecoSet();
-  const visitedCsv = [...visitedSet].slice(0, 150).join(",");
 
   setStatus("Calcolo la meta migliore…");
 
   const origin = await getOrigin();
 
-  setStatus("Controllo il meteo…");
-  const weather = await getWeather(origin.lat, origin.lng);
+  // Meteo (solo label)
+  const w = await getWeather(origin.lat, origin.lon);
+  lastWeatherLabel = w?.label || "";
 
-  // Car/Walk/Bike: usa il tuo flusso attuale
-  const isPlanMode = (mode === "plane" || mode === "train" || mode === "bus");
+  // ✅ Se plane/train/bus: usa PLAN
+  if (mode === "plane" || mode === "train" || mode === "bus") {
+    setStatus(`Cerco tratte ${mode.toUpperCase()}…`);
 
-  // car/walk/bike
-  if (!isPlanMode) {
-    setStatus("Cerco tra le mete curate…");
-    const curated = await loadCurated();
+    const plan = await fetchPlan(origin, minutes, mode);
+    const results = Array.isArray(plan?.results) ? plan.results : [];
 
-    let candidates = curated
-      .filter(p => (p.type || "").toLowerCase() === type)
-      .map(p => ({ ...p, ...estimateCarWalkBike(origin, p.lat, p.lng, mode) }));
-
-    const maxMin = minutes * 1.10;
-    const minMin = Math.max(12, minutes * 0.35);
-    candidates = candidates.filter(p => p.eta_min <= maxMin && p.eta_min >= minMin);
-
-    candidates.forEach(p => p._score = finalScore(p, minutes, style, weather.cls, dailySet, visitedSet));
-    candidates = candidates.filter(p => p._score > -100).sort((a,b)=>b._score - a._score);
-
-    if (candidates.length < 3) {
-      const altsTypes = nearbyTypes(type);
-      let extra = curated
-        .filter(p => altsTypes.includes((p.type || "").toLowerCase()))
-        .map(p => ({ ...p, ...estimateCarWalkBike(origin, p.lat, p.lng, mode) }))
-        .filter(p => p.eta_min <= maxMin && p.eta_min >= minMin);
-
-      extra.forEach(p => p._score = finalScore(p, minutes, style, weather.cls, dailySet, visitedSet));
-      extra = extra.filter(p => p._score > -100).sort((a,b)=>b._score - a._score);
-
-      candidates = dedupById([...candidates, ...extra]).sort((a,b)=>b._score - a._score);
-    }
-
-    if (candidates.length < 3) {
-      setStatus("Aggiungo mete locali vicino a te…");
-      const local = await fetchLocalFallback(origin, minutes, mode, visitedCsv);
-
-      const localEnriched = local
-        .filter(p => Number.isFinite(p.lat) && Number.isFinite(p.lng))
-        .map(p => {
-          const est = (Number.isFinite(p.eta_min) && Number.isFinite(p.distance_km))
-            ? { eta_min: p.eta_min, distance_km: p.distance_km }
-            : estimateCarWalkBike(origin, p.lat, p.lng, mode);
-          return { ...p, ...est };
-        });
-
-      localEnriched.forEach(p => p._score = finalScore(p, minutes, style, weather.cls, dailySet, visitedSet));
-
-      candidates = dedupById([...candidates, ...localEnriched])
-        .filter(p => p._score > -100)
-        .sort((a,b)=>b._score - a._score);
-    }
-
-    if (!candidates.length) {
-      setStatus("Non trovo mete con questi filtri. Aumenta il tempo o cambia categoria.", "err");
+    if (!results.length) {
+      setStatus("Non trovo tratte con questo tempo. Prova ad aumentare il tempo.", "err");
       return;
     }
 
-    const top = candidates[0];
-    const alternatives = candidates.slice(1, 3);
+    // Trasformo i results in “places” compatibili UI
+    const places = results.map((r) => {
+      const dest = r.destination || {};
+      const id = dest.id || `${dest.name}_${dest.lat}_${dest.lon}`;
+      return {
+        id,
+        name: dest.name,
+        country: dest.country,
+        type: category,
+        visibility: "conosciuta",     // per ora (poi la curiamo meglio)
+        lat: Number(dest.lat),
+        lng: Number(dest.lon),
+        eta_min: Number(r.totalMinutes),
+        distance_km: Number(haversineKm(origin.lat, origin.lon, Number(dest.lat), Number(dest.lon))),
+        what_to_do: [],
+        tags: [],
+        source: "plan",
+        // extra utile per futuro (stazione/aeroporto)
+        _route: {
+          originHub: r.originHub,
+          destinationHub: r.destinationHub,
+          segments: r.segments,
+          summary: r.summary,
+          confidence: r.confidence
+        }
+      };
+    });
+
+    // filtro visited/daily
+    const filtered = places.filter(p => !visitedSet.has(p.id) && !dailySet.has(p.id));
+
+    const list = filtered.length ? filtered : places;
+    const top = list[0];
+    const alternatives = list.slice(1, 3);
 
     addDailyReco(top.id);
     lastPicks = { top, alternatives };
-    renderResult(top, alternatives, weather.label);
+
+    // Mostro anche in meta una riga con hub (super utile)
+    const hubLine = top._route?.summary ? ` · ${top._route.summary}` : "";
+    placeNameEl.textContent = top.name;
+    placeMetaEl.textContent = `${Math.round(top.eta_min)} min${hubLine}`;
+    mapsLinkEl.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(top.name)}`;
+
+    // alternative + POI
+    altListEl.innerHTML = "";
+    alternatives.forEach((a) => {
+      const div = document.createElement("div");
+      div.className = "alt-item clickable";
+      div.innerHTML = `
+        <div class="name">${escapeHtml(a.name)}</div>
+        <div class="small">${Math.round(a.eta_min || 0)} min</div>
+      `;
+      div.onclick = () => {
+        lastPicks = { top: a, alternatives: [top, ...alternatives.filter(x => x.id !== a.id)].slice(0, 2) };
+        placeNameEl.textContent = a.name;
+        placeMetaEl.textContent = `${Math.round(a.eta_min)} min · ${a._route?.summary || ""}`.trim();
+        mapsLinkEl.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(a.name)}`;
+        renderPOI(a);
+        setStatus("Ok, cambio meta 🎲", "ok");
+      };
+      altListEl.appendChild(div);
+    });
+
+    if (visitedBtn) {
+      visitedBtn.onclick = () => {
+        markVisited(top.id);
+        setStatus("Segnato come già visitato ✅", "ok");
+      };
+    }
+    if (rerollBtn) {
+      rerollBtn.onclick = () => {
+        if (!lastPicks?.alternatives?.length) return;
+        const next = lastPicks.alternatives[0];
+        const rest = lastPicks.alternatives.slice(1);
+        lastPicks = { top: next, alternatives: [top, ...rest].slice(0, 2) };
+        placeNameEl.textContent = next.name;
+        placeMetaEl.textContent = `${Math.round(next.eta_min)} min · ${next._route?.summary || ""}`.trim();
+        mapsLinkEl.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(next.name)}`;
+        renderPOI(next);
+        setStatus("Ok, nuova proposta 🎲", "ok");
+      };
+    }
+
+    showResultBox(true);
+    renderPOI(top);
     setStatus("Meta trovata ✔", "ok");
     return;
   }
 
-  // plane/train/bus: usa PLAN
-  setStatus(`Cerco tratte ${mode.toUpperCase()} (hub + tempo)…`);
-  const planCandidates = await fetchPlan(origin, minutes, mode);
-
-  if (!planCandidates.length) {
-    setStatus("Non trovo tratte compatibili col tempo scelto. Prova ad aumentare il tempo.", "err");
-    return;
-  }
-
-  // qui “type” filtra sui tags del plan (es: city/sea/mountain/kids se li aggiungi nel dataset plan)
-  let candidates = planCandidates.slice();
-
-  // se il plan non ha tags coerenti col tuo type, non blocchiamo tutto: filtro soft
-  if (type && type !== "any") {
-    const filtered = candidates.filter(p => (p.tags || []).map(x=>String(x).toLowerCase()).includes(type));
-    if (filtered.length >= 2) candidates = filtered;
-  }
-
-  // mergia con curated.json (per visibility/type/what_to_do) quando il nome coincide
+  // ✅ Altrimenti: car/walk/bike con curated.json
+  setStatus("Cerco tra le mete curate…");
   const curated = await loadCurated();
-  const byName = new Map(curated.map(p => [String(p.name).toLowerCase(), p]));
-  candidates = candidates.map(p => {
-    const c = byName.get(String(p.name).toLowerCase());
-    if (!c) return p;
-    return {
-      ...p,
-      id: c.id || p.id,
-      visibility: c.visibility || p.visibility,
-      type: c.type || p.type,
-      what_to_do: c.what_to_do || []
-    };
-  });
 
-  candidates.forEach(p => p._score = finalScore(p, minutes, style, weather.cls, dailySet, visitedSet));
+  let candidates = curated
+    .filter(p => (p.type || "").toLowerCase() === category)
+    .map(p => ({ ...p, ...estimate(origin, p.lat, p.lng, mode) }));
+
+  const maxMin = minutes * 1.10;
+  const minMin = Math.max(12, minutes * 0.35);
+  candidates = candidates.filter(p => p.eta_min <= maxMin && p.eta_min >= minMin);
+
+  candidates.forEach(p => p._score = finalScore(p, minutes, style, dailySet, visitedSet));
   candidates = candidates.filter(p => p._score > -100).sort((a,b)=>b._score - a._score);
 
   if (!candidates.length) {
-    setStatus("Ho trovato tratte, ma sono tutte già viste/visitata oggi. Prova domani o rimuovi “già visitato”.", "err");
+    setStatus("Non trovo mete con questi filtri. Aumenta il tempo o cambia categoria.", "err");
     return;
   }
 
@@ -638,8 +545,10 @@ async function run() {
   const alternatives = candidates.slice(1, 3);
 
   addDailyReco(top.id);
+
   lastPicks = { top, alternatives };
-  renderResult(top, alternatives, weather.label);
+  renderResult(top, alternatives);
+
   setStatus("Meta trovata ✔", "ok");
 }
 
