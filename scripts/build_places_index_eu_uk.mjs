@@ -1,33 +1,35 @@
 // scripts/build_places_index_eu_uk.mjs
-// Robust version using system unzip (GitHub Actions friendly)
+// Usage: node scripts/build_places_index_eu_uk.mjs
 
 import fs from "fs";
 import path from "path";
 import https from "https";
-import { execSync } from "child_process";
+import unzipper from "unzipper";
 
 const OUT = path.join(process.cwd(), "public", "data", "places_index_eu_uk.json");
-const TMP_ZIP = "/tmp/cities500.zip";
-const TMP_TXT = "/tmp/cities500.txt";
 
 const EU_UK = new Set([
-  "AT","BE","BG","HR","CY","CZ","DK","EE","FI","FR","DE","GR","HU","IE","IT",
-  "LV","LT","LU","MT","NL","PL","PT","RO","SK","SI","ES","SE","GB","UK"
+  "AT","BE","BG","HR","CY","CZ","DK","EE","FI","FR","DE","GR","HU","IE","IT","LV","LT","LU","MT",
+  "NL","PL","PT","RO","SK","SI","ES","SE","UK","GB"
 ]);
 
 const URL = "https://download.geonames.org/export/dump/cities500.zip";
 
-function download(url, out) {
+function downloadToFile(url, destPath) {
   return new Promise((resolve, reject) => {
-    const file = fs.createWriteStream(out);
-    https.get(url, res => {
+    fs.mkdirSync(path.dirname(destPath), { recursive: true });
+    const file = fs.createWriteStream(destPath);
+    https.get(url, (res) => {
       if (res.statusCode !== 200) {
-        reject(new Error("Download failed: " + res.statusCode));
+        reject(new Error(`Download failed: ${res.statusCode}`));
         return;
       }
       res.pipe(file);
       file.on("finish", () => file.close(resolve));
-    }).on("error", reject);
+    }).on("error", (err) => {
+      try { fs.unlinkSync(destPath); } catch {}
+      reject(err);
+    });
   });
 }
 
@@ -38,39 +40,56 @@ function norm(s) {
     .trim();
 }
 
-(async () => {
-  console.log("Downloading cities500.zip…");
-  await download(URL, TMP_ZIP);
+function typeFromPop(pop) {
+  if (pop >= 60000) return "citta";
+  if (pop >= 8000) return "citta";
+  return "borgo";
+}
 
-  console.log("Extracting cities500.txt…");
-  execSync(`unzip -p ${TMP_ZIP} cities500.txt > ${TMP_TXT}`);
+async function extractTxtFromZip(zipPath, wantedName) {
+  const directory = await unzipper.Open.file(zipPath);
+  const file = directory.files.find(f => f.path === wantedName);
+  if (!file) throw new Error(`${wantedName} not found in zip`);
+  return (await file.buffer()).toString("utf8");
+}
 
-  const txt = fs.readFileSync(TMP_TXT, "utf8");
+(async function main(){
+  const tmpZip = path.join(process.cwd(), ".tmp", "cities500.zip");
+
+  console.log("Downloading:", URL);
+  await downloadToFile(URL, tmpZip);
+  const stat = fs.statSync(tmpZip);
+  console.log("Downloaded", Math.round(stat.size/1024/1024), "MB");
+
+  const txt = await extractTxtFromZip(tmpZip, "cities500.txt");
   const lines = txt.split("\n");
 
   const places = [];
-
   for (const line of lines) {
-    if (!line) continue;
-    const c = line.split("\t");
-    if (c.length < 15) continue;
+    if (!line || line.startsWith("#")) continue;
+    const cols = line.split("\t");
+    if (cols.length < 15) continue;
 
-    const id = c[0];
-    const name = c[1];
-    const lat = Number(c[4]);
-    const lng = Number(c[5]);
-    const country = c[8];
-    const pop = Number(c[14] || 0);
+    const geonameid = cols[0];
+    const name = cols[1];
+    const lat = Number(cols[4]);
+    const lng = Number(cols[5]);
+    const country = cols[8];
+    const population = Number(cols[14] || 0);
 
     if (!EU_UK.has(country)) continue;
     if (!Number.isFinite(lat) || !Number.isFinite(lng)) continue;
+    if (!name) continue;
+
+    const type = typeFromPop(population);
+    const visibility = population >= 250000 ? "conosciuta" : "chicca";
 
     places.push({
-      id: `gn_${id}`,
+      id: `gn_${geonameid}`,
       name,
       country: country === "GB" ? "UK" : country,
-      type: pop >= 8000 ? "citta" : "borgo",
-      visibility: pop >= 250000 ? "conosciuta" : "chicca",
+      type,
+      visibility,
       lat,
       lng,
       tags: [],
@@ -82,19 +101,20 @@ function norm(s) {
     });
   }
 
+  const out = {
+    version: "1.0",
+    updated: new Date().toISOString().slice(0,10),
+    regions: ["EU","UK"],
+    places
+  };
+
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
-  fs.writeFileSync(
-    OUT,
-    JSON.stringify({
-      version: "1.0",
-      updated: new Date().toISOString().slice(0,10),
-      regions: ["EU","UK"],
-      places
-    })
-  );
+  fs.writeFileSync(OUT, JSON.stringify(out), "utf8");
 
-  console.log("Saved", places.length, "places");
-
-  const aq = places.find(p => norm(p.name).includes("aquila"));
+  const aq = places.find(p => norm(p.name) === "l aquila" || norm(p.name) === "laquila");
+  console.log("Saved:", OUT, "places:", places.length);
   console.log("Check L'Aquila:", aq ? "OK" : "NOT FOUND");
-})();
+})().catch((e)=>{
+  console.error(e);
+  process.exit(1);
+});
