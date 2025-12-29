@@ -1,9 +1,8 @@
 /* =========================
    JAMO — app.js (v9 ONE-API + WOW UI + CTA hooks)
-   - Tutti i mode passano da /api/jamo (stabile)
+   - Tutti i mode passano da /api/jamo
    - Rotazione settimanale + visited
-   - Se categoria non ha mete vicine: fallback dichiarato (mai "mare->Milano")
-   - UI consigli differenziata + spazi per monetizzazione
+   - UI consigli differenziata + CTA monetizzabili
    ========================= */
 
 const API = {
@@ -170,9 +169,7 @@ async function getWeather(lat, lon) {
     if (Number.isFinite(code) && code >= 51) return { label: "pioggia" };
     if (Number.isFinite(code) && code <= 2) return { label: "sole" };
     return { label: "nuvoloso" };
-  } catch {
-    return { label: "" };
-  }
+  } catch { return { label: "" }; }
 }
 
 /* -------------------------
@@ -192,21 +189,16 @@ async function fetchJamo(payload) {
 /* -------------------------
    Render (WOW + CTA hooks)
 ------------------------- */
-function chip(label) {
-  return `<span class="chip">${escapeHtml(label)}</span>`;
-}
-
 function renderWhy(place) {
   if (!whyListEl) return;
   whyListEl.innerHTML = "";
 
   const arr = Array.isArray(place.why) ? place.why : [];
   if (!arr.length) {
-    whyListEl.innerHTML = `<div class="cardline"><b>Ok.</b> Ti propongo questa perché è coerente col tempo e col filtro.</div>`;
+    whyListEl.innerHTML = `<div class="muteline">Ti propongo questa perché è coerente col tempo e col filtro.</div>`;
     return;
   }
 
-  // differenzia visivamente: 1 “hero reason” + 2/3 bullet
   const hero = arr[0];
   const rest = arr.slice(1, 4);
 
@@ -216,7 +208,6 @@ function renderWhy(place) {
       <div class="heroText">${escapeHtml(hero)}</div>
     </div>
   `;
-
   rest.forEach(t=>{
     const div = document.createElement("div");
     div.className = "cardline";
@@ -231,7 +222,7 @@ function renderRoute(place) {
 
   const segs = Array.isArray(place.segments) ? place.segments : [];
   if (!segs.length) {
-    routeListEl.innerHTML = `<div class="muteline">Percorso stimato (dettagli in arrivo).</div>`;
+    routeListEl.innerHTML = `<div class="muteline">Percorso stimato (dettagli più ricchi in arrivo).</div>`;
     return;
   }
 
@@ -276,7 +267,7 @@ function renderPOI(place) {
   }
 
   if (!todo.length && !eat.length) {
-    poiListEl.innerHTML = `<div class="muteline">Consigli più ricchi in arrivo (e qui inseriremo link/esperienze monetizzabili).</div>`;
+    poiListEl.innerHTML = `<div class="muteline">Consigli in arrivo: qui metteremo anche link/esperienze monetizzabili.</div>`;
   }
 }
 
@@ -286,14 +277,14 @@ function renderCTA(place, mode) {
   const q = encodeURIComponent(place.name);
   const gmaps = `https://www.google.com/maps/search/?api=1&query=${q}`;
 
-  // CTA placeholder: oggi link “neutri”, domani metti affiliate
-  const buyLabel = (mode==="plane"||mode==="train"||mode==="bus")
-    ? "🎟️ Compra biglietti"
-    : "⭐ Trova cose da fare";
+  const buyLabel =
+    (mode==="plane"||mode==="train"||mode==="bus")
+      ? "🎟️ Acquista biglietti"
+      : "⭐ Cose da fare (link)";
 
   ctaBoxEl.innerHTML = `
     <a class="ctaPrimary" href="${gmaps}" target="_blank" rel="noopener">🗺️ Apri su Maps</a>
-    <a class="ctaGhost" href="#" onclick="alert('Qui inserirai i link monetizzabili (affiliate)'); return false;">${buyLabel}</a>
+    <a class="ctaGhost" href="#" onclick="alert('Qui inserirai i link monetizzabili (affiliate).'); return false;">${buyLabel}</a>
   `;
 }
 
@@ -302,7 +293,7 @@ function renderAlternatives(top, alternatives) {
   altListEl.innerHTML = "";
 
   if (!alternatives.length) {
-    altListEl.innerHTML = `<div class="muteline">Nessuna alternativa trovata (prova “Cambia meta”).</div>`;
+    altListEl.innerHTML = `<div class="muteline">Nessuna alternativa (prova “Cambia meta”).</div>`;
     return;
   }
 
@@ -326,7 +317,7 @@ function renderAlternatives(top, alternatives) {
   });
 }
 
-function renderResult(top, alternatives, mode) {
+function renderResult(top, alternatives) {
   showResultBox(true);
 
   placeNameEl.textContent = top.name;
@@ -337,9 +328,9 @@ function renderResult(top, alternatives, mode) {
 
   placeMetaEl.textContent = [top.type, eta, km].filter(Boolean).join(" · ") + w;
 
-  // link su maps
   mapsLinkEl.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(top.name)}`;
 
+  const mode = norm($("modeSelect")?.value || "car");
   renderCTA(top, mode);
   renderWhy(top);
   renderAlternatives(top, alternatives);
@@ -359,7 +350,7 @@ function renderResult(top, alternatives, mode) {
       const next = lastPicks.alternatives[0];
       const rest = lastPicks.alternatives.slice(1);
       lastPicks = { top: next, alternatives: [top, ...rest].slice(0, 2) };
-      renderResult(lastPicks.top, lastPicks.alternatives, mode);
+      renderResult(lastPicks.top, lastPicks.alternatives);
       setStatus("Ok, nuova proposta 🎲", "ok");
     };
   }
@@ -371,13 +362,13 @@ function renderResult(top, alternatives, mode) {
 async function run() {
   showResultBox(false);
 
-  const minutes = Number($("timeSelect")?.value || 60);
-  const mode    = norm($("modeSelect")?.value || "car");
-  const style   = norm($("styleSelect")?.value || "known");
+  const minutes  = Number($("timeSelect")?.value || 60);
+  const mode     = norm($("modeSelect")?.value || "car");
+  const style    = norm($("styleSelect")?.value || "known");
   const category = $("categorySelect")?.value || "citta_borghi";
 
   const visitedSet = getVisitedSet();
-  const weekSet = getWeekPickSet();
+  const weekSet    = getWeekPickSet();
 
   setStatus("Calcolo la meta migliore…");
   const origin = await getOrigin();
@@ -385,7 +376,6 @@ async function run() {
   const weather = await getWeather(origin.lat, origin.lon);
   lastWeatherLabel = weather.label || "";
 
-  // chiedi all'API la meta migliore (sempre)
   const payload = {
     origin: { lat: origin.lat, lon: origin.lon, label: origin.label },
     minutes,
@@ -399,13 +389,13 @@ async function run() {
   const resp = await fetchJamo(payload);
 
   if (!resp?.ok || !resp?.top) {
-    setStatus("Nessuna meta trovata: prova ad aumentare i minuti o cambia categoria.", "err");
+    setStatus(resp?.message || "Nessuna meta trovata: aumenta i minuti o cambia categoria.", "err");
     return;
   }
 
   addWeekPick(resp.top.id);
   lastPicks = { top: resp.top, alternatives: resp.alternatives || [] };
-  renderResult(resp.top, resp.alternatives || [], norm(mode));
+  renderResult(resp.top, resp.alternatives || []);
   setStatus("Meta trovata ✔", "ok");
 }
 
