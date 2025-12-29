@@ -1,0 +1,87 @@
+{
+  "version": "1.0",
+  "regions": ["EU", "UK"],
+  "places": [
+    {
+      "id": "rome_it",
+      "name": "Roma",
+      "country": "IT",
+      "types": ["citta", "cultura"],
+      "has_station": true,
+      "has_airport_near": true,
+      "beauty_score": 0.95
+    },
+    {
+      "id": "laquila_it",
+      "name": "L'Aquila",
+      "country": "IT",
+      "types": ["citta", "montagna", "chicca"],
+      "has_station": true,
+      "has_airport_near": false,
+      "beauty_score": 0.75
+    },
+    {
+      "id": "amalfi_coast_it",
+      "name": "Costiera Amalfitana",
+      "country": "IT",
+      "types": ["mare", "costiera", "romantico"],
+      "has_station": false,
+      "has_airport_near": true,
+      "beauty_score": 0.98
+    },
+    {
+      "id": "naples_it",
+      "name": "Napoli",
+      "country": "IT",
+      "types": ["citta", "mare", "cultura"],
+      "has_station": true,
+      "has_airport_near": true,
+      "beauty_score": 0.9
+    },
+    {
+      "id": "cinque_terre_it",
+      "name": "Cinque Terre",
+      "country": "IT",
+      "types": ["mare", "borghi", "panorama"],
+      "has_station": true,
+      "has_airport_near": false,
+      "beauty_score": 0.97
+    },
+    {
+      "id": "barcelona_es",
+      "name": "Barcellona",
+      "country": "ES",
+      "types": ["citta", "mare", "movida"],
+      "has_station": true,
+      "has_airport_near": true,
+      "beauty_score": 0.95
+    },
+    {
+      "id": "paris_fr",
+      "name": "Parigi",
+      "country": "FR",
+      "types": ["citta", "cultura", "romantico"],
+      "has_station": true,
+      "has_airport_near": true,
+      "beauty_score": 0.96
+    },
+    {
+      "id": "london_uk",
+      "name": "Londra",
+      "country": "UK",
+      "types": ["citta", "cultura"],
+      "has_station": true,
+      "has_airport_near": true,
+      "beauty_score": 0.94
+    },
+    {
+      "id": "cornwall_uk",
+      "name": "Cornovaglia",
+      "country": "UK",
+      "types": ["mare", "costiera", "natura"],
+      "has_station": false,
+      "has_airport_near": true,
+      "beauty_score": 0.9
+    }
+  ]
+}
