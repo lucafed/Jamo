@@ -1,9 +1,9 @@
 /* =========================
-   JAMO — app.js (v9 ONE-API + WEEKLY + ALWAYS-NEARBY)
-   - Usa SOLO /api/jamo (Hobby friendly)
-   - Auto/Walk/Bike: curated + fallback OSM => trova anche a 30/45 min ovunque
-   - Plane/Train/Bus: route con HUB + segments (dal backend)
-   - Visited + rotazione settimanale: excludeIds inviati all'API
+   JAMO — app.js (v9 ONE-API + WOW UI + CTA hooks)
+   - Tutti i mode passano da /api/jamo (stabile)
+   - Rotazione settimanale + visited
+   - Se categoria non ha mete vicine: fallback dichiarato (mai "mare->Milano")
+   - UI consigli differenziata + spazi per monetizzazione
    ========================= */
 
 const API = {
@@ -23,6 +23,7 @@ const altListEl   = $("altList");
 const whyListEl   = $("whyList");
 const routeListEl = $("routeList");
 const poiListEl   = $("poiList");
+const ctaBoxEl    = $("ctaBox");
 
 const goBtn       = $("goBtn");
 const gpsBtn      = $("gpsBtn");
@@ -52,36 +53,18 @@ function escapeHtml(s) {
     "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
   }[c]));
 }
-
-/* -------------------------
-   Normalize
-------------------------- */
 function norm(s) {
   return String(s ?? "")
     .toLowerCase()
     .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
     .trim();
 }
-
-/* -------------------------
-   Mode mapping (IT/EN -> canonical)
-------------------------- */
-function canonicalMode(raw) {
-  const m = norm(raw);
-  if (["car","auto","macchina"].includes(m)) return "car";
-  if (["walk","piedi","a piedi"].includes(m)) return "walk";
-  if (["bike","bici","bicicletta"].includes(m)) return "bike";
-  if (["plane","aereo","volo"].includes(m)) return "plane";
-  if (["train","treno"].includes(m)) return "train";
-  if (["bus","pullman"].includes(m)) return "bus";
-  return "car";
-}
+function clamp(n,a,b){ return Math.max(a, Math.min(b,n)); }
 
 /* -------------------------
    Weekly rotation + visited
 ------------------------- */
 function isoWeekKey() {
-  // YYYY-Www
   const d = new Date();
   const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
   const dayNum = date.getUTCDay() || 7;
@@ -122,7 +105,7 @@ function addWeekPick(id) {
     const key = isoWeekKey();
     const arr = Array.isArray(obj?.[key]) ? obj[key] : [];
     if (!arr.includes(id)) arr.push(id);
-    obj[key] = arr.slice(0, 400);
+    obj[key] = arr.slice(0, 300);
     localStorage.setItem(LS_WEEK_KEY, JSON.stringify(obj));
   } catch {}
 }
@@ -193,44 +176,51 @@ async function getWeather(lat, lon) {
 }
 
 /* -------------------------
-   /api/jamo call
+   API call
 ------------------------- */
 async function fetchJamo(payload) {
   const r = await fetch(API.jamo, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type":"application/json" },
     body: JSON.stringify(payload)
   });
-
-  const text = await r.text().catch(() => "");
-  if (!r.ok) throw new Error(`JAMO error ${r.status}: ${text.slice(0, 200)}`);
-
-  try { return JSON.parse(text); }
-  catch { throw new Error(`JAMO risposta non JSON: ${text.slice(0, 140)}`); }
+  const text = await r.text().catch(()=> "");
+  if (!r.ok) throw new Error(`JAMO ${r.status}: ${text.slice(0,180)}`);
+  return JSON.parse(text);
 }
 
 /* -------------------------
-   Render helpers
+   Render (WOW + CTA hooks)
 ------------------------- */
+function chip(label) {
+  return `<span class="chip">${escapeHtml(label)}</span>`;
+}
+
 function renderWhy(place) {
   if (!whyListEl) return;
   whyListEl.innerHTML = "";
 
   const arr = Array.isArray(place.why) ? place.why : [];
-  const list = arr.length ? arr : [];
-
-  if (!list.length) {
-    const div = document.createElement("div");
-    div.className = "alt-item";
-    div.innerHTML = `<div class="name">—</div><div class="small">Motivazioni non disponibili.</div>`;
-    whyListEl.appendChild(div);
+  if (!arr.length) {
+    whyListEl.innerHTML = `<div class="cardline"><b>Ok.</b> Ti propongo questa perché è coerente col tempo e col filtro.</div>`;
     return;
   }
 
-  list.slice(0, 4).forEach((t) => {
+  // differenzia visivamente: 1 “hero reason” + 2/3 bullet
+  const hero = arr[0];
+  const rest = arr.slice(1, 4);
+
+  whyListEl.innerHTML = `
+    <div class="heroReason">
+      <div class="heroTitle">🎯 Perché è perfetta oggi</div>
+      <div class="heroText">${escapeHtml(hero)}</div>
+    </div>
+  `;
+
+  rest.forEach(t=>{
     const div = document.createElement("div");
-    div.className = "alt-item";
-    div.innerHTML = `<div class="name">${escapeHtml(t)}</div>`;
+    div.className = "cardline";
+    div.innerHTML = `✅ ${escapeHtml(t)}`;
     whyListEl.appendChild(div);
   });
 }
@@ -239,21 +229,20 @@ function renderRoute(place) {
   if (!routeListEl) return;
   routeListEl.innerHTML = "";
 
-  const segments = Array.isArray(place.segments) ? place.segments : [];
-  if (!segments.length) {
-    const div = document.createElement("div");
-    div.className = "alt-item";
-    div.innerHTML = `<div class="name">—</div><div class="small">Nessun dettaglio percorso disponibile.</div>`;
-    routeListEl.appendChild(div);
+  const segs = Array.isArray(place.segments) ? place.segments : [];
+  if (!segs.length) {
+    routeListEl.innerHTML = `<div class="muteline">Percorso stimato (dettagli in arrivo).</div>`;
     return;
   }
 
-  segments.slice(0, 6).forEach((s) => {
+  segs.slice(0, 6).forEach((s) => {
     const div = document.createElement("div");
-    div.className = "alt-item";
+    div.className = "step";
     div.innerHTML = `
-      <div class="name">${escapeHtml(s.label || s.kind || "Step")}</div>
-      <div class="small">${Number.isFinite(s.minutes) ? `${s.minutes} min` : ""}</div>
+      <div class="stepTop">
+        <div class="stepLabel">${escapeHtml(s.label || s.kind || "Step")}</div>
+        <div class="stepTime">${Number.isFinite(s.minutes) ? `${s.minutes} min` : ""}</div>
+      </div>
     `;
     routeListEl.appendChild(div);
   });
@@ -267,29 +256,45 @@ function renderPOI(place) {
   const eat  = Array.isArray(place.what_to_eat) ? place.what_to_eat : [];
 
   if (todo.length) {
-    todo.slice(0, 6).forEach((t) => {
-      const div = document.createElement("div");
-      div.className = "alt-item";
-      div.innerHTML = `<div class="name">${escapeHtml(t)}</div>`;
-      poiListEl.appendChild(div);
-    });
+    const block = document.createElement("div");
+    block.className = "grid2";
+    block.innerHTML = `
+      <div class="blockTitle">✨ Cosa fare</div>
+      ${todo.slice(0,6).map(t=>`<div class="tile">📍 ${escapeHtml(t)}</div>`).join("")}
+    `;
+    poiListEl.appendChild(block);
   }
 
   if (eat.length) {
-    eat.slice(0, 5).forEach((t) => {
-      const div = document.createElement("div");
-      div.className = "alt-item";
-      div.innerHTML = `<div class="name">🍽️ ${escapeHtml(t)}</div>`;
-      poiListEl.appendChild(div);
-    });
+    const block2 = document.createElement("div");
+    block2.className = "grid2";
+    block2.innerHTML = `
+      <div class="blockTitle">🍴 Cosa mangiare</div>
+      ${eat.slice(0,5).map(t=>`<div class="tile">🍽️ ${escapeHtml(t)}</div>`).join("")}
+    `;
+    poiListEl.appendChild(block2);
   }
 
   if (!todo.length && !eat.length) {
-    const div = document.createElement("div");
-    div.className = "alt-item";
-    div.innerHTML = `<div class="name">Consigli in arrivo…</div><div class="small">Aggiungeremo cosa fare/mangiare anche alle mete “ovunque”.</div>`;
-    poiListEl.appendChild(div);
+    poiListEl.innerHTML = `<div class="muteline">Consigli più ricchi in arrivo (e qui inseriremo link/esperienze monetizzabili).</div>`;
   }
+}
+
+function renderCTA(place, mode) {
+  if (!ctaBoxEl) return;
+
+  const q = encodeURIComponent(place.name);
+  const gmaps = `https://www.google.com/maps/search/?api=1&query=${q}`;
+
+  // CTA placeholder: oggi link “neutri”, domani metti affiliate
+  const buyLabel = (mode==="plane"||mode==="train"||mode==="bus")
+    ? "🎟️ Compra biglietti"
+    : "⭐ Trova cose da fare";
+
+  ctaBoxEl.innerHTML = `
+    <a class="ctaPrimary" href="${gmaps}" target="_blank" rel="noopener">🗺️ Apri su Maps</a>
+    <a class="ctaGhost" href="#" onclick="alert('Qui inserirai i link monetizzabili (affiliate)'); return false;">${buyLabel}</a>
+  `;
 }
 
 function renderAlternatives(top, alternatives) {
@@ -297,27 +302,19 @@ function renderAlternatives(top, alternatives) {
   altListEl.innerHTML = "";
 
   if (!alternatives.length) {
-    const div = document.createElement("div");
-    div.className = "alt-item";
-    div.innerHTML = `<div class="name">Nessuna alternativa</div><div class="small">Prova “Cambia meta” o aumenta il tempo.</div>`;
-    altListEl.appendChild(div);
+    altListEl.innerHTML = `<div class="muteline">Nessuna alternativa trovata (prova “Cambia meta”).</div>`;
     return;
   }
 
   alternatives.slice(0, 2).forEach((a) => {
     const div = document.createElement("div");
-    div.className = "alt-item clickable";
-
+    div.className = "altCard";
     const eta = Number.isFinite(a.eta_min) ? `${Math.round(a.eta_min)} min` : "";
     const km  = Number.isFinite(a.distance_km) ? `${Math.round(a.distance_km)} km` : "";
-    const typeLabel = a.type ? `${a.type}` : "";
-    const hub = a.summary ? ` · ${escapeHtml(a.summary)}` : "";
-
     div.innerHTML = `
-      <div class="name">${escapeHtml(a.name)}</div>
-      <div class="small">${[typeLabel, eta, km].filter(Boolean).join(" · ")}${hub}</div>
+      <div class="altName">${escapeHtml(a.name)}</div>
+      <div class="altMeta">${escapeHtml([a.type, eta, km].filter(Boolean).join(" · "))}</div>
     `;
-
     div.onclick = () => {
       const newTop = a;
       const newAlts = [top, ...alternatives.filter(x => x.id !== a.id)].slice(0, 2);
@@ -325,33 +322,27 @@ function renderAlternatives(top, alternatives) {
       renderResult(newTop, newAlts);
       setStatus("Ok, cambio meta 🎲", "ok");
     };
-
     altListEl.appendChild(div);
   });
 }
 
-function renderResult(top, alternatives) {
+function renderResult(top, alternatives, mode) {
   showResultBox(true);
 
-  placeNameEl.textContent = top.name || "Meta";
+  placeNameEl.textContent = top.name;
+
   const eta = Number.isFinite(top.eta_min) ? `${Math.round(top.eta_min)} min` : "";
   const km  = Number.isFinite(top.distance_km) ? `${Math.round(top.distance_km)} km` : "";
   const w   = lastWeatherLabel ? ` · meteo: ${lastWeatherLabel}` : "";
 
-  const typeLabel = top.type ? `${top.type}` : "";
-  const extra = top.summary ? ` · ${top.summary}` : ""; // hub summary (plane/train/bus)
+  placeMetaEl.textContent = [top.type, eta, km].filter(Boolean).join(" · ") + w;
 
-  placeMetaEl.textContent = [typeLabel, eta, km].filter(Boolean).join(" · ") + w + extra;
+  // link su maps
+  mapsLinkEl.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(top.name)}`;
 
-  // maps: se ho coordinate uso quelle, altrimenti name
-  if (Number.isFinite(top.lat) && Number.isFinite(top.lng)) {
-    mapsLinkEl.href = `https://www.google.com/maps/search/?api=1&query=${top.lat},${top.lng}`;
-  } else {
-    mapsLinkEl.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(top.name || "")}`;
-  }
-
-  renderAlternatives(top, alternatives);
+  renderCTA(top, mode);
   renderWhy(top);
+  renderAlternatives(top, alternatives);
   renderRoute(top);
   renderPOI(top);
 
@@ -368,7 +359,7 @@ function renderResult(top, alternatives) {
       const next = lastPicks.alternatives[0];
       const rest = lastPicks.alternatives.slice(1);
       lastPicks = { top: next, alternatives: [top, ...rest].slice(0, 2) };
-      renderResult(lastPicks.top, lastPicks.alternatives);
+      renderResult(lastPicks.top, lastPicks.alternatives, mode);
       setStatus("Ok, nuova proposta 🎲", "ok");
     };
   }
@@ -380,13 +371,13 @@ function renderResult(top, alternatives) {
 async function run() {
   showResultBox(false);
 
-  const minutes   = Number($("timeSelect")?.value || 60);
-  const mode      = canonicalMode($("modeSelect")?.value || "car");
-  const style     = norm($("styleSelect")?.value || "known"); // known | gems
-  const category  = $("categorySelect")?.value || "citta_borghi";
+  const minutes = Number($("timeSelect")?.value || 60);
+  const mode    = norm($("modeSelect")?.value || "car");
+  const style   = norm($("styleSelect")?.value || "known");
+  const category = $("categorySelect")?.value || "citta_borghi";
 
   const visitedSet = getVisitedSet();
-  const weekSet    = getWeekPickSet();
+  const weekSet = getWeekPickSet();
 
   setStatus("Calcolo la meta migliore…");
   const origin = await getOrigin();
@@ -394,33 +385,27 @@ async function run() {
   const weather = await getWeather(origin.lat, origin.lon);
   lastWeatherLabel = weather.label || "";
 
-  // excludeIds = visited + picked this week (rotazione)
-  const excludeIds = [...new Set([...visitedSet, ...weekSet])];
-
-  setStatus("Sto scegliendo la meta migliore…");
-
-  const data = await fetchJamo({
+  // chiedi all'API la meta migliore (sempre)
+  const payload = {
     origin: { lat: origin.lat, lon: origin.lon, label: origin.label },
     minutes,
     mode,
     style,
     category,
-    excludeIds
-  });
+    visitedIds: [...visitedSet],
+    weekIds: [...weekSet]
+  };
 
-  if (!data?.ok || !data?.top) {
-    setStatus(data?.message || "Non trovo mete con questi filtri. Aumenta il tempo.", "err");
+  const resp = await fetchJamo(payload);
+
+  if (!resp?.ok || !resp?.top) {
+    setStatus("Nessuna meta trovata: prova ad aumentare i minuti o cambia categoria.", "err");
     return;
   }
 
-  const top = data.top;
-  const alternatives = Array.isArray(data.alternatives) ? data.alternatives : [];
-
-  // salva rotazione settimanale
-  if (top.id) addWeekPick(top.id);
-
-  lastPicks = { top, alternatives };
-  renderResult(top, alternatives);
+  addWeekPick(resp.top.id);
+  lastPicks = { top: resp.top, alternatives: resp.alternatives || [] };
+  renderResult(resp.top, resp.alternatives || [], norm(mode));
   setStatus("Meta trovata ✔", "ok");
 }
 
@@ -429,13 +414,9 @@ async function run() {
 ------------------------- */
 goBtn.onclick = async () => {
   goBtn.disabled = true;
-  try {
-    await run();
-  } catch (e) {
-    setStatus("Errore: " + (e?.message || String(e)), "err");
-  } finally {
-    goBtn.disabled = false;
-  }
+  try { await run(); }
+  catch (e) { setStatus("Errore: " + (e?.message || String(e)), "err"); }
+  finally { goBtn.disabled = false; }
 };
 
 gpsBtn.onclick = () => {
