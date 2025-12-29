@@ -18,11 +18,10 @@
       --muted:rgba(255,255,255,.68);
       --accent1:#2F7BFF;
       --accent2:#00D4FF;
-      --danger:#ff4d4d;
-      --ok:#20d18b;
       --radius:22px;
+      --ok:#20d18b;
+      --danger:#ff4d4d;
     }
-
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
@@ -39,7 +38,6 @@
       justify-content:center;
       align-items:flex-start;
     }
-
     .wrap{width:min(860px, 100%); padding: 16px 16px 28px;}
     .topbar{display:flex; align-items:center; justify-content:space-between; gap:12px; padding: 10px 4px 14px;}
     .brand{display:flex; align-items:center; gap:10px;}
@@ -56,7 +54,6 @@
       background: rgba(255,255,255,.04);
       padding:8px 10px; border-radius: 999px; white-space:nowrap;
     }
-
     .card{
       background: var(--card);
       border: 1px solid var(--stroke);
@@ -65,12 +62,9 @@
       box-shadow: 0 18px 70px rgba(0,0,0,.45);
       backdrop-filter: blur(12px);
     }
-
     .headline{margin: 0 0 6px; font-size: 18px; line-height:1.25; font-weight: 900;}
     .sub{margin: 0 0 14px; color: var(--muted); line-height:1.45; font-size: 14px;}
-
     .grid{display:grid; grid-template-columns: 1fr; gap: 12px;}
-
     .field{
       border:1px solid rgba(255,255,255,.10);
       background: rgba(0,0,0,.18);
@@ -84,9 +78,7 @@
       margin-bottom: 8px;
       letter-spacing:.2px;
     }
-
     .row{display:flex; gap:10px; flex-wrap:wrap;}
-
     select, input{
       width:100%;
       border:1px solid rgba(255,255,255,.12);
@@ -98,7 +90,6 @@
       font-size: 15px;
     }
     input::placeholder{color:rgba(255,255,255,.45)}
-
     .btn{
       width:100%;
       border:0;
@@ -112,7 +103,6 @@
       box-shadow: 0 16px 45px rgba(0,212,255,.22);
     }
     .btn:disabled{opacity:.55; cursor:not-allowed}
-
     .btn2{
       border:1px solid rgba(255,255,255,.14);
       background: rgba(255,255,255,.06);
@@ -124,7 +114,6 @@
       font-size: 13px;
       white-space:nowrap;
     }
-
     .status{
       margin-top: 12px;
       padding: 10px 12px;
@@ -137,7 +126,6 @@
     }
     .status.err{border-color: rgba(255,77,77,.35); color:#ffd1d1}
     .status.ok{border-color: rgba(32,209,139,.35); color:#c9ffe7}
-
     .result{
       margin-top: 14px;
       border-radius: 18px;
@@ -146,10 +134,8 @@
       padding: 14px;
     }
     .hidden{display:none}
-
     .place-title{margin:0 0 6px; font-size: 20px; font-weight: 950;}
     .meta{margin:0 0 10px; color: rgba(255,255,255,.70); font-size: 13px; line-height: 1.4;}
-
     .actions{display:flex; gap:10px; flex-wrap:wrap; margin-top: 10px;}
     .linkbtn{
       display:inline-flex;
@@ -164,7 +150,6 @@
       font-weight: 900;
       font-size: 13px;
     }
-
     .sectionTitle{
       margin: 14px 0 8px;
       font-size: 15px;
@@ -172,7 +157,6 @@
       color: rgba(255,255,255,.92);
       font-weight: 900;
     }
-
     .alt-item{
       padding: 10px 12px;
       border-radius: 14px;
@@ -183,7 +167,6 @@
     .alt-item .name{font-weight:900}
     .alt-item .small{color:rgba(255,255,255,.68); font-size:12px; margin-top:2px}
     .alt-item.clickable{cursor:pointer}
-
     .tiny{font-size: 12px; color: rgba(255,255,255,.60); margin-top: 8px; line-height:1.35;}
     .footer{margin-top: 14px; text-align:center; color: rgba(255,255,255,.55); font-size: 12px;}
     .footer a{color: rgba(255,255,255,.75); text-decoration: underline;}
@@ -197,19 +180,17 @@
         <div class="logo"></div>
         <h1>Jamo</h1>
       </div>
-      <div class="pill">v8 • Decide + spiega</div>
+      <div class="pill">v8 • Decide per te</div>
     </div>
 
     <main class="card">
       <p class="headline">“Andiamo da qualche parte?” → “Ok, ma dove?”</p>
       <p class="sub">
         Scegli <b>tempo</b>, <b>mezzo</b>, <b>stile</b> e <b>categoria</b>.
-        Jamo ti propone una meta <b>con alternative</b> e sotto trovi:
-        <b>perché te la consiglia</b>, <b>cosa vedere/fare</b> e <b>cosa mangiare</b>.
+        Jamo ti propone una meta + alternative e ti dice perché + cosa fare/mangiare.
       </p>
 
       <div class="grid">
-        <!-- PARTENZA -->
         <div class="field">
           <label>Partenza (opzionale)</label>
           <div class="row">
@@ -219,7 +200,6 @@
           <div class="tiny">Se inserisci un luogo userò quello. Se lasci vuoto uso il GPS.</div>
         </div>
 
-        <!-- FILTRI -->
         <div class="field">
           <label>Filtri</label>
           <div class="row">
@@ -257,7 +237,7 @@
             <div style="flex:1; min-width:220px">
               <select id="categorySelect">
                 <option value="citta_borghi" selected>Città + Borghi</option>
-                <option value="città">Solo Città</option>
+                <option value="citta">Solo Città</option>
                 <option value="borgo">Solo Borghi</option>
                 <option value="mare">Mare</option>
                 <option value="montagna">Montagna</option>
@@ -277,7 +257,6 @@
 
         <div id="status" class="status">Pronto. Premi “DOVE ANDIAMO?”</div>
 
-        <!-- RISULTATO -->
         <section id="result" class="result hidden">
           <div class="place-title" id="placeName"></div>
           <div class="meta" id="placeMeta"></div>
@@ -288,17 +267,15 @@
             <button class="btn2" id="rerollBtn" type="button">🔁 Cambia meta</button>
           </div>
 
+          <div class="sectionTitle">Perché te lo consiglio</div>
+          <div id="whyList"></div>
+
           <div class="sectionTitle">Alternative</div>
           <div id="altList"></div>
-
-          <!-- ✅ NEW: WHY -->
-          <div class="sectionTitle">Perché te la consiglio</div>
-          <div id="whyList"></div>
 
           <div class="sectionTitle">Cosa vedere / fare</div>
           <div id="poiList"></div>
 
-          <!-- ✅ NEW: EAT -->
           <div class="sectionTitle">Cosa mangiare</div>
           <div id="eatList"></div>
         </section>
