@@ -1,0 +1,38 @@
+name: Build places index (EU+UK)
+
+on:
+  workflow_dispatch: {}
+  push:
+    paths:
+      - "scripts/**"
+      - ".github/workflows/build-places-index.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Build index
+        run: node scripts/build_places_index_eu_uk.mjs
+
+      - name: Commit generated file
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/data/places_index_eu_uk.json
+          if git diff --cached --quiet; then
+            echo "No changes"
+          else
+            git commit -m "chore: build EU+UK places index"
+            git push
+          fi
