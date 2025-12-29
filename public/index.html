@@ -21,6 +21,14 @@
       --danger:#ff4d4d;
       --ok:#20d18b;
       --radius:22px;
+
+      /* nuovi */
+      --glow: rgba(0,212,255,.18);
+      --chip: rgba(255,255,255,.08);
+      --chipStroke: rgba(255,255,255,.12);
+      --warm: rgba(255, 200, 0, .14);
+      --green: rgba(32, 209, 139, .16);
+      --pink: rgba(255, 73, 173, .14);
     }
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -114,6 +122,7 @@
       font-size: 13px;
       white-space:nowrap;
     }
+
     .status{
       margin-top: 12px;
       padding: 10px 12px;
@@ -126,6 +135,7 @@
     }
     .status.err{border-color: rgba(255,77,77,.35); color:#ffd1d1}
     .status.ok{border-color: rgba(32,209,139,.35); color:#c9ffe7}
+
     .result{
       margin-top: 14px;
       border-radius: 18px;
@@ -134,8 +144,10 @@
       padding: 14px;
     }
     .hidden{display:none}
+
     .place-title{margin:0 0 6px; font-size: 20px; font-weight: 950;}
     .meta{margin:0 0 10px; color: rgba(255,255,255,.70); font-size: 13px; line-height: 1.4;}
+
     .actions{display:flex; gap:10px; flex-wrap:wrap; margin-top: 10px;}
     .linkbtn{
       display:inline-flex;
@@ -150,6 +162,7 @@
       font-weight: 900;
       font-size: 13px;
     }
+
     .sectionTitle{
       margin: 14px 0 8px;
       font-size: 15px;
@@ -157,6 +170,8 @@
       color: rgba(255,255,255,.92);
       font-weight: 900;
     }
+
+    /* ===== NUOVO: card differenziate ===== */
     .alt-item{
       padding: 10px 12px;
       border-radius: 14px;
@@ -167,6 +182,94 @@
     .alt-item .name{font-weight:900}
     .alt-item .small{color:rgba(255,255,255,.68); font-size:12px; margin-top:2px}
     .alt-item.clickable{cursor:pointer}
+
+    .why-card{
+      border:1px solid rgba(0,212,255,.20);
+      background: linear-gradient(180deg, rgba(0,212,255,.10), rgba(255,255,255,.03));
+      box-shadow: 0 18px 55px rgba(0,212,255,.08);
+    }
+    .why-card .badge{
+      display:inline-flex; align-items:center; gap:6px;
+      padding:6px 10px; border-radius:999px;
+      background: rgba(0,0,0,.22);
+      border:1px solid rgba(255,255,255,.10);
+      font-size:12px; color:rgba(255,255,255,.86);
+      margin-bottom: 6px;
+    }
+    .why-card .badge b{color:#fff}
+
+    .route-step{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.20);
+      position: relative;
+      padding-left: 14px;
+    }
+    .route-step:before{
+      content:"";
+      position:absolute;
+      left:10px; top:12px; bottom:12px;
+      width:2px;
+      background: rgba(255,255,255,.10);
+      border-radius:99px;
+    }
+    .route-step .dot{
+      width:10px; height:10px; border-radius:99px;
+      background: linear-gradient(135deg, var(--accent1), var(--accent2));
+      box-shadow: 0 0 0 4px rgba(0,212,255,.10);
+      position:absolute;
+      left:6px; top:18px;
+    }
+    .route-step .name{padding-left: 14px;}
+    .route-step .small{padding-left: 14px;}
+
+    .poi-grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    @media (min-width: 640px){
+      .poi-grid{grid-template-columns: 1fr 1fr;}
+    }
+    .poi-box{
+      border-radius: 16px;
+      padding: 12px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+    }
+    .poi-box h3{
+      margin:0 0 8px;
+      font-size: 13px;
+      letter-spacing:.2px;
+      color: rgba(255,255,255,.90);
+      font-weight: 950;
+      display:flex; align-items:center; gap:8px;
+    }
+    .poi-box--do{background: linear-gradient(180deg, rgba(32,209,139,.10), rgba(255,255,255,.03)); border-color: rgba(32,209,139,.18);}
+    .poi-box--eat{background: linear-gradient(180deg, rgba(255,73,173,.10), rgba(255,255,255,.03)); border-color: rgba(255,73,173,.18);}
+
+    .chip{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:7px 10px;
+      border-radius: 999px;
+      background: var(--chip);
+      border:1px solid var(--chipStroke);
+      color: rgba(255,255,255,.88);
+      font-weight: 900;
+      font-size: 12px;
+      text-decoration:none;
+      white-space:nowrap;
+    }
+    .chip.primary{
+      background: linear-gradient(90deg, rgba(47,123,255,.95), rgba(0,212,255,.95));
+      color:#04101c;
+      border:0;
+      box-shadow: 0 12px 35px var(--glow);
+    }
+    .monetize{
+      display:flex; gap:10px; flex-wrap:wrap;
+      margin-top: 8px;
+    }
+
     .tiny{font-size: 12px; color: rgba(255,255,255,.60); margin-top: 8px; line-height:1.35;}
     .footer{margin-top: 14px; text-align:center; color: rgba(255,255,255,.55); font-size: 12px;}
     .footer a{color: rgba(255,255,255,.75); text-decoration: underline;}
@@ -180,7 +283,7 @@
         <div class="logo"></div>
         <h1>Jamo</h1>
       </div>
-      <div class="pill">v8 • Vicino davvero</div>
+      <div class="pill">v9 • Consigli che risaltano</div>
     </div>
 
     <main class="card">
@@ -265,6 +368,14 @@
             <a class="linkbtn" id="mapsLink" href="#" target="_blank" rel="noopener">Apri su Google Maps</a>
             <button class="btn2" id="visitedBtn" type="button">✅ Già visitato</button>
             <button class="btn2" id="rerollBtn" type="button">🔁 Cambia meta</button>
+          </div>
+
+          <!-- CTA monetizzazione (risalta) -->
+          <div class="sectionTitle">Link utili</div>
+          <div class="monetize">
+            <a class="chip primary" id="ctaTickets" href="#" target="_blank" rel="noopener">🎟️ Biglietti / Trasporti</a>
+            <a class="chip" id="ctaHotels" href="#" target="_blank" rel="noopener">🏨 Hotel</a>
+            <a class="chip" id="ctaCar" href="#" target="_blank" rel="noopener">🚗 Noleggio auto</a>
           </div>
 
           <div class="sectionTitle">Perché te lo consiglio</div>
