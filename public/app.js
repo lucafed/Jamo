@@ -1,18 +1,15 @@
 /* =========================
-   JAMO — public/app.js (v6 STABILE)
-   - Funziona da ovunque (GPS o input)
-   - Non va mai a 0 se esistono mete compatibili
-   - Auto/Walk/Bike: curated + stima
-   - Plane/Train/Bus: /api/plan (robusto contro errori non-JSON)
-   - Stile: conosciuti/chicche
-   - Categoria: città, borgo, mare, montagna, natura, relax, bambini (+ città_borghi)
-   - Anti-repeat: soft (daily/visited) con fallback automatico
+   JAMO — app.js (v6 FIX)
+   - FIX: città vs citta (accenti), categoria combo
+   - Auto/Walk/Bike: curated + fallback "nearest" se filtri troppo stretti
+   - Plane/Train/Bus: /api/plan robust + error handling (HTML/JSON)
+   - Alternative: cerca di mostrarne sempre 2
    ========================= */
 
 const API = {
   geocode: "/api/geocode",
   plan: "/api/plan",
-  places: "/api/places" // opzionale, non obbligatorio
+  places: "/api/places" // opzionale
 };
 
 const CURATED_URL = "/data/curated.json";
@@ -33,16 +30,14 @@ const gpsBtn      = $("gpsBtn");
 const rerollBtn   = $("rerollBtn");
 const visitedBtn  = $("visitedBtn");
 
-// storage
 const LS_VISITED_KEY = "jamo_visited_v1";
 const LS_DAILY_KEY   = "jamo_daily_reco_v1";
 
-// state
 let lastPicks = { top: null, alternatives: [] };
 let lastWeatherLabel = "";
 
 /* -------------------------
-   Helpers
+   Utils
 ------------------------- */
 function setStatus(msg, type = "") {
   if (!statusEl) return;
@@ -61,19 +56,14 @@ function escapeHtml(s) {
   }[c]));
 }
 
+// ✅ normalizza: lower + rimuove accenti + trim
 function norm(s) {
   return String(s ?? "")
     .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // toglie accenti
     .trim();
 }
 
-function clamp(n,a,b){ return Math.max(a, Math.min(b,n)); }
-
-/* -------------------------
-   Storage: visited + daily
-------------------------- */
 function todayKey() {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
@@ -117,16 +107,17 @@ function addDailyReco(id) {
   } catch {}
 }
 
-// reset rapido se vuoi: /?reset=1
-(function maybeReset() {
+/* -------------------------
+   Reset via URL ?reset=1
+------------------------- */
+(function handleReset() {
   try {
     const u = new URL(location.href);
     if (u.searchParams.get("reset") === "1") {
       localStorage.removeItem(LS_VISITED_KEY);
       localStorage.removeItem(LS_DAILY_KEY);
       u.searchParams.delete("reset");
-      history.replaceState({}, "", u.toString());
-      setStatus("Reset completato ✅ (visited/daily svuotati)", "ok");
+      history.replaceState({}, "", u.pathname + (u.search ? u.search : ""));
     }
   } catch {}
 })();
@@ -159,26 +150,25 @@ async function getOrigin() {
 }
 
 /* -------------------------
-   Meteo: Open-Meteo (solo info)
+   Meteo (non blocca)
 ------------------------- */
 async function getWeather(lat, lon) {
   const url =
     `https://api.open-meteo.com/v1/forecast?latitude=${encodeURIComponent(lat)}` +
     `&longitude=${encodeURIComponent(lon)}` +
     `&daily=weathercode,precipitation_probability_max&forecast_days=1&timezone=auto`;
-
   try {
     const r = await fetch(url);
-    if (!r.ok) return { cls: "cloudy", label: "nuvoloso" };
+    if (!r.ok) return { label: "" };
     const d = await r.json();
     const code = d?.daily?.weathercode?.[0];
     const pop = d?.daily?.precipitation_probability_max?.[0];
-    if (Number.isFinite(pop) && pop >= 55) return { cls: "rain", label: "pioggia" };
-    if (Number.isFinite(code) && code >= 51) return { cls: "rain", label: "pioggia" };
-    if (Number.isFinite(code) && code <= 2) return { cls: "sunny", label: "sole" };
-    return { cls: "cloudy", label: "nuvoloso" };
+    if (Number.isFinite(pop) && pop >= 55) return { label: "pioggia" };
+    if (Number.isFinite(code) && code >= 51) return { label: "pioggia" };
+    if (Number.isFinite(code) && code <= 2) return { label: "sole" };
+    return { label: "nuvoloso" };
   } catch {
-    return { cls: "cloudy", label: "nuvoloso" };
+    return { label: "" };
   }
 }
 
@@ -186,29 +176,27 @@ async function getWeather(lat, lon) {
    Curated load
 ------------------------- */
 async function loadCurated() {
-  try {
-    const r = await fetch(CURATED_URL, { cache: "no-store" });
-    if (!r.ok) return [];
-    const d = await r.json();
-    const items = Array.isArray(d?.places) ? d.places : [];
-    return items
-      .map(x => ({
-        id: x.id,
-        name: x.name,
-        country: x.country,
-        type: norm(x.type || ""),                     // citta/borgo/mare/montagna/natura/relax/bambini
-        visibility: norm(x.visibility || ""),          // conosciuta/chicca
-        lat: Number(x.lat),
-        lng: Number(x.lng),
-        tags: Array.isArray(x.tags) ? x.tags : [],
-        what_to_do: Array.isArray(x.what_to_do) ? x.what_to_do : []
-      }))
-      .filter(p => p.id && p.name && Number.isFinite(p.lat) && Number.isFinite(p.lng));
-  } catch { return []; }
+  const r = await fetch(CURATED_URL, { cache: "no-store" });
+  if (!r.ok) return [];
+  const d = await r.json();
+  const items = Array.isArray(d?.places) ? d.places : [];
+  return items
+    .map(x => ({
+      id: x.id,
+      name: x.name,
+      country: x.country,
+      type: norm(x.type),              // ✅ normalizzato
+      visibility: norm(x.visibility),  // ✅ normalizzato
+      lat: Number(x.lat),
+      lng: Number(x.lng),
+      tags: Array.isArray(x.tags) ? x.tags : [],
+      what_to_do: Array.isArray(x.what_to_do) ? x.what_to_do : []
+    }))
+    .filter(p => p.id && p.name && Number.isFinite(p.lat) && Number.isFinite(p.lng));
 }
 
 /* -------------------------
-   Distance & time estimate
+   Distance & time estimate (auto-like)
 ------------------------- */
 function toRad(x){ return x * Math.PI / 180; }
 function haversineKm(lat1, lon1, lat2, lon2) {
@@ -234,30 +222,48 @@ function estimateAutoLike(origin, lat, lng, mode) {
 }
 
 /* -------------------------
-   Scoring
-   - timeFit: premia vicino al target, ma NON elimina tutto (soft)
-   - styleFit: conosciuta vs chicca
+   Category matching (FIX)
 ------------------------- */
+function allowedTypesFromCategory(categoryRaw) {
+  const c = norm(categoryRaw);
+  if (c === "citta_borghi") return ["citta", "borgo"]; // ✅ combo
+  if (c === "citta" || c === "citta ") return ["citta"];
+  return [c]; // mare, montagna, natura, relax, bambini, borgo, ...
+}
+
+function typeMatches(placeType, allowedTypes) {
+  const t = norm(placeType);
+  return allowedTypes.includes(t);
+}
+
+/* -------------------------
+   Style scoring
+------------------------- */
+function clamp(n,a,b){ return Math.max(a, Math.min(b,n)); }
 function timeFit(etaMin, targetMin) {
-  // tolleranza: da 0.45x a 1.20x (morbida, così “da ovunque” trovi qualcosa)
-  const minOk = Math.max(12, targetMin * 0.45);
-  const maxOk = targetMin * 1.20;
+  // finestra “buona”
+  const minOk = Math.max(10, targetMin * 0.30);
+  const maxOk = targetMin * 1.15;
   if (etaMin < minOk || etaMin > maxOk) return 0;
   const diff = Math.abs(etaMin - targetMin);
-  const normv = clamp(1 - (diff / (targetMin * 0.75)), 0, 1);
-  return 0.55 + normv * 0.45;
+  const normV = clamp(1 - (diff / (targetMin * 0.70)), 0, 1);
+  return 0.55 + normV * 0.45;
 }
 
 function styleFit(visibility, style) {
-  // style: known | gems
-  if (style === "known") return visibility === "conosciuta" ? 1.0 : 0.65;
-  return visibility === "chicca" ? 1.0 : 0.65;
+  const v = norm(visibility);
+  if (style === "known") return v === "conosciuta" ? 1.0 : 0.70;
+  return v === "chicca" ? 1.0 : 0.70;
 }
 
-function finalScore(p, targetMin, style) {
+function finalScore(p, targetMin, style, dailySet, visitedSet) {
+  if (visitedSet.has(p.id)) return -999;
+  if (dailySet.has(p.id)) return -999;
   const a = timeFit(p.eta_min, targetMin);
   const b = styleFit(p.visibility, style);
-  return (0.65 * a) + (0.35 * b);
+  // un filo di bias verso “più vicino” quando a parità
+  const nearBonus = clamp(1 - (p.eta_min / (targetMin * 1.3)), 0, 1) * 0.10;
+  return (0.58 * a) + (0.42 * b) + nearBonus;
 }
 
 /* -------------------------
@@ -270,20 +276,22 @@ async function fetchPlan({ origin, maxMinutes, mode }) {
     body: JSON.stringify({ origin, maxMinutes, mode, limit: 10 })
   });
 
-  // robusto: se la risposta non è JSON (es. html) non crashiamo
-  let data = null;
   const text = await r.text().catch(() => "");
-  try { data = JSON.parse(text); } catch { data = null; }
-
-  if (!r.ok || !data || data.ok === false) {
-    const msg = data?.error || text || `PLAN error ${r.status}`;
-    throw new Error(String(msg).slice(0, 200));
+  if (!r.ok) {
+    // può essere HTML di Vercel
+    throw new Error(`PLAN error ${r.status}: ${text.slice(0, 160)}`);
   }
-  return data;
+
+  // prova a parse JSON, altrimenti errore leggibile
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw new Error(`PLAN risposta non JSON: ${text.slice(0, 120)}`);
+  }
 }
 
 /* -------------------------
-   POI render (solo curated)
+   POI render
 ------------------------- */
 async function renderPOI(place) {
   if (!poiListEl) return;
@@ -299,6 +307,7 @@ async function renderPOI(place) {
     return;
   }
 
+  // fallback opzionale
   const div = document.createElement("div");
   div.className = "alt-item";
   div.innerHTML = `<div class="name">Consigli in arrivo…</div><div class="small">Aggiungeremo cosa fare/mangiare.</div>`;
@@ -319,14 +328,13 @@ function renderResult(top, alternatives) {
   const extra = top.hubSummary ? ` · ${top.hubSummary}` : "";
 
   placeMetaEl.textContent = [eta, km].filter(Boolean).join(" · ") + w + extra;
-
   mapsLinkEl.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(top.name)}`;
 
   altListEl.innerHTML = "";
   if (!alternatives.length) {
     const div = document.createElement("div");
     div.className = "alt-item";
-    div.innerHTML = `<div class="name">Nessuna alternativa</div>`;
+    div.innerHTML = `<div class="name">Nessuna alternativa (per ora)</div>`;
     altListEl.appendChild(div);
   } else {
     alternatives.slice(0, 2).forEach((a) => {
@@ -334,7 +342,7 @@ function renderResult(top, alternatives) {
       div.className = "alt-item clickable";
       div.innerHTML = `
         <div class="name">${escapeHtml(a.name)}</div>
-        <div class="small">${Number.isFinite(a.eta_min) ? Math.round(a.eta_min) + " min" : ""}${a.hubSummary ? ` · ${escapeHtml(a.hubSummary)}` : ""}</div>
+        <div class="small">${Math.round(a.eta_min || 0)} min${a.hubSummary ? ` · ${escapeHtml(a.hubSummary)}` : ""}</div>
       `;
       div.onclick = () => {
         const newTop = a;
@@ -348,81 +356,22 @@ function renderResult(top, alternatives) {
     });
   }
 
-  if (visitedBtn) {
-    visitedBtn.onclick = () => {
-      if (top.id) markVisited(top.id);
-      setStatus("Segnato come già visitato ✅", "ok");
-    };
-  }
+  visitedBtn.onclick = () => {
+    if (top.id) markVisited(top.id);
+    setStatus("Segnato come già visitato ✅", "ok");
+  };
 
-  if (rerollBtn) {
-    rerollBtn.onclick = () => {
-      if (!lastPicks?.alternatives?.length) return;
-      const next = lastPicks.alternatives[0];
-      const rest = lastPicks.alternatives.slice(1);
-      lastPicks = { top: next, alternatives: [top, ...rest].slice(0, 2) };
-      renderResult(lastPicks.top, lastPicks.alternatives);
-      renderPOI(lastPicks.top);
-      setStatus("Ok, nuova proposta 🎲", "ok");
-    };
-  }
+  rerollBtn.onclick = () => {
+    if (!lastPicks?.alternatives?.length) return;
+    const next = lastPicks.alternatives[0];
+    const rest = lastPicks.alternatives.slice(1);
+    lastPicks = { top: next, alternatives: [top, ...rest].slice(0, 2) };
+    renderResult(lastPicks.top, lastPicks.alternatives);
+    renderPOI(lastPicks.top);
+    setStatus("Ok, nuova proposta 🎲", "ok");
+  };
 
   renderPOI(top);
-}
-
-/* -------------------------
-   Candidate building (AUTO/WALK/BIKE)
-   - Rispetta tempo indicato (soft window)
-   - Se non trova: amplia finestra
-   - Anti-repeat soft: prova senza visited/daily, poi con
-------------------------- */
-function pickCandidatesAuto(curated, origin, mode, minutes, style, category, visitedSet, dailySet) {
-  // categoria:
-  // - "citta_borghi" => accetta citta e borgo
-  // - altrimenti match esatto
-  const cat = norm(category);
-  const allowedTypes = (cat === "citta_borghi")
-    ? new Set(["citta", "città", "borgo"])
-    : new Set([cat]);
-
-  const all = curated
-    .filter(p => allowedTypes.has(norm(p.type)))
-    .map(p => ({ ...p, ...estimateAutoLike(origin, p.lat, p.lng, mode) }))
-    .filter(p => Number.isFinite(p.eta_min));
-
-  // finestra tempo: prima stretta, poi morbida
-  const windows = [
-    { min: Math.max(10, minutes * 0.55), max: minutes * 1.15 },
-    { min: Math.max(10, minutes * 0.35), max: minutes * 1.35 },
-    { min: 0, max: minutes * 2.2 } // fallback "da ovunque"
-  ];
-
-  for (const w of windows) {
-    const inTime = all.filter(p => p.eta_min >= w.min && p.eta_min <= w.max);
-
-    // 1) prova senza visited/daily
-    let usable = inTime.filter(p => !visitedSet.has(p.id) && !dailySet.has(p.id));
-    usable.forEach(p => p._score = finalScore(p, minutes, style));
-    usable = usable.sort((a,b)=>b._score - a._score);
-
-    if (usable.length >= 1) return { chosen: usable, debug: { window: w, stage: "no_repeat", inTime: inTime.length } };
-
-    // 2) fallback: consenti daily (ma non visited)
-    usable = inTime.filter(p => !visitedSet.has(p.id));
-    usable.forEach(p => p._score = finalScore(p, minutes, style));
-    usable = usable.sort((a,b)=>b._score - a._score);
-
-    if (usable.length >= 1) return { chosen: usable, debug: { window: w, stage: "allow_daily", inTime: inTime.length } };
-
-    // 3) fallback: consenti tutto (anche visited) — ultimo livello
-    usable = inTime.slice();
-    usable.forEach(p => p._score = finalScore(p, minutes, style));
-    usable = usable.sort((a,b)=>b._score - a._score);
-
-    if (usable.length >= 1) return { chosen: usable, debug: { window: w, stage: "allow_all", inTime: inTime.length } };
-  }
-
-  return { chosen: [], debug: { stage: "none", total: all.length } };
 }
 
 /* -------------------------
@@ -432,9 +381,10 @@ async function run() {
   showResultBox(false);
 
   const minutes   = Number($("timeSelect")?.value || 60);
-  const mode      = ($("modeSelect")?.value || "car").toLowerCase();
-  const style     = ($("styleSelect")?.value || "known").toLowerCase();
-  const category  = ($("categorySelect")?.value || "città");
+  const mode      = norm($("modeSelect")?.value || "car");
+  const style     = norm($("styleSelect")?.value || "known");
+  const categoryRaw  = $("categorySelect")?.value || "citta_borghi";
+  const allowedTypes = allowedTypesFromCategory(categoryRaw);
 
   const visitedSet = getVisitedSet();
   const dailySet   = getDailyRecoSet();
@@ -442,7 +392,6 @@ async function run() {
   setStatus("Calcolo la meta migliore…");
   const origin = await getOrigin();
 
-  setStatus("Controllo il meteo…");
   const weather = await getWeather(origin.lat, origin.lon);
   lastWeatherLabel = weather.label || "";
 
@@ -462,9 +411,11 @@ async function run() {
       return;
     }
 
+    // per ora NON filtriamo per categoria (non abbiamo tipo mare/citta sui destinations),
+    // meglio dare sempre qualcosa.
     const candidates = results.map((r) => {
       const dest = r.destination;
-      const id = dest.id || `${dest.name}_${dest.country}`.toLowerCase().replace(/\s+/g,"_");
+      const id = dest.id || `${dest.name}_${dest.country}`.toLowerCase().replace(/[^a-z0-9]+/g,"_");
       return {
         id,
         name: `${dest.name}${dest.country ? `, ${dest.country}` : ""}`,
@@ -472,16 +423,20 @@ async function run() {
         lng: dest.lon,
         eta_min: r.totalMinutes,
         distance_km: null,
-        hubSummary: `${r.originHub?.code || r.originHub?.name || "HUB"} → ${r.destinationHub?.code || r.destinationHub?.name || "HUB"}`,
+        hubSummary: `${r.originHub?.code || r.originHub?.name} → ${r.destinationHub?.code || r.destinationHub?.name}`,
         what_to_do: [],
         source: "plan"
       };
     });
 
-    const top = candidates[0];
-    const alternatives = candidates.slice(1, 3);
-    addDailyReco(top.id);
+    // filtra visited/daily e mantieni alternative
+    const filtered = candidates.filter(c => !visitedSet.has(c.id) && !dailySet.has(c.id));
+    const list = filtered.length ? filtered : candidates; // se hai bloccato tutto, almeno mostra
 
+    const top = list[0];
+    const alternatives = list.slice(1, 3);
+
+    addDailyReco(top.id);
     lastPicks = { top, alternatives };
     renderResult(top, alternatives);
     setStatus("Meta trovata ✔", "ok");
@@ -492,31 +447,54 @@ async function run() {
   setStatus("Cerco tra le mete…");
   const curated = await loadCurated();
 
-  const { chosen, debug } = pickCandidatesAuto(
-    curated, origin, mode, minutes, style, category, visitedSet, dailySet
-  );
+  // (1) categoria (con fix accenti)
+  let candidates = curated
+    .filter(p => typeMatches(p.type, allowedTypes))
+    .map(p => ({ ...p, ...estimateAutoLike(origin, p.lat, p.lng, mode) }));
 
-  if (!chosen.length) {
-    // debug leggibile
-    const types = [...new Set(curated.map(p => norm(p.type)).filter(Boolean))].sort();
+  // (2) prima prova: finestra “buona”
+  const maxMin = minutes * 1.15;
+  const minMin = Math.max(10, minutes * 0.30);
+  let windowed = candidates.filter(p => p.eta_min <= maxMin && p.eta_min >= minMin);
+
+  // (3) se vuoto → RELAX: prendi le più vicine entro un max “grande”
+  if (!windowed.length) {
+    const relaxedMax = Math.max(minutes * 2.0, minutes + 60); // così “vicino” trova quasi sempre qualcosa
+    windowed = candidates
+      .filter(p => p.eta_min <= relaxedMax)
+      .sort((a,b) => a.eta_min - b.eta_min)
+      .slice(0, 40);
+  }
+
+  // (4) score (filtra daily/visited)
+  windowed.forEach(p => p._score = finalScore(p, minutes, style, dailySet, visitedSet));
+  let scored = windowed.filter(p => p._score > -100).sort((a,b)=>b._score - a._score);
+
+  // (5) se ancora vuoto → ignora daily (ma rispetta visited)
+  if (!scored.length) {
+    scored = windowed
+      .filter(p => !visitedSet.has(p.id))
+      .sort((a,b)=>a.eta_min - b.eta_min);
+  }
+
+  if (!scored.length) {
+    const typesAvail = [...new Set(curated.map(p => p.type))].sort().join(", ");
     setStatus(
       "Non trovo mete con questi filtri.\n" +
-      `• Categoria richiesta: ${norm(category)}\n` +
-      `• Tipi nel JSON: ${types.join(", ")}\n` +
-      `• Mete caricate: ${curated.length}\n` +
-      `• Debug: ${JSON.stringify(debug)}\n` +
-      "Suggerimento: aumenta il tempo o cambia categoria. Tip: /?reset=1",
+      `• Categoria: ${allowedTypes.join("+")}\n` +
+      `• Tipi disponibili nel JSON: ${typesAvail}\n` +
+      "Prova ad aumentare il tempo o cambia categoria.\n" +
+      "Tip: apri /?reset=1 se hai segnato troppe mete come visitate.",
       "err"
     );
     return;
   }
 
-  const top = chosen[0];
-  const alternatives = chosen.slice(1, 3);
+  const top = scored[0];
+  const alternatives = scored.slice(1, 3);
 
   addDailyReco(top.id);
   lastPicks = { top, alternatives };
-
   renderResult(top, alternatives);
   setStatus("Meta trovata ✔", "ok");
 }
