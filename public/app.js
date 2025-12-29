@@ -1,8 +1,9 @@
 /* =========================
-   JAMO — public/app.js (v4 STABILE FIX)
+   JAMO — public/app.js (v4 STABILE FIX COMPLETO)
    - Auto/Walk/Bike: curated (public/data/curated.json)
-   - Plane/Train/Bus: /api/plan
+   - Plane/Train/Bus: /api/plan (hub reali + tempi coerenti)
    - Categoria: separata + mapping (montagna+natura)
+   - Normalizzazione accenti: città == citta
    - Stile: known/gems
    - Meteo: Open-Meteo (gratis)
    - Visited + daily anti-repeat
@@ -42,7 +43,7 @@ let lastPicks = { top: null, alternatives: [] };
 let lastWeatherLabel = "";
 
 /* -------------------------
-   Small utils
+   Utils (UI + normalize)
 ------------------------- */
 function setStatus(msg, type = "") {
   if (!statusEl) return;
@@ -58,23 +59,22 @@ function escapeHtml(s) {
     "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
   }[c]));
 }
-function norm(s){
+function normalizeText(s) {
   return String(s ?? "")
     .toLowerCase()
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[\u0300-\u036f]/g, "") // rimuove accenti
     .trim();
 }
 
 /* -------------------------
-   Category mapping (per il tuo curated.json)
-   - UI "montagna" deve includere anche "natura"
+   Category mapping
+   - UI "montagna" include anche "natura"
+   - tutto il resto è 1:1
 ------------------------- */
-function allowedTypesForCategory(categoryRaw) {
-  const c = norm(categoryRaw);
+function allowedTypesForCategory(categoryValue) {
+  const c = normalizeText(categoryValue);
   if (c === "montagna") return new Set(["montagna", "natura"]);
-  if (c === "natura") return new Set(["natura"]); // (se un domani la metti separata)
-  // tutto il resto è 1:1 (citta/città gestito da norm)
   return new Set([c]);
 }
 
@@ -85,7 +85,6 @@ function todayKey() {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
 }
-
 function getVisitedSet() {
   try {
     const raw = localStorage.getItem(LS_VISITED_KEY);
@@ -93,7 +92,6 @@ function getVisitedSet() {
     return new Set(Array.isArray(arr) ? arr : []);
   } catch { return new Set(); }
 }
-
 function markVisited(id) {
   try {
     const set = getVisitedSet();
@@ -101,7 +99,6 @@ function markVisited(id) {
     localStorage.setItem(LS_VISITED_KEY, JSON.stringify([...set]));
   } catch {}
 }
-
 function getDailyRecoSet() {
   try {
     const raw = localStorage.getItem(LS_DAILY_KEY);
@@ -111,7 +108,6 @@ function getDailyRecoSet() {
     return new Set(arr);
   } catch { return new Set(); }
 }
-
 function addDailyReco(id) {
   try {
     const raw = localStorage.getItem(LS_DAILY_KEY);
@@ -179,29 +175,23 @@ async function getWeather(lat, lon) {
    Curated load (auto/walk/bike)
 ------------------------- */
 async function loadCurated() {
-  try {
-    const r = await fetch(CURATED_URL, { cache: "no-store" });
-    if (!r.ok) {
-      throw new Error(`Curated non trovato: ${CURATED_URL} (HTTP ${r.status})`);
-    }
-    const d = await r.json();
-    const items = Array.isArray(d?.places) ? d.places : [];
-    return items
-      .map(x => ({
-        id: x.id,
-        name: x.name,
-        country: x.country,
-        type: x.type,
-        visibility: x.visibility,
-        lat: Number(x.lat),
-        lng: Number(x.lng),
-        tags: Array.isArray(x.tags) ? x.tags : [],
-        what_to_do: Array.isArray(x.what_to_do) ? x.what_to_do : []
-      }))
-      .filter(p => p.id && p.name && Number.isFinite(p.lat) && Number.isFinite(p.lng) && p.type);
-  } catch (e) {
-    throw new Error(`Errore caricamento mete curate: ${e?.message || e}`);
-  }
+  const r = await fetch(CURATED_URL, { cache: "no-store" });
+  if (!r.ok) throw new Error(`Curated non trovato: ${CURATED_URL} (HTTP ${r.status})`);
+  const d = await r.json();
+  const items = Array.isArray(d?.places) ? d.places : [];
+  return items
+    .map(x => ({
+      id: x.id,
+      name: x.name,
+      country: x.country,
+      type: x.type,
+      visibility: x.visibility,
+      lat: Number(x.lat),
+      lng: Number(x.lng),
+      tags: Array.isArray(x.tags) ? x.tags : [],
+      what_to_do: Array.isArray(x.what_to_do) ? x.what_to_do : []
+    }))
+    .filter(p => p.id && p.name && p.type && Number.isFinite(p.lat) && Number.isFinite(p.lng));
 }
 
 /* -------------------------
@@ -233,15 +223,15 @@ function estimateAutoLike(origin, lat, lng, mode) {
 ------------------------- */
 function clamp(n,a,b){ return Math.max(a, Math.min(b,n)); }
 function timeFit(etaMin, targetMin) {
-  const minOk = 0; // ✅ non scartiamo mete vicine
-  const maxOk = targetMin * 1.15;
+  const minOk = 0;                 // ✅ non scartiamo mete vicine
+  const maxOk = targetMin * 1.15;  // ✅ finestra leggermente più larga
   if (etaMin < minOk || etaMin > maxOk) return 0;
   const diff = Math.abs(etaMin - targetMin);
   const normv = clamp(1 - (diff / (targetMin * 0.65)), 0, 1);
   return 0.55 + normv * 0.45;
 }
 function styleFit(visibility, style) {
-  const v = norm(visibility);
+  const v = normalizeText(visibility);
   if (style === "known") return v === "conosciuta" ? 1.0 : 0.55;
   return v === "chicca" ? 1.0 : 0.55;
 }
@@ -323,7 +313,6 @@ function renderResult(top, alternatives) {
   const extra = top.hubSummary ? ` · ${top.hubSummary}` : "";
 
   placeMetaEl.textContent = [eta, km].filter(Boolean).join(" · ") + w + extra;
-
   mapsLinkEl.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(top.name)}`;
 
   altListEl.innerHTML = "";
@@ -380,12 +369,12 @@ function renderResult(top, alternatives) {
 async function run() {
   showResultBox(false);
 
-  const minutes   = Number($("timeSelect")?.value || 60);
-  const mode      = norm($("modeSelect")?.value || "car");
-  const style     = norm($("styleSelect")?.value || "known");
-  const categoryRaw = $("categorySelect")?.value || "città";
+  const minutes     = Number($("timeSelect")?.value || 60);
+  const mode        = normalizeText($("modeSelect")?.value || "car");
+  const style       = normalizeText($("styleSelect")?.value || "known");
+  const categoryVal = $("categorySelect")?.value || "città";
 
-  const allowedTypes = allowedTypesForCategory(categoryRaw);
+  const allowedTypes = allowedTypesForCategory(categoryVal);
 
   const visitedSet = getVisitedSet();
   const dailySet   = getDailyRecoSet();
@@ -443,12 +432,11 @@ async function run() {
   setStatus("Cerco tra le mete curate…");
   const curated = await loadCurated();
 
-  // filtro categorie (robusto)
   let candidates = curated
-    .filter(p => allowedTypes.has(norm(p.type)))
+    .filter(p => allowedTypes.has(normalizeText(p.type)))
     .map(p => ({ ...p, ...estimateAutoLike(origin, p.lat, p.lng, mode) }));
 
-  // filtro tempo (più permissivo)
+  // filtro tempo: solo massimo, minimo 0
   const maxMin = minutes * 1.15;
   candidates = candidates.filter(p => p.eta_min <= maxMin);
 
@@ -456,10 +444,10 @@ async function run() {
   candidates = candidates.filter(p => p._score > -100).sort((a,b)=>b._score - a._score);
 
   if (!candidates.length) {
-    const typesInData = [...new Set(curated.map(p => norm(p.type)))].sort().join(", ");
+    const typesInData = [...new Set(curated.map(p => normalizeText(p.type)))].sort().join(", ");
     setStatus(
       "Non trovo mete con questi filtri.\n" +
-      `• Categoria richiesta: ${categoryRaw}\n` +
+      `• Categoria richiesta: ${categoryVal}\n` +
       `• Tipi disponibili nel JSON: ${typesInData}\n` +
       "Prova ad aumentare il tempo o cambia categoria.",
       "err"
@@ -477,7 +465,7 @@ async function run() {
 }
 
 /* -------------------------
-   Events (safe)
+   Events
 ------------------------- */
 if (goBtn) {
   goBtn.onclick = async () => {
