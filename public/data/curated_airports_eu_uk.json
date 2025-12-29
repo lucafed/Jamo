@@ -1,0 +1,61 @@
+[
+  { "type":"airport", "code":"FCO", "name":"Roma–Fiumicino", "country":"IT", "lat":41.8003, "lon":12.2389 },
+  { "type":"airport", "code":"CIA", "name":"Roma–Ciampino", "country":"IT", "lat":41.7994, "lon":12.5949 },
+  { "type":"airport", "code":"MXP", "name":"Milano–Malpensa", "country":"IT", "lat":45.6301, "lon":8.7231 },
+  { "type":"airport", "code":"LIN", "name":"Milano–Linate", "country":"IT", "lat":45.4451, "lon":9.2767 },
+  { "type":"airport", "code":"BGY", "name":"Bergamo–Orio al Serio", "country":"IT", "lat":45.6689, "lon":9.7003 },
+  { "type":"airport", "code":"VCE", "name":"Venezia–Marco Polo", "country":"IT", "lat":45.5053, "lon":12.3519 },
+  { "type":"airport", "code":"BLQ", "name":"Bologna–G. Marconi", "country":"IT", "lat":44.5354, "lon":11.2887 },
+  { "type":"airport", "code":"NAP", "name":"Napoli–Capodichino", "country":"IT", "lat":40.8860, "lon":14.2908 },
+  { "type":"airport", "code":"TRN", "name":"Torino–Caselle", "country":"IT", "lat":45.2008, "lon":7.6496 },
+  { "type":"airport", "code":"PSA", "name":"Pisa–Galileo Galilei", "country":"IT", "lat":43.6987, "lon":10.3927 },
+  { "type":"airport", "code":"VRN", "name":"Verona–Villafranca", "country":"IT", "lat":45.3957, "lon":10.8885 },
+  { "type":"airport", "code":"GOA", "name":"Genova–Cristoforo Colombo", "country":"IT", "lat":44.4133, "lon":8.8375 },
+  { "type":"airport", "code":"BRI", "name":"Bari–Karol Wojtyła", "country":"IT", "lat":41.1389, "lon":16.7606 },
+  { "type":"airport", "code":"PMO", "name":"Palermo–Falcone Borsellino", "country":"IT", "lat":38.1758, "lon":13.0910 },
+  { "type":"airport", "code":"CTA", "name":"Catania–Fontanarossa", "country":"IT", "lat":37.4668, "lon":15.0664 },
+  { "type":"airport", "code":"PSR", "name":"Pescara–Abruzzo", "country":"IT", "lat":42.4317, "lon":14.1811 },
+
+  { "type":"airport", "code":"LHR", "name":"London Heathrow", "country":"UK", "lat":51.4700, "lon":-0.4543 },
+  { "type":"airport", "code":"LGW", "name":"London Gatwick", "country":"UK", "lat":51.1537, "lon":-0.1821 },
+  { "type":"airport", "code":"STN", "name":"London Stansted", "country":"UK", "lat":51.8850, "lon":0.2350 },
+  { "type":"airport", "code":"LTN", "name":"London Luton", "country":"UK", "lat":51.8747, "lon":-0.3683 },
+  { "type":"airport", "code":"MAN", "name":"Manchester", "country":"UK", "lat":53.3537, "lon":-2.2749 },
+  { "type":"airport", "code":"EDI", "name":"Edinburgh", "country":"UK", "lat":55.9500, "lon":-3.3725 },
+  { "type":"airport", "code":"GLA", "name":"Glasgow", "country":"UK", "lat":55.8719, "lon":-4.4331 },
+  { "type":"airport", "code":"BRS", "name":"Bristol", "country":"UK", "lat":51.3827, "lon":-2.7191 },
+
+  { "type":"airport", "code":"CDG", "name":"Paris Charles de Gaulle", "country":"FR", "lat":49.0097, "lon":2.5479 },
+  { "type":"airport", "code":"ORY", "name":"Paris Orly", "country":"FR", "lat":48.7262, "lon":2.3652 },
+  { "type":"airport", "code":"NCE", "name":"Nice Côte d’Azur", "country":"FR", "lat":43.6653, "lon":7.2150 },
+  { "type":"airport", "code":"LYS", "name":"Lyon Saint-Exupéry", "country":"FR", "lat":45.7256, "lon":5.0811 },
+
+  { "type":"airport", "code":"BCN", "name":"Barcelona El Prat", "country":"ES", "lat":41.2974, "lon":2.0833 },
+  { "type":"airport", "code":"MAD", "name":"Madrid Barajas", "country":"ES", "lat":40.4983, "lon":-3.5676 },
+  { "type":"airport", "code":"VLC", "name":"Valencia", "country":"ES", "lat":39.4893, "lon":-0.4816 },
+
+  { "type":"airport", "code":"LIS", "name":"Lisbon", "country":"PT", "lat":38.7742, "lon":-9.1342 },
+  { "type":"airport", "code":"OPO", "name":"Porto", "country":"PT", "lat":41.2481, "lon":-8.6814 },
+
+  { "type":"airport", "code":"AMS", "name":"Amsterdam Schiphol", "country":"NL", "lat":52.3105, "lon":4.7683 },
+  { "type":"airport", "code":"BRU", "name":"Brussels", "country":"BE", "lat":50.9010, "lon":4.4844 },
+
+  { "type":"airport", "code":"BER", "name":"Berlin Brandenburg", "country":"DE", "lat":52.3667, "lon":13.5033 },
+  { "type":"airport", "code":"FRA", "name":"Frankfurt", "country":"DE", "lat":50.0379, "lon":8.5622 },
+  { "type":"airport", "code":"MUC", "name":"Munich", "country":"DE", "lat":48.3538, "lon":11.7861 },
+
+  { "type":"airport", "code":"ZRH", "name":"Zurich", "country":"CH", "lat":47.4581, "lon":8.5555 },
+  { "type":"airport", "code":"GVA", "name":"Geneva", "country":"CH", "lat":46.2381, "lon":6.1089 },
+
+  { "type":"airport", "code":"VIE", "name":"Vienna", "country":"AT", "lat":48.1103, "lon":16.5697 },
+  { "type":"airport", "code":"PRG", "name":"Prague", "country":"CZ", "lat":50.1008, "lon":14.2632 },
+  { "type":"airport", "code":"BUD", "name":"Budapest", "country":"HU", "lat":47.4390, "lon":19.2610 },
+
+  { "type":"airport", "code":"CPH", "name":"Copenhagen", "country":"DK", "lat":55.6181, "lon":12.6561 },
+  { "type":"airport", "code":"ARN", "name":"Stockholm Arlanda", "country":"SE", "lat":59.6519, "lon":17.9186 },
+  { "type":"airport", "code":"OSL", "name":"Oslo Gardermoen", "country":"NO", "lat":60.1939, "lon":11.1004 },
+
+  { "type":"airport", "code":"DUB", "name":"Dublin", "country":"IE", "lat":53.4264, "lon":-6.2499 },
+
+  { "type":"airport", "code":"ATH", "name":"Athens", "country":"GR", "lat":37.9364, "lon":23.9445 }
+]
