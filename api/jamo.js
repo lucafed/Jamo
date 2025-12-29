@@ -1,16 +1,6 @@
-// api/jamo.js — v10 BEAUTY-FIRST + TIME-BANDS + EU/UK index + plan bridge
-// POST {
-//   origin:{lat,lon,label?},
-//   minutes:number,
-//   mode:"car"|"walk"|"bike"|"train"|"bus"|"plane" (IT/EN ok),
-//   style:"known"|"gems",
-//   category:string,
-//   visitedIds?:string[],
-//   weekIds?:string[],
-//   excludeIds?:string[]
-// }
-//
-// Returns: { ok:true, top, alternatives[], debug }
+// api/jamo.js — v10 QUALITY + TIME-TARGET + curated-first + index-fallback
+// POST { origin:{lat,lon,label?}, minutes:number, mode:"car"|"walk"|"bike"|"train"|"bus"|"plane",
+//        style:"known"|"gems", category:string, excludeIds?:string[], visitedIds?:string[], weekIds?:string[] }
 
 import fs from "fs";
 import path from "path";
@@ -23,9 +13,6 @@ function readJson(filename) {
   return JSON.parse(raw);
 }
 
-/* -------------------------
-   Utils
-------------------------- */
 function toRad(x){ return (x*Math.PI)/180; }
 function haversineKm(aLat,aLon,bLat,bLon){
   const R=6371;
@@ -56,18 +43,15 @@ function allowedTypesFromCategory(categoryRaw){
   if (c.includes("borgh") && c.includes("citt")) return ["citta","borgo"];
   if (c === "citta_borghi" || (c.includes("citta") && c.includes("borg"))) return ["citta","borgo"];
   if (c === "citta" || c === "città" || c === "city") return ["citta"];
-  if (c === "borgo" || c === "borghi" || c === "village") return ["borgo"];
+  if (c === "borgo" || c === "borghi") return ["borgo"];
   if (["mare","montagna","natura","relax","bambini"].includes(c)) return [c];
   return ["citta","borgo"];
 }
 
-/* -------------------------
-   Speeds (rough, ok for ranking)
-------------------------- */
 function avgSpeedKmh(mode){
   if (mode==="walk") return 4.5;
   if (mode==="bike") return 15;
-  return 75; // car baseline
+  return 70;
 }
 function estimateAutoLike(origin, lat, lng, mode){
   const km = haversineKm(origin.lat, origin.lon, lat, lng);
@@ -75,107 +59,92 @@ function estimateAutoLike(origin, lat, lng, mode){
   return { distance_km: km, eta_min: eta };
 }
 
-/* -------------------------
-   Beauty-first filters (NO more "random places")
-   Heuristics only (no reviews yet).
-------------------------- */
-const BAD_NAME_PATTERNS = [
-  "project", "progetto", "cantiere", "lotto", "zona industriale",
-  "case", "casa", "residence", "villaggio", "quartiere",
-  "stabilimento", "deposito", "magazzino", "fabbrica",
-  "stazione", "aeroporto", "ospedale", "clinica", "carcere",
-  "autostrada", "uscita", "svincolo", "tangenziale",
-  "area di servizio", "parcheggio"
-].map(norm);
+function isoWeekKey(){
+  const d=new Date();
+  const date=new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  const dayNum=date.getUTCDay()||7;
+  date.setUTCDate(date.getUTCDate()+4-dayNum);
+  const yearStart=new Date(Date.UTC(date.getUTCFullYear(),0,1));
+  const weekNo=Math.ceil((((date-yearStart)/86400000)+1)/7);
+  return `${date.getUTCFullYear()}-W${String(weekNo).padStart(2,"0")}`;
+}
 
-function looksBadByName(name){
-  const n = norm(name);
-  return BAD_NAME_PATTERNS.some(p => n.includes(p));
+function styleBoost(visibility, style){
+  const v = norm(visibility);
+  if (style==="known") return v==="conosciuta" ? 1 : 0.88;
+  return v==="chicca" ? 1 : 0.88;
 }
 
 /**
- * For INDEX (GeoNames cities500):
- * - "citta": keep only fairly relevant places
- * - "borgo": keep villages/towns but avoid too tiny places
- *
- * NOTE: your current places_index_eu_uk.json probably does NOT include population.
- * So we use type+visibility+distance/time heuristics, plus name blacklist.
+ * TIME TARGET:
+ * - se minutes=60, vogliamo suggerire ~50–75 min
+ * - se minutes=120, vogliamo ~100–140 min
+ * Quindi penalizziamo fortemente mete "troppo vicine" quando l'utente mette un tempo alto.
  */
-function passIndexQualityGate(p, wantedType){
-  // hard stop on bad names
-  if (looksBadByName(p.name)) return false;
+function timeTargetScore(eta, minutes){
+  const m = Math.max(15, Number(minutes));
+  const t = Number(eta);
 
-  const t = norm(p.type);
-  if (wantedType === "citta"){
-    // keep "citta" and prefer known/chicca ok, but block ultra-small entries
-    // since index marks low pop as borgo, we just enforce type=citta
-    return t === "citta";
-  }
-  if (wantedType === "borgo"){
-    // allow borgo but avoid micro-settlements: require visibility present and name length > 2
-    return t === "borgo" && normName(p.name).length >= 4;
-  }
-  return true;
+  // fascia ideale: 0.75x .. 1.12x
+  const low = 0.75 * m;
+  const high = 1.12 * m;
+
+  // troppo vicina? (es. 2h ma eta=30min) => forte penalità
+  if (t < 0.55 * m) return 0.05;
+
+  // dentro fascia ideale: punteggio alto
+  if (t >= low && t <= high) return 1.0;
+
+  // fuori fascia: degrada gradualmente
+  const dist = Math.abs(t - m);
+  return clamp(1 - (dist / Math.max(20, m*0.65)), 0, 1);
 }
 
-/* -------------------------
-   Time bands: make 1h != 2h (NO same suggestions)
-------------------------- */
-function timeBand(minutes){
-  // desired ETA window (min..max) and "too close" threshold
-  // so 2h won't return the 45min stuff again.
-  if (minutes <= 45) return { min: minutes*0.60, max: minutes*1.15, tooClose: minutes*0.45 };
-  if (minutes <= 90) return { min: minutes*0.65, max: minutes*1.20, tooClose: minutes*0.50 };
-  if (minutes <= 180) return { min: minutes*0.70, max: minutes*1.28, tooClose: minutes*0.55 };
-  return { min: minutes*0.75, max: minutes*1.35, tooClose: minutes*0.60 };
+/**
+ * QUALITY SCORE:
+ * - Curated destinations hanno "score" (0-100) e contenuti (what_to_do/why)
+ * - Index (GeoNames) non ha qualità: quindi lo trattiamo come fallback e penalizziamo le micro-località.
+ */
+function beautyScore(p){
+  // score esplicito (curated_destinations): top
+  const s = Number(p.score);
+  if (Number.isFinite(s)) return clamp(s/100, 0, 1);
+
+  // euristica: se ha contenuti veri => più qualità
+  const todo = Array.isArray(p.what_to_do) ? p.what_to_do.length : 0;
+  const why  = Array.isArray(p.why) ? p.why.length : 0;
+  const vibes = Array.isArray(p.vibes) ? p.vibes.length : 0;
+
+  const content = clamp((todo*0.10) + (why*0.10) + (vibes*0.05), 0, 0.7);
+
+  // se è index e non ha contenuti: resta basso
+  const base = 0.20 + content;
+
+  // penalizza “index” piccoli centri: di solito sono “riempitivi”
+  const src = norm(p._source);
+  if (src==="index") return clamp(base - 0.12, 0, 1);
+
+  return clamp(base, 0, 1);
 }
 
-/* -------------------------
-   Scoring (beauty + fit time + style)
-------------------------- */
-function styleBoost(visibility, style){
-  const v = norm(visibility);
-  if (style==="known") return v==="conosciuta" ? 1.0 : 0.86;
-  return v==="chicca" ? 1.0 : 0.86;
-}
-
+// scoring finale (vicino davvero + target tempo + qualità)
 function scorePlace(p, minutes, style, originLabel){
-  const band = timeBand(minutes);
   const eta = Number(p.eta_min);
+  const m = Number(minutes);
 
-  // 1) time fit (target and band)
-  const tScore = clamp(1 - (Math.abs(eta - minutes) / Math.max(18, minutes*0.9)), 0, 1);
+  const near = clamp(1 - (eta / (m*1.35)), 0, 1);                 // non troppo lontano
+  const target = timeTargetScore(eta, m);                         // vicino al “tempo scelto”
+  const s = styleBoost(p.visibility, style);                      // chicche vs conosciuti
+  const q = beautyScore(p);                                       // bellezza / cose da fare
 
-  // 2) band bonus/penalty
-  let bandAdj = 0;
-  if (eta < band.tooClose) bandAdj -= 0.35;         // too near -> prevents 2h returning 1h stuff
-  else if (eta >= band.min && eta <= band.max) bandAdj += 0.20;
-
-  // 3) style
-  const s = styleBoost(p.visibility, style);
-
-  // 4) avoid "same as origin" if user typed city name
+  // evita suggerire esattamente la partenza (se scrivi “L’Aquila”)
   const samePenalty = originLabel && normName(p.name) === normName(originLabel) ? 0.25 : 0;
 
-  // 5) curated richness bonus (if has what_to_do/why)
-  const richness =
-    (Array.isArray(p.what_to_do) ? p.what_to_do.length : 0) +
-    (Array.isArray(p.why) ? p.why.length : 0) +
-    (Array.isArray(p.tags) ? p.tags.length : 0);
-
-  const richBonus = clamp(richness / 10, 0, 1) * 0.18;
-
-  // 6) mild distance sanity: don't pick absurdly far for car-like
-  const km = Number(p.distance_km);
-  const kScore = Number.isFinite(km) ? clamp(1 - (km / 900), 0, 1) : 0.4;
-
-  // final
-  return (0.55*tScore) + (0.18*s) + (0.12*kScore) + richBonus + bandAdj - samePenalty;
+  // mix:
+  // target + qualità pesano tanto (è quello che vuoi)
+  return (0.30*near) + (0.35*target) + (0.25*q) + (0.10*s) - samePenalty;
 }
 
-/* -------------------------
-   Output shaping
-------------------------- */
 function compactOut(p){
   return {
     id: p.id,
@@ -194,35 +163,10 @@ function compactOut(p){
   };
 }
 
-function ensureWhy(p, minutes, style, noteFallback){
-  const out = Array.isArray(p.why) ? [...p.why] : [];
-  const eta = Math.round(p.eta_min);
-
-  if (noteFallback) out.unshift(noteFallback);
-
-  // make it “marketing ready”
-  if (!out.length){
-    out.push(`Ci arrivi in ~${eta} min: è in linea col tempo che hai scelto.`);
-    out.push(style==="gems" ? "È una meta più “da chicca”: atmosfera, meno caos." : "È una scelta solida: bella e semplice da organizzare.");
-    out.push("Tra poco qui compariranno link utili (cose da fare, biglietti, esperienze) 💸");
-  } else {
-    if (!out.some(x => norm(x).includes("min"))) out.push(`Tempo stimato: ~${eta} min.`);
-    out.push("Tip: qui inseriremo link monetizzabili (esperienze / biglietti / tour).");
-  }
-  return out.slice(0, 4);
-}
-
-/* -------------------------
-   Call /api/plan (server-side, Vercel-safe)
-   Uses request host when possible.
-------------------------- */
-async function callPlan(req, origin, minutes, mode){
-  const host = req?.headers?.host;
-  const proto = req?.headers?.["x-forwarded-proto"] || "https";
-  const base =
-    process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` :
-    host ? `${proto}://${host}` :
-    "http://localhost:3000";
+async function callPlan(origin, minutes, mode){
+  const base = process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : "http://localhost:3000";
 
   const r = await fetch(`${base}/api/plan`, {
     method:"POST",
@@ -231,35 +175,10 @@ async function callPlan(req, origin, minutes, mode){
   });
 
   const text = await r.text();
-  if (!r.ok) throw new Error(`PLAN ${r.status}: ${text.slice(0,160)}`);
+  if (!r.ok) throw new Error(`PLAN ${r.status}: ${text.slice(0,120)}`);
   return JSON.parse(text);
 }
 
-/* -------------------------
-   Build candidates from datasets
-------------------------- */
-function normalizeDatasetPlace(x, source){
-  return {
-    id: x.id,
-    name: x.name,
-    country: x.country || "",
-    type: norm(x.type),
-    visibility: norm(x.visibility) || (source==="index" ? "chicca" : "conosciuta"),
-    lat: Number(x.lat),
-    lng: Number(x.lng),
-    tags: Array.isArray(x.tags) ? x.tags : [],
-    vibes: Array.isArray(x.vibes) ? x.vibes : [],
-    best_when: Array.isArray(x.best_when) ? x.best_when : [],
-    why: Array.isArray(x.why) ? x.why : [],
-    what_to_do: Array.isArray(x.what_to_do) ? x.what_to_do : [],
-    what_to_eat: Array.isArray(x.what_to_eat) ? x.what_to_eat : [],
-    _source: source
-  };
-}
-
-/* -------------------------
-   MAIN HANDLER
-------------------------- */
 export default async function handler(req,res){
   try{
     if (req.method !== "POST") return res.status(405).json({ error:"Use POST" });
@@ -268,11 +187,13 @@ export default async function handler(req,res){
     const origin = body.origin || {};
     const minutes = Number(body.minutes);
     const mode = canonicalMode(body.mode || "car");
-    const style = norm(body.style || "known");
-    const category = body.category || "citta_borghi";
-    const allowedTypes = allowedTypesFromCategory(category);
+    const style = norm(body.style || "known"); // known|gems
+    const allowedTypes = allowedTypesFromCategory(body.category || "citta_borghi");
 
-    const excludeIds = new Set([...(body.excludeIds || []), ...(body.visitedIds || []), ...(body.weekIds || [])].filter(Boolean));
+    const excludeIds = new Set(Array.isArray(body.excludeIds) ? body.excludeIds : []);
+    const visitedIds = new Set(Array.isArray(body.visitedIds) ? body.visitedIds : []);
+    const weekIds    = new Set(Array.isArray(body.weekIds) ? body.weekIds : []);
+    const weekKey = isoWeekKey();
 
     const oLat = Number(origin.lat);
     const oLon = Number(origin.lon ?? origin.lng);
@@ -286,31 +207,13 @@ export default async function handler(req,res){
     const originObj = { lat:oLat, lon:oLon, label: origin.label || "" };
     const originLabel = originObj.label || "";
 
-    /* ========= PUBLIC TRANSPORT ========= */
+    // ========= PLANE / TRAIN / BUS =========
     if (mode==="plane" || mode==="train" || mode==="bus"){
-      // if /api/plan missing, return a clean message (your UI shows it)
-      let plan;
-      try{
-        plan = await callPlan(req, originObj, minutes, mode);
-      } catch(e){
-        return res.status(200).json({
-          ok:false,
-          top:null,
-          alternatives:[],
-          message:`Modalità ${mode.toUpperCase()} non disponibile (manca /api/plan).`,
-          debug:{ error:String(e?.message || e), mode }
-        });
-      }
-
+      // Se /api/plan non c'è, verrà 500 e lo mostriamo chiaramente
+      const plan = await callPlan(originObj, minutes, mode);
       const results = Array.isArray(plan?.results) ? plan.results : [];
-      if (!results.length){
-        return res.status(200).json({ ok:true, top:null, alternatives:[], message:"Nessuna meta trovata per questo mezzo/tempo." });
-      }
 
-      // Make output consistent with “beauty-first”: filter out too-short weird combos
-      const band = timeBand(minutes);
-
-      let candidates = results.map(r=>{
+      const candidates = results.map(r=>{
         const dest = r.destination || {};
         const name = `${dest.name || "Meta"}${dest.country ? `, ${dest.country}` : ""}`;
         const km = (Number.isFinite(dest.lat) && Number.isFinite(dest.lon))
@@ -320,8 +223,6 @@ export default async function handler(req,res){
         const oh = r.originHub?.code || r.originHub?.name || "";
         const dh = r.destinationHub?.code || r.destinationHub?.name || "";
 
-        const eta = Number(r.totalMinutes);
-
         return {
           id: dest.id || normName(name).replace(/\s+/g,"_"),
           name: dest.name || "Meta",
@@ -330,30 +231,28 @@ export default async function handler(req,res){
           visibility: style==="gems" ? "chicca" : "conosciuta",
           lat: Number(dest.lat),
           lng: Number(dest.lon),
-          eta_min: eta,
+          eta_min: Number(r.totalMinutes),
           distance_km: km,
           hubSummary: `${oh} → ${dh}`,
           segments: Array.isArray(r.segments) ? r.segments : [],
+          // qualità: per ora usa tags/score se presenti nel dataset destinazioni
+          score: Number(dest.score),
           why: [
-            `Tempo totale stimato: ${Math.round(eta)} min (target: ${minutes} min).`,
-            `Hub: ${oh || "?"} → ${dh || "?"}.`,
-            "CTA pronta: qui metterai “Acquista biglietti” per monetizzare 💸"
+            `Ci arrivi in ~${Math.round(r.totalMinutes)} min (stima).`,
+            `Hub: ${oh || "?"} → ${dh || "?"}.`
           ],
-          what_to_do: [],
-          what_to_eat: [],
-          tags:[]
+          what_to_do: Array.isArray(dest.what_to_do) ? dest.what_to_do : [],
+          what_to_eat: Array.isArray(dest.what_to_eat) ? dest.what_to_eat : [],
+          _source: "plan"
         };
-      });
-
-      candidates = candidates
-        .filter(p => Number.isFinite(p.eta_min) && p.eta_min > 0)
-        .filter(p => !excludeIds.has(p.id))
-        .filter(p => p.distance_km >= 40)            // avoid “same area”
-        .filter(p => p.eta_min >= band.tooClose)     // avoid too short results
-        .filter(p => !looksBadByName(p.name));
+      })
+      .filter(p => Number.isFinite(p.eta_min) && p.eta_min > 0)
+      .filter(p => !excludeIds.has(p.id))
+      .filter(p => !visitedIds.has(p.id))
+      .filter(p => !weekIds.has(p.id));
 
       if (!candidates.length){
-        return res.status(200).json({ ok:true, top:null, alternatives:[], message:"Trovate mete, ma filtrate perché troppo vicine o poco sensate. Aumenta tempo." });
+        return res.status(200).json({ ok:true, top:null, alternatives:[], message:"Nessuna meta trovata per questo mezzo/tempo." });
       }
 
       candidates.forEach(p => { p._score = scorePlace(p, minutes, style, originLabel); });
@@ -362,155 +261,166 @@ export default async function handler(req,res){
       const top = candidates[0];
       const alts = candidates.slice(1,3);
 
-      top.why = ensureWhy(top, minutes, style, "");
-      alts.forEach(a => a.why = ensureWhy(a, minutes, style, ""));
-
       return res.status(200).json({
         ok:true,
+        weekKey,
         top: compactOut(top),
         alternatives: alts.map(compactOut),
-        debug: { mode, minutes, style, allowedTypes, source:"plan", poolCount:candidates.length }
+        debug: { mode, minutes, style, allowedTypes, source:"plan" }
       });
     }
 
-    /* ========= CAR / WALK / BIKE ========= */
+    // ========= AUTO / WALK / BIKE =========
+    // 1) curated “vecchio”
     const curated = readJson("curated.json");
     const curatedPlaces = Array.isArray(curated?.places) ? curated.places : [];
 
-    // EU+UK index (you already generated it)
+    // 2) curated_destinations EU+UK (qualità alta)
+    let curatedDest = null;
+    try { curatedDest = readJson("curated_destinations_eu_uk.json"); } catch {}
+    const curatedDestPlaces =
+      Array.isArray(curatedDest?.places) ? curatedDest.places :
+      Array.isArray(curatedDest?.destinations) ? curatedDest.destinations :
+      [];
+
+    // merge curated (dedup by id)
+    const curatedMap = new Map();
+    [...curatedPlaces, ...curatedDestPlaces].forEach(p=>{
+      if (p?.id) curatedMap.set(p.id, p);
+    });
+    const curatedAll = [...curatedMap.values()];
+
+    // index (copertura)
     const idx = readJson("places_index_eu_uk.json");
     const idxPlaces = Array.isArray(idx?.places) ? idx.places : [];
 
-    // normalize + add eta
-    const curatedNorm = curatedPlaces
-      .map(x => normalizeDatasetPlace(x, "curated"))
-      .filter(p => p.id && p.name && Number.isFinite(p.lat) && Number.isFinite(p.lng))
-      .filter(p => !excludeIds.has(p.id))
-      .map(p => ({ ...p, ...estimateAutoLike(originObj, p.lat, p.lng, mode) }))
-      .filter(p => p.distance_km >= 2.0)
-      .filter(p => !looksBadByName(p.name));
+    const caps = [1.10, 1.25, 1.45, 1.80, 2.40, 3.20].map(x => Math.round(minutes*x));
 
-    const indexNorm = idxPlaces
-      .map(x => normalizeDatasetPlace(x, "index"))
-      .filter(p => p.id && p.name && Number.isFinite(p.lat) && Number.isFinite(p.lng))
-      .filter(p => !excludeIds.has(p.id))
-      .map(p => ({ ...p, ...estimateAutoLike(originObj, p.lat, p.lng, mode) }))
-      .filter(p => p.distance_km >= 2.0)
-      .filter(p => !looksBadByName(p.name));
+    function buildCandidatesFrom(list, sourceLabel){
+      return list
+        .map(p => ({
+          id: p.id,
+          name: p.name,
+          country: p.country || "",
+          type: norm(p.type),
+          visibility: norm(p.visibility) || (sourceLabel==="index" ? "chicca" : "conosciuta"),
+          score: p.score, // <- se c'è, pesa tanto
+          lat: Number(p.lat),
+          lng: Number(p.lng),
+          tags: Array.isArray(p.tags) ? p.tags : [],
+          vibes: Array.isArray(p.vibes) ? p.vibes : [],
+          best_when: Array.isArray(p.best_when) ? p.best_when : [],
+          why: Array.isArray(p.why) ? p.why : [],
+          what_to_do: Array.isArray(p.what_to_do) ? p.what_to_do : [],
+          what_to_eat: Array.isArray(p.what_to_eat) ? p.what_to_eat : [],
+          _source: sourceLabel
+        }))
+        .filter(p => p.id && p.name && Number.isFinite(p.lat) && Number.isFinite(p.lng))
+        .filter(p => !excludeIds.has(p.id))
+        .map(p => ({ ...p, ...estimateAutoLike(originObj, p.lat, p.lng, mode) }))
+        .filter(p => p.distance_km >= 2.0); // evita “sei già lì”
+    }
+
+    const curatedCandidates = buildCandidatesFrom(curatedAll, "curated")
+      .filter(p => allowedTypes.includes(p.type));
+
+    // index: solo città/borghi
+    const indexCandidates = buildCandidatesFrom(idxPlaces, "index")
+      .filter(p => ["citta","borgo"].includes(p.type));
+
+    function pickWithinCaps(list){
+      for (const capMin of caps){
+        const within = list
+          .filter(p => p.eta_min <= capMin)
+          .filter(p => !visitedIds.has(p.id))
+          .filter(p => !weekIds.has(p.id));
+        if (within.length >= 6) return { capMin, within };
+      }
+      const notVisited = list.filter(p => !visitedIds.has(p.id));
+      const base = (notVisited.length ? notVisited : list).slice().sort((a,b)=>a.eta_min-b.eta_min);
+      return { capMin: caps[caps.length-1], within: base.slice(0, 40) };
+    }
 
     const isCityLike = allowedTypes.includes("citta") || allowedTypes.includes("borgo");
 
-    // Candidates pool rules:
-    // - City/Borghi: curated + index (but quality gated)
-    // - Special categories (mare/montagna/...): curated only; if none, fallback honestly to citylike index.
     let pool = [];
     let noteFallback = "";
 
     if (isCityLike){
-      const wanted = allowedTypes; // ["citta","borgo"] etc
+      // CURATED FIRST, poi index come rete di sicurezza
+      const pickC = pickWithinCaps(curatedCandidates);
+      const pickI = pickWithinCaps(indexCandidates);
 
-      const curatedPool = curatedNorm.filter(p => wanted.includes(p.type));
-
-      // index: enforce quality gate by requested type(s)
-      const idxPool = indexNorm.filter(p => wanted.includes(p.type)).filter(p => {
-        if (p.type === "citta") return passIndexQualityGate(p, "citta");
-        if (p.type === "borgo") return passIndexQualityGate(p, "borgo");
-        return true;
-      });
-
-      // Prefer curated strongly (better "beauty" fields), but keep index for coverage
-      pool = [...curatedPool, ...idxPool];
+      // regola: se curated ha almeno 3 scelte buone, usa SOLO curated (qualità)
+      if (pickC.within.length >= 3) {
+        pool = pickC.within;
+        if (pickC.capMin > minutes) noteFallback = `Ho allargato un po’ il raggio per trovare mete davvero belle: ~${pickC.capMin} min (stima).`;
+      } else {
+        // mix: curated + index
+        pool = [...pickC.within, ...pickI.within];
+        noteFallback = `Vicino a te ho poche mete “curate”: aggiungo anche città/borghi dall’indice (fallback).`;
+      }
     } else {
-      // special category: ONLY curated (to avoid "mare -> inland city")
-      const curatedOnly = curatedNorm.filter(p => allowedTypes.includes(p.type));
-      pool = curatedOnly;
-
-      if (!pool.length){
-        // honest fallback
-        noteFallback = `Vicino a te non ho abbastanza mete “${allowedTypes[0]}” nel dataset. Ti propongo una città/borgo davvero carino vicino.`;
-        pool = indexNorm.filter(p => ["citta","borgo"].includes(p.type)).filter(p => passIndexQualityGate(p, p.type));
+      // categorie speciali (mare/montagna/natura ecc):
+      const pick1 = pickWithinCaps(curatedCandidates);
+      if (pick1.within.length >= 1){
+        pool = pick1.within;
+        if (pick1.capMin > minutes) {
+          noteFallback = `Per trovare “${allowedTypes[0]}” ho allargato il raggio: ~${pick1.capMin} min (stima).`;
+        }
+      } else {
+        noteFallback = `Vicino a te non ho abbastanza mete “${allowedTypes[0]}” nel dataset. Ti propongo una meta carina vicina (città/borgo).`;
+        pool = pickWithinCaps(indexCandidates).within;
       }
     }
 
     if (!pool.length){
-      return res.status(200).json({ ok:true, top:null, alternatives:[], message:"Nessuna meta trovata (dataset vuoto o filtri troppo stretti)." });
+      return res.status(200).json({ ok:true, top:null, alternatives:[], message:"Nessuna meta trovata." });
     }
 
-    // HARD “time coherence”:
-    // instead of hard-capping immediately, we score but also enforce progressive caps
-    const caps = [1.10, 1.28, 1.55, 2.10, 3.00].map(x => minutes*x);
-    const band = timeBand(minutes);
-
-    function pickProgressive(list){
-      // 1) prefer inside band AND not too close
-      const goodBand = list.filter(p => p.eta_min >= band.tooClose && p.eta_min <= band.max);
-      if (goodBand.length >= 8) return { picked: goodBand, capUsed: band.max, bandUsed: true };
-
-      // 2) progressive cap expand
-      for (const cap of caps){
-        const within = list.filter(p => p.eta_min >= band.tooClose && p.eta_min <= cap);
-        if (within.length >= 8) return { picked: within, capUsed: cap, bandUsed: false };
-      }
-
-      // 3) if still low, take nearest but keep not-too-close rule if possible
-      const notTooClose = list.filter(p => p.eta_min >= band.tooClose);
-      const base = (notTooClose.length ? notTooClose : list).slice().sort((a,b)=>a.eta_min-b.eta_min);
-      return { picked: base.slice(0, 60), capUsed: caps[caps.length-1], bandUsed: false };
-    }
-
-    const { picked, capUsed, bandUsed } = pickProgressive(pool);
-
-    // Score
-    picked.forEach(p => {
+    pool.forEach(p => {
       p._score = scorePlace(p, minutes, style, originLabel);
 
-      // extra: gems -> penalize big known cities a bit
+      // chicche: penalizza metropoli note quando vuoi gems
       if (style==="gems" && p.type==="citta" && p.visibility==="conosciuta") p._score -= 0.18;
 
-      // special category fallback note: tiny penalty so it doesn’t dominate everything
-      if (noteFallback) p._score -= 0.06;
+      // se index e troppo “micro”, penalizza ancora
+      if (norm(p._source)==="index" && p.eta_min < minutes*0.70) p._score -= 0.10;
     });
 
-    picked.sort((a,b)=>b._score-a._score);
+    pool.sort((a,b)=>b._score-a._score);
 
-    const top = picked[0];
-    const alts = picked.slice(1,3);
+    const top = pool[0];
+    const alts = pool.slice(1,3);
 
-    // WHY enrichment
-    const capNote =
-      capUsed > minutes*1.05
-        ? `Per trovare mete davvero “belle” ho allargato un po’ il raggio: fino a ~${Math.round(capUsed)} min (stima).`
-        : "";
+    function ensureWhy(p){
+      const out = Array.isArray(p.why) ? [...p.why] : [];
+      if (noteFallback) out.unshift(noteFallback);
 
-    top.why = ensureWhy(top, minutes, style, noteFallback || capNote);
-    alts.forEach(a => a.why = ensureWhy(a, minutes, style, noteFallback || capNote));
-
-    // If top is from index and has empty what_to_do, add lightweight “hooks”
-    function addIndexHooks(p){
-      if (p._source === "index" && (!p.what_to_do || !p.what_to_do.length)){
-        p.what_to_do = [
-          "Centro storico / passeggiata principale",
-          "Piazza centrale e scorci panoramici",
-          "Caffè tipico (qui metteremo link/consigli)"
-        ];
+      // se è index e non ha contenuti, rendilo “onesto”
+      if (!out.length) {
+        out.push(`Ci arrivi in ~${Math.round(p.eta_min)} min: perfetta col tempo che hai.`);
+        out.push(style==="gems" ? "Vibe più da chicca: meno caos, più atmosfera." : "Scelta solida: facile e senza sbatti.");
       }
-      return p;
+
+      // hook monetizzazione
+      out.push("Tip: qui compariranno link utili (biglietti/esperienze/prenotazioni).");
+      return out.slice(0,4);
     }
-    addIndexHooks(top);
-    alts.forEach(addIndexHooks);
+
+    top.why = ensureWhy(top);
+    alts.forEach(a => a.why = ensureWhy(a));
 
     return res.status(200).json({
       ok:true,
+      weekKey,
       top: compactOut(top),
       alternatives: alts.map(compactOut),
       debug: {
         mode, minutes, style, allowedTypes,
-        curatedCount: curatedNorm.length,
+        curatedCount: curatedCandidates.length,
         indexCount: idxPlaces.length,
         poolCount: pool.length,
-        pickedCount: picked.length,
-        capUsed: Math.round(capUsed),
-        bandUsed,
         fallbackNote: noteFallback || ""
       }
     });
@@ -518,7 +428,7 @@ export default async function handler(req,res){
   } catch(e){
     return res.status(500).json({
       error: String(e?.message || e),
-      hint: "Controlla che esistano public/data/curated.json e public/data/places_index_eu_uk.json",
+      hint: "Controlla che esistano public/data/curated.json, public/data/curated_destinations_eu_uk.json e public/data/places_index_eu_uk.json"
     });
   }
-}
+        }
