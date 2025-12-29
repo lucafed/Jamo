@@ -22,6 +22,7 @@
       --ok:#20d18b;
       --radius:22px;
     }
+
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
@@ -38,7 +39,8 @@
       justify-content:center;
       align-items:flex-start;
     }
-    .wrap{width:min(860px, 100%); padding: 16px 16px 28px;}
+
+    .wrap{width:min(900px, 100%); padding: 16px 16px 28px;}
     .topbar{display:flex; align-items:center; justify-content:space-between; gap:12px; padding: 10px 4px 14px;}
     .brand{display:flex; align-items:center; gap:10px;}
     .logo{
@@ -54,6 +56,7 @@
       background: rgba(255,255,255,.04);
       padding:8px 10px; border-radius: 999px; white-space:nowrap;
     }
+
     .card{
       background: var(--card);
       border: 1px solid var(--stroke);
@@ -62,8 +65,10 @@
       box-shadow: 0 18px 70px rgba(0,0,0,.45);
       backdrop-filter: blur(12px);
     }
-    .headline{margin: 0 0 6px; font-size: 18px; line-height:1.25; font-weight: 900;}
+
+    .headline{margin: 0 0 6px; font-size: 18px; line-height:1.25; font-weight: 950;}
     .sub{margin: 0 0 14px; color: var(--muted); line-height:1.45; font-size: 14px;}
+
     .grid{display:grid; grid-template-columns: 1fr; gap: 12px;}
 
     .field{
@@ -79,7 +84,9 @@
       margin-bottom: 8px;
       letter-spacing:.2px;
     }
+
     .row{display:flex; gap:10px; flex-wrap:wrap;}
+
     select, input{
       width:100%;
       border:1px solid rgba(255,255,255,.12);
@@ -91,19 +98,21 @@
       font-size: 15px;
     }
     input::placeholder{color:rgba(255,255,255,.45)}
+
     .btn{
       width:100%;
       border:0;
       border-radius: 18px;
       padding: 15px 16px;
       font-size: 16px;
-      font-weight: 900;
+      font-weight: 950;
       color:#04101c;
       background: linear-gradient(90deg, var(--accent1), var(--accent2));
       cursor:pointer;
       box-shadow: 0 16px 45px rgba(0,212,255,.22);
     }
     .btn:disabled{opacity:.55; cursor:not-allowed}
+
     .btn2{
       border:1px solid rgba(255,255,255,.14);
       background: rgba(255,255,255,.06);
@@ -111,7 +120,7 @@
       padding: 10px 12px;
       border-radius: 14px;
       cursor:pointer;
-      font-weight: 900;
+      font-weight: 950;
       font-size: 13px;
       white-space:nowrap;
     }
@@ -137,8 +146,9 @@
       padding: 14px;
     }
     .hidden{display:none}
-    .place-title{margin:0 0 6px; font-size: 22px; font-weight: 950;}
-    .meta{margin:0 0 10px; color: rgba(255,255,255,.70); font-size: 13px; line-height: 1.4;}
+
+    .place-title{margin:0 0 6px; font-size: 22px; font-weight: 1000; letter-spacing:.2px;}
+    .meta{margin:0 0 8px; color: rgba(255,255,255,.70); font-size: 13px; line-height: 1.4;}
 
     .actions{display:flex; gap:10px; flex-wrap:wrap; margin-top: 10px;}
     .linkbtn{
@@ -151,128 +161,113 @@
       color:var(--text);
       text-decoration:none;
       background: rgba(255,255,255,.06);
-      font-weight: 900;
+      font-weight: 950;
       font-size: 13px;
     }
 
     .sectionTitle{
-      margin: 16px 0 8px;
+      margin: 14px 0 8px;
       font-size: 15px;
       letter-spacing:.2px;
       color: rgba(255,255,255,.92);
-      font-weight: 900;
-    }
-
-    /* WOW blocks */
-    .heroReason{
-      border:1px solid rgba(0,212,255,.22);
-      background: linear-gradient(180deg, rgba(0,212,255,.10), rgba(47,123,255,.06));
-      border-radius: 16px;
-      padding: 12px;
-      margin-bottom: 10px;
-    }
-    .heroTitle{font-weight:950; font-size:13px; color:rgba(255,255,255,.92); margin-bottom:6px}
-    .heroText{font-size:14px; color:rgba(255,255,255,.90); line-height:1.35}
-
-    .cardline{
-      padding: 10px 12px;
-      border-radius: 14px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      margin-bottom: 8px;
-      font-size: 13px;
-      color: rgba(255,255,255,.85);
-    }
-
-    .muteline{
-      padding: 10px 12px;
-      border-radius: 14px;
-      border:1px dashed rgba(255,255,255,.18);
-      color: rgba(255,255,255,.70);
-      background: rgba(255,255,255,.03);
-      font-size: 13px;
-    }
-
-    .altCard{
-      padding: 12px;
-      border-radius: 16px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.18);
-      margin-bottom: 10px;
-      cursor:pointer;
-    }
-    .altName{font-weight:950}
-    .altMeta{margin-top:2px; color:rgba(255,255,255,.68); font-size:12px}
-
-    .step{
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      border-radius: 14px;
-      padding: 10px 12px;
-      margin-bottom: 8px;
-    }
-    .stepTop{display:flex; justify-content:space-between; gap:12px}
-    .stepLabel{font-weight:900}
-    .stepTime{color:rgba(255,255,255,.70); font-size:12px}
-
-    .grid2{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-    .blockTitle{
-      font-weight:950;
-      color: rgba(255,255,255,.92);
-      margin: 8px 0 2px;
-    }
-    .tile{
-      padding: 10px 12px;
-      border-radius: 14px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      font-size: 13px;
-    }
-
-    /* CTA */
-    .ctaBox{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin: 12px 0 6px;
-      padding: 12px;
-      border-radius: 16px;
-      border:1px solid rgba(0,212,255,.22);
-      background: rgba(0,212,255,.06);
-    }
-    .ctaPrimary{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      padding: 12px 14px;
-      border-radius: 14px;
-      font-weight: 950;
-      text-decoration:none;
-      color:#04101c;
-      background: linear-gradient(90deg, var(--accent1), var(--accent2));
-      box-shadow: 0 12px 35px rgba(0,212,255,.18);
-    }
-    .ctaGhost{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      padding: 12px 14px;
-      border-radius: 14px;
-      font-weight: 950;
-      text-decoration:none;
-      color: rgba(255,255,255,.92);
-      border:1px solid rgba(255,255,255,.18);
-      background: rgba(255,255,255,.06);
+      font-weight: 1000;
     }
 
     .tiny{font-size: 12px; color: rgba(255,255,255,.60); margin-top: 8px; line-height:1.35;}
     .footer{margin-top: 14px; text-align:center; color: rgba(255,255,255,.55); font-size: 12px;}
     .footer a{color: rgba(255,255,255,.75); text-decoration: underline;}
+
+    /* =========================
+       WOW blocks + CTA monetizzazione
+       ========================= */
+
+    .ctaBox{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin: 12px 0 4px;
+    }
+    .ctaPrimary{
+      flex:1;
+      min-width:170px;
+      text-align:center;
+      padding:12px 14px;
+      border-radius:16px;
+      font-weight: 1000;
+      color:#04101c;
+      text-decoration:none;
+      background: linear-gradient(90deg, var(--accent1), var(--accent2));
+      box-shadow: 0 14px 40px rgba(0,212,255,.22);
+    }
+    .ctaGhost{
+      flex:1;
+      min-width:170px;
+      text-align:center;
+      padding:12px 14px;
+      border-radius:16px;
+      font-weight: 1000;
+      text-decoration:none;
+      color: rgba(255,255,255,.92);
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.06);
+    }
+
+    .heroReason{
+      border:1px solid rgba(0,212,255,.22);
+      background: linear-gradient(135deg, rgba(47,123,255,.14), rgba(0,212,255,.10));
+      padding:12px;
+      border-radius:16px;
+      margin-bottom:10px;
+    }
+    .heroTitle{font-weight:1000; font-size:13px; opacity:.95; margin-bottom:6px}
+    .heroText{font-size:14px; line-height:1.35; color:rgba(255,255,255,.92)}
+
+    .cardline{
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      margin-bottom:8px;
+    }
+
+    .muteline{
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px dashed rgba(255,255,255,.18);
+      color: rgba(255,255,255,.70);
+      background: rgba(0,0,0,.14);
+    }
+
+    .altCard{
+      padding:12px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      cursor:pointer;
+    }
+    .altCard:active{transform: scale(.99)}
+    .altName{font-weight:1000}
+    .altMeta{margin-top:2px; font-size:12px; color: rgba(255,255,255,.70)}
+
+    .step{
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      margin-bottom:8px;
+    }
+    .stepTop{display:flex; justify-content:space-between; gap:10px}
+    .stepLabel{font-weight:950}
+    .stepTime{color:rgba(255,255,255,.70); font-size:12px}
+
+    .grid2{display:grid; grid-template-columns:1fr; gap:8px; margin-bottom:12px}
+    .blockTitle{font-weight:1000; margin:10px 0 2px}
+    .tile{
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+    }
   </style>
 </head>
 
@@ -283,17 +278,18 @@
         <div class="logo"></div>
         <h1>Jamo</h1>
       </div>
-      <div class="pill">v9 • Ovunque in EU/UK</div>
+      <div class="pill">v9 • One API • WOW UI</div>
     </div>
 
     <main class="card">
       <p class="headline">“Andiamo da qualche parte?” → “Ok, ma dove?”</p>
       <p class="sub">
         Scegli <b>tempo</b>, <b>mezzo</b>, <b>stile</b> e <b>categoria</b>.
-        Jamo ti propone una meta <b>vicina davvero</b> + alternative e ti dice perché.
+        Jamo ti propone una meta + alternative e ti dà spunti (con CTA monetizzabili).
       </p>
 
       <div class="grid">
+        <!-- PARTENZA -->
         <div class="field">
           <label>Partenza (opzionale)</label>
           <div class="row">
@@ -303,6 +299,7 @@
           <div class="tiny">Se inserisci un luogo userò quello. Se lasci vuoto uso il GPS.</div>
         </div>
 
+        <!-- FILTRI -->
         <div class="field">
           <label>Filtri</label>
           <div class="row">
@@ -352,7 +349,8 @@
           </div>
 
           <div class="tiny">
-            Tip: se hai segnato troppe mete come “visitato”, fai reset: <a href="/?reset=1">clicca qui</a>
+            Tip: se hai segnato troppe mete come “visitato”, fai reset:
+            <a href="/?reset=1">clicca qui</a>
           </div>
         </div>
 
@@ -360,17 +358,19 @@
 
         <div id="status" class="status">Pronto. Premi “DOVE ANDIAMO?”</div>
 
+        <!-- RISULTATO -->
         <section id="result" class="result hidden">
           <div class="place-title" id="placeName"></div>
           <div class="meta" id="placeMeta"></div>
-
-          <div class="ctaBox" id="ctaBox"></div>
 
           <div class="actions">
             <a class="linkbtn" id="mapsLink" href="#" target="_blank" rel="noopener">Apri su Google Maps</a>
             <button class="btn2" id="visitedBtn" type="button">✅ Già visitato</button>
             <button class="btn2" id="rerollBtn" type="button">🔁 Cambia meta</button>
           </div>
+
+          <!-- CTA monetizzazione -->
+          <div id="ctaBox" class="ctaBox"></div>
 
           <div class="sectionTitle">Perché te lo consiglio</div>
           <div id="whyList"></div>
@@ -390,6 +390,7 @@
     </main>
   </div>
 
+  <!-- app.js -->
   <script src="/app.js"></script>
 </body>
 </html>
