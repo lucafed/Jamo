@@ -1,9 +1,9 @@
 /* =========================
-   JAMO — app.js (v4 STABILE)
-   - Auto/Walk/Bike: curated + fallback local (/api/suggest)
-   - Plane/Train/Bus: usa /api/plan (hub reali + tempi coerenti)
-   - Categoria: categorySelect (NO mix)
-   - Stile: known/gems (conosciuta/chicca)
+   JAMO — public/app.js (v4 STABILE FIX)
+   - Auto/Walk/Bike: curated (public/data/curated.json)
+   - Plane/Train/Bus: /api/plan
+   - Categoria: separata + mapping (montagna+natura)
+   - Stile: known/gems
    - Meteo: Open-Meteo (gratis)
    - Visited + daily anti-repeat
    - POI: curated what_to_do (fallback opzionale /api/places)
@@ -16,7 +16,7 @@ const API = {
   places: "/api/places" // opzionale
 };
 
-const CURATED_URL = "/data/curated.json"; // tuo file mete curate per auto/walk/bike
+const CURATED_URL = "/data/curated.json";
 
 const $ = (id) => document.getElementById(id);
 
@@ -42,7 +42,7 @@ let lastPicks = { top: null, alternatives: [] };
 let lastWeatherLabel = "";
 
 /* -------------------------
-   UI helpers
+   Small utils
 ------------------------- */
 function setStatus(msg, type = "") {
   if (!statusEl) return;
@@ -57,6 +57,25 @@ function escapeHtml(s) {
   return String(s ?? "").replace(/[&<>"']/g, (c) => ({
     "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
   }[c]));
+}
+function norm(s){
+  return String(s ?? "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim();
+}
+
+/* -------------------------
+   Category mapping (per il tuo curated.json)
+   - UI "montagna" deve includere anche "natura"
+------------------------- */
+function allowedTypesForCategory(categoryRaw) {
+  const c = norm(categoryRaw);
+  if (c === "montagna") return new Set(["montagna", "natura"]);
+  if (c === "natura") return new Set(["natura"]); // (se un domani la metti separata)
+  // tutto il resto è 1:1 (citta/città gestito da norm)
+  return new Set([c]);
 }
 
 /* -------------------------
@@ -100,7 +119,7 @@ function addDailyReco(id) {
     const key = todayKey();
     const arr = Array.isArray(obj?.[key]) ? obj[key] : [];
     if (!arr.includes(id)) arr.push(id);
-    obj[key] = arr.slice(0, 80);
+    obj[key] = arr.slice(0, 120);
     localStorage.setItem(LS_DAILY_KEY, JSON.stringify(obj));
   } catch {}
 }
@@ -162,7 +181,9 @@ async function getWeather(lat, lon) {
 async function loadCurated() {
   try {
     const r = await fetch(CURATED_URL, { cache: "no-store" });
-    if (!r.ok) return [];
+    if (!r.ok) {
+      throw new Error(`Curated non trovato: ${CURATED_URL} (HTTP ${r.status})`);
+    }
     const d = await r.json();
     const items = Array.isArray(d?.places) ? d.places : [];
     return items
@@ -170,15 +191,17 @@ async function loadCurated() {
         id: x.id,
         name: x.name,
         country: x.country,
-        type: (x.type || "").toLowerCase(),            // città/mare/montagna/bambini ecc.
-        visibility: x.visibility,                      // "conosciuta"|"chicca"
+        type: x.type,
+        visibility: x.visibility,
         lat: Number(x.lat),
         lng: Number(x.lng),
         tags: Array.isArray(x.tags) ? x.tags : [],
         what_to_do: Array.isArray(x.what_to_do) ? x.what_to_do : []
       }))
-      .filter(p => p.id && p.name && Number.isFinite(p.lat) && Number.isFinite(p.lng));
-  } catch { return []; }
+      .filter(p => p.id && p.name && Number.isFinite(p.lat) && Number.isFinite(p.lng) && p.type);
+  } catch (e) {
+    throw new Error(`Errore caricamento mete curate: ${e?.message || e}`);
+  }
 }
 
 /* -------------------------
@@ -210,16 +233,17 @@ function estimateAutoLike(origin, lat, lng, mode) {
 ------------------------- */
 function clamp(n,a,b){ return Math.max(a, Math.min(b,n)); }
 function timeFit(etaMin, targetMin) {
-  const minOk = Math.max(12, targetMin * 0.35);
-  const maxOk = targetMin * 1.10;
+  const minOk = 0; // ✅ non scartiamo mete vicine
+  const maxOk = targetMin * 1.15;
   if (etaMin < minOk || etaMin > maxOk) return 0;
   const diff = Math.abs(etaMin - targetMin);
-  const norm = clamp(1 - (diff / (targetMin * 0.60)), 0, 1);
-  return 0.55 + norm * 0.45;
+  const normv = clamp(1 - (diff / (targetMin * 0.65)), 0, 1);
+  return 0.55 + normv * 0.45;
 }
 function styleFit(visibility, style) {
-  if (style === "known") return visibility === "conosciuta" ? 1.0 : 0.55;
-  return visibility === "chicca" ? 1.0 : 0.55;
+  const v = norm(visibility);
+  if (style === "known") return v === "conosciuta" ? 1.0 : 0.55;
+  return v === "chicca" ? 1.0 : 0.55;
 }
 function finalScore(p, targetMin, style, dailySet, visitedSet) {
   if (visitedSet.has(p.id)) return -999;
@@ -252,7 +276,6 @@ async function renderPOI(place) {
   if (!poiListEl) return;
   poiListEl.innerHTML = "";
 
-  // curated what_to_do (se c'è)
   if (Array.isArray(place.what_to_do) && place.what_to_do.length) {
     place.what_to_do.slice(0, 6).forEach((t) => {
       const div = document.createElement("div");
@@ -297,8 +320,6 @@ function renderResult(top, alternatives) {
   const eta = Number.isFinite(top.eta_min) ? `${Math.round(top.eta_min)} min` : "";
   const km  = Number.isFinite(top.distance_km) ? `${top.distance_km.toFixed(0)} km` : "";
   const w   = lastWeatherLabel ? ` · meteo: ${lastWeatherLabel}` : "";
-
-  // meta: per plane/train/bus aggiungiamo hub info se presente
   const extra = top.hubSummary ? ` · ${top.hubSummary}` : "";
 
   placeMetaEl.textContent = [eta, km].filter(Boolean).join(" · ") + w + extra;
@@ -360,9 +381,11 @@ async function run() {
   showResultBox(false);
 
   const minutes   = Number($("timeSelect")?.value || 60);
-  const mode      = ($("modeSelect")?.value || "car").toLowerCase();
-  const style     = ($("styleSelect")?.value || "known").toLowerCase();
-  const category  = ($("categorySelect")?.value || "città").toLowerCase();
+  const mode      = norm($("modeSelect")?.value || "car");
+  const style     = norm($("styleSelect")?.value || "known");
+  const categoryRaw = $("categorySelect")?.value || "città";
+
+  const allowedTypes = allowedTypesForCategory(categoryRaw);
 
   const visitedSet = getVisitedSet();
   const dailySet   = getDailyRecoSet();
@@ -370,17 +393,19 @@ async function run() {
   setStatus("Calcolo la meta migliore…");
   const origin = await getOrigin();
 
-  // meteo lo usiamo solo come info (non blocca)
   setStatus("Controllo il meteo…");
   const weather = await getWeather(origin.lat, origin.lon);
   lastWeatherLabel = weather.label || "";
 
-  // ✅ MEZZI PUBBLICI: plane/train/bus -> /api/plan
+  // ✅ MEZZI PUBBLICI
   if (mode === "plane" || mode === "train" || mode === "bus") {
     setStatus(`Cerco mete con ${mode.toUpperCase()}…`);
 
-    // /api/plan vuole origin {lat, lon}
-    const plan = await fetchPlan({ origin: { lat: origin.lat, lon: origin.lon, label: origin.label }, maxMinutes: minutes, mode });
+    const plan = await fetchPlan({
+      origin: { lat: origin.lat, lon: origin.lon, label: origin.label },
+      maxMinutes: minutes,
+      mode
+    });
 
     const results = Array.isArray(plan?.results) ? plan.results : [];
     if (!results.length) {
@@ -388,7 +413,6 @@ async function run() {
       return;
     }
 
-    // Trasformiamo results in "places" per la UI
     const candidates = results.map((r) => {
       const dest = r.destination;
       const id = dest.id || `${dest.name}_${dest.country}`.toLowerCase().replace(/\s+/g,"_");
@@ -398,9 +422,9 @@ async function run() {
         lat: dest.lat,
         lng: dest.lon,
         eta_min: r.totalMinutes,
-        distance_km: null, // per mezzi pubblici non ha senso mostrarla
+        distance_km: null,
         hubSummary: `${r.originHub?.code ? r.originHub.code : r.originHub?.name} → ${r.destinationHub?.code ? r.destinationHub.code : r.destinationHub?.name}`,
-        what_to_do: Array.isArray(dest.tags) ? [] : [], // qui poi useremo OpenAI/curated per descrizioni
+        what_to_do: [],
         source: "plan"
       };
     });
@@ -409,31 +433,37 @@ async function run() {
     const alternatives = candidates.slice(1, 3);
 
     addDailyReco(top.id);
-
     lastPicks = { top, alternatives };
     renderResult(top, alternatives);
     setStatus("Meta trovata ✔", "ok");
     return;
   }
 
-  // ✅ AUTO/WALK/BIKE: curated + estimate
+  // ✅ AUTO/WALK/BIKE
   setStatus("Cerco tra le mete curate…");
   const curated = await loadCurated();
 
+  // filtro categorie (robusto)
   let candidates = curated
-    .filter(p => (p.type || "") === category)
+    .filter(p => allowedTypes.has(norm(p.type)))
     .map(p => ({ ...p, ...estimateAutoLike(origin, p.lat, p.lng, mode) }));
 
-  // filter time window
-  const maxMin = minutes * 1.10;
-  const minMin = Math.max(12, minutes * 0.35);
-  candidates = candidates.filter(p => p.eta_min <= maxMin && p.eta_min >= minMin);
+  // filtro tempo (più permissivo)
+  const maxMin = minutes * 1.15;
+  candidates = candidates.filter(p => p.eta_min <= maxMin);
 
   candidates.forEach(p => p._score = finalScore(p, minutes, style, dailySet, visitedSet));
   candidates = candidates.filter(p => p._score > -100).sort((a,b)=>b._score - a._score);
 
   if (!candidates.length) {
-    setStatus("Non trovo mete in questa categoria. Aumenta il tempo o cambia categoria.", "err");
+    const typesInData = [...new Set(curated.map(p => norm(p.type)))].sort().join(", ");
+    setStatus(
+      "Non trovo mete con questi filtri.\n" +
+      `• Categoria richiesta: ${categoryRaw}\n` +
+      `• Tipi disponibili nel JSON: ${typesInData}\n` +
+      "Prova ad aumentare il tempo o cambia categoria.",
+      "err"
+    );
     return;
   }
 
@@ -441,27 +471,30 @@ async function run() {
   const alternatives = candidates.slice(1, 3);
 
   addDailyReco(top.id);
-
   lastPicks = { top, alternatives };
   renderResult(top, alternatives);
   setStatus("Meta trovata ✔", "ok");
 }
 
 /* -------------------------
-   Events
+   Events (safe)
 ------------------------- */
-goBtn.onclick = async () => {
-  goBtn.disabled = true;
-  try {
-    await run();
-  } catch (e) {
-    setStatus("Errore: " + (e?.message || String(e)), "err");
-  } finally {
-    goBtn.disabled = false;
-  }
-};
+if (goBtn) {
+  goBtn.onclick = async () => {
+    goBtn.disabled = true;
+    try {
+      await run();
+    } catch (e) {
+      setStatus("Errore: " + (e?.message || String(e)), "err");
+    } finally {
+      goBtn.disabled = false;
+    }
+  };
+}
 
-gpsBtn.onclick = () => {
-  if ($("startInput")) $("startInput").value = "";
-  setStatus("Ok: userò il GPS quando premi “DOVE ANDIAMO?”");
-};
+if (gpsBtn) {
+  gpsBtn.onclick = () => {
+    if ($("startInput")) $("startInput").value = "";
+    setStatus("Ok: userò il GPS quando premi “DOVE ANDIAMO?”");
+  };
+}
