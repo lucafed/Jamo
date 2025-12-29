@@ -22,8 +22,15 @@ jobs:
         with:
           node-version: "20"
 
+      - name: Download + extract GeoNames cities500.txt
+        run: |
+          mkdir -p .tmp
+          curl -L "https://download.geonames.org/export/dump/cities500.zip" -o .tmp/cities500.zip
+          unzip -p .tmp/cities500.zip cities500.txt > .tmp/cities500.txt
+          wc -l .tmp/cities500.txt
+
       - name: Build index
-        run: node scripts/build_places_index_eu_uk.mjs
+        run: node scripts/build_places_index_eu_uk.mjs .tmp/cities500.txt
 
       - name: Commit generated file
         run: |
