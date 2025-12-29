@@ -6,7 +6,6 @@
   <title>Jamo</title>
 
   <meta name="theme-color" content="#0A0F14" />
-  <!-- ✅ usa il tuo file reale -->
   <link rel="manifest" href="/manifest.webmanifest" />
   <link rel="icon" href="/icons/icon-192.png" />
 
@@ -198,14 +197,15 @@
         <div class="logo"></div>
         <h1>Jamo</h1>
       </div>
-      <div class="pill">v6 • Mete ovunque</div>
+      <div class="pill">v8 • Decide + spiega</div>
     </div>
 
     <main class="card">
       <p class="headline">“Andiamo da qualche parte?” → “Ok, ma dove?”</p>
       <p class="sub">
         Scegli <b>tempo</b>, <b>mezzo</b>, <b>stile</b> e <b>categoria</b>.
-        Jamo ti propone una meta + alternative e sotto trovi cosa vedere/fare.
+        Jamo ti propone una meta <b>con alternative</b> e sotto trovi:
+        <b>perché te la consiglia</b>, <b>cosa vedere/fare</b> e <b>cosa mangiare</b>.
       </p>
 
       <div class="grid">
@@ -254,7 +254,6 @@
               </select>
             </div>
 
-            <!-- ✅ categorie aggiornate -->
             <div style="flex:1; min-width:220px">
               <select id="categorySelect">
                 <option value="citta_borghi" selected>Città + Borghi</option>
@@ -268,6 +267,7 @@
               </select>
             </div>
           </div>
+
           <div class="tiny">
             Tip: se hai segnato troppe mete come “visitato”, fai reset: <a href="/?reset=1">clicca qui</a>
           </div>
@@ -291,8 +291,16 @@
           <div class="sectionTitle">Alternative</div>
           <div id="altList"></div>
 
+          <!-- ✅ NEW: WHY -->
+          <div class="sectionTitle">Perché te la consiglio</div>
+          <div id="whyList"></div>
+
           <div class="sectionTitle">Cosa vedere / fare</div>
           <div id="poiList"></div>
+
+          <!-- ✅ NEW: EAT -->
+          <div class="sectionTitle">Cosa mangiare</div>
+          <div id="eatList"></div>
         </section>
       </div>
 
@@ -300,7 +308,6 @@
     </main>
   </div>
 
-  <!-- ✅ percorso assoluto -->
   <script src="/app.js"></script>
 </body>
 </html>
