@@ -65,6 +65,7 @@
     .headline{margin: 0 0 6px; font-size: 18px; line-height:1.25; font-weight: 900;}
     .sub{margin: 0 0 14px; color: var(--muted); line-height:1.45; font-size: 14px;}
     .grid{display:grid; grid-template-columns: 1fr; gap: 12px;}
+
     .field{
       border:1px solid rgba(255,255,255,.10);
       background: rgba(0,0,0,.18);
@@ -114,6 +115,7 @@
       font-size: 13px;
       white-space:nowrap;
     }
+
     .status{
       margin-top: 12px;
       padding: 10px 12px;
@@ -126,6 +128,7 @@
     }
     .status.err{border-color: rgba(255,77,77,.35); color:#ffd1d1}
     .status.ok{border-color: rgba(32,209,139,.35); color:#c9ffe7}
+
     .result{
       margin-top: 14px;
       border-radius: 18px;
@@ -136,6 +139,7 @@
     .hidden{display:none}
     .place-title{margin:0 0 6px; font-size: 22px; font-weight: 950;}
     .meta{margin:0 0 10px; color: rgba(255,255,255,.70); font-size: 13px; line-height: 1.4;}
+
     .actions{display:flex; gap:10px; flex-wrap:wrap; margin-top: 10px;}
     .linkbtn{
       display:inline-flex;
@@ -150,140 +154,125 @@
       font-weight: 900;
       font-size: 13px;
     }
+
     .sectionTitle{
-      margin: 14px 0 8px;
+      margin: 16px 0 8px;
       font-size: 15px;
       letter-spacing:.2px;
       color: rgba(255,255,255,.92);
       font-weight: 900;
     }
-    .tiny{font-size: 12px; color: rgba(255,255,255,.60); margin-top: 8px; line-height:1.35;}
-    .footer{margin-top: 14px; text-align:center; color: rgba(255,255,255,.55); font-size: 12px;}
-    .footer a{color: rgba(255,255,255,.75); text-decoration: underline;}
 
-    /* ---- NEW: consigli + CTA più “forti” ---- */
-    .why-hero{
-      border:1px solid rgba(0,212,255,.18);
-      background: linear-gradient(180deg, rgba(0,212,255,.10), rgba(255,255,255,.02));
+    /* WOW blocks */
+    .heroReason{
+      border:1px solid rgba(0,212,255,.22);
+      background: linear-gradient(180deg, rgba(0,212,255,.10), rgba(47,123,255,.06));
       border-radius: 16px;
       padding: 12px;
       margin-bottom: 10px;
     }
-    .why-title{font-weight: 950; font-size: 14px;}
-    .why-sub{color: rgba(255,255,255,.70); font-size: 12px; margin-top: 4px;}
+    .heroTitle{font-weight:950; font-size:13px; color:rgba(255,255,255,.92); margin-bottom:6px}
+    .heroText{font-size:14px; color:rgba(255,255,255,.90); line-height:1.35}
 
-    .chips{display:flex; gap:8px; flex-wrap:wrap; margin-top: 10px;}
-    .chip{
-      font-size: 12px;
-      padding: 7px 10px;
-      border-radius: 999px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.05);
-      color: rgba(255,255,255,.88);
-    }
-
-    .why-card{
-      display:flex;
-      gap:10px;
-      align-items:flex-start;
+    .cardline{
       padding: 10px 12px;
       border-radius: 14px;
       border:1px solid rgba(255,255,255,.10);
       background: rgba(255,255,255,.04);
       margin-bottom: 8px;
+      font-size: 13px;
+      color: rgba(255,255,255,.85);
     }
-    .why-dot{
-      width:22px; height:22px;
-      border-radius: 10px;
-      display:flex; align-items:center; justify-content:center;
-      background: rgba(0,212,255,.14);
-      border:1px solid rgba(0,212,255,.22);
-      flex:0 0 auto;
-      margin-top: 1px;
-    }
-    .why-text{font-weight: 800; color: rgba(255,255,255,.92);}
 
-    .cta-box{
-      border-radius: 16px;
-      padding: 12px;
-      border:1px solid rgba(47,123,255,.20);
-      background: linear-gradient(180deg, rgba(47,123,255,.10), rgba(0,0,0,.10));
-      margin: 12px 0 6px;
+    .muteline{
+      padding: 10px 12px;
+      border-radius: 14px;
+      border:1px dashed rgba(255,255,255,.18);
+      color: rgba(255,255,255,.70);
+      background: rgba(255,255,255,.03);
+      font-size: 13px;
     }
-    .cta-title{font-weight: 950;}
-    .cta-sub{margin-top:4px; color: rgba(255,255,255,.72); font-size: 12px; line-height: 1.35;}
-    .cta-row{display:flex; gap:10px; flex-wrap:wrap; margin-top: 10px;}
-    .cta-btn{
-      text-decoration:none;
+
+    .altCard{
+      padding: 12px;
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      margin-bottom: 10px;
+      cursor:pointer;
+    }
+    .altName{font-weight:950}
+    .altMeta{margin-top:2px; color:rgba(255,255,255,.68); font-size:12px}
+
+    .step{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      border-radius: 14px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+    }
+    .stepTop{display:flex; justify-content:space-between; gap:12px}
+    .stepLabel{font-weight:900}
+    .stepTime{color:rgba(255,255,255,.70); font-size:12px}
+
+    .grid2{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .blockTitle{
+      font-weight:950;
+      color: rgba(255,255,255,.92);
+      margin: 8px 0 2px;
+    }
+    .tile{
+      padding: 10px 12px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      font-size: 13px;
+    }
+
+    /* CTA */
+    .ctaBox{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin: 12px 0 6px;
+      padding: 12px;
+      border-radius: 16px;
+      border:1px solid rgba(0,212,255,.22);
+      background: rgba(0,212,255,.06);
+    }
+    .ctaPrimary{
       display:inline-flex;
       align-items:center;
       justify-content:center;
-      padding: 10px 12px;
+      padding: 12px 14px;
       border-radius: 14px;
-      background: linear-gradient(90deg, rgba(47,123,255,.95), rgba(0,212,255,.95));
-      color:#04101c;
       font-weight: 950;
-      font-size: 13px;
-      box-shadow: 0 14px 35px rgba(0,212,255,.18);
+      text-decoration:none;
+      color:#04101c;
+      background: linear-gradient(90deg, var(--accent1), var(--accent2));
+      box-shadow: 0 12px 35px rgba(0,212,255,.18);
     }
-
-    .alt-card{
-      padding: 12px;
-      border-radius: 16px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      margin-bottom: 8px;
-    }
-    .alt-card.clickable{cursor:pointer}
-    .alt-name{font-weight: 950; font-size: 14px;}
-    .alt-sub{color: rgba(255,255,255,.70); font-size: 12px; margin-top: 4px;}
-
-    .route-wrap{margin-bottom: 8px;}
-    .route-title{font-weight: 950;}
-    .route-sub{color: rgba(255,255,255,.70); font-size: 12px; margin-top: 4px;}
-    .route-step{
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      padding: 10px 12px;
+    .ctaGhost{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding: 12px 14px;
       border-radius: 14px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      margin-bottom: 8px;
-    }
-    .step-left{font-weight: 900;}
-    .step-right{color: rgba(255,255,255,.74); font-size: 12px; white-space:nowrap;}
-
-    .poi-grid{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-    }
-    @media (min-width:720px){
-      .poi-grid{grid-template-columns: 1fr 1fr;}
-    }
-    .poi-col{
-      border-radius: 16px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
-      padding: 12px;
-    }
-    .poi-title{font-weight: 950; margin-bottom: 10px;}
-    .poi-item{
-      display:flex; gap:10px; align-items:flex-start;
-      padding: 8px 10px;
-      border-radius: 14px;
-      background: rgba(0,0,0,.18);
-      border:1px solid rgba(255,255,255,.06);
-      margin-bottom: 8px;
-    }
-    .poi-bullet{
-      width:22px; height:22px; border-radius: 10px;
-      display:flex; align-items:center; justify-content:center;
+      font-weight: 950;
+      text-decoration:none;
+      color: rgba(255,255,255,.92);
+      border:1px solid rgba(255,255,255,.18);
       background: rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.10);
-      flex:0 0 auto;
     }
+
+    .tiny{font-size: 12px; color: rgba(255,255,255,.60); margin-top: 8px; line-height:1.35;}
+    .footer{margin-top: 14px; text-align:center; color: rgba(255,255,255,.55); font-size: 12px;}
+    .footer a{color: rgba(255,255,255,.75); text-decoration: underline;}
   </style>
 </head>
 
@@ -294,14 +283,14 @@
         <div class="logo"></div>
         <h1>Jamo</h1>
       </div>
-      <div class="pill">RESET • OSM first</div>
+      <div class="pill">v9 • Ovunque in EU/UK</div>
     </div>
 
     <main class="card">
       <p class="headline">“Andiamo da qualche parte?” → “Ok, ma dove?”</p>
       <p class="sub">
         Scegli <b>tempo</b>, <b>mezzo</b>, <b>stile</b> e <b>categoria</b>.
-        Jamo trova una meta <b>vicina e sensata</b> ovunque ti trovi.
+        Jamo ti propone una meta <b>vicina davvero</b> + alternative e ti dice perché.
       </p>
 
       <div class="grid">
@@ -375,13 +364,13 @@
           <div class="place-title" id="placeName"></div>
           <div class="meta" id="placeMeta"></div>
 
+          <div class="ctaBox" id="ctaBox"></div>
+
           <div class="actions">
             <a class="linkbtn" id="mapsLink" href="#" target="_blank" rel="noopener">Apri su Google Maps</a>
             <button class="btn2" id="visitedBtn" type="button">✅ Già visitato</button>
             <button class="btn2" id="rerollBtn" type="button">🔁 Cambia meta</button>
           </div>
-
-          <div id="ctaBox"></div>
 
           <div class="sectionTitle">Perché te lo consiglio</div>
           <div id="whyList"></div>
@@ -397,7 +386,7 @@
         </section>
       </div>
 
-      <div class="footer">Jamo • PWA • Fonte: OSM (Overpass) + curated • Meteo: Open-Meteo</div>
+      <div class="footer">Jamo • PWA • Dati: curated + index EU/UK • Meteo: Open-Meteo</div>
     </main>
   </div>
 
