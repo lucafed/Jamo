@@ -6,8 +6,12 @@
   <title>Jamo</title>
 
   <meta name="theme-color" content="#0b1220" />
-  <link rel="manifest" href="manifest.json" />
-  <link rel="icon" href="icons/icon-192.png" />
+
+  <!-- ✅ Manifest corretto (tu hai manifest.webmanifest) -->
+  <link rel="manifest" href="/manifest.webmanifest" />
+
+  <!-- (se hai davvero queste icone in public/icons/) -->
+  <link rel="icon" href="/icons/icon-192.png" />
 
   <style>
     :root{
@@ -196,7 +200,7 @@
         <div class="logo"></div>
         <h1>Jamo</h1>
       </div>
-      <div class="pill">v3 • Mete reali</div>
+      <div class="pill">v4 • Mete reali</div>
     </div>
 
     <main class="card">
@@ -251,7 +255,6 @@
               </select>
             </div>
 
-            <!-- QUESTA È LA SELECT CHE USA app.js: categorySelect -->
             <div style="flex:1; min-width:200px">
               <select id="categorySelect">
                 <option value="città" selected>Città / Borghi</option>
@@ -290,6 +293,7 @@
     </main>
   </div>
 
-  <script src="app.js"></script>
+  <!-- ✅ DEFER: evita goBtn null e altri crash -->
+  <script src="/app.js" defer></script>
 </body>
 </html>
