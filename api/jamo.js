@@ -1,194 +1,181 @@
-// api/jamo.js — JAMO CORE ENGINE v1.0
-// Seleziona mete BELLE, realistiche e coerenti con tempo + stile
+// /api/jamo.js — JAMO CORE v1
+// Selezione intelligente per BELLEZZA + TEMPO + MEZZO
+// EU + UK — NO mete casuali
 
 import fs from "fs";
 import path from "path";
 
-/* ======================
-   UTIL
-====================== */
-const DATA = (f) =>
-  JSON.parse(fs.readFileSync(path.join(process.cwd(), "public", "data", f), "utf8"));
+const DATA = path.join(process.cwd(), "public", "data", "curated_places_types_eu_uk.json");
 
-const toRad = (x) => (x * Math.PI) / 180;
-const haversine = (a, b, c, d) => {
-  const R = 6371;
-  const dLat = toRad(c - a);
-  const dLon = toRad(d - b);
-  const s =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos(toRad(a)) *
-      Math.cos(toRad(c)) *
-      Math.sin(dLon / 2) ** 2;
-  return 2 * R * Math.asin(Math.sqrt(s));
-};
-
-const norm = (s) =>
-  String(s ?? "")
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .trim();
-
-/* ======================
-   LIMITI REALISTICI
-====================== */
-function maxDistanceKm(minutes, mode) {
-  if (mode === "walk") return minutes * 0.08;
-  if (mode === "bike") return minutes * 0.25;
-  return (
-    minutes <= 45 ? 60 :
-    minutes <= 90 ? 120 :
-    minutes <= 180 ? 250 :
-    400
-  );
+/* =========================
+   Utils
+========================= */
+function readData() {
+  return JSON.parse(fs.readFileSync(DATA, "utf8")).places;
 }
 
-/* ======================
-   SCORE BELLEZZA
-====================== */
-function beautyScore(p) {
-  let s = 0;
-  if (p.why?.length) s += 0.4;
-  if (p.what_to_do?.length) s += 0.3;
-  if (p.what_to_eat?.length) s += 0.2;
-  if (p.visibility === "chicca") s += 0.3;
-  return s;
+function toRad(x){ return x*Math.PI/180; }
+function haversineKm(aLat,aLon,bLat,bLon){
+  const R=6371;
+  const dLat=toRad(bLat-aLat), dLon=toRad(bLon-aLon);
+  const lat1=toRad(aLat), lat2=toRad(bLat);
+  const s=Math.sin(dLat/2)**2 + Math.cos(lat1)*Math.cos(lat2)*Math.sin(dLon/2)**2;
+  return 2*R*Math.asin(Math.sqrt(s));
 }
 
-/* ======================
-   HANDLER
-====================== */
-export default async function handler(req, res) {
-  try {
-    if (req.method !== "POST")
-      return res.status(405).json({ error: "POST only" });
+function clamp(n,a,b){ return Math.max(a, Math.min(b,n)); }
+function norm(s){ return String(s||"").toLowerCase(); }
+
+/* =========================
+   Velocità realistiche
+========================= */
+function speed(mode){
+  if (mode==="walk") return 4;
+  if (mode==="bike") return 15;
+  if (mode==="car") return 70;
+  if (mode==="train") return 120;
+  if (mode==="bus") return 80;
+  if (mode==="plane") return 750;
+  return 70;
+}
+
+/* =========================
+   Filtro categoria
+========================= */
+function matchCategory(place, category){
+  if (!category || category==="citta_borghi") {
+    return place.types.includes("citta") || place.types.includes("borgo");
+  }
+  return place.types.includes(category);
+}
+
+/* =========================
+   Filtro mezzo
+========================= */
+function matchMode(place, mode){
+  if (["walk","bike","car"].includes(mode)) return true;
+  if (mode==="plane") return place.has_airport_near;
+  if (mode==="train" || mode==="bus") return place.has_station;
+  return true;
+}
+
+/* =========================
+   Score intelligente
+========================= */
+function scorePlace(p, eta, targetMin, style){
+  const timeFit = clamp(1 - Math.abs(eta - targetMin) / targetMin, 0, 1);
+  const beauty  = p.beauty_score || 0.7;
+  const chiccaBoost = style==="gems" && p.types.includes("chicca") ? 0.15 : 0;
+  const cityPenalty = style==="gems" && p.types.includes("citta") && p.beauty_score < 0.9 ? -0.2 : 0;
+
+  return (0.55 * timeFit) + (0.45 * beauty) + chiccaBoost + cityPenalty;
+}
+
+/* =========================
+   API
+========================= */
+export default function handler(req,res){
+  try{
+    if (req.method !== "POST") {
+      return res.status(405).json({ error:"POST only" });
+    }
 
     const {
       origin,
-      minutes = 60,
-      mode = "car",
-      style = "known",
-      category = "citta_borghi",
-      visitedIds = [],
-      weekIds = []
+      minutes,
+      mode="car",
+      style="known",
+      category="citta_borghi",
+      visitedIds=[]
     } = req.body || {};
 
-    if (!origin?.lat || !origin?.lon)
-      return res.status(400).json({ error: "Invalid origin" });
+    if (!origin?.lat || !origin?.lon || !minutes) {
+      return res.status(400).json({ error:"origin & minutes required" });
+    }
 
-    const oLat = Number(origin.lat);
-    const oLon = Number(origin.lon);
+    const places = readData();
+    const targetMin = Number(minutes);
+    const maxKm = speed(mode) * (targetMin/60) * 1.6;
 
-    const maxKm = maxDistanceKm(minutes, mode);
-    const visited = new Set(visitedIds);
-    const week = new Set(weekIds);
+    /* =========================
+       1️⃣ Base filter
+    ========================= */
+    let candidates = places
+      .map(p=>{
+        const km = haversineKm(origin.lat, origin.lon, p.lat, p.lng);
+        const eta = (km / speed(mode)) * 60;
+        return { ...p, km, eta };
+      })
+      .filter(p=>p.km > 2)
+      .filter(p=>p.km <= maxKm)
+      .filter(p=>matchCategory(p, category))
+      .filter(p=>matchMode(p, mode))
+      .filter(p=>!visitedIds.includes(p.id));
 
-    /* ======================
-       DATI
-    ====================== */
-    const curated = DATA("curated.json").places || [];
-    const index = DATA("places_index_eu_uk.json").places || [];
-
-    /* ======================
-       COSTRUZIONE CANDIDATI
-    ====================== */
-    function build(list, source) {
-      return list
-        .map((p) => {
-          const km = haversine(oLat, oLon, p.lat, p.lng);
-          const eta = (km / 70) * 60;
-          return {
-            ...p,
-            distance_km: km,
-            eta_min: eta,
-            _source: source
-          };
+    /* =========================
+       2️⃣ Se troppo pochi → allarga
+    ========================= */
+    if (candidates.length < 3) {
+      candidates = places
+        .map(p=>{
+          const km = haversineKm(origin.lat, origin.lon, p.lat, p.lng);
+          const eta = (km / speed(mode)) * 60;
+          return { ...p, km, eta };
         })
-        .filter((p) => p.distance_km >= 3)
-        .filter((p) => p.distance_km <= maxKm)
-        .filter((p) => !visited.has(p.id))
-        .filter((p) => !week.has(p.id));
+        .filter(p=>p.km > 2)
+        .filter(p=>matchCategory(p, category))
+        .filter(p=>matchMode(p, mode))
+        .filter(p=>!visitedIds.includes(p.id));
     }
 
-    let pool = [];
-
-    // 1️⃣ PRIORITÀ: curated (posti belli)
-    pool = build(curated, "curated");
-
-    // 2️⃣ BACKUP: index (solo città/borghi)
-    if (pool.length < 3) {
-      pool = pool.concat(
-        build(index, "index").filter((p) =>
-          ["citta", "borgo"].includes(p.type)
-        )
-      );
+    if (!candidates.length) {
+      return res.status(200).json({
+        ok:true,
+        top:null,
+        alternatives:[],
+        message:`Nessuna meta ${category} trovata con ${mode} nel tempo indicato`
+      });
     }
 
-    if (!pool.length)
-      return res.json({ ok: true, top: null, alternatives: [] });
-
-    /* ======================
-       SCORING
-    ====================== */
-    pool.forEach((p) => {
-      let score = 0;
-
-      // distanza coerente col tempo
-      score += 1 - Math.abs(p.eta_min - minutes) / minutes;
-
-      // bellezza
-      score += beautyScore(p);
-
-      // stile
-      if (style === "gems" && p.visibility === "chicca") score += 0.4;
-      if (style === "gems" && p.visibility === "conosciuta") score -= 0.3;
-
-      // penalizza metropoli per gite brevi
-      if (minutes <= 90 && p.visibility === "conosciuta") score -= 0.3;
-
-      p._score = score;
+    /* =========================
+       3️⃣ Ranking
+    ========================= */
+    candidates.forEach(p=>{
+      p._score = scorePlace(p, p.eta, targetMin, style);
     });
 
-    pool.sort((a, b) => b._score - a._score);
+    candidates.sort((a,b)=>b._score - a._score);
 
-    const top = pool[0];
-    const alternatives = pool.slice(1, 3);
+    const top = candidates[0];
+    const alternatives = candidates.slice(1,3);
 
-    /* ======================
-       WHY AUTO
-    ====================== */
-    function enrich(p) {
-      const why = p.why?.length
-        ? p.why
-        : [
-            `Si raggiunge in circa ${Math.round(p.eta_min)} minuti.`,
-            p.visibility === "chicca"
-              ? "È una chicca autentica, poco scontata."
-              : "È una meta solida e interessante.",
-            "Ottima scelta per il tempo che hai."
-          ];
-
+    /* =========================
+       4️⃣ Output
+    ========================= */
+    function out(p){
       return {
-        ...p,
-        why: why.slice(0, 4)
+        id: p.id,
+        name: p.name,
+        country: p.country,
+        type: p.types,
+        eta_min: Math.round(p.eta),
+        distance_km: Math.round(p.km),
+        beauty_score: p.beauty_score,
+        why: [
+          `È una meta bella (score ${p.beauty_score})`,
+          `Tempo stimato: ~${Math.round(p.eta)} min`,
+          style==="gems" ? "È una chicca selezionata" : "È una meta molto apprezzata"
+        ]
       };
     }
 
-    return res.json({
-      ok: true,
-      top: enrich(top),
-      alternatives: alternatives.map(enrich),
-      debug: {
-        pool: pool.length,
-        maxKm,
-        minutes,
-        mode
-      }
+    return res.status(200).json({
+      ok:true,
+      top: out(top),
+      alternatives: alternatives.map(out)
     });
-  } catch (e) {
-    return res.status(500).json({
-      error: e.message || String(e)
-    });
+
+  } catch(e){
+    return res.status(500).json({ error:String(e.message||e) });
   }
 }
