@@ -1,25 +1,17 @@
-// /api/plan.js
+// /api/plan.js  — Vercel-safe (solo public/data)
+// - Legge i JSON da public/data/*
+// - POST /api/plan con { origin:{lat,lon,label?}, maxMinutes:number, mode:"plane"|"train"|"bus", limit?:number }
+// - Restituisce mete raggiungibili entro maxMinutes con hub + stima tempi
+
 import fs from "fs";
 import path from "path";
 
-function readJsonTrying(relPaths) {
-  const tried = [];
-
-  for (const rel of relPaths) {
-    const p = path.resolve(process.cwd(), rel);
-    tried.push(p);
-    try {
-      if (!fs.existsSync(p)) continue;
-      const raw = fs.readFileSync(p, "utf8");
-      return { data: JSON.parse(raw), usedPath: p, tried };
-    } catch {
-      // continue
-    }
-  }
-
-  const err = new Error("JSON file not found in any known path");
-  err.tried = tried;
-  throw err;
+function readJsonFromPublicData(filename) {
+  // In Vercel, i file statici stanno in /public
+  // e in build diventano disponibili nel filesystem del deployment.
+  const p = path.join(process.cwd(), "public", "data", filename);
+  const raw = fs.readFileSync(p, "utf8");
+  return { data: JSON.parse(raw), usedPath: p };
 }
 
 function toRad(x) { return (x * Math.PI) / 180; }
@@ -36,12 +28,14 @@ function haversineKm(aLat, aLon, bLat, bLon) {
   return 2 * R * Math.asin(Math.sqrt(s));
 }
 
+function clamp(n, min, max) { return Math.max(min, Math.min(max, n)); }
+
 function nearestHub(hubs, lat, lon) {
   let best = null;
   let bestKm = Infinity;
   for (const h of hubs) {
     const hLat = Number(h.lat);
-    const hLon = Number(h.lon ?? h.lng);
+    const hLon = Number(h.lon);
     if (!Number.isFinite(hLat) || !Number.isFinite(hLon)) continue;
     const km = haversineKm(lat, lon, hLat, hLon);
     if (km < bestKm) { bestKm = km; best = h; }
@@ -49,28 +43,29 @@ function nearestHub(hubs, lat, lon) {
   return { hub: best, km: bestKm };
 }
 
-function clamp(n, min, max) { return Math.max(min, Math.min(max, n)); }
-
+// tempo per raggiungere hub (access/egress)
 function estAccessMinutes(km, speedKmh, minM = 10, maxM = 240) {
+  // +10 min “attrito” (parcheggio/attese)
   const m = (km / speedKmh) * 60 + 10;
   return Math.round(clamp(m, minM, maxM));
 }
 
+// tempo tratta principale
 function estMainMinutes(mode, km) {
   if (mode === "plane") {
     const cruise = 820;
-    const m = (km / cruise) * 60 + 50;
-    return Math.round(clamp(m, 45, 2400));
+    const m = (km / cruise) * 60 + 55; // check-in + security + boarding
+    return Math.round(clamp(m, 60, 2400));
   }
   if (mode === "train") {
-    const avg = 145;
-    const m = (km / avg) * 60 + 10;
-    return Math.round(clamp(m, 25, 2400));
+    const avg = 140;
+    const m = (km / avg) * 60 + 12;
+    return Math.round(clamp(m, 30, 2400));
   }
   if (mode === "bus") {
-    const avg = 90;
-    const m = (km / avg) * 60 + 10;
-    return Math.round(clamp(m, 30, 3000));
+    const avg = 85;
+    const m = (km / avg) * 60 + 12;
+    return Math.round(clamp(m, 35, 3000));
   }
   const avg = 70;
   return Math.round((km / avg) * 60);
@@ -85,10 +80,10 @@ function buildRoute({ mode, origin, dest, airports, stations }) {
     const dA = nearestHub(airports, dLat, dLon);
     if (!oA.hub || !dA.hub) return null;
 
-    const accessMin = estAccessMinutes(oA.km, 70, 15, 300);
+    const accessMin = estAccessMinutes(oA.km, 70, 20, 320);
     const flightKm = haversineKm(oA.hub.lat, oA.hub.lon, dA.hub.lat, dA.hub.lon);
     const flightMin = estMainMinutes("plane", flightKm);
-    const egressMin = estAccessMinutes(dA.km, 55, 10, 180);
+    const egressMin = estAccessMinutes(dA.km, 55, 10, 220);
     const totalMinutes = accessMin + flightMin + egressMin;
 
     return {
@@ -104,14 +99,15 @@ function buildRoute({ mode, origin, dest, airports, stations }) {
     };
   }
 
+  // train/bus: stazioni
   const oS = nearestHub(stations, oLat, oLon);
   const dS = nearestHub(stations, dLat, dLon);
   if (!oS.hub || !dS.hub) return null;
 
-  const accessMin = estAccessMinutes(oS.km, 35, 8, 120);
+  const accessMin = estAccessMinutes(oS.km, 35, 8, 160);
   const mainKm = haversineKm(oS.hub.lat, oS.hub.lon, dS.hub.lat, dS.hub.lon);
   const mainMin = estMainMinutes(mode, mainKm);
-  const egressMin = estAccessMinutes(dS.km, 30, 6, 120);
+  const egressMin = estAccessMinutes(dS.km, 30, 6, 160);
   const totalMinutes = accessMin + mainMin + egressMin;
 
   return {
@@ -132,11 +128,20 @@ export default async function handler(req, res) {
     if (req.method !== "POST") return res.status(405).json({ error: "Use POST" });
 
     const { origin, maxMinutes, mode, limit = 8 } = req.body || {};
-    if (!origin || !maxMinutes || !mode) {
+    if (!origin || maxMinutes == null || !mode) {
       return res.status(400).json({ error: "Missing fields", needed: ["origin", "maxMinutes", "mode"] });
     }
-    if (typeof origin !== "object" || typeof origin.lat !== "number" || typeof origin.lon !== "number") {
-      return res.status(400).json({ error: "origin must be {lat:number, lon:number, label?:string}", got: origin });
+
+    // accetta stringhe numeriche
+    const oLat = Number(origin.lat);
+    const oLon = Number(origin.lon);
+    const maxM = Number(maxMinutes);
+
+    if (!Number.isFinite(oLat) || !Number.isFinite(oLon)) {
+      return res.status(400).json({ error: "origin must be {lat, lon}", got: origin });
+    }
+    if (!Number.isFinite(maxM) || maxM <= 0) {
+      return res.status(400).json({ error: "maxMinutes must be a positive number", got: maxMinutes });
     }
 
     const allowedModes = ["plane", "train", "bus"];
@@ -144,26 +149,10 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "mode must be one of: plane, train, bus" });
     }
 
-    // ✅ PATHS ROBUSTI (incluso il caso public/public/data)
-    const AIRPORTS_PATHS = [
-      "public/data/curated_airports_eu_uk.json",
-      "public/public/data/curated_airports_eu_uk.json",
-      "data/curated_airports_eu_uk.json"
-    ];
-    const STATIONS_PATHS = [
-      "public/data/curated_stations_eu_uk.json",
-      "public/public/data/curated_stations_eu_uk.json",
-      "data/curated_stations_eu_uk.json"
-    ];
-    const DESTS_PATHS = [
-      "public/data/curated_destinations_eu_uk.json",
-      "public/public/data/curated_destinations_eu_uk.json",
-      "data/curated_destinations_eu_uk.json"
-    ];
-
-    const airportsPack = readJsonTrying(AIRPORTS_PATHS);
-    const stationsPack = readJsonTrying(STATIONS_PATHS);
-    const destinationsPack = readJsonTrying(DESTS_PATHS);
+    // ✅ Legge SOLO da public/data
+    const airportsPack = readJsonFromPublicData("curated_airports_eu_uk.json");
+    const stationsPack = readJsonFromPublicData("curated_stations_eu_uk.json");
+    const destinationsPack = readJsonFromPublicData("curated_destinations_eu_uk.json");
 
     const airports = airportsPack.data;
     const stations = stationsPack.data;
@@ -173,13 +162,21 @@ export default async function handler(req, res) {
       return res.status(500).json({
         error: "JSON format error: expected arrays",
         debug: {
-          used: { airports: airportsPack.usedPath, stations: stationsPack.usedPath, destinations: destinationsPack.usedPath }
+          used: {
+            airports: airportsPack.usedPath,
+            stations: stationsPack.usedPath,
+            destinations: destinationsPack.usedPath
+          },
+          types: {
+            airports: typeof airports,
+            stations: typeof stations,
+            destinations: typeof destinations
+          }
         }
       });
     }
 
-    const maxM = Number(maxMinutes);
-    const safeLimit = clamp(Number(limit) || 8, 1, 20);
+    const originObj = { lat: oLat, lon: oLon, label: origin.label || "Partenza" };
 
     const scored = [];
     for (const d of destinations) {
@@ -188,14 +185,15 @@ export default async function handler(req, res) {
         name: d.name,
         country: d.country,
         lat: Number(d.lat),
-        lon: Number(d.lon ?? d.lng)
+        lon: Number(d.lon),
+        tags: d.tags
       };
       if (!dest.id || !dest.name || !Number.isFinite(dest.lat) || !Number.isFinite(dest.lon)) continue;
 
-      const kmToDest = haversineKm(origin.lat, origin.lon, dest.lat, dest.lon);
+      const kmToDest = haversineKm(originObj.lat, originObj.lon, dest.lat, dest.lon);
       if (kmToDest < 5) continue;
 
-      const route = buildRoute({ mode, origin, dest, airports, stations });
+      const route = buildRoute({ mode, origin: originObj, dest, airports, stations });
       if (!route) continue;
 
       if (route.totalMinutes <= maxM) {
@@ -204,6 +202,7 @@ export default async function handler(req, res) {
     }
 
     scored.sort((a, b) => a.route.totalMinutes - b.route.totalMinutes);
+    const safeLimit = clamp(Number(limit) || 8, 1, 20);
 
     const results = scored.slice(0, safeLimit).map((r) => ({
       destination: r.destination,
@@ -217,20 +216,24 @@ export default async function handler(req, res) {
 
     return res.status(200).json({
       ok: true,
+      input: { origin: originObj, maxMinutes: maxM, mode },
       debug: {
         usedPaths: {
           airports: airportsPack.usedPath,
           stations: stationsPack.usedPath,
           destinations: destinationsPack.usedPath
-        },
-        counts: { airports: airports.length, stations: stations.length, destinations: destinations.length }
+        }
       },
       results
     });
   } catch (e) {
+    // errore chiaro (tipo file non trovato)
     return res.status(500).json({
       error: String(e?.message || e),
-      tried: e?.tried || undefined
+      hint: "Controlla che i file esistano in public/data e che i nomi combacino",
+      debug: {
+        cwd: process.cwd()
+      }
     });
   }
 }
