@@ -1,19 +1,22 @@
-// /api/jamo.js — JAMO CORE v4 (EU+UK) — REGION READY + OVUNQUE + WALK/BIKE FIX + PT HARD CAP
-// ✅ car/walk/bike: luoghi "belli" usando curated + POI + index (EU+UK)
-// ✅ plane/train/bus: SOLO HUB→HUB via /api/plan (NIENTE borghi, NIENTE ricuciture)
+// /api/jamo.js — JAMO CORE v5 — MACRO-ONLY (STABLE DATA) + OVUNQUE + WALK/BIKE FIX + HUB→HUB BUILTIN
+// ✅ car/walk/bike: SOLO da public/data/macros/<macro>.json -> places
+// ✅ plane/train/bus: SOLO da public/data/macros/<macro>.json -> hubs (hub→hub stimato, hard cap <= minutes)
 // ✅ categoria OVUNQUE: ignora tipo e sceglie solo per tempo/mezzo/qualità
-// ✅ FIX WALK/BIKE assurdi: no 2000 km, cap progressivi + filtri per mezzo
-// ✅ PT: scarta rotte > minutes (hard cap) + messaggio se hub lontanissimo (dataset povero)
-// ✅ FIX 401: /api/plan chiamata sullo stesso host reale + Cookie forward
+// ✅ FIX WALK/BIKE: limiti duri km/min + caps progressivi piccoli
+// ✅ Fix “treno/bus mi manda a Roma”: se hubs contiene stazioni locali, userà quelle; altrimenti warning chiaro
 
 import fs from "fs";
 import path from "path";
 
 const DATA_DIR = path.join(process.cwd(), "public", "data");
+const DEFAULT_MACRO_FILE = "macros/it_macro_01_abruzzo.json";
 
-function readJsonSafe(filename, fallback) {
+/* -------------------------
+   Utils
+------------------------- */
+function readJsonSafe(relPath, fallback) {
   try {
-    const p = path.join(DATA_DIR, filename);
+    const p = path.join(DATA_DIR, relPath);
     if (!fs.existsSync(p)) return fallback;
     const raw = fs.readFileSync(p, "utf8");
     return JSON.parse(raw);
@@ -61,12 +64,10 @@ function canonicalMode(raw) {
  * Categoria:
  * - "ovunque" => ["any"]
  * - "citta_borghi" => ["citta","borgo"]
- * - "mare|montagna|..." => [type]
+ * - "mare|montagna|natura|relax|bambini" => [type]
  */
 function allowedTypesFromCategory(categoryRaw) {
   const c = norm(categoryRaw);
-
-  // ✅ nuovo
   if (c === "ovunque" || c === "any" || c === "random") return ["any"];
 
   if (c.includes("borgh") && c.includes("citt")) return ["citta", "borgo"];
@@ -77,10 +78,13 @@ function allowedTypesFromCategory(categoryRaw) {
   return ["citta", "borgo"];
 }
 
+/* -------------------------
+   Local ETA estimates
+------------------------- */
 function avgSpeedKmh(mode) {
   if (mode === "walk") return 4.6;
   if (mode === "bike") return 15.0;
-  return 70;
+  return 70; // car
 }
 function estimateLocal(origin, lat, lon, mode) {
   const km = haversineKm(origin.lat, origin.lon, lat, lon);
@@ -88,28 +92,28 @@ function estimateLocal(origin, lat, lon, mode) {
   return { km, eta };
 }
 
-// “quanto è bello” (proxy): curated>pois>index. Se c'è beauty_score lo usa.
+/* -------------------------
+   Beauty + scoring
+------------------------- */
 function beautyScore(p) {
-  const b = Number(p.beauty_score);
+  const b = Number(p?.beauty_score);
   if (Number.isFinite(b)) return clamp(b, 0.2, 1.0);
 
-  const src = p._source || "";
-  if (src === "curated") return 0.92;
-  if (src === "pois") return 0.82;
-
-  const vis = norm(p.visibility || "");
-  const whyN = Array.isArray(p.why) ? p.why.length : 0;
-  const tagsN = Array.isArray(p.tags) ? p.tags.length : 0;
-  let s = 0.58;
+  // se non c'è beauty_score, fallback “safe”:
+  const vis = norm(p?.visibility || "");
+  let s = 0.65;
   if (vis === "conosciuta") s += 0.10;
   if (vis === "chicca") s += 0.06;
+
+  const whyN = Array.isArray(p?.why) ? p.why.length : 0;
+  const tagsN = Array.isArray(p?.tags) ? p.tags.length : 0;
   if (whyN >= 2) s += 0.06;
   if (tagsN >= 2) s += 0.04;
-  return clamp(s, 0.45, 0.82);
+
+  return clamp(s, 0.55, 0.85);
 }
 
-// score locale: forza “diverso col tempo” (timeFit forte) + evita posti troppo piccoli/brutti
-function scoreLocal(p, eta, targetMin, style) {
+function scoreLocal(p, eta, targetMin, style, isAny) {
   const timeFit = clamp(1 - (Math.abs(eta - targetMin) / Math.max(22, targetMin * 0.75)), 0, 1);
   const nearFit = clamp(1 - (eta / (targetMin * 1.9)), 0, 1);
 
@@ -122,65 +126,165 @@ function scoreLocal(p, eta, targetMin, style) {
   const beauty = beautyScore(p);
 
   const vis = norm(p.visibility || "");
-  const types = Array.isArray(p.types) ? p.types : (p.type ? [p.type] : []);
+  const types = Array.isArray(p.types) ? p.types.map(norm) : [];
 
   const bigCityPenalty = (style === "gems" && types.includes("citta") && vis === "conosciuta") ? 0.12 : 0;
-  const randomPenalty = (style === "known" && beauty < 0.60) ? 0.14 : 0;
+  const randomPenalty = (!isAny && style === "known" && beauty < 0.60) ? 0.14 : 0;
 
   return (0.50 * timeFit) + (0.18 * nearFit) + (0.32 * beauty) - outOfBandPenalty - bigCityPenalty - randomPenalty;
 }
 
-/**
- * ✅ Call /api/plan server-side sullo STESSO HOST della request (evita domini sbagliati)
- * ✅ Inoltra Cookie per bypassare eventuale protection che genera 401
- */
-async function callPlan(req, origin, maxMinutes, mode) {
-  const proto = (req.headers["x-forwarded-proto"] || "https").toString();
-  const host  = (req.headers["x-forwarded-host"] || req.headers.host).toString();
-  const url = `${proto}://${host}/api/plan`;
-
-  const r = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Cookie": req.headers.cookie || ""
-    },
-    body: JSON.stringify({
-      origin,
-      maxMinutes,
-      mode,
-      limit: 40,
-      // hub→hub only (il tuo plan v3)
-      minMainKm: mode === "plane" ? 180 : (mode === "train" ? 40 : 35),
-      avoidSameHub: true,
-      preferNear: true
-    })
-  });
-
-  const text = await r.text().catch(() => "");
-  if (!r.ok) throw new Error(`PLAN ${r.status}: ${text.slice(0, 220)}`);
-  return JSON.parse(text);
+/* -------------------------
+   Hard limits for walk/bike (anti-2000km)
+------------------------- */
+function hardLimitsForMode(mode, minutes) {
+  if (mode === "walk") {
+    const km = clamp((minutes / 60) * 5.5, 1.5, 18);
+    return { maxKm: km, maxEta: minutes * 1.35 };
+  }
+  if (mode === "bike") {
+    const km = clamp((minutes / 60) * 18, 3, 65);
+    return { maxKm: km, maxEta: minutes * 1.40 };
+  }
+  return { maxKm: Infinity, maxEta: minutes * 2.60 };
 }
 
-// POI vicini (mare/montagna/natura/relax/bambini)
-function nearbyPois(poisPack, lat, lon, wantedType, maxKm = 85, limit = 6) {
-  const list = Array.isArray(poisPack?.pois) ? poisPack.pois : [];
+/* -------------------------
+   Macro parsing (tollerante)
+------------------------- */
+function normalizeTypes(x) {
+  const t =
+    Array.isArray(x?.types) ? x.types :
+    (Array.isArray(x?.type) ? x.type :
+      (x?.type ? [x.type] : []));
+  return t.map(norm).filter(Boolean);
+}
+
+function normalizePlace(p) {
+  const lat = Number(p?.lat);
+  const lng = Number(p?.lng ?? p?.lon);
+  if (!p || !p.id || !p.name || !Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+
+  return {
+    id: String(p.id),
+    name: String(p.name),
+    country: p.country || "IT",
+    region: p.region || "",
+    lat, lng,
+    types: normalizeTypes(p),
+    visibility: p.visibility || "",
+    beauty_score: Number(p.beauty_score),
+    why: Array.isArray(p.why) ? p.why : [],
+    what_to_do: Array.isArray(p.what_to_do) ? p.what_to_do : [],
+    what_to_eat: Array.isArray(p.what_to_eat) ? p.what_to_eat : [],
+    tags: Array.isArray(p.tags) ? p.tags : []
+  };
+}
+
+function normalizeHub(h) {
+  const lat = Number(h?.lat);
+  const lon = Number(h?.lon ?? h?.lng);
+  if (!h || !Number.isFinite(lat) || !Number.isFinite(lon)) return null;
+
+  const type = norm(h?.type || h?.hubType || "");
+  const code = String(h?.code || "").trim();
+  const name = String(h?.name || h?.city || h?.label || "Hub").trim();
+
+  return {
+    type: type || "hub",
+    code,
+    name,
+    city: h?.city || "",
+    country: h?.country || "IT",
+    lat,
+    lon
+  };
+}
+
+function parseMacro(macroObj) {
+  const placesRaw =
+    Array.isArray(macroObj?.places) ? macroObj.places :
+    Array.isArray(macroObj?.data?.places) ? macroObj.data.places :
+    [];
+
+  const places = placesRaw.map(normalizePlace).filter(Boolean);
+
+  // hubs tollerante: hubs.airports / hubs.stations / hubs.bus oppure flat arrays
+  const hubsObj = macroObj?.hubs || macroObj?.data?.hubs || {};
+  const airportsRaw = Array.isArray(hubsObj?.airports) ? hubsObj.airports : (Array.isArray(macroObj?.airports) ? macroObj.airports : []);
+  const stationsRaw = Array.isArray(hubsObj?.stations) ? hubsObj.stations : (Array.isArray(macroObj?.stations) ? macroObj.stations : []);
+  const busRaw      = Array.isArray(hubsObj?.bus)      ? hubsObj.bus      : (Array.isArray(macroObj?.bus) ? macroObj.bus : []);
+
+  const airports = airportsRaw.map(normalizeHub).filter(Boolean);
+  const stations = stationsRaw.map(normalizeHub).filter(Boolean);
+  const bus      = busRaw.map(normalizeHub).filter(Boolean);
+
+  return { places, hubs: { airports, stations, bus } };
+}
+
+/* -------------------------
+   HUB→HUB estimate (built-in, stable)
+------------------------- */
+function estMainMinutes(mode, km) {
+  if (mode === "plane") {
+    const cruise = 820;
+    const m = (km / cruise) * 60 + 35; // overhead hub→hub
+    return Math.round(clamp(m, 35, 2400));
+  }
+  if (mode === "train") {
+    const avg = 135;
+    const m = (km / avg) * 60 + 8;
+    return Math.round(clamp(m, 20, 2400));
+  }
+  if (mode === "bus") {
+    const avg = 85;
+    const m = (km / avg) * 60 + 8;
+    return Math.round(clamp(m, 25, 3000));
+  }
+  return Math.round((km / 70) * 60);
+}
+
+function hubKey(h) {
+  const code = String(h?.code || "").trim();
+  const name = String(h?.name || "").trim();
+  return code ? code.toUpperCase() : normName(name);
+}
+
+function nearestHub(hubs, lat, lon) {
+  let best = null;
+  let bestKm = Infinity;
+  for (const h of hubs) {
+    const km = haversineKm(lat, lon, Number(h.lat), Number(h.lon));
+    if (km < bestKm) { bestKm = km; best = h; }
+  }
+  return { hub: best, km: bestKm };
+}
+
+function scoreHubCandidate({ mainMin, mainKm, targetMin, preferNear = true }) {
+  const tScore = clamp(1 - (Math.abs(mainMin - targetMin) / Math.max(18, targetMin * 0.60)), 0, 1);
+  const kScore = clamp(1 - (mainKm / 1600), 0, 1);
+  const nearWeight = preferNear ? 0.18 : 0.08;
+  return (0.82 * tScore) + (nearWeight * kScore);
+}
+
+function nearbyPlacesByType(places, lat, lon, wantedType, maxKm = 90, limit = 6) {
   const out = [];
-  for (const p of list) {
+  for (const p of places) {
     const types = Array.isArray(p.types) ? p.types : [];
     if (!types.includes(wantedType)) continue;
-    const plat = Number(p.lat), plon = Number(p.lng);
-    if (!Number.isFinite(plat) || !Number.isFinite(plon)) continue;
-    const km = haversineKm(lat, lon, plat, plon);
+    const km = haversineKm(lat, lon, p.lat, p.lng);
     if (km > maxKm) continue;
-    out.push({ ...p, _km: km });
+    out.push({ p, km, b: beautyScore(p) });
   }
-  out.sort((a, b) => (b.beauty_score || 0) - (a.beauty_score || 0) || a._km - b._km);
-  return out.slice(0, limit).map(x => `${x.name} (~${Math.round(x._km)} km)`);
+  out.sort((a, b) => (b.b - a.b) || (a.km - b.km));
+  return out.slice(0, limit).map(x => `${x.p.name} (~${Math.round(x.km)} km)`);
 }
 
+/* -------------------------
+   Output shape
+------------------------- */
 function outLocal(p) {
-  const types = Array.isArray(p.types) ? p.types : (p.type ? [p.type] : []);
+  const types = Array.isArray(p.types) ? p.types : [];
   return {
     id: p.id,
     name: p.country ? `${p.name}, ${p.country}` : p.name,
@@ -196,39 +300,26 @@ function outLocal(p) {
   };
 }
 
-function outPlanHub(candidate) {
+function outHub(c) {
   return {
-    id: candidate.id,
-    name: candidate.name,
-    country: candidate.country || "",
-    type: candidate.type || "hub",
-    visibility: candidate.visibility || "",
-    eta_min: Math.round(candidate.eta_min),
-    distance_km: Math.round(candidate.distance_km),
-    hubSummary: candidate.hubSummary,
-    segments: Array.isArray(candidate.segments) ? candidate.segments : [],
-    why: Array.isArray(candidate.why) ? candidate.why.slice(0, 4) : [],
-    what_to_do: Array.isArray(candidate.what_to_do) ? candidate.what_to_do.slice(0, 6) : [],
-    what_to_eat: Array.isArray(candidate.what_to_eat) ? candidate.what_to_eat.slice(0, 5) : []
+    id: c.id,
+    name: c.name,
+    country: c.country || "",
+    type: c.type || "hub",
+    visibility: c.visibility || "",
+    eta_min: Math.round(c.eta_min),
+    distance_km: Math.round(c.distance_km),
+    hubSummary: c.hubSummary,
+    segments: Array.isArray(c.segments) ? c.segments : [],
+    why: Array.isArray(c.why) ? c.why.slice(0, 4) : [],
+    what_to_do: Array.isArray(c.what_to_do) ? c.what_to_do.slice(0, 6) : [],
+    what_to_eat: Array.isArray(c.what_to_eat) ? c.what_to_eat.slice(0, 5) : []
   };
 }
 
-/** Filtri “anti-2000km” per walking/bike */
-function hardLimitsForMode(mode, minutes) {
-  // km massimi “ragionevoli” per la scelta, prima del fallback progressivo
-  if (mode === "walk") {
-    // esempio: 30m => ~3km, 60m => ~5km, 120m => ~10km, con minimo e massimo
-    const km = clamp((minutes / 60) * 5.5, 1.5, 18);
-    return { maxKm: km, maxEta: minutes * 1.35 };
-  }
-  if (mode === "bike") {
-    const km = clamp((minutes / 60) * 18, 3, 65);
-    return { maxKm: km, maxEta: minutes * 1.40 };
-  }
-  // car: nessun hard max km qui (lo gestiamo con cap minuti)
-  return { maxKm: Infinity, maxEta: minutes * 2.60 };
-}
-
+/* -------------------------
+   Handler
+------------------------- */
 export default async function handler(req, res) {
   try {
     if (req.method !== "POST") return res.status(405).json({ error: "POST only" });
@@ -237,7 +328,7 @@ export default async function handler(req, res) {
     const origin = body.origin || {};
     const minutes = Number(body.minutes);
     const mode = canonicalMode(body.mode || "car");
-    const style = norm(body.style || "known"); // known|gems
+    const style = norm(body.style || "known");
     const allowedTypes = allowedTypesFromCategory(body.category || "citta_borghi");
 
     const visitedIds = new Set(Array.isArray(body.visitedIds) ? body.visitedIds : []);
@@ -252,207 +343,173 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "minutes must be positive" });
     }
 
+    // macro selection (future-ready): body.macroFile oppure default
+    const macroFile = String(body.macroFile || DEFAULT_MACRO_FILE).replace(/^\/+/, "");
+    const macroObj = readJsonSafe(macroFile, null);
+    if (!macroObj) {
+      return res.status(500).json({
+        error: `Macro file not found: ${macroFile}`,
+        hint: `Crea ${DEFAULT_MACRO_FILE} oppure passa { macroFile:"macros/..." }`
+      });
+    }
+
+    const { places, hubs } = parseMacro(macroObj);
+    if (!Array.isArray(places) || !places.length) {
+      return res.status(500).json({
+        error: "Macro places missing/empty",
+        hint: `Nel macro deve esserci "places":[...] con id,name,lat,lon/lng,types`
+      });
+    }
+
     const originObj = { lat: oLat, lon: oLon, label: origin.label || "" };
 
     const isAny = allowedTypes[0] === "any";
     const specialCat = (!isAny && ["mare", "montagna", "natura", "relax", "bambini"].includes(allowedTypes[0]));
 
     /* =========================================================
-       A) PLANE / TRAIN / BUS  => SOLO HUB→HUB via /api/plan
+       A) PLANE / TRAIN / BUS  => HUB→HUB (from macro hubs)
     ========================================================= */
     if (mode === "plane" || mode === "train" || mode === "bus") {
-      const plan = await callPlan(req, originObj, minutes, mode);
-      const results = Array.isArray(plan?.results) ? plan.results : [];
+      const hubList =
+        mode === "plane" ? hubs.airports :
+        mode === "train" ? hubs.stations :
+        hubs.bus;
 
-      if (!results.length) {
+      if (!Array.isArray(hubList) || hubList.length < 2) {
         return res.status(200).json({
           ok: true,
           top: null,
           alternatives: [],
-          message: "Nessuna tratta hub→hub trovata (dataset hub potrebbe essere incompleto vicino a te)."
+          message: `Dataset hub (${mode}) vuoto o troppo piccolo nel macro. Aggiungi hubs.${mode === "plane" ? "airports" : mode === "train" ? "stations" : "bus"} nel file.`,
         });
       }
 
-      // 👇 se il dataset stazioni è povero vicino a te, spesso l’originHub risulta “lontano”
-      // usiamo la distanza accessKm (se plan la fornisce) oppure stimiamo: origin -> originHub
-      // (nel tuo plan hub-only potrebbe non avere accessKm: in tal caso stimiamo noi)
-      const first = results[0];
-      const oh0 = first?.originHub || null;
-
-      if (oh0 && Number.isFinite(Number(oh0.lat)) && Number.isFinite(Number(oh0.lon))) {
-        const kmToOriginHub = haversineKm(oLat, oLon, Number(oh0.lat), Number(oh0.lon));
-        // soglie “ragionevoli”:
-        const warnKm = (mode === "train" || mode === "bus") ? 60 : 120;
-        if (kmToOriginHub > warnKm) {
-          // Non blocchiamo, ma avvisiamo: è la causa di “mi manda a Roma”
-          // (poi: migliorare curated_stations_eu_uk.json)
-          // Lo aggiungiamo al WHY della top.
-        }
+      // origin hub
+      const oH = nearestHub(hubList, oLat, oLon);
+      if (!oH.hub) {
+        return res.status(200).json({ ok: true, top: null, alternatives: [], message: "Nessun hub trovato." });
       }
 
-      const poisPack = readJsonSafe("pois_eu_uk.json", { pois: [] });
+      const originHubKey = hubKey(oH.hub);
+      const warnKm = (mode === "train" || mode === "bus") ? 60 : 120;
+      const originHubWarning =
+        Number.isFinite(oH.km) && oH.km > warnKm
+          ? `Nota: l’hub più vicino è a ~${Math.round(oH.km)} km (aggiungi hub più vicini nel macro).`
+          : "";
 
-      const candidates = results
-        .map((r) => {
-          const oh = r.originHub || {};
-          const dh = r.destinationHub || {};
-          const segs = Array.isArray(r.segments) ? r.segments : [];
-          const main = segs.find(s => s.kind === "main") || segs[0] || null;
+      // min distance sensata (evita suggerire “stessa zona” con aereo/treno/bus)
+      const minKmDefault =
+        mode === "plane" ? 180 :
+        mode === "train" ? 40 :
+        35;
 
-          const destName = dh.city || dh.name || dh.code || "Hub";
-          const id = (dh.code ? String(dh.code).toUpperCase() : `hub_${normName(destName)}`) + `_${mode}`;
+      const candidates = [];
 
-          if (visitedIds.has(id) || weekIds.has(id)) return null;
+      for (const dh of hubList) {
+        const destHubKey = hubKey(dh);
+        if (destHubKey && originHubKey && destHubKey === originHubKey) continue;
 
-          const total = Number(r.totalMinutes);
-          const mainMin = Number(main?.minutes ?? total);
+        const mainKm = haversineKm(Number(oH.hub.lat), Number(oH.hub.lon), Number(dh.lat), Number(dh.lon));
+        if (mainKm < minKmDefault) continue;
 
-          // ✅ HARD CAP: mai oltre il tempo selezionato
-          if (!Number.isFinite(mainMin) || mainMin <= 0) return null;
-          if (mainMin > minutes) return null;
+        const mainMin = estMainMinutes(mode, mainKm);
 
-          const kmApprox = Number(r.distanceKmApprox);
-          const dist = Number.isFinite(kmApprox) ? kmApprox : 0;
+        // ✅ HARD CAP: mai sopra i minuti scelti
+        if (mainMin > minutes) continue;
 
-          let whatToDo = [];
-          let extraWhy = [];
+        const destName = dh.city || dh.name || dh.code || "Hub";
+        const id = (dh.code ? String(dh.code).toUpperCase() : `hub_${normName(destName)}`) + `_${mode}`;
+        if (visitedIds.has(id) || weekIds.has(id)) continue;
 
-          // categoria speciale: suggerisci POI vicini al DEST hub
-          if (specialCat) {
-            const lat = Number(dh.lat);
-            const lon = Number(dh.lon);
-            if (Number.isFinite(lat) && Number.isFinite(lon)) {
-              const near = nearbyPois(poisPack, lat, lon, allowedTypes[0], 90, 6);
-              if (near.length) {
-                whatToDo = near;
-                extraWhy.push(`Vicino a questo hub trovi ${allowedTypes[0]} veri.`);
-              } else {
-                extraWhy.push(`Non ho abbastanza ${allowedTypes[0]} classificati vicino a questo hub: scelgo comunque la tratta migliore col tuo tempo.`);
-              }
-            }
+        let whatToDo = [];
+        let extraWhy = [];
+
+        // Se categoria speciale: suggerisco *places* vicine al DEST hub (sempre dal macro, stabile)
+        if (specialCat) {
+          const near = nearbyPlacesByType(places, Number(dh.lat), Number(dh.lon), allowedTypes[0], 90, 6);
+          if (near.length) {
+            whatToDo = near;
+            extraWhy.push(`Vicino a questo hub trovi ${allowedTypes[0]} veri (dal dataset stabile).`);
+          } else {
+            extraWhy.push(`Non ho abbastanza ${allowedTypes[0]} vicino a questo hub nel dataset: scelgo comunque la tratta migliore col tuo tempo.`);
           }
+        }
 
-          // warning origin hub lontano (causa “Roma”)
-          let warnOriginHub = "";
-          if (oh && Number.isFinite(Number(oh.lat)) && Number.isFinite(Number(oh.lon))) {
-            const kmToOriginHub = haversineKm(oLat, oLon, Number(oh.lat), Number(oh.lon));
-            const warnKm = (mode === "train" || mode === "bus") ? 60 : 120;
-            if (kmToOriginHub > warnKm) {
-              warnOriginHub = `Nota: il dataset hub vicino a te sembra incompleto (hub più vicino a ~${Math.round(kmToOriginHub)} km).`;
-            }
-          }
+        const hubSummary =
+          mode === "plane"
+            ? `${(oH.hub.code || "?")} → ${(dh.code || "?")}`
+            : `${(oH.hub.name || oH.hub.code || "?")} → ${(dh.name || dh.code || "?")}`;
 
-          // score: spinge sul target time (1h ≠ 2h) e non solo “vicino”
-          const timeFit = clamp(1 - (Math.abs(mainMin - minutes) / Math.max(18, minutes * 0.60)), 0, 1);
-          const score = (0.82 * timeFit) + (0.18 * clamp(1 - (dist / 1600), 0, 1));
+        const score = scoreHubCandidate({ mainMin, mainKm, targetMin: minutes, preferNear: true });
 
-          const hubSummary =
-            mode === "plane"
-              ? `${(oh.code || "?")} → ${(dh.code || "?")}`
-              : `${(oh.name || oh.code || "?")} → ${(dh.name || dh.code || "?")}`;
+        const whyBase = [
+          `Tratta ${mode.toUpperCase()} stimata: ~${Math.round(mainMin)} min (hub→hub).`,
+          `Hub: ${hubSummary}.`,
+          isAny
+            ? "Categoria: OVUNQUE (scelgo solo per tempo/mezzo/qualità)."
+            : (specialCat
+                ? `Categoria richiesta: ${allowedTypes[0]} (ti segnalo opzioni vicine all’hub).`
+                : (style === "gems" ? "Preferisco mete più particolari." : "Preferisco mete solide e facili.")
+              )
+        ];
 
-          const whyBase = [
-            `Tratta ${mode.toUpperCase()} stimata: ~${Math.round(mainMin)} min (hub→hub).`,
-            `Hub: ${hubSummary}.`,
-            isAny
-              ? "Categoria: OVUNQUE (scelgo solo per tempo/mezzo/qualità)."
-              : (specialCat
-                  ? `Categoria richiesta: ${allowedTypes[0]} (ti segnalo opzioni vicine all’hub).`
-                  : (style === "gems" ? "Preferisco mete più particolari." : "Preferisco mete solide e facili.")
-                )
-          ];
+        const why = [...whyBase, originHubWarning, ...extraWhy].filter(Boolean).slice(0, 4);
 
-          const why = [...whyBase, warnOriginHub, ...extraWhy].filter(Boolean).slice(0, 4);
-
-          return {
-            id,
-            name: destName + (dh.country ? `, ${dh.country}` : ""),
-            country: dh.country || "",
-            type: "hub",
-            visibility: style === "gems" ? "chicca" : "conosciuta",
-            eta_min: mainMin,
-            distance_km: dist,
-            hubSummary,
-            segments: main
-              ? [{ kind: "main", label: String(main.label || "Tratta principale"), minutes: mainMin, km: main.km }]
-              : [{ kind: "main", label: "Tratta principale", minutes: mainMin }],
-            what_to_do: whatToDo,
-            what_to_eat: [],
-            why,
-            _score: score
-          };
-        })
-        .filter(Boolean);
+        candidates.push({
+          id,
+          name: destName + (dh.country ? `, ${dh.country}` : ""),
+          country: dh.country || "",
+          type: "hub",
+          visibility: style === "gems" ? "chicca" : "conosciuta",
+          eta_min: mainMin,
+          distance_km: Math.round(mainKm),
+          hubSummary,
+          segments: [{
+            kind: "main",
+            label:
+              mode === "plane"
+                ? `Volo ${(oH.hub.code || "?")} → ${(dh.code || "?")}`
+                : (mode === "train"
+                    ? `Treno ${oH.hub.name} → ${dh.name}`
+                    : `Bus ${oH.hub.name} → ${dh.name}`),
+            minutes: mainMin,
+            km: Math.round(mainKm)
+          }],
+          what_to_do: whatToDo,
+          what_to_eat: [],
+          why,
+          _score: Number(score.toFixed(6))
+        });
+      }
 
       if (!candidates.length) {
         return res.status(200).json({
           ok: true,
           top: null,
           alternatives: [],
-          message: `Ho trovato tratte, ma nessuna rientra davvero entro ${minutes} min. Prova ad aumentare il tempo o migliora il dataset hub vicino a te.`
+          message: `Nessuna tratta ${mode} entro ${minutes} min con gli hub attuali. (Oppure manca qualche hub vicino).`
         });
       }
 
-      candidates.sort((a, b) => b._score - a._score);
-
+      candidates.sort((a, b) => (b._score - a._score) || (a.eta_min - b.eta_min));
       const top = candidates[0];
       const alts = candidates.slice(1, 3);
 
       return res.status(200).json({
         ok: true,
-        top: outPlanHub(top),
-        alternatives: alts.map(outPlanHub),
-        debug: { source: "plan_hub_only", mode, minutes, category: allowedTypes[0] }
+        top: outHub(top),
+        alternatives: alts.map(outHub),
+        debug: { source: "macro_hub_only", macroFile, mode, minutes, category: allowedTypes[0], originHubKm: Math.round(oH.km) }
       });
     }
 
     /* =========================================================
-       B) CAR / WALK / BIKE  => LUOGHI "BELLI"
-       dataset: curated.json + pois_eu_uk.json + places_index_eu_uk.json
+       B) CAR / WALK / BIKE  => PLACES (from macro places)
     ========================================================= */
+    const hard = hardLimitsForMode(mode, minutes);
 
-    const curatedPack = readJsonSafe("curated.json", { places: [] });
-    const curatedPlaces = Array.isArray(curatedPack?.places) ? curatedPack.places : [];
-
-    const poisPack = readJsonSafe("pois_eu_uk.json", { pois: [] });
-    const pois = Array.isArray(poisPack?.pois) ? poisPack.pois : [];
-
-    const idxPack = readJsonSafe("places_index_eu_uk.json", { places: [] });
-    const idxPlaces = Array.isArray(idxPack?.places) ? idxPack.places : [];
-
-    function normalizePlace(p, source) {
-      const lat = Number(p?.lat);
-      const lng = Number(p?.lng ?? p?.lon);
-      if (!p || !p.id || !p.name || !Number.isFinite(lat) || !Number.isFinite(lng)) return null;
-
-      const types =
-        Array.isArray(p.types) ? p.types :
-        (Array.isArray(p.type) ? p.type : (p.type ? [p.type] : []));
-
-      return {
-        id: String(p.id),
-        name: String(p.name),
-        country: p.country || "",
-        lat, lng,
-        types: types.map(norm).filter(Boolean),
-        visibility: p.visibility || "",
-        beauty_score: Number(p.beauty_score),
-        why: Array.isArray(p.why) ? p.why : [],
-        what_to_do: Array.isArray(p.what_to_do) ? p.what_to_do : [],
-        what_to_eat: Array.isArray(p.what_to_eat) ? p.what_to_eat : [],
-        tags: Array.isArray(p.tags) ? p.tags : [],
-        _source: source
-      };
-    }
-
-    const all = [
-      ...curatedPlaces.map(p => normalizePlace(p, "curated")).filter(Boolean),
-      ...pois.map(p => normalizePlace(p, "pois")).filter(Boolean),
-      ...idxPlaces.map(p => normalizePlace(p, "index")).filter(Boolean)
-    ];
-
-    // stima distanza/tempo + exclude “sei già lì”
-    const base = all
+    // estimate distance/eta + exclude “sei già lì”
+    const base = places
       .filter(p => !visitedIds.has(p.id))
       .filter(p => !weekIds.has(p.id))
       .map(p => {
@@ -461,18 +518,14 @@ export default async function handler(req, res) {
       })
       .filter(p => p.distance_km >= 1.2);
 
-    // ✅ hard limits per walk/bike per evitare 2000 km
-    const hard = hardLimitsForMode(mode, minutes);
-
-    // filtro categoria reale (con OVUNQUE)
     let pool = base.filter(p => {
-      if (p.distance_km > hard.maxKm) return false;         // ✅ stop km folli per walk/bike
-      if (p.eta_min > hard.maxEta) return false;            // ✅ stop tempi folli per walk/bike
+      if (p.distance_km > hard.maxKm) return false;
+      if (p.eta_min > hard.maxEta) return false;
 
       if (isAny) return true;
 
-      const t = p.types || [];
       const want = allowedTypes;
+      const t = Array.isArray(p.types) ? p.types : [];
 
       if (want.length === 1 && ["mare", "montagna", "natura", "relax", "bambini"].includes(want[0])) {
         return t.includes(want[0]);
@@ -483,16 +536,14 @@ export default async function handler(req, res) {
       return true;
     });
 
-    // qualità minima: taglia via index troppo casuale
+    // qualità minima (più severa su walk/bike)
     pool = pool.filter(p => {
       const b = beautyScore(p);
-      if (p._source === "index" && b < 0.60) return false;
-      // per walk/bike: ancora più severi (evita roba “meh”)
       if ((mode === "walk" || mode === "bike") && b < 0.68) return false;
       return true;
     });
 
-    // caps progressivi coerenti col mezzo (non espandiamo troppo su walk/bike)
+    // caps progressivi per mezzo
     const capMult =
       mode === "walk" ? [1.10, 1.22, 1.35] :
       mode === "bike" ? [1.10, 1.28, 1.45] :
@@ -509,16 +560,15 @@ export default async function handler(req, res) {
     }
 
     if (!within.length) {
-      // fallback: prendi i più vicini, MA sempre rispettando hard limits walk/bike
       within = pool.slice().sort((a, b) => a.eta_min - b.eta_min).slice(0, 60);
     }
 
     if (!within.length) {
-      return res.status(200).json({ ok: true, top: null, alternatives: [], message: "Nessuna meta trovata." });
+      return res.status(200).json({ ok: true, top: null, alternatives: [], message: "Nessuna meta trovata nel dataset macro." });
     }
 
     within.forEach(p => {
-      p._score = scoreLocal(p, p.eta_min, minutes, style);
+      p._score = scoreLocal(p, p.eta_min, minutes, style, isAny);
     });
     within.sort((a, b) => b._score - a._score);
 
@@ -532,6 +582,7 @@ export default async function handler(req, res) {
     function buildWhy(p) {
       const arr = Array.isArray(p.why) ? p.why.slice(0, 3) : [];
       const out = [];
+
       if (fallbackNote) out.push(fallbackNote);
 
       if (arr.length) {
@@ -555,13 +606,13 @@ export default async function handler(req, res) {
       ok: true,
       top: outLocal(top),
       alternatives: alts.map(outLocal),
-      debug: { source: "local_mix", mode, minutes, category: allowedTypes[0], pool: within.length }
+      debug: { source: "macro_places_only", macroFile, mode, minutes, category: allowedTypes[0], pool: within.length }
     });
 
   } catch (e) {
     return res.status(500).json({
       error: String(e?.message || e),
-      hint: "Controlla i JSON in public/data: curated.json, places_index_eu_uk.json, pois_eu_uk.json, curated_airports_eu_uk.json, curated_stations_eu_uk.json"
+      hint: `Controlla il macro: public/data/${DEFAULT_MACRO_FILE} deve contenere places[] e hubs{}`
     });
   }
 }
