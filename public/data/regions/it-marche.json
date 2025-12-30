@@ -1,0 +1,52 @@
+{
+  "region_id": "it-marche",
+  "country": "IT",
+  "label_it": "Marche",
+  "bbox_hint": { "lat": 43.2, "lng": 13.1, "radius_km": 210 },
+  "places": [
+    {
+      "id": "it-marche-urbino",
+      "name": "Urbino",
+      "lat": 43.7260,
+      "lng": 12.6363,
+      "types": ["citta"],
+      "beauty_score": 0.92,
+      "highlights": ["Palazzo Ducale", "Vista panoramica", "Centro storico", "Universitaria"],
+      "season": ["all"],
+      "cta": { "maps": true, "tours": true, "food": true }
+    },
+    {
+      "id": "it-marche-ascoli",
+      "name": "Ascoli Piceno",
+      "lat": 42.8530,
+      "lng": 13.5734,
+      "types": ["citta"],
+      "beauty_score": 0.90,
+      "highlights": ["Piazza del Popolo", "Olive ascolane", "Centro in travertino", "Passeggio serale"],
+      "season": ["all"],
+      "cta": { "maps": true, "food": true, "tours": true }
+    },
+    {
+      "id": "it-marche-frassassi",
+      "name": "Grotte di Frasassi",
+      "lat": 43.4021,
+      "lng": 12.9554,
+      "types": ["natura"],
+      "beauty_score": 0.94,
+      "highlights": ["Grotte enormi", "Visita guidata", "Perfette con pioggia", "Wow assicurato"],
+      "season": ["all"],
+      "cta": { "maps": true, "tours": true }
+    },
+    {
+      "id": "it-marche-conero",
+      "name": "Riviera del Conero (Sirolo/Numana)",
+      "lat": 43.5225,
+      "lng": 13.6156,
+      "types": ["mare", "natura"],
+      "beauty_score": 0.93,
+      "highlights": ["Spiagge bellissime", "Sentieri vista mare", "Borghetti", "Acqua top"],
+      "season": ["summer", "spring", "autumn"],
+      "cta": { "maps": true, "food": true, "hotel": true }
+    }
+  ]
+}
