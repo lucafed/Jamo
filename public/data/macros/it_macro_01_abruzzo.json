@@ -1,0 +1,67 @@
+{
+  "id": "it_macro_01_abruzzo",
+  "name": "Abruzzo (core)",
+  "country": "IT",
+  "core_regions": ["abruzzo"],
+  "hub_macro_regions": ["abruzzo", "lazio", "marche", "molise"],
+  "version": "1.0",
+  "updated": "2025-12-30",
+  "places": [
+    {
+      "id": "it_abruzzo_laquila",
+      "name": "L’Aquila",
+      "region": "abruzzo",
+      "country": "IT",
+      "lat": 42.3498,
+      "lng": 13.3995,
+      "types": ["citta"],
+      "visibility": "conosciuta",
+      "beauty_score": 0.82,
+      "why": [
+        "Centro storico unico e atmosfera di montagna.",
+        "Perfetta per giornata tra cultura e panorami."
+      ],
+      "what_to_do": [
+        "Basilica di Collemaggio",
+        "Fontana delle 99 Cannelle",
+        "Castello Cinquecentesco"
+      ],
+      "what_to_eat": ["Arrosticini", "Maccheroni alla chitarra"]
+    }
+  ],
+  "hubs": {
+    "airports": [
+      {
+        "type": "airport",
+        "code": "PSR",
+        "name": "Pescara (Abruzzo Airport)",
+        "region": "abruzzo",
+        "country": "IT",
+        "lat": 42.4317,
+        "lon": 14.1811
+      }
+    ],
+    "stations": [
+      {
+        "type": "station",
+        "code": "IT-PESCARA-CENTRALE",
+        "name": "Pescara Centrale",
+        "region": "abruzzo",
+        "country": "IT",
+        "lat": 42.4557,
+        "lon": 14.2180
+      }
+    ],
+    "bus": [
+      {
+        "type": "bus",
+        "code": "IT-LAQUILA-BUS",
+        "name": "L’Aquila (Terminal bus)",
+        "region": "abruzzo",
+        "country": "IT",
+        "lat": 42.3507,
+        "lon": 13.3920
+      }
+    ]
+  }
+}
