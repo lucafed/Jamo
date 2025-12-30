@@ -1,0 +1,63 @@
+{
+  "region_id": "it-lazio",
+  "country": "IT",
+  "label_it": "Lazio",
+  "bbox_hint": { "lat": 41.9, "lng": 12.7, "radius_km": 220 },
+  "places": [
+    {
+      "id": "it-lazio-roma",
+      "name": "Roma",
+      "lat": 41.9028,
+      "lng": 12.4964,
+      "types": ["citta"],
+      "beauty_score": 0.97,
+      "highlights": ["Colosseo", "Centro storico", "Musei", "Cibo"],
+      "season": ["all"],
+      "cta": { "maps": true, "tours": true, "food": true, "hotel": true }
+    },
+    {
+      "id": "it-lazio-tivoli",
+      "name": "Tivoli (Villa d’Este / Villa Adriana)",
+      "lat": 41.9634,
+      "lng": 12.7980,
+      "types": ["citta", "natura"],
+      "beauty_score": 0.92,
+      "highlights": ["Villa d’Este", "Villa Adriana", "Cascate", "Gita perfetta"],
+      "season": ["all"],
+      "cta": { "maps": true, "tours": true, "food": true }
+    },
+    {
+      "id": "it-lazio-civita-bagnoregio",
+      "name": "Civita di Bagnoregio",
+      "lat": 42.6276,
+      "lng": 12.1206,
+      "types": ["borgo"],
+      "beauty_score": 0.94,
+      "highlights": ["Borgo sospeso", "Ponte pedonale", "Foto top", "Chicca vera"],
+      "season": ["all"],
+      "cta": { "maps": true, "tours": true, "food": true }
+    },
+    {
+      "id": "it-lazio-lago-bolsena",
+      "name": "Lago di Bolsena",
+      "lat": 42.6446,
+      "lng": 11.9860,
+      "types": ["lago", "relax", "natura"],
+      "beauty_score": 0.86,
+      "highlights": ["Spiaggette", "Tramonti", "Paesini sul lago", "Relax"],
+      "season": ["spring", "summer", "autumn"],
+      "cta": { "maps": true, "food": true, "hotel": true }
+    },
+    {
+      "id": "it-lazio-gaeta",
+      "name": "Gaeta",
+      "lat": 41.2146,
+      "lng": 13.5705,
+      "types": ["mare", "citta"],
+      "beauty_score": 0.88,
+      "highlights": ["Spiagge", "Montagna Spaccata", "Centro", "Pesce"],
+      "season": ["spring", "summer", "autumn"],
+      "cta": { "maps": true, "food": true, "hotel": true }
+    }
+  ]
+}
