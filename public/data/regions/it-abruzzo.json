@@ -1,0 +1,85 @@
+{
+  "region_id": "it-abruzzo",
+  "country": "IT",
+  "label_it": "Abruzzo",
+  "bbox_hint": { "lat": 42.2, "lng": 13.4, "radius_km": 190 },
+  "places": [
+    {
+      "id": "it-abruzzo-laquila",
+      "name": "L’Aquila",
+      "lat": 42.3507,
+      "lng": 13.3995,
+      "types": ["citta"],
+      "beauty_score": 0.78,
+      "highlights": ["Centro storico", "Basilica di Collemaggio", "Fontana delle 99 Cannelle", "Gran Sasso vicino"],
+      "season": ["all"],
+      "cta": { "maps": true, "tours": true, "food": true, "hotel": true }
+    },
+    {
+      "id": "it-abruzzo-gransasso",
+      "name": "Campo Imperatore (Gran Sasso)",
+      "lat": 42.4499,
+      "lng": 13.5556,
+      "types": ["montagna", "natura"],
+      "beauty_score": 0.95,
+      "highlights": ["Pianoro spettacolare", "Belvedere", "Trekking", "Panorami unici"],
+      "season": ["all"],
+      "cta": { "maps": true, "tours": true, "rental_car": true }
+    },
+    {
+      "id": "it-abruzzo-roccacalascio",
+      "name": "Rocca Calascio",
+      "lat": 42.3299,
+      "lng": 13.6903,
+      "types": ["borgo", "natura", "montagna"],
+      "beauty_score": 0.94,
+      "highlights": ["Ruderi iconici", "Alba/tramonto top", "Sentieri", "Foto da film"],
+      "season": ["all"],
+      "cta": { "maps": true, "tours": true, "food": true }
+    },
+    {
+      "id": "it-abruzzo-santo-stefano",
+      "name": "Santo Stefano di Sessanio",
+      "lat": 42.3421,
+      "lng": 13.6457,
+      "types": ["borgo"],
+      "beauty_score": 0.90,
+      "highlights": ["Borgo in pietra", "Atmosfera slow", "Artigianato", "Cibo tipico"],
+      "season": ["all"],
+      "cta": { "maps": true, "food": true, "hotel": true }
+    },
+    {
+      "id": "it-abruzzo-scanno",
+      "name": "Scanno e Lago di Scanno",
+      "lat": 41.9058,
+      "lng": 13.8786,
+      "types": ["borgo", "lago", "natura"],
+      "beauty_score": 0.88,
+      "highlights": ["Passeggiata lago", "Belvedere cuore", "Centro storico", "Relax"],
+      "season": ["spring", "summer", "autumn"],
+      "cta": { "maps": true, "tours": true, "food": true }
+    },
+    {
+      "id": "it-abruzzo-giulianova",
+      "name": "Giulianova",
+      "lat": 42.7537,
+      "lng": 13.9629,
+      "types": ["mare", "citta", "relax"],
+      "beauty_score": 0.80,
+      "highlights": ["Lungomare", "Spiaggia", "Centro", "Aperitivo vista mare"],
+      "season": ["summer", "spring"],
+      "cta": { "maps": true, "food": true, "hotel": true }
+    },
+    {
+      "id": "it-abruzzo-costa-dei-trabocchi",
+      "name": "Costa dei Trabocchi (tratto iconico)",
+      "lat": 42.2445,
+      "lng": 14.4382,
+      "types": ["mare", "natura"],
+      "beauty_score": 0.93,
+      "highlights": ["Trabocchi", "Ciclovia", "Tramonti", "Pesce sul mare"],
+      "season": ["spring", "summer", "autumn"],
+      "cta": { "maps": true, "food": true, "tours": true }
+    }
+  ]
+}
