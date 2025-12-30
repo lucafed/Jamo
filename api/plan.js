@@ -1,4 +1,4 @@
-// /api/plan.js — HUB→HUB ONLY (NO porta-a-porta) — v3
+// /api/plan.js — HUB→HUB ONLY (NO porta-a-porta) — v3 FINAL
 // - Usa SOLO:
 //   public/data/curated_airports_eu_uk.json
 //   public/data/curated_stations_eu_uk.json
@@ -12,7 +12,8 @@ import path from "path";
 
 function readJson(filename) {
   const p = path.join(process.cwd(), "public", "data", filename);
-  return JSON.parse(fs.readFileSync(p, "utf8"));
+  const raw = fs.readFileSync(p, "utf8");
+  return JSON.parse(raw);
 }
 
 function toRad(x) { return (x * Math.PI) / 180; }
@@ -48,8 +49,8 @@ function nearestHub(hubs, lat, lon) {
   let best = null;
   let bestKm = Infinity;
   for (const h of hubs) {
-    const hLat = Number(h.lat);
-    const hLon = Number(h.lon);
+    const hLat = Number(h?.lat);
+    const hLon = Number(h?.lon ?? h?.lng);
     if (!Number.isFinite(hLat) || !Number.isFinite(hLon)) continue;
     const km = haversineKm(lat, lon, hLat, hLon);
     if (km < bestKm) { bestKm = km; best = h; }
@@ -97,19 +98,18 @@ export default async function handler(req, res) {
   try {
     if (req.method !== "POST") return res.status(405).json({ error: "Use POST" });
 
-    const {
-      origin,
-      maxMinutes,
-      mode,
-      limit = 10,
-      // distanza minima della tratta principale
-      minMainKm = null,
-      avoidSameHub = true,
-      preferNear = true
-    } = req.body || {};
+    const body = req.body || {};
+    const origin = body.origin || {};
+    const maxMinutes = body.maxMinutes;
+    const mode = body.mode;
+
+    const limit = body.limit ?? 10;
+    const minMainKm = body.minMainKm ?? null;
+    const avoidSameHub = body.avoidSameHub ?? true;
+    const preferNear = body.preferNear ?? true;
 
     const oLat = Number(origin?.lat);
-    const oLon = Number(origin?.lon);
+    const oLon = Number(origin?.lon ?? origin?.lng);
     const maxM = Number(maxMinutes);
 
     if (!Number.isFinite(oLat) || !Number.isFinite(oLon)) {
@@ -122,6 +122,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "mode must be plane|train|bus" });
     }
 
+    // Hubs
     const airports = readJson("curated_airports_eu_uk.json");
     const stations = readJson("curated_stations_eu_uk.json");
 
@@ -129,7 +130,6 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: "Bad hubs JSON (expected arrays)" });
     }
 
-    // HUB list per mode
     const hubs = (mode === "plane") ? airports : stations;
 
     // origin hub = più vicino alla posizione
@@ -151,14 +151,14 @@ export default async function handler(req, res) {
     const scored = [];
 
     for (const dh of hubs) {
-      const dLat = Number(dh.lat);
-      const dLon = Number(dh.lon);
+      const dLat = Number(dh?.lat);
+      const dLon = Number(dh?.lon ?? dh?.lng);
       if (!Number.isFinite(dLat) || !Number.isFinite(dLon)) continue;
 
       const destHubKey = hubKey(dh);
       if (avoidSameHub && originHubKey && destHubKey && originHubKey === destHubKey) continue;
 
-      const mainKm = haversineKm(Number(oH.hub.lat), Number(oH.hub.lon), dLat, dLon);
+      const mainKm = haversineKm(Number(oH.hub.lat), Number(oH.hub.lon ?? oH.hub.lng), dLat, dLon);
       if (Number.isFinite(minKm) && mainKm < minKm) continue;
 
       const mainMin = estMainMinutes(mode, mainKm);
@@ -166,7 +166,6 @@ export default async function handler(req, res) {
 
       const s = score({ totalMinutes: mainMin, mainKm, targetMinutes: maxM, preferNear: !!preferNear });
 
-      // destination = HUB (non “borgo”)
       const destination = {
         id: (dh.code ? String(dh.code).toUpperCase() : `hub_${normName(dh.name)}`),
         name: dh.name || dh.code || "Hub",
@@ -225,7 +224,15 @@ export default async function handler(req, res) {
 
     return res.status(200).json({
       ok: true,
-      input: { origin: { lat:oLat, lon:oLon, label: origin?.label || "" }, maxMinutes: maxM, mode, limit: safeLimit, minMainKm: minKm, avoidSameHub, preferNear },
+      input: {
+        origin: { lat:oLat, lon:oLon, label: origin?.label || "" },
+        maxMinutes: maxM,
+        mode,
+        limit: safeLimit,
+        minMainKm: minKm,
+        avoidSameHub,
+        preferNear
+      },
       results
     });
 
