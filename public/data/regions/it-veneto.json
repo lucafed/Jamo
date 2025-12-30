@@ -1,0 +1,63 @@
+{
+  "region_id": "it-veneto",
+  "country": "IT",
+  "label_it": "Veneto",
+  "bbox_hint": { "lat": 45.5, "lng": 11.9, "radius_km": 240 },
+  "places": [
+    {
+      "id": "it-veneto-venezia",
+      "name": "Venezia",
+      "lat": 45.4408,
+      "lng": 12.3155,
+      "types": ["citta"],
+      "beauty_score": 0.98,
+      "highlights": ["Canali", "San Marco", "Bacari", "Tramonti"],
+      "season": ["all"],
+      "cta": { "maps": true, "tours": true, "food": true, "hotel": true }
+    },
+    {
+      "id": "it-veneto-verona",
+      "name": "Verona",
+      "lat": 45.4384,
+      "lng": 10.9916,
+      "types": ["citta"],
+      "beauty_score": 0.92,
+      "highlights": ["Arena", "Centro", "Adige", "Gita perfetta"],
+      "season": ["all"],
+      "cta": { "maps": true, "tours": true, "food": true }
+    },
+    {
+      "id": "it-veneto-lagodigarda",
+      "name": "Lago di Garda (sponda veneta)",
+      "lat": 45.5850,
+      "lng": 10.6870,
+      "types": ["lago", "relax", "natura"],
+      "beauty_score": 0.92,
+      "highlights": ["Panorami", "Passeggiate", "Paesini", "Relax"],
+      "season": ["spring", "summer", "autumn"],
+      "cta": { "maps": true, "hotel": true, "food": true }
+    },
+    {
+      "id": "it-veneto-dolomiti",
+      "name": "Dolomiti (Cortina area)",
+      "lat": 46.5405,
+      "lng": 12.1357,
+      "types": ["montagna", "natura"],
+      "beauty_score": 0.97,
+      "highlights": ["Trekking", "Passi alpini", "Panorami", "Laghetti"],
+      "season": ["all"],
+      "cta": { "maps": true, "tours": true, "hotel": true }
+    },
+    {
+      "id": "it-veneto-prosecco",
+      "name": "Colline del Prosecco (Valdobbiadene)",
+      "lat": 45.9009,
+      "lng": 11.9957,
+      "types": ["relax", "natura"],
+      "beauty_score": 0.86,
+      "highlights": ["Cantine", "Strade panoramiche", "Degustazioni", "Slow weekend"],
+      "season": ["all"],
+      "cta": { "maps": true, "tours": true, "food": true }
+    }
+  ]
+}
