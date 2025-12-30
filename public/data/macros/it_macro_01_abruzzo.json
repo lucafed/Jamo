@@ -12,7 +12,6 @@
     "hub_modes_use_hubs_only": true,
     "places_are_offline_and_stable": true
   },
-
   "places": [
     {
       "id": "abruzzo_laquila",
@@ -55,14 +54,13 @@
       "name": "Chieti",
       "type": "citta",
       "area": "Abruzzo",
-      "lat": 42.3510,
+      "lat": 42.351,
       "lon": 14.1673,
       "tags": ["citta", "storia", "panorama"],
       "visibility": "conosciuta",
       "beauty_score": 0.75,
       "why": ["Centro storico con viste ampie", "Vicina a mare e colline"]
     },
-
     {
       "id": "abruzzo_rocca_calascio",
       "name": "Rocca Calascio",
@@ -72,7 +70,7 @@
       "lon": 13.6945,
       "tags": ["chicca", "montagna", "panorama", "fotografico"],
       "visibility": "chicca",
-      "beauty_score": 1.0,
+      "beauty_score": 1,
       "why": ["Uno dei panorami più spettacolari d’Italia", "Rocca iconica tra altipiani e cielo"]
     },
     {
@@ -120,7 +118,7 @@
       "lon": 13.5584,
       "tags": ["montagna", "trekking", "panorama"],
       "visibility": "conosciuta",
-      "beauty_score": 1.0,
+      "beauty_score": 1,
       "why": ["Vetta simbolo dell’Appennino", "Esperienza top per escursioni"]
     },
     {
@@ -129,13 +127,12 @@
       "type": "natura",
       "area": "Abruzzo",
       "lat": 42.5512,
-      "lon": 13.3720,
+      "lon": 13.372,
       "tags": ["natura", "lago", "relax", "panorama"],
       "visibility": "conosciuta",
       "beauty_score": 0.92,
       "why": ["Grande lago d’altura", "Relax e strade panoramiche"]
     },
-
     {
       "id": "abruzzo_ovindoli",
       "name": "Ovindoli",
@@ -220,13 +217,12 @@
       "beauty_score": 0.86,
       "why": ["Piazza e centro storico molto belli", "Ottimo per giornata slow"]
     },
-
     {
       "id": "abruzzo_sulmona",
       "name": "Sulmona",
       "type": "citta",
       "area": "Abruzzo",
-      "lat": 42.0480,
+      "lat": 42.048,
       "lon": 13.9246,
       "tags": ["citta", "storia", "dolci", "borghi"],
       "visibility": "conosciuta",
@@ -306,7 +302,7 @@
       "why": ["Borgo piccolissimo e delizioso", "Vista lago e natura del Parco"]
     },
     {
-      "id": "abruzzo_opa",
+      "id": "abruzzo_opi",
       "name": "Opi",
       "type": "borgo",
       "area": "Abruzzo",
@@ -329,9 +325,8 @@
       "beauty_score": 0.87,
       "why": ["Borgo comodo sul lago", "Perfetto per passeggi e relax"]
     },
-
     {
-      "id": "abruzzo_majella_caramanico",
+      "id": "abruzzo_caramanico_terme",
       "name": "Caramanico Terme",
       "type": "relax",
       "area": "Abruzzo",
@@ -343,12 +338,12 @@
       "why": ["Terme e natura insieme", "Ottimo per staccare davvero"]
     },
     {
-      "id": "abruzzo_majella_ermiti",
+      "id": "abruzzo_eremi_majella",
       "name": "Eremi della Majella (Roccamorice)",
       "type": "chicca",
       "area": "Abruzzo",
       "lat": 42.2186,
-      "lon": 14.0190,
+      "lon": 14.019,
       "tags": ["chicca", "natura", "storia", "trekking"],
       "visibility": "chicca",
       "beauty_score": 0.97,
@@ -360,7 +355,7 @@
       "type": "natura",
       "area": "Abruzzo",
       "lat": 42.0893,
-      "lon": 14.2050,
+      "lon": 14.205,
       "tags": ["natura", "gole", "trekking"],
       "visibility": "conosciuta",
       "beauty_score": 0.94,
@@ -384,19 +379,18 @@
       "type": "chicca",
       "area": "Abruzzo",
       "lat": 42.1504,
-      "lon": 14.1960,
+      "lon": 14.196,
       "tags": ["chicca", "borgo", "montagna", "fotografico"],
       "visibility": "chicca",
       "beauty_score": 0.9,
       "why": ["Borgo incastonato nella roccia", "Scorci fotonici e atmosfera unica"]
     },
-
     {
       "id": "abruzzo_atri",
       "name": "Atri",
       "type": "borgo",
       "area": "Abruzzo",
-      "lat": 42.5770,
+      "lat": 42.577,
       "lon": 13.9798,
       "tags": ["borgo", "storia", "calanchi"],
       "visibility": "conosciuta",
@@ -427,7 +421,6 @@
       "beauty_score": 0.92,
       "why": ["Fortezza spettacolare e panorama", "Borgo storico super suggestivo"]
     },
-
     {
       "id": "abruzzo_costa_trabocchi",
       "name": "Costa dei Trabocchi",
@@ -500,7 +493,6 @@
       "beauty_score": 0.93,
       "why": ["Abbazia spettacolare vista mare", "Uno dei luoghi più suggestivi della costa"]
     },
-
     {
       "id": "abruzzo_silvi",
       "name": "Silvi",
@@ -549,9 +541,8 @@
       "beauty_score": 0.76,
       "why": ["Spiagge e servizi family", "Perfetta per relax semplice"]
     },
-
     {
-      "id": "abruzzo_bambini_parco",
+      "id": "abruzzo_family_spot",
       "name": "Parco Nazionale d’Abruzzo (family spot)",
       "type": "bambini",
       "area": "Abruzzo",
@@ -561,46 +552,16 @@
       "visibility": "conosciuta",
       "beauty_score": 0.9,
       "why": ["Ideale per famiglie e natura", "Passeggiate facili e scenari wow"]
-    },
-    {
-      "id": "abruzzo_relax_terme_caramanico",
-      "name": "Relax alle Terme di Caramanico",
-      "type": "relax",
-      "area": "Abruzzo",
-      "lat": 42.1613,
-      "lon": 14.0069,
-      "tags": ["relax", "terme", "benessere"],
-      "visibility": "conosciuta",
-      "beauty_score": 0.86,
-      "why": ["Relax vero tra monti e verde", "Perfetto per ricaricare"]
-    },
-
-    {
-      "id": "abruzzo_ovunque_mix",
-      "name": "Abruzzo Random (mix di chicche)",
-      "type": "ovunque",
-      "area": "Abruzzo",
-      "lat": 42.2,
-      "lon": 13.8,
-      "tags": ["ovunque", "mix"],
-      "visibility": "chicca",
-      "beauty_score": 0.7,
-      "why": ["Selezione 'ovunque': sceglie in base a tempo e mezzo", "Utile per scoprire cose nuove senza filtri"]
     }
   ],
-
   "hubs": {
     "airports": [
       { "type": "airport", "code": "PSR", "name": "Pescara (Abruzzo Airport)", "country": "IT", "lat": 42.4317, "lon": 14.1811, "region_hint": "Abruzzo" },
-
       { "type": "airport", "code": "FCO", "name": "Roma Fiumicino", "country": "IT", "lat": 41.8003, "lon": 12.2389, "region_hint": "Lazio" },
       { "type": "airport", "code": "CIA", "name": "Roma Ciampino", "country": "IT", "lat": 41.7994, "lon": 12.5949, "region_hint": "Lazio" },
-
       { "type": "airport", "code": "AOI", "name": "Ancona (Marche Airport)", "country": "IT", "lat": 43.6167, "lon": 13.3623, "region_hint": "Marche" },
-
-      { "type": "airport", "code": "NAP", "name": "Napoli Capodichino", "country": "IT", "lat": 40.8860, "lon": 14.2908, "region_hint": "extra" }
+      { "type": "airport", "code": "NAP", "name": "Napoli Capodichino", "country": "IT", "lat": 40.886, "lon": 14.2908, "region_hint": "extra" }
     ],
-
     "stations": [
       { "type": "station", "code": "IT-AQ-LAQUILA", "name": "L'Aquila", "country": "IT", "lat": 42.3502, "lon": 13.3998, "region_hint": "Abruzzo" },
       { "type": "station", "code": "IT-PE-PESCARA-CENTRALE", "name": "Pescara Centrale", "country": "IT", "lat": 42.4666, "lon": 14.2104, "region_hint": "Abruzzo" },
@@ -608,26 +569,25 @@
       { "type": "station", "code": "IT-TE-TERAMO", "name": "Teramo", "country": "IT", "lat": 42.6576, "lon": 13.7014, "region_hint": "Abruzzo" },
       { "type": "station", "code": "IT-AQ-SULMONA", "name": "Sulmona", "country": "IT", "lat": 42.0492, "lon": 13.9225, "region_hint": "Abruzzo" },
       { "type": "station", "code": "IT-AQ-AVEZZANO", "name": "Avezzano", "country": "IT", "lat": 42.0319, "lon": 13.4256, "region_hint": "Abruzzo" },
-      { "type": "station", "code": "IT-CH-ORTONA", "name": "Ortona", "country": "IT", "lat": 42.3560, "lon": 14.4031, "region_hint": "Abruzzo" },
+      { "type": "station", "code": "IT-CH-ORTONA", "name": "Ortona", "country": "IT", "lat": 42.356, "lon": 14.4031, "region_hint": "Abruzzo" },
       { "type": "station", "code": "IT-CH-LANCIANO", "name": "Lanciano", "country": "IT", "lat": 42.2294, "lon": 14.3894, "region_hint": "Abruzzo" },
       { "type": "station", "code": "IT-CH-VASTO-SANSALVO", "name": "Vasto-San Salvo", "country": "IT", "lat": 42.0557, "lon": 14.7292, "region_hint": "Abruzzo" },
 
-      { "type": "station", "code": "IT-ROMA-TERMINI", "name": "Roma Termini", "country": "IT", "lat": 41.9010, "lon": 12.5018, "region_hint": "Lazio" },
+      { "type": "station", "code": "IT-ROMA-TERMINI", "name": "Roma Termini", "country": "IT", "lat": 41.901, "lon": 12.5018, "region_hint": "Lazio" },
       { "type": "station", "code": "IT-ROMA-TIBURTINA", "name": "Roma Tiburtina", "country": "IT", "lat": 41.9109, "lon": 12.5296, "region_hint": "Lazio" },
 
       { "type": "station", "code": "IT-AN-ANCONA", "name": "Ancona", "country": "IT", "lat": 43.6156, "lon": 13.5097, "region_hint": "Marche" },
 
-      { "type": "station", "code": "IT-CB-CAMPOBASSO", "name": "Campobasso", "country": "IT", "lat": 41.5600, "lon": 14.6685, "region_hint": "Molise" },
+      { "type": "station", "code": "IT-CB-CAMPOBASSO", "name": "Campobasso", "country": "IT", "lat": 41.56, "lon": 14.6685, "region_hint": "Molise" },
       { "type": "station", "code": "IT-CB-TERMOLI", "name": "Termoli", "country": "IT", "lat": 41.9997, "lon": 14.9998, "region_hint": "Molise" }
     ],
-
-    "bus_hubs": [
+    "bus": [
       { "type": "bus", "code": "BUS-AQ-LAQUILA", "name": "L'Aquila (bus hub)", "country": "IT", "lat": 42.3498, "lon": 13.3995, "region_hint": "Abruzzo" },
       { "type": "bus", "code": "BUS-PE-PESCARA", "name": "Pescara (bus hub)", "country": "IT", "lat": 42.4618, "lon": 14.2161, "region_hint": "Abruzzo" },
-      { "type": "bus", "code": "BUS-CH-CHIETI", "name": "Chieti (bus hub)", "country": "IT", "lat": 42.3510, "lon": 14.1673, "region_hint": "Abruzzo" },
+      { "type": "bus", "code": "BUS-CH-CHIETI", "name": "Chieti (bus hub)", "country": "IT", "lat": 42.351, "lon": 14.1673, "region_hint": "Abruzzo" },
       { "type": "bus", "code": "BUS-ROMA-TIBURTINA", "name": "Roma Tiburtina (bus hub)", "country": "IT", "lat": 41.9109, "lon": 12.5296, "region_hint": "Lazio" },
       { "type": "bus", "code": "BUS-AN-ANCONA", "name": "Ancona (bus hub)", "country": "IT", "lat": 43.6156, "lon": 13.5097, "region_hint": "Marche" },
-      { "type": "bus", "code": "BUS-CB-CAMPOBASSO", "name": "Campobasso (bus hub)", "country": "IT", "lat": 41.5600, "lon": 14.6685, "region_hint": "Molise" }
+      { "type": "bus", "code": "BUS-CB-CAMPOBASSO", "name": "Campobasso (bus hub)", "country": "IT", "lat": 41.56, "lon": 14.6685, "region_hint": "Molise" }
     ]
   }
-      }
+}
