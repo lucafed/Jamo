@@ -1,8 +1,9 @@
-// /api/jamo.js — JAMO CORE v3 (EU+UK) — FINAL FIX
+// /api/jamo.js — JAMO CORE v3 (EU+UK) — FINAL FIX (PLAN 401 FIX INCLUDED)
 // ✅ car/walk/bike: luoghi "belli" usando curated + POI + index (EU+UK)
 // ✅ plane/train/bus: SOLO HUB→HUB via /api/plan (NIENTE borghi, NIENTE ricuciture)
 // ✅ categoria mare/montagna/natura/relax/bambini: per aereo/treno/bus suggerisce POI vicini alla città-hub (fallback onesto)
 // ✅ tempo: spinge mete diverse in base al target (1h ≠ 2h)
+// ✅ FIX 401 "Authentication Required": /api/plan chiamata sullo stesso host reale + Cookie forward
 
 import fs from "fs";
 import path from "path";
@@ -33,6 +34,7 @@ function haversineKm(aLat, aLon, bLat, bLon) {
   return 2 * R * Math.asin(Math.sqrt(s));
 }
 function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
+
 function norm(s) {
   return String(s ?? "")
     .toLowerCase()
@@ -85,7 +87,6 @@ function beautyScore(p) {
   if (src === "pois") return 0.82;
 
   // index: spesso rumoroso → basso di default
-  // se ha visibility/why/tags, lo alziamo un filo
   const vis = norm(p.visibility || "");
   const whyN = Array.isArray(p.why) ? p.why.length : 0;
   const tagsN = Array.isArray(p.tags) ? p.tags.length : 0;
@@ -99,47 +100,46 @@ function beautyScore(p) {
 
 // score locale: forza “diverso col tempo” (timeFit forte) + evita posti troppo piccoli/brutti
 function scoreLocal(p, eta, targetMin, style) {
-  // timeFit spinge mete diverse a 1h vs 2h
   const timeFit = clamp(1 - (Math.abs(eta - targetMin) / Math.max(22, targetMin * 0.75)), 0, 1);
-
-  // nearFit: non premiare troppo solo “vicino”
   const nearFit = clamp(1 - (eta / (targetMin * 1.9)), 0, 1);
 
-  // penalty se troppo fuori fascia (es: 30 min quando target 2h)
   const ratio = eta / Math.max(1, targetMin);
   const outOfBandPenalty =
     (ratio < 0.55) ? 0.22 :
     (ratio > 1.65) ? 0.18 :
     0;
 
-  // beauty + preferenze stile
   const beauty = beautyScore(p);
 
   const vis = norm(p.visibility || "");
   const types = Array.isArray(p.types) ? p.types : (p.type ? [p.type] : []);
 
-  // gems: penalizza città mega "conosciute"
   const bigCityPenalty = (style === "gems" && types.includes("citta") && vis === "conosciuta") ? 0.12 : 0;
-
-  // known: penalizza roba “random”
   const randomPenalty = (style === "known" && beauty < 0.60) ? 0.14 : 0;
 
   return (0.50 * timeFit) + (0.18 * nearFit) + (0.32 * beauty) - outOfBandPenalty - bigCityPenalty - randomPenalty;
 }
 
-// Call /api/plan server-side (stesso dominio)
-async function callPlan(origin, maxMinutes, mode) {
-  const base = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000";
+/**
+ * ✅ Call /api/plan server-side sullo STESSO HOST della request (evita "seven" o domini sbagliati)
+ * ✅ Inoltra Cookie per bypassare eventuale protection che genera 401 "Authentication Required"
+ */
+async function callPlan(req, origin, maxMinutes, mode) {
+  const proto = (req.headers["x-forwarded-proto"] || "https").toString();
+  const host  = (req.headers["x-forwarded-host"] || req.headers.host).toString();
+  const url = `${proto}://${host}/api/plan`;
 
-  const r = await fetch(`${base}/api/plan`, {
+  const r = await fetch(url, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "Cookie": req.headers.cookie || ""
+    },
     body: JSON.stringify({
       origin,
       maxMinutes,
       mode,
       limit: 30,
-      // filtri:
       minMainKm: mode === "plane" ? 180 : (mode === "train" ? 40 : 35),
       avoidSameHub: true,
       preferNear: true
@@ -216,7 +216,7 @@ export default async function handler(req, res) {
     const weekIds = new Set(Array.isArray(body.weekIds) ? body.weekIds : []);
 
     const oLat = Number(origin.lat);
-    const oLon = Number(origin.lon ?? origin.lng);
+    const oLon = Number(origin.lon ?? origin.lng); // accetta lon o lng
     if (!Number.isFinite(oLat) || !Number.isFinite(oLon)) {
       return res.status(400).json({ error: "origin must be {lat, lon}" });
     }
@@ -232,16 +232,15 @@ export default async function handler(req, res) {
        (NO luoghi, NO borghi, NO ricuciture)
     ========================================================= */
     if (mode === "plane" || mode === "train" || mode === "bus") {
-      const plan = await callPlan(originObj, minutes, mode);
+      const plan = await callPlan(req, originObj, minutes, mode);
       const results = Array.isArray(plan?.results) ? plan.results : [];
       if (!results.length) {
         return res.status(200).json({ ok: true, top: null, alternatives: [], message: "Nessuna tratta hub→hub trovata." });
       }
 
-      // carico POIs solo per suggerimenti vicino all’hub (se categoria speciale)
+      // POI per suggerimenti vicino all’hub (solo se categoria speciale)
       const poisPack = readJsonSafe("pois_eu_uk.json", { pois: [] });
 
-      // build candidates = DEST HUB (città/stazione/aeroporto)
       const candidates = results
         .map((r) => {
           const oh = r.originHub || {};
@@ -252,19 +251,15 @@ export default async function handler(req, res) {
           const destName = dh.city || dh.name || dh.code || "Hub";
           const id = (dh.code ? String(dh.code).toUpperCase() : `hub_${normName(destName)}`) + `_${mode}`;
 
+          if (visitedIds.has(id) || weekIds.has(id)) return null;
+
           const total = Number(r.totalMinutes);
           const mainMin = Number(main?.minutes ?? total);
-
-          // distanza approximated: usa quella di plan se esiste
           const kmApprox = Number(r.distanceKmApprox);
           const dist = Number.isFinite(kmApprox) ? kmApprox : 0;
 
-          // filtri visited/week
-          if (visitedIds.has(id) || weekIds.has(id)) return null;
-
-          // costruisci consigli “special category” vicino alla destinazione hub
           let whatToDo = [];
-          let why = [];
+          let extraWhy = [];
 
           if (specialCat) {
             const lat = Number(dh.lat);
@@ -273,14 +268,13 @@ export default async function handler(req, res) {
               const near = nearbyPois(poisPack, lat, lon, allowedTypes[0], 90, 6);
               if (near.length) {
                 whatToDo = near;
-                why.push(`Selezionato come hub comodo: vicino trovi ${allowedTypes[0]} veri.`);
+                extraWhy.push(`Vicino a questo hub trovi ${allowedTypes[0]} veri.`);
               } else {
-                why.push(`Non ho abbastanza ${allowedTypes[0]} classificati vicino a questo hub: scelgo comunque la tratta migliore col tuo tempo.`);
+                extraWhy.push(`Non ho abbastanza ${allowedTypes[0]} classificati vicino a questo hub: scelgo comunque la tratta migliore col tuo tempo.`);
               }
             }
           }
 
-          // score: spinge sul target time (1h ≠ 2h) e non solo “vicino”
           const timeFit = clamp(1 - (Math.abs(mainMin - minutes) / Math.max(25, minutes * 0.75)), 0, 1);
           const ratio = mainMin / Math.max(1, minutes);
           const outBand = (ratio < 0.55) ? 0.20 : (ratio > 1.70) ? 0.14 : 0;
@@ -292,7 +286,6 @@ export default async function handler(req, res) {
               ? `${(oh.code || "?")} → ${(dh.code || "?")}`
               : `${(oh.name || oh.code || "?")} → ${(dh.name || dh.code || "?")}`;
 
-          // why “pulito”
           const whyBase = [
             `Tratta ${mode.toUpperCase()} stimata: ~${Math.round(mainMin)} min (hub→hub).`,
             `Hub: ${hubSummary}.`,
@@ -315,7 +308,7 @@ export default async function handler(req, res) {
               : [{ kind: "main", label: "Tratta principale", minutes: mainMin }],
             what_to_do: whatToDo,
             what_to_eat: [],
-            why: [...whyBase, ...why].slice(0, 4),
+            why: [...whyBase, ...extraWhy].slice(0, 4),
             _score: score
           };
         })
@@ -352,16 +345,14 @@ export default async function handler(req, res) {
     const idxPack = readJsonSafe("places_index_eu_uk.json", { places: [] });
     const idxPlaces = Array.isArray(idxPack?.places) ? idxPack.places : [];
 
-    // normalizza tutto in un formato unico
     function normalizePlace(p, source) {
-      const lat = Number(p.lat);
-      const lng = Number(p.lng ?? p.lon);
+      const lat = Number(p?.lat);
+      const lng = Number(p?.lng ?? p?.lon);
       if (!p || !p.id || !p.name || !Number.isFinite(lat) || !Number.isFinite(lng)) return null;
 
       const types =
         Array.isArray(p.types) ? p.types :
-        (Array.isArray(p.type) ? p.type :
-          (p.type ? [p.type] : []));
+        (Array.isArray(p.type) ? p.type : (p.type ? [p.type] : []));
 
       return {
         id: String(p.id),
@@ -381,14 +372,10 @@ export default async function handler(req, res) {
 
     const all = [
       ...curatedPlaces.map(p => normalizePlace(p, "curated")).filter(Boolean),
-      ...pois.map(p => {
-        // pois ha "types":[...]
-        return normalizePlace(p, "pois");
-      }).filter(Boolean),
+      ...pois.map(p => normalizePlace(p, "pois")).filter(Boolean),
       ...idxPlaces.map(p => normalizePlace(p, "index")).filter(Boolean)
     ];
 
-    // remove visited/week, evita “sei già lì”
     const base = all
       .filter(p => !visitedIds.has(p.id))
       .filter(p => !weekIds.has(p.id))
@@ -398,7 +385,6 @@ export default async function handler(req, res) {
       })
       .filter(p => p.distance_km >= 2.0);
 
-    // filtro categoria reale
     let pool = base.filter(p => {
       const t = p.types || [];
       const want = allowedTypes;
@@ -406,24 +392,18 @@ export default async function handler(req, res) {
       if (want.length === 1 && ["mare", "montagna", "natura", "relax", "bambini"].includes(want[0])) {
         return t.includes(want[0]);
       }
-
-      // città/borghi
       if (want.includes("citta") || want.includes("borgo")) {
         return want.some(x => t.includes(x));
       }
-
       return true;
     });
 
-    // “qualità minima”: taglia via index troppo casuale
-    // - se viene da index e beauty basso, fuori
     pool = pool.filter(p => {
       const b = beautyScore(p);
       if (p._source === "index" && b < 0.60) return false;
       return true;
     });
 
-    // caps progressivi ma con preferenza “vicino al target”
     const caps = [1.20, 1.45, 1.85, 2.60].map(x => minutes * x);
 
     let within = [];
@@ -442,7 +422,6 @@ export default async function handler(req, res) {
       return res.status(200).json({ ok: true, top: null, alternatives: [], message: "Nessuna meta trovata." });
     }
 
-    // score + ordinamento
     within.forEach(p => {
       p._score = scoreLocal(p, p.eta_min, minutes, style);
     });
@@ -451,7 +430,6 @@ export default async function handler(req, res) {
     const top = within[0];
     const alts = within.slice(1, 3);
 
-    // why (fallback tempo dichiarato)
     const fallbackNote = (usedCap > minutes * 1.35)
       ? `Per trovare abbastanza mete ho allargato: fino a ~${Math.round(usedCap)} min (stima).`
       : "";
@@ -468,7 +446,6 @@ export default async function handler(req, res) {
         out.push(style === "gems" ? "È più particolare / fuori dai soliti giri." : "È una meta solida e facile da godere.");
       }
 
-      // hook monetizzazione
       out.push("Tip: qui puoi inserire CTA (esperienze, tour, ristoranti, hotel).");
       return out.slice(0, 4);
     }
@@ -489,4 +466,4 @@ export default async function handler(req, res) {
       hint: "Controlla i JSON in public/data: curated.json, places_index_eu_uk.json, pois_eu_uk.json, curated_airports_eu_uk.json, curated_stations_eu_uk.json"
     });
   }
-        }
+}
