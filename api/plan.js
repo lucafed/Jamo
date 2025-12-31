@@ -1,4 +1,4 @@
-// /api/plan.js — HUB→HUB ONLY (NO porta-a-porta) — v3.1
+// /api/plan.js — HUB→HUB ONLY (NO porta-a-porta) — v3.2 (PLANE FIX + DEBUG)
 // - Usa SOLO:
 //   public/data/curated_airports_eu_uk.json
 //   public/data/curated_stations_eu_uk.json
@@ -8,7 +8,7 @@
 //     maxMinutes:number,
 //     mode:"plane"|"train"|"bus",
 //     limit?:number,
-//     minMainKm?:number,
+//     minMainKm?:number,           // opzionale: se passato, vince
 //     avoidSameHub?:boolean,
 //     preferNear?:boolean
 //   }
@@ -20,13 +20,10 @@ import path from "path";
 function readJson(filename) {
   const p = path.join(process.cwd(), "public", "data", filename);
   const raw = fs.readFileSync(p, "utf8");
-  // Se per errore il file contiene commenti o roba non-JSON, qui esplode (giusto così)
   return JSON.parse(raw);
 }
 
-function toRad(x) {
-  return (x * Math.PI) / 180;
-}
+function toRad(x) { return (x * Math.PI) / 180; }
 
 function haversineKm(aLat, aLon, bLat, bLon) {
   const R = 6371;
@@ -40,9 +37,7 @@ function haversineKm(aLat, aLon, bLat, bLon) {
   return 2 * R * Math.asin(Math.sqrt(s));
 }
 
-function clamp(n, a, b) {
-  return Math.max(a, Math.min(b, n));
-}
+function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
 
 function normName(s) {
   return String(s ?? "")
@@ -104,19 +99,34 @@ function score({ totalMinutes, mainKm, targetMinutes, preferNear }) {
   const t = Number(totalMinutes);
   const target = Number(targetMinutes);
 
-  // vicinanza al target (0..1)
   const tScore = clamp(
     1 - Math.abs(t - target) / Math.max(20, target * 0.9),
     0,
     1
   );
 
-  // preferenza “non troppo lontano” (soprattutto per train/bus)
-  // 0 km => 1, 1500 km => ~0
   const kScore = clamp(1 - mainKm / 1500, 0, 1);
 
   const nearWeight = preferNear ? 0.35 : 0.1;
   return 0.65 * tScore + nearWeight * kScore;
+}
+
+/**
+ * ✅ FIX PLANE: minMainKm dinamico
+ * Se hai poco tempo (60–90 min), non ha senso bloccare voli <180 km,
+ * perché spesso sono gli unici che “ci stanno” nel tempo selezionato.
+ */
+function defaultMinMainKm(mode, maxMinutes) {
+  if (mode === "plane") {
+    const m = Number(maxMinutes);
+    if (!Number.isFinite(m)) return 120;
+    if (m <= 75)  return 70;   // 1h ~ permette PSR↔ROMA ecc.
+    if (m <= 110) return 110;
+    if (m <= 160) return 150;
+    return 180;
+  }
+  if (mode === "train") return 40;
+  return 35; // bus
 }
 
 export default async function handler(req, res) {
@@ -175,37 +185,45 @@ export default async function handler(req, res) {
 
     const originHubKey = hubKey(oH.hub);
 
-    // default minMainKm sensati
-    const minKmDefault =
-      mode === "plane" ? 180 : mode === "train" ? 40 : 35;
-
-    const minKm = Number.isFinite(Number(minMainKm))
+    // ✅ minKm: se non passato, usa dinamico (soprattutto per plane)
+    const minKmUsed = Number.isFinite(Number(minMainKm))
       ? Number(minMainKm)
-      : minKmDefault;
+      : defaultMinMainKm(mode, maxM);
 
     const scored = [];
+
+    // debug counters
+    let skippedSameHub = 0;
+    let skippedMinKm = 0;
+    let skippedTooLong = 0;
+    let skippedBadCoords = 0;
 
     for (const dh of hubs) {
       const dLat = Number(dh.lat);
       const dLon = Number(dh.lon);
-      if (!Number.isFinite(dLat) || !Number.isFinite(dLon)) continue;
-
-      const destHubKey = hubKey(dh);
-      if (avoidSameHub && originHubKey && destHubKey && originHubKey === destHubKey) {
+      if (!Number.isFinite(dLat) || !Number.isFinite(dLon)) {
+        skippedBadCoords++;
         continue;
       }
 
-      const mainKm = haversineKm(
-        Number(oH.hub.lat),
-        Number(oH.hub.lon),
-        dLat,
-        dLon
-      );
+      const destHubKey = hubKey(dh);
+      if (avoidSameHub && originHubKey && destHubKey && originHubKey === destHubKey) {
+        skippedSameHub++;
+        continue;
+      }
 
-      if (Number.isFinite(minKm) && mainKm < minKm) continue;
+      const mainKm = haversineKm(Number(oH.hub.lat), Number(oH.hub.lon), dLat, dLon);
+
+      if (Number.isFinite(minKmUsed) && mainKm < minKmUsed) {
+        skippedMinKm++;
+        continue;
+      }
 
       const mainMin = estMainMinutes(mode, mainKm);
-      if (mainMin > maxM) continue;
+      if (mainMin > maxM) {
+        skippedTooLong++;
+        continue;
+      }
 
       const s = score({
         totalMinutes: mainMin,
@@ -214,11 +232,8 @@ export default async function handler(req, res) {
         preferNear: !!preferNear,
       });
 
-      // destination = HUB
       const destination = {
-        id: dh.code
-          ? String(dh.code).toUpperCase()
-          : `hub_${normName(dh.name || "hub")}`,
+        id: dh.code ? String(dh.code).toUpperCase() : `hub_${normName(dh.name || "hub")}`,
         name: dh.name || dh.code || "Hub",
         country: dh.country || "",
         lat: dLat,
@@ -239,14 +254,7 @@ export default async function handler(req, res) {
         destination,
         originHub: { ...oH.hub },
         destinationHub: { ...dh },
-        segments: [
-          {
-            kind: "main",
-            label,
-            minutes: mainMin,
-            km: Math.round(mainKm),
-          },
-        ],
+        segments: [{ kind: "main", label, minutes: mainMin, km: Math.round(mainKm) }],
         totalMinutes: mainMin,
         confidence: "estimated_hub_to_hub",
         distanceKmApprox: Math.round(mainKm),
@@ -278,6 +286,14 @@ export default async function handler(req, res) {
         ` • ${r.totalMinutes} min`,
     }));
 
+    // debug reason se 0 risultati
+    let reason = "";
+    if (!results.length) {
+      reason =
+        `0 results. Tipico se minMainKm è troppo alto per il tempo scelto o se il dataset hubs è piccolo. ` +
+        `Skipped: sameHub=${skippedSameHub}, minKm=${skippedMinKm}, tooLong=${skippedTooLong}, badCoords=${skippedBadCoords}.`;
+    }
+
     return res.status(200).json({
       ok: true,
       input: {
@@ -285,9 +301,15 @@ export default async function handler(req, res) {
         maxMinutes: maxM,
         mode,
         limit: safeLimit,
-        minMainKm: minKm,
+        minMainKm: minKmUsed,
         avoidSameHub,
         preferNear,
+      },
+      debug: {
+        originHubDistanceKm: Math.round(oH.km),
+        minKmUsed,
+        skipped: { skippedSameHub, skippedMinKm, skippedTooLong, skippedBadCoords },
+        reason,
       },
       results,
     });
