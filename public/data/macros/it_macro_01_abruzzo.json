@@ -1,8 +1,8 @@
 {
   "id": "it_macro_01_abruzzo",
   "name": "Macro 01 — Abruzzo (mete locali) + Hub confinanti (Lazio/Marche/Molise)",
-  "version": "1.0.0",
-  "updated_at": "2025-12-30",
+  "version": "1.1.0",
+  "updated_at": "2025-12-31",
   "coverage": {
     "places_region": "Abruzzo",
     "hubs_regions": ["Abruzzo", "Lazio", "Marche", "Molise"]
@@ -10,7 +10,8 @@
   "rules": {
     "local_modes_prefer_places": true,
     "hub_modes_use_hubs_only": true,
-    "places_are_offline_and_stable": true
+    "places_are_offline_and_stable": true,
+    "train_and_bus_are_graph_based": true
   },
   "places": [
     {
@@ -588,6 +589,28 @@
       { "type": "bus", "code": "BUS-ROMA-TIBURTINA", "name": "Roma Tiburtina (bus hub)", "country": "IT", "lat": 41.9109, "lon": 12.5296, "region_hint": "Lazio" },
       { "type": "bus", "code": "BUS-AN-ANCONA", "name": "Ancona (bus hub)", "country": "IT", "lat": 43.6156, "lon": 13.5097, "region_hint": "Marche" },
       { "type": "bus", "code": "BUS-CB-CAMPOBASSO", "name": "Campobasso (bus hub)", "country": "IT", "lat": 41.56, "lon": 14.6685, "region_hint": "Molise" }
+    ],
+
+    "train_edges": [
+      { "from": "IT-AQ-LAQUILA", "to": "IT-AQ-SULMONA", "minutes": 67, "confidence": "rfi_timetable_link" },
+      { "from": "IT-AQ-LAQUILA", "to": "IT-ROMA-TIBURTINA", "minutes": 120, "confidence": "rail_or_substitute_estimate" },
+
+      { "from": "IT-AQ-AVEZZANO", "to": "IT-ROMA-TIBURTINA", "minutes": 75, "confidence": "typical_regional_estimate" },
+
+      { "from": "IT-AQ-SULMONA", "to": "IT-PE-PESCARA-CENTRALE", "minutes": 65, "confidence": "typical_regional_estimate" },
+
+      { "from": "IT-PE-PESCARA-CENTRALE", "to": "IT-CH-ORTONA", "minutes": 25, "confidence": "typical_regional_estimate" },
+      { "from": "IT-CH-ORTONA", "to": "IT-CH-VASTO-SANSALVO", "minutes": 40, "confidence": "typical_regional_estimate" },
+      { "from": "IT-CH-VASTO-SANSALVO", "to": "IT-CB-TERMOLI", "minutes": 35, "confidence": "typical_regional_estimate" },
+      { "from": "IT-CB-TERMOLI", "to": "IT-AN-ANCONA", "minutes": 100, "confidence": "typical_regional_estimate" },
+
+      { "from": "IT-ROMA-TIBURTINA", "to": "IT-ROMA-TERMINI", "minutes": 10, "confidence": "in_city_transfer_estimate" }
+    ],
+
+    "bus_edges": [
+      { "from": "BUS-AQ-LAQUILA", "to": "BUS-ROMA-TIBURTINA", "minutes": 110, "confidence": "typical_bus_estimate" },
+      { "from": "BUS-AQ-LAQUILA", "to": "BUS-PE-PESCARA", "minutes": 95, "confidence": "typical_bus_estimate" },
+      { "from": "BUS-PE-PESCARA", "to": "BUS-AN-ANCONA", "minutes": 165, "confidence": "typical_bus_estimate" }
     ]
   }
 }
