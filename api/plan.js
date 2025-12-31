@@ -1,4 +1,4 @@
-// /api/plan.js — HUB→HUB ONLY (NO porta-a-porta) — v4.0 (REGIONAL PRIORITY + PLANE FIX)
+// /api/plan.js — HUB→HUB ONLY — v4 (MULTI-ORIGIN HUBS + PLANE FIX)
 // - Usa SOLO:
 //   public/data/curated_airports_eu_uk.json
 //   public/data/curated_stations_eu_uk.json
@@ -8,12 +8,14 @@
 //     maxMinutes:number,
 //     mode:"plane"|"train"|"bus",
 //     limit?:number,
-//     minMainKm?:number,          // opzionale: override
+//     minMainKm?:number,
 //     avoidSameHub?:boolean,
 //     preferNear?:boolean,
-//     regionalPriorityKm?:number  // opzionale: default 140
+//     // NEW (optional):
+//     originHubCandidates?:number,  // default 4
+//     originHubMaxKm?:number        // default plane 180, train/bus 90
 //   }
-// - Output: results con originHub, destinationHub, segments=[{kind:"main",...}], totalMinutes = SOLO TRATTA HUB→HUB
+// - Output: results con originHub, destinationHub, segments=[{kind:"main",...}], totalMinutes=SOLO HUB→HUB
 
 import fs from "fs";
 import path from "path";
@@ -24,9 +26,7 @@ function readJson(filename) {
   return JSON.parse(raw);
 }
 
-function toRad(x) {
-  return (x * Math.PI) / 180;
-}
+function toRad(x) { return (x * Math.PI) / 180; }
 
 function haversineKm(aLat, aLon, bLat, bLon) {
   const R = 6371;
@@ -40,9 +40,7 @@ function haversineKm(aLat, aLon, bLat, bLon) {
   return 2 * R * Math.asin(Math.sqrt(s));
 }
 
-function clamp(n, a, b) {
-  return Math.max(a, Math.min(b, n));
-}
+function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
 
 function normName(s) {
   return String(s ?? "")
@@ -59,74 +57,38 @@ function hubKey(h) {
   return code ? code.toUpperCase() : normName(name);
 }
 
-/**
- * ✅ Scelta origin hub:
- * - se esiste un hub entro regionalPriorityKm => PRENDILO SUBITO (priorità regionale)
- * - altrimenti usa il più vicino in assoluto
- *
- * Questo risolve: "sono in Abruzzo ma mi manda a Roma" (usa PSR se entro 140km)
- */
-function nearestHub(hubs, lat, lon, regionalPriorityKm = 140) {
-  let best = null;
-  let bestKm = Infinity;
-
+// ritorna hubs ordinati per distanza dalla origin
+function hubsByDistance(hubs, lat, lon) {
+  const out = [];
   for (const h of hubs) {
     const hLat = Number(h.lat);
     const hLon = Number(h.lon);
     if (!Number.isFinite(hLat) || !Number.isFinite(hLon)) continue;
-
     const km = haversineKm(lat, lon, hLat, hLon);
-
-    // ✅ PRIORITÀ HUB REGIONALI
-    if (Number.isFinite(regionalPriorityKm) && km <= regionalPriorityKm) {
-      return { hub: h, km, pickedBy: "regional_priority" };
-    }
-
-    if (km < bestKm) {
-      bestKm = km;
-      best = h;
-    }
+    out.push({ hub: h, km });
   }
-
-  return { hub: best, km: bestKm, pickedBy: "nearest" };
-}
-
-// ✅ min km dinamico per plane (permette short-haul reali)
-function dynamicMinKmPlane(maxMinutes) {
-  if (maxMinutes <= 90) return 40;
-  if (maxMinutes <= 150) return 80;
-  if (maxMinutes <= 210) return 120;
-  return 160;
+  out.sort((a, b) => a.km - b.km);
+  return out;
 }
 
 // SOLO tratta principale (hub→hub)
 function estMainMinutes(mode, km) {
   if (mode === "plane") {
     const cruise = 820;
-
-    // overhead più realistico per voli corti
-    // (sempre hub→hub, ma riduce il problema "nessuna tratta entro 2-4 ore")
-    const overhead =
-      km < 300 ? 22 :
-      km < 600 ? 28 :
-      35;
-
-    const m = (km / cruise) * 60 + overhead;
-    return Math.round(clamp(m, 22, 2400));
+    // overhead “solo volo” (hub→hub stimato): sicurezza minima
+    const m = (km / cruise) * 60 + 35;
+    return Math.round(clamp(m, 35, 2400));
   }
-
   if (mode === "train") {
     const avg = 135;
     const m = (km / avg) * 60 + 8;
     return Math.round(clamp(m, 20, 2400));
   }
-
   if (mode === "bus") {
     const avg = 85;
     const m = (km / avg) * 60 + 8;
     return Math.round(clamp(m, 25, 3000));
   }
-
   const avg = 70;
   return Math.round((km / avg) * 60);
 }
@@ -147,11 +109,34 @@ function score({ totalMinutes, mainKm, targetMinutes, preferNear }) {
   return 0.65 * tScore + nearWeight * kScore;
 }
 
+// minMainKm adattivo (se tempo basso, abbassa la soglia sennò uccidi tutto)
+function adaptiveMinMainKm(mode, maxMinutes, explicitMinMainKm) {
+  const maxM = Number(maxMinutes);
+  const user = Number(explicitMinMainKm);
+  if (Number.isFinite(user)) return user;
+
+  if (mode === "plane") {
+    // 60–90 min: permetti anche voli corti (PSR↔NAP ecc.)
+    if (maxM <= 90) return 80;
+    if (maxM <= 120) return 120;
+    return 180;
+  }
+  if (mode === "train") {
+    if (maxM <= 60) return 15;
+    if (maxM <= 120) return 25;
+    return 40;
+  }
+  if (mode === "bus") {
+    if (maxM <= 60) return 15;
+    if (maxM <= 120) return 25;
+    return 35;
+  }
+  return 40;
+}
+
 export default async function handler(req, res) {
   try {
-    if (req.method !== "POST") {
-      return res.status(405).json({ error: "Use POST" });
-    }
+    if (req.method !== "POST") return res.status(405).json({ error: "Use POST" });
 
     const body = req.body || {};
     const origin = body.origin || {};
@@ -159,10 +144,8 @@ export default async function handler(req, res) {
     const maxMinutes = body.maxMinutes;
 
     const limit = body.limit ?? 10;
-    const minMainKm = body.minMainKm ?? null;
     const avoidSameHub = body.avoidSameHub ?? true;
     const preferNear = body.preferNear ?? true;
-    const regionalPriorityKm = Number(body.regionalPriorityKm ?? 140);
 
     const oLat = Number(origin?.lat);
     const oLon = Number(origin?.lon);
@@ -190,9 +173,20 @@ export default async function handler(req, res) {
 
     const hubs = mode === "plane" ? airports : stations;
 
-    // origin hub = preferisci "regionale" entro 140km, altrimenti nearest
-    const oH = nearestHub(hubs, oLat, oLon, regionalPriorityKm);
-    if (!oH.hub) {
+    // ✅ multi-origin hub settings
+    const originHubCandidates = clamp(Number(body.originHubCandidates) || 4, 1, 8);
+    const originHubMaxKm =
+      Number(body.originHubMaxKm) ||
+      (mode === "plane" ? 180 : 90); // default: plane più ampio
+
+    const rankedOrigins = hubsByDistance(hubs, oLat, oLon)
+      .filter(x => x.km <= originHubMaxKm)
+      .slice(0, originHubCandidates);
+
+    // fallback: se non ne trovi entro raggio, prendi comunque i primi 2
+    const originList = rankedOrigins.length ? rankedOrigins : hubsByDistance(hubs, oLat, oLon).slice(0, 2);
+
+    if (!originList.length || !originList[0].hub) {
       return res.status(200).json({
         ok: true,
         input: { origin: { lat: oLat, lon: oLon, label: origin?.label || "" }, maxMinutes: maxM, mode },
@@ -201,92 +195,75 @@ export default async function handler(req, res) {
       });
     }
 
-    const originHubKey = hubKey(oH.hub);
-
-    // default minMainKm
-    const defaultMinKm =
-      mode === "plane"
-        ? dynamicMinKmPlane(maxM)
-        : mode === "train"
-        ? 40
-        : 35;
-
-    const minKm = Number.isFinite(Number(minMainKm))
-      ? Number(minMainKm)
-      : defaultMinKm;
+    const minKm = adaptiveMinMainKm(mode, maxM, body.minMainKm);
 
     const scored = [];
 
-    for (const dh of hubs) {
-      const dLat = Number(dh.lat);
-      const dLon = Number(dh.lon);
-      if (!Number.isFinite(dLat) || !Number.isFinite(dLon)) continue;
+    for (const oPick of originList) {
+      const oHub = oPick.hub;
+      const originHubKey = hubKey(oHub);
 
-      const destHubKey = hubKey(dh);
-      if (avoidSameHub && originHubKey && destHubKey && originHubKey === destHubKey) {
-        continue;
-      }
+      for (const dh of hubs) {
+        const dLat = Number(dh.lat);
+        const dLon = Number(dh.lon);
+        if (!Number.isFinite(dLat) || !Number.isFinite(dLon)) continue;
 
-      const mainKm = haversineKm(
-        Number(oH.hub.lat),
-        Number(oH.hub.lon),
-        dLat,
-        dLon
-      );
+        const destHubKey = hubKey(dh);
+        if (avoidSameHub && originHubKey && destHubKey && originHubKey === destHubKey) continue;
 
-      if (Number.isFinite(minKm) && mainKm < minKm) continue;
+        const mainKm = haversineKm(Number(oHub.lat), Number(oHub.lon), dLat, dLon);
+        if (Number.isFinite(minKm) && mainKm < minKm) continue;
 
-      const mainMin = estMainMinutes(mode, mainKm);
-      if (mainMin > maxM) continue;
+        const mainMin = estMainMinutes(mode, mainKm);
+        if (mainMin > maxM) continue;
 
-      const s = score({
-        totalMinutes: mainMin,
-        mainKm,
-        targetMinutes: maxM,
-        preferNear: !!preferNear,
-      });
+        const s = score({
+          totalMinutes: mainMin,
+          mainKm,
+          targetMinutes: maxM,
+          preferNear: !!preferNear,
+        });
 
-      const destination = {
-        id: dh.code
-          ? String(dh.code).toUpperCase()
-          : `hub_${normName(dh.name || "hub")}`,
-        name: dh.name || dh.code || "Hub",
-        country: dh.country || "",
-        lat: dLat,
-        lon: dLon,
-      };
+        const originCode = oHub.code || "?";
+        const destCode = dh.code || "?";
 
-      const originCode = oH.hub.code || "?";
-      const destCode = dh.code || "?";
+        const label =
+          mode === "plane"
+            ? `Volo ${originCode} → ${destCode}`
+            : mode === "train"
+            ? `Treno ${oHub.name} → ${dh.name}`
+            : `Bus ${oHub.name} → ${dh.name}`;
 
-      const label =
-        mode === "plane"
-          ? `Volo ${originCode} → ${destCode}`
-          : mode === "train"
-          ? `Treno ${oH.hub.name} → ${dh.name}`
-          : `Bus ${oH.hub.name} → ${dh.name}`;
-
-      scored.push({
-        destination,
-        originHub: { ...oH.hub },
-        destinationHub: { ...dh },
-        segments: [
-          {
-            kind: "main",
-            label,
-            minutes: mainMin,
-            km: Math.round(mainKm),
+        scored.push({
+          destination: {
+            id: dh.code ? String(dh.code).toUpperCase() : `hub_${normName(dh.name || "hub")}`,
+            name: dh.name || dh.code || "Hub",
+            country: dh.country || "",
+            lat: dLat,
+            lon: dLon,
           },
-        ],
-        totalMinutes: mainMin,
-        confidence: "estimated_hub_to_hub",
-        distanceKmApprox: Math.round(mainKm),
-        score: Number(s.toFixed(4)),
-      });
+          originHub: { ...oHub },
+          destinationHub: { ...dh },
+          originHubDistanceKm: Math.round(oPick.km),
+          segments: [
+            {
+              kind: "main",
+              label,
+              minutes: mainMin,
+              km: Math.round(mainKm),
+            },
+          ],
+          totalMinutes: mainMin,
+          confidence: "estimated_hub_to_hub",
+          distanceKmApprox: Math.round(mainKm),
+          score: Number(s.toFixed(4)),
+        });
+      }
     }
 
     scored.sort((a, b) => {
       if (b.score !== a.score) return b.score - a.score;
+      if (a.originHubDistanceKm !== b.originHubDistanceKm) return a.originHubDistanceKm - b.originHubDistanceKm;
       return a.totalMinutes - b.totalMinutes;
     });
 
@@ -296,6 +273,7 @@ export default async function handler(req, res) {
       destination: r.destination,
       originHub: r.originHub,
       destinationHub: r.destinationHub,
+      originHubDistanceKm: r.originHubDistanceKm,
       segments: r.segments,
       totalMinutes: r.totalMinutes,
       confidence: r.confidence,
@@ -319,12 +297,8 @@ export default async function handler(req, res) {
         minMainKm: minKm,
         avoidSameHub,
         preferNear,
-        regionalPriorityKm,
-      },
-      debug: {
-        originHubPickedBy: oH.pickedBy,
-        originHubKmFromOrigin: Math.round(oH.km),
-        originHub: { code: oH.hub.code || "", name: oH.hub.name || "" },
+        originHubCandidates,
+        originHubMaxKm
       },
       results,
     });
