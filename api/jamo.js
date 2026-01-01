@@ -1,20 +1,30 @@
-// pages/api/jamo.js — JAMO CORE v5 — AUTO ONLY (offline macro)
-// ✅ Solo auto: mete stabili offline (macro JSON)
-// ✅ Tempo = stima guida (no orari inventati)
-// ✅ Preferisce Abruzzo, fallback fuori solo se dataset macro in futuro include neighbors
-// ✅ Categoria: citta_borghi | mare | montagna | natura | relax | bambini | ovunque
-// ✅ Stile: known | gems
-// ✅ visitedIds / weekIds per evitare ripetizioni
+// api/jamo.js — AUTO-ONLY (OFFLINE MACRO) — v1.0
+// - Usa SOLO macro file: public/data/macros/it_macro_01_abruzzo.json
+// - Ignora completamente plane/train/bus
+// - Input POST:
+//   {
+//     origin:{lat,lon,label?},
+//     minutes:number,
+//     mode:"car" (o "auto"),
+//     category:"ovunque"|"chicca"|"borgo"|"mare"|"montagna"|"natura"|"storia"|"relax"|"bambini"|"citta"|"citta_borghi",
+//     style:"gems"|"known",
+//     macroId?:"it_macro_01_abruzzo" (opzionale)
+//   }
 
 import fs from "fs";
 import path from "path";
 
 const DATA_DIR = path.join(process.cwd(), "public", "data");
-const MACRO_PATH = path.join(DATA_DIR, "macros", "it_macro_01_abruzzo.json");
+const DEFAULT_MACRO = "it_macro_01_abruzzo.json";
 
-function readJsonStrict(p) {
-  const raw = fs.readFileSync(p, "utf8");
-  return JSON.parse(raw);
+function readJsonSafe(file, fallback) {
+  try {
+    const p = path.join(DATA_DIR, "macros", file);
+    if (!fs.existsSync(p)) return fallback;
+    return JSON.parse(fs.readFileSync(p, "utf8"));
+  } catch {
+    return fallback;
+  }
 }
 
 function toRad(x) { return (x * Math.PI) / 180; }
@@ -29,7 +39,6 @@ function haversineKm(aLat, aLon, bLat, bLon) {
     Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2;
   return 2 * R * Math.asin(Math.sqrt(s));
 }
-
 function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
 
 function norm(s) {
@@ -39,92 +48,91 @@ function norm(s) {
     .trim();
 }
 
-function canonicalCategory(raw) {
-  const c = norm(raw);
-  if (!c) return "citta_borghi";
-  if (["ovunque","any","random"].includes(c)) return "ovunque";
-  if (["mare","montagna","natura","relax","bambini"].includes(c)) return c;
-  if (c.includes("citta") && c.includes("borg")) return "citta_borghi";
-  if (c === "citta" || c === "città" || c === "city") return "citta";
-  if (c === "borgo" || c === "borghi") return "borgo";
-  return "citta_borghi";
+function canonicalMode(raw) {
+  const m = norm(raw);
+  if (["car", "auto", "macchina"].includes(m)) return "car";
+  return "car";
 }
 
-function canonicalStyle(raw) {
-  const s = norm(raw);
-  return (s === "gems" || s === "chicche") ? "gems" : "known";
+function allowedTypesFromCategory(categoryRaw) {
+  const c = norm(categoryRaw);
+
+  if (c === "ovunque" || c === "any" || c === "random") return ["any"];
+  if (c === "citta_borghi" || (c.includes("citta") && c.includes("borg"))) return ["citta", "borgo"];
+  if (c === "citta" || c === "città" || c === "city") return ["citta"];
+  if (c === "borgo" || c === "borghi") return ["borgo"];
+
+  // categorie “tematiche”
+  if (["mare", "montagna", "natura", "relax", "bambini", "storia", "chicca"].includes(c)) return [c];
+
+  return ["any"];
 }
 
-// Stima velocità: Abruzzo ha molte strade di montagna.
-// Se tags include montagna/gole/trekking => più lento.
-// Se mare/citta => più veloce.
-function speedKmhForPlace(tags) {
-  const t = new Set((tags || []).map(norm));
-  const mountainish = t.has("montagna") || t.has("gole") || t.has("trekking") || t.has("parco_nazionale");
-  const coastal = t.has("mare") || t.has("spiagge");
-  const cityish = t.has("citta");
-
-  if (mountainish) return 52;     // prudente
-  if (coastal || cityish) return 68;
-  return 62;                      // default misto
+// stima tempo auto: semplice e stabile (nessun “2000km”)
+function estimateCarMinutes(origin, lat, lon) {
+  const km = haversineKm(origin.lat, origin.lon, lat, lon);
+  // velocità media realistica “mista”
+  const avg = 68;
+  const minutes = (km / avg) * 60;
+  return { km, minutes };
 }
 
-// “bellezza” clamp
 function beautyScore(p) {
   const b = Number(p.beauty_score);
   if (Number.isFinite(b)) return clamp(b, 0.2, 1.0);
-  // fallback raro: se non c'è, diamo medio-alto solo se chicca
-  return (norm(p.visibility) === "chicca") ? 0.88 : 0.75;
+  // fallback se manca
+  const vis = norm(p.visibility || "");
+  let s = 0.72;
+  if (vis === "conosciuta") s += 0.05;
+  if (vis === "chicca") s += 0.10;
+  return clamp(s, 0.55, 0.90);
 }
 
-// Score finale: tempo + bellezza + stile
-function scorePlace(p, etaMin, targetMin, style) {
+function scorePlace(p, eta, targetMin, style) {
+  const timeFit = clamp(1 - (Math.abs(eta - targetMin) / Math.max(20, targetMin * 0.75)), 0, 1);
+  const nearFit = clamp(1 - (eta / (targetMin * 1.9)), 0, 1);
   const beauty = beautyScore(p);
 
-  // quanto è vicino al tempo scelto (spinge mete diverse a 1h vs 2h)
-  const timeFit = clamp(1 - (Math.abs(etaMin - targetMin) / Math.max(25, targetMin * 0.75)), 0, 1);
-
-  // penalizza se troppo fuori banda (troppo vicino o troppo lontano)
-  const ratio = etaMin / Math.max(1, targetMin);
-  const outBand =
-    (ratio < 0.55) ? 0.20 :
-    (ratio > 1.55) ? 0.16 :
-    0;
-
   const vis = norm(p.visibility || "");
-  const isBigKnownCity = (style === "gems" && (p.type === "citta") && vis === "conosciuta");
-  const cityPenalty = isBigKnownCity ? 0.10 : 0;
+  const type = norm(p.type || "");
 
-  return (0.50 * timeFit) + (0.50 * beauty) - outBand - cityPenalty;
+  // se l’utente vuole “gems”, penalizzo città troppo note
+  const bigPenalty = (style === "gems" && type === "citta" && vis === "conosciuta") ? 0.10 : 0;
+
+  // se vuole “known”, penalizzo roba con beauty bassa
+  const mehPenalty = (style === "known" && beauty < 0.70) ? 0.10 : 0;
+
+  return (0.54 * timeFit) + (0.18 * nearFit) + (0.28 * beauty) - bigPenalty - mehPenalty;
 }
 
-function matchesCategory(p, category) {
-  if (category === "ovunque") return true;
+function normalizePlace(p) {
+  if (!p || !p.id || !p.name) return null;
+  const lat = Number(p.lat);
+  const lon = Number(p.lon ?? p.lng);
+  if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
 
-  const type = norm(p.type);
-  const tags = new Set((p.tags || []).map(norm));
-
-  if (category === "citta_borghi") return (type === "citta" || type === "borgo" || tags.has("citta") || tags.has("borgo"));
-  if (category === "citta") return (type === "citta" || tags.has("citta"));
-  if (category === "borgo") return (type === "borgo" || tags.has("borgo") || tags.has("chicca"));
-  if (["mare","montagna","natura","relax","bambini"].includes(category)) {
-    return type === category || tags.has(category);
-  }
-  return true;
+  return {
+    id: String(p.id),
+    name: String(p.name),
+    type: norm(p.type || "place"),
+    area: p.area || "",
+    lat, lon,
+    tags: Array.isArray(p.tags) ? p.tags.map(norm) : [],
+    visibility: p.visibility || "",
+    beauty_score: Number(p.beauty_score),
+    why: Array.isArray(p.why) ? p.why : [],
+  };
 }
 
 function outPlace(p) {
   return {
     id: p.id,
     name: p.name,
-    area: p.area || "",
-    type: p.type || "place",
+    type: p.type,
     visibility: p.visibility || "",
-    beauty_score: Number(p.beauty_score) || null,
     eta_min: Math.round(p.eta_min),
     distance_km: Math.round(p.distance_km),
-    tags: Array.isArray(p.tags) ? p.tags.slice(0, 10) : [],
-    why: Array.isArray(p.why) ? p.why.slice(0, 4) : []
+    why: Array.isArray(p.why) ? p.why.slice(0, 4) : [],
   };
 }
 
@@ -135,6 +143,10 @@ export default async function handler(req, res) {
     const body = req.body || {};
     const origin = body.origin || {};
     const minutes = Number(body.minutes);
+    const mode = canonicalMode(body.mode);
+    const style = norm(body.style || "gems"); // gems|known
+    const category = body.category || "ovunque";
+    const allowed = allowedTypesFromCategory(category);
 
     const oLat = Number(origin.lat);
     const oLon = Number(origin.lon ?? origin.lng);
@@ -146,117 +158,102 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "minutes must be positive" });
     }
 
-    const category = canonicalCategory(body.category);
-    const style = canonicalStyle(body.style);
-
-    const visitedIds = new Set(Array.isArray(body.visitedIds) ? body.visitedIds : []);
-    const weekIds = new Set(Array.isArray(body.weekIds) ? body.weekIds : []);
-
-    if (!fs.existsSync(MACRO_PATH)) {
-      return res.status(500).json({
-        error: "Macro file missing",
-        hint: "Create: public/data/macros/it_macro_01_abruzzo.json"
+    // ✅ car-only
+    if (mode !== "car") {
+      return res.status(200).json({
+        ok: true,
+        top: null,
+        alternatives: [],
+        message: "Modalità non supportata: questa build è SOLO AUTO.",
       });
     }
 
-    const macro = readJsonStrict(MACRO_PATH);
-    const places = Array.isArray(macro?.places) ? macro.places : [];
+    const macroFile = DEFAULT_MACRO;
+    const macro = readJsonSafe(macroFile, null);
+    if (!macro || !Array.isArray(macro.places)) {
+      return res.status(500).json({
+        error: "Macro file mancante o invalido",
+        hint: `Controlla: public/data/macros/${DEFAULT_MACRO}`,
+      });
+    }
 
-    // normalizza + calcola tempo
-    const computed = places
-      .filter(p => p && p.id && p.name)
-      .filter(p => !visitedIds.has(p.id))
-      .filter(p => !weekIds.has(p.id))
-      .map(p => {
-        const lat = Number(p.lat);
-        const lon = Number(p.lon);
-        if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
+    const originObj = { lat: oLat, lon: oLon, label: origin.label || "" };
 
-        const km = haversineKm(oLat, oLon, lat, lon);
-        // evita “sei già lì”
-        if (km < 1.2) return null;
+    // pool
+    const all = macro.places.map(normalizePlace).filter(Boolean);
 
-        const speed = speedKmhForPlace(p.tags || []);
-        const eta = (km / speed) * 60;
-
-        return {
-          ...p,
-          distance_km: km,
-          eta_min: eta
-        };
-      })
-      .filter(Boolean);
-
-    // filtra per categoria
-    let pool = computed.filter(p => matchesCategory(p, category));
-
-    // filtra per qualità minima (taglia cose “meh”)
-    pool = pool.filter(p => {
-      const b = beautyScore(p);
-      if (b < 0.70 && style !== "known") return false; // gems = più severo
-      return true;
+    let pool = all.map((p) => {
+      const est = estimateCarMinutes(originObj, p.lat, p.lon);
+      return { ...p, distance_km: est.km, eta_min: est.minutes };
     });
 
-    // caps progressivi (car): preferiamo stare vicino al tempo scelto
-    const caps = [1.05, 1.18, 1.35, 1.60].map(x => minutes * x);
+    // elimina “sei già lì”
+    pool = pool.filter(p => p.distance_km >= 1.2);
 
+    // filtra per categoria
+    pool = pool.filter((p) => {
+      if (allowed[0] === "any") return true;
+
+      // categoria tematica
+      const t = p.type;
+      const tags = p.tags || [];
+
+      // se chiedi “chicca” accetta type chicca O visibility chicca O tag chicca
+      if (allowed[0] === "chicca") {
+        return t === "chicca" || norm(p.visibility) === "chicca" || tags.includes("chicca");
+      }
+
+      // altrimenti match su type o tag
+      return (t === allowed[0]) || tags.includes(allowed[0]);
+    });
+
+    if (!pool.length) {
+      return res.status(200).json({ ok: true, top: null, alternatives: [], message: "Nessuna meta trovata per questa categoria." });
+    }
+
+    // cap tempo: prendiamo “vicino al target”, con espansione dolce
+    const caps = [1.05, 1.18, 1.35, 1.60].map(x => minutes * x);
     let within = [];
     let usedCap = caps[caps.length - 1];
 
     for (const cap of caps) {
       const tmp = pool.filter(p => p.eta_min <= cap);
-      if (tmp.length >= 10) { within = tmp; usedCap = cap; break; }
+      if (tmp.length >= 6) { within = tmp; usedCap = cap; break; }
     }
-    if (!within.length) {
-      within = pool.slice().sort((a, b) => a.eta_min - b.eta_min).slice(0, 80);
-    }
+    if (!within.length) within = pool.slice().sort((a, b) => a.eta_min - b.eta_min).slice(0, 80);
 
-    if (!within.length) {
-      return res.status(200).json({ ok: true, top: null, alternatives: [], message: "Nessuna meta trovata con questi filtri." });
-    }
-
-    // score
-    within.forEach(p => { p._score = scorePlace(p, p.eta_min, minutes, style); });
+    within.forEach(p => {
+      p._score = scorePlace(p, p.eta_min, minutes, style);
+    });
     within.sort((a, b) => b._score - a._score);
 
     const top = within[0];
-    const alts = within.slice(1, 3);
+    const alternatives = within.slice(1, 3);
 
-    // messaggio “onesto” se abbiamo dovuto allargare troppo
-    const note = (usedCap > minutes * 1.25)
-      ? `Per trovare abbastanza mete ho allargato il raggio: fino a ~${Math.round(usedCap)} min di guida stimata.`
-      : "";
-
-    // why fallback se mancano
+    // why fallback
+    const fallbackNote = usedCap > minutes * 1.12 ? `Ho allargato fino a ~${Math.round(usedCap)} min per trovare mete top.` : "";
     function buildWhy(p) {
+      const base = Array.isArray(p.why) && p.why.length ? p.why.slice(0, 3) : [
+        `Ci arrivi in ~${Math.round(p.eta_min)} min.`,
+        style === "gems" ? "È una meta più particolare / fuori dai soliti giri." : "È una meta solida e super godibile.",
+      ];
       const out = [];
-      if (note) out.push(note);
-      if (Array.isArray(p.why) && p.why.length) out.push(...p.why.slice(0, 3));
-      if (out.length < 2) out.push(`Guida stimata ~${Math.round(p.eta_min)} min (auto).`);
-      if (out.length < 3) out.push(style === "gems" ? "Scelta più 'chicca' possibile col tuo tempo." : "Scelta solida e bella col tuo tempo.");
+      if (fallbackNote) out.push(fallbackNote);
+      out.push(...base);
       return out.slice(0, 4);
     }
 
     top.why = buildWhy(top);
-    alts.forEach(a => { a.why = buildWhy(a); });
+    alternatives.forEach(a => { a.why = buildWhy(a); });
 
     return res.status(200).json({
       ok: true,
       top: outPlace(top),
-      alternatives: alts.map(outPlace),
-      debug: {
-        mode: "car",
-        minutes,
-        category,
-        style,
-        pool_size: within.length,
-        macro: macro?.id || "unknown"
-      }
+      alternatives: alternatives.map(outPlace),
+      debug: { source: "macro_offline_car_only", macro: macro.id, minutes, category: allowed[0], style },
     });
+
   } catch (e) {
-    return res.status(500).json({
-      error: String(e?.message || e),
-      hint: "Controlla che il macro JSON sia valido e nel percorso corretto: public/data/macros/it_macro_01_abruzzo.json"
-    });
+    return res.status(500).json({ error: String(e?.message || e) });
   }
 }
