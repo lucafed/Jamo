@@ -1,417 +1,94 @@
-import { useMemo, useState } from "react";
-
-const CATEGORIES = [
-  { id: "ovunque", label: "Ovunque (sorpresa) 🎲" },
-  { id: "chicca", label: "Chicche ✨" },
-  { id: "borgo", label: "Borghi 🏘️" },
-  { id: "mare", label: "Mare 🌊" },
-  { id: "montagna", label: "Montagna 🏔️" },
-  { id: "natura", label: "Natura 🌿" },
-  { id: "storia", label: "Storia 🏛️" },
-  { id: "relax", label: "Relax 🧖" },
-  { id: "bambini", label: "Family 👨‍👩‍👧‍👦" },
-];
-
-const QUICK_TIMES = [30, 60, 90, 120, 180, 240];
-
-export default function Home() {
-  const [originLabel, setOriginLabel] = useState("L'Aquila");
-  const [originLat, setOriginLat] = useState("42.3498");
-  const [originLon, setOriginLon] = useState("13.3995");
-
-  const [minutes, setMinutes] = useState(120);
-  const [category, setCategory] = useState("ovunque");
-  const [style, setStyle] = useState("gems"); // gems | known
-
-  const [loading, setLoading] = useState(false);
-  const [top, setTop] = useState(null);
-  const [alts, setAlts] = useState([]);
-  const [msg, setMsg] = useState("");
-
-  const canSearch = useMemo(() => {
-    const lat = Number(originLat);
-    const lon = Number(originLon);
-    return Number.isFinite(lat) && Number.isFinite(lon) && Number(minutes) > 0;
-  }, [originLat, originLon, minutes]);
-
-  async function findIdea() {
-    if (!canSearch) return;
-    setLoading(true);
-    setMsg("");
-    setTop(null);
-    setAlts([]);
-
-    try {
-      const r = await fetch("/api/jamo", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          origin: { lat: Number(originLat), lon: Number(originLon), label: originLabel },
-          minutes: Number(minutes),
-          mode: "car", // ✅ auto-only
-          category,
-          style,
-          visitedIds: [],
-          weekIds: [],
-        }),
-      });
-
-      const data = await r.json().catch(() => ({}));
-      if (!r.ok) throw new Error(data?.error || "Errore API");
-
-      if (!data?.top) {
-        setMsg(data?.message || "Nessuna meta trovata. Aumenta il tempo o cambia categoria.");
-        return;
-      }
-
-      setTop(data.top);
-      setAlts(Array.isArray(data.alternatives) ? data.alternatives : []);
-    } catch (e) {
-      setMsg(String(e?.message || e));
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  function useMyLocation() {
-    if (!navigator.geolocation) {
-      setMsg("Geolocalizzazione non supportata.");
-      return;
-    }
-    setMsg("");
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setOriginLabel("La mia posizione");
-        setOriginLat(String(pos.coords.latitude));
-        setOriginLon(String(pos.coords.longitude));
-      },
-      () => setMsg("Impossibile ottenere la posizione. Inserisci lat/lon manualmente.")
-    );
-  }
-
-  const ui = styles();
-
-  return (
-    <div style={ui.page}>
-      <div style={ui.container}>
-        <header style={ui.header}>
-          <div style={ui.brandRow}>
-            <div style={ui.logo}>W</div>
-            <div>
-              <div style={ui.title}>What?f Trips</div>
-              <div style={ui.sub}>AUTO-ONLY • mete bellissime • chicche</div>
-            </div>
-          </div>
-
-          <h1 style={ui.h1}>
-            Partenza + tempo = <span style={{ color: "#00E0FF" }}>meta perfetta</span>.
-          </h1>
-
-          <div style={ui.chips}>
-            <span style={ui.chip}>🚗 Solo auto</span>
-            <span style={ui.chip}>⏱️ Tempo realistico</span>
-            <span style={ui.chip}>✨ Chicche / Classiche</span>
-          </div>
-        </header>
-
-        <main style={ui.main}>
-          <section style={ui.panel}>
-            <div style={ui.panelTitle}>Partenza</div>
-
-            <div style={ui.grid2}>
-              <Field label="Città / Etichetta" value={originLabel} onChange={setOriginLabel} placeholder="Es. L'Aquila" ui={ui} />
-
-              <button style={ui.btnGhost} onClick={useMyLocation} type="button">
-                📍 Usa la mia posizione
-              </button>
-
-              <Field label="Latitudine" value={originLat} onChange={setOriginLat} ui={ui} />
-              <Field label="Longitudine" value={originLon} onChange={setOriginLon} ui={ui} />
-            </div>
-          </section>
-
-          <section style={ui.panel}>
-            <div style={ui.panelTitle}>Quanto tempo hai?</div>
-
-            <div style={ui.rowWrap}>
-              {QUICK_TIMES.map((t) => (
-                <button
-                  key={t}
-                  type="button"
-                  onClick={() => setMinutes(t)}
-                  style={{
-                    ...ui.btnPill,
-                    ...(minutes === t ? ui.btnPillActive : null),
-                  }}
-                >
-                  {t} min
-                </button>
-              ))}
-            </div>
-
-            <div style={{ marginTop: 10 }}>
-              <label style={ui.label}>Minuti precisi</label>
-              <input
-                style={ui.input}
-                type="number"
-                min={10}
-                max={600}
-                value={minutes}
-                onChange={(e) => setMinutes(Number(e.target.value))}
-              />
-            </div>
-          </section>
-
-          <section style={ui.panel}>
-            <div style={ui.panelTitle}>Che vibe vuoi?</div>
-
-            <div style={ui.catGrid}>
-              {CATEGORIES.map((c) => (
-                <button
-                  key={c.id}
-                  type="button"
-                  onClick={() => setCategory(c.id)}
-                  style={{
-                    ...ui.catBtn,
-                    ...(category === c.id ? ui.catBtnActive : null),
-                  }}
-                >
-                  {c.label}
-                </button>
-              ))}
-            </div>
-
-            <div style={ui.grid2a}>
-              <button
-                type="button"
-                onClick={() => setStyle("gems")}
-                style={{ ...ui.toggle, ...(style === "gems" ? ui.toggleActive : null) }}
-              >
-                ✨ Voglio chicche
-              </button>
-              <button
-                type="button"
-                onClick={() => setStyle("known")}
-                style={{ ...ui.toggle, ...(style === "known" ? ui.toggleActive : null) }}
-              >
-                ✅ Voglio classiche
-              </button>
-            </div>
-
-            <button style={ui.cta} onClick={findIdea} disabled={!canSearch || loading} type="button">
-              {loading ? "Sto scegliendo..." : "🎯 TROVAMI LA META"}
-            </button>
-
-            {msg ? <div style={ui.msg}>{msg}</div> : null}
-          </section>
-
-          {top ? (
-            <section style={{ marginTop: 14 }}>
-              <div style={ui.sectionTitle}>La tua meta</div>
-
-              <article style={ui.cardTop}>
-                <div style={ui.cardTitle}>{top.name}</div>
-                <div style={ui.badges}>
-                  <span style={ui.badge}>🚗 ~{top.eta_min} min</span>
-                  <span style={ui.badge}>📏 ~{top.distance_km} km</span>
-                  <span style={ui.badge}>✨ {top.visibility || "bella"}</span>
-                </div>
-
-                {Array.isArray(top.why) && top.why.length ? (
-                  <ul style={ui.ul}>
-                    {top.why.map((x, i) => (
-                      <li key={i} style={ui.li}>{x}</li>
-                    ))}
-                  </ul>
-                ) : null}
-              </article>
-
-              {alts?.length ? (
-                <>
-                  <div style={ui.sectionTitle2}>Alternative</div>
-                  <div style={ui.altGrid}>
-                    {alts.map((a) => (
-                      <article style={ui.cardAlt} key={a.id}>
-                        <div style={ui.cardAltTitle}>{a.name}</div>
-                        <div style={ui.altMeta}>🚗 ~{a.eta_min} min • 📏 ~{a.distance_km} km</div>
-                      </article>
-                    ))}
-                  </div>
-                </>
-              ) : null}
-            </section>
-          ) : null}
-        </main>
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>What?f Trips — Auto Only</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <div class="brand">
+        <div class="logo">W</div>
+        <div>
+          <div class="brand-title">What?f Trips</div>
+          <div class="brand-sub">AUTO-ONLY • mete bellissime • chicche</div>
+        </div>
       </div>
-    </div>
-  );
-}
 
-function Field({ label, value, onChange, placeholder, ui }) {
-  return (
-    <label style={{ display: "block" }}>
-      <div style={ui.label}>{label}</div>
-      <input style={ui.input} value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} />
-    </label>
-  );
-}
+      <h1>
+        Scegli <span class="accent">partenza</span> e <span class="accent">tempo</span>.
+        <br/>Ti do una meta top.
+      </h1>
 
-function styles() {
-  return {
-    page: {
-      minHeight: "100vh",
-      background:
-        "radial-gradient(1000px 600px at 20% 10%, rgba(0,224,255,0.14), transparent 60%), radial-gradient(900px 520px at 85% 0%, rgba(26,255,213,0.10), transparent 55%), #0A0F14",
-      color: "#fff",
-      padding: 16,
-    },
-    container: { maxWidth: 980, margin: "0 auto" },
-    header: { padding: "16px 6px 6px" },
-    brandRow: { display: "flex", gap: 12, alignItems: "center", marginBottom: 10 },
-    logo: {
-      width: 44,
-      height: 44,
-      borderRadius: 12,
-      display: "grid",
-      placeItems: "center",
-      fontWeight: 900,
-      color: "#0A0F14",
-      background: "linear-gradient(135deg,#00E0FF,#1AFFD5)",
-    },
-    title: { fontSize: 18, fontWeight: 900 },
-    sub: { fontSize: 13, color: "#A0B2BA" },
-    h1: { fontSize: 30, lineHeight: 1.15, margin: "10px 0 8px", letterSpacing: "-0.02em" },
-    chips: { display: "flex", flexWrap: "wrap", gap: 8 },
-    chip: {
-      fontSize: 13,
-      color: "#A0B2BA",
-      padding: "8px 10px",
-      borderRadius: 999,
-      border: "1px solid rgba(160,178,186,0.20)",
-      background: "rgba(20,28,34,0.7)",
-    },
-    main: { marginTop: 10 },
-    panel: {
-      marginTop: 12,
-      padding: 14,
-      borderRadius: 16,
-      border: "1px solid rgba(160,178,186,0.16)",
-      background: "rgba(20,28,34,0.82)",
-      boxShadow: "0 18px 60px rgba(0,0,0,0.35)",
-    },
-    panelTitle: { fontWeight: 900, marginBottom: 10 },
-    grid2: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 },
-    grid2a: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginTop: 10 },
-    label: { fontSize: 12, color: "#A0B2BA", marginBottom: 6 },
-    input: {
-      width: "100%",
-      padding: "12px 12px",
-      borderRadius: 12,
-      border: "1px solid rgba(160,178,186,0.22)",
-      background: "rgba(10,15,20,0.7)",
-      color: "#fff",
-      outline: "none",
-    },
-    btnGhost: {
-      height: 46,
-      borderRadius: 12,
-      border: "1px solid rgba(0,224,255,0.35)",
-      background: "rgba(0,224,255,0.10)",
-      color: "#fff",
-      cursor: "pointer",
-      fontWeight: 800,
-    },
-    rowWrap: { display: "flex", flexWrap: "wrap", gap: 8 },
-    btnPill: {
-      padding: "10px 12px",
-      borderRadius: 999,
-      border: "1px solid rgba(160,178,186,0.22)",
-      background: "rgba(10,15,20,0.55)",
-      color: "#fff",
-      cursor: "pointer",
-      fontWeight: 800,
-    },
-    btnPillActive: {
-      border: "1px solid rgba(0,224,255,0.65)",
-      background: "rgba(0,224,255,0.14)",
-    },
-    catGrid: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 },
-    catBtn: {
-      padding: 12,
-      borderRadius: 14,
-      border: "1px solid rgba(160,178,186,0.18)",
-      background: "rgba(10,15,20,0.55)",
-      color: "#fff",
-      cursor: "pointer",
-      textAlign: "left",
-      fontWeight: 800,
-    },
-    catBtnActive: {
-      border: "1px solid rgba(26,255,213,0.55)",
-      background: "rgba(26,255,213,0.10)",
-    },
-    toggle: {
-      padding: 12,
-      borderRadius: 14,
-      border: "1px solid rgba(160,178,186,0.18)",
-      background: "rgba(10,15,20,0.55)",
-      color: "#fff",
-      cursor: "pointer",
-      fontWeight: 900,
-    },
-    toggleActive: {
-      border: "1px solid rgba(0,224,255,0.65)",
-      background: "rgba(0,224,255,0.14)",
-    },
-    cta: {
-      marginTop: 12,
-      width: "100%",
-      padding: "14px 14px",
-      borderRadius: 16,
-      border: "none",
-      cursor: "pointer",
-      fontWeight: 900,
-      color: "#0A0F14",
-      background: "linear-gradient(135deg,#00E0FF,#1AFFD5)",
-    },
-    msg: {
-      marginTop: 10,
-      padding: "10px 12px",
-      borderRadius: 12,
-      border: "1px solid rgba(160,178,186,0.16)",
-      background: "rgba(10,15,20,0.55)",
-      color: "#A0B2BA",
-      fontSize: 13,
-    },
-    sectionTitle: { marginTop: 16, fontWeight: 900, fontSize: 18 },
-    sectionTitle2: { marginTop: 12, fontWeight: 900, fontSize: 15, color: "#A0B2BA" },
-    cardTop: {
-      marginTop: 10,
-      padding: 14,
-      borderRadius: 16,
-      border: "1px solid rgba(0,224,255,0.22)",
-      background: "linear-gradient(180deg, rgba(0,224,255,0.10), rgba(20,28,34,0.82))",
-    },
-    cardTitle: { fontSize: 22, fontWeight: 900, marginBottom: 8, letterSpacing: "-0.02em" },
-    badges: { display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 8 },
-    badge: {
-      fontSize: 12,
-      padding: "7px 10px",
-      borderRadius: 999,
-      border: "1px solid rgba(160,178,186,0.18)",
-      background: "rgba(10,15,20,0.55)",
-      color: "#A0B2BA",
-    },
-    ul: { margin: "10px 0 0", paddingLeft: 18 },
-    li: { margin: "6px 0" },
-    altGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginTop: 10 },
-    cardAlt: {
-      padding: 12,
-      borderRadius: 14,
-      border: "1px solid rgba(160,178,186,0.16)",
-      background: "rgba(20,28,34,0.82)",
-    },
-    cardAltTitle: { fontWeight: 900, marginBottom: 6 },
-    altMeta: { color: "#A0B2BA", fontSize: 13 },
-  };
-}
+      <div class="chips">
+        <span class="chip">🚗 Solo auto</span>
+        <span class="chip">⏱️ Tempo realistico</span>
+        <span class="chip">✨ Chicche / Classiche</span>
+        <span class="chip">🧱 Offline & stabile</span>
+      </div>
+    </header>
+
+    <main class="grid">
+      <section class="card">
+        <div class="card-title">Partenza</div>
+
+        <div class="row">
+          <label class="field">
+            <span>Etichetta</span>
+            <input id="originLabel" value="L'Aquila" placeholder="Es. L'Aquila">
+          </label>
+          <button id="geoBtn" class="ghost">📍 Usa la mia posizione</button>
+        </div>
+
+        <div class="row">
+          <label class="field">
+            <span>Lat</span>
+            <input id="originLat" value="42.3498">
+          </label>
+          <label class="field">
+            <span>Lon</span>
+            <input id="originLon" value="13.3995">
+          </label>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-title">Tempo</div>
+
+        <div class="pills" id="quickTimes"></div>
+
+        <label class="field" style="margin-top:10px">
+          <span>Minuti precisi</span>
+          <input id="minutes" type="number" min="10" max="600" value="120">
+        </label>
+      </section>
+
+      <section class="card">
+        <div class="card-title">Categoria</div>
+        <div class="cats" id="cats"></div>
+
+        <div class="toggles">
+          <button id="styleGems" class="toggle active">✨ Voglio chicche</button>
+          <button id="styleKnown" class="toggle">✅ Voglio classiche</button>
+        </div>
+
+        <button id="goBtn" class="cta">🎯 TROVAMI LA META</button>
+        <div id="msg" class="msg" style="display:none"></div>
+      </section>
+
+      <section class="result" id="result" style="display:none">
+        <div class="section-title">La tua meta</div>
+        <article class="top" id="topCard"></article>
+
+        <div class="section-title small" id="altTitle" style="display:none">Alternative</div>
+        <div class="alts" id="alts"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
