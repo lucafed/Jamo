@@ -1,10 +1,10 @@
-// /api/jamo.js — CAR ONLY (offline, stable macro) — v3.0
+// /api/jamo.js — CAR ONLY (offline, stable macro) — v3.1
 // Uses: public/data/macros/it_macro_01_abruzzo.json
 //
 // POST body:
 // {
-//   origin?: { lat:number, lon:number, label?:string },
-//   originText?: string,            // optional: server will call /api/geocode
+//   origin?: { lat:number, lon?:number, lng?:number, label?:string },
+//   originText?: string,            // optional: server will call /api/geocode?q=
 //   maxMinutes: number,
 //   flavor?: "classici"|"chicche"|"famiglia",
 //   visitedIds?: string[],
@@ -15,7 +15,7 @@
 // {
 //   ok:true,
 //   input:{...},
-//   top: { id,name,area,type,visibility,eta_min,distance_km,why,gmaps },
+//   top: { id,name,area,type,visibility,eta_min,distance_km,why,gmaps,tags },
 //   alternatives:[ ...2 ],
 //   message?: string,
 //   debug?: {...}
@@ -55,8 +55,18 @@ function norm(s) {
     .trim();
 }
 
+function tryParseLatLon(text) {
+  const s = String(text || "").trim();
+  const m = s.match(/^\s*(-?\d+(?:\.\d+)?)\s*[, ]\s*(-?\d+(?:\.\d+)?)\s*$/);
+  if (!m) return null;
+  const lat = Number(m[1]);
+  const lon = Number(m[2]);
+  if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
+  if (lat < -90 || lat > 90 || lon < -180 || lon > 180) return null;
+  return { lat, lon, label: "Coordinate inserite" };
+}
+
 function gmapsLink(origin, dest) {
-  // driving directions
   const o = `${origin.lat},${origin.lon}`;
   const d = `${dest.lat},${dest.lon}`;
   return `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(o)}&destination=${encodeURIComponent(d)}&travelmode=driving`;
@@ -66,7 +76,6 @@ function beautyScore(p) {
   const b = Number(p?.beauty_score);
   if (Number.isFinite(b)) return clamp(b, 0.2, 1.0);
 
-  // fallback “sensato”
   const vis = norm(p?.visibility);
   let s = 0.72;
   if (vis === "chicca") s += 0.08;
@@ -85,7 +94,6 @@ function flavorMatch(p, flavor) {
   const type = norm(p?.type);
 
   if (flavor === "famiglia") {
-    // famiglia: deve essere chiaramente family-friendly o attività
     return (
       tags.includes("famiglie") ||
       tags.includes("famiglia") ||
@@ -99,41 +107,27 @@ function flavorMatch(p, flavor) {
   }
 
   if (flavor === "chicche") {
-    // chicche: vis chicca o tag chicca o type chicca
     return (vis === "chicca" || tags.includes("chicca") || type === "chicca");
   }
 
-  // classici: tutto ciò che è “solido” (conosciuta) + città/borghi/icone
-  // (non escludo chicche: ma le spingo meno con score)
+  // classici: nessun filtro hard (lo gestiamo nello score)
   return true;
 }
 
 function estimateCarMinutes(km) {
-  // stimatore semplice e stabile (offline):
-  // - primi 15 km più lenti (urbano/uscita)
-  // - poi medio
   const k = Math.max(0, Number(km) || 0);
   const urban = Math.min(k, 15);
   const extra = Math.max(0, k - 15);
-
-  // 35 km/h urbano + 75 km/h extra + 6 min “parcheggio/pausa”
   const min = (urban / 35) * 60 + (extra / 75) * 60 + 6;
   return Math.round(clamp(min, 5, 24 * 60));
 }
 
 function scoreCandidate(p, eta, km, targetMin, flavor, isPrimaryRegion) {
   const beauty = beautyScore(p);
-
-  // vicino al tempo richiesto (1 = perfetto)
   const timeFit = clamp(1 - Math.abs(eta - targetMin) / Math.max(25, targetMin * 0.85), 0, 1);
-
-  // preferenza “non troppo lontano”
   const nearFit = clamp(1 - (eta / (targetMin * 2.2)), 0, 1);
-
-  // boost regione primaria
   const regionBoost = isPrimaryRegion ? 0.08 : 0;
 
-  // flavor boost
   const tags = getTags(p);
   const vis = norm(p?.visibility);
   const type = norm(p?.type);
@@ -145,19 +139,15 @@ function scoreCandidate(p, eta, km, targetMin, flavor, isPrimaryRegion) {
     if (tags.includes("animali") || tags.includes("parco_nazionale")) flavorBoost += 0.06;
   } else if (flavor === "chicche") {
     if (vis === "chicca" || tags.includes("chicca") || type === "chicca") flavorBoost += 0.14;
-    // penalizza mete troppo “mainstream” se chiedi chicche
     if (vis === "conosciuta" && (type === "citta" || type === "città")) flavorBoost -= 0.05;
   } else {
-    // classici: spinge “conosciuta” e città/icone
     if (vis === "conosciuta") flavorBoost += 0.06;
     if (type === "citta" || type === "borgo" || type === "mare" || type === "montagna") flavorBoost += 0.03;
   }
 
-  // penalità se troppo fuori banda
   const ratio = eta / Math.max(1, targetMin);
   const outPenalty = ratio > 1.95 ? 0.20 : ratio > 1.65 ? 0.12 : 0;
 
-  // score finale
   return (
     0.46 * timeFit +
     0.18 * nearFit +
@@ -169,33 +159,43 @@ function scoreCandidate(p, eta, km, targetMin, flavor, isPrimaryRegion) {
 }
 
 /**
- * server-side call to /api/geocode on SAME host (avoids CORS/domain issues)
- * expects your /api/geocode to return:
- * { ok:true, lat:number, lon:number, label?:string }
+ * server-side call to /api/geocode?q=... on SAME host
+ * expects geocode API:
+ * { ok:true, result:{ label, lat, lon }, ... }
  */
 async function geocodeOnSameHost(req, text) {
+  const q = String(text || "").trim();
+  if (!q) throw new Error("GEOCODE: empty query");
+
+  // ✅ se sono coordinate, niente chiamata API
+  const parsed = tryParseLatLon(q);
+  if (parsed) return parsed;
+
   const proto = (req.headers["x-forwarded-proto"] || "https").toString();
   const host = (req.headers["x-forwarded-host"] || req.headers.host).toString();
-  const url = `${proto}://${host}/api/geocode`;
+  const url = `${proto}://${host}/api/geocode?q=${encodeURIComponent(q)}`;
 
   const r = await fetch(url, {
-    method: "POST",
+    method: "GET",
     headers: {
-      "Content-Type": "application/json",
+      "Accept": "application/json",
+      "User-Agent": "Jamo/1.0 (server-side geocode)",
       "Cookie": req.headers.cookie || ""
-    },
-    body: JSON.stringify({ q: text })
+    }
   });
 
   const bodyText = await r.text().catch(() => "");
   if (!r.ok) throw new Error(`GEOCODE ${r.status}: ${bodyText.slice(0, 200)}`);
 
-  const j = JSON.parse(bodyText);
-  if (!j || !j.ok || !Number.isFinite(Number(j.lat)) || !Number.isFinite(Number(j.lon))) {
-    throw new Error("GEOCODE failed: bad response");
-  }
+  let j = null;
+  try { j = JSON.parse(bodyText); } catch {}
+  if (!j || !j.ok || !j.result) throw new Error(`GEOCODE failed: ${bodyText.slice(0, 200)}`);
 
-  return { lat: Number(j.lat), lon: Number(j.lon), label: j.label || text };
+  const lat = Number(j.result.lat);
+  const lon = Number(j.result.lon);
+  if (!Number.isFinite(lat) || !Number.isFinite(lon)) throw new Error("GEOCODE failed: invalid coords");
+
+  return { lat, lon, label: j.result.label || q };
 }
 
 function outPlace(p, originObj, eta, km) {
@@ -217,7 +217,7 @@ function outPlace(p, originObj, eta, km) {
     beauty_score: Number.isFinite(Number(p.beauty_score)) ? Number(p.beauty_score) : undefined,
     eta_min: Math.round(eta),
     distance_km: Math.round(km),
-    tags: Array.isArray(p.tags) ? p.tags.slice(0, 12) : [],
+    tags: Array.isArray(p.tags) ? p.tags.slice(0, 18) : [],
     why: baseWhy.slice(0, 4),
     gmaps: gmapsLink(originObj, { lat: Number(p.lat), lon: Number(p.lon) })
   };
@@ -228,7 +228,7 @@ export default async function handler(req, res) {
     if (req.method !== "POST") return res.status(405).json({ error: "POST only" });
 
     const body = req.body || {};
-    const maxMinutes = Number(body.maxMinutes ?? body.minutes); // supporta anche minutes se il client vecchio lo manda
+    const maxMinutes = Number(body.maxMinutes ?? body.minutes);
     const flavorRaw = norm(body.flavor || body.style || "classici");
     const flavor =
       (flavorRaw === "chicche" || flavorRaw === "gems") ? "chicche" :
@@ -252,7 +252,6 @@ export default async function handler(req, res) {
     if (Number.isFinite(oLat) && Number.isFinite(oLon)) {
       originObj = { lat: oLat, lon: oLon, label: o?.label || "" };
     } else if (body.originText && String(body.originText).trim().length >= 2) {
-      // server-side geocode fallback
       const g = await geocodeOnSameHost(req, String(body.originText));
       originObj = { lat: g.lat, lon: g.lon, label: g.label || String(body.originText) };
     } else {
@@ -275,7 +274,7 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: "Macro has no places[]" });
     }
 
-    // Normalize & filter basic validity
+    // Normalize & filter validity + visited/week
     const normalized = places
       .map((p) => {
         const lat = Number(p?.lat);
@@ -290,8 +289,8 @@ export default async function handler(req, res) {
     // Flavor filter (hard)
     let pool = normalized.filter(p => flavorMatch(p, flavor));
 
-    // Se famiglia e pool troppo piccolo, allarghiamo includendo anche “relax/natura/mare” family-friendly
-    if (flavor === "famiglia" && pool.length < 10) {
+    // Se famiglia e pool troppo piccolo, allarga un po'
+    if (flavor === "famiglia" && pool.length < 12) {
       const extra = normalized.filter(p => {
         const tags = getTags(p);
         const type = norm(p.type);
@@ -305,27 +304,20 @@ export default async function handler(req, res) {
       for (const e of extra) if (!ids.has(String(e.id))) pool.push(e);
     }
 
-    // Compute distance/time + region preference
+    // Compute distance/time + region flag
     const enriched = pool
       .map((p) => {
         const km = haversineKm(originObj.lat, originObj.lon, p.lat, p.lon);
         const eta = estimateCarMinutes(km);
         const isPrimary = (norm(p.area) === norm(primaryRegion));
-        return {
-          ...p,
-          _km: km,
-          _eta: eta,
-          _isPrimary: isPrimary
-        };
+        return { ...p, _km: km, _eta: eta, _isPrimary: isPrimary };
       })
-      // scarta “sei già lì”
-      .filter(p => p._km >= 1.2);
+      .filter(p => p._km >= 1.2); // scarta “sei già lì”
 
-    // Prefer primary region first, neighbors only if needed
     const primary = enriched.filter(p => p._isPrimary);
     const others = enriched.filter(p => !p._isPrimary);
 
-    // cap progressivo: cerca prima entro tempo scelto, poi allarga un po'
+    // cap progressivo: entro tempo, poi allarga un po'
     const caps = [1.0, 1.25, 1.55, 1.85].map(m => maxMinutes * m);
 
     function pickWithin(list) {
@@ -333,17 +325,14 @@ export default async function handler(req, res) {
         const within = list.filter(p => p._eta <= cap);
         if (within.length >= 8) return within;
       }
-      // fallback: i più vicini
-      return list.slice().sort((a, b) => a._eta - b._eta).slice(0, 80);
+      return list.slice().sort((a, b) => a._eta - b._eta).slice(0, 90);
     }
 
     let candidateList = pickWithin(primary);
 
-    // se non bastano risultati, aggiungi “dintorni”
     if (candidateList.length < 8) {
       const add = pickWithin(others);
       candidateList = candidateList.concat(add);
-      // de-dup
       const seen = new Set();
       candidateList = candidateList.filter(p => {
         const id = String(p.id);
@@ -363,7 +352,7 @@ export default async function handler(req, res) {
       });
     }
 
-    // Score and sort
+    // Score & sort
     for (const p of candidateList) {
       p._score = scoreCandidate(p, p._eta, p._km, maxMinutes, flavor, p._isPrimary);
     }
