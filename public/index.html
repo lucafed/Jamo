@@ -2,93 +2,232 @@
 <html lang="it">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>What?f Trips — Auto Only</title>
-  <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Jamo — Trova la meta perfetta</title>
+
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#00E0FF">
+
+  <link rel="stylesheet" href="/style.css" />
+
+  <style>
+    /* fallback minimale se style.css è rotto/non carica */
+    :root {
+      --bg: #0A0F14;
+      --surface: #141C22;
+      --text: #fff;
+      --muted: #A0B2BA;
+      --acc: #00E0FF;
+      --acc2: #1AFFD5;
+      --border: rgba(255,255,255,.08);
+    }
+    body { background: var(--bg); color: var(--text); margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+    a { color: inherit; }
+    .wrap { max-width: 980px; margin: 0 auto; padding: 18px 14px 60px; }
+    .topbar { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .brand { display:flex; align-items:center; gap:10px; }
+    .logo {
+      width:40px; height:40px; border-radius:12px;
+      background: radial-gradient(circle at 30% 30%, var(--acc2), var(--acc));
+      box-shadow: 0 10px 30px rgba(0,224,255,.18);
+    }
+    .title h1 { font-size: 20px; margin:0; letter-spacing:.2px; }
+    .title p { margin:0; color: var(--muted); font-size: 13px; }
+    .hero { margin-top:16px; padding:18px; border:1px solid var(--border); border-radius:18px; background: linear-gradient(180deg, rgba(0,224,255,.08), rgba(20,28,34,.0)); }
+    .hero h2 { margin:0 0 6px; font-size: 26px; }
+    .hero .sub { margin:0; color: var(--muted); font-size: 14px; line-height:1.4; }
+    .grid { display:grid; grid-template-columns: 1fr; gap:12px; margin-top:14px; }
+    @media(min-width: 900px){ .grid { grid-template-columns: 1.05fr .95fr; } }
+    .card { background: var(--surface); border:1px solid var(--border); border-radius:18px; padding:14px; }
+    .card h3 { margin:0 0 10px; font-size: 16px; }
+    .small { font-size: 12px; color: var(--muted); }
+    .muted { color: var(--muted); }
+    .row { display:flex; align-items:center; gap:10px; }
+    .row.wrap { flex-wrap: wrap; }
+    .gap { gap:10px; }
+    input, select {
+      width: 100%;
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      outline: none;
+    }
+    input:focus, select:focus { border-color: rgba(0,224,255,.4); box-shadow: 0 0 0 3px rgba(0,224,255,.12); }
+    .btn {
+      border: 1px solid rgba(0,224,255,.35);
+      background: linear-gradient(90deg, rgba(0,224,255,.18), rgba(26,255,213,.10));
+      color: var(--text);
+      border-radius: 14px;
+      padding: 10px 12px;
+      cursor: pointer;
+      user-select:none;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      font-weight: 650;
+    }
+    .btn:hover { border-color: rgba(0,224,255,.6); }
+    .btn-ghost {
+      background: rgba(255,255,255,.04);
+      border-color: var(--border);
+      font-weight: 600;
+    }
+    .chiprow { display:flex; flex-wrap:wrap; gap:8px; }
+    .chip {
+      padding: 8px 10px;
+      border-radius: 999px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      cursor:pointer;
+      font-size: 13px;
+      user-select:none;
+    }
+    .chip.active { border-color: rgba(0,224,255,.55); box-shadow: 0 0 0 3px rgba(0,224,255,.10); }
+    .hr { height:1px; background: var(--border); margin: 12px 0; }
+    .resultTitle { font-size: 30px; margin: 6px 0 0; }
+    .pill { display:inline-flex; gap:8px; align-items:center; padding: 6px 10px; border-radius:999px; border:1px solid var(--border); background: rgba(255,255,255,.03); font-size: 12px; color: var(--muted); }
+    .okbox { border:1px solid rgba(26,255,213,.35); background: rgba(26,255,213,.06); }
+    .warnbox { border:1px solid rgba(255,180,80,.35); background: rgba(255,180,80,.06); }
+    .errbox { border:1px solid rgba(255,90,90,.35); background: rgba(255,90,90,.08); }
+    .footer { margin-top: 16px; text-align:center; color: var(--muted); font-size: 12px; }
+  </style>
 </head>
+
 <body>
   <div class="wrap">
-    <header class="hero">
+    <div class="topbar">
       <div class="brand">
-        <div class="logo">W</div>
-        <div>
-          <div class="brand-title">What?f Trips</div>
-          <div class="brand-sub">AUTO-ONLY • mete bellissime • chicche</div>
+        <div class="logo" aria-hidden="true"></div>
+        <div class="title">
+          <h1>Jamo</h1>
+          <p>Auto-only • Mete offline • Chicche + Classici</p>
+        </div>
+      </div>
+      <button id="btnInstall" class="btn btn-ghost" style="display:none;">➕ Installa</button>
+    </div>
+
+    <div class="hero">
+      <h2>Scegli la partenza, il tempo… e ti troviamo la meta.</h2>
+      <p class="sub">Niente casino con treni/bus/aerei: solo auto, mete bellissime, chicche vere. Funziona anche offline (dati locali).</p>
+    </div>
+
+    <div class="grid">
+      <!-- COLONNA SINISTRA: FILTRI -->
+      <div class="card">
+        <h3>Partenza</h3>
+
+        <label class="small">Cerca luogo (opzionale)</label>
+        <input id="originLabel" type="text" placeholder="Es: L'Aquila / Roma Termini / Via Roma 10" />
+
+        <div class="row gap" style="margin-top:10px;">
+          <button id="btnUseGPS" class="btn">📍 Usa la mia posizione</button>
+          <button id="btnFindPlace" class="btn btn-ghost">🔎 Usa questo luogo</button>
+        </div>
+
+        <div id="originStatus" class="small muted" style="margin-top:10px;"></div>
+
+        <div class="row gap" style="margin-top:10px;">
+          <div style="flex:1;">
+            <label class="small">Lat</label>
+            <input id="originLat" type="text" inputmode="decimal" placeholder="42.3498" />
+          </div>
+          <div style="flex:1;">
+            <label class="small">Lon</label>
+            <input id="originLon" type="text" inputmode="decimal" placeholder="13.3995" />
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <h3>Tempo</h3>
+        <div class="chiprow" id="timeChips">
+          <div class="chip" data-min="30">30 min</div>
+          <div class="chip" data-min="60">60 min</div>
+          <div class="chip" data-min="90">90 min</div>
+          <div class="chip active" data-min="120">120 min</div>
+          <div class="chip" data-min="180">180 min</div>
+          <div class="chip" data-min="240">240 min</div>
+        </div>
+
+        <div style="margin-top:10px;">
+          <label class="small">Minuti precisi</label>
+          <input id="maxMinutes" type="number" min="10" max="600" step="5" value="120" />
+          <div class="small muted" style="margin-top:6px;">Consiglio: 90–180 per chicche locali, 180–240 per gite più grandi.</div>
+        </div>
+
+        <div class="hr"></div>
+
+        <h3>Categoria</h3>
+        <div class="chiprow" id="categoryChips">
+          <div class="chip active" data-cat="ovunque">Ovunque 🎲</div>
+          <div class="chip" data-cat="borghi">Borghi 🏘️</div>
+          <div class="chip" data-cat="mare">Mare 🌊</div>
+          <div class="chip" data-cat="montagna">Montagna 🏔️</div>
+          <div class="chip" data-cat="natura">Natura 🌿</div>
+          <div class="chip" data-cat="storia">Storia 🏛️</div>
+          <div class="chip" data-cat="relax">Relax 🧖</div>
+          <div class="chip" data-cat="family">Family 👨‍👩‍👧‍👦</div>
+          <div class="chip" data-cat="citta">Città 🏙️</div>
+        </div>
+
+        <div class="hr"></div>
+
+        <h3>Stile mete</h3>
+        <div class="chiprow" id="styleChips">
+          <div class="chip active" data-style="chicche">✨ Voglio chicche</div>
+          <div class="chip active" data-style="classici">✅ Voglio classici</div>
+        </div>
+
+        <div class="row gap" style="margin-top:14px; flex-wrap:wrap;">
+          <button id="btnFind" class="btn" style="flex:1; min-width:220px;">🎯 TROVAMI LA META</button>
+          <button id="btnResetVisited" class="btn btn-ghost">♻️ Reset visitati</button>
+        </div>
+
+        <div id="statusBox" class="card warnbox" style="margin-top:12px; display:none;">
+          <div id="statusText" class="small"></div>
         </div>
       </div>
 
-      <h1>
-        Scegli <span class="accent">partenza</span> e <span class="accent">tempo</span>.
-        <br/>Ti do una meta top.
-      </h1>
+      <!-- COLONNA DESTRA: RISULTATO -->
+      <div class="card" id="resultCard">
+        <h3>Risultato</h3>
+        <div class="small muted">Premi “TROVAMI LA META” per vedere una proposta.</div>
 
-      <div class="chips">
-        <span class="chip">🚗 Solo auto</span>
-        <span class="chip">⏱️ Tempo realistico</span>
-        <span class="chip">✨ Chicche / Classiche</span>
-        <span class="chip">🧱 Offline & stabile</span>
+        <div id="resultArea" style="margin-top:12px;"></div>
+
+        <div class="footer" style="margin-top:16px;">
+          Jamo • PWA • Auto-only • Dati: macro locali
+        </div>
       </div>
-    </header>
-
-    <main class="grid">
-      <section class="card">
-        <div class="card-title">Partenza</div>
-
-        <div class="row">
-          <label class="field">
-            <span>Etichetta</span>
-            <input id="originLabel" value="L'Aquila" placeholder="Es. L'Aquila">
-          </label>
-          <button id="geoBtn" class="ghost">📍 Usa la mia posizione</button>
-        </div>
-
-        <div class="row">
-          <label class="field">
-            <span>Lat</span>
-            <input id="originLat" value="42.3498">
-          </label>
-          <label class="field">
-            <span>Lon</span>
-            <input id="originLon" value="13.3995">
-          </label>
-        </div>
-      </section>
-
-      <section class="card">
-        <div class="card-title">Tempo</div>
-
-        <div class="pills" id="quickTimes"></div>
-
-        <label class="field" style="margin-top:10px">
-          <span>Minuti precisi</span>
-          <input id="minutes" type="number" min="10" max="600" value="120">
-        </label>
-      </section>
-
-      <section class="card">
-        <div class="card-title">Categoria</div>
-        <div class="cats" id="cats"></div>
-
-        <div class="toggles">
-          <button id="styleGems" class="toggle active">✨ Voglio chicche</button>
-          <button id="styleKnown" class="toggle">✅ Voglio classiche</button>
-        </div>
-
-        <button id="goBtn" class="cta">🎯 TROVAMI LA META</button>
-        <div id="msg" class="msg" style="display:none"></div>
-      </section>
-
-      <section class="result" id="result" style="display:none">
-        <div class="section-title">La tua meta</div>
-        <article class="top" id="topCard"></article>
-
-        <div class="section-title small" id="altTitle" style="display:none">Alternative</div>
-        <div class="alts" id="alts"></div>
-      </section>
-    </main>
+    </div>
   </div>
 
-  <script src="app.js"></script>
+  <script src="/app.js"></script>
+  <script>
+    // PWA install prompt (optional)
+    let deferredPrompt = null;
+    const btn = document.getElementById("btnInstall");
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      btn.style.display = "inline-flex";
+    });
+    btn?.addEventListener("click", async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      btn.style.display = "none";
+    });
+
+    // register SW (if present)
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js").catch(()=>{});
+    }
+  </script>
 </body>
 </html>
