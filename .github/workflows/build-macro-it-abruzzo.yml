@@ -1,0 +1,44 @@
+name: Build macro (Abruzzo auto-only)
+
+on:
+  workflow_dispatch: {}
+  push:
+    paths:
+      - "scripts/build_macro_it_abruzzo.mjs"
+      - "public/data/places_bbox_abruzzo_neighbors.json"
+      - "public/data/pois_eu_uk.json"
+      - ".github/workflows/build-macro-it-abruzzo.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-macro-it-abruzzo
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Build macro
+        run: node scripts/build_macro_it_abruzzo.mjs
+
+      - name: Commit generated macro
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/data/macros/it_macro_01_abruzzo.json
+          if git diff --cached --quiet; then
+            echo "No changes"
+          else
+            git commit -m "chore: build abruzzo macro"
+            git push
+          fi
