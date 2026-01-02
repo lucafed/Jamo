@@ -1,7 +1,7 @@
 {
    "id": "it_macro_01_abruzzo",
    "name": "Macro 01 — Abruzzo (AUTO-ONLY) — Mete stabili offline (massiccio)",
-   "version": "3.0.0",
+   "version": "3.1.0",
    "updated_at": "2026-01-02",
    "coverage": {
       "primary_region": "Abruzzo",
@@ -4097,6 +4097,451 @@
             "Tour e-bike prenotabili",
             "Perfetto per scoprire costa e colline",
             "Esperienza monetizzabile"
+         ]
+      },
+      {
+         "id": "abruzzo_torre_del_cerrano",
+         "name": "Area Marina Protetta Torre del Cerrano (Pineto/Silvi)",
+         "type": "mare",
+         "area": "Abruzzo",
+         "lat": 42.5569,
+         "lon": 14.1327,
+         "tags": [
+            "mare",
+            "natura",
+            "spiagge",
+            "riserva",
+            "family"
+         ],
+         "visibility": "chicca",
+         "beauty_score": 0.93,
+         "why": [
+            "Dune e mare protetto",
+            "Perfetto per passeggiate e bici",
+            "Ottimo per famiglie"
+         ]
+      },
+      {
+         "id": "abruzzo_punta_penna",
+         "name": "Punta Penna (Vasto)",
+         "type": "mare",
+         "area": "Abruzzo",
+         "lat": 42.1219,
+         "lon": 14.7426,
+         "tags": [
+            "mare",
+            "spiagge",
+            "natura",
+            "chicca"
+         ],
+         "visibility": "conosciuta",
+         "beauty_score": 0.9,
+         "why": [
+            "Spiaggia ampia e faro iconico",
+            "Tratti naturali e vento perfetto",
+            "Top al tramonto"
+         ]
+      },
+      {
+         "id": "abruzzo_le_morge",
+         "name": "Spiaggia Le Morge (Torino di Sangro)",
+         "type": "mare",
+         "area": "Abruzzo",
+         "lat": 42.3195,
+         "lon": 14.5534,
+         "tags": [
+            "mare",
+            "trabocchi",
+            "spiagge",
+            "relax",
+            "family"
+         ],
+         "visibility": "conosciuta",
+         "beauty_score": 0.87,
+         "why": [
+            "Spiaggia comoda con vista trabocchi",
+            "Ideale per relax",
+            "Tramonti bellissimi"
+         ]
+      },
+      {
+         "id": "abruzzo_punta_aderci_sentieri",
+         "name": "Punta Aderci — sentieri panoramici",
+         "type": "natura",
+         "area": "Abruzzo",
+         "lat": 42.1337,
+         "lon": 14.7346,
+         "tags": [
+            "natura",
+            "mare",
+            "trekking",
+            "panorama",
+            "chicca"
+         ],
+         "visibility": "chicca",
+         "beauty_score": 0.96,
+         "why": [
+            "Sentieri sulla scogliera e sulla spiaggia",
+            "Vista 'wow' sulla costa",
+            "Perfetto per foto e camminate"
+         ]
+      },
+      {
+         "id": "abruzzo_spiaggia_punta_acquabella",
+         "name": "Punta Acquabella (Ortona)",
+         "type": "mare",
+         "area": "Abruzzo",
+         "lat": 42.3475,
+         "lon": 14.4028,
+         "tags": [
+            "mare",
+            "spiagge",
+            "chicca",
+            "natura"
+         ],
+         "visibility": "chicca",
+         "beauty_score": 0.93,
+         "why": [
+            "Calette e scogliere scenografiche",
+            "Acqua spesso limpida",
+            "Ideale per foto e snorkeling easy"
+         ]
+      },
+      {
+         "id": "abruzzo_lido_di_casalbordino",
+         "name": "Casalbordino Lido",
+         "type": "mare",
+         "area": "Abruzzo",
+         "lat": 42.2106,
+         "lon": 14.6577,
+         "tags": [
+            "mare",
+            "spiagge",
+            "family",
+            "relax"
+         ],
+         "visibility": "conosciuta",
+         "beauty_score": 0.81,
+         "why": [
+            "Spiaggia comoda e ampia",
+            "Perfetta per famiglie",
+            "Giornata easy senza stress"
+         ]
+      },
+      {
+         "id": "abruzzo_marina_di_san_salvo_ciclabile",
+         "name": "Ciclovia Adriatica (tratto Costa dei Trabocchi)",
+         "type": "natura",
+         "area": "Abruzzo",
+         "lat": 42.248,
+         "lon": 14.47,
+         "tags": [
+            "natura",
+            "mare",
+            "family",
+            "attivita",
+            "bici"
+         ],
+         "visibility": "conosciuta",
+         "beauty_score": 0.88,
+         "why": [
+            "Una delle ciclabili più belle d'Italia",
+            "Perfetta per famiglie (bici/passeggio)",
+            "Panorami mare continui"
+         ]
+      },
+      {
+         "id": "abruzzo_passolanciano_maielletta",
+         "name": "Passo Lanciano – La Maielletta",
+         "type": "montagna",
+         "area": "Abruzzo",
+         "lat": 42.259,
+         "lon": 14.181,
+         "tags": [
+            "montagna",
+            "panorama",
+            "neve",
+            "family"
+         ],
+         "visibility": "conosciuta",
+         "beauty_score": 0.9,
+         "why": [
+            "Panorami enormi sulla Maiella",
+            "Inverno: neve, estate: passeggi",
+            "Facile gita giornata"
+         ]
+      },
+      {
+         "id": "abruzzo_blockhaus",
+         "name": "Blockhaus (Maiella)",
+         "type": "montagna",
+         "area": "Abruzzo",
+         "lat": 42.2315,
+         "lon": 14.192,
+         "tags": [
+            "montagna",
+            "panorama",
+            "trekking",
+            "chicca"
+         ],
+         "visibility": "chicca",
+         "beauty_score": 0.93,
+         "why": [
+            "Uno dei punti panoramici più wow",
+            "Sentieri e aria altissima",
+            "Perfetto per foto"
+         ]
+      },
+      {
+         "id": "abruzzo_valle_dell_orfento",
+         "name": "Valle dell'Orfento (Caramanico)",
+         "type": "natura",
+         "area": "Abruzzo",
+         "lat": 42.1435,
+         "lon": 14.0075,
+         "tags": [
+            "natura",
+            "trekking",
+            "fiume",
+            "chicca"
+         ],
+         "visibility": "chicca",
+         "beauty_score": 0.95,
+         "why": [
+            "Sentieri lungo acqua e boschi",
+            "Tra i trekking più belli della Maiella",
+            "Esperienza super fresca d'estate"
+         ]
+      },
+      {
+         "id": "abruzzo_riserva_calanchi_aterni",
+         "name": "Riserva Naturale Gole del Sagittario (Anversa)",
+         "type": "natura",
+         "area": "Abruzzo",
+         "lat": 41.9935,
+         "lon": 13.804,
+         "tags": [
+            "natura",
+            "gole",
+            "panorama",
+            "trekking"
+         ],
+         "visibility": "conosciuta",
+         "beauty_score": 0.93,
+         "why": [
+            "Gole e acqua cristallina",
+            "Passeggiate scenografiche",
+            "Ottima gita natura"
+         ]
+      },
+      {
+         "id": "abruzzo_grotte_di_stiffe",
+         "name": "Grotte di Stiffe",
+         "type": "natura",
+         "area": "Abruzzo",
+         "lat": 42.2637,
+         "lon": 13.4996,
+         "tags": [
+            "natura",
+            "grotte",
+            "family",
+            "attivita"
+         ],
+         "visibility": "conosciuta",
+         "beauty_score": 0.9,
+         "why": [
+            "Grotte con fiume sotterraneo",
+            "Visita guidata perfetta per famiglie",
+            "Esperienza 'wow' con qualsiasi meteo"
+         ]
+      },
+      {
+         "id": "abruzzo_alba_fucens",
+         "name": "Alba Fucens (area archeologica)",
+         "type": "storia",
+         "area": "Abruzzo",
+         "lat": 42.0486,
+         "lon": 13.4176,
+         "tags": [
+            "storia",
+            "archeologia",
+            "panorama",
+            "family"
+         ],
+         "visibility": "conosciuta",
+         "beauty_score": 0.9,
+         "why": [
+            "Rovine romane + vista sul Fucino",
+            "Passeggiata facile e super interessante",
+            "Ottima per foto e storia"
+         ]
+      },
+      {
+         "id": "abruzzo_lago_di_bomba",
+         "name": "Lago di Bomba",
+         "type": "natura",
+         "area": "Abruzzo",
+         "lat": 41.9926,
+         "lon": 14.3666,
+         "tags": [
+            "natura",
+            "lago",
+            "relax",
+            "family"
+         ],
+         "visibility": "chicca",
+         "beauty_score": 0.86,
+         "why": [
+            "Lago tranquillo tra i monti",
+            "Picnic e relax",
+            "Ottimo in primavera/estate"
+         ]
+      },
+      {
+         "id": "abruzzo_lago_di_penne",
+         "name": "Oasi WWF Lago di Penne",
+         "type": "natura",
+         "area": "Abruzzo",
+         "lat": 42.4562,
+         "lon": 13.9386,
+         "tags": [
+            "natura",
+            "animali",
+            "family",
+            "attivita",
+            "wwf"
+         ],
+         "visibility": "conosciuta",
+         "beauty_score": 0.88,
+         "why": [
+            "Oasi con sentieri e birdwatching",
+            "Perfetta per bambini",
+            "Attività guidate e visite"
+         ]
+      },
+      {
+         "id": "abruzzo_riserva_borsacchio",
+         "name": "Riserva Naturale del Borsacchio (Roseto)",
+         "type": "mare",
+         "area": "Abruzzo",
+         "lat": 42.682,
+         "lon": 14.0485,
+         "tags": [
+            "mare",
+            "natura",
+            "spiagge",
+            "chicca",
+            "family"
+         ],
+         "visibility": "chicca",
+         "beauty_score": 0.9,
+         "why": [
+            "Tratto di costa più naturale",
+            "Spiaggia wild e panorami",
+            "Top per camminata e foto"
+         ]
+      },
+      {
+         "id": "abruzzo_castel_di_ieri",
+         "name": "Castel di Ieri",
+         "type": "borgo",
+         "area": "Abruzzo",
+         "lat": 42.1144,
+         "lon": 13.7408,
+         "tags": [
+            "borgo",
+            "chicca",
+            "storia"
+         ],
+         "visibility": "chicca",
+         "beauty_score": 0.82,
+         "why": [
+            "Micro-borgo autentico",
+            "Pochi turisti, atmosfera vera",
+            "Perfetto per giro 'off'"
+         ]
+      },
+      {
+         "id": "abruzzo_zompo_lo_schioppo",
+         "name": "Riserva Zompo lo Schioppo (cascata)",
+         "type": "natura",
+         "area": "Abruzzo",
+         "lat": 41.9888,
+         "lon": 13.3021,
+         "tags": [
+            "natura",
+            "cascata",
+            "trekking",
+            "family"
+         ],
+         "visibility": "conosciuta",
+         "beauty_score": 0.9,
+         "why": [
+            "Cascata scenografica",
+            "Sentieri nel bosco",
+            "Perfetta per famiglie (percorsi semplici)"
+         ]
+      },
+      {
+         "id": "abruzzo_trasacco",
+         "name": "Trasacco",
+         "type": "borgo",
+         "area": "Abruzzo",
+         "lat": 41.9628,
+         "lon": 13.535,
+         "tags": [
+            "borgo",
+            "natura",
+            "family"
+         ],
+         "visibility": "chicca",
+         "beauty_score": 0.78,
+         "why": [
+            "Paese del Fucino autentico",
+            "Gita easy",
+            "Vicinanza a percorsi natura"
+         ]
+      },
+      {
+         "id": "abruzzo_roseto_degli_abruzzi",
+         "name": "Roseto degli Abruzzi",
+         "type": "mare",
+         "area": "Abruzzo",
+         "lat": 42.6713,
+         "lon": 14.0143,
+         "tags": [
+            "mare",
+            "spiagge",
+            "family",
+            "citta"
+         ],
+         "visibility": "conosciuta",
+         "beauty_score": 0.78,
+         "why": [
+            "Spiaggia ampia e servizi",
+            "Ottima per famiglie",
+            "Base per esplorare la costa teramana"
+         ]
+      },
+      {
+         "id": "abruzzo_giulianova_lido",
+         "name": "Giulianova Lido",
+         "type": "mare",
+         "area": "Abruzzo",
+         "lat": 42.7549,
+         "lon": 13.9608,
+         "tags": [
+            "mare",
+            "spiagge",
+            "family",
+            "citta"
+         ],
+         "visibility": "conosciuta",
+         "beauty_score": 0.77,
+         "why": [
+            "Spiaggia ampia + porto",
+            "Comoda per famiglie",
+            "Tanti servizi"
          ]
       }
    ]
