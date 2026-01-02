@@ -1,9 +1,8 @@
 /* Jamo — Auto-only (offline macro) — app.js v3.2
- * FIX:
- * - geocode robusto (GET + POST fallback, supporta diversi formati risposta)
- * - risultati sempre “nuovi” (exclude recenti oltre a visited)
- * - fallback soft se 0 risultati entro minuti (fino a +20%)
- * - alternative cliccabili + leggibili (azioni: scegli / maps / percorso)
+ * - Origin: GPS or manual (geocode via /api/geocode?q=)
+ * - Picks destinations from macro places based on:
+ *   time (maxMinutes), category, style (chicche/classici), rotation (not repeating)
+ * - Outputs: result card + 2 alternatives (clickable) + maps links + monetization placeholders
  */
 
 const $ = (id) => document.getElementById(id);
@@ -11,20 +10,22 @@ const $ = (id) => document.getElementById(id);
 // -------------------- SETTINGS --------------------
 const MACRO_URL = "/data/macros/it_macro_01_abruzzo.json";
 
-// stima auto (offline)
-const ROAD_FACTOR = 1.22;       // un filo meno severo → più risultati a 60 min
+// driving estimator (offline)
+const ROAD_FACTOR = 1.25;
 const AVG_KMH = 72;
 const FIXED_OVERHEAD_MIN = 8;
 
-// “nuovi risultati”
-const RECENT_MAX = 18;          // quante mete recenti evitare
-const SOFT_FALLBACK_MULT = 1.2; // se non trova nulla, prova fino a +20%
+// ROTATION
+const RECENT_TTL_MS = 1000 * 60 * 60 * 20; // ~20h: “oggi”
+const RECENT_MAX = 120;                    // quante mete ricordare “oggi”
+let SESSION_SEEN = new Set();              // in-memory (sessione)
+let LAST_SHOWN_PID = null;
 
-// monetization placeholders
-const BOOKING_AID = "";
-const AMAZON_TAG  = "";
-const GYG_PID     = "";
-const TIQETS_PID  = "";
+// Monetization placeholders (fill with your IDs)
+const BOOKING_AID = ""; // Booking affiliate id (aid)
+const AMAZON_TAG  = ""; // Amazon tag
+const GYG_PID     = ""; // GetYourGuide partner_id
+const TIQETS_PID  = ""; // Tiqets partner
 
 // -------------------- UTIL --------------------
 function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
@@ -58,7 +59,7 @@ function safeIdFromPlace(p) {
 function estCarMinutesFromKm(km) {
   const roadKm = km * ROAD_FACTOR;
   const driveMin = (roadKm / AVG_KMH) * 60;
-  return Math.round(clamp(driveMin + FIXED_OVERHEAD_MIN, 10, 600));
+  return Math.round(clamp(driveMin + FIXED_OVERHEAD_MIN, 8, 900));
 }
 
 function fmtKm(km) { return `${Math.round(km)} km`; }
@@ -66,6 +67,7 @@ function fmtKm(km) { return `${Math.round(km)} km`; }
 function mapsPlaceUrl(lat, lon) {
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(lat + "," + lon)}`;
 }
+
 function mapsDirUrl(oLat, oLon, dLat, dLon) {
   return `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(oLat + "," + oLon)}&destination=${encodeURIComponent(dLat + "," + dLon)}&travelmode=driving`;
 }
@@ -76,14 +78,17 @@ function bookingUrl(city, countryCode, affId = "") {
   const base = `https://www.booking.com/searchresults.html?ss=${encodeURIComponent(q)}`;
   return affId ? `${base}&aid=${encodeURIComponent(affId)}` : base;
 }
+
 function getYourGuideUrl(city, affId = "") {
   const base = `https://www.getyourguide.com/s/?q=${encodeURIComponent(city)}`;
   return affId ? `${base}&partner_id=${encodeURIComponent(affId)}` : base;
 }
+
 function tiqetsUrl(city, affId = "") {
   const base = `https://www.tiqets.com/it/search/?query=${encodeURIComponent(city)}`;
   return affId ? `${base}&partner=${encodeURIComponent(affId)}` : base;
 }
+
 function amazonEssentialsUrl(tag = "") {
   const base = `https://www.amazon.it/s?k=${encodeURIComponent("accessori viaggio")}`;
   return tag ? `${base}&tag=${encodeURIComponent(tag)}` : base;
@@ -107,7 +112,9 @@ function getOrigin() {
   if (Number.isFinite(lat) && Number.isFinite(lon)) return { label, lat, lon };
 
   const raw = localStorage.getItem("jamo_origin");
-  if (raw) { try { return JSON.parse(raw); } catch {} }
+  if (raw) {
+    try { return JSON.parse(raw); } catch {}
+  }
   return null;
 }
 
@@ -117,34 +124,69 @@ function getVisitedSet() {
   try {
     const arr = JSON.parse(raw);
     return new Set(Array.isArray(arr) ? arr : []);
-  } catch { return new Set(); }
+  } catch {
+    return new Set();
+  }
 }
+
 function saveVisitedSet(set) {
   localStorage.setItem("jamo_visited", JSON.stringify([...set]));
 }
+
 function markVisited(placeId) {
   const s = getVisitedSet();
   s.add(placeId);
   saveVisitedSet(s);
 }
 
-function getRecentList() {
+function resetVisited() {
+  localStorage.removeItem("jamo_visited");
+}
+
+function loadRecent() {
   const raw = localStorage.getItem("jamo_recent");
   if (!raw) return [];
   try {
     const arr = JSON.parse(raw);
-    return Array.isArray(arr) ? arr.map(String) : [];
-  } catch { return []; }
+    return Array.isArray(arr) ? arr : [];
+  } catch {
+    return [];
+  }
 }
-function pushRecent(placeId) {
-  const pid = String(placeId);
-  const arr = getRecentList().filter(x => x !== pid);
-  arr.unshift(pid);
-  localStorage.setItem("jamo_recent", JSON.stringify(arr.slice(0, RECENT_MAX)));
+
+function saveRecent(list) {
+  localStorage.setItem("jamo_recent", JSON.stringify(list.slice(0, RECENT_MAX)));
 }
-function resetVisitedAndRecent() {
-  localStorage.removeItem("jamo_visited");
+
+function cleanupRecent(list) {
+  const t = Date.now();
+  return list.filter(x => x && x.pid && (t - (x.ts || 0) <= RECENT_TTL_MS));
+}
+
+function addRecent(pid) {
+  const t = Date.now();
+  let list = cleanupRecent(loadRecent());
+  list.unshift({ pid, ts: t });
+  // de-dup keeping newest
+  const seen = new Set();
+  list = list.filter(x => {
+    if (seen.has(x.pid)) return false;
+    seen.add(x.pid);
+    return true;
+  });
+  saveRecent(list);
+}
+
+function getRecentSet() {
+  const list = cleanupRecent(loadRecent());
+  saveRecent(list);
+  return new Set(list.map(x => x.pid));
+}
+
+function resetRotation() {
   localStorage.removeItem("jamo_recent");
+  SESSION_SEEN = new Set();
+  LAST_SHOWN_PID = null;
 }
 
 // -------------------- UI state (chips) --------------------
@@ -155,9 +197,6 @@ function initChips(containerId, { multi = false } = {}) {
   el.addEventListener("click", (e) => {
     const chip = e.target.closest(".chip");
     if (!chip) return;
-
-    // evita “rimane premuto” su mobile (tap doppio)
-    e.preventDefault();
 
     if (!multi) {
       [...el.querySelectorAll(".chip")].forEach(c => c.classList.remove("active"));
@@ -170,7 +209,7 @@ function initChips(containerId, { multi = false } = {}) {
       const v = Number(chip.dataset.min);
       if (Number.isFinite(v)) $("maxMinutes").value = String(v);
     }
-  }, { passive: false });
+  });
 }
 
 function getActiveCategory() {
@@ -198,6 +237,7 @@ function showStatus(type, text) {
   t.textContent = text;
   box.style.display = "block";
 }
+
 function hideStatus() {
   $("statusBox").style.display = "none";
   $("statusText").textContent = "";
@@ -215,47 +255,19 @@ async function loadMacro() {
   return j;
 }
 
-// -------------------- GEOcoding (robusto) --------------------
-function normalizeGeocodeResponse(j, fallbackLabel) {
-  // accetta:
-  // A) { ok:true, result:{ lat, lon, label } }
-  // B) { ok:true, lat, lon, label }
-  // C) { ok:true, result:{ ... }, lat, lon } (misto)
-  if (!j || !j.ok) return null;
-
-  const r = j.result || j;
-  const lat = Number(r.lat);
-  const lon = Number(r.lon ?? r.lng);
-  const label = String(r.label || j.label || fallbackLabel || "").trim();
-
-  if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
-  return { lat, lon, label: label || fallbackLabel || "Partenza" };
-}
-
+// -------------------- GEOCODING --------------------
 async function geocodeLabel(label) {
   const q = String(label || "").trim();
-  if (!q) throw new Error("Inserisci un luogo");
+  if (!q) throw new Error("Scrivi un luogo (es: L'Aquila, Roma, Via Roma 10)");
+  const r = await fetch(`/api/geocode?q=${encodeURIComponent(q)}`, { method: "GET" });
+  const j = await r.json().catch(() => null);
 
-  // 1) prova GET
-  try {
-    const r1 = await fetch(`/api/geocode?q=${encodeURIComponent(q)}`, { method: "GET" });
-    const j1 = await r1.json().catch(() => null);
-    const out1 = normalizeGeocodeResponse(j1, q);
-    if (r1.ok && out1) return out1;
-  } catch {}
-
-  // 2) fallback POST
-  const r2 = await fetch(`/api/geocode`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ q })
-  });
-  const j2 = await r2.json().catch(() => null);
-  const out2 = normalizeGeocodeResponse(j2, q);
-  if (r2.ok && out2) return out2;
-
-  const errMsg = (j2 && (j2.error || j2.message)) ? String(j2.error || j2.message) : "Geocoding fallito";
-  throw new Error(errMsg);
+  if (!j) throw new Error("Geocoding fallito (risposta vuota)");
+  if (!j.ok) throw new Error(j.error || "Geocoding fallito");
+  if (!j.result || !Number.isFinite(Number(j.result.lat)) || !Number.isFinite(Number(j.result.lon))) {
+    throw new Error("Geocoding fallito (coordinate non valide)");
+  }
+  return j.result; // {label, lat, lon}
 }
 
 // -------------------- FILTERS --------------------
@@ -269,43 +281,81 @@ function matchesCategory(place, cat) {
   if (cat === "borghi") return type === "borgo" || tags.includes("borgo");
   if (cat === "mare") return (
     type === "mare" ||
-    tags.includes("mare") || tags.includes("trabocchi") || tags.includes("spiagge") ||
-    tags.includes("spiaggia") || tags.includes("baia") || tags.includes("riserva")
+    tags.includes("mare") ||
+    tags.includes("trabocchi") ||
+    tags.includes("spiagge") ||
+    tags.includes("spiaggia") ||
+    tags.includes("lido")
   );
   if (cat === "montagna") return type === "montagna" || tags.includes("montagna") || tags.includes("neve");
-  if (cat === "natura") return type === "natura" || tags.includes("natura") || tags.includes("lago") || tags.includes("parco_nazionale") || tags.includes("riserva");
+  if (cat === "natura") return (
+    type === "natura" ||
+    tags.includes("natura") ||
+    tags.includes("lago") ||
+    tags.includes("parco_nazionale") ||
+    tags.includes("gole") ||
+    tags.includes("cascate") ||
+    tags.includes("riserva")
+  );
   if (cat === "storia") return type === "storia" || tags.includes("storia") || tags.includes("castello") || tags.includes("abbazia") || tags.includes("museo");
   if (cat === "relax") return type === "relax" || tags.includes("relax") || tags.includes("terme") || tags.includes("spa");
   if (cat === "family") return (
     type === "bambini" ||
-    tags.includes("famiglie") || tags.includes("bambini") || tags.includes("family") ||
-    tags.includes("parco_avventura") || tags.includes("zoo") || tags.includes("animali") ||
-    tags.includes("spiagge") || tags.includes("lago") || tags.includes("parco_nazionale")
+    tags.includes("famiglie") ||
+    tags.includes("bambini") ||
+    tags.includes("family") ||
+    tags.includes("animali") ||
+    tags.includes("parco_avventura") ||
+    tags.includes("luna_park") ||
+    tags.includes("acquario")
   );
 
   return true;
 }
 
 function matchesStyle(place, { wantChicche, wantClassici }) {
-  const vis = String(place.visibility || "").toLowerCase();
+  const vis = String(place.visibility || "").toLowerCase(); // "chicca" | "conosciuta"
   if (!wantChicche && !wantClassici) return true;
   if (vis === "chicca") return !!wantChicche;
   return !!wantClassici;
 }
 
-function scorePlace({ driveMin, targetMin, beautyScore, isChicca }) {
+function baseScorePlace({ driveMin, targetMin, beautyScore, isChicca }) {
   const t = clamp(1 - Math.abs(driveMin - targetMin) / Math.max(25, targetMin * 0.85), 0, 1);
   const b = clamp(Number(beautyScore) || 0.75, 0.4, 1);
   const c = isChicca ? 0.06 : 0;
   return 0.62 * t + 0.34 * b + c;
 }
 
-// -------------------- PICK DESTINATION (evita ripetizioni) --------------------
-function buildCandidates(origin, maxMinutes, category, styles, { softCapMult = 1.0 } = {}) {
-  const visited = getVisitedSet();
-  const recent = new Set(getRecentList());
+// ROTATION penalty: avoid repeats in session + today
+function rotationPenalty(pid, recentSet) {
+  let pen = 0;
+  if (pid && pid === LAST_SHOWN_PID) pen += 0.22;   // evita duplicato immediato
+  if (SESSION_SEEN.has(pid)) pen += 0.20;           // già proposto in sessione
+  if (recentSet.has(pid)) pen += 0.12;              // già proposto “oggi”
+  return pen;
+}
 
-  const target = Number(maxMinutes) * Number(softCapMult);
+// -------------------- TIME “SMART” (special cases) --------------------
+function effectiveMaxMinutes(maxMinutes, category) {
+  const m = Number(maxMinutes);
+  if (!Number.isFinite(m)) return 120;
+
+  // MARE: spesso non esiste entro 60' reali, quindi allarghiamo “gentilmente”
+  if (category === "mare" && m < 75) {
+    // es: 60 -> 81, 45 -> 61
+    const widened = Math.round(m * 1.35);
+    return clamp(widened, m, 180);
+  }
+  return clamp(m, 10, 600);
+}
+
+// -------------------- PICK DESTINATION (with rotation) --------------------
+function buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited = false, ignoreRotation = false } = {}) {
+  const visited = getVisitedSet();
+  const recentSet = getRecentSet();
+
+  const target = Number(maxMinutes);
   const oLat = Number(origin.lat);
   const oLon = Number(origin.lon);
 
@@ -320,130 +370,108 @@ function buildCandidates(origin, maxMinutes, category, styles, { softCapMult = 1
     if (!matchesStyle(p, styles)) continue;
 
     const pid = safeIdFromPlace(p);
-
-    // evita ripetizioni
-    if (visited.has(pid)) continue;
-    if (recent.has(pid)) continue;
+    if (!ignoreVisited && visited.has(pid)) continue;
 
     const km = haversineKm(oLat, oLon, lat, lon);
     const driveMin = estCarMinutesFromKm(km);
 
     if (driveMin > target) continue;
+    if (km < 1.2) continue; // “sei già lì”
 
     const isChicca = String(p.visibility || "").toLowerCase() === "chicca";
-    const s = scorePlace({ driveMin, targetMin: Number(maxMinutes), beautyScore: p.beauty_score, isChicca });
+    let s = baseScorePlace({
+      driveMin,
+      targetMin: target,
+      beautyScore: p.beauty_score,
+      isChicca
+    });
 
-    candidates.push({ place: p, pid, km, driveMin, score: Number(s.toFixed(4)) });
+    if (!ignoreRotation) {
+      s = s - rotationPenalty(pid, recentSet);
+    }
+
+    candidates.push({
+      place: p,
+      pid,
+      km,
+      driveMin,
+      score: Number(s.toFixed(4))
+    });
   }
 
-  candidates.sort((a, b) => (b.score - a.score) || (a.driveMin - b.driveMin));
+  candidates.sort((a, b) => {
+    if (b.score !== a.score) return b.score - a.score;
+    return a.driveMin - b.driveMin;
+  });
+
   return candidates;
 }
 
 function pickDestination(origin, maxMinutes, category, styles) {
-  // 1) normale
-  let candidates = buildCandidates(origin, maxMinutes, category, styles, { softCapMult: 1.0 });
+  // 1) normale: visita esclusa + rotazione attiva
+  let candidates = buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited: false, ignoreRotation: false });
 
-  // 2) fallback soft se zero
-  let usedSoftFallback = false;
+  // 2) se zero: ignora rotazione (ma non i visitati)
   if (candidates.length === 0) {
-    candidates = buildCandidates(origin, maxMinutes, category, styles, { softCapMult: SOFT_FALLBACK_MULT });
-    usedSoftFallback = candidates.length > 0;
+    candidates = buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited: false, ignoreRotation: true });
   }
 
-  // 3) ultimo fallback: ignora “recent” ma rispetta “visited”
+  // 3) se ancora zero: ignora anche visited (ultima spiaggia)
   if (candidates.length === 0) {
-    const visited = getVisitedSet();
-    const target = Number(maxMinutes) * SOFT_FALLBACK_MULT;
-    const oLat = Number(origin.lat), oLon = Number(origin.lon);
-
-    for (const p of MACRO.places) {
-      const lat = Number(p.lat), lon = Number(p.lon);
-      if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
-      if (!matchesCategory(p, category)) continue;
-      if (!matchesStyle(p, styles)) continue;
-
-      const pid = safeIdFromPlace(p);
-      if (visited.has(pid)) continue;
-
-      const km = haversineKm(oLat, oLon, lat, lon);
-      const driveMin = estCarMinutesFromKm(km);
-      if (driveMin > target) continue;
-
-      const isChicca = String(p.visibility || "").toLowerCase() === "chicca";
-      const s = scorePlace({ driveMin, targetMin: Number(maxMinutes), beautyScore: p.beauty_score, isChicca });
-
-      candidates.push({ place: p, pid, km, driveMin, score: Number(s.toFixed(4)) });
-    }
-
-    candidates.sort((a, b) => (b.score - a.score) || (a.driveMin - b.driveMin));
-    usedSoftFallback = candidates.length > 0;
+    candidates = buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited: true, ignoreRotation: true });
   }
 
   const chosen = candidates[0] || null;
-  const alternatives = candidates.slice(1, 3); // due alternative
-  return { chosen, alternatives, totalCandidates: candidates.length, usedSoftFallback };
+  const alternatives = candidates.slice(1, 3); // **2 alternative**
+  return { chosen, alternatives, totalCandidates: candidates.length };
 }
 
 // -------------------- RENDER --------------------
-function renderAlternatives(origin, alternatives) {
-  if (!alternatives || !alternatives.length) return "";
-
-  const html = alternatives.map((a, idx) => {
-    const p = a.place;
-    const isChicca = String(p.visibility || "").toLowerCase() === "chicca";
-    const badge = isChicca ? "✨" : "✅";
-    const placeUrl = mapsPlaceUrl(p.lat, p.lon);
-    const dirUrl = mapsDirUrl(origin.lat, origin.lon, p.lat, p.lon);
-
-    // card cliccabile + bottoni
-    return `
-      <div class="card altCard" data-alt-idx="${idx}" style="padding:12px;">
-        <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
-          <div>
-            <div style="font-weight:800; font-size:16px; line-height:1.2;">
-              ${p.name} <span class="small muted">(${badge})</span>
-            </div>
-            <div class="small muted" style="margin-top:6px;">
-              ~${a.driveMin} min • ${fmtKm(a.km)} • ${p.type || "meta"}
-            </div>
-          </div>
-          <button class="btn btn-ghost altPickBtn" data-alt-idx="${idx}" type="button">Scegli</button>
-        </div>
-
-        <div class="row wrap gap" style="margin-top:10px;">
-          <a class="btn btn-ghost" target="_blank" rel="noopener" href="${placeUrl}">Maps</a>
-          <a class="btn btn-ghost" target="_blank" rel="noopener" href="${dirUrl}">Percorso</a>
-        </div>
-      </div>
-    `;
-  }).join("");
-
+function monetBoxHtml(placeName, country = "IT") {
   return `
     <div class="card" style="margin-top:12px;">
-      <div class="small muted">Alternative (toccane una)</div>
-      <div style="margin-top:10px; display:flex; flex-direction:column; gap:10px;">
-        ${html}
+      <div class="small muted">Prenota / Scopri (link monetizzabili)</div>
+      <div class="row wrap gap" style="margin-top:10px;">
+        <a class="btn" target="_blank" rel="noopener" href="${bookingUrl(placeName, country, BOOKING_AID)}">🏨 Hotel</a>
+        <a class="btn" target="_blank" rel="noopener" href="${getYourGuideUrl(placeName, GYG_PID)}">🎟️ Tour</a>
+        <a class="btn" target="_blank" rel="noopener" href="${tiqetsUrl(placeName, TIQETS_PID)}">🏛️ Attrazioni</a>
+        <a class="btn btn-ghost" target="_blank" rel="noopener" href="${amazonEssentialsUrl(AMAZON_TAG)}">🧳 Essenziali</a>
+      </div>
+      <div class="small muted" style="margin-top:8px;">
+        (Inserisci i tuoi ID affiliato in app.js: BOOKING_AID / GYG_PID / TIQETS_PID / AMAZON_TAG)
       </div>
     </div>
   `;
 }
 
-function renderResult(origin, maxMinutes, chosen, alternatives, usedSoftFallback) {
+function renderResult(origin, maxMinutesShown, chosen, alternatives, meta = {}) {
   const area = $("resultArea");
+  const category = meta.category || "ovunque";
 
   if (!chosen) {
+    const extra = (category === "mare" && Number(maxMinutesShown) < 75)
+      ? `Hai scelto <b>Mare</b>: a volte serve un po' più tempo. (Prova 90–120 min)`
+      : `Prova ad aumentare i minuti o cambiare categoria/stile.`;
+
     area.innerHTML = `
       <div class="card errbox">
-        <div class="small">❌ Nessuna meta trovata entro ${maxMinutes} min con i filtri attuali.</div>
-        <div class="small muted" style="margin-top:6px;">Prova ad aumentare i minuti oppure cambia categoria/stile.</div>
+        <div class="small">❌ Nessuna meta trovata entro ${maxMinutesShown} min con i filtri attuali.</div>
+        <div class="small muted" style="margin-top:6px;">${extra}</div>
+        <div class="row wrap gap" style="margin-top:12px;">
+          <button class="btn btn-ghost" id="btnResetRotation">🧽 Reset “proposte di oggi”</button>
+        </div>
       </div>
     `;
+    $("btnResetRotation")?.addEventListener("click", () => {
+      resetRotation();
+      showStatus("ok", "Reset fatto ✅ Ora ti ripropongo mete che avevo evitato oggi.");
+    });
     return;
   }
 
   const p = chosen.place;
   const pid = chosen.pid;
+
   const isChicca = String(p.visibility || "").toLowerCase() === "chicca";
   const badge = isChicca ? "✨ chicca" : "✅ classica";
 
@@ -458,35 +486,54 @@ function renderResult(origin, maxMinutes, chosen, alternatives, usedSoftFallback
     : "";
 
   const country = p.country || "IT";
-  const cityForLinks = p.name;
 
-  const monetHtml = `
+  const altHtml = (alternatives || []).length ? `
     <div class="card" style="margin-top:12px;">
-      <div class="small muted">Prenota / Scopri (link monetizzabili)</div>
-      <div class="row wrap gap" style="margin-top:10px;">
-        <a class="btn" target="_blank" rel="noopener" href="${bookingUrl(cityForLinks, country, BOOKING_AID)}">🏨 Hotel</a>
-        <a class="btn" target="_blank" rel="noopener" href="${getYourGuideUrl(cityForLinks, GYG_PID)}">🎟️ Tour</a>
-        <a class="btn" target="_blank" rel="noopener" href="${tiqetsUrl(cityForLinks, TIQETS_PID)}">🏛️ Attrazioni</a>
-        <a class="btn btn-ghost" target="_blank" rel="noopener" href="${amazonEssentialsUrl(AMAZON_TAG)}">🧳 Essenziali</a>
-      </div>
-      <div class="small muted" style="margin-top:8px;">
-        (Inserisci i tuoi ID affiliato in app.js: BOOKING_AID / GYG_PID / TIQETS_PID / AMAZON_TAG)
+      <div class="small muted">Alternative (clicca per scegliere)</div>
+      <div style="margin-top:10px; display:flex; flex-direction:column; gap:10px;">
+        ${(alternatives || []).map(a => {
+          const ap = a.place;
+          const aPid = a.pid;
+          const aIsChicca = String(ap.visibility || "").toLowerCase() === "chicca";
+          const aBadge = aIsChicca ? "✨" : "✅";
+          const aPlaceUrl = mapsPlaceUrl(ap.lat, ap.lon);
+          const aDirUrl = mapsDirUrl(origin.lat, origin.lon, ap.lat, ap.lon);
+
+          return `
+            <div class="card" data-alt="1" data-pid="${aPid}"
+                 style="padding:12px 12px; cursor:pointer; border-color: rgba(255,255,255,.12);">
+              <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
+                <div>
+                  <div style="font-weight:800; font-size:16px; line-height:1.2;">
+                    ${ap.name} <span class="small muted">(${aBadge})</span>
+                  </div>
+                  <div class="small muted" style="margin-top:4px;">
+                    ~${a.driveMin} min • ${fmtKm(a.km)} • ${ap.type || "meta"}
+                  </div>
+                </div>
+                <div class="pill" style="white-space:nowrap;">Scegli</div>
+              </div>
+
+              <div class="row wrap gap" style="margin-top:10px;">
+                <a class="btn btn-ghost" href="${aPlaceUrl}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Maps</a>
+                <a class="btn btn-ghost" href="${aDirUrl}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Percorso</a>
+              </div>
+            </div>
+          `;
+        }).join("")}
       </div>
     </div>
-  `;
-
-  const fallbackNote = usedSoftFallback
-    ? `<div class="small muted" style="margin-top:8px;">⚠️ Nota: ho allargato leggermente la soglia per trovarti qualcosa (fino a ~${Math.round(maxMinutes * SOFT_FALLBACK_MULT)} min stimati).</div>`
-    : "";
+  ` : "";
 
   area.innerHTML = `
     <div class="card okbox">
       <div class="pill">🚗 auto • ~${chosen.driveMin} min • ${fmtKm(chosen.km)} • ${badge}</div>
-      <div class="resultTitle">${p.name}</div>
+      <div class="resultTitle">${p.name}, ${country}</div>
+
       <div class="small muted" style="margin-top:6px;">
         Categoria: <b>${p.type || "meta"}</b> • Punteggio: <b>${chosen.score}</b>
+        ${category === "mare" && Number(maxMinutesShown) < 75 ? ` • <span class="muted">(Mare: raggio smart attivo)</span>` : ""}
       </div>
-      ${fallbackNote}
 
       <div class="row wrap gap" style="margin-top:12px;">
         <a class="btn" href="${placeUrl}" target="_blank" rel="noopener">Apri su Google Maps</a>
@@ -496,60 +543,66 @@ function renderResult(origin, maxMinutes, chosen, alternatives, usedSoftFallback
       ${whyHtml}
 
       <div class="row wrap gap" style="margin-top:12px;">
-        <button class="btn btn-ghost" id="btnVisited" type="button">✅ Già visitato</button>
-        <button class="btn" id="btnChange" type="button">🔁 Cambia meta</button>
+        <button class="btn btn-ghost" id="btnVisited">✅ Già visitato</button>
+        <button class="btn" id="btnChange">🔁 Cambia meta</button>
+        <button class="btn btn-ghost" id="btnResetRotation">🧽 Reset “proposte di oggi”</button>
       </div>
     </div>
 
-    ${monetHtml}
-    ${renderAlternatives(origin, alternatives)}
+    ${monetBoxHtml(p.name, country)}
+    ${altHtml}
   `;
 
-  // segna come “mostrato di recente” (così la prossima ricerca cambia)
-  pushRecent(pid);
+  // track shown (for rotation)
+  LAST_SHOWN_PID = pid;
+  SESSION_SEEN.add(pid);
+  addRecent(pid);
 
   // buttons
   $("btnVisited")?.addEventListener("click", () => {
     markVisited(pid);
-    showStatus("ok", "Segnato come visitato ✅ — La prossima volta ti proporrò un’altra meta.");
+    showStatus("ok", "Segnato come visitato ✅ (non te lo ripropongo più).");
   });
 
   $("btnChange")?.addEventListener("click", () => {
-    runSearch({ silent: true });
+    // “cambia” = trova un’altra evitando quella appena mostrata
+    runSearch({ silent: true, forbidPid: pid });
   });
 
-  // alternative: scegli
-  area.querySelectorAll(".altPickBtn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const idx = Number(btn.dataset.altIdx);
-      const alt = (alternatives || [])[idx];
-      if (!alt) return;
-      // renderizza l’alternativa come principale
-      renderResult(origin, maxMinutes, alt, alternatives.filter((_, i) => i !== idx), false);
-      showStatus("ok", "Ok ✅ Hai scelto un’alternativa.");
-    });
+  $("btnResetRotation")?.addEventListener("click", () => {
+    resetRotation();
+    showStatus("ok", "Reset fatto ✅ Ora posso ripescare anche mete già proposte oggi/sessione.");
   });
 
-  // card cliccabile (tap ovunque sulla card → scegli)
-  area.querySelectorAll(".altCard").forEach(card => {
-    card.addEventListener("click", (e) => {
-      // se clicchi su link/bottone, non forzare choose
-      const a = e.target.closest("a,button");
-      if (a) return;
-      const idx = Number(card.dataset.altIdx);
-      const alt = (alternatives || [])[idx];
+  // Alternative clickable: click -> set as main immediately
+  [...area.querySelectorAll('[data-alt="1"][data-pid]')].forEach((el) => {
+    el.addEventListener("click", () => {
+      const pid2 = el.getAttribute("data-pid");
+      const alt = (alternatives || []).find(x => x.pid === pid2);
       if (!alt) return;
-      renderResult(origin, maxMinutes, alt, alternatives.filter((_, i) => i !== idx), false);
-      showStatus("ok", "Ok ✅ Hai scelto un’alternativa.");
+
+      // Mark previous as “seen” (but not visited), and render alt as chosen
+      LAST_SHOWN_PID = pid2;
+      SESSION_SEEN.add(pid2);
+      addRecent(pid2);
+
+      // Re-render with new chosen and the other one as alternative (best effort)
+      const remaining = (alternatives || []).filter(x => x.pid !== pid2);
+      const newAlternatives = [
+        { place: chosen.place, pid: chosen.pid, km: chosen.km, driveMin: chosen.driveMin, score: chosen.score },
+        ...remaining
+      ].slice(0, 2);
+
+      renderResult(origin, maxMinutesShown, alt, newAlternatives, meta);
+      showStatus("ok", "Ok ✅ Ho scelto l’alternativa.");
     });
   });
 }
 
 // -------------------- MAIN SEARCH --------------------
-async function runSearch({ silent = false } = {}) {
+async function runSearch({ silent = false, forbidPid = null } = {}) {
   try {
     if (!silent) hideStatus();
-
     if (!MACRO) await loadMacro();
 
     const origin = getOrigin();
@@ -558,18 +611,67 @@ async function runSearch({ silent = false } = {}) {
       return;
     }
 
-    const maxMinutes = clamp(Number($("maxMinutes").value) || 120, 10, 600);
+    const maxMinutesInput = clamp(Number($("maxMinutes").value) || 120, 10, 600);
     const category = getActiveCategory();
     const styles = getActiveStyles();
 
-    const { chosen, alternatives, usedSoftFallback } = pickDestination(origin, maxMinutes, category, styles);
+    // smart effective time (especially for mare)
+    const effMax = effectiveMaxMinutes(maxMinutesInput, category);
 
-    renderResult(origin, maxMinutes, chosen, alternatives, usedSoftFallback);
+    // pick
+    let { chosen, alternatives } = pickDestination(origin, effMax, category, styles);
+
+    // forbid immediate specific pid (e.g. “cambia meta”)
+    if (forbidPid && chosen?.pid === forbidPid) {
+      // temporarily treat forbid as “session seen”
+      const tmp = new Set(SESSION_SEEN);
+      tmp.add(forbidPid);
+
+      // rebuild ignoring visited but respecting tmp rotation strongly
+      const visited = getVisitedSet();
+      const recentSet = getRecentSet();
+      const target = effMax;
+
+      const candidates = [];
+      const oLat = Number(origin.lat), oLon = Number(origin.lon);
+
+      for (const p of MACRO.places) {
+        const lat = Number(p.lat), lon = Number(p.lon);
+        if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
+        const pid = safeIdFromPlace(p);
+
+        if (visited.has(pid)) continue;
+        if (!matchesCategory(p, category)) continue;
+        if (!matchesStyle(p, styles)) continue;
+
+        const km = haversineKm(oLat, oLon, lat, lon);
+        const driveMin = estCarMinutesFromKm(km);
+        if (driveMin > target) continue;
+        if (km < 1.2) continue;
+        if (tmp.has(pid)) continue;
+
+        const isChicca = String(p.visibility || "").toLowerCase() === "chicca";
+        let s = baseScorePlace({ driveMin, targetMin: target, beautyScore: p.beauty_score, isChicca });
+        // apply rotation (based on real session/today)
+        s = s - rotationPenalty(pid, recentSet);
+
+        candidates.push({ place: p, pid, km, driveMin, score: Number(s.toFixed(4)) });
+      }
+
+      candidates.sort((a,b)=> (b.score-a.score) || (a.driveMin-b.driveMin));
+      chosen = candidates[0] || null;
+      alternatives = candidates.slice(1,3);
+    }
+
+    renderResult(origin, maxMinutesInput, chosen, alternatives, { category, effMax });
 
     if (!chosen) {
-      showStatus("warn", `Nessuna meta entro ${maxMinutes} min con i filtri attuali. Prova ad aumentare i minuti o cambiare filtri.`);
+      showStatus("warn", `Nessuna meta entro ${maxMinutesInput} min. Prova ad aumentare i minuti o cambiare filtri.`);
     } else if (!silent) {
-      showStatus("ok", `Meta trovata ✅ (~${chosen.driveMin} min in auto)`);
+      const extra = (category === "mare" && effMax !== maxMinutesInput)
+        ? ` (Mare: ho allargato il raggio a ~${effMax} min per non lasciarti a secco)`
+        : "";
+      showStatus("ok", `Meta trovata ✅ (~${chosen.driveMin} min in auto)${extra}`);
     }
   } catch (e) {
     console.error(e);
@@ -593,7 +695,9 @@ function restoreOrigin() {
   if (raw) {
     try {
       const o = JSON.parse(raw);
-      if (o?.lat && o?.lon) setOrigin(o);
+      if (Number.isFinite(Number(o?.lat)) && Number.isFinite(Number(o?.lon))) {
+        setOrigin(o);
+      }
     } catch {}
   }
 }
@@ -611,7 +715,7 @@ function bindOriginButtons() {
       (err) => {
         console.error(err);
         $("originStatus").textContent = "❌ GPS non disponibile (permessi?)";
-        showStatus("err", "GPS non disponibile. Prova a scrivere un luogo e usare “Usa questo luogo”.");
+        showStatus("err", "GPS non disponibile. Scrivi un luogo e usa “Usa questo luogo”.");
       },
       { enableHighAccuracy: true, timeout: 12000 }
     );
@@ -623,7 +727,7 @@ function bindOriginButtons() {
       $("originStatus").textContent = "🔎 Cerco il luogo…";
       const result = await geocodeLabel(label);
       setOrigin({ label: result.label || label, lat: result.lat, lon: result.lon });
-      showStatus("ok", "Partenza impostata dal luogo ✅");
+      showStatus("ok", "Partenza impostata ✅");
     } catch (e) {
       console.error(e);
       $("originStatus").textContent = `❌ ${String(e.message || e)}`;
@@ -636,13 +740,12 @@ function bindMainButtons() {
   $("btnFind")?.addEventListener("click", () => runSearch());
 
   $("btnResetVisited")?.addEventListener("click", () => {
-    resetVisitedAndRecent();
-    showStatus("ok", "Reset fatto ✅ (visitati + recenti). Ora ti proporrà mete nuove.");
-    $("resultArea").innerHTML = "";
+    resetVisited();
+    showStatus("ok", "Visitati resettati ✅");
   });
 }
 
-// init chips
+// init
 initChips("timeChips", { multi: false });
 initChips("categoryChips", { multi: false });
 initChips("styleChips", { multi: true });
@@ -654,6 +757,4 @@ bindMainButtons();
 
 // preload macro
 loadMacro().catch(() => {});
-
-// default
 hideStatus();
