@@ -1,7 +1,7 @@
 {
    "id": "it_macro_01_abruzzo",
-   "name": "Macro 01 — Abruzzo (AUTO-ONLY) — Mete stabili offline (massiccio)",
-   "version": "3.1.0",
+   "name": "Macro 01 — Abruzzo (AUTO-ONLY) — Mete stabili offline (massiccio + monetizzabile)",
+   "version": "3.2.0",
    "updated_at": "2026-01-02",
    "coverage": {
       "primary_region": "Abruzzo",
@@ -29,31 +29,222 @@
          "tags",
          "visibility",
          "beauty_score",
-         "why"
+         "why",
+         "activities",
+         "monetize"
       ]
    },
    "places": [
       {
-         "id": "abruzzo_laquila",
-         "name": "L'Aquila",
-         "type": "citta",
+         "id": "abruzzo_martinsicuro",
+         "name": "Martinsicuro",
+         "type": "mare",
          "area": "Abruzzo",
-         "lat": 42.3498,
-         "lon": 13.3995,
+         "lat": 42.8856,
+         "lon": 13.9156,
          "tags": [
-            "citta",
-            "storia",
-            "montagna",
-            "musei",
-            "food"
+            "mare",
+            "spiagge",
+            "famiglie"
          ],
          "visibility": "conosciuta",
-         "beauty_score": 0.86,
+         "beauty_score": 0.77,
          "why": [
-            "Centro storico tra i più importanti dell’Appennino",
-            "Musei, piazze, locali: perfetta base per il Gran Sasso",
-            "Ottima per tour guidati e degustazioni"
-         ]
+            "Lungomare comodo e family-friendly",
+            "Base perfetta per spiagge e relax"
+         ],
+         "activities": [
+            "spiaggia",
+            "bike lungomare"
+         ],
+         "monetize": {
+            "booking": "hotel",
+            "gyg": "tour"
+         }
+      },
+      {
+         "id": "abruzzo_alba_adriatica",
+         "name": "Alba Adriatica",
+         "type": "mare",
+         "area": "Abruzzo",
+         "lat": 42.8343,
+         "lon": 13.9282,
+         "tags": [
+            "mare",
+            "spiagge",
+            "famiglie"
+         ],
+         "visibility": "conosciuta",
+         "beauty_score": 0.76,
+         "why": [
+            "Spiaggia ampia e servizi top",
+            "Ottima per famiglie e weekend easy"
+         ],
+         "activities": [
+            "spiaggia",
+            "passeggiata serale"
+         ],
+         "monetize": {
+            "booking": "hotel"
+         }
+      },
+      {
+         "id": "abruzzo_tortoreto_lido",
+         "name": "Tortoreto Lido",
+         "type": "mare",
+         "area": "Abruzzo",
+         "lat": 42.805,
+         "lon": 13.949,
+         "tags": [
+            "mare",
+            "spiagge",
+            "famiglie"
+         ],
+         "visibility": "conosciuta",
+         "beauty_score": 0.77,
+         "why": [
+            "Mare comodo e stabilimenti",
+            "Perfetto con bambini"
+         ],
+         "activities": [
+            "spiaggia",
+            "gelato"
+         ],
+         "monetize": {
+            "booking": "hotel"
+         }
+      },
+      {
+         "id": "abruzzo_giulianova",
+         "name": "Giulianova",
+         "type": "mare",
+         "area": "Abruzzo",
+         "lat": 42.7531,
+         "lon": 13.9647,
+         "tags": [
+            "mare",
+            "citta",
+            "famiglie"
+         ],
+         "visibility": "conosciuta",
+         "beauty_score": 0.78,
+         "why": [
+            "Mare + porto + centro",
+            "Ottima base per gita completa"
+         ],
+         "activities": [
+            "spiaggia",
+            "porto",
+            "pesce"
+         ],
+         "monetize": {
+            "booking": "hotel",
+            "gyg": "tour"
+         }
+      },
+      {
+         "id": "abruzzo_roseto_degli_abruzzi",
+         "name": "Roseto degli Abruzzi",
+         "type": "mare",
+         "area": "Abruzzo",
+         "lat": 42.6714,
+         "lon": 14.0162,
+         "tags": [
+            "mare",
+            "spiagge",
+            "famiglie"
+         ],
+         "visibility": "conosciuta",
+         "beauty_score": 0.78,
+         "why": [
+            "Spiagge lunghe e tranquille",
+            "Molto comoda in auto"
+         ],
+         "activities": [
+            "spiaggia",
+            "bike"
+         ],
+         "monetize": {
+            "booking": "hotel"
+         }
+      },
+      {
+         "id": "abruzzo_pineto",
+         "name": "Pineto",
+         "type": "mare",
+         "area": "Abruzzo",
+         "lat": 42.6093,
+         "lon": 14.0667,
+         "tags": [
+            "mare",
+            "relax",
+            "passeggiata"
+         ],
+         "visibility": "conosciuta",
+         "beauty_score": 0.79,
+         "why": [
+            "Pineta sul mare iconica",
+            "Passeggiata facile e bellissima"
+         ],
+         "activities": [
+            "spiaggia",
+            "pineta"
+         ],
+         "monetize": {
+            "booking": "hotel"
+         }
+      },
+      {
+         "id": "abruzzo_silvi_marina",
+         "name": "Silvi Marina",
+         "type": "mare",
+         "area": "Abruzzo",
+         "lat": 42.5496,
+         "lon": 14.1145,
+         "tags": [
+            "mare",
+            "famiglie",
+            "spiagge"
+         ],
+         "visibility": "conosciuta",
+         "beauty_score": 0.8,
+         "why": [
+            "Spiaggia ampia e servizi",
+            "Ottimo per famiglie"
+         ],
+         "activities": [
+            "spiaggia",
+            "passeggiata"
+         ],
+         "monetize": {
+            "booking": "hotel"
+         }
+      },
+      {
+         "id": "abruzzo_montesilvano",
+         "name": "Montesilvano",
+         "type": "mare",
+         "area": "Abruzzo",
+         "lat": 42.5169,
+         "lon": 14.1501,
+         "tags": [
+            "mare",
+            "spiagge",
+            "citta"
+         ],
+         "visibility": "conosciuta",
+         "beauty_score": 0.72,
+         "why": [
+            "Mare urbano super comodo",
+            "Molti servizi e locali"
+         ],
+         "activities": [
+            "spiaggia",
+            "shopping"
+         ],
+         "monetize": {
+            "booking": "hotel"
+         }
       },
       {
          "id": "abruzzo_pescara",
@@ -66,1295 +257,102 @@
             "citta",
             "mare",
             "movida",
-            "bike",
             "famiglie"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.79,
-         "why": [
-            "Lungomare, Ponte del Mare e vita serale",
-            "Comoda per spiagge e Costa dei Trabocchi",
-            "Ideale per noleggio bici e attività sul mare"
-         ]
-      },
-      {
-         "id": "abruzzo_teramo",
-         "name": "Teramo",
-         "type": "citta",
-         "area": "Abruzzo",
-         "lat": 42.6589,
-         "lon": 13.7044,
-         "tags": [
-            "citta",
-            "storia",
-            "colline",
-            "food"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.77,
-         "why": [
-            "Centro elegante con cibo ottimo",
-            "Porta d’accesso al Gran Sasso lato teramano",
-            "Perfetta per gite tra borghi e colline"
-         ]
-      },
-      {
-         "id": "abruzzo_chieti",
-         "name": "Chieti",
-         "type": "citta",
-         "area": "Abruzzo",
-         "lat": 42.351,
-         "lon": 14.1673,
-         "tags": [
-            "citta",
-            "storia",
-            "panorama",
-            "musei"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.76,
-         "why": [
-            "Centro storico panoramico e musei",
-            "Vicina a mare e colline",
-            "Ottima per giornata culturale"
-         ]
-      },
-      {
-         "id": "abruzzo_sulmona",
-         "name": "Sulmona",
-         "type": "citta",
-         "area": "Abruzzo",
-         "lat": 42.048,
-         "lon": 13.9246,
-         "tags": [
-            "citta",
-            "storia",
-            "dolci",
-            "borghi",
-            "famiglie"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.89,
-         "why": [
-            "Centro storico bellissimo e vivibile",
-            "Confetti, botteghe e passeggiate sceniche",
-            "Base perfetta per Maiella e Valle Peligna"
-         ]
-      },
-      {
-         "id": "abruzzo_rocca_calascio",
-         "name": "Rocca Calascio",
-         "type": "chicca",
-         "area": "Abruzzo",
-         "lat": 42.3276,
-         "lon": 13.6945,
-         "tags": [
-            "chicca",
-            "montagna",
-            "panorama",
-            "fotografico",
-            "trekking"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 1,
-         "why": [
-            "Panorama iconico tra i più spettacolari d’Italia",
-            "Alba/tramonto da cartolina",
-            "Trekking facile + foto assurde"
-         ]
-      },
-      {
-         "id": "abruzzo_santo_stefano_sessanio",
-         "name": "Santo Stefano di Sessanio",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 42.3431,
-         "lon": 13.6456,
-         "tags": [
-            "borgo",
-            "storia",
-            "montagna",
-            "artigianato",
-            "chicca"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.98,
-         "why": [
-            "Borgo medievale curatissimo",
-            "Weekend slow: botteghe e vicoli di pietra",
-            "Perfetto con Rocca Calascio e Campo Imperatore"
-         ]
-      },
-      {
-         "id": "abruzzo_castel_del_monte",
-         "name": "Castel del Monte (AQ)",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 42.3656,
-         "lon": 13.7269,
-         "tags": [
-            "borgo",
-            "montagna",
-            "panorama",
-            "gran_sasso"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.91,
-         "why": [
-            "Borgo di pietra sull’altopiano",
-            "Vibrazioni autentiche e aria top",
-            "Base per trekking e strade panoramiche"
-         ]
-      },
-      {
-         "id": "abruzzo_campo_imperatore",
-         "name": "Campo Imperatore",
-         "type": "montagna",
-         "area": "Abruzzo",
-         "lat": 42.4486,
-         "lon": 13.5566,
-         "tags": [
-            "montagna",
-            "panorama",
-            "natura",
-            "trekking",
-            "gran_sasso"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.99,
-         "why": [
-            "Paesaggi da ‘Piccolo Tibet’",
-            "Facile vedere tramonti spettacolari",
-            "Trekking, foto e rifugi"
-         ]
-      },
-      {
-         "id": "abruzzo_corno_grande",
-         "name": "Corno Grande (Gran Sasso)",
-         "type": "montagna",
-         "area": "Abruzzo",
-         "lat": 42.4745,
-         "lon": 13.5584,
-         "tags": [
-            "montagna",
-            "trekking",
-            "panorama",
-            "avventura"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 1,
-         "why": [
-            "Vetta simbolo dell’Appennino",
-            "Escursioni memorabili (anche con guida)",
-            "Vista infinita nelle giornate limpide"
-         ]
-      },
-      {
-         "id": "abruzzo_prati_di_tivo",
-         "name": "Prati di Tivo",
-         "type": "montagna",
-         "area": "Abruzzo",
-         "lat": 42.5206,
-         "lon": 13.5605,
-         "tags": [
-            "montagna",
-            "trekking",
-            "impianti",
-            "famiglie",
-            "sci"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.9,
-         "why": [
-            "Base comodissima per Gran Sasso",
-            "Sci e attività outdoor (anche family)",
-            "Ottima per funivia/escursioni guidate"
-         ]
-      },
-      {
-         "id": "abruzzo_castelli_ceramica",
-         "name": "Castelli (ceramica)",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 42.4904,
-         "lon": 13.7087,
-         "tags": [
-            "borgo",
-            "artigianato",
-            "storia",
-            "famiglie"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.86,
-         "why": [
-            "Capitale della ceramica artistica",
-            "Laboratori e botteghe visitabili",
-            "Perfetto per shopping artigianale"
-         ]
-      },
-      {
-         "id": "abruzzo_lago_campotosto",
-         "name": "Lago di Campotosto",
-         "type": "natura",
-         "area": "Abruzzo",
-         "lat": 42.5512,
-         "lon": 13.372,
-         "tags": [
-            "natura",
-            "lago",
-            "panorama",
-            "relax",
-            "bike"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.93,
-         "why": [
-            "Grande lago d’altura scenografico",
-            "Giro panoramico in auto/moto",
-            "Ottimo per picnic e foto"
-         ]
-      },
-      {
-         "id": "abruzzo_pietracamela",
-         "name": "Pietracamela",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 42.5332,
-         "lon": 13.5552,
-         "tags": [
-            "borgo",
-            "montagna",
-            "chicca",
-            "trekking"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.9,
-         "why": [
-            "Borgo montano super suggestivo",
-            "Porta per escursioni e panorami",
-            "Atmosfera autentica"
-         ]
-      },
-      {
-         "id": "abruzzo_rigopiano",
-         "name": "Piana di Rigopiano",
-         "type": "natura",
-         "area": "Abruzzo",
-         "lat": 42.1147,
-         "lon": 14.0552,
-         "tags": [
-            "natura",
-            "montagna",
-            "panorama",
-            "famiglie"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.88,
-         "why": [
-            "Altopiano spettacolare tra boschi",
-            "Perfetto per passeggiate e neve",
-            "Ideale per foto e relax"
-         ]
-      },
-      {
-         "id": "abruzzo_gran_sasso_lago_pietranzoni",
-         "name": "Lago Pietranzoni (Campo Imperatore)",
-         "type": "natura",
-         "area": "Abruzzo",
-         "lat": 42.4762,
-         "lon": 13.5668,
-         "tags": [
-            "natura",
-            "lago",
-            "montagna",
-            "fotografico"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.92,
-         "why": [
-            "Laghetto d’altura fotonico",
-            "Facile da raggiungere con bella luce",
-            "Stop perfetto on the road"
-         ]
-      },
-      {
-         "id": "abruzzo_ovindoli",
-         "name": "Ovindoli",
-         "type": "montagna",
-         "area": "Abruzzo",
-         "lat": 42.1335,
-         "lon": 13.5169,
-         "tags": [
-            "montagna",
-            "neve",
-            "sport",
-            "famiglie",
-            "sci"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.87,
-         "why": [
-            "Località top per sport e aria buona",
-            "Inverno: sci — estate: trekking easy",
-            "Ottima per famiglie"
-         ]
-      },
-      {
-         "id": "abruzzo_rocca_di_mezzo",
-         "name": "Rocca di Mezzo",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 42.2077,
-         "lon": 13.5219,
-         "tags": [
-            "borgo",
-            "montagna",
-            "relax",
-            "famiglie"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.85,
-         "why": [
-            "Base perfetta sull’Altopiano delle Rocche",
-            "Passeggiate facili e panorami",
-            "Weekend relax garantito"
-         ]
-      },
-      {
-         "id": "abruzzo_rocca_di_cambio",
-         "name": "Rocca di Cambio",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 42.2366,
-         "lon": 13.4906,
-         "tags": [
-            "borgo",
-            "montagna",
-            "panorama",
-            "chicca"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.86,
-         "why": [
-            "Tra i comuni più alti d’Italia",
-            "Scorci d’altopiano e aria pulita",
-            "Perfetto per tramonti"
-         ]
-      },
-      {
-         "id": "abruzzo_piani_di_pezza",
-         "name": "Piani di Pezza",
-         "type": "natura",
-         "area": "Abruzzo",
-         "lat": 42.1705,
-         "lon": 13.5142,
-         "tags": [
-            "natura",
-            "montagna",
-            "prati",
-            "famiglie",
-            "trekking"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.92,
-         "why": [
-            "Prati immensi e passeggiate facili",
-            "Family-friendly per picnic e giochi",
-            "Foto wow in tutte le stagioni"
-         ]
-      },
-      {
-         "id": "abruzzo_gole_celano",
-         "name": "Gole di Celano",
-         "type": "natura",
-         "area": "Abruzzo",
-         "lat": 42.0839,
-         "lon": 13.5584,
-         "tags": [
-            "natura",
-            "gole",
-            "trekking",
-            "avventura",
-            "famiglie"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.94,
-         "why": [
-            "Uno dei canyon più belli del Centro Italia",
-            "Percorsi wow tra pareti e acqua",
-            "Perfetto con guida/attività outdoor"
-         ]
-      },
-      {
-         "id": "abruzzo_castello_piccolomini",
-         "name": "Castello Piccolomini (Celano)",
-         "type": "storia",
-         "area": "Abruzzo",
-         "lat": 42.0847,
-         "lon": 13.5509,
-         "tags": [
-            "storia",
-            "castello",
-            "panorama",
-            "famiglie"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.87,
-         "why": [
-            "Castello spettacolare e ben conservato",
-            "Vista sulla piana del Fucino",
-            "Ottimo con bambini"
-         ]
-      },
-      {
-         "id": "abruzzo_aielli_borgo_universo",
-         "name": "Aielli (Borgo Universo)",
-         "type": "chicca",
-         "area": "Abruzzo",
-         "lat": 42.0796,
-         "lon": 13.5912,
-         "tags": [
-            "chicca",
-            "arte",
-            "borgo",
-            "fotografico",
-            "famiglie"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.91,
-         "why": [
-            "Murales e installazioni ovunque",
-            "Passeggiata perfetta per foto",
-            "Spesso eventi/visite guidate"
-         ]
-      },
-      {
-         "id": "abruzzo_tagliacozzo",
-         "name": "Tagliacozzo",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 42.0691,
-         "lon": 13.2546,
-         "tags": [
-            "borgo",
-            "storia",
-            "piazze",
-            "food"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.86,
-         "why": [
-            "Centro storico e piazza super belli",
-            "Giornata slow tra bar e botteghe",
-            "Ottimo per mangiare bene"
-         ]
-      },
-      {
-         "id": "abruzzo_avezzano",
-         "name": "Avezzano",
-         "type": "citta",
-         "area": "Abruzzo",
-         "lat": 42.0321,
-         "lon": 13.4266,
-         "tags": [
-            "citta",
-            "comoda",
-            "marsica",
-            "famiglie"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.72,
-         "why": [
-            "Comoda base logistica per Marsica e Sirente",
-            "Perfetta per partire verso gole/borghi",
-            "Servizi e ristoranti"
-         ]
-      },
-      {
-         "id": "abruzzo_lago_san_domenico",
-         "name": "Lago di San Domenico (Villalago)",
-         "type": "natura",
-         "area": "Abruzzo",
-         "lat": 41.9373,
-         "lon": 13.8467,
-         "tags": [
-            "natura",
-            "lago",
-            "fotografico",
-            "chicca"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.95,
-         "why": [
-            "Acqua verde smeraldo e scenario wow",
-            "Spot fotografico tra i migliori d’Abruzzo",
-            "Perfetto in giornata con Scanno/Villalago"
-         ]
-      },
-      {
-         "id": "abruzzo_villalago",
-         "name": "Villalago",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 41.934,
-         "lon": 13.8424,
-         "tags": [
-            "borgo",
-            "lago",
-            "panorama",
-            "chicca"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.9,
-         "why": [
-            "Borgo panoramico poco battuto",
-            "Vicino a Lago di San Domenico e Scanno",
-            "Atmosfera autentica"
-         ]
-      },
-      {
-         "id": "abruzzo_majella_eremi_roccamorice",
-         "name": "Eremi della Majella (Roccamorice)",
-         "type": "chicca",
-         "area": "Abruzzo",
-         "lat": 42.2186,
-         "lon": 14.019,
-         "tags": [
-            "chicca",
-            "natura",
-            "storia",
-            "trekking",
-            "fotografico"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.98,
-         "why": [
-            "Luoghi mistici scavati nella roccia",
-            "Esperienza wow con sentieri panoramici",
-            "Perfetti con guida/trekking"
-         ]
-      },
-      {
-         "id": "abruzzo_eremo_santo_spirito",
-         "name": "Eremo di Santo Spirito a Maiella",
-         "type": "chicca",
-         "area": "Abruzzo",
-         "lat": 42.2359,
-         "lon": 14.0489,
-         "tags": [
-            "chicca",
-            "natura",
-            "storia",
-            "trekking"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.95,
-         "why": [
-            "Eremo spettacolare nella roccia",
-            "Trekking scenico e atmosfera unica",
-            "Ideale per foto e natura"
-         ]
-      },
-      {
-         "id": "abruzzo_caramanico_terme",
-         "name": "Caramanico Terme",
-         "type": "relax",
-         "area": "Abruzzo",
-         "lat": 42.1613,
-         "lon": 14.0069,
-         "tags": [
-            "relax",
-            "terme",
-            "natura",
-            "famiglie"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.87,
-         "why": [
-            "Terme + natura: combo perfetta",
-            "Sentieri e canyon (Orfento) vicini",
-            "Ottimo per weekend rigenerante"
-         ]
-      },
-      {
-         "id": "abruzzo_valle_orfento",
-         "name": "Valle dell'Orfento (sentieri)",
-         "type": "natura",
-         "area": "Abruzzo",
-         "lat": 42.1385,
-         "lon": 14.0096,
-         "tags": [
-            "natura",
-            "trekking",
-            "fiume",
-            "chicca"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.93,
-         "why": [
-            "Uno dei trekking più belli della Maiella",
-            "Acqua, boschi e canyon",
-            "Esperienza perfetta con guida"
-         ]
-      },
-      {
-         "id": "abruzzo_guardiagrele",
-         "name": "Guardiagrele",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 42.1917,
-         "lon": 14.2208,
-         "tags": [
-            "borgo",
-            "storia",
-            "colline",
-            "food"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.87,
-         "why": [
-            "Borgo vivo e raffinato",
-            "Ottimo cibo e artigianato",
-            "Base per Maiella e dintorni"
-         ]
-      },
-      {
-         "id": "abruzzo_pennapiedimonte",
-         "name": "Pennapiedimonte",
-         "type": "chicca",
-         "area": "Abruzzo",
-         "lat": 42.1504,
-         "lon": 14.196,
-         "tags": [
-            "chicca",
-            "borgo",
-            "fotografico",
-            "montagna"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.91,
-         "why": [
-            "Borgo incastonato nella roccia",
-            "Scorci fotonici e atmosfera unica",
-            "Perfetto per foto e passeggio"
-         ]
-      },
-      {
-         "id": "abruzzo_fara_san_martino_gole",
-         "name": "Fara San Martino (Gole)",
-         "type": "natura",
-         "area": "Abruzzo",
-         "lat": 42.0893,
-         "lon": 14.205,
-         "tags": [
-            "natura",
-            "gole",
-            "trekking",
-            "acqua",
-            "famiglie"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.95,
-         "why": [
-            "Gole spettacolari e acqua limpida",
-            "Passeggiata facile e scenica",
-            "Ottima anche con bambini (tratti semplici)"
-         ]
-      },
-      {
-         "id": "abruzzo_lama_dei_peligni",
-         "name": "Lama dei Peligni",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 42.0396,
-         "lon": 14.1883,
-         "tags": [
-            "borgo",
-            "maiella",
-            "famiglie",
-            "natura"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.82,
-         "why": [
-            "Borgo di montagna con accesso a sentieri",
-            "Centro visite e attività natura",
-            "Ottimo per famiglie"
-         ]
-      },
-      {
-         "id": "abruzzo_pescocostanzo",
-         "name": "Pescocostanzo",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 41.8898,
-         "lon": 14.0651,
-         "tags": [
-            "borgo",
-            "storia",
-            "neve",
-            "famiglie"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.92,
-         "why": [
-            "Tra i borghi più belli d’Italia",
-            "Centro storico elegante",
-            "Ottimo in inverno/estate"
-         ]
-      },
-      {
-         "id": "abruzzo_roccaraso",
-         "name": "Roccaraso",
-         "type": "montagna",
-         "area": "Abruzzo",
-         "lat": 41.8472,
-         "lon": 14.0781,
-         "tags": [
-            "montagna",
-            "sci",
-            "famiglie",
-            "sport",
-            "impianti"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.88,
-         "why": [
-            "Top per sci e attività family",
-            "Piste, snowpark e noleggi",
-            "Estate: trekking e bike"
-         ]
-      },
-      {
-         "id": "abruzzo_rivisondoli",
-         "name": "Rivisondoli",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 41.8663,
-         "lon": 14.0669,
-         "tags": [
-            "borgo",
-            "montagna",
-            "neve",
-            "famiglie"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.86,
-         "why": [
-            "Borgo di montagna super carino",
-            "Perfetto con Roccaraso/Pescocostanzo",
-            "Atmosfera invernale top"
-         ]
-      },
-      {
-         "id": "abruzzo_campo_di_giove",
-         "name": "Campo di Giove",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 42.0145,
-         "lon": 14.0386,
-         "tags": [
-            "borgo",
-            "maiella",
-            "trekking",
-            "natura"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.87,
-         "why": [
-            "Borgo ai piedi della Maiella",
-            "Sentieri e panorami enormi",
-            "Ottimo per weekend outdoor"
-         ]
-      },
-      {
-         "id": "abruzzo_pescasseroli",
-         "name": "Pescasseroli",
-         "type": "montagna",
-         "area": "Abruzzo",
-         "lat": 41.8075,
-         "lon": 13.7871,
-         "tags": [
-            "montagna",
-            "parco_nazionale",
-            "natura",
-            "famiglie",
-            "animali"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.91,
-         "why": [
-            "Cuore del Parco Nazionale d’Abruzzo",
-            "Avvistamenti fauna + centri visita",
-            "Perfetto per famiglie e attività"
-         ]
-      },
-      {
-         "id": "abruzzo_lago_barrea",
-         "name": "Lago di Barrea",
-         "type": "natura",
-         "area": "Abruzzo",
-         "lat": 41.7569,
-         "lon": 13.9894,
-         "tags": [
-            "natura",
-            "lago",
-            "panorama",
-            "famiglie",
-            "foto"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.94,
-         "why": [
-            "Lago scenografico tra i monti",
-            "Passeggiata facile e punti vista",
-            "Spesso cervi in zona"
-         ]
-      },
-      {
-         "id": "abruzzo_barrea",
-         "name": "Barrea",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 41.7589,
-         "lon": 13.999,
-         "tags": [
-            "borgo",
-            "lago",
-            "panorama",
-            "famiglie"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.88,
-         "why": [
-            "Borgo sul lago super panoramico",
-            "Ottimo per tramonti",
-            "Perfetto con giro lago"
-         ]
-      },
-      {
-         "id": "abruzzo_civitella_alfedena",
-         "name": "Civitella Alfedena",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 41.7684,
-         "lon": 13.9502,
-         "tags": [
-            "borgo",
-            "chicca",
-            "parco_nazionale",
-            "famiglie",
-            "lupo"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.9,
-         "why": [
-            "Borgo delizioso nel Parco",
-            "Centro visita/educazione ambientale",
-            "Family-friendly + natura"
-         ]
-      },
-      {
-         "id": "abruzzo_opi",
-         "name": "Opi",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 41.7818,
-         "lon": 13.8272,
-         "tags": [
-            "borgo",
-            "chicca",
-            "panorama",
-            "parco_nazionale"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.91,
-         "why": [
-            "Borgo panorama tra i più belli del Parco",
-            "Atmosfera autentica",
-            "Perfetto per foto e quiete"
-         ]
-      },
-      {
-         "id": "abruzzo_villetta_barrea",
-         "name": "Villetta Barrea",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 41.7735,
-         "lon": 13.9365,
-         "tags": [
-            "borgo",
-            "lago",
-            "famiglie",
-            "parco_nazionale"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.88,
-         "why": [
-            "Comodissima sul lago",
-            "Passeggiate e relax",
-            "Ottima base per gite nel Parco"
-         ]
-      },
-      {
-         "id": "abruzzo_val_fondillo",
-         "name": "Val Fondillo (Opi)",
-         "type": "natura",
-         "area": "Abruzzo",
-         "lat": 41.7772,
-         "lon": 13.8325,
-         "tags": [
-            "natura",
-            "parco_nazionale",
-            "trekking",
-            "famiglie",
-            "animali"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.95,
-         "why": [
-            "Valle super verde e fresca",
-            "Passeggiate facili (anche con bambini)",
-            "Spot perfetto per picnic e natura"
-         ]
-      },
-      {
-         "id": "abruzzo_passo_godi",
-         "name": "Passo Godi",
-         "type": "natura",
-         "area": "Abruzzo",
-         "lat": 41.8747,
-         "lon": 13.8276,
-         "tags": [
-            "natura",
-            "panorama",
-            "parco_nazionale",
-            "neve"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.86,
-         "why": [
-            "Passo panoramico e area picnic",
-            "Inverno: neve e paesaggi wow",
-            "Ottimo per foto"
-         ]
-      },
-      {
-         "id": "abruzzo_martinsicuro",
-         "name": "Martinsicuro",
-         "type": "mare",
-         "area": "Abruzzo",
-         "lat": 42.8818,
-         "lon": 13.9146,
-         "tags": [
-            "mare",
-            "spiagge",
-            "famiglie",
-            "relax"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.74,
-         "why": [
-            "Spiagge lunghe e comode",
-            "Ottima per famiglie e servizi",
-            "Pista ciclabile costiera"
-         ]
-      },
-      {
-         "id": "abruzzo_villa_rosa",
-         "name": "Villa Rosa (Martinsicuro)",
-         "type": "mare",
-         "area": "Abruzzo",
-         "lat": 42.8566,
-         "lon": 13.9293,
-         "tags": [
-            "mare",
-            "spiagge",
-            "famiglie"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.73,
-         "why": [
-            "Lido tranquillo e family-friendly",
-            "Spiaggia ampia e servizi",
-            "Perfetto per giornata easy"
-         ]
-      },
-      {
-         "id": "abruzzo_alba_adriatica",
-         "name": "Alba Adriatica",
-         "type": "mare",
-         "area": "Abruzzo",
-         "lat": 42.8343,
-         "lon": 13.9282,
-         "tags": [
-            "mare",
-            "spiagge",
-            "famiglie",
-            "bike"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.76,
-         "why": [
-            "Lungomare bellissimo e pinete",
-            "Spiagge top per famiglie",
-            "Pista ciclabile spettacolare"
-         ]
-      },
-      {
-         "id": "abruzzo_tortoreto_lido",
-         "name": "Tortoreto Lido",
-         "type": "mare",
-         "area": "Abruzzo",
-         "lat": 42.8106,
-         "lon": 13.9496,
-         "tags": [
-            "mare",
-            "spiagge",
-            "famiglie",
-            "bike"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.76,
-         "why": [
-            "Spiagge comode e lungomare",
-            "Ottimo per bici/passeggiate",
-            "Ideale con bambini"
-         ]
-      },
-      {
-         "id": "abruzzo_tortoreto_borgo",
-         "name": "Tortoreto (borgo)",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 42.8069,
-         "lon": 13.961,
-         "tags": [
-            "borgo",
-            "panorama",
-            "mare",
-            "storia"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.83,
-         "why": [
-            "Borgo sopra il mare con vista",
-            "Centro storico carino",
-            "Perfetto al tramonto"
-         ]
-      },
-      {
-         "id": "abruzzo_giulianova",
-         "name": "Giulianova",
-         "type": "mare",
-         "area": "Abruzzo",
-         "lat": 42.7531,
-         "lon": 13.9647,
-         "tags": [
-            "mare",
-            "citta",
-            "famiglie",
-            "food"
          ],
          "visibility": "conosciuta",
          "beauty_score": 0.78,
          "why": [
-            "Mare comodo e città viva",
-            "Porto, ristoranti e lungomare",
-            "Weekend easy"
-         ]
-      },
-      {
-         "id": "abruzzo_rosello_roseto",
-         "name": "Roseto degli Abruzzi",
-         "type": "mare",
-         "area": "Abruzzo",
-         "lat": 42.6717,
-         "lon": 14.0149,
-         "tags": [
-            "mare",
-            "spiagge",
-            "famiglie"
+            "Città di mare viva e facile",
+            "Spiaggia + cena + passeggio"
          ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.75,
-         "why": [
-            "Spiagge ampie e servizi",
-            "Ottimo per famiglie",
-            "Base comoda per calanchi di Atri"
-         ]
-      },
-      {
-         "id": "abruzzo_pineto",
-         "name": "Pineto",
-         "type": "mare",
-         "area": "Abruzzo",
-         "lat": 42.6093,
-         "lon": 14.0667,
-         "tags": [
-            "mare",
-            "relax",
-            "passeggiata",
-            "pineta",
-            "famiglie"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.8,
-         "why": [
-            "Pineta sul mare e aria buona",
-            "Spiagge tranquille",
-            "Perfetta per relax"
-         ]
-      },
-      {
-         "id": "abruzzo_silvi",
-         "name": "Silvi",
-         "type": "mare",
-         "area": "Abruzzo",
-         "lat": 42.5595,
-         "lon": 14.1163,
-         "tags": [
-            "mare",
-            "famiglie",
-            "relax",
-            "belvedere"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.81,
-         "why": [
-            "Mare comodo e servizi",
-            "Belvedere in paese alto",
-            "Perfetta per weekend family"
-         ]
-      },
-      {
-         "id": "abruzzo_montesilvano",
-         "name": "Montesilvano",
-         "type": "mare",
-         "area": "Abruzzo",
-         "lat": 42.5112,
-         "lon": 14.1441,
-         "tags": [
-            "mare",
-            "spiagge",
-            "famiglie",
+         "activities": [
+            "spiaggia",
+            "nightlife",
             "shopping"
          ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.72,
-         "why": [
-            "Spiaggia lunga e servizi",
-            "Molto comoda per famiglie",
-            "Shopping e locali"
-         ]
-      },
-      {
-         "id": "abruzzo_pescara_ponte_del_mare",
-         "name": "Pescara — Ponte del Mare & lungomare",
-         "type": "mare",
-         "area": "Abruzzo",
-         "lat": 42.4688,
-         "lon": 14.2116,
-         "tags": [
-            "mare",
-            "citta",
-            "bike",
-            "famiglie",
-            "fotografico"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.82,
-         "why": [
-            "Passeggiata top sul Ponte del Mare",
-            "Perfetto per bici e tramonti",
-            "Locali e gelati ovunque"
-         ]
+         "monetize": {
+            "booking": "hotel",
+            "gyg": "tour"
+         }
       },
       {
          "id": "abruzzo_francavilla_al_mare",
          "name": "Francavilla al Mare",
          "type": "mare",
          "area": "Abruzzo",
-         "lat": 42.421,
-         "lon": 14.2809,
+         "lat": 42.4226,
+         "lon": 14.2828,
          "tags": [
             "mare",
             "spiagge",
-            "famiglie",
-            "food"
+            "arte"
          ],
          "visibility": "conosciuta",
-         "beauty_score": 0.75,
+         "beauty_score": 0.76,
          "why": [
-            "Spiagge comode e ristoranti",
-            "Ottima per giornata relax",
-            "Vicino a Pescara"
-         ]
+            "Lungomare e vibe artistica",
+            "Ottima per aperitivo vista mare"
+         ],
+         "activities": [
+            "spiaggia",
+            "aperitivo"
+         ],
+         "monetize": {
+            "booking": "hotel"
+         }
       },
       {
          "id": "abruzzo_ortona",
          "name": "Ortona",
          "type": "citta",
          "area": "Abruzzo",
-         "lat": 42.355,
-         "lon": 14.4033,
+         "lat": 42.356,
+         "lon": 14.4031,
          "tags": [
             "citta",
             "mare",
             "storia",
-            "trabocchi",
-            "famiglie"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.84,
-         "why": [
-            "Costa scenografica e centro storico",
-            "Trabocchi e panorami",
-            "Perfetta per mangiare pesce"
-         ]
-      },
-      {
-         "id": "abruzzo_castello_aragonese_ortona",
-         "name": "Castello Aragonese (Ortona)",
-         "type": "storia",
-         "area": "Abruzzo",
-         "lat": 42.357,
-         "lon": 14.4056,
-         "tags": [
-            "storia",
-            "mare",
-            "panorama",
-            "famiglie"
+            "trabocchi"
          ],
          "visibility": "conosciuta",
          "beauty_score": 0.83,
          "why": [
-            "Rocca sul mare con vista",
-            "Facile e bella da visitare",
-            "Tramonti top"
-         ]
+            "Porto + storia",
+            "Porta della Costa dei Trabocchi"
+         ],
+         "activities": [
+            "trabocchi",
+            "porto"
+         ],
+         "monetize": {
+            "booking": "hotel",
+            "gyg": "tour"
+         }
       },
       {
-         "id": "abruzzo_ripari_di_giobbe",
-         "name": "Ripari di Giobbe (Ortona)",
+         "id": "abruzzo_lido_riccio_ortona",
+         "name": "Lido Riccio (Ortona)",
          "type": "mare",
          "area": "Abruzzo",
-         "lat": 42.3301,
-         "lon": 14.4518,
+         "lat": 42.309,
+         "lon": 14.446,
          "tags": [
             "mare",
             "spiagge",
-            "natura",
-            "chicca",
-            "snorkeling"
+            "chicca"
          ],
          "visibility": "chicca",
-         "beauty_score": 0.95,
+         "beauty_score": 0.8,
          "why": [
-            "Una delle calette più belle d’Abruzzo",
-            "Acqua limpida e natura",
-            "Ideale per foto e bagno"
-         ]
+            "Spiaggia comoda vicino Ortona",
+            "Buona per giornata easy"
+         ],
+         "activities": [
+            "spiaggia"
+         ],
+         "monetize": {
+            "booking": "hotel"
+         }
       },
       {
          "id": "abruzzo_san_vito_chietino",
@@ -1366,17 +364,49 @@
          "tags": [
             "mare",
             "trabocchi",
-            "relax",
-            "bike",
-            "famiglie"
+            "relax"
          ],
          "visibility": "conosciuta",
-         "beauty_score": 0.89,
+         "beauty_score": 0.88,
          "why": [
-            "Cuore della Costa dei Trabocchi",
-            "Ciclovia e punti vista",
-            "Trabocchi e cene sul mare"
-         ]
+            "Cuore dei Trabocchi",
+            "Panorami top e ciclabile"
+         ],
+         "activities": [
+            "trabocchi",
+            "bike costa"
+         ],
+         "monetize": {
+            "booking": "hotel",
+            "gyg": "tour",
+            "tiqets": "attrazioni"
+         }
+      },
+      {
+         "id": "abruzzo_marina_di_san_vito_calata_turchino",
+         "name": "Marina di San Vito / Calata Turchino",
+         "type": "mare",
+         "area": "Abruzzo",
+         "lat": 42.296,
+         "lon": 14.454,
+         "tags": [
+            "mare",
+            "trabocchi",
+            "fotografico"
+         ],
+         "visibility": "conosciuta",
+         "beauty_score": 0.84,
+         "why": [
+            "Spot iconico dei Trabocchi",
+            "Foto e passeggio sul mare"
+         ],
+         "activities": [
+            "foto",
+            "passeggio"
+         ],
+         "monetize": {
+            "gyg": "tour"
+         }
       },
       {
          "id": "abruzzo_rocca_san_giovanni",
@@ -1392,15 +422,21 @@
             "trabocchi"
          ],
          "visibility": "conosciuta",
-         "beauty_score": 0.88,
+         "beauty_score": 0.86,
          "why": [
-            "Borgo con vista sulla costa",
-            "Perfetto con Trabocchi",
-            "Foto e passeggio"
-         ]
+            "Borgo panoramico sulla costa",
+            "Perfetto al tramonto"
+         ],
+         "activities": [
+            "belvedere",
+            "cena trabocco"
+         ],
+         "monetize": {
+            "booking": "hotel"
+         }
       },
       {
-         "id": "abruzzo_abbazia_san_giovanni_in_venere",
+         "id": "abruzzo_abbazia_di_san_giovanni_in_venere",
          "name": "Abbazia di San Giovanni in Venere",
          "type": "storia",
          "area": "Abruzzo",
@@ -1410,144 +446,100 @@
             "storia",
             "mare",
             "panorama",
-            "chicca",
-            "famiglie"
+            "abbazia"
          ],
          "visibility": "conosciuta",
-         "beauty_score": 0.94,
+         "beauty_score": 0.93,
          "why": [
             "Abbazia spettacolare vista mare",
-            "Tappa culturale super scenica",
-            "Perfetta al tramonto"
-         ]
+            "Foto incredibili e visita culturale"
+         ],
+         "activities": [
+            "visita abbazia",
+            "tramonto"
+         ],
+         "monetize": {
+            "gyg": "tour",
+            "tiqets": "attrazioni"
+         }
       },
       {
          "id": "abruzzo_fossacesia_marina",
          "name": "Fossacesia Marina",
          "type": "mare",
          "area": "Abruzzo",
-         "lat": 42.245,
-         "lon": 14.487,
+         "lat": 42.241,
+         "lon": 14.486,
          "tags": [
             "mare",
-            "trabocchi",
             "spiagge",
-            "famiglie"
+            "trabocchi"
          ],
          "visibility": "conosciuta",
-         "beauty_score": 0.82,
+         "beauty_score": 0.8,
          "why": [
-            "Spiagge e trabocchi vicinissimi",
-            "Perfetta per giornata mare",
-            "Ottima base per ciclovia"
-         ]
-      },
-      {
-         "id": "abruzzo_lanciano",
-         "name": "Lanciano",
-         "type": "citta",
-         "area": "Abruzzo",
-         "lat": 42.2287,
-         "lon": 14.3909,
-         "tags": [
-            "citta",
-            "storia",
-            "food",
-            "famiglie"
+            "Mare + trabocchi vicino",
+            "Ottimo per giornata completa"
          ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.84,
-         "why": [
-            "Centro storico molto bello",
-            "Ottima per mangiare bene",
-            "Perfetta con costa trabocchi"
-         ]
+         "activities": [
+            "spiaggia",
+            "trabocchi"
+         ],
+         "monetize": {
+            "booking": "hotel"
+         }
       },
       {
          "id": "abruzzo_torino_di_sangro_le_morge",
-         "name": "Torino di Sangro — Le Morge",
+         "name": "Torino di Sangro (Le Morge)",
          "type": "mare",
          "area": "Abruzzo",
-         "lat": 42.2487,
-         "lon": 14.546,
+         "lat": 42.2467,
+         "lon": 14.5402,
          "tags": [
             "mare",
-            "trabocchi",
+            "chicca",
             "spiagge",
-            "chicca"
+            "trabocchi"
          ],
          "visibility": "chicca",
-         "beauty_score": 0.9,
+         "beauty_score": 0.88,
          "why": [
-            "Tratto costa molto scenografico",
-            "Spiaggia ampia e trabocchi",
-            "Ottimo per foto e relax"
-         ]
+            "Spiaggia scenografica e meno affollata",
+            "Ottima per foto e relax"
+         ],
+         "activities": [
+            "spiaggia",
+            "foto"
+         ],
+         "monetize": {
+            "booking": "hotel"
+         }
       },
       {
          "id": "abruzzo_casalbordino_lido",
          "name": "Casalbordino Lido",
          "type": "mare",
          "area": "Abruzzo",
-         "lat": 42.1348,
-         "lon": 14.6334,
+         "lat": 42.1332,
+         "lon": 14.5822,
          "tags": [
             "mare",
             "spiagge",
-            "famiglie",
-            "relax"
+            "famiglie"
          ],
          "visibility": "conosciuta",
-         "beauty_score": 0.76,
+         "beauty_score": 0.78,
          "why": [
-            "Spiaggia lunga e tranquilla",
-            "Family-friendly e easy",
-            "Vicino a riserve e Vasto"
-         ]
-      },
-      {
-         "id": "abruzzo_torre_sinello",
-         "name": "Riserva Naturale Punta Aderci — Torre Sinello",
-         "type": "mare",
-         "area": "Abruzzo",
-         "lat": 42.1337,
-         "lon": 14.7346,
-         "tags": [
-            "mare",
-            "natura",
-            "chicca",
-            "spiagge",
-            "foto"
+            "Lido comodo e tranquillo",
+            "Perfetto per famiglie"
          ],
-         "visibility": "chicca",
-         "beauty_score": 0.98,
-         "why": [
-            "Natura selvaggia e mare top",
-            "Una delle spiagge più belle d’Italia",
-            "Ideale per trekking costiero e foto"
-         ]
-      },
-      {
-         "id": "abruzzo_costa_trabocchi",
-         "name": "Costa dei Trabocchi (tratto scenico)",
-         "type": "mare",
-         "area": "Abruzzo",
-         "lat": 42.2145,
-         "lon": 14.4501,
-         "tags": [
-            "mare",
-            "trabocchi",
-            "panorama",
-            "bike",
-            "food"
+         "activities": [
+            "spiaggia"
          ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.96,
-         "why": [
-            "Uno dei tratti di costa più scenografici",
-            "Ciclovia sul mare + soste food",
-            "Perfetta per esperienze monetizzabili"
-         ]
+         "monetize": {
+            "booking": "hotel"
+         }
       },
       {
          "id": "abruzzo_vasto",
@@ -1559,40 +551,50 @@
          "tags": [
             "citta",
             "mare",
-            "panorama",
-            "famiglie"
+            "panorama"
          ],
          "visibility": "conosciuta",
-         "beauty_score": 0.87,
+         "beauty_score": 0.86,
          "why": [
             "Centro storico con vista mare",
-            "Spiagge e riserve vicine",
-            "Ottima base per weekend"
-         ]
+            "Base perfetta per Punta Aderci"
+         ],
+         "activities": [
+            "centro storico",
+            "spiaggia"
+         ],
+         "monetize": {
+            "booking": "hotel",
+            "gyg": "tour"
+         }
       },
       {
-         "id": "abruzzo_vasto_marina",
-         "name": "Vasto Marina",
+         "id": "abruzzo_marina_di_vasto",
+         "name": "Marina di Vasto",
          "type": "mare",
          "area": "Abruzzo",
-         "lat": 42.1059,
-         "lon": 14.7337,
+         "lat": 42.108,
+         "lon": 14.726,
          "tags": [
             "mare",
             "spiagge",
-            "famiglie",
-            "relax"
+            "famiglie"
          ],
          "visibility": "conosciuta",
-         "beauty_score": 0.79,
+         "beauty_score": 0.78,
          "why": [
-            "Spiaggia ampia e servizi",
-            "Perfetta per famiglie",
-            "Passeggiata serale piacevole"
-         ]
+            "Spiaggia attrezzata e facile",
+            "Ottima per famiglie"
+         ],
+         "activities": [
+            "spiaggia"
+         ],
+         "monetize": {
+            "booking": "hotel"
+         }
       },
       {
-         "id": "abruzzo_punta_aderci",
+         "id": "abruzzo_riserva_naturale_punta_aderci",
          "name": "Riserva Naturale Punta Aderci",
          "type": "mare",
          "area": "Abruzzo",
@@ -1605,144 +607,392 @@
             "spiagge",
             "trekking"
          ],
-         "visibility": "chicca",
-         "beauty_score": 0.98,
+         "visibility": "conosciuta",
+         "beauty_score": 0.97,
          "why": [
-            "Tratti di costa selvaggi e acqua top",
-            "Sentieri facili con panorami",
-            "Ottima per foto e picnic"
-         ]
+            "Una delle spiagge naturali più belle d’Italia",
+            "Scogliere + sentieri vista mare"
+         ],
+         "activities": [
+            "spiaggia",
+            "sentieri"
+         ],
+         "monetize": {
+            "gyg": "tour"
+         }
       },
       {
-         "id": "abruzzo_san_salvo",
-         "name": "San Salvo",
+         "id": "abruzzo_punta_penna_vasto",
+         "name": "Punta Penna (Vasto)",
          "type": "mare",
          "area": "Abruzzo",
-         "lat": 42.0432,
-         "lon": 14.7274,
+         "lat": 42.1029,
+         "lon": 14.7794,
          "tags": [
             "mare",
             "spiagge",
-            "famiglie",
-            "relax"
+            "chicca",
+            "fotografico"
          ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.74,
+         "visibility": "chicca",
+         "beauty_score": 0.9,
          "why": [
-            "Spiagge ampie e comode",
-            "Perfetta per relax family",
-            "Ottima per giornate mare easy"
-         ]
+            "Faro iconico e spiaggia lunga",
+            "Atmosfera wild e fotonica"
+         ],
+         "activities": [
+            "spiaggia",
+            "foto faro"
+         ],
+         "monetize": {
+            "booking": "hotel"
+         }
       },
       {
          "id": "abruzzo_san_salvo_marina",
          "name": "San Salvo Marina",
          "type": "mare",
          "area": "Abruzzo",
-         "lat": 42.0606,
-         "lon": 14.7367,
+         "lat": 42.0319,
+         "lon": 14.7369,
          "tags": [
             "mare",
             "spiagge",
             "famiglie"
          ],
          "visibility": "conosciuta",
-         "beauty_score": 0.74,
+         "beauty_score": 0.75,
          "why": [
-            "Lido comodo e servizi",
-            "Family-friendly",
-            "Passeggiata sul mare"
-         ]
+            "Spiagge comode e servizi",
+            "Ottimo con bambini"
+         ],
+         "activities": [
+            "spiaggia"
+         ],
+         "monetize": {
+            "booking": "hotel"
+         }
       },
       {
-         "id": "abruzzo_riserva_punta_penna",
-         "name": "Punta Penna (Vasto)",
-         "type": "mare",
+         "id": "abruzzo_riserva_marina_di_punta_aderci_belvedere",
+         "name": "Riserva Marina di Punta Aderci (belvedere)",
+         "type": "natura",
          "area": "Abruzzo",
-         "lat": 42.0815,
-         "lon": 14.6997,
+         "lat": 42.146,
+         "lon": 14.724,
          "tags": [
+            "natura",
             "mare",
-            "spiagge",
-            "chicca",
-            "faro",
+            "panorama",
+            "fotografico"
+         ],
+         "visibility": "chicca",
+         "beauty_score": 0.88,
+         "why": [
+            "Belvedere e sentieri vista mare",
+            "Foto top"
+         ],
+         "activities": [
+            "sentiero",
             "foto"
+         ],
+         "monetize": {
+            "gyg": "tour"
+         }
+      },
+      {
+         "id": "abruzzo_laquila",
+         "name": "L'Aquila",
+         "type": "citta",
+         "area": "Abruzzo",
+         "lat": 42.3498,
+         "lon": 13.3995,
+         "tags": [
+            "citta",
+            "storia",
+            "montagna"
+         ],
+         "visibility": "conosciuta",
+         "beauty_score": 0.85,
+         "why": [
+            "Città storica nel cuore dell’Appennino",
+            "Base perfetta per Gran Sasso"
+         ],
+         "activities": [
+            "centro storico",
+            "musei"
+         ],
+         "monetize": {
+            "booking": "hotel",
+            "gyg": "tour"
+         }
+      },
+      {
+         "id": "abruzzo_campo_imperatore",
+         "name": "Campo Imperatore",
+         "type": "montagna",
+         "area": "Abruzzo",
+         "lat": 42.4486,
+         "lon": 13.5566,
+         "tags": [
+            "montagna",
+            "natura",
+            "panorama",
+            "trekking"
+         ],
+         "visibility": "conosciuta",
+         "beauty_score": 0.98,
+         "why": [
+            "Paesaggi da Piccolo Tibet",
+            "Panorami enormi e aria top"
+         ],
+         "activities": [
+            "trekking",
+            "foto",
+            "rifugio"
+         ],
+         "monetize": {
+            "gyg": "tour"
+         }
+      },
+      {
+         "id": "abruzzo_gran_sasso_fonte_cerreto",
+         "name": "Gran Sasso (Fonte Cerreto)",
+         "type": "montagna",
+         "area": "Abruzzo",
+         "lat": 42.424,
+         "lon": 13.564,
+         "tags": [
+            "montagna",
+            "funivia",
+            "family",
+            "attivita"
+         ],
+         "visibility": "conosciuta",
+         "beauty_score": 0.88,
+         "why": [
+            "Funivia per Campo Imperatore (stagionale)",
+            "Gita family super"
+         ],
+         "activities": [
+            "funivia",
+            "panorami"
+         ],
+         "monetize": {
+            "gyg": "tour",
+            "booking": "hotel"
+         }
+      },
+      {
+         "id": "abruzzo_rocca_calascio",
+         "name": "Rocca Calascio",
+         "type": "chicca",
+         "area": "Abruzzo",
+         "lat": 42.3276,
+         "lon": 13.6945,
+         "tags": [
+            "chicca",
+            "montagna",
+            "panorama",
+            "fotografico"
+         ],
+         "visibility": "chicca",
+         "beauty_score": 1,
+         "why": [
+            "Rocca iconica e atmosfera unica",
+            "Tra i panorami più spettacolari d’Italia"
+         ],
+         "activities": [
+            "salita rocca",
+            "foto"
+         ],
+         "monetize": {
+            "gyg": "tour"
+         }
+      },
+      {
+         "id": "abruzzo_santo_stefano_di_sessanio",
+         "name": "Santo Stefano di Sessanio",
+         "type": "borgo",
+         "area": "Abruzzo",
+         "lat": 42.3431,
+         "lon": 13.6456,
+         "tags": [
+            "borgo",
+            "chicca",
+            "storia",
+            "montagna"
+         ],
+         "visibility": "conosciuta",
+         "beauty_score": 0.98,
+         "why": [
+            "Borgo medievale curatissimo",
+            "Perfetto per weekend slow"
+         ],
+         "activities": [
+            "passeggio borgo",
+            "artigianato"
+         ],
+         "monetize": {
+            "booking": "hotel"
+         }
+      },
+      {
+         "id": "abruzzo_castel_del_monte_aq",
+         "name": "Castel del Monte (AQ)",
+         "type": "borgo",
+         "area": "Abruzzo",
+         "lat": 42.3656,
+         "lon": 13.7269,
+         "tags": [
+            "borgo",
+            "montagna",
+            "panorama"
+         ],
+         "visibility": "conosciuta",
+         "beauty_score": 0.9,
+         "why": [
+            "Borgo di pietra sul Gran Sasso",
+            "Atmosfera autentica d’altopiano"
+         ],
+         "activities": [
+            "passeggio",
+            "foto"
+         ],
+         "monetize": {
+            "booking": "hotel"
+         }
+      },
+      {
+         "id": "abruzzo_lago_di_campotosto",
+         "name": "Lago di Campotosto",
+         "type": "natura",
+         "area": "Abruzzo",
+         "lat": 42.5512,
+         "lon": 13.372,
+         "tags": [
+            "natura",
+            "lago",
+            "relax",
+            "panorama"
+         ],
+         "visibility": "conosciuta",
+         "beauty_score": 0.92,
+         "why": [
+            "Grande lago d’altura",
+            "Strade panoramiche top"
+         ],
+         "activities": [
+            "giro lago",
+            "foto"
+         ],
+         "monetize": {
+            "booking": "hotel"
+         }
+      },
+      {
+         "id": "abruzzo_gole_di_celano",
+         "name": "Gole di Celano",
+         "type": "natura",
+         "area": "Abruzzo",
+         "lat": 42.0839,
+         "lon": 13.5584,
+         "tags": [
+            "natura",
+            "trekking",
+            "gole",
+            "avventura"
+         ],
+         "visibility": "conosciuta",
+         "beauty_score": 0.93,
+         "why": [
+            "Uno dei canyon più belli del centro Italia",
+            "Percorso wow tra pareti e acqua"
+         ],
+         "activities": [
+            "trekking"
+         ],
+         "monetize": {
+            "gyg": "tour"
+         }
+      },
+      {
+         "id": "abruzzo_castello_piccolomini_celano",
+         "name": "Castello Piccolomini (Celano)",
+         "type": "storia",
+         "area": "Abruzzo",
+         "lat": 42.0847,
+         "lon": 13.5509,
+         "tags": [
+            "storia",
+            "castello",
+            "panorama"
+         ],
+         "visibility": "conosciuta",
+         "beauty_score": 0.86,
+         "why": [
+            "Castello spettacolare",
+            "Vista sulla piana del Fucino"
+         ],
+         "activities": [
+            "visita castello"
+         ],
+         "monetize": {
+            "tiqets": "attrazioni"
+         }
+      },
+      {
+         "id": "abruzzo_aielli_borgo_universo",
+         "name": "Aielli (Borgo Universo)",
+         "type": "chicca",
+         "area": "Abruzzo",
+         "lat": 42.0796,
+         "lon": 13.5912,
+         "tags": [
+            "chicca",
+            "arte",
+            "borgo",
+            "fotografico"
          ],
          "visibility": "chicca",
          "beauty_score": 0.9,
          "why": [
-            "Spiaggia lunghissima e faro iconico",
-            "Atmosfera selvaggia",
-            "Ottima per foto e relax"
-         ]
+            "Murales e arte ovunque",
+            "Passeggio perfetto per foto"
+         ],
+         "activities": [
+            "street art"
+         ],
+         "monetize": {
+            "gyg": "tour"
+         }
       },
       {
-         "id": "abruzzo_zoo_abruzzo",
-         "name": "Zoo d'Abruzzo (Rocca San Giovanni)",
-         "type": "bambini",
+         "id": "abruzzo_sulmona",
+         "name": "Sulmona",
+         "type": "citta",
          "area": "Abruzzo",
-         "lat": 42.27,
-         "lon": 14.474,
+         "lat": 42.048,
+         "lon": 13.9246,
          "tags": [
-            "bambini",
-            "famiglie",
-            "animali",
-            "attivita",
-            "monetizzabile"
+            "citta",
+            "storia",
+            "dolci"
          ],
          "visibility": "conosciuta",
-         "beauty_score": 0.8,
+         "beauty_score": 0.88,
          "why": [
-            "Giornata perfetta con bambini",
-            "Animali e percorsi visitabili",
-            "Ottimo abbinato ai Trabocchi"
-         ]
-      },
-      {
-         "id": "abruzzo_aqualand_vasto",
-         "name": "Aqualand del Vasto (Acquapark)",
-         "type": "bambini",
-         "area": "Abruzzo",
-         "lat": 42.125,
-         "lon": 14.675,
-         "tags": [
-            "bambini",
-            "famiglie",
-            "acquapark",
-            "attivita",
-            "estate",
-            "monetizzabile"
+            "Città elegante e vivibile",
+            "Confetti e centro storico"
          ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.82,
-         "why": [
-            "Acquapark: scivoli e divertimento",
-            "Super monetizzabile (biglietti)",
-            "Perfetto in estate con mare"
-         ]
-      },
-      {
-         "id": "abruzzo_ondablu_tortoreto",
-         "name": "Acquapark OndaBlu (Tortoreto)",
-         "type": "bambini",
-         "area": "Abruzzo",
-         "lat": 42.8095,
-         "lon": 13.953,
-         "tags": [
-            "bambini",
-            "famiglie",
-            "acquapark",
-            "attivita",
-            "estate",
-            "monetizzabile"
+         "activities": [
+            "passeggio",
+            "shopping tipico"
          ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.8,
-         "why": [
-            "Acquapark storico e super family",
-            "Biglietti/servizi monetizzabili",
-            "Ottimo con mare Teramano"
-         ]
+         "monetize": {
+            "booking": "hotel",
+            "gyg": "tour"
+         }
       },
       {
          "id": "abruzzo_pacentro",
@@ -1754,37 +1004,20 @@
          "tags": [
             "borgo",
             "panorama",
-            "storia",
             "chicca"
          ],
          "visibility": "conosciuta",
-         "beauty_score": 0.93,
+         "beauty_score": 0.92,
          "why": [
-            "Uno dei borghi più belli d’Abruzzo",
-            "Scorci medievali e foto",
-            "Perfetto con Sulmona"
-         ]
-      },
-      {
-         "id": "abruzzo_pettorano_sul_gizio",
-         "name": "Pettorano sul Gizio",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 42.0616,
-         "lon": 13.9772,
-         "tags": [
-            "borgo",
-            "storia",
-            "natura",
-            "chicca"
+            "Borgo tra i più belli",
+            "Scorci medievali"
          ],
-         "visibility": "chicca",
-         "beauty_score": 0.88,
-         "why": [
-            "Borgo arroccato super suggestivo",
-            "Riserva del Gizio e sentieri",
-            "Poco affollato: chicca vera"
-         ]
+         "activities": [
+            "passeggio borgo"
+         ],
+         "monetize": {
+            "booking": "hotel"
+         }
       },
       {
          "id": "abruzzo_scanno",
@@ -1796,19 +1029,24 @@
          "tags": [
             "borgo",
             "lago",
-            "fotografico",
-            "famiglie"
+            "fotografico"
          ],
          "visibility": "conosciuta",
-         "beauty_score": 0.96,
+         "beauty_score": 0.95,
          "why": [
-            "Tra i borghi più iconici",
-            "Vicoli e botteghe",
-            "Perfetto con Lago di Scanno"
-         ]
+            "Borgo iconico",
+            "Atmosfera d’Abruzzo autentico"
+         ],
+         "activities": [
+            "passeggio borgo",
+            "foto"
+         ],
+         "monetize": {
+            "booking": "hotel"
+         }
       },
       {
-         "id": "abruzzo_lago_scanno",
+         "id": "abruzzo_lago_di_scanno",
          "name": "Lago di Scanno",
          "type": "natura",
          "area": "Abruzzo",
@@ -1818,237 +1056,166 @@
             "natura",
             "lago",
             "relax",
-            "famiglie",
-            "foto"
+            "famiglie"
          ],
          "visibility": "conosciuta",
-         "beauty_score": 0.93,
-         "why": [
-            "Passeggiata facile e bellissima",
-            "Punti foto ‘cuore’ panoramici",
-            "Picnic e relax assicurati"
-         ]
-      },
-      {
-         "id": "abruzzo_atri",
-         "name": "Atri",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 42.577,
-         "lon": 13.9798,
-         "tags": [
-            "borgo",
-            "storia",
-            "calanchi",
-            "food"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.89,
-         "why": [
-            "Centro storico elegante",
-            "Vicino ai calanchi (paesaggio lunare)",
-            "Ottimo per degustazioni"
-         ]
-      },
-      {
-         "id": "abruzzo_calanchi_atri",
-         "name": "Calanchi di Atri",
-         "type": "natura",
-         "area": "Abruzzo",
-         "lat": 42.5906,
-         "lon": 13.9808,
-         "tags": [
-            "natura",
-            "panorama",
-            "fotografico",
-            "chicca"
-         ],
-         "visibility": "chicca",
          "beauty_score": 0.92,
          "why": [
-            "Paesaggio lunare unico",
-            "Tramonti pazzeschi",
-            "Ottimo per foto e passeggiate"
-         ]
+            "Passeggiata facile e bellissima",
+            "Ottimo per famiglie"
+         ],
+         "activities": [
+            "passeggiata",
+            "picnic"
+         ],
+         "monetize": {
+            "booking": "hotel"
+         }
       },
       {
-         "id": "abruzzo_civita_del_tronto",
-         "name": "Civitella del Tronto",
-         "type": "borgo",
+         "id": "abruzzo_lago_di_barrea",
+         "name": "Lago di Barrea",
+         "type": "natura",
          "area": "Abruzzo",
-         "lat": 42.7715,
-         "lon": 13.6651,
+         "lat": 41.7569,
+         "lon": 13.9894,
          "tags": [
-            "borgo",
-            "storia",
-            "fortezza",
+            "natura",
+            "lago",
             "panorama",
             "famiglie"
          ],
          "visibility": "conosciuta",
          "beauty_score": 0.93,
          "why": [
-            "Fortezza tra le più grandi d’Italia",
-            "Vista enorme sulle colline",
-            "Visita super interessante"
-         ]
+            "Lago scenografico tra i monti",
+            "Perfetto per foto e picnic"
+         ],
+         "activities": [
+            "picnic",
+            "passeggio lago"
+         ],
+         "monetize": {
+            "booking": "hotel"
+         }
       },
       {
-         "id": "abruzzo_citta_sant_angelo",
-         "name": "Città Sant’Angelo",
-         "type": "borgo",
+         "id": "abruzzo_parco_nazionale_dabruzzo_pescasseroli",
+         "name": "Parco Nazionale d’Abruzzo (Pescasseroli)",
+         "type": "bambini",
          "area": "Abruzzo",
-         "lat": 42.5187,
-         "lon": 14.0603,
+         "lat": 41.8075,
+         "lon": 13.7871,
          "tags": [
-            "borgo",
-            "storia",
-            "panorama",
-            "food"
+            "bambini",
+            "famiglie",
+            "natura",
+            "parco_nazionale",
+            "animali"
          ],
          "visibility": "conosciuta",
-         "beauty_score": 0.86,
+         "beauty_score": 0.92,
          "why": [
-            "Borgo collinare super curato",
-            "Vista mare+colline",
-            "Ottimo per cena e passeggio"
-         ]
-      },
-      {
-         "id": "abruzzo_penne",
-         "name": "Penne (centro storico)",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 42.4536,
-         "lon": 13.9294,
-         "tags": [
-            "borgo",
-            "storia",
-            "food",
-            "famiglie"
+            "Natura e fauna (cervi, orsi)",
+            "Passeggiate facili per famiglie"
          ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.82,
-         "why": [
-            "Centro storico interessante",
-            "Vicino a riserve e natura",
-            "Ottimo per giornata slow"
-         ]
+         "activities": [
+            "centri visita",
+            "sentieri facili"
+         ],
+         "monetize": {
+            "gyg": "tour",
+            "booking": "hotel"
+         }
       },
       {
-         "id": "abruzzo_lago_penne_wwf",
-         "name": "Riserva WWF Lago di Penne",
-         "type": "natura",
+         "id": "abruzzo_grotte_di_stiffe",
+         "name": "Grotte di Stiffe",
+         "type": "family",
          "area": "Abruzzo",
-         "lat": 42.4348,
-         "lon": 13.941,
+         "lat": 42.2876,
+         "lon": 13.5666,
          "tags": [
             "natura",
-            "wwf",
+            "grotte",
             "famiglie",
-            "animali",
-            "birdwatching"
+            "attivita"
          ],
          "visibility": "conosciuta",
-         "beauty_score": 0.88,
+         "beauty_score": 0.9,
          "why": [
-            "Percorsi natura e avvistamento fauna",
-            "Perfetta per famiglie e scuole",
-            "Esperienza monetizzabile (visite guidate)"
-         ]
+            "Grotte visitabili e spettacolari",
+            "Esperienza perfetta con bambini"
+         ],
+         "activities": [
+            "visita grotte"
+         ],
+         "monetize": {
+            "tiqets": "attrazioni",
+            "gyg": "tour"
+         }
       },
       {
-         "id": "abruzzo_capitignano_cascata",
-         "name": "Cascata delle 100 Fonti (Cesacastina)",
+         "id": "abruzzo_cascata_del_rio_verde_borrello",
+         "name": "Cascata del Rio Verde (Borrello)",
          "type": "natura",
          "area": "Abruzzo",
-         "lat": 42.54,
-         "lon": 13.472,
+         "lat": 41.9172,
+         "lon": 14.3046,
          "tags": [
             "natura",
             "cascata",
-            "trekking",
-            "chicca"
+            "fotografico",
+            "family"
          ],
          "visibility": "chicca",
-         "beauty_score": 0.92,
+         "beauty_score": 0.9,
          "why": [
-            "Sentiero fresco con cascatelle",
-            "Perfetto in estate",
-            "Foto e picnic top"
-         ]
+            "Tra le cascate più alte d’Appennino",
+            "Belvedere e sentieri"
+         ],
+         "activities": [
+            "belvedere",
+            "foto"
+         ],
+         "monetize": {
+            "booking": "hotel"
+         }
       },
       {
-         "id": "abruzzo_bominaco",
-         "name": "Bominaco (Oratorio di San Pellegrino)",
-         "type": "storia",
+         "id": "abruzzo_zoo_dabruzzo_rocca_san_giovanni",
+         "name": "Zoo d’Abruzzo (Rocca San Giovanni)",
+         "type": "family",
          "area": "Abruzzo",
-         "lat": 42.2213,
-         "lon": 13.6299,
+         "lat": 42.244,
+         "lon": 14.473,
          "tags": [
-            "storia",
-            "arte",
-            "chicca",
-            "abbazia"
+            "family",
+            "animali",
+            "bambini",
+            "attivita"
          ],
-         "visibility": "chicca",
-         "beauty_score": 0.93,
+         "visibility": "conosciuta",
+         "beauty_score": 0.8,
          "why": [
-            "Affreschi tra i più belli d’Italia",
-            "Chicca culturale pazzesca",
-            "Perfetta per gita slow"
-         ]
+            "Giornata animali con bambini",
+            "Perfetto per famiglie"
+         ],
+         "activities": [
+            "visita zoo"
+         ],
+         "monetize": {
+            "tiqets": "attrazioni",
+            "gyg": "tour"
+         }
       },
       {
-         "id": "abruzzo_capestrano",
-         "name": "Capestrano",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 42.2679,
-         "lon": 13.7738,
-         "tags": [
-            "borgo",
-            "storia",
-            "panorama",
-            "fiume"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.84,
-         "why": [
-            "Borgo autentico e panoramico",
-            "Vicino al Tirino (acque limpide)",
-            "Perfetto per giornata easy"
-         ]
-      },
-      {
-         "id": "abruzzo_tirino_canottaggio",
-         "name": "Fiume Tirino (canoa/kayak)",
-         "type": "natura",
-         "area": "Abruzzo",
-         "lat": 42.2419,
-         "lon": 13.7847,
-         "tags": [
-            "natura",
-            "acqua",
-            "attivita",
-            "famiglie",
-            "monetizzabile"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.96,
-         "why": [
-            "Acque tra le più limpide d’Europa",
-            "Canoa/kayak guidato super monetizzabile",
-            "Perfetto anche per famiglie"
-         ]
-      },
-      {
-         "id": "abruzzo_popoli_terme",
-         "name": "Popoli Terme",
+         "id": "abruzzo_caramanico_terme",
+         "name": "Caramanico Terme",
          "type": "relax",
          "area": "Abruzzo",
-         "lat": 42.1717,
-         "lon": 13.8281,
+         "lat": 42.1613,
+         "lon": 14.0069,
          "tags": [
             "relax",
             "terme",
@@ -2056,961 +1223,708 @@
             "famiglie"
          ],
          "visibility": "conosciuta",
-         "beauty_score": 0.81,
-         "why": [
-            "Terme e natura insieme",
-            "Comoda tra Gran Sasso e Maiella",
-            "Ottima per staccare"
-         ]
-      },
-      {
-         "id": "abruzzo_parco_avventura_roccaraso",
-         "name": "Parco Avventura (zona Roccaraso)",
-         "type": "bambini",
-         "area": "Abruzzo",
-         "lat": 41.847,
-         "lon": 14.09,
-         "tags": [
-            "bambini",
-            "famiglie",
-            "parco_avventura",
-            "attivita",
-            "monetizzabile"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.82,
-         "why": [
-            "Percorsi sospesi e divertimento",
-            "Perfetto per famiglie",
-            "Biglietti/servizi monetizzabili"
-         ]
-      },
-      {
-         "id": "abruzzo_majella_geopark_visitor",
-         "name": "Centro Visite Majella (area)",
-         "type": "bambini",
-         "area": "Abruzzo",
-         "lat": 42.07,
-         "lon": 14.07,
-         "tags": [
-            "bambini",
-            "famiglie",
-            "musei",
-            "natura",
-            "attivita"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.78,
-         "why": [
-            "Centri visita e percorsi didattici",
-            "Ottimo con bambini",
-            "Perfetto per scoprire la Maiella"
-         ]
-      },
-      {
-         "id": "abruzzo_centro_visita_lupo",
-         "name": "Centro Visita Lupo (Civitella Alfedena)",
-         "type": "bambini",
-         "area": "Abruzzo",
-         "lat": 41.7689,
-         "lon": 13.9506,
-         "tags": [
-            "bambini",
-            "famiglie",
-            "animali",
-            "parco_nazionale",
-            "monetizzabile"
-         ],
-         "visibility": "conosciuta",
          "beauty_score": 0.86,
          "why": [
-            "Esperienza educativa super per bambini",
-            "Fauna del Parco e percorsi",
-            "Ottimo abbinato a Lago di Barrea"
-         ]
+            "Terme e natura insieme",
+            "Ottimo per staccare davvero"
+         ],
+         "activities": [
+            "terme",
+            "passeggiate"
+         ],
+         "monetize": {
+            "booking": "hotel"
+         }
       },
       {
-         "id": "lazio_castel_gandolfo",
-         "name": "Castel Gandolfo (Lazio)",
-         "type": "borgo",
-         "area": "Lazio",
-         "lat": 41.7467,
-         "lon": 12.6516,
+         "id": "abruzzo_eremi_della_majella_roccamorice",
+         "name": "Eremi della Majella (Roccamorice)",
+         "type": "chicca",
+         "area": "Abruzzo",
+         "lat": 42.2186,
+         "lon": 14.019,
          "tags": [
-            "borgo",
-            "lago",
-            "panorama",
-            "classico"
+            "chicca",
+            "natura",
+            "storia",
+            "trekking"
+         ],
+         "visibility": "chicca",
+         "beauty_score": 0.97,
+         "why": [
+            "Luoghi mistici scavati nella roccia",
+            "Tra le esperienze più wow"
+         ],
+         "activities": [
+            "trekking",
+            "visita eremi"
+         ],
+         "monetize": {
+            "gyg": "tour"
+         }
+      },
+      {
+         "id": "umbria_cascata_delle_marmore",
+         "name": "Cascata delle Marmore",
+         "type": "natura",
+         "area": "Umbria",
+         "lat": 42.5546,
+         "lon": 12.7126,
+         "tags": [
+            "natura",
+            "cascata",
+            "family",
+            "attivita"
          ],
          "visibility": "conosciuta",
          "beauty_score": 0.9,
          "why": [
-            "Borgo sul Lago Albano molto scenico",
-            "Gita top da Abruzzo occidentale",
-            "Perfetto per giornata romantica"
-         ]
+            "Cascata iconica e super scenografica",
+            "Perfetta per famiglie e foto"
+         ],
+         "activities": [
+            "sentieri",
+            "belvedere"
+         ],
+         "monetize": {
+            "tiqets": "attrazioni",
+            "gyg": "tour"
+         }
       },
       {
-         "id": "marche_ascoli_piceno",
-         "name": "Ascoli Piceno (Marche)",
+         "id": "lazio_roma_centro",
+         "name": "Roma (centro)",
          "type": "citta",
-         "area": "Marche",
-         "lat": 42.8536,
-         "lon": 13.573,
+         "area": "Lazio",
+         "lat": 41.9028,
+         "lon": 12.4964,
          "tags": [
             "citta",
             "storia",
-            "piazze",
+            "musei",
+            "monetizzabile"
+         ],
+         "visibility": "conosciuta",
+         "beauty_score": 0.95,
+         "why": [
+            "Capitale con infinite cose da fare",
+            "Monetizzazione altissima (tour/musei)"
+         ],
+         "activities": [
+            "musei",
+            "tour",
+            "food"
+         ],
+         "monetize": {
+            "booking": "hotel",
+            "gyg": "tour",
+            "tiqets": "attrazioni"
+         }
+      },
+      {
+         "id": "lazio_tivoli_villa_deste",
+         "name": "Tivoli (Villa d’Este)",
+         "type": "storia",
+         "area": "Lazio",
+         "lat": 41.9634,
+         "lon": 12.798,
+         "tags": [
+            "storia",
+            "villa",
+            "giardini",
+            "family"
+         ],
+         "visibility": "conosciuta",
+         "beauty_score": 0.9,
+         "why": [
+            "Ville e giardini spettacolari",
+            "Gita perfetta fuori Roma"
+         ],
+         "activities": [
+            "visita villa",
+            "giardini"
+         ],
+         "monetize": {
+            "tiqets": "attrazioni",
+            "gyg": "tour"
+         }
+      },
+      {
+         "id": "marche_ascoli_piceno",
+         "name": "Ascoli Piceno",
+         "type": "citta",
+         "area": "Marche",
+         "lat": 42.8536,
+         "lon": 13.575,
+         "tags": [
+            "citta",
+            "storia",
             "food"
          ],
          "visibility": "conosciuta",
-         "beauty_score": 0.92,
+         "beauty_score": 0.88,
          "why": [
-            "Una delle città più belle del centro Italia",
-            "Piazza del Popolo wow",
-            "Ottima per food e passeggio"
-         ]
+            "Piazza tra le più belle d’Italia",
+            "Centro storico + food"
+         ],
+         "activities": [
+            "food tour",
+            "passeggio"
+         ],
+         "monetize": {
+            "booking": "hotel",
+            "gyg": "tour"
+         }
       },
       {
          "id": "molise_termoli",
          "name": "Termoli",
-         "type": "mare",
+         "type": "citta",
          "area": "Molise",
-         "lat": 41.9997,
-         "lon": 14.9998,
+         "lat": 42.0039,
+         "lon": 14.9949,
          "tags": [
+            "citta",
             "mare",
             "borgo",
-            "spiagge",
-            "famiglie"
+            "family"
          ],
          "visibility": "conosciuta",
-         "beauty_score": 0.86,
+         "beauty_score": 0.82,
          "why": [
-            "Borgo sul mare + spiagge comode",
-            "Ottimo per weekend",
-            "Perfetto se stai nel sud Abruzzo"
-         ]
-      },
-      {
-         "id": "umbria_cascata_marmore",
-         "name": "Cascata delle Marmore (Umbria)",
-         "type": "natura",
-         "area": "Umbria",
-         "lat": 42.5536,
-         "lon": 12.7085,
-         "tags": [
-            "natura",
-            "cascata",
-            "famiglie",
-            "monetizzabile"
+            "Borgo sul mare molto carino",
+            "Weekend perfetto"
          ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.95,
-         "why": [
-            "Una delle cascate più famose d’Europa",
-            "Percorsi e visite prenotabili",
-            "Perfetta per gita di 1 giorno"
-         ]
+         "activities": [
+            "borgo",
+            "mare"
+         ],
+         "monetize": {
+            "booking": "hotel"
+         }
       },
       {
-         "id": "abruzzo_punta_cavalluccio",
-         "name": "Punta Cavalluccio (Trabocchi)",
-         "type": "mare",
+         "id": "abruzzo_tortoreto_borgo_alto",
+         "name": "Tortoreto (borgo alto)",
+         "type": "borgo",
          "area": "Abruzzo",
-         "lat": 42.229,
-         "lon": 14.5125,
+         "lat": 42.8068,
+         "lon": 13.934,
          "tags": [
+            "borgo",
             "mare",
-            "trabocchi",
-            "panorama",
-            "chicca",
+            "panorama"
+         ],
+         "visibility": "conosciuta",
+         "beauty_score": 0.8,
+         "why": [
+            "Borgo panoramico sopra il lido",
+            "Perfetto al tramonto"
+         ],
+         "activities": [
+            "passeggio",
+            "foto"
+         ],
+         "monetize": {
+            "booking": "hotel"
+         }
+      },
+      {
+         "id": "abruzzo_santomero",
+         "name": "Sant’Omero",
+         "type": "borgo",
+         "area": "Abruzzo",
+         "lat": 42.795,
+         "lon": 13.783,
+         "tags": [
+            "borgo",
+            "colline",
             "food"
          ],
          "visibility": "chicca",
-         "beauty_score": 0.92,
+         "beauty_score": 0.78,
          "why": [
-            "Uno dei punti più scenici della Costa dei Trabocchi",
-            "Perfetto per cena su trabocco (prenotabile)",
-            "Tramonti assurdi"
-         ]
-      },
-      {
-         "id": "abruzzo_trabocco_turchino",
-         "name": "Trabocco Turchino (San Vito)",
-         "type": "mare",
-         "area": "Abruzzo",
-         "lat": 42.2928,
-         "lon": 14.4576,
-         "tags": [
-            "mare",
-            "trabocchi",
-            "chicca",
-            "food",
-            "fotografico"
+            "Colline e atmosfera slow",
+            "Buone sagre e prodotti locali"
          ],
-         "visibility": "chicca",
-         "beauty_score": 0.91,
-         "why": [
-            "Trabocco iconico e super fotografato",
-            "Ottimo per esperienza ‘cena sul trabocco’",
-            "Vista mare top"
-         ]
-      },
-      {
-         "id": "abruzzo_lecceta_torino_sangro",
-         "name": "Riserva Naturale Lecceta di Torino di Sangro",
-         "type": "natura",
-         "area": "Abruzzo",
-         "lat": 42.2716,
-         "lon": 14.5666,
-         "tags": [
-            "natura",
-            "mare",
-            "pineta",
-            "famiglie",
-            "trekking"
+         "activities": [
+            "degustazioni"
          ],
-         "visibility": "chicca",
-         "beauty_score": 0.88,
-         "why": [
-            "Bosco costiero raro e fresco",
-            "Passeggiate facili anche family",
-            "Perfetto in estate nelle ore calde"
-         ]
+         "monetize": {
+            "booking": "hotel"
+         }
       },
       {
-         "id": "abruzzo_san_vito_marina",
-         "name": "San Vito Marina",
-         "type": "mare",
-         "area": "Abruzzo",
-         "lat": 42.2939,
-         "lon": 14.4608,
-         "tags": [
-            "mare",
-            "spiagge",
-            "trabocchi",
-            "famiglie",
-            "bike"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.84,
-         "why": [
-            "Spiagge comode + trabocchi vicini",
-            "Ottima base per ciclovia",
-            "Perfetta per family"
-         ]
-      },
-      {
-         "id": "abruzzo_fossacesia_ciclovia",
-         "name": "Ciclovia dei Trabocchi (tratto Fossacesia)",
-         "type": "attivita",
-         "area": "Abruzzo",
-         "lat": 42.2469,
-         "lon": 14.4915,
-         "tags": [
-            "bike",
-            "mare",
-            "trabocchi",
-            "attivita",
-            "monetizzabile"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.9,
-         "why": [
-            "Tratto ciclabile più scenico sul mare",
-            "Noleggio bici/ebike monetizzabile",
-            "Soste food e foto"
-         ]
-      },
-      {
-         "id": "abruzzo_ortona_punta_acquabella",
-         "name": "Punta Acquabella (Ortona)",
-         "type": "mare",
-         "area": "Abruzzo",
-         "lat": 42.3196,
-         "lon": 14.4658,
-         "tags": [
-            "mare",
-            "caletta",
-            "natura",
-            "chicca",
-            "snorkeling"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.93,
-         "why": [
-            "Caletta verde smeraldo",
-            "Perfetta per snorkeling",
-            "Chicca poco affollata (fuori orari di punta)"
-         ]
-      },
-      {
-         "id": "abruzzo_ortona_lido_saraceni",
-         "name": "Lido Saraceni (Ortona)",
-         "type": "mare",
-         "area": "Abruzzo",
-         "lat": 42.3334,
-         "lon": 14.455,
-         "tags": [
-            "mare",
-            "spiagge",
-            "famiglie"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.82,
-         "why": [
-            "Spiaggia bella e comoda",
-            "Ideale per giornata mare easy",
-            "Ottima con Ortona centro"
-         ]
-      },
-      {
-         "id": "abruzzo_francavilla_pista_ciclabile",
-         "name": "Pista ciclopedonale Francavilla–Pescara",
-         "type": "attivita",
-         "area": "Abruzzo",
-         "lat": 42.428,
-         "lon": 14.279,
-         "tags": [
-            "bike",
-            "mare",
-            "famiglie",
-            "attivita"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.8,
-         "why": [
-            "Passeggiata/bici fronte mare",
-            "Perfetta per famiglie",
-            "Tramonto + gelato"
-         ]
-      },
-      {
-         "id": "abruzzo_torre_cerrano",
-         "name": "Area Marina Protetta Torre del Cerrano",
-         "type": "mare",
-         "area": "Abruzzo",
-         "lat": 42.553,
-         "lon": 14.094,
-         "tags": [
-            "mare",
-            "natura",
-            "spiagge",
-            "chicca",
-            "famiglie"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.93,
-         "why": [
-            "Spiagge e pinete protette",
-            "Torre storica e percorsi natura",
-            "Ottima per snorkeling e passeggiate"
-         ]
-      },
-      {
-         "id": "abruzzo_silvi_borgo",
-         "name": "Silvi Paese (belvedere)",
+         "id": "abruzzo_citt_santangelo",
+         "name": "Città Sant’Angelo",
          "type": "borgo",
          "area": "Abruzzo",
-         "lat": 42.556,
-         "lon": 14.105,
+         "lat": 42.5216,
+         "lon": 14.0523,
          "tags": [
             "borgo",
             "panorama",
-            "mare",
-            "chicca"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.82,
-         "why": [
-            "Belvedere con vista mare",
-            "Centro storico carino",
-            "Perfetto al tramonto"
-         ]
-      },
-      {
-         "id": "abruzzo_rosburgo_rosato_colline",
-         "name": "Colline di Roseto (strade panoramiche)",
-         "type": "natura",
-         "area": "Abruzzo",
-         "lat": 42.66,
-         "lon": 13.99,
-         "tags": [
-            "panorama",
-            "roadtrip",
-            "colline",
-            "vino"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.78,
-         "why": [
-            "Stradine panoramiche tra ulivi e vista mare",
-            "Perfetto per gita in auto",
-            "Degustazioni facilmente trovabili"
-         ]
-      },
-      {
-         "id": "abruzzo_giulianova_paese",
-         "name": "Giulianova Paese (belvedere)",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 42.7575,
-         "lon": 13.962,
-         "tags": [
-            "borgo",
-            "panorama",
-            "mare"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.82,
-         "why": [
-            "Parte alta con vista spettacolare",
-            "Passeggiata serale piacevole",
-            "Ottimo per foto"
-         ]
-      },
-      {
-         "id": "abruzzo_alba_adriatica_pinetina",
-         "name": "Pineta e lungomare di Alba Adriatica",
-         "type": "mare",
-         "area": "Abruzzo",
-         "lat": 42.8295,
-         "lon": 13.935,
-         "tags": [
-            "mare",
-            "bike",
-            "famiglie",
-            "pineta"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.78,
-         "why": [
-            "Lungomare tra i più belli",
-            "Perfetto per bici e passeggini",
-            "Serate easy"
-         ]
-      },
-      {
-         "id": "abruzzo_martinsicuro_ciclabile",
-         "name": "Ciclabile costiera (Martinsicuro–Alba)",
-         "type": "attivita",
-         "area": "Abruzzo",
-         "lat": 42.865,
-         "lon": 13.925,
-         "tags": [
-            "bike",
-            "mare",
-            "famiglie",
-            "attivita"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.77,
-         "why": [
-            "Ciclabile lunga e super comoda",
-            "Perfetta con bambini",
-            "Tappa gelato e tramonto"
-         ]
-      },
-      {
-         "id": "abruzzo_vasto_punta_aderci_sentiero",
-         "name": "Sentiero costiero Punta Aderci",
-         "type": "natura",
-         "area": "Abruzzo",
-         "lat": 42.126,
-         "lon": 14.74,
-         "tags": [
-            "natura",
-            "mare",
-            "trekking",
-            "fotografico"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.94,
-         "why": [
-            "Passeggiata panoramica sul mare",
-            "Foto top e aria buonissima",
-            "Perfetto in primavera/sera"
-         ]
-      },
-      {
-         "id": "abruzzo_casalbordino_santuario",
-         "name": "Santuario della Madonna dei Miracoli (Casalbordino)",
-         "type": "storia",
-         "area": "Abruzzo",
-         "lat": 42.1295,
-         "lon": 14.602,
-         "tags": [
-            "storia",
-            "arte",
-            "famiglie"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.8,
-         "why": [
-            "Tappa culturale importante",
-            "Bello anche con bambini (visita easy)",
-            "Ottimo con mare vicino"
-         ]
-      },
-      {
-         "id": "abruzzo_ortona_costa_teatina_view",
-         "name": "Belvederi della Costa Teatina (spot)",
-         "type": "panorama",
-         "area": "Abruzzo",
-         "lat": 42.29,
-         "lon": 14.47,
-         "tags": [
-            "panorama",
-            "mare",
-            "fotografico",
-            "roadtrip"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.84,
-         "why": [
-            "Fermate panoramiche top lungo la costa",
-            "Ideale per roadtrip fotografico",
-            "Abbina trabocchi e calette"
-         ]
-      },
-      {
-         "id": "abruzzo_pescara_museo_genti",
-         "name": "Museo delle Genti d'Abruzzo (Pescara)",
-         "type": "storia",
-         "area": "Abruzzo",
-         "lat": 42.4643,
-         "lon": 14.2156,
-         "tags": [
-            "musei",
-            "storia",
-            "famiglie",
-            "citta"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.8,
-         "why": [
-            "Museo interessante e visitabile tutto l’anno",
-            "Perfetto se piove o fa caldo",
-            "Ottimo anche con bambini"
-         ]
-      },
-      {
-         "id": "abruzzo_pescara_casa_dannunzio",
-         "name": "Casa Natale di Gabriele d’Annunzio",
-         "type": "storia",
-         "area": "Abruzzo",
-         "lat": 42.4649,
-         "lon": 14.2121,
-         "tags": [
-            "storia",
-            "musei",
-            "citta"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.78,
-         "why": [
-            "Visita culturale breve e bella",
-            "Perfetta in città",
-            "Monetizzabile con tour culturali"
-         ]
-      },
-      {
-         "id": "abruzzo_chieti_museo_archeologico",
-         "name": "Museo Archeologico Nazionale d'Abruzzo (La Civitella)",
-         "type": "storia",
-         "area": "Abruzzo",
-         "lat": 42.3587,
-         "lon": 14.165,
-         "tags": [
-            "musei",
-            "storia",
-            "famiglie"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.82,
-         "why": [
-            "Museo top per storia antica",
-            "Ottimo con bambini curiosi",
-            "Visita perfetta in mezza giornata"
-         ]
-      },
-      {
-         "id": "abruzzo_laquila_munda",
-         "name": "MuNDA — Museo Nazionale d’Abruzzo",
-         "type": "storia",
-         "area": "Abruzzo",
-         "lat": 42.3507,
-         "lon": 13.3993,
-         "tags": [
-            "musei",
-            "storia",
-            "famiglie",
-            "citta"
+            "shopping"
          ],
          "visibility": "conosciuta",
          "beauty_score": 0.83,
          "why": [
-            "Arte e storia in un museo importante",
-            "Ottimo anche con bambini",
-            "Perfetto in giornata urbana"
-         ]
+            "Uno dei borghi più belli vicino al mare",
+            "Vista e passeggio"
+         ],
+         "activities": [
+            "passeggio",
+            "shopping outlet vicino"
+         ],
+         "monetize": {
+            "booking": "hotel"
+         }
       },
       {
-         "id": "abruzzo_scafa_san_valentino_lavino",
-         "name": "Sorgenti del Lavino (Scafa)",
+         "id": "abruzzo_montesilvano_colle",
+         "name": "Montesilvano Colle",
+         "type": "borgo",
+         "area": "Abruzzo",
+         "lat": 42.502,
+         "lon": 14.138,
+         "tags": [
+            "borgo",
+            "panorama"
+         ],
+         "visibility": "chicca",
+         "beauty_score": 0.74,
+         "why": [
+            "Borgo sopra la costa",
+            "Belvedere facile"
+         ],
+         "activities": [
+            "foto"
+         ],
+         "monetize": {
+            "booking": "hotel"
+         }
+      },
+      {
+         "id": "abruzzo_chieti",
+         "name": "Chieti",
+         "type": "citta",
+         "area": "Abruzzo",
+         "lat": 42.351,
+         "lon": 14.1673,
+         "tags": [
+            "citta",
+            "storia",
+            "panorama"
+         ],
+         "visibility": "conosciuta",
+         "beauty_score": 0.75,
+         "why": [
+            "Centro storico panoramico",
+            "Vicina a mare e colline"
+         ],
+         "activities": [
+            "musei",
+            "passeggio"
+         ],
+         "monetize": {
+            "booking": "hotel",
+            "gyg": "tour"
+         }
+      },
+      {
+         "id": "abruzzo_lanciano",
+         "name": "Lanciano",
+         "type": "citta",
+         "area": "Abruzzo",
+         "lat": 42.2294,
+         "lon": 14.3894,
+         "tags": [
+            "citta",
+            "storia",
+            "food"
+         ],
+         "visibility": "conosciuta",
+         "beauty_score": 0.8,
+         "why": [
+            "Città storica viva",
+            "Ottima base per Trabocchi"
+         ],
+         "activities": [
+            "centro storico",
+            "ristoranti"
+         ],
+         "monetize": {
+            "booking": "hotel",
+            "gyg": "tour"
+         }
+      },
+      {
+         "id": "abruzzo_fara_san_martino_gole",
+         "name": "Fara San Martino (Gole)",
          "type": "natura",
          "area": "Abruzzo",
-         "lat": 42.2776,
-         "lon": 13.981,
+         "lat": 42.0893,
+         "lon": 14.205,
          "tags": [
             "natura",
-            "acqua",
+            "gole",
+            "trekking",
+            "family"
+         ],
+         "visibility": "conosciuta",
+         "beauty_score": 0.94,
+         "why": [
+            "Gole spettacolari",
+            "Passeggiata memorabile"
+         ],
+         "activities": [
+            "passeggiata",
+            "foto"
+         ],
+         "monetize": {
+            "gyg": "tour"
+         }
+      },
+      {
+         "id": "abruzzo_vasto_belvedere_loggia_amblingh",
+         "name": "Vasto (Belvedere Loggia Amblingh)",
+         "type": "chicca",
+         "area": "Abruzzo",
+         "lat": 42.1124,
+         "lon": 14.706,
+         "tags": [
             "chicca",
-            "famiglie"
+            "panorama",
+            "mare",
+            "fotografico"
          ],
          "visibility": "chicca",
          "beauty_score": 0.88,
          "why": [
-            "Acque turchesi e atmosfera wow",
-            "Passeggiata semplice e fresca",
-            "Perfetto per foto e relax"
-         ]
-      },
-      {
-         "id": "abruzzo_popoli_sorgenti_pescara",
-         "name": "Sorgenti del Pescara (Popoli)",
-         "type": "natura",
-         "area": "Abruzzo",
-         "lat": 42.1758,
-         "lon": 13.8298,
-         "tags": [
-            "natura",
-            "acqua",
-            "famiglie",
-            "birdwatching"
+            "Belvedere iconico",
+            "Foto e passeggio top"
          ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.86,
-         "why": [
-            "Acque limpide e sentieri facili",
-            "Ottimo per famiglie",
-            "Perfetto in estate"
-         ]
+         "activities": [
+            "foto",
+            "passeggio"
+         ],
+         "monetize": {
+            "gyg": "tour"
+         }
       },
       {
-         "id": "abruzzo_lago_bomba",
-         "name": "Lago di Bomba",
-         "type": "natura",
+         "id": "abruzzo_san_salvo_centro_borgo",
+         "name": "San Salvo (centro + borgo)",
+         "type": "citta",
          "area": "Abruzzo",
          "lat": 42.044,
-         "lon": 14.369,
+         "lon": 14.733,
          "tags": [
-            "natura",
-            "lago",
-            "relax",
-            "famiglie"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.85,
-         "why": [
-            "Lago tranquillo e scenografico",
-            "Picnic e relax",
-            "Ottimo per gita easy"
-         ]
-      },
-      {
-         "id": "abruzzo_lago_casoli",
-         "name": "Lago di Casoli (Sant'Angelo)",
-         "type": "natura",
-         "area": "Abruzzo",
-         "lat": 42.09,
-         "lon": 14.29,
-         "tags": [
-            "natura",
-            "lago",
-            "relax",
-            "famiglie"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.82,
-         "why": [
-            "Lago poco conosciuto e rilassante",
-            "Perfetto per staccare",
-            "Ottimo per foto con luce serale"
-         ]
-      },
-      {
-         "id": "abruzzo_lago_serranella",
-         "name": "Lago di Serranella (Riserva)",
-         "type": "natura",
-         "area": "Abruzzo",
-         "lat": 42.11,
-         "lon": 14.23,
-         "tags": [
-            "natura",
-            "riserva",
-            "birdwatching",
-            "famiglie"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.84,
-         "why": [
-            "Riserva naturale con fauna",
-            "Percorsi semplici",
-            "Perfetta per birdwatching"
-         ]
-      },
-      {
-         "id": "abruzzo_pescocostanzo_bosco_santantonio",
-         "name": "Bosco di Sant’Antonio (Pescocostanzo)",
-         "type": "natura",
-         "area": "Abruzzo",
-         "lat": 41.8915,
-         "lon": 14.033,
-         "tags": [
-            "natura",
-            "bosco",
-            "famiglie",
-            "trekking"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.93,
-         "why": [
-            "Bosco magico e fresco",
-            "Passeggiate facili per famiglie",
-            "Perfetto in estate"
-         ]
-      },
-      {
-         "id": "abruzzo_santo_stefano_sessanio_grotta",
-         "name": "Grotta del Cavallone (Taranta Peligna)",
-         "type": "natura",
-         "area": "Abruzzo",
-         "lat": 42.036,
-         "lon": 14.19,
-         "tags": [
-            "natura",
-            "grotte",
-            "famiglie",
-            "monetizzabile"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.9,
-         "why": [
-            "Una delle grotte più famose",
-            "Visite guidate monetizzabili",
-            "Perfetta con bambini"
-         ]
-      },
-      {
-         "id": "abruzzo_teramo_duomo",
-         "name": "Duomo di Teramo e centro",
-         "type": "storia",
-         "area": "Abruzzo",
-         "lat": 42.6594,
-         "lon": 13.6982,
-         "tags": [
-            "storia",
             "citta",
-            "arte"
+            "mare",
+            "family"
+         ],
+         "visibility": "conosciuta",
+         "beauty_score": 0.72,
+         "why": [
+            "Comodo e vicino al mare",
+            "Gita easy con bambini"
+         ],
+         "activities": [
+            "passeggio",
+            "spiaggia"
+         ],
+         "monetize": {
+            "booking": "hotel"
+         }
+      },
+      {
+         "id": "abruzzo_teramo",
+         "name": "Teramo",
+         "type": "citta",
+         "area": "Abruzzo",
+         "lat": 42.6589,
+         "lon": 13.7044,
+         "tags": [
+            "citta",
+            "storia",
+            "colline"
          ],
          "visibility": "conosciuta",
          "beauty_score": 0.76,
          "why": [
-            "Tappa culturale in centro città",
-            "Perfetta per mezza giornata",
-            "Abbina con cibo locale"
-         ]
+            "Città elegante ai piedi dei monti",
+            "Porta per Gran Sasso teramano"
+         ],
+         "activities": [
+            "centro storico"
+         ],
+         "monetize": {
+            "booking": "hotel"
+         }
       },
       {
-         "id": "abruzzo_atessa_borgo",
-         "name": "Atessa",
+         "id": "abruzzo_castelli_ceramiche",
+         "name": "Castelli (ceramiche)",
          "type": "borgo",
          "area": "Abruzzo",
-         "lat": 42.0695,
-         "lon": 14.4475,
+         "lat": 42.487,
+         "lon": 13.71,
          "tags": [
             "borgo",
-            "storia",
-            "panorama",
-            "food"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.8,
-         "why": [
-            "Borgo lungo e panoramico",
-            "Ottimo per passeggio e cibo",
-            "Poco turistico: vera chicca"
-         ]
-      },
-      {
-         "id": "abruzzo_vasto_palazzo_davalos",
-         "name": "Palazzo d'Avalos e giardini (Vasto)",
-         "type": "storia",
-         "area": "Abruzzo",
-         "lat": 42.1127,
-         "lon": 14.7075,
-         "tags": [
-            "storia",
-            "musei",
-            "panorama",
-            "famiglie"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.84,
-         "why": [
-            "Giardini con vista mare",
-            "Museo e passeggiata top",
-            "Perfetto con bambini"
-         ]
-      },
-      {
-         "id": "abruzzo_pescara_aeroporto_spot",
-         "name": "Spot aerei (Aeroporto Pescara)",
-         "type": "attivita",
-         "area": "Abruzzo",
-         "lat": 42.4325,
-         "lon": 14.188,
-         "tags": [
-            "attivita",
-            "famiglie",
-            "fotografico"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.65,
-         "why": [
-            "Per bambini: vedere decolli/atterraggi",
-            "Tappa veloce e divertente",
-            "Perfetto se siete in zona"
-         ]
-      },
-      {
-         "id": "abruzzo_grotte_stiffe",
-         "name": "Grotte di Stiffe",
-         "type": "natura",
-         "area": "Abruzzo",
-         "lat": 42.2849,
-         "lon": 13.5627,
-         "tags": [
-            "natura",
-            "grotte",
-            "monetizzabile",
-            "famiglie",
-            "acqua"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.92,
-         "why": [
-            "Grotte con fiume interno: visita wow",
-            "Visite guidate monetizzabili",
-            "Perfette con bambini"
-         ]
-      },
-      {
-         "id": "abruzzo_lago_sinizzo",
-         "name": "Lago Sinizzo",
-         "type": "natura",
-         "area": "Abruzzo",
-         "lat": 42.2978,
-         "lon": 13.4515,
-         "tags": [
-            "natura",
-            "lago",
-            "relax",
-            "famiglie"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.86,
-         "why": [
-            "Laghetto turchese vicino a L’Aquila",
-            "Perfetto per picnic e relax",
-            "Chicca facile"
-         ]
-      },
-      {
-         "id": "abruzzo_lago_capodacqua",
-         "name": "Lago di Capo d’Acqua (Capestrano)",
-         "type": "natura",
-         "area": "Abruzzo",
-         "lat": 42.2538,
-         "lon": 13.7879,
-         "tags": [
-            "natura",
-            "acqua",
-            "chicca",
-            "fotografico"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.95,
-         "why": [
-            "Acqua incredibilmente limpida",
-            "Spot fotografico super",
-            "Perfetto per gita easy"
-         ]
-      },
-      {
-         "id": "abruzzo_castelvecchio_calvisio",
-         "name": "Castelvecchio Calvisio",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 42.3231,
-         "lon": 13.7056,
-         "tags": [
-            "borgo",
-            "storia",
-            "chicca",
-            "montagna"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.9,
-         "why": [
-            "Borgo di pietra intatto",
-            "Atmosfera da film",
-            "Perfetto con Calascio/Sessanio"
-         ]
-      },
-      {
-         "id": "abruzzo_calascio_borgo",
-         "name": "Calascio (borgo)",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 42.33,
-         "lon": 13.6955,
-         "tags": [
-            "borgo",
-            "storia",
+            "arte",
             "montagna",
             "chicca"
          ],
          "visibility": "chicca",
          "beauty_score": 0.86,
          "why": [
-            "Borgo sotto la Rocca",
-            "Scorci autentici e quiete",
-            "Perfetto per foto"
-         ]
+            "Ceramiche famose",
+            "Borgo artistico tra i monti"
+         ],
+         "activities": [
+            "laboratori",
+            "shopping ceramiche"
+         ],
+         "monetize": {
+            "booking": "hotel"
+         }
       },
       {
-         "id": "abruzzo_navelli",
-         "name": "Navelli (zafferano)",
+         "id": "abruzzo_civitella_alfedena",
+         "name": "Civitella Alfedena",
          "type": "borgo",
          "area": "Abruzzo",
-         "lat": 42.244,
-         "lon": 13.7298,
+         "lat": 41.7684,
+         "lon": 13.9502,
          "tags": [
             "borgo",
-            "food",
+            "chicca",
+            "natura",
+            "parco_nazionale",
+            "famiglie"
+         ],
+         "visibility": "chicca",
+         "beauty_score": 0.88,
+         "why": [
+            "Borgo piccolo e delizioso",
+            "Vista lago e natura del Parco"
+         ],
+         "activities": [
+            "centro visita",
+            "passeggio"
+         ],
+         "monetize": {
+            "booking": "hotel"
+         }
+      },
+      {
+         "id": "abruzzo_opi",
+         "name": "Opi",
+         "type": "borgo",
+         "area": "Abruzzo",
+         "lat": 41.7818,
+         "lon": 13.8272,
+         "tags": [
+            "borgo",
+            "chicca",
+            "panorama"
+         ],
+         "visibility": "chicca",
+         "beauty_score": 0.9,
+         "why": [
+            "Borgo panorama nel Parco",
+            "Atmosfera autentica"
+         ],
+         "activities": [
+            "passeggio"
+         ],
+         "monetize": {
+            "booking": "hotel"
+         }
+      },
+      {
+         "id": "abruzzo_villetta_barrea",
+         "name": "Villetta Barrea",
+         "type": "borgo",
+         "area": "Abruzzo",
+         "lat": 41.7735,
+         "lon": 13.9365,
+         "tags": [
+            "borgo",
+            "lago",
+            "famiglie"
+         ],
+         "visibility": "conosciuta",
+         "beauty_score": 0.87,
+         "why": [
+            "Comoda sul lago",
+            "Relax e passeggiate"
+         ],
+         "activities": [
+            "passeggio lago"
+         ],
+         "monetize": {
+            "booking": "hotel"
+         }
+      },
+      {
+         "id": "abruzzo_rivisondoli",
+         "name": "Rivisondoli",
+         "type": "borgo",
+         "area": "Abruzzo",
+         "lat": 41.868,
+         "lon": 14.067,
+         "tags": [
+            "borgo",
+            "neve",
+            "famiglie"
+         ],
+         "visibility": "conosciuta",
+         "beauty_score": 0.83,
+         "why": [
+            "Borgo di montagna vicino Roccaraso",
+            "Molto family"
+         ],
+         "activities": [
+            "neve",
+            "passeggio"
+         ],
+         "monetize": {
+            "booking": "hotel"
+         }
+      },
+      {
+         "id": "abruzzo_pescocostanzo",
+         "name": "Pescocostanzo",
+         "type": "borgo",
+         "area": "Abruzzo",
+         "lat": 41.891,
+         "lon": 14.065,
+         "tags": [
+            "borgo",
             "storia",
+            "neve",
+            "chicca"
+         ],
+         "visibility": "conosciuta",
+         "beauty_score": 0.9,
+         "why": [
+            "Borgo bellissimo e curato",
+            "Artigianato e atmosfera top"
+         ],
+         "activities": [
+            "passeggio",
+            "shopping tipico"
+         ],
+         "monetize": {
+            "booking": "hotel"
+         }
+      },
+      {
+         "id": "abruzzo_passo_lanciano_majelletta",
+         "name": "Passo Lanciano - Majelletta",
+         "type": "montagna",
+         "area": "Abruzzo",
+         "lat": 42.169,
+         "lon": 14.21,
+         "tags": [
+            "montagna",
+            "neve",
+            "panorama",
+            "sport"
+         ],
+         "visibility": "conosciuta",
+         "beauty_score": 0.84,
+         "why": [
+            "Panorami Majella",
+            "Sci e ciaspolate"
+         ],
+         "activities": [
+            "sci",
+            "ciaspole"
+         ],
+         "monetize": {
+            "booking": "hotel"
+         }
+      },
+      {
+         "id": "abruzzo_gole_di_san_martino_fara",
+         "name": "Gole di San Martino (Fara)",
+         "type": "natura",
+         "area": "Abruzzo",
+         "lat": 42.086,
+         "lon": 14.207,
+         "tags": [
+            "natura",
+            "gole",
+            "family"
+         ],
+         "visibility": "conosciuta",
+         "beauty_score": 0.86,
+         "why": [
+            "Passeggiata facile in gola",
+            "Perfetta con bambini"
+         ],
+         "activities": [
+            "passeggio"
+         ],
+         "monetize": {
+            "gyg": "tour"
+         }
+      },
+      {
+         "id": "abruzzo_punta_aderci_sentiero_costiero",
+         "name": "Punta Aderci (sentiero costiero)",
+         "type": "natura",
+         "area": "Abruzzo",
+         "lat": 42.141,
+         "lon": 14.741,
+         "tags": [
+            "natura",
+            "mare",
+            "trekking",
             "chicca"
          ],
          "visibility": "chicca",
-         "beauty_score": 0.84,
+         "beauty_score": 0.9,
          "why": [
-            "Borgo famoso per lo zafferano",
-            "Degustazioni e botteghe",
-            "Molto bello in stagione"
-         ]
+            "Sentieri vista mare",
+            "Foto e natura wild"
+         ],
+         "activities": [
+            "trekking",
+            "foto"
+         ],
+         "monetize": {
+            "gyg": "tour"
+         }
+      },
+      {
+         "id": "abruzzo_parco_sirente_velino",
+         "name": "Parco Sirente-Velino",
+         "type": "natura",
+         "area": "Abruzzo",
+         "lat": 42.1,
+         "lon": 13.55,
+         "tags": [
+            "natura",
+            "montagna",
+            "panorama",
+            "trekking"
+         ],
+         "visibility": "conosciuta",
+         "beauty_score": 0.9,
+         "why": [
+            "Panorami enormi",
+            "Trekking per tutti i livelli"
+         ],
+         "activities": [
+            "trekking"
+         ],
+         "monetize": {
+            "gyg": "tour"
+         }
       },
       {
          "id": "abruzzo_fontecchio",
@@ -3027,1522 +1941,200 @@
          "visibility": "chicca",
          "beauty_score": 0.86,
          "why": [
-            "Borgo autentico poco turistico",
-            "Perfetto per scoprire l’Abruzzo vero",
-            "Weekend slow"
-         ]
-      },
-      {
-         "id": "abruzzo_beffi",
-         "name": "Beffi (San Demetrio ne’ Vestini)",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 42.284,
-         "lon": 13.566,
-         "tags": [
-            "borgo",
-            "storia",
-            "chicca"
+            "Borgo autentico e poco turistico",
+            "Abruzzo vero"
          ],
-         "visibility": "chicca",
-         "beauty_score": 0.78,
-         "why": [
-            "Borgo piccolo e suggestivo",
-            "Ideale per giro borghi",
-            "Poco affollato"
-         ]
-      },
-      {
-         "id": "abruzzo_san_demetrio_vestini",
-         "name": "San Demetrio ne’ Vestini",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 42.2858,
-         "lon": 13.5529,
-         "tags": [
-            "borgo",
-            "storia",
-            "famiglie"
+         "activities": [
+            "passeggio"
          ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.74,
-         "why": [
-            "Base comoda per Grotte di Stiffe",
-            "Gita facile e tranquilla",
-            "Perfetta con bambini"
-         ]
+         "monetize": {
+            "booking": "hotel"
+         }
       },
       {
-         "id": "abruzzo_sirente_velino_parco",
-         "name": "Parco Sirente–Velino (spot)",
+         "id": "abruzzo_santo_stefano_di_sessanio_sentieri",
+         "name": "Santo Stefano di Sessanio (sentieri)",
          "type": "natura",
          "area": "Abruzzo",
-         "lat": 42.1,
-         "lon": 13.55,
+         "lat": 42.344,
+         "lon": 13.642,
          "tags": [
             "natura",
-            "montagna",
-            "panorama",
-            "trekking"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.9,
-         "why": [
-            "Panorami enormi e sentieri",
-            "Trekking per tutti i livelli",
-            "Perfetto 4 stagioni"
-         ]
-      },
-      {
-         "id": "abruzzo_pescina",
-         "name": "Pescina (Silone)",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 42.0219,
-         "lon": 13.6595,
-         "tags": [
-            "borgo",
-            "storia",
-            "cultura"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.74,
-         "why": [
-            "Borgo legato a Silone",
-            "Gita culturale tranquilla",
-            "Perfetto con Marsica"
-         ]
-      },
-      {
-         "id": "abruzzo_anversa",
-         "name": "Anversa degli Abruzzi",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 41.9956,
-         "lon": 13.802,
-         "tags": [
-            "borgo",
-            "natura",
-            "chicca",
-            "gole"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.9,
-         "why": [
-            "Borgo bellissimo in area gole",
-            "Poco affollato e autentico",
-            "Perfetto per foto e passeggio"
-         ]
-      },
-      {
-         "id": "abruzzo_gole_sagittario",
-         "name": "Gole del Sagittario (Anversa)",
-         "type": "natura",
-         "area": "Abruzzo",
-         "lat": 41.995,
-         "lon": 13.803,
-         "tags": [
-            "natura",
-            "gole",
             "trekking",
-            "fotografico"
+            "montagna"
          ],
          "visibility": "chicca",
-         "beauty_score": 0.94,
+         "beauty_score": 0.85,
          "why": [
-            "Canyon e acqua: scenari wow",
-            "Passeggiate e trekking",
-            "Foto incredibili"
-         ]
-      },
-      {
-         "id": "abruzzo_pettorano_riserva",
-         "name": "Riserva Naturale Monte Genzana (Pettorano)",
-         "type": "natura",
-         "area": "Abruzzo",
-         "lat": 42.053,
-         "lon": 13.976,
-         "tags": [
-            "natura",
-            "riserva",
-            "cervi",
+            "Sentieri facili tra altopiani",
+            "Panorami top"
+         ],
+         "activities": [
             "trekking"
          ],
-         "visibility": "chicca",
-         "beauty_score": 0.88,
-         "why": [
-            "Riserva con fauna (anche cervi)",
-            "Percorsi natura",
-            "Perfetta per foto"
-         ]
-      },
-      {
-         "id": "abruzzo_pratola_peligna",
-         "name": "Pratola Peligna",
-         "type": "citta",
-         "area": "Abruzzo",
-         "lat": 42.097,
-         "lon": 13.8723,
-         "tags": [
-            "citta",
-            "valle_peligna",
-            "food"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.7,
-         "why": [
-            "Tappa comoda in Valle Peligna",
-            "Ottima base per gite verso Maiella",
-            "Food locale"
-         ]
-      },
-      {
-         "id": "abruzzo_pescocostanzo_artigianato",
-         "name": "Botteghe artigiane (Pescocostanzo)",
-         "type": "attivita",
-         "area": "Abruzzo",
-         "lat": 41.8898,
-         "lon": 14.0651,
-         "tags": [
-            "artigianato",
-            "shopping",
-            "attivita",
-            "monetizzabile"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.78,
-         "why": [
-            "Shopping artigianale (merletti, ferro)",
-            "Esperienza monetizzabile",
-            "Perfetto in centro borgo"
-         ]
+         "monetize": {
+            "gyg": "tour"
+         }
       },
       {
          "id": "abruzzo_castel_di_sangro",
          "name": "Castel di Sangro",
          "type": "citta",
          "area": "Abruzzo",
-         "lat": 41.7848,
-         "lon": 14.1076,
+         "lat": 41.785,
+         "lon": 14.105,
          "tags": [
             "citta",
             "montagna",
-            "famiglie",
-            "food"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.83,
-         "why": [
-            "Cittadina viva tra montagne",
-            "Ottima per famiglie e ristoranti",
-            "Base perfetta per Alto Sangro"
-         ]
-      },
-      {
-         "id": "abruzzo_scontrone",
-         "name": "Scontrone",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 41.7443,
-         "lon": 14.035,
-         "tags": [
-            "borgo",
-            "chicca",
-            "panorama"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.82,
-         "why": [
-            "Borgo panoramico e tranquillo",
-            "Poco turistico",
-            "Perfetto per giornata slow"
-         ]
-      },
-      {
-         "id": "abruzzo_pescostanzo_rifugi",
-         "name": "Rifugi e ciaspolate (Alto Sangro)",
-         "type": "attivita",
-         "area": "Abruzzo",
-         "lat": 41.86,
-         "lon": 14.08,
-         "tags": [
-            "attivita",
-            "neve",
-            "famiglie",
-            "monetizzabile"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.82,
-         "why": [
-            "Ciaspolate/escursioni guidate prenotabili",
-            "Ideale con bambini",
-            "Esperienza super monetizzabile"
-         ]
-      },
-      {
-         "id": "abruzzo_campo_felice",
-         "name": "Campo Felice (ski/estate)",
-         "type": "montagna",
-         "area": "Abruzzo",
-         "lat": 42.2125,
-         "lon": 13.413,
-         "tags": [
-            "montagna",
-            "sci",
-            "famiglie",
-            "sport"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.86,
-         "why": [
-            "Sci in inverno e passeggiate in estate",
-            "Ottimo per famiglie",
-            "Noleggio/skipass monetizzabili"
-         ]
-      },
-      {
-         "id": "abruzzo_fonte_cerreto",
-         "name": "Fonte Cerreto (funivia Gran Sasso)",
-         "type": "attivita",
-         "area": "Abruzzo",
-         "lat": 42.4195,
-         "lon": 13.5228,
-         "tags": [
-            "attivita",
-            "montagna",
-            "famiglie",
-            "monetizzabile"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.88,
-         "why": [
-            "Funivia per Campo Imperatore",
-            "Esperienza facile e wow",
-            "Biglietti monetizzabili"
-         ]
-      },
-      {
-         "id": "abruzzo_asserigi",
-         "name": "Assergi",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 42.41,
-         "lon": 13.52,
-         "tags": [
-            "borgo",
-            "gran_sasso",
+            "food",
             "famiglie"
          ],
          "visibility": "conosciuta",
-         "beauty_score": 0.74,
-         "why": [
-            "Borgo base per Gran Sasso",
-            "Comodo per funivia",
-            "Gita easy"
-         ]
-      },
-      {
-         "id": "abruzzo_basilica_collemaggio",
-         "name": "Basilica di Santa Maria di Collemaggio",
-         "type": "storia",
-         "area": "Abruzzo",
-         "lat": 42.3422,
-         "lon": 13.3928,
-         "tags": [
-            "storia",
-            "arte",
-            "citta"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.86,
-         "why": [
-            "Monumento simbolo dell’Aquila",
-            "Architettura unica",
-            "Tappa culturale top"
-         ]
-      },
-      {
-         "id": "abruzzo_santa_maria_di_paganica",
-         "name": "Santa Maria di Paganica (AQ)",
-         "type": "storia",
-         "area": "Abruzzo",
-         "lat": 42.359,
-         "lon": 13.46,
-         "tags": [
-            "storia",
-            "arte",
-            "chicca"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.72,
-         "why": [
-            "Chiesa e borgo con atmosfera",
-            "Tappa veloce ma interessante",
-            "Poco turistico"
-         ]
-      },
-      {
-         "id": "abruzzo_punta_alderci_mottagrossa",
-         "name": "Spiaggia di Mottagrossa (Punta Aderci)",
-         "type": "mare",
-         "area": "Abruzzo",
-         "lat": 42.122,
-         "lon": 14.751,
-         "tags": [
-            "mare",
-            "spiagge",
-            "chicca",
-            "natura"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.94,
-         "why": [
-            "Spiaggia selvaggia e scenica",
-            "Perfetta per foto e bagno",
-            "Meno affollata fuori weekend"
-         ]
-      },
-      {
-         "id": "abruzzo_vasto_golfo",
-         "name": "Golfo di Vasto (punti vista)",
-         "type": "panorama",
-         "area": "Abruzzo",
-         "lat": 42.11,
-         "lon": 14.72,
-         "tags": [
-            "panorama",
-            "mare",
-            "fotografico"
-         ],
-         "visibility": "conosciuta",
          "beauty_score": 0.82,
          "why": [
-            "Belvederi sul golfo",
-            "Ottimo al tramonto",
-            "Passeggiata facile"
-         ]
-      },
-      {
-         "id": "abruzzo_pineta_dannunziana",
-         "name": "Pineta Dannunziana (Pescara)",
-         "type": "natura",
-         "area": "Abruzzo",
-         "lat": 42.4517,
-         "lon": 14.2089,
-         "tags": [
-            "natura",
-            "parco",
-            "famiglie",
-            "citta"
+            "Cittadina comoda in montagna",
+            "Ottima base per gite family"
          ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.78,
-         "why": [
-            "Oasi verde in città",
-            "Perfetta per bambini e passeggio",
-            "Ottima se fa caldo"
-         ]
-      },
-      {
-         "id": "abruzzo_parco_nazionale_gran_sasso",
-         "name": "Parco Nazionale Gran Sasso (spot)",
-         "type": "natura",
-         "area": "Abruzzo",
-         "lat": 42.42,
-         "lon": 13.58,
-         "tags": [
-            "natura",
-            "parco_nazionale",
-            "panorama",
-            "trekking"
+         "activities": [
+            "passeggio",
+            "ristoranti"
          ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.92,
-         "why": [
-            "Panorami e sentieri iconici",
-            "Perfetto per trekking e foto",
-            "Esperienze guidate monetizzabili"
-         ]
+         "monetize": {
+            "booking": "hotel"
+         }
       },
       {
-         "id": "abruzzo_lago_salve",
-         "name": "Lago di Salto (vicino confine)",
-         "type": "natura",
-         "area": "Lazio",
-         "lat": 42.208,
-         "lon": 13.02,
-         "tags": [
-            "natura",
-            "lago",
-            "relax",
-            "famiglie"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.84,
-         "why": [
-            "Lago grande e bello vicino Abruzzo",
-            "Perfetto per picnic e relax",
-            "Ottimo per gite più lunghe"
-         ]
-      },
-      {
-         "id": "abruzzo_citta_santangelo_outlet",
-         "name": "Shopping outlet (Città Sant’Angelo Village)",
-         "type": "attivita",
-         "area": "Abruzzo",
-         "lat": 42.5155,
-         "lon": 14.0825,
-         "tags": [
-            "shopping",
-            "famiglie",
-            "monetizzabile",
-            "attivita"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.7,
-         "why": [
-            "Shopping comodo per famiglie",
-            "Perfetto se piove o per pausa",
-            "Servizi e ristorazione"
-         ]
-      },
-      {
-         "id": "abruzzo_penna_santandrea",
-         "name": "Penne — belvederi e centro",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 42.456,
-         "lon": 13.929,
-         "tags": [
-            "borgo",
-            "panorama",
-            "storia"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.8,
-         "why": [
-            "Centro storico con scorci belli",
-            "Ottimo per passeggio e caffè",
-            "Vicino a natura"
-         ]
-      },
-      {
-         "id": "abruzzo_celano_altopiano_fucino",
-         "name": "Piana del Fucino (on the road)",
-         "type": "panorama",
-         "area": "Abruzzo",
-         "lat": 41.99,
-         "lon": 13.5,
-         "tags": [
-            "panorama",
-            "roadtrip",
-            "foto"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.7,
-         "why": [
-            "Strade dritte e cieli enormi",
-            "On the road fotogenico",
-            "Perfetto verso Marsica"
-         ]
-      },
-      {
-         "id": "abruzzo_trasacco_lago_fucino",
-         "name": "Trasacco (Marsica)",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 41.957,
-         "lon": 13.535,
-         "tags": [
-            "borgo",
-            "marsica",
-            "food"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.68,
-         "why": [
-            "Borgo base Marsica",
-            "Tappa food locale",
-            "Comodo per gite"
-         ]
-      },
-      {
-         "id": "abruzzo_pratola_superiore",
-         "name": "Pratola Peligna — sentieri e sport",
-         "type": "attivita",
-         "area": "Abruzzo",
-         "lat": 42.098,
-         "lon": 13.873,
-         "tags": [
-            "attivita",
-            "famiglie",
-            "sport"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.65,
-         "why": [
-            "Attività sportive e passeggiate",
-            "Perfetto per famiglie",
-            "Tappa easy"
-         ]
-      },
-      {
-         "id": "abruzzo_loreto_aprutino",
-         "name": "Loreto Aprutino",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 42.434,
-         "lon": 13.986,
-         "tags": [
-            "borgo",
-            "food",
-            "vino",
-            "storia"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.84,
-         "why": [
-            "Borgo collinare molto bello",
-            "Olio/vino: degustazioni monetizzabili",
-            "Perfetto per slow day"
-         ]
-      },
-      {
-         "id": "abruzzo_moscufo",
-         "name": "Moscufo",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 42.42,
-         "lon": 14.055,
-         "tags": [
-            "borgo",
-            "vino",
-            "food"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.74,
-         "why": [
-            "Vigne e colline panoramiche",
-            "Degustazioni e agriturismi",
-            "Poco turistico"
-         ]
-      },
-      {
-         "id": "abruzzo_farindola",
-         "name": "Farindola",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 42.508,
-         "lon": 13.819,
-         "tags": [
-            "borgo",
-            "montagna",
-            "food"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.78,
-         "why": [
-            "Borgo ai piedi del Gran Sasso",
-            "Cibo locale top",
-            "Ottimo per strade panoramiche"
-         ]
-      },
-      {
-         "id": "abruzzo_montebello_di_bertona",
-         "name": "Montebello di Bertona",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 42.418,
-         "lon": 13.869,
-         "tags": [
-            "borgo",
-            "panorama",
-            "chicca"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.76,
-         "why": [
-            "Borgo panoramico poco battuto",
-            "Perfetto per tramonto",
-            "Tappa slow"
-         ]
-      },
-      {
-         "id": "abruzzo_castiglione_a_casauria",
-         "name": "Castiglione a Casauria",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 42.235,
-         "lon": 13.908,
-         "tags": [
-            "borgo",
-            "storia",
-            "abbazia"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.72,
-         "why": [
-            "Comodo per abbazia e valle",
-            "Gita culturale semplice",
-            "Poco affollato"
-         ]
-      },
-      {
-         "id": "abruzzo_san_clemente_casauria",
-         "name": "Abbazia di San Clemente a Casauria",
+         "id": "abruzzo_abbazia_di_san_bartolomeo_in_legio_roccamorice",
+         "name": "Abbazia di San Bartolomeo in Legio (Roccamorice)",
          "type": "storia",
-         "area": "Abruzzo",
-         "lat": 42.239,
-         "lon": 13.966,
-         "tags": [
-            "storia",
-            "arte",
-            "chicca",
-            "abbazia"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.88,
-         "why": [
-            "Abbazia romanica bellissima",
-            "Chicca culturale top",
-            "Visita perfetta in 1–2 ore"
-         ]
-      },
-      {
-         "id": "abruzzo_abbateggio",
-         "name": "Abbateggio",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 42.228,
-         "lon": 14.011,
-         "tags": [
-            "borgo",
-            "maiella",
-            "panorama",
-            "chicca"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.82,
-         "why": [
-            "Borgo panoramico sulla Maiella",
-            "Tramonti e aria top",
-            "Perfetto con eremi"
-         ]
-      },
-      {
-         "id": "abruzzo_roccamorice",
-         "name": "Roccamorice",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 42.216,
-         "lon": 14.023,
-         "tags": [
-            "borgo",
-            "maiella",
-            "chicca"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.78,
-         "why": [
-            "Borgo base per eremi",
-            "Atmosfera autentica",
-            "Ottimo per gite natura"
-         ]
-      },
-      {
-         "id": "abruzzo_guardiaregle_artigianato",
-         "name": "Guardiagrele — artigianato e mercati",
-         "type": "attivita",
-         "area": "Abruzzo",
-         "lat": 42.19,
-         "lon": 14.22,
-         "tags": [
-            "artigianato",
-            "shopping",
-            "food",
-            "monetizzabile"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.76,
-         "why": [
-            "Botteghe e prodotti tipici",
-            "Ottimo per shopping locale",
-            "Esperienza monetizzabile"
-         ]
-      },
-      {
-         "id": "abruzzo_pretoro",
-         "name": "Pretoro",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 42.226,
-         "lon": 14.129,
-         "tags": [
-            "borgo",
-            "maiella",
-            "panorama",
-            "chicca"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.82,
-         "why": [
-            "Borgo in pietra spettacolare",
-            "Vista valle + Maiella",
-            "Poco turistico"
-         ]
-      },
-      {
-         "id": "abruzzo_pennadomo",
-         "name": "Pennadomo",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 41.98,
-         "lon": 14.327,
-         "tags": [
-            "borgo",
-            "panorama",
-            "chicca"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.8,
-         "why": [
-            "Borgo su roccia con vista incredibile",
-            "Fotogenico e tranquillo",
-            "Perfetto per gita breve"
-         ]
-      },
-      {
-         "id": "abruzzo_gessopalena",
-         "name": "Gessopalena",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 42.056,
-         "lon": 14.281,
-         "tags": [
-            "borgo",
-            "storia",
-            "chicca"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.78,
-         "why": [
-            "Borgo suggestivo e particolare",
-            "Tappa culturale diversa",
-            "Poco affollato"
-         ]
-      },
-      {
-         "id": "abruzzo_pizzoferrato",
-         "name": "Pizzoferrato",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 41.92,
-         "lon": 14.236,
-         "tags": [
-            "borgo",
-            "montagna",
-            "neve"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.8,
-         "why": [
-            "Borgo di montagna panoramico",
-            "Inverno: atmosfera top",
-            "Estate: aria fresca"
-         ]
-      },
-      {
-         "id": "abruzzo_palena",
-         "name": "Palena",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 41.983,
-         "lon": 14.133,
-         "tags": [
-            "borgo",
-            "maiella",
-            "storia"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.76,
-         "why": [
-            "Borgo carino e comodo",
-            "Perfetto per gite Maiella",
-            "Tappa food"
-         ]
-      },
-      {
-         "id": "abruzzo_sant_eufemia_a_maiella",
-         "name": "Sant'Eufemia a Maiella",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 42.132,
-         "lon": 14.018,
-         "tags": [
-            "borgo",
-            "natura",
-            "maiella"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.76,
-         "why": [
-            "Porta per trekking in Maiella",
-            "Atmosfera tranquilla",
-            "Ottimo per weekend outdoor"
-         ]
-      },
-      {
-         "id": "abruzzo_torre_de_passeri",
-         "name": "Torre de' Passeri",
-         "type": "citta",
-         "area": "Abruzzo",
-         "lat": 42.246,
-         "lon": 13.931,
-         "tags": [
-            "citta",
-            "val_pescara",
-            "comoda"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.66,
-         "why": [
-            "Comoda base tra costa e montagne",
-            "Ottimo punto di passaggio",
-            "Servizi e ristoranti"
-         ]
-      },
-      {
-         "id": "abruzzo_bussi_sul_tirino",
-         "name": "Bussi sul Tirino",
-         "type": "borgo",
          "area": "Abruzzo",
          "lat": 42.214,
-         "lon": 13.825,
-         "tags": [
-            "borgo",
-            "acqua",
-            "attivita",
-            "famiglie"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.74,
-         "why": [
-            "Vicino a Tirino e acque limpide",
-            "Perfetto per attività outdoor",
-            "Gita semplice"
-         ]
-      },
-      {
-         "id": "abruzzo_raiano",
-         "name": "Raiano",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 42.104,
-         "lon": 13.812,
-         "tags": [
-            "borgo",
-            "valle_peligna",
-            "food"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.68,
-         "why": [
-            "Tappa autentica in Valle Peligna",
-            "Ottimo per cibo locale",
-            "Comodo per gite vicine"
-         ]
-      },
-      {
-         "id": "abruzzo_santo_spirito_a_maiella_trail",
-         "name": "Sentiero eremi (Maiella)",
-         "type": "attivita",
-         "area": "Abruzzo",
-         "lat": 42.23,
-         "lon": 14.04,
-         "tags": [
-            "attivita",
-            "trekking",
-            "monetizzabile",
-            "natura"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.88,
-         "why": [
-            "Trekking guidati prenotabili",
-            "Panorami e storia insieme",
-            "Esperienza super monetizzabile"
-         ]
-      },
-      {
-         "id": "abruzzo_vasto_passeggiata_loggia",
-         "name": "Loggia Amblingh (Vasto)",
-         "type": "panorama",
-         "area": "Abruzzo",
-         "lat": 42.1123,
-         "lon": 14.7086,
-         "tags": [
-            "panorama",
-            "mare",
-            "citta",
-            "famiglie"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.84,
-         "why": [
-            "Passeggiata panoramica sul mare",
-            "Perfetta al tramonto",
-            "Facile e bellissima"
-         ]
-      },
-      {
-         "id": "abruzzo_ortona_porto",
-         "name": "Porto e passeggiata (Ortona)",
-         "type": "attivita",
-         "area": "Abruzzo",
-         "lat": 42.352,
-         "lon": 14.405,
-         "tags": [
-            "mare",
-            "citta",
-            "famiglie",
-            "attivita"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.74,
-         "why": [
-            "Passeggiata porto + gelato",
-            "Perfetta con bambini",
-            "Tappa easy"
-         ]
-      },
-      {
-         "id": "abruzzo_pescara_porto_turistico",
-         "name": "Porto Turistico Marina di Pescara",
-         "type": "attivita",
-         "area": "Abruzzo",
-         "lat": 42.4492,
-         "lon": 14.205,
-         "tags": [
-            "mare",
-            "attivita",
-            "famiglie",
-            "monetizzabile"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.74,
-         "why": [
-            "Giri in barca/uscite mare prenotabili",
-            "Ottimo per aperitivo e passeggio",
-            "Monetizzabile (tour/barca)"
-         ]
-      },
-      {
-         "id": "abruzzo_tortoreto_outdoor",
-         "name": "Noleggio bici/attività (Tortoreto)",
-         "type": "attivita",
-         "area": "Abruzzo",
-         "lat": 42.81,
-         "lon": 13.95,
-         "tags": [
-            "bike",
-            "mare",
-            "monetizzabile",
-            "famiglie"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.7,
-         "why": [
-            "Bici/ebike e attività sul lungomare",
-            "Perfetto per famiglie",
-            "Monetizzabile con noleggi"
-         ]
-      },
-      {
-         "id": "abruzzo_celano_parco_avventura",
-         "name": "Parco Avventura (zona Celano)",
-         "type": "bambini",
-         "area": "Abruzzo",
-         "lat": 42.086,
-         "lon": 13.56,
-         "tags": [
-            "bambini",
-            "famiglie",
-            "parco_avventura",
-            "monetizzabile"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.78,
-         "why": [
-            "Percorsi avventura per bambini/ragazzi",
-            "Giornata attiva e divertente",
-            "Biglietti monetizzabili"
-         ]
-      },
-      {
-         "id": "abruzzo_pescara_escursioni_ebike",
-         "name": "Escursioni e-bike (Costa/Colli)",
-         "type": "attivita",
-         "area": "Abruzzo",
-         "lat": 42.46,
-         "lon": 14.21,
-         "tags": [
-            "bike",
-            "monetizzabile",
-            "attivita",
-            "famiglie"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.78,
-         "why": [
-            "Tour e-bike prenotabili",
-            "Perfetto per scoprire costa e colline",
-            "Esperienza monetizzabile"
-         ]
-      },
-      {
-         "id": "abruzzo_torre_del_cerrano",
-         "name": "Area Marina Protetta Torre del Cerrano (Pineto/Silvi)",
-         "type": "mare",
-         "area": "Abruzzo",
-         "lat": 42.5569,
-         "lon": 14.1327,
-         "tags": [
-            "mare",
-            "natura",
-            "spiagge",
-            "riserva",
-            "family"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.93,
-         "why": [
-            "Dune e mare protetto",
-            "Perfetto per passeggiate e bici",
-            "Ottimo per famiglie"
-         ]
-      },
-      {
-         "id": "abruzzo_punta_penna",
-         "name": "Punta Penna (Vasto)",
-         "type": "mare",
-         "area": "Abruzzo",
-         "lat": 42.1219,
-         "lon": 14.7426,
-         "tags": [
-            "mare",
-            "spiagge",
-            "natura",
-            "chicca"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.9,
-         "why": [
-            "Spiaggia ampia e faro iconico",
-            "Tratti naturali e vento perfetto",
-            "Top al tramonto"
-         ]
-      },
-      {
-         "id": "abruzzo_le_morge",
-         "name": "Spiaggia Le Morge (Torino di Sangro)",
-         "type": "mare",
-         "area": "Abruzzo",
-         "lat": 42.3195,
-         "lon": 14.5534,
-         "tags": [
-            "mare",
-            "trabocchi",
-            "spiagge",
-            "relax",
-            "family"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.87,
-         "why": [
-            "Spiaggia comoda con vista trabocchi",
-            "Ideale per relax",
-            "Tramonti bellissimi"
-         ]
-      },
-      {
-         "id": "abruzzo_punta_aderci_sentieri",
-         "name": "Punta Aderci — sentieri panoramici",
-         "type": "natura",
-         "area": "Abruzzo",
-         "lat": 42.1337,
-         "lon": 14.7346,
-         "tags": [
-            "natura",
-            "mare",
-            "trekking",
-            "panorama",
-            "chicca"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.96,
-         "why": [
-            "Sentieri sulla scogliera e sulla spiaggia",
-            "Vista 'wow' sulla costa",
-            "Perfetto per foto e camminate"
-         ]
-      },
-      {
-         "id": "abruzzo_spiaggia_punta_acquabella",
-         "name": "Punta Acquabella (Ortona)",
-         "type": "mare",
-         "area": "Abruzzo",
-         "lat": 42.3475,
-         "lon": 14.4028,
-         "tags": [
-            "mare",
-            "spiagge",
-            "chicca",
-            "natura"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.93,
-         "why": [
-            "Calette e scogliere scenografiche",
-            "Acqua spesso limpida",
-            "Ideale per foto e snorkeling easy"
-         ]
-      },
-      {
-         "id": "abruzzo_lido_di_casalbordino",
-         "name": "Casalbordino Lido",
-         "type": "mare",
-         "area": "Abruzzo",
-         "lat": 42.2106,
-         "lon": 14.6577,
-         "tags": [
-            "mare",
-            "spiagge",
-            "family",
-            "relax"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.81,
-         "why": [
-            "Spiaggia comoda e ampia",
-            "Perfetta per famiglie",
-            "Giornata easy senza stress"
-         ]
-      },
-      {
-         "id": "abruzzo_marina_di_san_salvo_ciclabile",
-         "name": "Ciclovia Adriatica (tratto Costa dei Trabocchi)",
-         "type": "natura",
-         "area": "Abruzzo",
-         "lat": 42.248,
-         "lon": 14.47,
-         "tags": [
-            "natura",
-            "mare",
-            "family",
-            "attivita",
-            "bici"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.88,
-         "why": [
-            "Una delle ciclabili più belle d'Italia",
-            "Perfetta per famiglie (bici/passeggio)",
-            "Panorami mare continui"
-         ]
-      },
-      {
-         "id": "abruzzo_passolanciano_maielletta",
-         "name": "Passo Lanciano – La Maielletta",
-         "type": "montagna",
-         "area": "Abruzzo",
-         "lat": 42.259,
-         "lon": 14.181,
-         "tags": [
-            "montagna",
-            "panorama",
-            "neve",
-            "family"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.9,
-         "why": [
-            "Panorami enormi sulla Maiella",
-            "Inverno: neve, estate: passeggi",
-            "Facile gita giornata"
-         ]
-      },
-      {
-         "id": "abruzzo_blockhaus",
-         "name": "Blockhaus (Maiella)",
-         "type": "montagna",
-         "area": "Abruzzo",
-         "lat": 42.2315,
-         "lon": 14.192,
-         "tags": [
-            "montagna",
-            "panorama",
-            "trekking",
-            "chicca"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.93,
-         "why": [
-            "Uno dei punti panoramici più wow",
-            "Sentieri e aria altissima",
-            "Perfetto per foto"
-         ]
-      },
-      {
-         "id": "abruzzo_valle_dell_orfento",
-         "name": "Valle dell'Orfento (Caramanico)",
-         "type": "natura",
-         "area": "Abruzzo",
-         "lat": 42.1435,
-         "lon": 14.0075,
-         "tags": [
-            "natura",
-            "trekking",
-            "fiume",
-            "chicca"
-         ],
-         "visibility": "chicca",
-         "beauty_score": 0.95,
-         "why": [
-            "Sentieri lungo acqua e boschi",
-            "Tra i trekking più belli della Maiella",
-            "Esperienza super fresca d'estate"
-         ]
-      },
-      {
-         "id": "abruzzo_riserva_calanchi_aterni",
-         "name": "Riserva Naturale Gole del Sagittario (Anversa)",
-         "type": "natura",
-         "area": "Abruzzo",
-         "lat": 41.9935,
-         "lon": 13.804,
-         "tags": [
-            "natura",
-            "gole",
-            "panorama",
-            "trekking"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.93,
-         "why": [
-            "Gole e acqua cristallina",
-            "Passeggiate scenografiche",
-            "Ottima gita natura"
-         ]
-      },
-      {
-         "id": "abruzzo_grotte_di_stiffe",
-         "name": "Grotte di Stiffe",
-         "type": "natura",
-         "area": "Abruzzo",
-         "lat": 42.2637,
-         "lon": 13.4996,
-         "tags": [
-            "natura",
-            "grotte",
-            "family",
-            "attivita"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.9,
-         "why": [
-            "Grotte con fiume sotterraneo",
-            "Visita guidata perfetta per famiglie",
-            "Esperienza 'wow' con qualsiasi meteo"
-         ]
-      },
-      {
-         "id": "abruzzo_alba_fucens",
-         "name": "Alba Fucens (area archeologica)",
-         "type": "storia",
-         "area": "Abruzzo",
-         "lat": 42.0486,
-         "lon": 13.4176,
+         "lon": 14.045,
          "tags": [
             "storia",
-            "archeologia",
-            "panorama",
-            "family"
-         ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.9,
-         "why": [
-            "Rovine romane + vista sul Fucino",
-            "Passeggiata facile e super interessante",
-            "Ottima per foto e storia"
-         ]
-      },
-      {
-         "id": "abruzzo_lago_di_bomba",
-         "name": "Lago di Bomba",
-         "type": "natura",
-         "area": "Abruzzo",
-         "lat": 41.9926,
-         "lon": 14.3666,
-         "tags": [
-            "natura",
-            "lago",
-            "relax",
-            "family"
+            "abbazia",
+            "chicca"
          ],
          "visibility": "chicca",
+         "beauty_score": 0.84,
+         "why": [
+            "Piccola abbazia suggestiva",
+            "Natura intorno"
+         ],
+         "activities": [
+            "visita"
+         ],
+         "monetize": {
+            "gyg": "tour"
+         }
+      },
+      {
+         "id": "umbria_gubbio",
+         "name": "Gubbio",
+         "type": "citta",
+         "area": "Umbria",
+         "lat": 43.353,
+         "lon": 12.573,
+         "tags": [
+            "citta",
+            "storia",
+            "family",
+            "monetizzabile"
+         ],
+         "visibility": "conosciuta",
          "beauty_score": 0.86,
          "why": [
-            "Lago tranquillo tra i monti",
-            "Picnic e relax",
-            "Ottimo in primavera/estate"
-         ]
+            "Città medievale iconica",
+            "Molte attività e tour"
+         ],
+         "activities": [
+            "centro storico",
+            "funivia"
+         ],
+         "monetize": {
+            "booking": "hotel",
+            "gyg": "tour"
+         }
       },
       {
-         "id": "abruzzo_lago_di_penne",
-         "name": "Oasi WWF Lago di Penne",
-         "type": "natura",
-         "area": "Abruzzo",
-         "lat": 42.4562,
-         "lon": 13.9386,
+         "id": "umbria_spoleto",
+         "name": "Spoleto",
+         "type": "citta",
+         "area": "Umbria",
+         "lat": 42.74,
+         "lon": 12.738,
          "tags": [
-            "natura",
-            "animali",
-            "family",
-            "attivita",
-            "wwf"
+            "citta",
+            "storia",
+            "musei"
          ],
          "visibility": "conosciuta",
-         "beauty_score": 0.88,
+         "beauty_score": 0.86,
          "why": [
-            "Oasi con sentieri e birdwatching",
-            "Perfetta per bambini",
-            "Attività guidate e visite"
-         ]
+            "Storia e scorci bellissimi",
+            "Ottima per weekend"
+         ],
+         "activities": [
+            "visite",
+            "passeggio"
+         ],
+         "monetize": {
+            "booking": "hotel",
+            "gyg": "tour"
+         }
       },
       {
-         "id": "abruzzo_riserva_borsacchio",
-         "name": "Riserva Naturale del Borsacchio (Roseto)",
-         "type": "mare",
-         "area": "Abruzzo",
-         "lat": 42.682,
-         "lon": 14.0485,
+         "id": "marche_ancona_conero_gateway",
+         "name": "Ancona (Conero gateway)",
+         "type": "citta",
+         "area": "Marche",
+         "lat": 43.6156,
+         "lon": 13.5097,
          "tags": [
+            "citta",
             "mare",
-            "natura",
-            "spiagge",
-            "chicca",
-            "family"
+            "monetizzabile"
          ],
-         "visibility": "chicca",
-         "beauty_score": 0.9,
-         "why": [
-            "Tratto di costa più naturale",
-            "Spiaggia wild e panorami",
-            "Top per camminata e foto"
-         ]
-      },
-      {
-         "id": "abruzzo_castel_di_ieri",
-         "name": "Castel di Ieri",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 42.1144,
-         "lon": 13.7408,
-         "tags": [
-            "borgo",
-            "chicca",
-            "storia"
-         ],
-         "visibility": "chicca",
+         "visibility": "conosciuta",
          "beauty_score": 0.82,
          "why": [
-            "Micro-borgo autentico",
-            "Pochi turisti, atmosfera vera",
-            "Perfetto per giro 'off'"
-         ]
-      },
-      {
-         "id": "abruzzo_zompo_lo_schioppo",
-         "name": "Riserva Zompo lo Schioppo (cascata)",
-         "type": "natura",
-         "area": "Abruzzo",
-         "lat": 41.9888,
-         "lon": 13.3021,
-         "tags": [
-            "natura",
-            "cascata",
-            "trekking",
-            "family"
+            "Porta del Conero",
+            "Base per mare e tour"
          ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.9,
-         "why": [
-            "Cascata scenografica",
-            "Sentieri nel bosco",
-            "Perfetta per famiglie (percorsi semplici)"
-         ]
-      },
-      {
-         "id": "abruzzo_trasacco",
-         "name": "Trasacco",
-         "type": "borgo",
-         "area": "Abruzzo",
-         "lat": 41.9628,
-         "lon": 13.535,
-         "tags": [
-            "borgo",
-            "natura",
-            "family"
+         "activities": [
+            "porto",
+            "spiagge"
          ],
-         "visibility": "chicca",
-         "beauty_score": 0.78,
-         "why": [
-            "Paese del Fucino autentico",
-            "Gita easy",
-            "Vicinanza a percorsi natura"
-         ]
+         "monetize": {
+            "booking": "hotel",
+            "gyg": "tour"
+         }
       },
       {
-         "id": "abruzzo_roseto_degli_abruzzi",
-         "name": "Roseto degli Abruzzi",
+         "id": "marche_san_benedetto_del_tronto",
+         "name": "San Benedetto del Tronto",
          "type": "mare",
-         "area": "Abruzzo",
-         "lat": 42.6713,
-         "lon": 14.0143,
+         "area": "Marche",
+         "lat": 42.9569,
+         "lon": 13.875,
          "tags": [
             "mare",
             "spiagge",
-            "family",
-            "citta"
+            "famiglie"
          ],
          "visibility": "conosciuta",
-         "beauty_score": 0.78,
+         "beauty_score": 0.8,
          "why": [
-            "Spiaggia ampia e servizi",
-            "Ottima per famiglie",
-            "Base per esplorare la costa teramana"
-         ]
-      },
-      {
-         "id": "abruzzo_giulianova_lido",
-         "name": "Giulianova Lido",
-         "type": "mare",
-         "area": "Abruzzo",
-         "lat": 42.7549,
-         "lon": 13.9608,
-         "tags": [
-            "mare",
-            "spiagge",
-            "family",
-            "citta"
+            "Lungomare e spiagge comode",
+            "Family-friendly"
          ],
-         "visibility": "conosciuta",
-         "beauty_score": 0.77,
-         "why": [
-            "Spiaggia ampia + porto",
-            "Comoda per famiglie",
-            "Tanti servizi"
-         ]
+         "activities": [
+            "spiaggia",
+            "passeggio"
+         ],
+         "monetize": {
+            "booking": "hotel"
+         }
       }
    ]
       }
