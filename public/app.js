@@ -1,9 +1,9 @@
-/* Jamo — Auto-only (offline macro) — v3.2
- * Fixes:
- * - "Geocoding fallito": robust handling + retries + accepts "lat,lon" direct input
- * - "Sempre mete nuove": rotates suggestions using a per-filter "seen" pool in localStorage
- * - Alternative cliccabili: tap an alternative to set it as main result
- * - Better results at low minutes: soft fallback (up to +15%) if no matches
+/* Jamo — Auto-only (offline macro) — app.js v3.2
+ * FIX:
+ * - geocode robusto (GET + POST fallback, supporta diversi formati risposta)
+ * - risultati sempre “nuovi” (exclude recenti oltre a visited)
+ * - fallback soft se 0 risultati entro minuti (fino a +20%)
+ * - alternative cliccabili + leggibili (azioni: scegli / maps / percorso)
  */
 
 const $ = (id) => document.getElementById(id);
@@ -11,12 +11,16 @@ const $ = (id) => document.getElementById(id);
 // -------------------- SETTINGS --------------------
 const MACRO_URL = "/data/macros/it_macro_01_abruzzo.json";
 
-// Driving estimate (simple + stable)
-const ROAD_FACTOR = 1.18;
-const AVG_KMH = 78;
-const FIXED_OVERHEAD_MIN = 6;
+// stima auto (offline)
+const ROAD_FACTOR = 1.22;       // un filo meno severo → più risultati a 60 min
+const AVG_KMH = 72;
+const FIXED_OVERHEAD_MIN = 8;
 
-// monetization placeholders (fill with your IDs)
+// “nuovi risultati”
+const RECENT_MAX = 18;          // quante mete recenti evitare
+const SOFT_FALLBACK_MULT = 1.2; // se non trova nulla, prova fino a +20%
+
+// monetization placeholders
 const BOOKING_AID = "";
 const AMAZON_TAG  = "";
 const GYG_PID     = "";
@@ -54,7 +58,7 @@ function safeIdFromPlace(p) {
 function estCarMinutesFromKm(km) {
   const roadKm = km * ROAD_FACTOR;
   const driveMin = (roadKm / AVG_KMH) * 60;
-  return Math.round(clamp(driveMin + FIXED_OVERHEAD_MIN, 8, 600));
+  return Math.round(clamp(driveMin + FIXED_OVERHEAD_MIN, 10, 600));
 }
 
 function fmtKm(km) { return `${Math.round(km)} km`; }
@@ -85,7 +89,7 @@ function amazonEssentialsUrl(tag = "") {
   return tag ? `${base}&tag=${encodeURIComponent(tag)}` : base;
 }
 
-// -------------------- STORAGE: origin + visited + seen-rotation --------------------
+// -------------------- STORAGE: origin + visited + recent --------------------
 function setOrigin({ label, lat, lon }) {
   $("originLabel").value = label ?? "";
   $("originLat").value = String(lat);
@@ -103,9 +107,7 @@ function getOrigin() {
   if (Number.isFinite(lat) && Number.isFinite(lon)) return { label, lat, lon };
 
   const raw = localStorage.getItem("jamo_origin");
-  if (raw) {
-    try { return JSON.parse(raw); } catch {}
-  }
+  if (raw) { try { return JSON.parse(raw); } catch {} }
   return null;
 }
 
@@ -115,37 +117,34 @@ function getVisitedSet() {
   try {
     const arr = JSON.parse(raw);
     return new Set(Array.isArray(arr) ? arr : []);
-  } catch {
-    return new Set();
-  }
+  } catch { return new Set(); }
 }
-function saveVisitedSet(set) { localStorage.setItem("jamo_visited", JSON.stringify([...set])); }
-function markVisited(placeId) { const s = getVisitedSet(); s.add(placeId); saveVisitedSet(s); }
-function resetVisited() { localStorage.removeItem("jamo_visited"); }
+function saveVisitedSet(set) {
+  localStorage.setItem("jamo_visited", JSON.stringify([...set]));
+}
+function markVisited(placeId) {
+  const s = getVisitedSet();
+  s.add(placeId);
+  saveVisitedSet(s);
+}
 
-// Seen rotation key: depends on category + styles + minutes bucket (so it rotates within that context)
-function seenKey({ category, styles, maxMinutes }) {
-  const chic = styles.wantChicche ? "1" : "0";
-  const clas = styles.wantClassici ? "1" : "0";
-  // bucket minutes to avoid exploding keys (30-min buckets)
-  const b = Math.round(clamp(maxMinutes,10,600) / 30) * 30;
-  return `jamo_seen_v1_${category}_${chic}${clas}_${b}`;
+function getRecentList() {
+  const raw = localStorage.getItem("jamo_recent");
+  if (!raw) return [];
+  try {
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr.map(String) : [];
+  } catch { return []; }
 }
-function getSeenSet(key) {
-  const raw = localStorage.getItem(key);
-  if (!raw) return new Set();
-  try { return new Set(JSON.parse(raw) || []); } catch { return new Set(); }
+function pushRecent(placeId) {
+  const pid = String(placeId);
+  const arr = getRecentList().filter(x => x !== pid);
+  arr.unshift(pid);
+  localStorage.setItem("jamo_recent", JSON.stringify(arr.slice(0, RECENT_MAX)));
 }
-function saveSeenSet(key, set) {
-  // keep it bounded
-  const arr = [...set].slice(-800);
-  localStorage.setItem(key, JSON.stringify(arr));
-}
-function resetSeenForCurrentFilters() {
-  const maxMinutes = Number($("maxMinutes").value) || 120;
-  const category = getActiveCategory();
-  const styles = getActiveStyles();
-  localStorage.removeItem(seenKey({ category, styles, maxMinutes }));
+function resetVisitedAndRecent() {
+  localStorage.removeItem("jamo_visited");
+  localStorage.removeItem("jamo_recent");
 }
 
 // -------------------- UI state (chips) --------------------
@@ -157,6 +156,9 @@ function initChips(containerId, { multi = false } = {}) {
     const chip = e.target.closest(".chip");
     if (!chip) return;
 
+    // evita “rimane premuto” su mobile (tap doppio)
+    e.preventDefault();
+
     if (!multi) {
       [...el.querySelectorAll(".chip")].forEach(c => c.classList.remove("active"));
       chip.classList.add("active");
@@ -164,12 +166,11 @@ function initChips(containerId, { multi = false } = {}) {
       chip.classList.toggle("active");
     }
 
-    // sync time chips to input
     if (containerId === "timeChips") {
       const v = Number(chip.dataset.min);
       if (Number.isFinite(v)) $("maxMinutes").value = String(v);
     }
-  });
+  }, { passive: false });
 }
 
 function getActiveCategory() {
@@ -215,51 +216,49 @@ async function loadMacro() {
 }
 
 // -------------------- GEOcoding (robusto) --------------------
-function tryParseLatLon(text) {
-  // accepts "42.35, 13.39" or "42.35 13.39"
-  const m = String(text || "").trim().match(/(-?\d+(?:\.\d+)?)[,\s]+(-?\d+(?:\.\d+)?)/);
-  if (!m) return null;
-  const lat = Number(m[1]), lon = Number(m[2]);
+function normalizeGeocodeResponse(j, fallbackLabel) {
+  // accetta:
+  // A) { ok:true, result:{ lat, lon, label } }
+  // B) { ok:true, lat, lon, label }
+  // C) { ok:true, result:{ ... }, lat, lon } (misto)
+  if (!j || !j.ok) return null;
+
+  const r = j.result || j;
+  const lat = Number(r.lat);
+  const lon = Number(r.lon ?? r.lng);
+  const label = String(r.label || j.label || fallbackLabel || "").trim();
+
   if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
-  if (Math.abs(lat) > 90 || Math.abs(lon) > 180) return null;
-  return { label: `${lat}, ${lon}`, lat, lon };
+  return { lat, lon, label: label || fallbackLabel || "Partenza" };
 }
 
 async function geocodeLabel(label) {
   const q = String(label || "").trim();
   if (!q) throw new Error("Inserisci un luogo");
 
-  // direct lat/lon shortcut
-  const parsed = tryParseLatLon(q);
-  if (parsed) return parsed;
+  // 1) prova GET
+  try {
+    const r1 = await fetch(`/api/geocode?q=${encodeURIComponent(q)}`, { method: "GET" });
+    const j1 = await r1.json().catch(() => null);
+    const out1 = normalizeGeocodeResponse(j1, q);
+    if (r1.ok && out1) return out1;
+  } catch {}
 
-  // 2 tries (sometimes mobile network hiccups)
-  let lastErr = null;
-  for (let i = 0; i < 2; i++) {
-    try {
-      const r = await fetch(`/api/geocode?q=${encodeURIComponent(q)}`, { cache: "no-store" });
-      const j = await r.json().catch(() => ({}));
+  // 2) fallback POST
+  const r2 = await fetch(`/api/geocode`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ q })
+  });
+  const j2 = await r2.json().catch(() => null);
+  const out2 = normalizeGeocodeResponse(j2, q);
+  if (r2.ok && out2) return out2;
 
-      // Accept both shapes:
-      // A) { ok:true, result:{label,lat,lon} }
-      // B) { ok:true, lat, lon, label }
-      if (j?.ok && j?.result && Number.isFinite(Number(j.result.lat)) && Number.isFinite(Number(j.result.lon))) {
-        return { label: j.result.label || q, lat: Number(j.result.lat), lon: Number(j.result.lon) };
-      }
-      if (j?.ok && Number.isFinite(Number(j.lat)) && Number.isFinite(Number(j.lon))) {
-        return { label: j.label || q, lat: Number(j.lat), lon: Number(j.lon) };
-      }
-
-      throw new Error(j?.error || "Geocoding fallito");
-    } catch (e) {
-      lastErr = e;
-      await new Promise(r => setTimeout(r, 250));
-    }
-  }
-  throw lastErr || new Error("Geocoding fallito");
+  const errMsg = (j2 && (j2.error || j2.message)) ? String(j2.error || j2.message) : "Geocoding fallito";
+  throw new Error(errMsg);
 }
 
-// -------------------- FILTERING --------------------
+// -------------------- FILTERS --------------------
 function matchesCategory(place, cat) {
   if (!cat || cat === "ovunque") return true;
 
@@ -268,23 +267,21 @@ function matchesCategory(place, cat) {
 
   if (cat === "citta") return type === "citta" || tags.includes("citta");
   if (cat === "borghi") return type === "borgo" || tags.includes("borgo");
-  if (cat === "mare") {
-    return (
-      type === "mare" ||
-      tags.includes("mare") ||
-      tags.includes("spiagge") ||
-      tags.includes("spiaggia") ||
-      tags.includes("trabocchi") ||
-      tags.includes("costa") ||
-      tags.includes("lido") ||
-      tags.includes("marina")
-    );
-  }
+  if (cat === "mare") return (
+    type === "mare" ||
+    tags.includes("mare") || tags.includes("trabocchi") || tags.includes("spiagge") ||
+    tags.includes("spiaggia") || tags.includes("baia") || tags.includes("riserva")
+  );
   if (cat === "montagna") return type === "montagna" || tags.includes("montagna") || tags.includes("neve");
-  if (cat === "natura") return type === "natura" || tags.includes("natura") || tags.includes("lago") || tags.includes("parco_nazionale") || tags.includes("fiume") || tags.includes("cascata");
-  if (cat === "storia") return type === "storia" || tags.includes("storia") || tags.includes("castello") || tags.includes("abbazia") || tags.includes("archeologia");
-  if (cat === "relax") return type === "relax" || tags.includes("relax") || tags.includes("terme");
-  if (cat === "family") return type === "bambini" || tags.includes("famiglie") || tags.includes("bambini") || tags.includes("family") || tags.includes("attivita") || tags.includes("animali");
+  if (cat === "natura") return type === "natura" || tags.includes("natura") || tags.includes("lago") || tags.includes("parco_nazionale") || tags.includes("riserva");
+  if (cat === "storia") return type === "storia" || tags.includes("storia") || tags.includes("castello") || tags.includes("abbazia") || tags.includes("museo");
+  if (cat === "relax") return type === "relax" || tags.includes("relax") || tags.includes("terme") || tags.includes("spa");
+  if (cat === "family") return (
+    type === "bambini" ||
+    tags.includes("famiglie") || tags.includes("bambini") || tags.includes("family") ||
+    tags.includes("parco_avventura") || tags.includes("zoo") || tags.includes("animali") ||
+    tags.includes("spiagge") || tags.includes("lago") || tags.includes("parco_nazionale")
+  );
 
   return true;
 }
@@ -303,28 +300,14 @@ function scorePlace({ driveMin, targetMin, beautyScore, isChicca }) {
   return 0.62 * t + 0.34 * b + c;
 }
 
-// Choose one among top-N with weights (and rotate)
-function weightedPickTop(cands, topN = 18) {
-  const pool = cands.slice(0, Math.min(topN, cands.length));
-  const weights = pool.map((c, i) => Math.max(0.01, c.score * (1 - i * 0.03)));
-  const sum = weights.reduce((a,b)=>a+b,0);
-  let r = Math.random() * sum;
-  for (let i=0;i<pool.length;i++){
-    r -= weights[i];
-    if (r <= 0) return pool[i];
-  }
-  return pool[0];
-}
-
-// -------------------- PICK DESTINATION --------------------
-function buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited=false, ignoreSeen=false } = {}) {
+// -------------------- PICK DESTINATION (evita ripetizioni) --------------------
+function buildCandidates(origin, maxMinutes, category, styles, { softCapMult = 1.0 } = {}) {
   const visited = getVisitedSet();
+  const recent = new Set(getRecentList());
+
+  const target = Number(maxMinutes) * Number(softCapMult);
   const oLat = Number(origin.lat);
   const oLon = Number(origin.lon);
-  const target = Number(maxMinutes);
-
-  const key = seenKey({ category, styles, maxMinutes: target });
-  const seen = getSeenSet(key);
 
   const candidates = [];
 
@@ -337,75 +320,125 @@ function buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited=f
     if (!matchesStyle(p, styles)) continue;
 
     const pid = safeIdFromPlace(p);
-    if (!ignoreVisited && visited.has(pid)) continue;
-    if (!ignoreSeen && seen.has(pid)) continue;
+
+    // evita ripetizioni
+    if (visited.has(pid)) continue;
+    if (recent.has(pid)) continue;
 
     const km = haversineKm(oLat, oLon, lat, lon);
     const driveMin = estCarMinutesFromKm(km);
 
-    // soft cap: first try <= target, later caller may allow +15%
     if (driveMin > target) continue;
 
     const isChicca = String(p.visibility || "").toLowerCase() === "chicca";
-    const s = scorePlace({ driveMin, targetMin: target, beautyScore: p.beauty_score, isChicca });
+    const s = scorePlace({ driveMin, targetMin: Number(maxMinutes), beautyScore: p.beauty_score, isChicca });
 
     candidates.push({ place: p, pid, km, driveMin, score: Number(s.toFixed(4)) });
   }
 
-  candidates.sort((a,b)=> (b.score-a.score) || (a.driveMin-b.driveMin));
-  return { candidates, key };
+  candidates.sort((a, b) => (b.score - a.score) || (a.driveMin - b.driveMin));
+  return candidates;
 }
 
 function pickDestination(origin, maxMinutes, category, styles) {
-  // 1) strict: within minutes, not visited, not seen
-  let { candidates, key } = buildCandidates(origin, maxMinutes, category, styles);
-  let usedSoftCap = false;
+  // 1) normale
+  let candidates = buildCandidates(origin, maxMinutes, category, styles, { softCapMult: 1.0 });
 
-  // 2) if none, allow +15% soft cap (still respects visited/seen)
+  // 2) fallback soft se zero
+  let usedSoftFallback = false;
   if (candidates.length === 0) {
-    const soft = Math.round(maxMinutes * 1.15);
-    usedSoftCap = true;
-    const r = buildCandidates(origin, soft, category, styles);
-    candidates = r.candidates; key = r.key;
+    candidates = buildCandidates(origin, maxMinutes, category, styles, { softCapMult: SOFT_FALLBACK_MULT });
+    usedSoftFallback = candidates.length > 0;
   }
 
-  // 3) if still none, ignore seen (but keep visited)
+  // 3) ultimo fallback: ignora “recent” ma rispetta “visited”
   if (candidates.length === 0) {
-    const r = buildCandidates(origin, maxMinutes, category, styles, { ignoreSeen:true });
-    candidates = r.candidates; key = r.key;
+    const visited = getVisitedSet();
+    const target = Number(maxMinutes) * SOFT_FALLBACK_MULT;
+    const oLat = Number(origin.lat), oLon = Number(origin.lon);
+
+    for (const p of MACRO.places) {
+      const lat = Number(p.lat), lon = Number(p.lon);
+      if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
+      if (!matchesCategory(p, category)) continue;
+      if (!matchesStyle(p, styles)) continue;
+
+      const pid = safeIdFromPlace(p);
+      if (visited.has(pid)) continue;
+
+      const km = haversineKm(oLat, oLon, lat, lon);
+      const driveMin = estCarMinutesFromKm(km);
+      if (driveMin > target) continue;
+
+      const isChicca = String(p.visibility || "").toLowerCase() === "chicca";
+      const s = scorePlace({ driveMin, targetMin: Number(maxMinutes), beautyScore: p.beauty_score, isChicca });
+
+      candidates.push({ place: p, pid, km, driveMin, score: Number(s.toFixed(4)) });
+    }
+
+    candidates.sort((a, b) => (b.score - a.score) || (a.driveMin - b.driveMin));
+    usedSoftFallback = candidates.length > 0;
   }
 
-  // 4) if still none, ignore visited too (last resort)
-  if (candidates.length === 0) {
-    const r = buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited:true, ignoreSeen:true });
-    candidates = r.candidates; key = r.key;
-  }
-
-  if (candidates.length === 0) return { chosen:null, alternatives:[], key, usedSoftCap };
-
-  // pick = weighted among top 18 to avoid always same #1
-  const chosen = weightedPickTop(candidates, 18);
-
-  // alternatives = next best excluding chosen (take 2)
-  const alternatives = candidates.filter(c => c.pid !== chosen.pid).slice(0, 2);
-
-  // mark chosen as seen for this filter context
-  const seen = getSeenSet(key);
-  seen.add(chosen.pid);
-  saveSeenSet(key, seen);
-
-  return { chosen, alternatives, key, usedSoftCap };
+  const chosen = candidates[0] || null;
+  const alternatives = candidates.slice(1, 3); // due alternative
+  return { chosen, alternatives, totalCandidates: candidates.length, usedSoftFallback };
 }
 
 // -------------------- RENDER --------------------
-function renderResult(origin, maxMinutes, chosen, alternatives, usedSoftCap) {
+function renderAlternatives(origin, alternatives) {
+  if (!alternatives || !alternatives.length) return "";
+
+  const html = alternatives.map((a, idx) => {
+    const p = a.place;
+    const isChicca = String(p.visibility || "").toLowerCase() === "chicca";
+    const badge = isChicca ? "✨" : "✅";
+    const placeUrl = mapsPlaceUrl(p.lat, p.lon);
+    const dirUrl = mapsDirUrl(origin.lat, origin.lon, p.lat, p.lon);
+
+    // card cliccabile + bottoni
+    return `
+      <div class="card altCard" data-alt-idx="${idx}" style="padding:12px;">
+        <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
+          <div>
+            <div style="font-weight:800; font-size:16px; line-height:1.2;">
+              ${p.name} <span class="small muted">(${badge})</span>
+            </div>
+            <div class="small muted" style="margin-top:6px;">
+              ~${a.driveMin} min • ${fmtKm(a.km)} • ${p.type || "meta"}
+            </div>
+          </div>
+          <button class="btn btn-ghost altPickBtn" data-alt-idx="${idx}" type="button">Scegli</button>
+        </div>
+
+        <div class="row wrap gap" style="margin-top:10px;">
+          <a class="btn btn-ghost" target="_blank" rel="noopener" href="${placeUrl}">Maps</a>
+          <a class="btn btn-ghost" target="_blank" rel="noopener" href="${dirUrl}">Percorso</a>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  return `
+    <div class="card" style="margin-top:12px;">
+      <div class="small muted">Alternative (toccane una)</div>
+      <div style="margin-top:10px; display:flex; flex-direction:column; gap:10px;">
+        ${html}
+      </div>
+    </div>
+  `;
+}
+
+function renderResult(origin, maxMinutes, chosen, alternatives, usedSoftFallback) {
   const area = $("resultArea");
+
   if (!chosen) {
     area.innerHTML = `
       <div class="card errbox">
         <div class="small">❌ Nessuna meta trovata entro ${maxMinutes} min con i filtri attuali.</div>
-        <div class="small muted" style="margin-top:6px;">Prova ad aumentare i minuti o cambiare categoria/stile.</div>
-      </div>`;
+        <div class="small muted" style="margin-top:6px;">Prova ad aumentare i minuti oppure cambia categoria/stile.</div>
+      </div>
+    `;
     return;
   }
 
@@ -417,7 +450,7 @@ function renderResult(origin, maxMinutes, chosen, alternatives, usedSoftCap) {
   const placeUrl = mapsPlaceUrl(p.lat, p.lon);
   const dirUrl = mapsDirUrl(origin.lat, origin.lon, p.lat, p.lon);
 
-  const why = Array.isArray(p.why) ? p.why.slice(0, 3) : [];
+  const why = Array.isArray(p.why) ? p.why.slice(0, 4) : [];
   const whyHtml = why.length
     ? `<ul style="margin:10px 0 0; padding-left:18px; color: var(--muted);">
          ${why.map(x => `<li>${x}</li>`).join("")}
@@ -425,88 +458,89 @@ function renderResult(origin, maxMinutes, chosen, alternatives, usedSoftCap) {
     : "";
 
   const country = p.country || "IT";
+  const cityForLinks = p.name;
 
   const monetHtml = `
     <div class="card" style="margin-top:12px;">
       <div class="small muted">Prenota / Scopri (link monetizzabili)</div>
       <div class="row wrap gap" style="margin-top:10px;">
-        <a class="btn" target="_blank" rel="noopener" href="${bookingUrl(p.name, country, BOOKING_AID)}">🏨 Hotel</a>
-        <a class="btn" target="_blank" rel="noopener" href="${getYourGuideUrl(p.name, GYG_PID)}">🎟️ Tour</a>
-        <a class="btn" target="_blank" rel="noopener" href="${tiqetsUrl(p.name, TIQETS_PID)}">🏛️ Attrazioni</a>
+        <a class="btn" target="_blank" rel="noopener" href="${bookingUrl(cityForLinks, country, BOOKING_AID)}">🏨 Hotel</a>
+        <a class="btn" target="_blank" rel="noopener" href="${getYourGuideUrl(cityForLinks, GYG_PID)}">🎟️ Tour</a>
+        <a class="btn" target="_blank" rel="noopener" href="${tiqetsUrl(cityForLinks, TIQETS_PID)}">🏛️ Attrazioni</a>
         <a class="btn btn-ghost" target="_blank" rel="noopener" href="${amazonEssentialsUrl(AMAZON_TAG)}">🧳 Essenziali</a>
       </div>
-    </div>`;
-
-  const altHtml = (alternatives || []).length ? `
-    <div class="card" style="margin-top:12px;">
-      <div class="small muted">Alternative (cliccabili)</div>
-      <div style="margin-top:10px; display:flex; flex-direction:column; gap:8px;">
-        ${(alternatives || []).map(a => {
-          const ap = a.place;
-          const aBadge = String(ap.visibility || "").toLowerCase() === "chicca" ? "✨" : "✅";
-          return `
-            <button class="card altbtn" data-pid="${a.pid}" style="padding:12px 12px; text-align:left; cursor:pointer;">
-              <div style="font-weight:800; font-size:16px; line-height:1.25;">${ap.name} <span class="small muted">(${aBadge})</span></div>
-              <div class="small muted">~${a.driveMin} min • ${fmtKm(a.km)}</div>
-            </button>`;
-        }).join("")}
+      <div class="small muted" style="margin-top:8px;">
+        (Inserisci i tuoi ID affiliato in app.js: BOOKING_AID / GYG_PID / TIQETS_PID / AMAZON_TAG)
       </div>
-    </div>` : "";
+    </div>
+  `;
 
-  const softNote = usedSoftCap
-    ? `<div class="small muted" style="margin-top:8px;">Nota: ho allargato leggermente il tempo (+15%) perché non c'erano mete nel limite esatto.</div>`
+  const fallbackNote = usedSoftFallback
+    ? `<div class="small muted" style="margin-top:8px;">⚠️ Nota: ho allargato leggermente la soglia per trovarti qualcosa (fino a ~${Math.round(maxMinutes * SOFT_FALLBACK_MULT)} min stimati).</div>`
     : "";
 
   area.innerHTML = `
     <div class="card okbox">
       <div class="pill">🚗 auto • ~${chosen.driveMin} min • ${fmtKm(chosen.km)} • ${badge}</div>
-      <div class="resultTitle">${p.name}, ${country}</div>
+      <div class="resultTitle">${p.name}</div>
       <div class="small muted" style="margin-top:6px;">
         Categoria: <b>${p.type || "meta"}</b> • Punteggio: <b>${chosen.score}</b>
       </div>
+      ${fallbackNote}
 
       <div class="row wrap gap" style="margin-top:12px;">
         <a class="btn" href="${placeUrl}" target="_blank" rel="noopener">Apri su Google Maps</a>
         <a class="btn btn-ghost" href="${dirUrl}" target="_blank" rel="noopener">Apri percorso</a>
       </div>
 
-      ${softNote}
       ${whyHtml}
 
       <div class="row wrap gap" style="margin-top:12px;">
-        <button class="btn btn-ghost" id="btnVisited">✅ Già visitato</button>
-        <button class="btn" id="btnChange">🔁 Cambia meta</button>
+        <button class="btn btn-ghost" id="btnVisited" type="button">✅ Già visitato</button>
+        <button class="btn" id="btnChange" type="button">🔁 Cambia meta</button>
       </div>
     </div>
 
     ${monetHtml}
-    ${altHtml}
+    ${renderAlternatives(origin, alternatives)}
   `;
 
+  // segna come “mostrato di recente” (così la prossima ricerca cambia)
+  pushRecent(pid);
+
+  // buttons
   $("btnVisited")?.addEventListener("click", () => {
     markVisited(pid);
     showStatus("ok", "Segnato come visitato ✅ — La prossima volta ti proporrò un’altra meta.");
   });
 
-  $("btnChange")?.addEventListener("click", () => runSearch({ silent: true }));
+  $("btnChange")?.addEventListener("click", () => {
+    runSearch({ silent: true });
+  });
 
-  // alternative click = promote
-  area.querySelectorAll(".altbtn").forEach(btn => {
+  // alternative: scegli
+  area.querySelectorAll(".altPickBtn").forEach(btn => {
     btn.addEventListener("click", () => {
-      const pid2 = btn.getAttribute("data-pid");
-      const alt = (alternatives || []).find(x => x.pid === pid2);
+      const idx = Number(btn.dataset.altIdx);
+      const alt = (alternatives || [])[idx];
       if (!alt) return;
+      // renderizza l’alternativa come principale
+      renderResult(origin, maxMinutes, alt, alternatives.filter((_, i) => i !== idx), false);
+      showStatus("ok", "Ok ✅ Hai scelto un’alternativa.");
+    });
+  });
 
-      const maxMinutes = clamp(Number($("maxMinutes").value) || 120, 10, 600);
-      const category = getActiveCategory();
-      const styles = getActiveStyles();
-      const key = seenKey({ category, styles, maxMinutes });
-      const seen = getSeenSet(key);
-      seen.add(pid2);
-      saveSeenSet(key, seen);
-
-      renderResult(origin, maxMinutes, alt, alternatives.filter(x=>x.pid!==pid2), false);
-      showStatus("ok", "Meta selezionata ✅");
+  // card cliccabile (tap ovunque sulla card → scegli)
+  area.querySelectorAll(".altCard").forEach(card => {
+    card.addEventListener("click", (e) => {
+      // se clicchi su link/bottone, non forzare choose
+      const a = e.target.closest("a,button");
+      if (a) return;
+      const idx = Number(card.dataset.altIdx);
+      const alt = (alternatives || [])[idx];
+      if (!alt) return;
+      renderResult(origin, maxMinutes, alt, alternatives.filter((_, i) => i !== idx), false);
+      showStatus("ok", "Ok ✅ Hai scelto un’alternativa.");
     });
   });
 }
@@ -515,6 +549,7 @@ function renderResult(origin, maxMinutes, chosen, alternatives, usedSoftCap) {
 async function runSearch({ silent = false } = {}) {
   try {
     if (!silent) hideStatus();
+
     if (!MACRO) await loadMacro();
 
     const origin = getOrigin();
@@ -527,11 +562,12 @@ async function runSearch({ silent = false } = {}) {
     const category = getActiveCategory();
     const styles = getActiveStyles();
 
-    const { chosen, alternatives, usedSoftCap } = pickDestination(origin, maxMinutes, category, styles);
-    renderResult(origin, maxMinutes, chosen, alternatives, usedSoftCap);
+    const { chosen, alternatives, usedSoftFallback } = pickDestination(origin, maxMinutes, category, styles);
+
+    renderResult(origin, maxMinutes, chosen, alternatives, usedSoftFallback);
 
     if (!chosen) {
-      showStatus("warn", `Nessuna meta entro ${maxMinutes} min con i filtri attuali.`);
+      showStatus("warn", `Nessuna meta entro ${maxMinutes} min con i filtri attuali. Prova ad aumentare i minuti o cambiare filtri.`);
     } else if (!silent) {
       showStatus("ok", `Meta trovata ✅ (~${chosen.driveMin} min in auto)`);
     }
@@ -557,7 +593,7 @@ function restoreOrigin() {
   if (raw) {
     try {
       const o = JSON.parse(raw);
-      if (Number.isFinite(Number(o?.lat)) && Number.isFinite(Number(o?.lon))) setOrigin(o);
+      if (o?.lat && o?.lon) setOrigin(o);
     } catch {}
   }
 }
@@ -567,12 +603,15 @@ function bindOriginButtons() {
     $("originStatus").textContent = "📍 Sto leggendo il GPS…";
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        setOrigin({ label: "La mia posizione", lat: pos.coords.latitude, lon: pos.coords.longitude });
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+        setOrigin({ label: "La mia posizione", lat, lon });
         showStatus("ok", "Partenza GPS impostata ✅");
       },
-      () => {
+      (err) => {
+        console.error(err);
         $("originStatus").textContent = "❌ GPS non disponibile (permessi?)";
-        showStatus("err", "GPS non disponibile. Scrivi un luogo e usa “Usa questo luogo”.");
+        showStatus("err", "GPS non disponibile. Prova a scrivere un luogo e usare “Usa questo luogo”.");
       },
       { enableHighAccuracy: true, timeout: 12000 }
     );
@@ -595,16 +634,11 @@ function bindOriginButtons() {
 
 function bindMainButtons() {
   $("btnFind")?.addEventListener("click", () => runSearch());
-  $("btnResetVisited")?.addEventListener("click", () => {
-    resetVisited();
-    showStatus("ok", "Visitati resettati ✅");
-  });
 
-  // Optional: long-press reset "seen" rotation for current filters
-  $("btnResetVisited")?.addEventListener("contextmenu", (e) => {
-    e.preventDefault();
-    resetSeenForCurrentFilters();
-    showStatus("ok", "Rotazione mete resettata ✅ (filtri attuali)");
+  $("btnResetVisited")?.addEventListener("click", () => {
+    resetVisitedAndRecent();
+    showStatus("ok", "Reset fatto ✅ (visitati + recenti). Ora ti proporrà mete nuove.");
+    $("resultArea").innerHTML = "";
   });
 }
 
@@ -618,5 +652,8 @@ restoreOrigin();
 bindOriginButtons();
 bindMainButtons();
 
+// preload macro
 loadMacro().catch(() => {});
+
+// default
 hideStatus();
