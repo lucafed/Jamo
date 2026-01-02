@@ -6,7 +6,6 @@ on:
     paths:
       - "scripts/build_macro_it_abruzzo.mjs"
       - "public/data/places_bbox_abruzzo_neighbors.json"
-      - "public/data/pois_eu_uk.json"
       - ".github/workflows/build-macro-it-abruzzo.yml"
 
 permissions:
