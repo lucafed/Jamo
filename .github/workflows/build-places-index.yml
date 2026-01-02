@@ -2,6 +2,8 @@ name: Build places index (EU+UK)
 
 on:
   workflow_dispatch: {}
+  schedule:
+    - cron: "0 6 * * 1" # ogni lunedì alle 06:00 UTC
   push:
     paths:
       - "scripts/**"
@@ -9,6 +11,10 @@ on:
 
 permissions:
   contents: write
+
+concurrency:
+  group: build-places-index
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -22,10 +28,26 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Download + extract GeoNames cities500.txt
+      - name: Prepare temp dir
+        run: mkdir -p .tmp
+
+      - name: Cache GeoNames cities500.zip
+        uses: actions/cache@v4
+        with:
+          path: .tmp/cities500.zip
+          key: geonames-cities500-v1
+
+      - name: Download GeoNames cities500.zip (if missing)
         run: |
-          mkdir -p .tmp
-          curl -L "https://download.geonames.org/export/dump/cities500.zip" -o .tmp/cities500.zip
+          if [ ! -f ".tmp/cities500.zip" ]; then
+            echo "Downloading cities500.zip..."
+            curl -L "https://download.geonames.org/export/dump/cities500.zip" -o .tmp/cities500.zip
+          else
+            echo "Using cached cities500.zip"
+          fi
+
+      - name: Extract cities500.txt
+        run: |
           unzip -p .tmp/cities500.zip cities500.txt > .tmp/cities500.txt
           wc -l .tmp/cities500.txt
 
