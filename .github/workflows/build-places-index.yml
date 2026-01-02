@@ -31,24 +31,23 @@ jobs:
       - name: Prepare temp dir
         run: mkdir -p .tmp
 
+      # cache SOLO come acceleratore (ma aggiorniamo comunque con download)
       - name: Cache GeoNames cities500.zip
         uses: actions/cache@v4
         with:
           path: .tmp/cities500.zip
           key: geonames-cities500-v1
 
-      - name: Download GeoNames cities500.zip (if missing)
+      - name: Download GeoNames cities500.zip (always refresh)
         run: |
-          if [ ! -f ".tmp/cities500.zip" ]; then
-            echo "Downloading cities500.zip..."
-            curl -L "https://download.geonames.org/export/dump/cities500.zip" -o .tmp/cities500.zip
-          else
-            echo "Using cached cities500.zip"
-          fi
+          echo "Downloading cities500.zip..."
+          curl -L "https://download.geonames.org/export/dump/cities500.zip" -o .tmp/cities500.zip
 
       - name: Extract cities500.txt
         run: |
+          set -e
           unzip -p .tmp/cities500.zip cities500.txt > .tmp/cities500.txt
+          test -s .tmp/cities500.txt
           wc -l .tmp/cities500.txt
 
       - name: Build index
