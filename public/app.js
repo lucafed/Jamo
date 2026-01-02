@@ -1,8 +1,8 @@
-/* Jamo — Auto-only (offline macro) — app.js v3.2
- * - Origin: GPS or manual (geocode via /api/geocode?q=)
+/* Jamo — Auto-only (offline macro) — app.js v3.3 (FULL)
+ * - Origin: GPS or manual (geocode via /api/geocode?q=) with robust fallback
  * - Picks destinations from macro places based on:
  *   time (maxMinutes), category, style (chicche/classici), rotation (not repeating)
- * - Outputs: result card + 2 alternatives (clickable) + maps links + monetization placeholders
+ * - Outputs: result card + 2 alternatives (clickable) + maps links + REAL monetization blocks
  */
 
 const $ = (id) => document.getElementById(id);
@@ -16,16 +16,25 @@ const AVG_KMH = 72;
 const FIXED_OVERHEAD_MIN = 8;
 
 // ROTATION
-const RECENT_TTL_MS = 1000 * 60 * 60 * 20; // ~20h: “oggi”
-const RECENT_MAX = 120;                    // quante mete ricordare “oggi”
-let SESSION_SEEN = new Set();              // in-memory (sessione)
+const RECENT_TTL_MS = 1000 * 60 * 60 * 20; // ~20h “oggi”
+const RECENT_MAX = 160;                    // aumentato
+let SESSION_SEEN = new Set();
 let LAST_SHOWN_PID = null;
+let LAST_SHOWN_NAMEKEY = null;
 
-// Monetization placeholders (fill with your IDs)
-const BOOKING_AID = ""; // Booking affiliate id (aid)
-const AMAZON_TAG  = ""; // Amazon tag
-const GYG_PID     = ""; // GetYourGuide partner_id
-const TIQETS_PID  = ""; // Tiqets partner
+// -------------------- AFFILIATE CONFIG (METTI QUI I TUOI ID) --------------------
+// Se lasci vuoto, il link funziona ma NON traccia.
+const AFF = {
+  bookingAid: "",        // Booking.com: aid=...
+  amazonTag: "",         // Amazon Associates tag: ...-21
+  gygPartnerId: "",      // GetYourGuide: partner_id=...
+  tiqetsPartner: "",     // Tiqets: partner=...
+
+  // Extra super-monetizzabili anche per mete vicine (opzionali):
+  esimUrl: "",           // tuo affiliate link eSIM (Airalo/Holafly ecc.)
+  insuranceUrl: "",      // tuo affiliate link assicurazione (Awin/CJ ecc.)
+  carRentalUrl: ""       // tuo affiliate link noleggio auto (DiscoverCars/Rentalcars ecc.)
+};
 
 // -------------------- UTIL --------------------
 function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
@@ -53,7 +62,7 @@ function normName(s) {
 }
 
 function safeIdFromPlace(p) {
-  return p.id || `p_${normName(p.name)}_${String(p.lat).slice(0,6)}_${String(p.lon).slice(0,6)}`;
+  return p.id || `p_${normName(p.name)}_${String(p.lat).slice(0, 6)}_${String(p.lon).slice(0, 6)}`;
 }
 
 function estCarMinutesFromKm(km) {
@@ -72,26 +81,42 @@ function mapsDirUrl(oLat, oLon, dLat, dLon) {
   return `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(oLat + "," + oLon)}&destination=${encodeURIComponent(dLat + "," + dLon)}&travelmode=driving`;
 }
 
-// Monetization URLs
-function bookingUrl(city, countryCode, affId = "") {
+// -------------------- MONETIZATION URLS --------------------
+function bookingUrl(city, countryCode, aid = "") {
   const q = `${city}${countryCode ? ", " + countryCode : ""}`;
   const base = `https://www.booking.com/searchresults.html?ss=${encodeURIComponent(q)}`;
-  return affId ? `${base}&aid=${encodeURIComponent(affId)}` : base;
+  return aid ? `${base}&aid=${encodeURIComponent(aid)}` : base;
 }
 
-function getYourGuideUrl(city, affId = "") {
+function getYourGuideUrl(city, partnerId = "") {
   const base = `https://www.getyourguide.com/s/?q=${encodeURIComponent(city)}`;
-  return affId ? `${base}&partner_id=${encodeURIComponent(affId)}` : base;
+  return partnerId ? `${base}&partner_id=${encodeURIComponent(partnerId)}` : base;
 }
 
-function tiqetsUrl(city, affId = "") {
+function tiqetsUrl(city, partner = "") {
   const base = `https://www.tiqets.com/it/search/?query=${encodeURIComponent(city)}`;
-  return affId ? `${base}&partner=${encodeURIComponent(affId)}` : base;
+  return partner ? `${base}&partner=${encodeURIComponent(partner)}` : base;
 }
 
-function amazonEssentialsUrl(tag = "") {
-  const base = `https://www.amazon.it/s?k=${encodeURIComponent("accessori viaggio")}`;
+function amazonEssentialsUrl(tag = "", query = "accessori viaggio") {
+  const base = `https://www.amazon.it/s?k=${encodeURIComponent(query)}`;
   return tag ? `${base}&tag=${encodeURIComponent(tag)}` : base;
+}
+
+function externalUrlOrFallback(url, fallback) {
+  const u = String(url || "").trim();
+  return u ? u : fallback;
+}
+
+// Small client-side event logger (optional; useful later for analytics)
+function track(event, payload = {}) {
+  try {
+    const key = "jamo_events";
+    const raw = localStorage.getItem(key);
+    const arr = raw ? JSON.parse(raw) : [];
+    arr.unshift({ event, payload, ts: Date.now() });
+    localStorage.setItem(key, JSON.stringify(arr.slice(0, 250)));
+  } catch {}
 }
 
 // -------------------- STORAGE: origin + visited + recent --------------------
@@ -163,11 +188,10 @@ function cleanupRecent(list) {
   return list.filter(x => x && x.pid && (t - (x.ts || 0) <= RECENT_TTL_MS));
 }
 
-function addRecent(pid) {
+function addRecent(pid, nameKey = "") {
   const t = Date.now();
   let list = cleanupRecent(loadRecent());
-  list.unshift({ pid, ts: t });
-  // de-dup keeping newest
+  list.unshift({ pid, nameKey, ts: t });
   const seen = new Set();
   list = list.filter(x => {
     if (seen.has(x.pid)) return false;
@@ -183,13 +207,19 @@ function getRecentSet() {
   return new Set(list.map(x => x.pid));
 }
 
+function getRecentNameKeySet() {
+  const list = cleanupRecent(loadRecent());
+  return new Set(list.map(x => x.nameKey).filter(Boolean));
+}
+
 function resetRotation() {
   localStorage.removeItem("jamo_recent");
   SESSION_SEEN = new Set();
   LAST_SHOWN_PID = null;
+  LAST_SHOWN_NAMEKEY = null;
 }
 
-// -------------------- UI state (chips) --------------------
+// -------------------- UI (chips + status) --------------------
 function initChips(containerId, { multi = false } = {}) {
   const el = $(containerId);
   if (!el) return;
@@ -209,7 +239,11 @@ function initChips(containerId, { multi = false } = {}) {
       const v = Number(chip.dataset.min);
       if (Number.isFinite(v)) $("maxMinutes").value = String(v);
     }
-  });
+
+    // UX: evita “rimane premuto” su mobile (toglie focus)
+    chip.blur?.();
+    document.activeElement?.blur?.();
+  }, { passive: true });
 }
 
 function getActiveCategory() {
@@ -243,7 +277,7 @@ function hideStatus() {
   $("statusText").textContent = "";
 }
 
-// -------------------- DATA loading --------------------
+// -------------------- DATA --------------------
 let MACRO = null;
 
 async function loadMacro() {
@@ -255,19 +289,80 @@ async function loadMacro() {
   return j;
 }
 
-// -------------------- GEOCODING --------------------
+// -------------------- GEOCODING (ROBUST) --------------------
+async function fetchWithTimeout(url, ms = 9000) {
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), ms);
+  try {
+    const r = await fetch(url, { signal: ctrl.signal });
+    return r;
+  } finally {
+    clearTimeout(t);
+  }
+}
+
+function pickCandidateUI(candidates) {
+  // mini chooser (prompt) - semplice e stabile
+  // ritorna indice scelto o -1
+  const lines = candidates.map((c, i) => `${i + 1}) ${c.label}`).join("\n");
+  const ans = window.prompt(
+    `Ho trovato più risultati. Scrivi il numero giusto:\n\n${lines}\n\n(Annulla per uscire)`
+  );
+  const n = Number(String(ans || "").trim());
+  if (!Number.isFinite(n) || n < 1 || n > candidates.length) return -1;
+  return n - 1;
+}
+
 async function geocodeLabel(label) {
-  const q = String(label || "").trim();
+  let q = String(label || "").trim();
   if (!q) throw new Error("Scrivi un luogo (es: L'Aquila, Roma, Via Roma 10)");
-  const r = await fetch(`/api/geocode?q=${encodeURIComponent(q)}`, { method: "GET" });
-  const j = await r.json().catch(() => null);
+
+  // 1) prova normale
+  const url1 = `/api/geocode?q=${encodeURIComponent(q)}`;
+  let r = await fetchWithTimeout(url1, 9000);
+  let j = await r.json().catch(() => null);
+
+  // 2) se fallisce, prova aggiungendo “Italia”
+  if (!j || !j.ok) {
+    const q2 = q.toLowerCase().includes("italia") ? q : `${q}, Italia`;
+    const url2 = `/api/geocode?q=${encodeURIComponent(q2)}`;
+    r = await fetchWithTimeout(url2, 9000);
+    j = await r.json().catch(() => null);
+  }
+
+  // 3) se ancora nulla, prova “semplificazione” (togli parole tipo stazione/terminale)
+  if (!j || !j.ok) {
+    const simplified = q
+      .replace(/stazione|termini|aeroporto|porto|centro|piazza|via|viale/ig, "")
+      .replace(/\s+/g, " ")
+      .trim();
+    if (simplified && simplified.length >= 2 && simplified !== q) {
+      const url3 = `/api/geocode?q=${encodeURIComponent(simplified + ", Italia")}`;
+      r = await fetchWithTimeout(url3, 9000);
+      j = await r.json().catch(() => null);
+    }
+  }
 
   if (!j) throw new Error("Geocoding fallito (risposta vuota)");
   if (!j.ok) throw new Error(j.error || "Geocoding fallito");
+
+  // se ci sono candidates, per sicurezza (a volte best è “strano”)
+  if (Array.isArray(j.candidates) && j.candidates.length >= 2) {
+    // se il primo è molto diverso dalla query, fai scegliere
+    const qn = normName(q);
+    const best = j.result;
+    const bestn = normName(best?.label || "");
+    const suspicious = (qn.length >= 4 && bestn && !bestn.includes(qn.split(" ")[0]));
+    if (suspicious) {
+      const idx = pickCandidateUI(j.candidates);
+      if (idx >= 0) return j.candidates[idx];
+    }
+  }
+
   if (!j.result || !Number.isFinite(Number(j.result.lat)) || !Number.isFinite(Number(j.result.lon))) {
     throw new Error("Geocoding fallito (coordinate non valide)");
   }
-  return j.result; // {label, lat, lon}
+  return j.result;
 }
 
 // -------------------- FILTERS --------------------
@@ -307,14 +402,16 @@ function matchesCategory(place, cat) {
     tags.includes("animali") ||
     tags.includes("parco_avventura") ||
     tags.includes("luna_park") ||
-    tags.includes("acquario")
+    tags.includes("acquario") ||
+    tags.includes("attivita") ||
+    tags.includes("attività")
   );
 
   return true;
 }
 
 function matchesStyle(place, { wantChicche, wantClassici }) {
-  const vis = String(place.visibility || "").toLowerCase(); // "chicca" | "conosciuta"
+  const vis = String(place.visibility || "").toLowerCase();
   if (!wantChicche && !wantClassici) return true;
   if (vis === "chicca") return !!wantChicche;
   return !!wantClassici;
@@ -327,33 +424,38 @@ function baseScorePlace({ driveMin, targetMin, beautyScore, isChicca }) {
   return 0.62 * t + 0.34 * b + c;
 }
 
-// ROTATION penalty: avoid repeats in session + today
-function rotationPenalty(pid, recentSet) {
+// rotation penalty: avoid repeats today/session + “similar consecutive”
+function rotationPenalty(pid, nameKey, recentSet, recentNameKeys) {
   let pen = 0;
-  if (pid && pid === LAST_SHOWN_PID) pen += 0.22;   // evita duplicato immediato
-  if (SESSION_SEEN.has(pid)) pen += 0.20;           // già proposto in sessione
-  if (recentSet.has(pid)) pen += 0.12;              // già proposto “oggi”
+  if (pid && pid === LAST_SHOWN_PID) pen += 0.28;
+  if (SESSION_SEEN.has(pid)) pen += 0.22;
+  if (recentSet.has(pid)) pen += 0.14;
+
+  // evita mete “simili” (stesso nome key) consecutive o “oggi”
+  if (nameKey && nameKey === LAST_SHOWN_NAMEKEY) pen += 0.14;
+  if (nameKey && recentNameKeys.has(nameKey)) pen += 0.06;
+
   return pen;
 }
 
-// -------------------- TIME “SMART” (special cases) --------------------
+// -------------------- TIME SMART --------------------
 function effectiveMaxMinutes(maxMinutes, category) {
   const m = Number(maxMinutes);
   if (!Number.isFinite(m)) return 120;
 
-  // MARE: spesso non esiste entro 60' reali, quindi allarghiamo “gentilmente”
+  // Mare: spesso serve un filo più di tempo (ma senza esagerare)
   if (category === "mare" && m < 75) {
-    // es: 60 -> 81, 45 -> 61
     const widened = Math.round(m * 1.35);
     return clamp(widened, m, 180);
   }
   return clamp(m, 10, 600);
 }
 
-// -------------------- PICK DESTINATION (with rotation) --------------------
+// -------------------- PICK DESTINATION --------------------
 function buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited = false, ignoreRotation = false } = {}) {
   const visited = getVisitedSet();
   const recentSet = getRecentSet();
+  const recentNameKeys = getRecentNameKeySet();
 
   const target = Number(maxMinutes);
   const oLat = Number(origin.lat);
@@ -370,13 +472,15 @@ function buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited =
     if (!matchesStyle(p, styles)) continue;
 
     const pid = safeIdFromPlace(p);
+    const nameKey = normName(p.name);
+
     if (!ignoreVisited && visited.has(pid)) continue;
 
     const km = haversineKm(oLat, oLon, lat, lon);
     const driveMin = estCarMinutesFromKm(km);
 
     if (driveMin > target) continue;
-    if (km < 1.2) continue; // “sei già lì”
+    if (km < 1.2) continue;
 
     const isChicca = String(p.visibility || "").toLowerCase() === "chicca";
     let s = baseScorePlace({
@@ -387,70 +491,99 @@ function buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited =
     });
 
     if (!ignoreRotation) {
-      s = s - rotationPenalty(pid, recentSet);
+      s = s - rotationPenalty(pid, nameKey, recentSet, recentNameKeys);
     }
 
-    candidates.push({
-      place: p,
-      pid,
-      km,
-      driveMin,
-      score: Number(s.toFixed(4))
-    });
+    candidates.push({ place: p, pid, nameKey, km, driveMin, score: Number(s.toFixed(4)) });
   }
 
-  candidates.sort((a, b) => {
-    if (b.score !== a.score) return b.score - a.score;
-    return a.driveMin - b.driveMin;
-  });
-
+  candidates.sort((a, b) => (b.score - a.score) || (a.driveMin - b.driveMin));
   return candidates;
 }
 
 function pickDestination(origin, maxMinutes, category, styles) {
-  // 1) normale: visita esclusa + rotazione attiva
   let candidates = buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited: false, ignoreRotation: false });
 
-  // 2) se zero: ignora rotazione (ma non i visitati)
   if (candidates.length === 0) {
     candidates = buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited: false, ignoreRotation: true });
   }
-
-  // 3) se ancora zero: ignora anche visited (ultima spiaggia)
   if (candidates.length === 0) {
     candidates = buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited: true, ignoreRotation: true });
   }
 
   const chosen = candidates[0] || null;
-  const alternatives = candidates.slice(1, 3); // **2 alternative**
+  const alternatives = candidates.slice(1, 3); // 2 alternative
   return { chosen, alternatives, totalCandidates: candidates.length };
 }
 
-// -------------------- RENDER --------------------
-function monetBoxHtml(placeName, country = "IT") {
+// -------------------- MONETIZATION BLOCK (SMART) --------------------
+function monetBoxHtml(place, category, country = "IT") {
+  const placeName = place?.name || "Abruzzo";
+  const tags = (place?.tags || []).map(x => String(x).toLowerCase());
+
+  // query Amazon “smart”
+  let amazonQ = "accessori viaggio";
+  if (category === "mare" || tags.includes("mare") || tags.includes("spiagge")) amazonQ = "accessori mare spiaggia";
+  if (category === "montagna" || tags.includes("montagna") || tags.includes("trekking")) amazonQ = "trekking zaino bastoncini";
+  if (category === "family" || tags.includes("bambini") || tags.includes("famiglie")) amazonQ = "giochi da viaggio bambini";
+  if (category === "relax" || tags.includes("terme") || tags.includes("spa")) amazonQ = "accappatoio spa ciabatte";
+
+  const booking = bookingUrl(placeName, country, AFF.bookingAid);
+  const gyg = getYourGuideUrl(placeName, AFF.gygPartnerId);
+  const tiq = tiqetsUrl(placeName, AFF.tiqetsPartner);
+  const ama = amazonEssentialsUrl(AFF.amazonTag, amazonQ);
+
+  // extra (anche per mete vicine)
+  const esim = externalUrlOrFallback(AFF.esimUrl, "");
+  const ins = externalUrlOrFallback(AFF.insuranceUrl, "");
+  const car = externalUrlOrFallback(AFF.carRentalUrl, "");
+
+  const extraBtns = [
+    esim ? `<a class="btn btn-ghost" target="_blank" rel="noopener" href="${esim}" data-track="esim">📶 eSIM</a>` : "",
+    ins ? `<a class="btn btn-ghost" target="_blank" rel="noopener" href="${ins}" data-track="insurance">🛡️ Assicurazione</a>` : "",
+    car ? `<a class="btn btn-ghost" target="_blank" rel="noopener" href="${car}" data-track="carrental">🚗 Noleggio</a>` : "",
+  ].filter(Boolean).join("");
+
+  // hint monet: se non hai inserito ID, mostra un warning leggero
+  const missing =
+    (!AFF.bookingAid && !AFF.gygPartnerId && !AFF.tiqetsPartner && !AFF.amazonTag && !AFF.esimUrl && !AFF.insuranceUrl && !AFF.carRentalUrl);
+
   return `
     <div class="card" style="margin-top:12px;">
       <div class="small muted">Prenota / Scopri (link monetizzabili)</div>
+
       <div class="row wrap gap" style="margin-top:10px;">
-        <a class="btn" target="_blank" rel="noopener" href="${bookingUrl(placeName, country, BOOKING_AID)}">🏨 Hotel</a>
-        <a class="btn" target="_blank" rel="noopener" href="${getYourGuideUrl(placeName, GYG_PID)}">🎟️ Tour</a>
-        <a class="btn" target="_blank" rel="noopener" href="${tiqetsUrl(placeName, TIQETS_PID)}">🏛️ Attrazioni</a>
-        <a class="btn btn-ghost" target="_blank" rel="noopener" href="${amazonEssentialsUrl(AMAZON_TAG)}">🧳 Essenziali</a>
+        <a class="btn" target="_blank" rel="noopener" href="${booking}" data-track="booking">🏨 Hotel</a>
+        <a class="btn" target="_blank" rel="noopener" href="${gyg}" data-track="gyg">🎟️ Tour</a>
+        <a class="btn" target="_blank" rel="noopener" href="${tiq}" data-track="tiqets">🏛️ Attrazioni</a>
+        <a class="btn btn-ghost" target="_blank" rel="noopener" href="${ama}" data-track="amazon">🧳 Essenziali</a>
+        ${extraBtns}
       </div>
-      <div class="small muted" style="margin-top:8px;">
-        (Inserisci i tuoi ID affiliato in app.js: BOOKING_AID / GYG_PID / TIQETS_PID / AMAZON_TAG)
-      </div>
+
+      ${missing ? `<div class="small muted" style="margin-top:10px;">
+        ⚠️ Per monetizzare davvero devi inserire gli ID affiliato in <b>AFF</b> (in cima a app.js).
+      </div>` : ``}
     </div>
   `;
 }
 
+function bindMonetTracking(container, placeName) {
+  // Traccia click monet (locale)
+  [...container.querySelectorAll("[data-track]")].forEach(a => {
+    a.addEventListener("click", () => {
+      track("monet_click", { provider: a.getAttribute("data-track"), place: placeName });
+    }, { passive: true });
+  });
+}
+
+// -------------------- RENDER --------------------
 function renderResult(origin, maxMinutesShown, chosen, alternatives, meta = {}) {
   const area = $("resultArea");
   const category = meta.category || "ovunque";
 
   if (!chosen) {
     const extra = (category === "mare" && Number(maxMinutesShown) < 75)
-      ? `Hai scelto <b>Mare</b>: a volte serve un po' più tempo. (Prova 90–120 min)`
+      ? `Hai scelto <b>Mare</b>: spesso serve più tempo. Prova 90–120 min.`
       : `Prova ad aumentare i minuti o cambiare categoria/stile.`;
 
     area.innerHTML = `
@@ -471,6 +604,7 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives, meta = {}) 
 
   const p = chosen.place;
   const pid = chosen.pid;
+  const nameKey = chosen.nameKey || normName(p.name);
 
   const isChicca = String(p.visibility || "").toLowerCase() === "chicca";
   const badge = isChicca ? "✨ chicca" : "✅ classica";
@@ -501,10 +635,10 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives, meta = {}) 
 
           return `
             <div class="card" data-alt="1" data-pid="${aPid}"
-                 style="padding:12px 12px; cursor:pointer; border-color: rgba(255,255,255,.12);">
+                 style="padding:12px 12px; cursor:pointer; border-color: rgba(255,255,255,.14);">
               <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
                 <div>
-                  <div style="font-weight:800; font-size:16px; line-height:1.2;">
+                  <div style="font-weight:850; font-size:16px; line-height:1.2;">
                     ${ap.name} <span class="small muted">(${aBadge})</span>
                   </div>
                   <div class="small muted" style="margin-top:4px;">
@@ -549,14 +683,15 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives, meta = {}) 
       </div>
     </div>
 
-    ${monetBoxHtml(p.name, country)}
+    ${monetBoxHtml(p, category, country)}
     ${altHtml}
   `;
 
-  // track shown (for rotation)
+  // rotation memory
   LAST_SHOWN_PID = pid;
+  LAST_SHOWN_NAMEKEY = nameKey;
   SESSION_SEEN.add(pid);
-  addRecent(pid);
+  addRecent(pid, nameKey);
 
   // buttons
   $("btnVisited")?.addEventListener("click", () => {
@@ -565,7 +700,6 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives, meta = {}) 
   });
 
   $("btnChange")?.addEventListener("click", () => {
-    // “cambia” = trova un’altra evitando quella appena mostrata
     runSearch({ silent: true, forbidPid: pid });
   });
 
@@ -574,22 +708,23 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives, meta = {}) 
     showStatus("ok", "Reset fatto ✅ Ora posso ripescare anche mete già proposte oggi/sessione.");
   });
 
-  // Alternative clickable: click -> set as main immediately
+  // alternative click -> render as chosen
   [...area.querySelectorAll('[data-alt="1"][data-pid]')].forEach((el) => {
     el.addEventListener("click", () => {
       const pid2 = el.getAttribute("data-pid");
       const alt = (alternatives || []).find(x => x.pid === pid2);
       if (!alt) return;
 
-      // Mark previous as “seen” (but not visited), and render alt as chosen
-      LAST_SHOWN_PID = pid2;
-      SESSION_SEEN.add(pid2);
-      addRecent(pid2);
+      track("choose_alternative", { from: pid, to: pid2 });
 
-      // Re-render with new chosen and the other one as alternative (best effort)
+      LAST_SHOWN_PID = pid2;
+      LAST_SHOWN_NAMEKEY = alt.nameKey || normName(alt.place?.name);
+      SESSION_SEEN.add(pid2);
+      addRecent(pid2, LAST_SHOWN_NAMEKEY);
+
       const remaining = (alternatives || []).filter(x => x.pid !== pid2);
       const newAlternatives = [
-        { place: chosen.place, pid: chosen.pid, km: chosen.km, driveMin: chosen.driveMin, score: chosen.score },
+        { place: chosen.place, pid: chosen.pid, nameKey: chosen.nameKey, km: chosen.km, driveMin: chosen.driveMin, score: chosen.score },
         ...remaining
       ].slice(0, 2);
 
@@ -597,6 +732,9 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives, meta = {}) 
       showStatus("ok", "Ok ✅ Ho scelto l’alternativa.");
     });
   });
+
+  // bind monet tracking
+  bindMonetTracking(area, p.name);
 }
 
 // -------------------- MAIN SEARCH --------------------
@@ -615,21 +753,15 @@ async function runSearch({ silent = false, forbidPid = null } = {}) {
     const category = getActiveCategory();
     const styles = getActiveStyles();
 
-    // smart effective time (especially for mare)
     const effMax = effectiveMaxMinutes(maxMinutesInput, category);
 
-    // pick
     let { chosen, alternatives } = pickDestination(origin, effMax, category, styles);
 
-    // forbid immediate specific pid (e.g. “cambia meta”)
+    // forbid immediate specific pid (“cambia meta”)
     if (forbidPid && chosen?.pid === forbidPid) {
-      // temporarily treat forbid as “session seen”
-      const tmp = new Set(SESSION_SEEN);
-      tmp.add(forbidPid);
-
-      // rebuild ignoring visited but respecting tmp rotation strongly
       const visited = getVisitedSet();
       const recentSet = getRecentSet();
+      const recentNameKeys = getRecentNameKeySet();
       const target = effMax;
 
       const candidates = [];
@@ -638,29 +770,30 @@ async function runSearch({ silent = false, forbidPid = null } = {}) {
       for (const p of MACRO.places) {
         const lat = Number(p.lat), lon = Number(p.lon);
         if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
-        const pid = safeIdFromPlace(p);
 
-        if (visited.has(pid)) continue;
         if (!matchesCategory(p, category)) continue;
         if (!matchesStyle(p, styles)) continue;
+
+        const pid = safeIdFromPlace(p);
+        const nameKey = normName(p.name);
+        if (pid === forbidPid) continue;
+        if (visited.has(pid)) continue;
 
         const km = haversineKm(oLat, oLon, lat, lon);
         const driveMin = estCarMinutesFromKm(km);
         if (driveMin > target) continue;
         if (km < 1.2) continue;
-        if (tmp.has(pid)) continue;
 
         const isChicca = String(p.visibility || "").toLowerCase() === "chicca";
         let s = baseScorePlace({ driveMin, targetMin: target, beautyScore: p.beauty_score, isChicca });
-        // apply rotation (based on real session/today)
-        s = s - rotationPenalty(pid, recentSet);
+        s = s - rotationPenalty(pid, nameKey, recentSet, recentNameKeys);
 
-        candidates.push({ place: p, pid, km, driveMin, score: Number(s.toFixed(4)) });
+        candidates.push({ place: p, pid, nameKey, km, driveMin, score: Number(s.toFixed(4)) });
       }
 
-      candidates.sort((a,b)=> (b.score-a.score) || (a.driveMin-b.driveMin));
+      candidates.sort((a, b) => (b.score - a.score) || (a.driveMin - b.driveMin));
       chosen = candidates[0] || null;
-      alternatives = candidates.slice(1,3);
+      alternatives = candidates.slice(1, 3);
     }
 
     renderResult(origin, maxMinutesInput, chosen, alternatives, { category, effMax });
@@ -677,6 +810,35 @@ async function runSearch({ silent = false, forbidPid = null } = {}) {
     console.error(e);
     showStatus("err", `Errore: ${String(e.message || e)}`);
   }
+}
+
+// -------------------- RESET SEARCH (NEW) --------------------
+function resetSearchUI() {
+  // reset chips to defaults (best-effort)
+  const resetSingle = (id, keepIndex = 0) => {
+    const el = $(id);
+    if (!el) return;
+    const chips = [...el.querySelectorAll(".chip")];
+    chips.forEach(c => c.classList.remove("active"));
+    if (chips[keepIndex]) chips[keepIndex].classList.add("active");
+  };
+
+  resetSingle("categoryChips", 0); // ovunque
+  // style: chicche+classici attivi
+  const style = $("styleChips");
+  if (style) [...style.querySelectorAll(".chip")].forEach(c => c.classList.add("active"));
+
+  $("maxMinutes").value = "120";
+  const time = $("timeChips");
+  if (time) {
+    [...time.querySelectorAll(".chip")].forEach(c => c.classList.remove("active"));
+    const match = [...time.querySelectorAll(".chip")].find(c => Number(c.dataset.min) === 120);
+    if (match) match.classList.add("active");
+  }
+
+  $("resultArea").innerHTML = `<div class="small muted">Premi “TROVAMI LA META” per vedere una proposta.</div>`;
+  hideStatus();
+  track("reset_search");
 }
 
 // -------------------- INIT --------------------
@@ -711,6 +873,7 @@ function bindOriginButtons() {
         const lon = pos.coords.longitude;
         setOrigin({ label: "La mia posizione", lat, lon });
         showStatus("ok", "Partenza GPS impostata ✅");
+        track("origin_set_gps", { lat: Number(lat.toFixed(4)), lon: Number(lon.toFixed(4)) });
       },
       (err) => {
         console.error(err);
@@ -728,6 +891,7 @@ function bindOriginButtons() {
       const result = await geocodeLabel(label);
       setOrigin({ label: result.label || label, lat: result.lat, lon: result.lon });
       showStatus("ok", "Partenza impostata ✅");
+      track("origin_set_text", { q: label, label: result.label || label });
     } catch (e) {
       console.error(e);
       $("originStatus").textContent = `❌ ${String(e.message || e)}`;
@@ -737,12 +901,20 @@ function bindOriginButtons() {
 }
 
 function bindMainButtons() {
-  $("btnFind")?.addEventListener("click", () => runSearch());
+  $("btnFind")?.addEventListener("click", () => {
+    track("search");
+    runSearch();
+  });
 
   $("btnResetVisited")?.addEventListener("click", () => {
     resetVisited();
     showStatus("ok", "Visitati resettati ✅");
+    track("reset_visited");
   });
+
+  // se vuoi aggiungere un bottone reset ricerca in index.html:
+  // <button id="btnResetSearch" class="btn btn-ghost">🧼 Reset ricerca</button>
+  $("btnResetSearch")?.addEventListener("click", () => resetSearchUI());
 }
 
 // init
@@ -755,6 +927,5 @@ restoreOrigin();
 bindOriginButtons();
 bindMainButtons();
 
-// preload macro
 loadMacro().catch(() => {});
 hideStatus();
