@@ -1,16 +1,17 @@
-/* Jamo — Auto-only (offline macro) — app.js v3.3
- * - Origin: GPS or manual (geocode via /api/geocode?q=)
- * - Macro selector: loads /data/macros/macros_index.json (if present) and lets user switch dataset
- * - Picks destinations from macro places based on:
- *   time, category, style (chicche/classici), rotation (not repeating), quality filter
- * - Output: result + alternatives (clickable) + info buttons + monetization links (safe)
+/* Jamo — app.js v4.0
+ * - Macro selector from /data/macros/macros_index.json (no HTML changes needed)
+ * - Rotation: avoids repeats in session + “today”
+ * - Better alternatives UI (clickable + readable)
+ * - Monetization links: Booking / GYG / Tiqets (fixed) / Amazon + Restaurants
+ * - “Reset proposte di oggi” works
  */
 
 const $ = (id) => document.getElementById(id);
 
 // -------------------- SETTINGS --------------------
+const MACROS_INDEX_URL = "/data/macros/macros_index.json";
 const DEFAULT_MACRO_URL = "/data/macros/it_macro_01_abruzzo.json";
-const MACROS_INDEX_URL  = "/data/macros/macros_index.json";
+const LS_MACRO_URL_KEY = "jamo_macro_url";
 
 // driving estimator (offline)
 const ROAD_FACTOR = 1.25;
@@ -18,22 +19,17 @@ const AVG_KMH = 72;
 const FIXED_OVERHEAD_MIN = 8;
 
 // ROTATION
-const RECENT_TTL_MS = 1000 * 60 * 60 * 20; // ~20h: “oggi”
-const RECENT_MAX = 140;                    // quante mete ricordare “oggi”
-let SESSION_SEEN = new Set();              // in-memory (sessione)
+const RECENT_TTL_MS = 1000 * 60 * 60 * 20; // ~20h
+const RECENT_MAX = 160;                    // quante mete ricordare “oggi”
+let SESSION_SEEN = new Set();
 let LAST_SHOWN_PID = null;
 
-// Monetization placeholders (optional)
-const BOOKING_AID = ""; // Booking affiliate id (aid) - optional
-const AMAZON_TAG  = ""; // Amazon tag - optional
-const GYG_PID     = ""; // GetYourGuide partner_id - optional
-const TIQETS_PID  = ""; // Tiqets partner - optional
-
-// Extra travel monetization placeholders (optional)
-// (senza tratte: apri ricerche precompilate)
-const OMIO_AFF   = ""; // Omio affiliate (se lo hai)
-const SKY_AFF    = ""; // Skyscanner/partner param (se lo hai)
-const TRAINLINE_AFF = ""; // Trainline param (se lo hai)
+// Monetization placeholders (fill with your IDs)
+const BOOKING_AID = ""; // Booking affiliate id (aid)
+const AMAZON_TAG  = ""; // Amazon tag
+const GYG_PID     = ""; // GetYourGuide partner_id
+const TIQETS_PID  = ""; // Tiqets partner
+const THEFORK_AFF = ""; // opzionale: se hai affiliazione TheFork (se vuoto, link normale)
 
 // -------------------- UTIL --------------------
 function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
@@ -61,7 +57,7 @@ function normName(s) {
 }
 
 function safeIdFromPlace(p) {
-  return p.id || `p_${normName(p.name)}_${String(p.lat).slice(0,6)}_${String(p.lon).slice(0,6)}`;
+  return p.id || `p_${normName(p.name)}_${String(p.lat).slice(0, 6)}_${String(p.lon).slice(0, 6)}`;
 }
 
 function estCarMinutesFromKm(km) {
@@ -80,57 +76,45 @@ function mapsDirUrl(oLat, oLon, dLat, dLon) {
   return `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(oLat + "," + oLon)}&destination=${encodeURIComponent(dLat + "," + dLon)}&travelmode=driving`;
 }
 
-// Robust info URLs (no 404)
-function googleWeb(q) {
+function googleThingsToDoUrl(placeName) {
+  const q = `cosa vedere ${placeName}`;
   return `https://www.google.com/search?q=${encodeURIComponent(q)}`;
 }
-function googleImages(q) {
-  return `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(q)}`;
-}
-function wikiIt(q) {
-  // prova Wikipedia IT via search interno (stabile)
-  return `https://it.wikipedia.org/w/index.php?search=${encodeURIComponent(q)}`;
-}
-function mapsSearchNear(lat, lon, query) {
-  // ricerca su Maps vicino alle coordinate
-  const q = `${query} near ${lat},${lon}`;
-  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
+
+function googleRestaurantsUrl(placeName) {
+  const q = `ristoranti vicino ${placeName}`;
+  return `https://www.google.com/search?q=${encodeURIComponent(q)}`;
 }
 
-// Monetization URLs (safe mode: ricerche, non pagine specifiche)
-function bookingUrl(placeName, countryCode = "IT", affId = "") {
-  const q = `${placeName}${countryCode ? ", " + countryCode : ""}`;
+// -------------------- Monetization URLs --------------------
+function bookingUrl(place, countryCode, affId = "") {
+  const q = `${place}${countryCode ? ", " + countryCode : ""}`;
   const base = `https://www.booking.com/searchresults.html?ss=${encodeURIComponent(q)}`;
   return affId ? `${base}&aid=${encodeURIComponent(affId)}` : base;
 }
-function getYourGuideUrl(placeName, affId = "") {
-  // ricerca interna: sempre valida
-  const base = `https://www.getyourguide.com/s/?q=${encodeURIComponent(placeName)}`;
+
+function getYourGuideUrl(place, affId = "") {
+  // query più “robusta” (GYG spesso capisce meglio così)
+  const q = `${place} tickets things to do`;
+  const base = `https://www.getyourguide.com/s/?q=${encodeURIComponent(q)}&locale=it`;
   return affId ? `${base}&partner_id=${encodeURIComponent(affId)}` : base;
 }
-function tiqetsUrl(placeName, affId = "") {
-  // TIQETS: molte query dirette non esistono, uso search
-  const base = `https://www.tiqets.com/it/search/?query=${encodeURIComponent(placeName)}`;
+
+function tiqetsUrl(place, affId = "") {
+  // FIX: /it/search spesso fa 404. /en/search è più stabile.
+  const base = `https://www.tiqets.com/en/search/?query=${encodeURIComponent(place)}`;
   return affId ? `${base}&partner=${encodeURIComponent(affId)}` : base;
 }
+
 function amazonEssentialsUrl(tag = "") {
-  const base = `https://www.amazon.it/s?k=${encodeURIComponent("accessori viaggio auto weekend")}`;
+  const base = `https://www.amazon.it/s?k=${encodeURIComponent("accessori viaggio")}`;
   return tag ? `${base}&tag=${encodeURIComponent(tag)}` : base;
 }
 
-// Travel links (no tratte: solo ricerca)
-function flightsUrl(placeName, countryCode = "") {
-  // fallback: Google Flights query (stabile)
-  // NB: non mette tratte, apre ricerca generica
-  return `https://www.google.com/travel/flights?q=${encodeURIComponent("voli per " + placeName + (countryCode ? " " + countryCode : ""))}`;
-}
-function trainsUrl(placeName) {
-  // Google search “Treni per …” (stabile)
-  return googleWeb(`treni per ${placeName} biglietti`);
-}
-function busUrl(placeName) {
-  // Google search “bus per …”
-  return googleWeb(`bus per ${placeName} biglietti`);
+function theForkSearchUrl(place, aff = "") {
+  // TheFork non sempre supporta aff param pubblico stabile: metto aff solo se lo usi nel tuo programma
+  const base = `https://www.thefork.it/search?query=${encodeURIComponent(place)}`;
+  return aff ? `${base}&utm_source=${encodeURIComponent(aff)}` : base;
 }
 
 // -------------------- STORAGE: origin + visited + recent --------------------
@@ -227,6 +211,23 @@ function resetRotation() {
   LAST_SHOWN_PID = null;
 }
 
+// -------------------- UI: status --------------------
+function showStatus(type, text) {
+  const box = $("statusBox");
+  const t = $("statusText");
+  box.classList.remove("okbox", "warnbox", "errbox");
+  if (type === "ok") box.classList.add("okbox");
+  else if (type === "err") box.classList.add("errbox");
+  else box.classList.add("warnbox");
+  t.textContent = text;
+  box.style.display = "block";
+}
+
+function hideStatus() {
+  $("statusBox").style.display = "none";
+  $("statusText").textContent = "";
+}
+
 // -------------------- UI state (chips) --------------------
 function initChips(containerId, { multi = false } = {}) {
   const el = $(containerId);
@@ -265,129 +266,154 @@ function getActiveStyles() {
   };
 }
 
-function showStatus(type, text) {
-  const box = $("statusBox");
-  const t = $("statusText");
-  box.classList.remove("okbox", "warnbox", "errbox");
-  if (type === "ok") box.classList.add("okbox");
-  else if (type === "err") box.classList.add("errbox");
-  else box.classList.add("warnbox");
-  t.textContent = text;
-  box.style.display = "block";
+// -------------------- MACROS: index + selector --------------------
+let MACRO_URL = localStorage.getItem(LS_MACRO_URL_KEY) || DEFAULT_MACRO_URL;
+let MACROS_INDEX = null;
+
+function groupLabel(item) {
+  const scope = item?.scope || "";
+  if (scope === "region" && item.country === "IT") return "Italia — Regioni";
+  if (scope === "country") return "Europa+UK — Paesi";
+  if (scope === "euuk") return "Europa+UK — Macro";
+  return "Altri";
 }
 
-function hideStatus() {
-  $("statusBox").style.display = "none";
-  $("statusText").textContent = "";
-}
+function buildMacroSelector(indexJson) {
+  // Trova la card sinistra (quella con “Partenza”): è la prima .card dentro .grid
+  const grid = document.querySelector(".grid");
+  const leftCard = grid?.querySelector(".card");
+  if (!leftCard) return;
 
-// -------------------- MACRO SELECTOR (no index.html changes) --------------------
-let MACRO = null;
-let CURRENT_MACRO_URL = DEFAULT_MACRO_URL;
-
-function ensureMacroSelectorUI() {
-  const filtersCard = document.querySelector(".grid .card"); // prima card (sinistra)
-  if (!filtersCard) return;
-
+  // Evita doppio inserimento
   if (document.getElementById("macroSelect")) return;
 
   const wrap = document.createElement("div");
-  wrap.style.marginTop = "10px";
+  wrap.className = "card";
+  wrap.style.marginBottom = "12px";
+
   wrap.innerHTML = `
-    <div class="hr"></div>
-    <h3>Area / Database</h3>
-    <label class="small">Scegli dove cercare</label>
-    <select id="macroSelect"></select>
-    <div class="small muted" style="margin-top:6px;">
-      Se cambi area, aggiorno la ricerca e la rotazione.
+    <h3>Area / Dataset</h3>
+    <div class="small muted" style="margin-top:-6px;">
+      Scegli dove cercare (es: EU+UK per vedere tutta Europa + Regno Unito).
+    </div>
+    <div style="margin-top:10px;">
+      <select id="macroSelect"></select>
+      <div id="macroInfo" class="small muted" style="margin-top:8px;"></div>
     </div>
   `;
-  // Inseriscilo dopo “Partenza” (prima del tempo). Qui lo appendo in alto nella card.
-  // Appendo subito dopo origin blocco: lo metto prima della HR “Tempo” esistente: ok lo aggiungo alla fine e va bene.
-  filtersCard.appendChild(wrap);
-}
 
-async function loadMacrosIndex() {
-  try {
-    const r = await fetch(MACROS_INDEX_URL, { cache: "no-store" });
-    if (!r.ok) throw new Error("no index");
-    const j = await r.json();
-    return j;
-  } catch {
-    return null;
-  }
-}
-
-function setCurrentMacroUrl(url) {
-  CURRENT_MACRO_URL = url || DEFAULT_MACRO_URL;
-  localStorage.setItem("jamo_macro_url", CURRENT_MACRO_URL);
-  // reset session rotation when switching dataset to avoid “vuoti”
-  resetRotation();
-}
-
-function restoreCurrentMacroUrl() {
-  const raw = localStorage.getItem("jamo_macro_url");
-  if (raw && typeof raw === "string" && raw.startsWith("/")) {
-    CURRENT_MACRO_URL = raw;
-  }
-}
-
-async function initMacroSelector() {
-  ensureMacroSelectorUI();
-  restoreCurrentMacroUrl();
+  // Inserisci sopra la card Partenza (prima del leftCard)
+  leftCard.parentNode.insertBefore(wrap, leftCard);
 
   const sel = document.getElementById("macroSelect");
-  if (!sel) return;
+  const info = document.getElementById("macroInfo");
 
-  const idx = await loadMacrosIndex();
+  const items = Array.isArray(indexJson?.items) ? indexJson.items : [];
 
-  // build options
-  const opts = [];
-  // always include Abruzzo
-  opts.push({ label: "Abruzzo (curato)", url: DEFAULT_MACRO_URL });
-
-  // if index exists, add “all EU+UK” and whatever is inside
-  if (idx) {
-    // support different shapes
-    const list =
-      Array.isArray(idx.macros) ? idx.macros :
-      Array.isArray(idx.items) ? idx.items :
-      Array.isArray(idx) ? idx : [];
-
-    for (const m of list) {
-      const url = m.url || m.path || m.macro_url;
-      const name = m.name || m.label || m.id || "Macro";
-      if (!url || typeof url !== "string") continue;
-      if (!url.startsWith("/")) continue;
-
-      // avoid duplicates
-      if (opts.some(o => o.url === url)) continue;
-      opts.push({ label: name, url });
-    }
+  // raggruppa in optgroup
+  const groups = new Map();
+  for (const it of items) {
+    const g = groupLabel(it);
+    if (!groups.has(g)) groups.set(g, []);
+    groups.get(g).push(it);
   }
 
-  sel.innerHTML = opts.map(o => `<option value="${o.url}">${o.label}</option>`).join("");
+  // ordine gruppi: macro euuk, it regioni, paesi
+  const orderedGroupNames = [
+    "Europa+UK — Macro",
+    "Italia — Regioni",
+    "Europa+UK — Paesi",
+    "Altri"
+  ].filter(g => groups.has(g));
 
-  // set selected
-  sel.value = opts.some(o => o.url === CURRENT_MACRO_URL) ? CURRENT_MACRO_URL : DEFAULT_MACRO_URL;
+  for (const gName of orderedGroupNames) {
+    const og = document.createElement("optgroup");
+    og.label = gName;
+
+    const arr = groups.get(gName) || [];
+    // ordina alfabetico
+    arr.sort((a, b) => String(a.label || "").localeCompare(String(b.label || ""), "it"));
+
+    for (const it of arr) {
+      const opt = document.createElement("option");
+      opt.value = it.path;
+      opt.textContent = it.label;
+      og.appendChild(opt);
+    }
+    sel.appendChild(og);
+  }
+
+  // selezione attuale
+  sel.value = MACRO_URL;
+  if (!sel.value) {
+    // se MACRO_URL non è tra le options, fallback ad Abruzzo
+    sel.value = DEFAULT_MACRO_URL;
+    MACRO_URL = DEFAULT_MACRO_URL;
+    localStorage.setItem(LS_MACRO_URL_KEY, MACRO_URL);
+  }
+
+  function updateInfo() {
+    const chosen = items.find(x => x.path === sel.value);
+    if (!chosen) {
+      info.textContent = `Dataset: ${sel.value}`;
+      return;
+    }
+    const scope = chosen.scope || "";
+    const hint =
+      chosen.id === "euuk_macro_all" ? "👉 Questo contiene tutta EU+UK." :
+      scope === "region" ? `Regione: ${chosen.region || ""}` :
+      scope === "country" ? `Paese: ${chosen.country || ""}` :
+      "";
+    info.textContent = hint || `Dataset: ${chosen.label}`;
+  }
+
+  updateInfo();
 
   sel.addEventListener("change", async () => {
-    setCurrentMacroUrl(sel.value);
-    MACRO = null;
-    await loadMacro().catch(() => {});
-    showStatus("ok", "Area cambiata ✅ Ora cerco nel nuovo database.");
-    runSearch({ silent: true });
+    try {
+      MACRO_URL = sel.value;
+      localStorage.setItem(LS_MACRO_URL_KEY, MACRO_URL);
+
+      // ricarica macro
+      MACRO = null;
+      await loadMacro(true);
+
+      resetRotation(); // quando cambi dataset, resetto rotazione per non “tagliare” risultati
+      showStatus("ok", `Dataset cambiato ✅ (${sel.options[sel.selectedIndex].text})`);
+      updateInfo();
+
+      // se già hai una partenza, rifai la ricerca al volo
+      const o = getOrigin();
+      if (o?.lat && o?.lon) runSearch({ silent: true });
+    } catch (e) {
+      console.error(e);
+      showStatus("err", `Errore nel caricamento dataset: ${String(e.message || e)}`);
+    }
   });
 }
 
+async function loadMacrosIndex() {
+  const r = await fetch(MACROS_INDEX_URL, { cache: "no-store" });
+  if (!r.ok) throw new Error(`macros_index.json non trovato (${r.status})`);
+  const j = await r.json();
+  MACROS_INDEX = j;
+  buildMacroSelector(j);
+  return j;
+}
+
 // -------------------- DATA loading --------------------
-async function loadMacro() {
-  const url = CURRENT_MACRO_URL || DEFAULT_MACRO_URL;
-  const r = await fetch(url, { cache: "no-store" });
-  if (!r.ok) throw new Error(`Macro non trovato (${r.status})`);
+let MACRO = null;
+
+async function loadMacro(silent = false) {
+  const r = await fetch(MACRO_URL, { cache: "no-store" });
+  if (!r.ok) throw new Error(`Macro non trovato (${r.status}) → ${MACRO_URL}`);
   const j = await r.json();
   if (!j?.places || !Array.isArray(j.places)) throw new Error("Macro invalido: manca places[]");
   MACRO = j;
+
+  if (!silent) {
+    showStatus("ok", `Dataset caricato ✅ (${j.name || "macro"}) — mete: ${j.places.length}`);
+  }
   return j;
 }
 
@@ -400,38 +426,10 @@ async function geocodeLabel(label) {
 
   if (!j) throw new Error("Geocoding fallito (risposta vuota)");
   if (!j.ok) throw new Error(j.error || "Geocoding fallito");
-
-  const result = j.result || j; // compat
-  if (!result || !Number.isFinite(Number(result.lat)) || !Number.isFinite(Number(result.lon))) {
+  if (!j.result || !Number.isFinite(Number(j.result.lat)) || !Number.isFinite(Number(j.result.lon))) {
     throw new Error("Geocoding fallito (coordinate non valide)");
   }
-  return { label: result.label || q, lat: Number(result.lat), lon: Number(result.lon) };
-}
-
-// -------------------- QUALITY FILTER (anti mete brutte) --------------------
-const BAD_WORDS = [
-  "nucleo industriale", "zona industriale", "area industriale", "interporto",
-  "centro commerciale", "outlet", "ipermercato",
-  "inceneritore", "discarica",
-  "stazione di servizio", "autogrill",
-  "capannoni", "deposito", "raffineria",
-  "cimitero", "obitorio"
-].map(normName);
-
-function isBadPlace(p) {
-  const n = normName(p?.name);
-  if (!n) return true;
-
-  // blacklist
-  for (const w of BAD_WORDS) {
-    if (n.includes(w)) return true;
-  }
-
-  // if tags explicitly mark as industrial
-  const tags = (p.tags || []).map(normName);
-  if (tags.includes("industriale") || tags.includes("zona industriale")) return true;
-
-  return false;
+  return j.result;
 }
 
 // -------------------- FILTERS --------------------
@@ -443,26 +441,51 @@ function matchesCategory(place, cat) {
 
   if (cat === "citta") return type === "citta" || tags.includes("citta");
   if (cat === "borghi") return type === "borgo" || tags.includes("borgo");
+
   if (cat === "mare") return (
     type === "mare" ||
     tags.includes("mare") ||
     tags.includes("trabocchi") ||
     tags.includes("spiagge") ||
     tags.includes("spiaggia") ||
-    tags.includes("lido")
+    tags.includes("lido") ||
+    tags.includes("costa")
   );
-  if (cat === "montagna") return type === "montagna" || tags.includes("montagna") || tags.includes("neve");
+
+  if (cat === "montagna") return (
+    type === "montagna" || tags.includes("montagna") || tags.includes("neve") || tags.includes("sci")
+  );
+
   if (cat === "natura") return (
     type === "natura" ||
     tags.includes("natura") ||
     tags.includes("lago") ||
     tags.includes("parco_nazionale") ||
     tags.includes("gole") ||
+    tags.includes("cascata") ||
     tags.includes("cascate") ||
-    tags.includes("riserva")
+    tags.includes("riserva") ||
+    tags.includes("trekking")
   );
-  if (cat === "storia") return type === "storia" || tags.includes("storia") || tags.includes("castello") || tags.includes("abbazia") || tags.includes("museo");
-  if (cat === "relax") return type === "relax" || tags.includes("relax") || tags.includes("terme") || tags.includes("spa");
+
+  if (cat === "storia") return (
+    type === "storia" ||
+    tags.includes("storia") ||
+    tags.includes("castello") ||
+    tags.includes("abbazia") ||
+    tags.includes("museo") ||
+    tags.includes("monumenti") ||
+    tags.includes("archeologia")
+  );
+
+  if (cat === "relax") return (
+    type === "relax" ||
+    tags.includes("relax") ||
+    tags.includes("terme") ||
+    tags.includes("spa") ||
+    tags.includes("benessere")
+  );
+
   if (cat === "family") return (
     type === "bambini" ||
     tags.includes("famiglie") ||
@@ -470,15 +493,16 @@ function matchesCategory(place, cat) {
     tags.includes("family") ||
     tags.includes("animali") ||
     tags.includes("parco_avventura") ||
-    tags.includes("luna_park") ||
-    tags.includes("acquario")
+    tags.includes("acquario") ||
+    tags.includes("zoo") ||
+    tags.includes("divertimento")
   );
 
   return true;
 }
 
 function matchesStyle(place, { wantChicche, wantClassici }) {
-  const vis = String(place.visibility || "").toLowerCase(); // "chicca" | "conosciuta"
+  const vis = String(place.visibility || "").toLowerCase();
   if (!wantChicche && !wantClassici) return true;
   if (vis === "chicca") return !!wantChicche;
   return !!wantClassici;
@@ -491,12 +515,11 @@ function baseScorePlace({ driveMin, targetMin, beautyScore, isChicca }) {
   return 0.62 * t + 0.34 * b + c;
 }
 
-// ROTATION penalty: avoid repeats in session + today
 function rotationPenalty(pid, recentSet) {
   let pen = 0;
-  if (pid && pid === LAST_SHOWN_PID) pen += 0.22;
+  if (pid && pid === LAST_SHOWN_PID) pen += 0.24;
   if (SESSION_SEEN.has(pid)) pen += 0.20;
-  if (recentSet.has(pid)) pen += 0.12;
+  if (recentSet.has(pid)) pen += 0.14;
   return pen;
 }
 
@@ -505,15 +528,16 @@ function effectiveMaxMinutes(maxMinutes, category) {
   const m = Number(maxMinutes);
   if (!Number.isFinite(m)) return 120;
 
-  // MARE: spesso non esiste entro 60' reali, quindi allarghiamo “gentilmente”
-  if (category === "mare" && m < 75) {
-    const widened = Math.round(m * 1.35);
-    return clamp(widened, m, 180);
-  }
+  // Mare: spesso oltre 60' se sei in interno
+  if (category === "mare" && m < 75) return clamp(Math.round(m * 1.35), m, 180);
+
+  // Storia: a 30' può essere poco in alcune zone, allarghiamo leggero
+  if (category === "storia" && m <= 35) return clamp(Math.round(m * 1.25), m, 120);
+
   return clamp(m, 10, 600);
 }
 
-// -------------------- PICK DESTINATION (with rotation + quality) --------------------
+// -------------------- PICK DESTINATION --------------------
 function buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited = false, ignoreRotation = false } = {}) {
   const visited = getVisitedSet();
   const recentSet = getRecentSet();
@@ -529,9 +553,6 @@ function buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited =
     const lon = Number(p.lon);
     if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
 
-    // skip ugly/industrial
-    if (isBadPlace(p)) continue;
-
     if (!matchesCategory(p, category)) continue;
     if (!matchesStyle(p, styles)) continue;
 
@@ -539,10 +560,10 @@ function buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited =
     if (!ignoreVisited && visited.has(pid)) continue;
 
     const km = haversineKm(oLat, oLon, lat, lon);
-    const driveMin = estCarMinutesFromKm(km);
+    if (km < 1.2) continue;
 
+    const driveMin = estCarMinutesFromKm(km);
     if (driveMin > target) continue;
-    if (km < 0.6) continue; // troppo vicino (sei praticamente lì)
 
     const isChicca = String(p.visibility || "").toLowerCase() === "chicca";
     let s = baseScorePlace({
@@ -552,14 +573,7 @@ function buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited =
       isChicca
     });
 
-    // preferisci mete “belle” se possibile
-    const bs = Number(p.beauty_score) || 0.75;
-    if (bs < 0.74) s -= 0.10;
-    if (bs >= 0.90) s += 0.04;
-
-    if (!ignoreRotation) {
-      s = s - rotationPenalty(pid, recentSet);
-    }
+    if (!ignoreRotation) s -= rotationPenalty(pid, recentSet);
 
     candidates.push({
       place: p,
@@ -570,11 +584,7 @@ function buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited =
     });
   }
 
-  candidates.sort((a, b) => {
-    if (b.score !== a.score) return b.score - a.score;
-    return a.driveMin - b.driveMin;
-  });
-
+  candidates.sort((a, b) => (b.score - a.score) || (a.driveMin - b.driveMin));
   return candidates;
 }
 
@@ -584,153 +594,75 @@ function pickDestination(origin, maxMinutes, category, styles) {
   if (candidates.length === 0) {
     candidates = buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited: false, ignoreRotation: true });
   }
-
   if (candidates.length === 0) {
     candidates = buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited: true, ignoreRotation: true });
   }
 
   const chosen = candidates[0] || null;
-  const alternatives = candidates.slice(1, 3);
+  const alternatives = candidates.slice(1, 3); // 2 alternative
   return { chosen, alternatives, totalCandidates: candidates.length };
 }
 
-// -------------------- RENDER HELPERS --------------------
-function bigButtonRowHtml(buttons) {
-  // 2 colonne su mobile: facile da cliccare
-  return `
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:10px;">
-      ${buttons.join("")}
-    </div>
-  `;
-}
-
-function infoButtonsHtml(p, origin) {
-  const placeName = p.name;
-  const country = (p.country || "IT").toUpperCase();
-  const lat = Number(p.lat), lon = Number(p.lon);
-
-  const qBase = `${placeName} ${country}`.trim();
-
-  const btns = [
-    `<a class="btn" target="_blank" rel="noopener" href="${googleImages(qBase)}">📷 Foto</a>`,
-    `<a class="btn" target="_blank" rel="noopener" href="${googleWeb(`cosa vedere a ${qBase}`)}">👀 Cosa vedere</a>`,
-    `<a class="btn" target="_blank" rel="noopener" href="${googleWeb(`cosa fare a ${qBase}`)}">🎯 Cosa fare</a>`,
-    `<a class="btn" target="_blank" rel="noopener" href="${mapsSearchNear(lat, lon, "ristoranti")}">🍝 Ristoranti</a>`,
-    `<a class="btn btn-ghost" target="_blank" rel="noopener" href="${wikiIt(qBase)}">📚 Wiki</a>`,
-    `<a class="btn btn-ghost" target="_blank" rel="noopener" href="${mapsPlaceUrl(lat, lon)}">🗺️ Maps</a>`,
-  ];
+// -------------------- RENDER --------------------
+function monetBoxHtml(placeName, country = "IT") {
+  // bottoni più “cliccabili”: larghi e con min-width
+  const btnStyle = `style="flex:1; min-width:160px; justify-content:center;"`;
 
   return `
     <div class="card" style="margin-top:12px;">
-      <div class="small muted">Info veloci</div>
-      ${bigButtonRowHtml(btns)}
+      <div class="small muted">Link rapidi (prenota / scopri)</div>
+
+      <div class="row wrap gap" style="margin-top:10px;">
+        <a class="btn" ${btnStyle} target="_blank" rel="noopener" href="${bookingUrl(placeName, country, BOOKING_AID)}">🏨 Hotel</a>
+        <a class="btn" ${btnStyle} target="_blank" rel="noopener" href="${getYourGuideUrl(placeName, GYG_PID)}">🎟️ Tour</a>
+        <a class="btn" ${btnStyle} target="_blank" rel="noopener" href="${tiqetsUrl(placeName, TIQETS_PID)}">🏛️ Biglietti</a>
+        <a class="btn btn-ghost" ${btnStyle} target="_blank" rel="noopener" href="${amazonEssentialsUrl(AMAZON_TAG)}">🧳 Essenziali</a>
+      </div>
+
+      <div class="row wrap gap" style="margin-top:10px;">
+        <a class="btn btn-ghost" ${btnStyle} target="_blank" rel="noopener" href="${theForkSearchUrl(placeName, THEFORK_AFF)}">🍝 Ristoranti</a>
+        <a class="btn btn-ghost" ${btnStyle} target="_blank" rel="noopener" href="${googleThingsToDoUrl(placeName)}">📸 Foto / Cosa fare</a>
+      </div>
+
       <div class="small muted" style="margin-top:8px;">
-        Link “safe”: aprono ricerche già pronte (zero 404).
+        Tip: per monetizzare davvero inserisci i tuoi ID in app.js (BOOKING_AID / GYG_PID / TIQETS_PID / AMAZON_TAG).
       </div>
     </div>
   `;
 }
 
-function monetBoxHtml(p) {
-  const placeName = p.name;
-  const country = (p.country || "IT").toUpperCase();
-
-  // monetizzazione: sempre ricerche, non pagine specifiche (più affidabile)
-  const btns = [
-    `<a class="btn" target="_blank" rel="noopener" href="${bookingUrl(placeName, country, BOOKING_AID)}">🏨 Hotel</a>`,
-    `<a class="btn" target="_blank" rel="noopener" href="${getYourGuideUrl(`${placeName} ${country}`, GYG_PID)}">🎟️ Tour</a>`,
-    `<a class="btn" target="_blank" rel="noopener" href="${tiqetsUrl(`${placeName} ${country}`, TIQETS_PID)}">🏛️ Attrazioni</a>`,
-    `<a class="btn" target="_blank" rel="noopener" href="${amazonEssentialsUrl(AMAZON_TAG)}">🧳 Essenziali</a>`,
-
-    `<a class="btn btn-ghost" target="_blank" rel="noopener" href="${flightsUrl(placeName, country)}">✈️ Voli</a>`,
-    `<a class="btn btn-ghost" target="_blank" rel="noopener" href="${trainsUrl(placeName)}">🚆 Treni</a>`,
-    `<a class="btn btn-ghost" target="_blank" rel="noopener" href="${busUrl(placeName)}">🚌 Bus</a>`,
-    `<a class="btn btn-ghost" target="_blank" rel="noopener" href="${googleWeb(`noleggio auto ${placeName} ${country}`)}">🚗 Noleggio</a>`,
-  ];
+function noResultCard(maxMinutesShown, category) {
+  const extra = (category === "mare" && Number(maxMinutesShown) < 75)
+    ? `Hai scelto <b>Mare</b>: spesso serve più tempo. Prova 90–120 min.`
+    : `Prova ad aumentare i minuti o cambiare categoria/stile.`;
 
   return `
-    <div class="card" style="margin-top:12px;">
-      <div class="small muted">Prenota / Scopri (monetizzabile)</div>
-      ${bigButtonRowHtml(btns)}
-      <div class="small muted" style="margin-top:8px;">
-        (Opzionale) Inserisci gli ID affiliato in app.js: BOOKING_AID / GYG_PID / TIQETS_PID / AMAZON_TAG
+    <div class="card errbox">
+      <div class="small">❌ Nessuna meta trovata entro ${maxMinutesShown} min con i filtri attuali.</div>
+      <div class="small muted" style="margin-top:6px;">${extra}</div>
+      <div class="row wrap gap" style="margin-top:12px;">
+        <button class="btn btn-ghost" id="btnResetRotationInline">🧽 Reset “proposte di oggi”</button>
+        <button class="btn" id="btnTryAgain">🔁 Riprova</button>
       </div>
     </div>
   `;
 }
 
-function renderAlternatives(origin, alternatives) {
-  if (!(alternatives || []).length) return "";
-
-  return `
-    <div class="card" style="margin-top:12px;">
-      <div class="small muted">Alternative (clicca per scegliere)</div>
-
-      <div style="margin-top:10px; display:flex; flex-direction:column; gap:10px;">
-        ${(alternatives || []).map(a => {
-          const ap = a.place;
-          const aPid = a.pid;
-          const aIsChicca = String(ap.visibility || "").toLowerCase() === "chicca";
-          const aBadge = aIsChicca ? "✨" : "✅";
-          const aPlaceUrl = mapsPlaceUrl(ap.lat, ap.lon);
-          const aDirUrl = mapsDirUrl(origin.lat, origin.lon, ap.lat, ap.lon);
-
-          const qBase = `${ap.name} ${(ap.country || "IT")}`.trim();
-
-          return `
-            <div class="card" data-alt="1" data-pid="${aPid}"
-                 style="padding:12px 12px; cursor:pointer; border-color: rgba(255,255,255,.14);">
-              <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
-                <div style="min-width:0;">
-                  <div style="font-weight:850; font-size:16px; line-height:1.2; word-break:break-word;">
-                    ${ap.name} <span class="small muted">(${aBadge})</span>
-                  </div>
-                  <div class="small muted" style="margin-top:4px;">
-                    ~${a.driveMin} min • ${fmtKm(a.km)} • ${ap.type || "meta"}
-                  </div>
-                </div>
-                <div class="pill" style="white-space:nowrap;">Scegli</div>
-              </div>
-
-              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:10px;">
-                <a class="btn btn-ghost" href="${aPlaceUrl}" target="_blank" rel="noopener" onclick="event.stopPropagation()">🗺️ Maps</a>
-                <a class="btn btn-ghost" href="${aDirUrl}" target="_blank" rel="noopener" onclick="event.stopPropagation()">🚗 Percorso</a>
-                <a class="btn btn-ghost" href="${googleImages(qBase)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">📷 Foto</a>
-                <a class="btn btn-ghost" href="${mapsSearchNear(ap.lat, ap.lon, "ristoranti")}" target="_blank" rel="noopener" onclick="event.stopPropagation()">🍝 Ristoranti</a>
-              </div>
-            </div>
-          `;
-        }).join("")}
-      </div>
-    </div>
-  `;
-}
-
-// -------------------- MAIN RENDER --------------------
 function renderResult(origin, maxMinutesShown, chosen, alternatives, meta = {}) {
   const area = $("resultArea");
   const category = meta.category || "ovunque";
 
   if (!chosen) {
-    const extra = (category === "mare" && Number(maxMinutesShown) < 75)
-      ? `Hai scelto <b>Mare</b>: a volte serve più tempo. Prova 90–120 min.`
-      : `Prova ad aumentare i minuti o cambiare categoria/stile.`;
+    area.innerHTML = noResultCard(maxMinutesShown, category);
 
-    area.innerHTML = `
-      <div class="card errbox">
-        <div class="small">❌ Nessuna meta trovata entro ${maxMinutesShown} min con i filtri attuali.</div>
-        <div class="small muted" style="margin-top:6px;">${extra}</div>
-        <div class="row wrap gap" style="margin-top:12px;">
-          <button class="btn btn-ghost js-reset-rotation">🧽 Reset “proposte di oggi”</button>
-        </div>
-      </div>
-    `;
-
-    // bind (no id duplicati)
-    area.querySelector(".js-reset-rotation")?.addEventListener("click", () => {
+    $("btnResetRotationInline")?.addEventListener("click", () => {
       resetRotation();
-      showStatus("ok", "Reset fatto ✅ Ora posso ripescare anche mete già proposte oggi/sessione.");
+      showStatus("ok", "Reset fatto ✅ Ora ti ripropongo mete che avevo evitato oggi.");
+      runSearch({ silent: true });
     });
+
+    $("btnTryAgain")?.addEventListener("click", () => runSearch());
+
     return;
   }
 
@@ -750,36 +682,80 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives, meta = {}) 
        </ul>`
     : "";
 
-  const country = (p.country || "IT").toUpperCase();
+  const country = p.country || "IT";
+
+  const altHtml = (alternatives || []).length ? `
+    <div class="card" style="margin-top:12px;">
+      <div class="small muted">Alternative (tocca per scegliere)</div>
+
+      <div style="margin-top:10px; display:flex; flex-direction:column; gap:12px;">
+        ${(alternatives || []).map(a => {
+          const ap = a.place;
+          const aPid = a.pid;
+          const aIsChicca = String(ap.visibility || "").toLowerCase() === "chicca";
+          const aBadge = aIsChicca ? "✨" : "✅";
+          const aPlaceUrl = mapsPlaceUrl(ap.lat, ap.lon);
+          const aDirUrl = mapsDirUrl(origin.lat, origin.lon, ap.lat, ap.lon);
+
+          return `
+            <div class="card" data-alt="1" data-pid="${aPid}"
+                 style="
+                   padding:14px 14px;
+                   cursor:pointer;
+                   border-color: rgba(0,224,255,.22);
+                   background: linear-gradient(180deg, rgba(0,224,255,.06), rgba(255,255,255,.02));
+                 ">
+              <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
+                <div style="flex:1;">
+                  <div style="font-weight:850; font-size:17px; line-height:1.2;">
+                    ${ap.name} <span class="small muted">(${aBadge})</span>
+                  </div>
+                  <div class="small muted" style="margin-top:6px;">
+                    🚗 ~${a.driveMin} min • ${fmtKm(a.km)} • ${ap.type || "meta"}
+                  </div>
+                </div>
+                <div class="pill" style="white-space:nowrap;">Scegli</div>
+              </div>
+
+              <div class="row wrap gap" style="margin-top:12px;">
+                <a class="btn btn-ghost" target="_blank" rel="noopener" href="${aPlaceUrl}" onclick="event.stopPropagation()" style="min-width:140px;">📸 Foto</a>
+                <a class="btn btn-ghost" target="_blank" rel="noopener" href="${aDirUrl}" onclick="event.stopPropagation()" style="min-width:140px;">🧭 Percorso</a>
+                <a class="btn btn-ghost" target="_blank" rel="noopener" href="${googleThingsToDoUrl(ap.name)}" onclick="event.stopPropagation()" style="min-width:160px;">🗺️ Cosa fare</a>
+              </div>
+            </div>
+          `;
+        }).join("")}
+      </div>
+    </div>
+  ` : "";
 
   area.innerHTML = `
     <div class="card okbox">
       <div class="pill">🚗 auto • ~${chosen.driveMin} min • ${fmtKm(chosen.km)} • ${badge}</div>
       <div class="resultTitle">${p.name}, ${country}</div>
 
-      <div class="small muted" style="margin-top:6px;">
+      <div class="small muted" style="margin-top:8px;">
         Categoria: <b>${p.type || "meta"}</b> • Punteggio: <b>${chosen.score}</b>
-        ${category === "mare" && Number(maxMinutesShown) < 75 ? ` • <span class="muted">(Mare: raggio smart attivo)</span>` : ""}
+        ${category === "mare" && meta.effMax && meta.effMax !== maxMinutesShown ? ` • <span class="muted">(Mare: raggio smart ~${meta.effMax} min)</span>` : ""}
       </div>
 
-      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:12px;">
-        <a class="btn" href="${placeUrl}" target="_blank" rel="noopener">🗺️ Maps</a>
-        <a class="btn btn-ghost" href="${dirUrl}" target="_blank" rel="noopener">🚗 Percorso</a>
+      <div class="row wrap gap" style="margin-top:12px;">
+        <a class="btn" href="${placeUrl}" target="_blank" rel="noopener" style="min-width:220px;">📸 Foto / Scheda</a>
+        <a class="btn btn-ghost" href="${dirUrl}" target="_blank" rel="noopener" style="min-width:220px;">🧭 Percorso</a>
+        <a class="btn btn-ghost" href="${googleThingsToDoUrl(p.name)}" target="_blank" rel="noopener" style="min-width:220px;">🗺️ Cosa vedere</a>
       </div>
 
       ${whyHtml}
 
-      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:12px;">
-        <button class="btn btn-ghost js-visited">✅ Già visitato</button>
-        <button class="btn js-change">🔁 Cambia meta</button>
-        <button class="btn btn-ghost js-reset-rotation">🧽 Reset oggi</button>
-        <button class="btn btn-ghost js-reset-visited">♻️ Reset visitati</button>
+      <div class="row wrap gap" style="margin-top:14px;">
+        <button class="btn btn-ghost" id="btnVisited">✅ Già visitato</button>
+        <button class="btn" id="btnChange">🔁 Cambia meta</button>
+        <button class="btn btn-ghost" id="btnResetRotationTop">🧽 Reset “proposte di oggi”</button>
       </div>
     </div>
 
-    ${infoButtonsHtml(p, origin)}
-    ${monetBoxHtml(p)}
-    ${renderAlternatives(origin, alternatives)}
+    ${monetBoxHtml(p.name, country)}
+    ${altHtml}
   `;
 
   // track shown (for rotation)
@@ -787,24 +763,20 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives, meta = {}) 
   SESSION_SEEN.add(pid);
   addRecent(pid);
 
-  // bind buttons (no id duplicati)
-  area.querySelector(".js-visited")?.addEventListener("click", () => {
+  // buttons
+  $("btnVisited")?.addEventListener("click", () => {
     markVisited(pid);
     showStatus("ok", "Segnato come visitato ✅ (non te lo ripropongo più).");
   });
 
-  area.querySelector(".js-change")?.addEventListener("click", () => {
+  $("btnChange")?.addEventListener("click", () => {
     runSearch({ silent: true, forbidPid: pid });
   });
 
-  area.querySelector(".js-reset-rotation")?.addEventListener("click", () => {
+  $("btnResetRotationTop")?.addEventListener("click", () => {
     resetRotation();
     showStatus("ok", "Reset fatto ✅ Ora posso ripescare anche mete già proposte oggi/sessione.");
-  });
-
-  area.querySelector(".js-reset-visited")?.addEventListener("click", () => {
-    resetVisited();
-    showStatus("ok", "Visitati resettati ✅");
+    runSearch({ silent: true });
   });
 
   // Alternative clickable: click -> set as main immediately
@@ -834,7 +806,7 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives, meta = {}) 
 async function runSearch({ silent = false, forbidPid = null } = {}) {
   try {
     if (!silent) hideStatus();
-    if (!MACRO) await loadMacro();
+    if (!MACRO) await loadMacro(true);
 
     const origin = getOrigin();
     if (!origin || !Number.isFinite(Number(origin.lat)) || !Number.isFinite(Number(origin.lon))) {
@@ -852,47 +824,38 @@ async function runSearch({ silent = false, forbidPid = null } = {}) {
 
     // forbid immediate specific pid (e.g. “cambia meta”)
     if (forbidPid && chosen?.pid === forbidPid) {
-      const tmp = new Set(SESSION_SEEN);
-      tmp.add(forbidPid);
-
-      const visited = getVisitedSet();
+      // rebuild excluding forbid pid
       const recentSet = getRecentSet();
-      const target = effMax;
-
-      const candidates = [];
+      const visited = getVisitedSet();
       const oLat = Number(origin.lat), oLon = Number(origin.lon);
 
+      const candidates = [];
       for (const p of MACRO.places) {
         const lat = Number(p.lat), lon = Number(p.lon);
         if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
-
-        if (isBadPlace(p)) continue;
-
         const pid = safeIdFromPlace(p);
+
+        if (pid === forbidPid) continue;
         if (visited.has(pid)) continue;
         if (!matchesCategory(p, category)) continue;
         if (!matchesStyle(p, styles)) continue;
 
         const km = haversineKm(oLat, oLon, lat, lon);
+        if (km < 1.2) continue;
+
         const driveMin = estCarMinutesFromKm(km);
-        if (driveMin > target) continue;
-        if (km < 0.6) continue;
-        if (tmp.has(pid)) continue;
+        if (driveMin > effMax) continue;
 
         const isChicca = String(p.visibility || "").toLowerCase() === "chicca";
-        let s = baseScorePlace({ driveMin, targetMin: target, beautyScore: p.beauty_score, isChicca });
-        const bs = Number(p.beauty_score) || 0.75;
-        if (bs < 0.74) s -= 0.10;
-        if (bs >= 0.90) s += 0.04;
-
-        s = s - rotationPenalty(pid, recentSet);
+        let s = baseScorePlace({ driveMin, targetMin: effMax, beautyScore: p.beauty_score, isChicca });
+        s -= rotationPenalty(pid, recentSet);
 
         candidates.push({ place: p, pid, km, driveMin, score: Number(s.toFixed(4)) });
       }
 
-      candidates.sort((a,b)=> (b.score-a.score) || (a.driveMin-b.driveMin));
+      candidates.sort((a, b) => (b.score - a.score) || (a.driveMin - b.driveMin));
       chosen = candidates[0] || null;
-      alternatives = candidates.slice(1,3);
+      alternatives = candidates.slice(1, 3);
     }
 
     renderResult(origin, maxMinutesInput, chosen, alternatives, { category, effMax });
@@ -927,9 +890,7 @@ function restoreOrigin() {
   if (raw) {
     try {
       const o = JSON.parse(raw);
-      if (Number.isFinite(Number(o?.lat)) && Number.isFinite(Number(o?.lon))) {
-        setOrigin(o);
-      }
+      if (Number.isFinite(Number(o?.lat)) && Number.isFinite(Number(o?.lon))) setOrigin(o);
     } catch {}
   }
 }
@@ -977,7 +938,7 @@ function bindMainButtons() {
   });
 }
 
-// init
+// init chips
 initChips("timeChips", { multi: false });
 initChips("categoryChips", { multi: false });
 initChips("styleChips", { multi: true });
@@ -987,7 +948,18 @@ restoreOrigin();
 bindOriginButtons();
 bindMainButtons();
 
-// macro selector + preload macro
-initMacroSelector().catch(()=>{});
-loadMacro().catch(() => {});
+// Load macros index (build selector) + load selected macro
+loadMacrosIndex()
+  .catch(() => {
+    // se index non c’è, vai comunque con default macro
+  })
+  .finally(async () => {
+    try {
+      await loadMacro(true);
+    } catch (e) {
+      console.error(e);
+      showStatus("err", `Errore macro: ${String(e.message || e)}`);
+    }
+  });
+
 hideStatus();
