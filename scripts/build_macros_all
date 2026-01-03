@@ -1,0 +1,249 @@
+// scripts/build_macros_all.mjs
+// Build ALL macros (auto-only) for every area in public/data/areas.json
+// - Calls: node scripts/build_macro_from_area.mjs <areaId>
+// - Normalizes output file names to MATCH what the app expects (macros_index style):
+//   * IT regions -> public/data/macros/it_macro_01_<region>.json
+//   * Other areas -> public/data/macros/macro_<areaId>.json (fallback)
+// - Also updates: public/data/macros/macros_index.json with correct existing paths
+//
+// Usage:
+//   node scripts/build_macros_all.mjs
+//
+// Works in GitHub Actions (Node 20+)
+
+import fs from "fs";
+import path from "path";
+import { execSync } from "child_process";
+
+const ROOT = process.cwd();
+
+const AREAS_FILE = path.join(ROOT, "public", "data", "areas.json");
+const MACROS_DIR = path.join(ROOT, "public", "data", "macros");
+const INDEX_FILE = path.join(MACROS_DIR, "macros_index.json");
+
+function readJson(file) {
+  return JSON.parse(fs.readFileSync(file, "utf8"));
+}
+
+function writeJson(file, obj) {
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  fs.writeFileSync(file, JSON.stringify(obj, null, 2), "utf8");
+}
+
+function slugify(s) {
+  return String(s ?? "")
+    .toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+// areas.json can be: [ ... ] OR { areas:[...] } OR { items:[...] }
+function getAreas(raw) {
+  if (Array.isArray(raw)) return raw;
+  if (raw && Array.isArray(raw.areas)) return raw.areas;
+  if (raw && Array.isArray(raw.items)) return raw.items;
+  return [];
+}
+
+function safeReadIndex() {
+  if (!fs.existsSync(INDEX_FILE)) {
+    return {
+      version: "1.0.0",
+      updated_at: new Date().toISOString().slice(0, 10),
+      notes: "Index delle macro disponibili (auto-generated).",
+      items: []
+    };
+  }
+  try {
+    const j = readJson(INDEX_FILE);
+    if (j && Array.isArray(j.items)) return j;
+    // normalize if malformed
+    return {
+      version: j?.version || "1.0.0",
+      updated_at: j?.updated_at || new Date().toISOString().slice(0, 10),
+      notes: j?.notes || "Index delle macro disponibili (auto-generated).",
+      items: Array.isArray(j) ? j : []
+    };
+  } catch {
+    return {
+      version: "1.0.0",
+      updated_at: new Date().toISOString().slice(0, 10),
+      notes: "Index delle macro disponibili (auto-generated).",
+      items: []
+    };
+  }
+}
+
+function normalizeMacroFilename(area) {
+  // We force IT regions to "it_macro_01_<region>.json"
+  const id = String(area?.id || "");
+  const country = String(area?.country || "").toUpperCase();
+
+  // Typical ids: it_abruzzo, it_lazio... or euuk_country_fr, etc.
+  const isItRegion = country === "IT" && (id.startsWith("it_") || id.startsWith("it-"));
+  if (isItRegion) {
+    const regionSlug =
+      slugify(area?.region || area?.name || id.replace(/^it[_-]/, ""));
+    return `it_macro_01_${regionSlug}.json`;
+  }
+
+  // fallback
+  return `macro_${id}.json`;
+}
+
+function buildOne(areaId) {
+  execSync(`node scripts/build_macro_from_area.mjs ${areaId}`, { stdio: "inherit" });
+}
+
+function findLatestGeneratedMacro(areaId) {
+  // build_macro_from_area.mjs currently writes: public/data/macros/macro_<areaId>.json (as in your file)
+  const f = path.join(MACROS_DIR, `macro_${areaId}.json`);
+  if (fs.existsSync(f)) return f;
+  return null;
+}
+
+function moveMacro(fromAbs, toAbs) {
+  fs.mkdirSync(path.dirname(toAbs), { recursive: true });
+  fs.copyFileSync(fromAbs, toAbs);
+  // keep original too? better remove to avoid confusion
+  try { fs.unlinkSync(fromAbs); } catch {}
+}
+
+function buildIndexFromAreas(areas, existingIndex) {
+  // Keep user’s existing items but fix paths if we generated them
+  const byId = new Map();
+  for (const it of (existingIndex.items || [])) {
+    if (it?.id) byId.set(it.id, { ...it });
+  }
+
+  const items = [];
+
+  for (const a of areas) {
+    if (!a || !a.id) continue;
+    const id = a.id;
+
+    const prev = byId.get(id) || {};
+    const label = prev.label || a.label || a.name || id;
+    const country = (prev.country || a.country || "").toUpperCase() || undefined;
+    const scope = prev.scope || a.scope || (country === "IT" ? "region" : "area");
+
+    const expectedFile = normalizeMacroFilename(a);
+    const expectedPath = `/data/macros/${expectedFile}`;
+    const expectedAbs = path.join(MACROS_DIR, expectedFile);
+
+    const offline = true;
+    const mode = prev.mode || "car_only";
+
+    const item = {
+      id,
+      label,
+      path: expectedPath,
+      scope,
+      country: country || prev.country,
+      region: prev.region || a.region,
+      mode,
+      offline
+    };
+
+    // Only include items that actually exist on disk
+    if (fs.existsSync(expectedAbs)) {
+      items.push(item);
+    } else {
+      // If file doesn't exist, we still keep it but warn in notes? Here we skip to avoid 404 in UI.
+      // If you prefer keep all, comment out the next line and push anyway.
+      // For now: include only generated -> no 404.
+    }
+  }
+
+  // Also keep any non-area extra items already present (like euuk_macro_all) IF file exists
+  const keepExtras = (existingIndex.items || []).filter(x => x && x.id && !areas.find(a => a.id === x.id));
+  for (const it of keepExtras) {
+    // if it has a path to /data/macros/<file>, ensure file exists in public/data/macros
+    const p = String(it.path || "");
+    const m = p.match(/\/data\/macros\/(.+\.json)$/);
+    if (m) {
+      const abs = path.join(MACROS_DIR, m[1]);
+      if (fs.existsSync(abs)) items.push(it);
+    } else {
+      // keep items without macro file constraint
+      items.push(it);
+    }
+  }
+
+  // de-dup by id
+  const seen = new Set();
+  const out = [];
+  for (const it of items) {
+    if (seen.has(it.id)) continue;
+    seen.add(it.id);
+    out.push(it);
+  }
+
+  // sort: IT first then others
+  out.sort((a, b) => {
+    const aIt = (a.country || "") === "IT";
+    const bIt = (b.country || "") === "IT";
+    if (aIt !== bIt) return aIt ? -1 : 1;
+    return String(a.label || a.id).localeCompare(String(b.label || b.id), "it");
+  });
+
+  return {
+    version: existingIndex.version || "1.0.0",
+    updated_at: new Date().toISOString().slice(0, 10),
+    notes: "Index macro (auto-generated) — include solo file realmente presenti per evitare 404.",
+    items: out
+  };
+}
+
+async function main() {
+  if (!fs.existsSync(AREAS_FILE)) {
+    console.error("❌ Missing public/data/areas.json");
+    process.exit(1);
+  }
+
+  fs.mkdirSync(MACROS_DIR, { recursive: true });
+
+  const rawAreas = readJson(AREAS_FILE);
+  const areas = getAreas(rawAreas);
+
+  if (!areas.length) {
+    console.error("❌ areas.json non contiene una lista valida (array / areas / items).");
+    process.exit(1);
+  }
+
+  const index = safeReadIndex();
+
+  for (const a of areas) {
+    if (!a || !a.id) continue;
+
+    console.log(`\n▶ Building macro for ${a.id}`);
+    buildOne(a.id);
+
+    const generated = findLatestGeneratedMacro(a.id);
+    if (!generated) {
+      console.warn(`  ⚠️ Missing generated macro file for ${a.id} (expected macro_${a.id}.json)`);
+      continue;
+    }
+
+    const finalName = normalizeMacroFilename(a);
+    const finalAbs = path.join(MACROS_DIR, finalName);
+
+    // move/rename to final filename
+    moveMacro(generated, finalAbs);
+
+    console.log(`  ✅ Saved: public/data/macros/${finalName}`);
+  }
+
+  // rebuild index so app never 404s
+  const newIndex = buildIndexFromAreas(areas, index);
+  writeJson(INDEX_FILE, newIndex);
+  console.log(`\n✅ Updated index: public/data/macros/macros_index.json`);
+  console.log(`   Items: ${newIndex.items.length}`);
+}
+
+main().catch((e) => {
+  console.error("❌ build_macros_all failed:", e);
+  process.exit(1);
+});
