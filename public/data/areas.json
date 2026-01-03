@@ -1,0 +1,30 @@
+{
+  "version": "1.0",
+  "updated_at": "2026-01-03",
+  "areas": [
+    {
+      "id": "it_abruzzo",
+      "name": "Abruzzo",
+      "country": "IT",
+      "bbox": { "minLat": 41.65, "minLon": 13.05, "maxLat": 42.90, "maxLon": 14.90 },
+      "neighbors": ["it_lazio", "it_marche", "it_molise", "it_umbria"],
+      "macro_out": "public/data/macros/it_macro_01_abruzzo.json"
+    },
+    {
+      "id": "it_lazio",
+      "name": "Lazio",
+      "country": "IT",
+      "bbox": { "minLat": 41.20, "minLon": 11.45, "maxLat": 42.85, "maxLon": 14.15 },
+      "neighbors": ["it_abruzzo", "it_toscana", "it_umbria", "it_campania", "it_marche"],
+      "macro_out": "public/data/macros/it_macro_02_lazio.json"
+    },
+    {
+      "id": "it_marche",
+      "name": "Marche",
+      "country": "IT",
+      "bbox": { "minLat": 42.35, "minLon": 12.95, "maxLat": 43.98, "maxLon": 14.85 },
+      "neighbors": ["it_abruzzo", "it_umbria", "it_emilia_romagna"],
+      "macro_out": "public/data/macros/it_macro_03_marche.json"
+    }
+  ]
+}
