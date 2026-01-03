@@ -1,8 +1,8 @@
-// /api/destinations.js — Overpass live destinations (EU/UK) — v3.0
-// ✅ Supports category filter: ?cat=family|borghi|citta|mare|natura|storia|ovunque
-// ✅ Uses nwr (node/way/relation) so it finds big parks like Gardaland (often relation/way)
-// ✅ For family: focuses on TRUE tourist attractions (theme parks, water parks, zoo, aquarium, attractions…)
-// ✅ Output includes "center" for ways/relations (so frontend can compute distance)
+// /api/destinations.js — Overpass live destinations (EU/UK) — v3.2
+// ✅ category filter: ?cat=family|borghi|citta|mare|natura|storia|ovunque
+// ✅ uses nwr + out center (finds big POIs as ways/relations)
+// ✅ family includes REAL kid attractions + water parks + theme parks + zoo/aquarium + pools + ALSO terme/spa (as requested)
+// ✅ storia boosted: castles/fort/tower/ruins/archaeology + museums + historic churches/abbeys/monasteries
 
 const OVERPASS = "https://overpass-api.de/api/interpreter";
 
@@ -14,28 +14,50 @@ function normCat(x) {
   return allowed.has(c) ? c : "ovunque";
 }
 
-// Build Overpass "nwr(...)..." blocks for a category
 function blocksForCat(cat, radiusM, lat, lon) {
   const around = `(around:${radiusM},${lat},${lon})`;
 
-  // NOTE: nwr = node/way/relation
-  // For ways/relations we use "out center" later so we get lat/lon.
-
   if (cat === "family") {
-    // Focus on real attractions, NOT small local parks.
+    // Real attractions + kids + ALSO terme/spa (user requested)
     return `
       nwr${around}["tourism"="theme_park"];
       nwr${around}["leisure"="water_park"];
+      nwr${around}["tourism"="attraction"];
       nwr${around}["amenity"="zoo"];
       nwr${around}["tourism"="zoo"];
       nwr${around}["amenity"="aquarium"];
       nwr${around}["tourism"="aquarium"];
       nwr${around}["leisure"="swimming_pool"];
       nwr${around}["sport"="swimming"];
-      nwr${around}["tourism"="attraction"];
-      nwr${around}["tourism"="museum"]; /* spesso family-friendly */
-      nwr${around}["leisure"="amusement_arcade"];
-      nwr${around}["tourism"="viewpoint"]; /* belvedere “wow” */
+      nwr${around}["tourism"="museum"];          /* spesso family-friendly */
+      nwr${around}["amenity"="spa"];             /* TERME/SPA ok */
+      nwr${around}["amenity"="public_bath"];     /* TERME/SPA ok */
+      nwr${around}["natural"="hot_spring"];      /* TERME/SPA ok */
+    `;
+  }
+
+  if (cat === "storia") {
+    // BIG BOOST: includes the stuff you were missing near L'Aquila area
+    // - castles / forts / towers / gates / ruins / archaeology
+    // - museums / galleries
+    // - historic churches/abbeys/monasteries/cathedrals (often mapped as place_of_worship + building=church)
+    return `
+      nwr${around}["historic"="castle"];
+      nwr${around}["historic"="fort"];
+      nwr${around}["historic"="ruins"];
+      nwr${around}["historic"="monument"];
+      nwr${around}["historic"="memorial"];
+      nwr${around}["historic"="archaeological_site"];
+      nwr${around}["man_made"="tower"];
+      nwr${around}["historic"="city_gate"];
+
+      nwr${around}["tourism"="museum"];
+      nwr${around}["tourism"="gallery"];
+      nwr${around}["tourism"="attraction"]["historic"];
+
+      /* chiese / abbazie / monasteri (molto frequenti in Italia) */
+      nwr${around}["amenity"="place_of_worship"]["building"~"^(church|cathedral|chapel)$"];
+      nwr${around}["amenity"="place_of_worship"]["name"~"(?i)(abbazia|abbey|monastero|monastery|convento|san |santa )"];
     `;
   }
 
@@ -64,21 +86,8 @@ function blocksForCat(cat, radiusM, lat, lon) {
       nwr${around}["natural"="beach"];
       nwr${around}["amenity"="bathing_place"];
       nwr${around}["leisure"="beach_resort"];
-      nwr${around}["tourism"="attraction"]["natural"="beach"];
       nwr${around}["tourism"="viewpoint"];
       nwr${around}["man_made"="lighthouse"];
-    `;
-  }
-
-  if (cat === "storia") {
-    return `
-      nwr${around}["tourism"="museum"];
-      nwr${around}["historic"="castle"];
-      nwr${around}["historic"="ruins"];
-      nwr${around}["historic"="monument"];
-      nwr${around}["historic"="archaeological_site"];
-      nwr${around}["tourism"="attraction"]["historic"];
-      nwr${around}["amenity"="theatre"];
     `;
   }
 
@@ -88,26 +97,29 @@ function blocksForCat(cat, radiusM, lat, lon) {
       nwr${around}["leisure"="nature_reserve"];
       nwr${around}["natural"="peak"];
       nwr${around}["natural"="waterfall"];
+      nwr${around}["waterway"="waterfall"];
       nwr${around}["tourism"="viewpoint"];
       nwr${around}["natural"="cave_entrance"];
       nwr${around}["natural"="gorge"];
-      nwr${around}["waterway"="waterfall"];
     `;
   }
 
-  // ovunque: mix di cose belle/turistiche
+  // ovunque: mix turistico forte
   return `
     nwr${around}["tourism"="theme_park"];
     nwr${around}["leisure"="water_park"];
     nwr${around}["tourism"="attraction"];
     nwr${around}["tourism"="museum"];
     nwr${around}["historic"="castle"];
-    nwr${around}["historic"="monument"];
+    nwr${around}["historic"="archaeological_site"];
+    nwr${around}["man_made"="tower"];
     nwr${around}["natural"="beach"];
     nwr${around}["boundary"="national_park"];
     nwr${around}["leisure"="nature_reserve"];
     nwr${around}["tourism"="viewpoint"];
-    nwr${around}["natural"="waterfall"];
+    nwr${around}["amenity"="spa"];
+    nwr${around}["amenity"="public_bath"];
+    nwr${around}["natural"="hot_spring"];
   `;
 }
 
@@ -120,11 +132,13 @@ export default async function handler(req, res) {
     }
 
     const cat = normCat(req.query.cat);
-    const radiusKm = clamp(Number(req.query.radiusKm || 80), 5, 350); // live nearby
+
+    // live "nearby" default; allow up to 350km if you pass radiusKm
+    const radiusKm = clamp(Number(req.query.radiusKm || 90), 5, 350);
     const radiusM = Math.round(radiusKm * 1000);
 
-    // Bigger limit for family (more chances to include the “big names”)
-    const outLimit = (cat === "family") ? 900 : 650;
+    // higher limit for family/storia (more POIs)
+    const outLimit = (cat === "family" || cat === "storia") ? 1100 : 750;
 
     const query = `
 [out:json][timeout:25];
@@ -155,7 +169,7 @@ out tags center qt ${outLimit};
       return res.status(502).json({ ok: false, error: "Bad JSON from Overpass", details: txt.slice(0, 200) });
     }
 
-    // Cache CDN 6 min: enough to keep it snappy, avoids hammering Overpass
+    // Cache CDN a bit (don’t hammer Overpass)
     res.setHeader("Cache-Control", "public, s-maxage=360, stale-while-revalidate=1200");
 
     return res.status(200).json({
