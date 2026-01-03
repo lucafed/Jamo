@@ -1,15 +1,14 @@
-/* Jamo — Auto-only — app.js v4.1 (EU+UK ALL)
+/* Jamo — Auto-only — app.js v4.2 (EU+UK ALL + FAMILY BOOST)
  * FIXES:
- * - Better category detection (BORGHIs / STORIA / FAMILY) with tag + name heuristics (IT+EN)
- * - Less aggressive quality filter (keeps small borghi & history places)
- * - Uses ONLY euuk_macro_all.json (no regional 404)
- * - Reset “proposte di oggi” works + reruns search
+ * - Family category is now VERY inclusive (parks/lakes/easy nature/borghi + kids POIs)
+ * - Adds "Family vicino casa" list (8–12 nearby ideas) when category=family
+ * - Family scoring boost prioritizes easy/near/family-signals
  */
 
 const $ = (id) => document.getElementById(id);
 
 // -------------------- SETTINGS --------------------
-const MACRO_URL = "/data/macros/euuk_macro_all.json"; // ONE macro for all EU+UK (+ IT)
+const MACRO_URL = "/data/macros/euuk_macro_all.json";
 
 // driving estimator (offline)
 const ROAD_FACTOR = 1.25;
@@ -17,7 +16,7 @@ const AVG_KMH = 72;
 const FIXED_OVERHEAD_MIN = 8;
 
 // ROTATION
-const RECENT_TTL_MS = 1000 * 60 * 60 * 20; // ~20h: “oggi”
+const RECENT_TTL_MS = 1000 * 60 * 60 * 20;
 const RECENT_MAX = 160;
 let SESSION_SEEN = new Set();
 let LAST_SHOWN_PID = null;
@@ -30,6 +29,10 @@ const TIQETS_PID  = "";
 
 // Optional WhatsApp lead
 const WHATSAPP_NUMBER = "";
+
+// Family "vicino casa" defaults
+const FAMILY_NEARBY_MAX_MIN = 60; // idee immediate entro 60 min
+const FAMILY_NEARBY_LIMIT = 12;
 
 // -------------------- UTIL --------------------
 function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
@@ -78,11 +81,11 @@ function mapsDirUrl(oLat, oLon, dLat, dLon) {
 
 // -------------------- QUICK “INFO” LINKS --------------------
 function googleThingsToDoUrl(placeName, countryCode = "") {
-  const q = `${placeName}${countryCode ? " " + countryCode : ""} things to do cosa vedere`;
+  const q = `${placeName}${countryCode ? " " + countryCode : ""} cosa vedere things to do`;
   return `https://www.google.com/search?q=${encodeURIComponent(q)}&tbm=pts`;
 }
 function googleWhatToDoUrl(placeName, countryCode = "") {
-  const q = `${placeName}${countryCode ? " " + countryCode : ""} activities cosa fare`;
+  const q = `${placeName}${countryCode ? " " + countryCode : ""} cosa fare activities`;
   return `https://www.google.com/search?q=${encodeURIComponent(q)}`;
 }
 function googleImagesUrl(placeName, countryCode = "") {
@@ -90,7 +93,7 @@ function googleImagesUrl(placeName, countryCode = "") {
   return `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(q)}`;
 }
 function googleRestaurantsUrl(placeName, countryCode = "") {
-  const q = `${placeName}${countryCode ? " " + countryCode : ""} restaurants ristoranti`;
+  const q = `${placeName}${countryCode ? " " + countryCode : ""} ristoranti restaurants`;
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
 }
 function wikipediaUrl(placeName, countryCode = "") {
@@ -115,24 +118,12 @@ function tiqetsUrl(placeName, countryCode = "", affId = "") {
   return affId ? `${base}&partner=${encodeURIComponent(affId)}` : base;
 }
 function amazonEssentialsUrl(tag = "") {
-  const base = `https://www.amazon.it/s?k=${encodeURIComponent("accessori viaggio")}`;
+  const base = `https://www.amazon.it/s?k=${encodeURIComponent("accessori viaggio bambini")}`;
   return tag ? `${base}&tag=${encodeURIComponent(tag)}` : base;
-}
-function flightsUrl(placeName, countryCode = "") {
-  const q = `${placeName}${countryCode ? " " + countryCode : ""}`;
-  return `https://www.google.com/travel/flights?q=${encodeURIComponent("flights to " + q)}`;
-}
-function trainsUrl(placeName, countryCode = "") {
-  const q = `${placeName}${countryCode ? " " + countryCode : ""}`;
-  return `https://www.thetrainline.com/it/search?searchTerm=${encodeURIComponent(q)}`;
-}
-function busUrl(placeName, countryCode = "") {
-  const q = `${placeName}${countryCode ? " " + countryCode : ""}`;
-  return `https://www.omio.com/search-frontend/results/${encodeURIComponent(q)}`;
 }
 function whatsappLeadUrl(placeName) {
   if (!WHATSAPP_NUMBER) return "";
-  const msg = `Ciao! Vorrei un itinerario/consigli per: ${placeName}.`;
+  const msg = `Ciao! Mi consigli un'idea FAMILY vicino a ${placeName}? (itinerario facile con bambini)`;
   return `https://wa.me/${WHATSAPP_NUMBER.replace(/\D/g, "")}?text=${encodeURIComponent(msg)}`;
 }
 
@@ -164,33 +155,18 @@ function getVisitedSet() {
   try {
     const arr = JSON.parse(raw);
     return new Set(Array.isArray(arr) ? arr : []);
-  } catch {
-    return new Set();
-  }
+  } catch { return new Set(); }
 }
-function saveVisitedSet(set) {
-  localStorage.setItem("jamo_visited", JSON.stringify([...set]));
-}
-function markVisited(placeId) {
-  const s = getVisitedSet();
-  s.add(placeId);
-  saveVisitedSet(s);
-}
+function saveVisitedSet(set) { localStorage.setItem("jamo_visited", JSON.stringify([...set])); }
+function markVisited(placeId) { const s = getVisitedSet(); s.add(placeId); saveVisitedSet(s); }
 function resetVisited() { localStorage.removeItem("jamo_visited"); }
 
 function loadRecent() {
   const raw = localStorage.getItem("jamo_recent");
   if (!raw) return [];
-  try {
-    const arr = JSON.parse(raw);
-    return Array.isArray(arr) ? arr : [];
-  } catch {
-    return [];
-  }
+  try { const arr = JSON.parse(raw); return Array.isArray(arr) ? arr : []; } catch { return []; }
 }
-function saveRecent(list) {
-  localStorage.setItem("jamo_recent", JSON.stringify(list.slice(0, RECENT_MAX)));
-}
+function saveRecent(list) { localStorage.setItem("jamo_recent", JSON.stringify(list.slice(0, RECENT_MAX))); }
 function cleanupRecent(list) {
   const t = Date.now();
   return list.filter(x => x && x.pid && (t - (x.ts || 0) <= RECENT_TTL_MS));
@@ -200,11 +176,7 @@ function addRecent(pid) {
   let list = cleanupRecent(loadRecent());
   list.unshift({ pid, ts: t });
   const seen = new Set();
-  list = list.filter(x => {
-    if (seen.has(x.pid)) return false;
-    seen.add(x.pid);
-    return true;
-  });
+  list = list.filter(x => (seen.has(x.pid) ? false : (seen.add(x.pid), true)));
   saveRecent(list);
 }
 function getRecentSet() {
@@ -218,7 +190,7 @@ function resetRotation() {
   LAST_SHOWN_PID = null;
 }
 
-// -------------------- UI state (chips) --------------------
+// -------------------- UI (chips) --------------------
 function initChips(containerId, { multi = false } = {}) {
   const el = $(containerId);
   if (!el) return;
@@ -230,9 +202,7 @@ function initChips(containerId, { multi = false } = {}) {
     if (!multi) {
       [...el.querySelectorAll(".chip")].forEach(c => c.classList.remove("active"));
       chip.classList.add("active");
-    } else {
-      chip.classList.toggle("active");
-    }
+    } else chip.classList.toggle("active");
 
     if (containerId === "timeChips") {
       const v = Number(chip.dataset.min);
@@ -248,11 +218,9 @@ function getActiveCategory() {
 function getActiveStyles() {
   const el = $("styleChips");
   const actives = [...(el?.querySelectorAll(".chip.active") || [])].map(c => c.dataset.style);
-  return {
-    wantChicche: actives.includes("chicche"),
-    wantClassici: actives.includes("classici"),
-  };
+  return { wantChicche: actives.includes("chicche"), wantClassici: actives.includes("classici") };
 }
+
 function showStatus(type, text) {
   const box = $("statusBox");
   const t = $("statusText");
@@ -263,12 +231,9 @@ function showStatus(type, text) {
   t.textContent = text;
   box.style.display = "block";
 }
-function hideStatus() {
-  $("statusBox").style.display = "none";
-  $("statusText").textContent = "";
-}
+function hideStatus() { $("statusBox").style.display = "none"; $("statusText").textContent = ""; }
 
-// -------------------- DATA loading --------------------
+// -------------------- DATA --------------------
 let MACRO = null;
 async function loadMacro() {
   const r = await fetch(MACRO_URL, { cache: "no-store" });
@@ -294,59 +259,57 @@ async function geocodeLabel(label) {
   return j.result;
 }
 
-// -------------------- QUALITY FILTERS (less aggressive) --------------------
-function isClearlyJunkPlaceName(name) {
-  const n = normName(name);
-  if (!n) return true;
-
-  // BAD ONLY if strongly utilitarian/industrial
-  const badStrong = [
-    "nucleo industriale", "zona industriale", "area industriale", "polo industriale",
-    "zona artigianale", "area artigianale", "interporto",
-    "svincolo", "uscita", "casello", "autogrill", "stazione di servizio",
-    "deposito", "magazzino", "capannone", "discarica",
-    "centro commerciale", "shopping center", "outlet"
-  ];
-  return badStrong.some(t => n.includes(t));
-}
-
-function hasTouristicSignals(place) {
-  const type = String(place.type || "").toLowerCase();
+// -------------------- FAMILY SIGNALS --------------------
+function familySignals(place) {
   const tags = (place.tags || []).map(t => String(t).toLowerCase());
   const n = normName(place.name || "");
+  const type = String(place.type || "").toLowerCase();
 
-  // if type is one of ours, ok
-  if (["mare","montagna","natura","storia","relax","bambini","borgo","citta","city"].includes(type)) return true;
-
-  // tags signal
-  const goodTags = [
-    "borgo","oldtown","old_town","historic","heritage",
-    "storia","history","museo","museum","castello","castle","abbazia","abbey","church","cathedral","duomo",
-    "spiagge","beach","sea","mare","coast","trabocchi",
-    "parco","park","national_park","parco_nazionale","riserva","reserve",
-    "lago","lake","gole","canyon","cascata","waterfall",
-    "panorama","viewpoint","fotografico",
-    "terme","spa","relax",
-    "family","kids","bambini","zoo","aquarium","themepark","attraction"
+  // strong kids-specific
+  const strong = [
+    "zoo","aquarium","acquario","theme park","themepark","parco divertimenti","luna park",
+    "playground","area giochi","kids","children","bambini","family","fattoria didattica","farm",
+    "parco avventura","adventure park"
   ];
-  if (tags.some(t => goodTags.includes(t))) return true;
+  if (strong.some(x => n.includes(x)) || tags.some(t => strong.includes(t))) return 3;
 
-  // name signal (IT+EN)
-  const goodNameHints = [
-    "borgo","centro storico","old town","historic centre","historic center",
-    "castel","castello","rocca","forte","fortress","castle",
-    "abbazia","abbey","monastero","monastery","duomo","cattedrale","cathedral","church","basilica","santuario",
-    "museo","museum","archeo","archaeo","anfiteatro","amphitheatre","amphitheater","teatro romano",
-    "spiaggia","beach","lido","coast","costa",
-    "parco","park","riserva","reserve","canyon","gole","cascata","waterfall","lago","lake",
-    "terme","spa","belvedere","viewpoint"
-  ];
-  if (goodNameHints.some(x => n.includes(x))) return true;
+  // medium: parks/lakes/beaches/easy nature (great with family)
+  const mediumTags = ["park","parco","lago","lake","beach","spiaggia","mare","natura","riserva","reserve","viewpoint","panorama"];
+  const mediumName = ["parco","park","lago","lake","spiaggia","beach","riserva","reserve","belvedere","viewpoint","cascata","waterfall"];
+  if (
+    mediumTags.some(x => tags.includes(x)) ||
+    mediumName.some(x => n.includes(x)) ||
+    ["natura","mare","relax","borgo","citta","city"].includes(type)
+  ) return 2;
 
-  return false;
+  // light: museums/castles can still be family-friendly
+  const light = ["museo","museum","castello","castle","abbazia","abbey","centro storico","old town"];
+  if (light.some(x => n.includes(x)) || tags.some(t => light.includes(t))) return 1;
+
+  return 0;
 }
 
-// -------------------- FILTERS (UPGRADED) --------------------
+function familyWhyQuick(place) {
+  const n = normName(place.name || "");
+  const tags = (place.tags || []).map(t => String(t).toLowerCase());
+
+  // short ideas (no AI needed, deterministic)
+  const ideas = [];
+
+  if (n.includes("parco") || tags.includes("parco") || tags.includes("park")) ideas.push("Passeggiata + area verde (easy).");
+  if (n.includes("lago") || tags.includes("lago") || tags.includes("lake")) ideas.push("Giro lago + foto + merenda.");
+  if (n.includes("spiaggia") || tags.includes("beach") || tags.includes("mare")) ideas.push("Spiaggia facile (se stagione) + passeggio.");
+  if (n.includes("cascata") || tags.includes("waterfall")) ideas.push("Mini-trekking semplice (scarpe comode).");
+  if (n.includes("zoo") || tags.includes("zoo")) ideas.push("Animali + attività per bambini.");
+  if (n.includes("acquario") || tags.includes("aquarium")) ideas.push("Visita indoor perfetta anche se piove.");
+  if (n.includes("castello") || tags.includes("castle")) ideas.push("Castello = visita breve + wow per i bimbi.");
+
+  if (ideas.length === 0) ideas.push("Gita easy + passeggio + gelato.");
+
+  return ideas.slice(0, 3);
+}
+
+// -------------------- FILTERS --------------------
 function matchesCategory(place, cat) {
   if (!cat || cat === "ovunque") return true;
 
@@ -362,7 +325,6 @@ function matchesCategory(place, cat) {
   }
 
   if (cat === "borghi") {
-    // ✅ borghi are often "borgo" type or name has castel/rocca/old town
     return (
       type === "borgo" ||
       hasAnyTag("borgo","oldtown","old_town","historic","heritage") ||
@@ -382,7 +344,7 @@ function matchesCategory(place, cat) {
     return (
       type === "montagna" ||
       hasAnyTag("montagna","mountain","neve","snow","ski") ||
-      nameHasAny("monte","mount","mountain","peak","vetta","rifugio","ski","roccaraso")
+      nameHasAny("monte","mount","mountain","peak","vetta","rifugio","ski")
     );
   }
 
@@ -397,14 +359,8 @@ function matchesCategory(place, cat) {
   if (cat === "storia") {
     return (
       type === "storia" ||
-      hasAnyTag("storia","history","museo","museum","castello","castle","abbazia","abbey","cathedral","duomo","church","archeology","archaeology","heritage") ||
-      nameHasAny(
-        "castello","castle","rocca","forte","fortress",
-        "abbazia","abbey","monastero","monastery",
-        "duomo","cattedrale","cathedral","basilica","church","chiesa","santuario",
-        "museo","museum","archeo","archaeo","anfiteatro","amphitheatre","amphitheater","teatro romano","roman theatre",
-        "palazzo","villa","necropolis","necropoli"
-      )
+      hasAnyTag("storia","history","museo","museum","castello","castle","abbazia","abbey","cathedral","duomo","church","archaeology","heritage") ||
+      nameHasAny("castello","castle","rocca","forte","fortress","abbazia","abbey","duomo","cattedrale","cathedral","basilica","church","chiesa","museo","museum","archeo","anfiteatro","amphitheatre","teatro romano","roman theatre")
     );
   }
 
@@ -417,11 +373,21 @@ function matchesCategory(place, cat) {
   }
 
   if (cat === "family") {
-    return (
-      type === "bambini" ||
-      hasAnyTag("famiglie","family","kids","bambini","children","zoo","aquarium","themepark","attraction","playground","park") ||
-      nameHasAny("zoo","aquarium","acquario","parco","park","playground","family","kids","bambini","children","luna park","theme park","fun")
-    );
+    // ✅ SUPER-INCLUSIVE:
+    // - anything with familySignals >= 2
+    // - plus parks/lakes/beaches/borghi (great for kids) unless obviously "nightlife"
+    const sig = familySignals(place);
+    if (sig >= 2) return true;
+
+    const anti = ["nightclub","club","discoteca","casino"];
+    if (anti.some(x => n.includes(x))) return false;
+
+    // fallback: places that are generally family friendly (easy categories)
+    if (["natura","mare","borgo","citta","city","relax"].includes(type)) return true;
+    if (hasAnyTag("parco","park","lago","lake","beach","spiaggia","mare","natura")) return true;
+    if (nameHasAny("parco","park","lago","lake","spiaggia","beach","belvedere","viewpoint")) return true;
+
+    return false;
   }
 
   return true;
@@ -434,13 +400,6 @@ function matchesStyle(place, { wantChicche, wantClassici }) {
   return !!wantClassici;
 }
 
-function baseScorePlace({ driveMin, targetMin, beautyScore, isChicca }) {
-  const t = clamp(1 - Math.abs(driveMin - targetMin) / Math.max(25, targetMin * 0.85), 0, 1);
-  const b = clamp(Number(beautyScore) || 0.78, 0.4, 1);
-  const c = isChicca ? 0.06 : 0;
-  return 0.60 * t + 0.36 * b + c;
-}
-
 function rotationPenalty(pid, recentSet) {
   let pen = 0;
   if (pid && pid === LAST_SHOWN_PID) pen += 0.28;
@@ -449,14 +408,30 @@ function rotationPenalty(pid, recentSet) {
   return pen;
 }
 
+function baseScorePlace({ driveMin, targetMin, beautyScore, isChicca, familyMode, familySig }) {
+  const t = clamp(1 - Math.abs(driveMin - targetMin) / Math.max(25, targetMin * 0.85), 0, 1);
+  const b = clamp(Number(beautyScore) || 0.78, 0.4, 1);
+  const c = isChicca ? 0.06 : 0;
+
+  let s = 0.60 * t + 0.36 * b + c;
+
+  // ✅ family boost (prefer easy + strong signals)
+  if (familyMode) {
+    // stronger signals matter
+    s += 0.06 * clamp(familySig / 3, 0, 1);
+    // prefer closer (kids)
+    if (driveMin <= 35) s += 0.04;
+    else if (driveMin <= 55) s += 0.02;
+  }
+
+  return s;
+}
+
 // -------------------- TIME “SMART” --------------------
 function effectiveMaxMinutes(maxMinutes, category) {
   const m = Number(maxMinutes);
   if (!Number.isFinite(m)) return 120;
-  if (category === "mare" && m < 75) {
-    const widened = Math.round(m * 1.35);
-    return clamp(widened, m, 180);
-  }
+  if (category === "mare" && m < 75) return clamp(Math.round(m * 1.35), m, 180);
   return clamp(m, 10, 600);
 }
 
@@ -469,16 +444,14 @@ function buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited =
   const oLat = Number(origin.lat);
   const oLon = Number(origin.lon);
 
+  const familyMode = category === "family";
+
   const candidates = [];
 
   for (const p of MACRO.places) {
     const lat = Number(p.lat);
     const lon = Number(p.lon);
     if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
-
-    // ✅ less aggressive:
-    // - only skip if clearly junk AND not touristic
-    if (isClearlyJunkPlaceName(p.name) && !hasTouristicSignals(p)) continue;
 
     if (!matchesCategory(p, category)) continue;
     if (!matchesStyle(p, styles)) continue;
@@ -493,23 +466,26 @@ function buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited =
     if (km < 1.2) continue;
 
     const isChicca = String(p.visibility || "").toLowerCase() === "chicca";
+    const familySig = familySignals(p);
+
     let s = baseScorePlace({
       driveMin,
       targetMin: target,
       beautyScore: p.beauty_score,
-      isChicca
+      isChicca,
+      familyMode,
+      familySig
     });
 
-    // small boost for “wow” hints
+    // small boosts
     const tags = (p.tags || []).map(x => String(x).toLowerCase());
     const n = normName(p.name || "");
-    if (tags.includes("panorama") || tags.includes("fotografico") || n.includes("belvedere") || n.includes("viewpoint")) s += 0.03;
-    if (tags.includes("spiagge") || tags.includes("castello") || tags.includes("abbazia") || tags.includes("gole") || tags.includes("cascata")) s += 0.04;
-    if (n.includes("castello") || n.includes("castle") || n.includes("abbazia") || n.includes("abbey")) s += 0.03;
+    if (tags.includes("panorama") || n.includes("belvedere") || n.includes("viewpoint")) s += 0.03;
+    if (tags.includes("spiagge") || tags.includes("castle") || tags.includes("castello") || tags.includes("abbazia")) s += 0.04;
 
-    if (!ignoreRotation) s = s - rotationPenalty(pid, recentSet);
+    if (!ignoreRotation) s -= rotationPenalty(pid, recentSet);
 
-    candidates.push({ place: p, pid, km, driveMin, score: Number(s.toFixed(4)) });
+    candidates.push({ place: p, pid, km, driveMin, score: Number(s.toFixed(4)), familySig });
   }
 
   candidates.sort((a, b) => (b.score - a.score) || (a.driveMin - b.driveMin));
@@ -518,18 +494,15 @@ function buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited =
 
 function pickDestination(origin, maxMinutes, category, styles) {
   let candidates = buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited: false, ignoreRotation: false });
-  if (candidates.length === 0) {
-    candidates = buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited: false, ignoreRotation: true });
-  }
-  if (candidates.length === 0) {
-    candidates = buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited: true, ignoreRotation: true });
-  }
+  if (candidates.length === 0) candidates = buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited: false, ignoreRotation: true });
+  if (candidates.length === 0) candidates = buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited: true, ignoreRotation: true });
+
   const chosen = candidates[0] || null;
   const alternatives = candidates.slice(1, 3);
-  return { chosen, alternatives };
+  return { chosen, alternatives, candidates };
 }
 
-// -------------------- RENDER --------------------
+// -------------------- RENDER HELPERS --------------------
 function quickInfoButtonsHtml(placeName, countryCode = "IT") {
   return `
     <div class="card" style="margin-top:12px;">
@@ -555,11 +528,6 @@ function monetBoxHtml(placeName, countryCode = "IT") {
         <a class="btn" target="_blank" rel="noopener" href="${getYourGuideUrl(placeName, countryCode, GYG_PID)}">🎟️ Tour</a>
         <a class="btn" target="_blank" rel="noopener" href="${tiqetsUrl(placeName, countryCode, TIQETS_PID)}">🏛️ Biglietti</a>
         <a class="btn btn-ghost" target="_blank" rel="noopener" href="${amazonEssentialsUrl(AMAZON_TAG)}">🧳 Essenziali</a>
-      </div>
-      <div class="row wrap gap" style="margin-top:10px;">
-        <a class="btn btn-ghost" target="_blank" rel="noopener" href="${flightsUrl(placeName, countryCode)}">✈️ Voli</a>
-        <a class="btn btn-ghost" target="_blank" rel="noopener" href="${trainsUrl(placeName, countryCode)}">🚆 Treni</a>
-        <a class="btn btn-ghost" target="_blank" rel="noopener" href="${busUrl(placeName, countryCode)}">🚌 Bus</a>
         ${wa ? `<a class="btn btn-ghost" target="_blank" rel="noopener" href="${wa}">💬 WhatsApp</a>` : ""}
       </div>
       <div class="small muted" style="margin-top:8px;">
@@ -569,10 +537,61 @@ function monetBoxHtml(placeName, countryCode = "IT") {
   `;
 }
 
+function familyNearbyHtml(list, origin) {
+  if (!list || list.length === 0) return "";
+
+  return `
+    <div class="card" style="margin-top:12px;">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+        <div class="small muted">👨‍👩‍👧‍👦 Family vicino casa (idee immediate)</div>
+        <div class="pill">entro ~${FAMILY_NEARBY_MAX_MIN} min</div>
+      </div>
+
+      <div class="small muted" style="margin-top:8px;">
+        Toccane una per vedere foto / cosa fare / percorso.
+      </div>
+
+      <div style="margin-top:10px; display:flex; flex-direction:column; gap:10px;">
+        ${list.map(x => {
+          const p = x.place;
+          const country = p.country || "IT";
+          const placeUrl = mapsPlaceUrl(p.lat, p.lon);
+          const dirUrl = mapsDirUrl(origin.lat, origin.lon, p.lat, p.lon);
+          const ideas = familyWhyQuick(p).join(" • ");
+
+          return `
+            <div class="card" style="padding:12px; border-color: rgba(255,255,255,.12);">
+              <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
+                <div>
+                  <div style="font-weight:800; font-size:15px; line-height:1.2;">
+                    ${p.name} <span class="small muted">(${p.type || "meta"})</span>
+                  </div>
+                  <div class="small muted" style="margin-top:4px;">
+                    ~${x.driveMin} min • ${fmtKm(x.km)} • ${ideas}
+                  </div>
+                </div>
+                <div class="pill">Family</div>
+              </div>
+
+              <div class="row wrap gap" style="margin-top:10px;">
+                <a class="btn" href="${googleImagesUrl(p.name, country)}" target="_blank" rel="noopener">📷 Foto</a>
+                <a class="btn" href="${googleWhatToDoUrl(p.name, country)}" target="_blank" rel="noopener">🎯 Cosa fare</a>
+                <a class="btn btn-ghost" href="${placeUrl}" target="_blank" rel="noopener">Maps</a>
+                <a class="btn btn-ghost" href="${dirUrl}" target="_blank" rel="noopener">Percorso</a>
+              </div>
+            </div>
+          `;
+        }).join("")}
+      </div>
+    </div>
+  `;
+}
+
+// -------------------- RENDER MAIN RESULT --------------------
 function renderNoResult(maxMinutesShown, category) {
   const area = $("resultArea");
-  const extra = (category === "mare" && Number(maxMinutesShown) < 75)
-    ? `Hai scelto <b>Mare</b>: spesso serve 90–180 min reali.`
+  const extra = (category === "family")
+    ? `Consiglio: prova 45–90 min. Family “vicino casa” ti dovrebbe mostrare comunque idee immediate.`
     : `Prova ad aumentare i minuti o cambiare categoria/stile.`;
 
   area.innerHTML = `
@@ -595,22 +614,31 @@ function renderNoResult(maxMinutesShown, category) {
 function renderResult(origin, maxMinutesShown, chosen, alternatives, meta = {}) {
   const area = $("resultArea");
   const category = meta.category || "ovunque";
+  const familyNearbyBlock = meta.familyNearbyHtml || "";
 
-  if (!chosen) { renderNoResult(maxMinutesShown, category); return; }
+  if (!chosen) {
+    area.innerHTML = familyNearbyBlock + `<div style="margin-top:12px;"></div>`;
+    renderNoResult(maxMinutesShown, category);
+    return;
+  }
 
   const p = chosen.place;
   const pid = chosen.pid;
+  const country = p.country || "IT";
 
   const isChicca = String(p.visibility || "").toLowerCase() === "chicca";
   const badge = isChicca ? "✨ chicca" : "✅ classica";
 
   const placeUrl = mapsPlaceUrl(p.lat, p.lon);
   const dirUrl = mapsDirUrl(origin.lat, origin.lon, p.lat, p.lon);
-  const country = p.country || "IT";
 
   const why = Array.isArray(p.why) ? p.why.slice(0, 4) : [];
   const whyHtml = why.length
     ? `<ul style="margin:10px 0 0; padding-left:18px; color: var(--muted);">${why.map(x => `<li>${x}</li>`).join("")}</ul>`
+    : "";
+
+  const familyIdeas = (category === "family")
+    ? `<div class="small muted" style="margin-top:8px;">👨‍👩‍👧‍👦 Idee family: <b>${familyWhyQuick(p).join(" • ")}</b></div>`
     : "";
 
   const altHtml = (alternatives || []).length ? `
@@ -625,6 +653,7 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives, meta = {}) 
           const aDirUrl = mapsDirUrl(origin.lat, origin.lon, ap.lat, ap.lon);
           const aIsChicca = String(ap.visibility || "").toLowerCase() === "chicca";
           const aBadge = aIsChicca ? "✨" : "✅";
+          const ideas = (category === "family") ? ` • ${familyWhyQuick(ap).join(" • ")}` : "";
 
           return `
             <div class="card" data-alt="1" data-pid="${aPid}" style="padding:12px; cursor:pointer; border-color: rgba(255,255,255,.12);">
@@ -633,7 +662,9 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives, meta = {}) 
                   <div style="font-weight:800; font-size:16px; line-height:1.2;">
                     ${ap.name} <span class="small muted">(${aBadge})</span>
                   </div>
-                  <div class="small muted" style="margin-top:4px;">~${a.driveMin} min • ${fmtKm(a.km)} • ${ap.type || "meta"}</div>
+                  <div class="small muted" style="margin-top:4px;">
+                    ~${a.driveMin} min • ${fmtKm(a.km)} • ${ap.type || "meta"}${ideas}
+                  </div>
                 </div>
                 <div class="pill" style="white-space:nowrap;">Scegli</div>
               </div>
@@ -642,7 +673,7 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives, meta = {}) 
                 <a class="btn btn-ghost" href="${aPlaceUrl}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Maps</a>
                 <a class="btn btn-ghost" href="${aDirUrl}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Percorso</a>
                 <a class="btn btn-ghost" href="${googleImagesUrl(ap.name, aCountry)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Foto</a>
-                <a class="btn btn-ghost" href="${googleRestaurantsUrl(ap.name, aCountry)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Ristoranti</a>
+                <a class="btn btn-ghost" href="${googleWhatToDoUrl(ap.name, aCountry)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Cosa fare</a>
               </div>
             </div>
           `;
@@ -652,22 +683,24 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives, meta = {}) 
   ` : "";
 
   area.innerHTML = `
-    <div class="card okbox">
+    ${familyNearbyBlock}
+
+    <div class="card okbox" style="margin-top:12px;">
       <div class="pill">🚗 auto • ~${chosen.driveMin} min • ${fmtKm(chosen.km)} • ${badge}</div>
       <div class="resultTitle">${p.name}, ${country}</div>
 
       <div class="small muted" style="margin-top:6px;">
         Categoria: <b>${p.type || "meta"}</b> • Punteggio: <b>${chosen.score}</b>
-        ${category === "mare" && Number(maxMinutesShown) < 75 ? ` • <span class="muted">(Mare: raggio smart attivo)</span>` : ""}
       </div>
 
       <div class="row wrap gap" style="margin-top:12px;">
         <a class="btn" href="${placeUrl}" target="_blank" rel="noopener">🗺️ Maps</a>
         <a class="btn" href="${dirUrl}" target="_blank" rel="noopener">🚗 Percorso</a>
         <a class="btn" href="${googleImagesUrl(p.name, country)}" target="_blank" rel="noopener">📷 Foto</a>
-        <a class="btn" href="${googleRestaurantsUrl(p.name, country)}" target="_blank" rel="noopener">🍝 Ristoranti</a>
+        <a class="btn" href="${googleWhatToDoUrl(p.name, country)}" target="_blank" rel="noopener">🎯 Cosa fare</a>
       </div>
 
+      ${familyIdeas}
       ${whyHtml}
 
       <div class="row wrap gap" style="margin-top:12px;">
@@ -682,7 +715,7 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives, meta = {}) 
     ${altHtml}
   `;
 
-  // rotation track
+  // rotation
   LAST_SHOWN_PID = pid;
   SESSION_SEEN.add(pid);
   addRecent(pid);
@@ -692,9 +725,7 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives, meta = {}) 
     showStatus("ok", "Segnato come visitato ✅ (non te lo ripropongo più).");
   });
 
-  $("btnChange")?.addEventListener("click", () => {
-    runSearch({ silent: true, forbidPid: pid });
-  });
+  $("btnChange")?.addEventListener("click", () => runSearch({ silent: true, forbidPid: pid }));
 
   $("btnResetRotation")?.addEventListener("click", () => {
     resetRotation();
@@ -725,6 +756,46 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives, meta = {}) 
   });
 }
 
+// -------------------- FAMILY NEARBY LIST --------------------
+function buildFamilyNearby(origin) {
+  if (!MACRO || !origin) return [];
+  const oLat = Number(origin.lat);
+  const oLon = Number(origin.lon);
+  if (!Number.isFinite(oLat) || !Number.isFinite(oLon)) return [];
+
+  const visited = getVisitedSet();
+
+  const out = [];
+  for (const p of MACRO.places) {
+    const lat = Number(p.lat), lon = Number(p.lon);
+    if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
+
+    // must be family-ish
+    const sig = familySignals(p);
+    const type = String(p.type || "").toLowerCase();
+    if (sig === 0 && !["natura","mare","borgo","citta","city","relax"].includes(type)) continue;
+
+    const pid = safeIdFromPlace(p);
+    if (visited.has(pid)) continue;
+
+    const km = haversineKm(oLat, oLon, lat, lon);
+    const driveMin = estCarMinutesFromKm(km);
+    if (driveMin > FAMILY_NEARBY_MAX_MIN) continue;
+    if (km < 1.2) continue;
+
+    // score: prefer closer + stronger family signal
+    let s = 0;
+    s += clamp(1 - (driveMin / FAMILY_NEARBY_MAX_MIN), 0, 1) * 0.6;
+    s += clamp(sig / 3, 0, 1) * 0.3;
+    s += clamp((Number(p.beauty_score) || 0.75), 0.4, 1) * 0.1;
+
+    out.push({ place: p, pid, km, driveMin, score: Number(s.toFixed(4)) });
+  }
+
+  out.sort((a,b)=> (b.score-a.score) || (a.driveMin-b.driveMin));
+  return out.slice(0, FAMILY_NEARBY_LIMIT);
+}
+
 // -------------------- MAIN SEARCH --------------------
 async function runSearch({ silent = false, forbidPid = null } = {}) {
   try {
@@ -742,6 +813,10 @@ async function runSearch({ silent = false, forbidPid = null } = {}) {
     const styles = getActiveStyles();
     const effMax = effectiveMaxMinutes(maxMinutesInput, category);
 
+    // family nearby block
+    const familyNearby = (category === "family") ? buildFamilyNearby(origin) : [];
+    const familyNearbyBlock = (category === "family") ? familyNearbyHtml(familyNearby, origin) : "";
+
     let { chosen, alternatives } = pickDestination(origin, effMax, category, styles);
 
     if (forbidPid && chosen?.pid === forbidPid) {
@@ -749,15 +824,12 @@ async function runSearch({ silent = false, forbidPid = null } = {}) {
       ({ chosen, alternatives } = pickDestination(origin, effMax, category, styles));
     }
 
-    renderResult(origin, maxMinutesInput, chosen, alternatives, { category, effMax });
+    renderResult(origin, maxMinutesInput, chosen, alternatives, { category, effMax, familyNearbyHtml: familyNearbyBlock });
 
     if (!chosen) {
       showStatus("warn", `Nessuna meta entro ${maxMinutesInput} min. Prova ad aumentare i minuti o cambiare filtri.`);
     } else if (!silent) {
-      const extra = (category === "mare" && effMax !== maxMinutesInput)
-        ? ` (Mare: ho allargato il raggio a ~${effMax} min per non lasciarti a secco)`
-        : "";
-      showStatus("ok", `Meta trovata ✅ (~${chosen.driveMin} min in auto)${extra}`);
+      showStatus("ok", `Meta trovata ✅ (~${chosen.driveMin} min in auto)`);
     }
   } catch (e) {
     console.error(e);
