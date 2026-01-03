@@ -1,11 +1,8 @@
 /* Jamo — Auto-only (offline macro) — app.js v3.3
- * Fix:
- * - Reset “proposte di oggi” ora funziona davvero (reset + nuova ricerca)
- * - Link rapidi: Foto / Cosa vedere / Ristoranti / Wikipedia (anche per alternative)
- * - Monetization buttons più grandi e immediati
- * - Tiqets link più robusto (usa /en/search/)
- * - GetYourGuide query migliorata (aggiunge Italia)
- * - Tracking UTM base (per capire click in analytics)
+ * - Origin: GPS or manual (geocode via /api/geocode?q=)
+ * - Picks destinations from macro places based on:
+ *   time (maxMinutes), category, style (chicche/classici), rotation (not repeating)
+ * - Outputs: result card + 2 alternatives (clickable) + maps links + quick info links + monetization links
  */
 
 const $ = (id) => document.getElementById(id);
@@ -20,25 +17,55 @@ const FIXED_OVERHEAD_MIN = 8;
 
 // ROTATION
 const RECENT_TTL_MS = 1000 * 60 * 60 * 20; // ~20h: “oggi”
-const RECENT_MAX = 200;                    // più memoria = più rotazione
-let SESSION_SEEN = new Set();
+const RECENT_MAX = 120;                    // quante mete ricordare “oggi”
+let SESSION_SEEN = new Set();              // in-memory (sessione)
 let LAST_SHOWN_PID = null;
 
-// Monetization placeholders (metti i tuoi ID reali)
+// ---- QUALITY GATE ----
+// Se vuoi SOLO mete wow, alza:
+const MIN_BEAUTY_DEFAULT = 0.78;
+
+// Se minuti molto bassi: alziamo la qualità (meno mete “meh”)
+function minBeautyForMinutes(m) {
+  if (m <= 45) return 0.83;
+  if (m <= 60) return 0.81;
+  return MIN_BEAUTY_DEFAULT;
+}
+
+// --- Hard filters: mai proporre roba non turistica ---
+const BAD_NAME_PATTERNS = [
+  "nucleo industriale",
+  "zona industriale",
+  "area industriale",
+  "industriale",
+  "interporto",
+  "scalo",
+  "stazione",
+  "autostrada",
+  "casello",
+  "uscita",
+  "svincolo",
+  "centro commerciale",
+  "parcheggio",
+  "iper",
+  "outlet",
+  "deposito",
+  "capannone",
+  "ospedale",
+  "clinica",
+  "cimitero",
+];
+
+function isBadPlaceName(name) {
+  const n = normName(name);
+  return BAD_NAME_PATTERNS.some(p => n.includes(p));
+}
+
+// Monetization placeholders (fill with your IDs)
 const BOOKING_AID = ""; // Booking affiliate id (aid)
-const AMAZON_TAG  = ""; // Amazon tag (Associates)
+const AMAZON_TAG  = ""; // Amazon tag
 const GYG_PID     = ""; // GetYourGuide partner_id
 const TIQETS_PID  = ""; // Tiqets partner (se ce l'hai)
-
-// WhatsApp “concierge” (opzionale): numero in formato internazionale senza + (es: 393331112233)
-const WHATSAPP_NUMBER = ""; // es: "393331112233"
-
-// UTM base per tracciare click (se usi GA / Plausible / ecc.)
-const UTM = {
-  source: "jamo",
-  medium: "app",
-  campaign: "abruzzo_auto"
-};
 
 // -------------------- UTIL --------------------
 function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
@@ -65,6 +92,25 @@ function normName(s) {
     .trim();
 }
 
+function cleanPlaceQuery(name) {
+  // Rende la query più “search-friendly” per GYG/Tiqets/Booking
+  let q = String(name || "").trim();
+
+  // rimuove emoji e simboli strani
+  q = q.replace(/[^\p{L}\p{N}\s,'’-]/gu, " ");
+
+  // se c'è “( ... )” prendi solo prima parte
+  q = q.replace(/\s*\(.*?\)\s*/g, " ").trim();
+
+  // se ha “—” o “ - ” prendi prima parte
+  q = q.split("—")[0].split(" - ")[0].trim();
+
+  // normalizza spazi
+  q = q.replace(/\s+/g, " ").trim();
+
+  return q;
+}
+
 function safeIdFromPlace(p) {
   return p.id || `p_${normName(p.name)}_${String(p.lat).slice(0,6)}_${String(p.lon).slice(0,6)}`;
 }
@@ -77,75 +123,53 @@ function estCarMinutesFromKm(km) {
 
 function fmtKm(km) { return `${Math.round(km)} km`; }
 
-function withUtm(url) {
-  try {
-    const u = new URL(url);
-    u.searchParams.set("utm_source", UTM.source);
-    u.searchParams.set("utm_medium", UTM.medium);
-    u.searchParams.set("utm_campaign", UTM.campaign);
-    return u.toString();
-  } catch {
-    // se non è URL valido, ritorna com’è
-    return url;
-  }
-}
-
-// -------------------- MAPS / INFO LINKS --------------------
 function mapsPlaceUrl(lat, lon) {
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(lat + "," + lon)}`;
 }
+
 function mapsDirUrl(oLat, oLon, dLat, dLon) {
   return `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(oLat + "," + oLon)}&destination=${encodeURIComponent(dLat + "," + dLon)}&travelmode=driving`;
 }
 
+// Quick info links
 function googleSearchUrl(q) {
   return `https://www.google.com/search?q=${encodeURIComponent(q)}`;
 }
 function googleImagesUrl(q) {
   return `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(q)}`;
 }
-function wikiUrl(title) {
-  // prova IT, se non esiste Google lo gestisce comunque
-  return `https://it.wikipedia.org/wiki/${encodeURIComponent(String(title || "").replace(/\s+/g, "_"))}`;
-}
-function mapsRestaurantsNear(placeName) {
+function mapsRestaurantsUrl(placeName) {
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent("ristoranti " + placeName)}`;
 }
+function wikiSearchUrl(q) {
+  return `https://it.wikipedia.org/w/index.php?search=${encodeURIComponent(q)}`;
+}
+function whatsappShareUrl(text) {
+  return `https://wa.me/?text=${encodeURIComponent(text)}`;
+}
 
-// -------------------- MONETIZATION URLs --------------------
+// Monetization URLs
 function bookingUrl(city, countryCode, affId = "") {
   const q = `${city}${countryCode ? ", " + countryCode : ""}`;
   const base = `https://www.booking.com/searchresults.html?ss=${encodeURIComponent(q)}`;
-  const url = affId ? `${base}&aid=${encodeURIComponent(affId)}` : base;
-  return withUtm(url);
+  return affId ? `${base}&aid=${encodeURIComponent(affId)}` : base;
 }
 
 function getYourGuideUrl(city, affId = "") {
-  // Query più “forte”: aggiunge Italia per evitare ambiguità
-  const q = `${city}, Italia`;
-  const base = `https://www.getyourguide.com/s/?q=${encodeURIComponent(q)}`;
-  const url = affId ? `${base}&partner_id=${encodeURIComponent(affId)}` : base;
-  return withUtm(url);
+  // Ricerca robusta (non deep-link fragile)
+  const base = `https://www.getyourguide.com/s/?q=${encodeURIComponent(city)}`;
+  return affId ? `${base}&partner_id=${encodeURIComponent(affId)}` : base;
 }
 
 function tiqetsUrl(city, affId = "") {
-  // /it/search a volte fa 404: uso /en/search/ che è più stabile
-  const base = `https://www.tiqets.com/en/search/?query=${encodeURIComponent(city)}`;
-  const url = affId ? `${base}&partner=${encodeURIComponent(affId)}` : base;
-  return withUtm(url);
+  // Ricerca robusta (evita 404)
+  const base = `https://www.tiqets.com/it/search/?query=${encodeURIComponent(city)}`;
+  return affId ? `${base}&partner=${encodeURIComponent(affId)}` : base;
 }
 
 function amazonEssentialsUrl(tag = "") {
-  const base = `https://www.amazon.it/s?k=${encodeURIComponent("accessori viaggio")}`;
-  const url = tag ? `${base}&tag=${encodeURIComponent(tag)}` : base;
-  return withUtm(url);
-}
-
-// WhatsApp click-to-chat (prefilled message)
-function whatsappUrl(message) {
-  if (!WHATSAPP_NUMBER) return "";
-  // Formato wa.me: https://wa.me/<number>?text=<encoded>
-  return `https://wa.me/${encodeURIComponent(WHATSAPP_NUMBER)}?text=${encodeURIComponent(message)}`;
+  const base = `https://www.amazon.it/s?k=${encodeURIComponent("accessori viaggio auto gita")}`;
+  return tag ? `${base}&tag=${encodeURIComponent(tag)}` : base;
 }
 
 // -------------------- STORAGE: origin + visited + recent --------------------
@@ -221,7 +245,6 @@ function addRecent(pid) {
   const t = Date.now();
   let list = cleanupRecent(loadRecent());
   list.unshift({ pid, ts: t });
-
   // de-dup keeping newest
   const seen = new Set();
   list = list.filter(x => {
@@ -229,7 +252,6 @@ function addRecent(pid) {
     seen.add(x.pid);
     return true;
   });
-
   saveRecent(list);
 }
 
@@ -331,49 +353,76 @@ function matchesCategory(place, cat) {
   if (!cat || cat === "ovunque") return true;
 
   const type = String(place.type || "").toLowerCase();
-  const tags = (place.tags || []).map(t => String(t).toLowerCase());
+  const tagsRaw = (place.tags || []).map(t => String(t));
+  const tags = tagsRaw.map(t => normName(t)); // normalizzati
 
-  if (cat === "citta") return type === "citta" || tags.includes("citta");
-  if (cat === "borghi") return type === "borgo" || tags.includes("borgo");
+  // helper "tag contains"
+  const hasTag = (x) => tags.includes(normName(x));
+
+  if (cat === "citta") return type === "citta" || hasTag("citta") || hasTag("città");
+  if (cat === "borghi") return type === "borgo" || hasTag("borgo");
+
   if (cat === "mare") return (
     type === "mare" ||
-    tags.includes("mare") ||
-    tags.includes("trabocchi") ||
-    tags.includes("spiagge") ||
-    tags.includes("spiaggia") ||
-    tags.includes("lido")
+    hasTag("mare") ||
+    hasTag("trabocchi") ||
+    hasTag("spiagge") ||
+    hasTag("spiaggia") ||
+    hasTag("lido")
   );
-  if (cat === "montagna") return type === "montagna" || tags.includes("montagna") || tags.includes("neve");
+
+  if (cat === "montagna") return type === "montagna" || hasTag("montagna") || hasTag("neve");
+
   if (cat === "natura") return (
     type === "natura" ||
-    tags.includes("natura") ||
-    tags.includes("lago") ||
-    tags.includes("parco_nazionale") ||
-    tags.includes("gole") ||
-    tags.includes("cascate") ||
-    tags.includes("riserva") ||
-    tags.includes("cascata")
+    hasTag("natura") ||
+    hasTag("lago") ||
+    hasTag("parco nazionale") ||
+    hasTag("parco_nazionale") ||
+    hasTag("gole") ||
+    hasTag("cascata") ||
+    hasTag("cascate") ||
+    hasTag("riserva")
   );
-  if (cat === "storia") return (
-    type === "storia" ||
-    tags.includes("storia") ||
-    tags.includes("castello") ||
-    tags.includes("abbazia") ||
-    tags.includes("museo") ||
-    tags.includes("monumenti")
-  );
-  if (cat === "relax") return type === "relax" || tags.includes("relax") || tags.includes("terme") || tags.includes("spa");
+
+  // ✅ FIX STORIA: più robusto (anche se mancano tag nel macro)
+  if (cat === "storia") {
+    const n = normName(place.name);
+    return (
+      type === "storia" ||
+      hasTag("storia") ||
+      hasTag("arte") ||
+      hasTag("monumenti") ||
+      hasTag("museo") ||
+      hasTag("castello") ||
+      hasTag("abbazia") ||
+      hasTag("cattedrale") ||
+      hasTag("santuario") ||
+      n.includes("castello") ||
+      n.includes("abbazia") ||
+      n.includes("basilica") ||
+      n.includes("duomo") ||
+      n.includes("museo") ||
+      n.includes("anfiteatro") ||
+      n.includes("teatro romano") ||
+      n.includes("tempio")
+    );
+  }
+
+  if (cat === "relax") return type === "relax" || hasTag("relax") || hasTag("terme") || hasTag("spa");
+
   if (cat === "family") return (
     type === "bambini" ||
-    tags.includes("famiglie") ||
-    tags.includes("bambini") ||
-    tags.includes("family") ||
-    tags.includes("animali") ||
-    tags.includes("parco_avventura") ||
-    tags.includes("luna_park") ||
-    tags.includes("acquario") ||
-    tags.includes("attivita") ||
-    tags.includes("attività")
+    hasTag("famiglie") ||
+    hasTag("famiglia") ||
+    hasTag("bambini") ||
+    hasTag("family") ||
+    hasTag("animali") ||
+    hasTag("parco avventura") ||
+    hasTag("parco_avventura") ||
+    hasTag("luna park") ||
+    hasTag("luna_park") ||
+    hasTag("acquario")
   );
 
   return true;
@@ -393,28 +442,29 @@ function baseScorePlace({ driveMin, targetMin, beautyScore, isChicca }) {
   return 0.62 * t + 0.34 * b + c;
 }
 
+// ROTATION penalty: avoid repeats in session + today
 function rotationPenalty(pid, recentSet) {
   let pen = 0;
-  if (pid && pid === LAST_SHOWN_PID) pen += 0.25;
-  if (SESSION_SEEN.has(pid)) pen += 0.22;
-  if (recentSet.has(pid)) pen += 0.14;
+  if (pid && pid === LAST_SHOWN_PID) pen += 0.22;   // evita duplicato immediato
+  if (SESSION_SEEN.has(pid)) pen += 0.20;           // già proposto in sessione
+  if (recentSet.has(pid)) pen += 0.12;              // già proposto “oggi”
   return pen;
 }
 
-// -------------------- TIME “SMART” --------------------
+// -------------------- TIME “SMART” (special cases) --------------------
 function effectiveMaxMinutes(maxMinutes, category) {
   const m = Number(maxMinutes);
   if (!Number.isFinite(m)) return 120;
 
-  // Mare: spesso non sta entro 60’, allarga un po’ per non “0 risultati”
-  if (category === "mare" && m < 80) {
-    const widened = Math.round(m * 1.45);
-    return clamp(widened, m, 200);
+  // MARE: spesso non esiste entro 60' reali, quindi allarghiamo “gentilmente”
+  if (category === "mare" && m < 75) {
+    const widened = Math.round(m * 1.35);
+    return clamp(widened, m, 180);
   }
   return clamp(m, 10, 600);
 }
 
-// -------------------- PICK DESTINATION --------------------
+// -------------------- PICK DESTINATION (with rotation + quality gate) --------------------
 function buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited = false, ignoreRotation = false } = {}) {
   const visited = getVisitedSet();
   const recentSet = getRecentSet();
@@ -423,12 +473,21 @@ function buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited =
   const oLat = Number(origin.lat);
   const oLon = Number(origin.lon);
 
+  const beautyMin = minBeautyForMinutes(target);
+
   const candidates = [];
 
   for (const p of MACRO.places) {
     const lat = Number(p.lat);
     const lon = Number(p.lon);
     if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
+
+    // ✅ blocca mete non turistiche
+    if (isBadPlaceName(p.name)) continue;
+
+    // ✅ soglia qualità
+    const beauty = Number(p.beauty_score);
+    if (Number.isFinite(beauty) && beauty < beautyMin) continue;
 
     if (!matchesCategory(p, category)) continue;
     if (!matchesStyle(p, styles)) continue;
@@ -440,7 +499,7 @@ function buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited =
     const driveMin = estCarMinutesFromKm(km);
 
     if (driveMin > target) continue;
-    if (km < 1.2) continue;
+    if (km < 1.2) continue; // “sei già lì”
 
     const isChicca = String(p.visibility || "").toLowerCase() === "chicca";
     let s = baseScorePlace({
@@ -450,19 +509,40 @@ function buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited =
       isChicca
     });
 
-    if (!ignoreRotation) s = s - rotationPenalty(pid, recentSet);
+    if (!ignoreRotation) {
+      s = s - rotationPenalty(pid, recentSet);
+    }
 
-    candidates.push({ place: p, pid, km, driveMin, score: Number(s.toFixed(4)) });
+    candidates.push({
+      place: p,
+      pid,
+      km,
+      driveMin,
+      score: Number(s.toFixed(4))
+    });
   }
 
-  candidates.sort((a, b) => (b.score - a.score) || (a.driveMin - b.driveMin));
+  candidates.sort((a, b) => {
+    if (b.score !== a.score) return b.score - a.score;
+    return a.driveMin - b.driveMin;
+  });
+
   return candidates;
 }
 
 function pickDestination(origin, maxMinutes, category, styles) {
+  // 1) normale: visita esclusa + rotazione attiva
   let candidates = buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited: false, ignoreRotation: false });
-  if (candidates.length === 0) candidates = buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited: false, ignoreRotation: true });
-  if (candidates.length === 0) candidates = buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited: true, ignoreRotation: true });
+
+  // 2) se zero: ignora rotazione (ma non i visitati)
+  if (candidates.length === 0) {
+    candidates = buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited: false, ignoreRotation: true });
+  }
+
+  // 3) se ancora zero: ignora anche visited (ultima spiaggia)
+  if (candidates.length === 0) {
+    candidates = buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited: true, ignoreRotation: true });
+  }
 
   const chosen = candidates[0] || null;
   const alternatives = candidates.slice(1, 3); // 2 alternative
@@ -470,52 +550,58 @@ function pickDestination(origin, maxMinutes, category, styles) {
 }
 
 // -------------------- RENDER HELPERS --------------------
-function infoLinksRow(placeName) {
-  const qSee = `cosa vedere a ${placeName}`;
-  const qDo = `cosa fare a ${placeName}`;
-  const qImg = `${placeName} foto`;
+function btnStylePrimary() {
+  // Bottoni più “cliccabili” su mobile
+  return `style="min-height:48px; padding:12px 14px; border-radius:16px; flex:1; min-width:150px;"`;
+}
+function btnStyleGhost() {
+  return `style="min-height:48px; padding:12px 14px; border-radius:16px; flex:1; min-width:150px;"`;
+}
+
+function quickLinksHtml(placeName, country = "IT") {
+  const q = cleanPlaceQuery(placeName);
+  const title = `${q}${country ? ", " + country : ""}`;
+
+  const linkFoto = googleImagesUrl(`${q} foto`);
+  const linkVedere = googleSearchUrl(`cosa vedere a ${q}`);
+  const linkFare = googleSearchUrl(`cosa fare a ${q}`);
+  const linkRisto = mapsRestaurantsUrl(q);
+  const linkWiki = wikiSearchUrl(q);
+
+  const share = whatsappShareUrl(`Jamo mi ha proposto: ${title}. Idee: cosa vedere/cosa fare, foto e ristoranti:\n- Foto: ${linkFoto}\n- Cosa vedere: ${linkVedere}\n- Cosa fare: ${linkFare}\n- Ristoranti: ${linkRisto}`);
+
   return `
-    <div class="row wrap gap" style="margin-top:10px;">
-      <a class="btn btn-ghost" target="_blank" rel="noopener" href="${withUtm(googleSearchUrl(qSee))}">👀 Cosa vedere</a>
-      <a class="btn btn-ghost" target="_blank" rel="noopener" href="${withUtm(googleSearchUrl(qDo))}">🎯 Cosa fare</a>
-      <a class="btn btn-ghost" target="_blank" rel="noopener" href="${withUtm(googleImagesUrl(qImg))}">📸 Foto</a>
-      <a class="btn btn-ghost" target="_blank" rel="noopener" href="${withUtm(mapsRestaurantsNear(placeName))}">🍝 Ristoranti</a>
-      <a class="btn btn-ghost" target="_blank" rel="noopener" href="${withUtm(wikiUrl(placeName))}">📚 Wiki</a>
+    <div class="card" style="margin-top:12px;">
+      <div class="small muted">Info rapide (aprile subito)</div>
+      <div class="row wrap gap" style="margin-top:10px;">
+        <a class="btn" ${btnStylePrimary()} target="_blank" rel="noopener" href="${linkVedere}">👀 Cosa vedere</a>
+        <a class="btn" ${btnStylePrimary()} target="_blank" rel="noopener" href="${linkFare}">🎯 Cosa fare</a>
+        <a class="btn btn-ghost" ${btnStyleGhost()} target="_blank" rel="noopener" href="${linkFoto}">📸 Foto</a>
+        <a class="btn btn-ghost" ${btnStyleGhost()} target="_blank" rel="noopener" href="${linkRisto}">🍝 Ristoranti</a>
+        <a class="btn btn-ghost" ${btnStyleGhost()} target="_blank" rel="noopener" href="${linkWiki}">📚 Wiki</a>
+        <a class="btn btn-ghost" ${btnStyleGhost()} target="_blank" rel="noopener" href="${share}">💬 WhatsApp</a>
+      </div>
     </div>
   `;
 }
 
 function monetBoxHtml(placeName, country = "IT") {
-  const hotel = bookingUrl(placeName, country, BOOKING_AID);
-  const tours = getYourGuideUrl(placeName, GYG_PID);
-  const tickets = tiqetsUrl(placeName, TIQETS_PID);
-  const gear = amazonEssentialsUrl(AMAZON_TAG);
+  const q = cleanPlaceQuery(placeName);
 
-  const wa = WHATSAPP_NUMBER
-    ? whatsappUrl(`Ciao! Vorrei organizzare una gita a ${placeName}. Mi consigli: cosa vedere, attività (anche family), ristoranti e dove dormire?`)
-    : "";
-
-  // Bottoni più “tappabili”: larghi e con min-width alta
   return `
     <div class="card" style="margin-top:12px;">
       <div class="small muted">Prenota / Scopri (monetizzazione)</div>
-
       <div class="row wrap gap" style="margin-top:10px;">
-        <a class="btn" style="flex:1; min-width:220px;" target="_blank" rel="noopener" href="${hotel}">🏨 Hotel (Booking)</a>
-        <a class="btn" style="flex:1; min-width:220px;" target="_blank" rel="noopener" href="${tours}">🎟️ Tour & Esperienze</a>
-        <a class="btn" style="flex:1; min-width:220px;" target="_blank" rel="noopener" href="${tickets}">🏛️ Biglietti (Tiqets)</a>
-        <a class="btn btn-ghost" style="flex:1; min-width:220px;" target="_blank" rel="noopener" href="${gear}">🧳 Essenziali</a>
+        <a class="btn" ${btnStylePrimary()} target="_blank" rel="noopener" href="${bookingUrl(q, country, BOOKING_AID)}">🏨 Hotel</a>
+        <a class="btn" ${btnStylePrimary()} target="_blank" rel="noopener" href="${getYourGuideUrl(q, GYG_PID)}">🎟️ Tour</a>
+        <a class="btn" ${btnStylePrimary()} target="_blank" rel="noopener" href="${tiqetsUrl(q, TIQETS_PID)}">🏛️ Biglietti</a>
+        <a class="btn btn-ghost" ${btnStyleGhost()} target="_blank" rel="noopener" href="${amazonEssentialsUrl(AMAZON_TAG)}">🧳 Essenziali</a>
       </div>
 
-      ${wa ? `
-        <div class="row wrap gap" style="margin-top:10px;">
-          <a class="btn btn-ghost" style="flex:1; min-width:220px;" target="_blank" rel="noopener" href="${withUtm(wa)}">💬 Chiedi su WhatsApp (concierge)</a>
-        </div>` : ""
-      }
-
       <div class="small muted" style="margin-top:10px;">
-        Inserisci i tuoi ID in alto in app.js: <b>BOOKING_AID</b> / <b>GYG_PID</b> / <b>TIQETS_PID</b> / <b>AMAZON_TAG</b>
-        ${WHATSAPP_NUMBER ? ` / <b>WHATSAPP_NUMBER</b>` : ""}
+        Se alcuni link non trovano subito: prova “Tour/Biglietti” (ricerca) + “Cosa vedere”.
+        <br/>
+        Inserisci i tuoi ID affiliato in app.js: <b>BOOKING_AID</b> / <b>GYG_PID</b> / <b>TIQETS_PID</b> / <b>AMAZON_TAG</b>.
       </div>
     </div>
   `;
@@ -525,11 +611,10 @@ function monetBoxHtml(placeName, country = "IT") {
 function renderResult(origin, maxMinutesShown, chosen, alternatives, meta = {}) {
   const area = $("resultArea");
   const category = meta.category || "ovunque";
-  const effMax = meta.effMax ?? maxMinutesShown;
 
   if (!chosen) {
-    const extra = (category === "mare" && Number(maxMinutesShown) < 80)
-      ? `Hai scelto <b>Mare</b>: a volte serve più tempo. Prova 90–120 min.`
+    const extra = (category === "mare" && Number(maxMinutesShown) < 75)
+      ? `Hai scelto <b>Mare</b>: spesso serve un po' più tempo. (Prova 90–120 min)`
       : `Prova ad aumentare i minuti o cambiare categoria/stile.`;
 
     area.innerHTML = `
@@ -537,19 +622,18 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives, meta = {}) 
         <div class="small">❌ Nessuna meta trovata entro ${maxMinutesShown} min con i filtri attuali.</div>
         <div class="small muted" style="margin-top:6px;">${extra}</div>
         <div class="row wrap gap" style="margin-top:12px;">
-          <button class="btn btn-ghost" id="btnResetRotation">🧽 Reset “proposte di oggi”</button>
-          <button class="btn" id="btnRetry">🔁 Riprova</button>
+          <button class="btn btn-ghost" id="btnResetRotation" ${btnStyleGhost()}>🧽 Reset “proposte di oggi”</button>
         </div>
       </div>
     `;
 
     $("btnResetRotation")?.addEventListener("click", () => {
       resetRotation();
-      showStatus("ok", "Reset fatto ✅ Ora riprovo con rotazione pulita.");
+      showStatus("ok", "Reset fatto ✅ Ora non evito più le mete già proposte oggi.");
+      // rilancia subito la ricerca
       runSearch({ silent: true });
     });
 
-    $("btnRetry")?.addEventListener("click", () => runSearch());
     return;
   }
 
@@ -583,28 +667,29 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives, meta = {}) 
           const aPlaceUrl = mapsPlaceUrl(ap.lat, ap.lon);
           const aDirUrl = mapsDirUrl(origin.lat, origin.lon, ap.lat, ap.lon);
 
+          const q = cleanPlaceQuery(ap.name);
+          const foto = googleImagesUrl(`${q} foto`);
+
           return `
             <div class="card" data-alt="1" data-pid="${aPid}"
-                 style="padding:12px 12px; cursor:pointer; border-color: rgba(255,255,255,.14);">
+                 style="padding:14px; cursor:pointer; border-color: rgba(255,255,255,.12);">
               <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
                 <div>
-                  <div style="font-weight:800; font-size:16px; line-height:1.2;">
+                  <div style="font-weight:850; font-size:16px; line-height:1.2;">
                     ${ap.name} <span class="small muted">(${aBadge})</span>
                   </div>
-                  <div class="small muted" style="margin-top:4px;">
+                  <div class="small muted" style="margin-top:6px;">
                     ~${a.driveMin} min • ${fmtKm(a.km)} • ${ap.type || "meta"}
                   </div>
                 </div>
                 <div class="pill" style="white-space:nowrap;">Scegli</div>
               </div>
 
-              <div class="row wrap gap" style="margin-top:10px;">
-                <a class="btn btn-ghost" href="${withUtm(aPlaceUrl)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Maps</a>
-                <a class="btn btn-ghost" href="${withUtm(aDirUrl)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Percorso</a>
-                <a class="btn btn-ghost" href="${withUtm(googleImagesUrl(ap.name + ' foto'))}" target="_blank" rel="noopener" onclick="event.stopPropagation()">📸 Foto</a>
+              <div class="row wrap gap" style="margin-top:12px;">
+                <a class="btn btn-ghost" ${btnStyleGhost()} href="${aPlaceUrl}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Maps</a>
+                <a class="btn btn-ghost" ${btnStyleGhost()} href="${aDirUrl}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Percorso</a>
+                <a class="btn btn-ghost" ${btnStyleGhost()} href="${foto}" target="_blank" rel="noopener" onclick="event.stopPropagation()">📸 Foto</a>
               </div>
-
-              ${infoLinksRow(ap.name)}
             </div>
           `;
         }).join("")}
@@ -619,34 +704,34 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives, meta = {}) 
 
       <div class="small muted" style="margin-top:6px;">
         Categoria: <b>${p.type || "meta"}</b> • Punteggio: <b>${chosen.score}</b>
-        ${category === "mare" && effMax !== maxMinutesShown ? ` • <span class="muted">(Mare: raggio smart ~${effMax} min)</span>` : ""}
+        ${category === "mare" && Number(maxMinutesShown) < 75 ? ` • <span class="muted">(Mare: raggio smart attivo)</span>` : ""}
       </div>
 
       <div class="row wrap gap" style="margin-top:12px;">
-        <a class="btn" href="${withUtm(placeUrl)}" target="_blank" rel="noopener">Apri su Google Maps</a>
-        <a class="btn btn-ghost" href="${withUtm(dirUrl)}" target="_blank" rel="noopener">Apri percorso</a>
+        <a class="btn" ${btnStylePrimary()} href="${placeUrl}" target="_blank" rel="noopener">🗺️ Maps</a>
+        <a class="btn btn-ghost" ${btnStyleGhost()} href="${dirUrl}" target="_blank" rel="noopener">🚗 Percorso</a>
       </div>
-
-      ${infoLinksRow(p.name)}
 
       ${whyHtml}
 
       <div class="row wrap gap" style="margin-top:12px;">
-        <button class="btn btn-ghost" id="btnVisited">✅ Già visitato</button>
-        <button class="btn" id="btnChange">🔁 Cambia meta</button>
-        <button class="btn btn-ghost" id="btnResetRotation">🧽 Reset “proposte di oggi”</button>
+        <button class="btn btn-ghost" id="btnVisited" ${btnStyleGhost()}>✅ Già visitato</button>
+        <button class="btn" id="btnChange" ${btnStylePrimary()}>🔁 Cambia meta</button>
+        <button class="btn btn-ghost" id="btnResetRotation" ${btnStyleGhost()}>🧽 Reset oggi</button>
       </div>
     </div>
 
+    ${quickLinksHtml(p.name, country)}
     ${monetBoxHtml(p.name, country)}
     ${altHtml}
   `;
 
-  // track shown (rotation)
+  // track shown (for rotation)
   LAST_SHOWN_PID = pid;
   SESSION_SEEN.add(pid);
   addRecent(pid);
 
+  // buttons
   $("btnVisited")?.addEventListener("click", () => {
     markVisited(pid);
     showStatus("ok", "Segnato come visitato ✅ (non te lo ripropongo più).");
@@ -658,11 +743,11 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives, meta = {}) 
 
   $("btnResetRotation")?.addEventListener("click", () => {
     resetRotation();
-    showStatus("ok", "Reset fatto ✅ Ora riprovo con rotazione pulita.");
+    showStatus("ok", "Reset fatto ✅ Ora ti propongo anche mete già mostrate oggi.");
     runSearch({ silent: true });
   });
 
-  // Alternative clickable -> diventa la scelta principale
+  // Alternative clickable: click -> set as main immediately
   [...area.querySelectorAll('[data-alt="1"][data-pid]')].forEach((el) => {
     el.addEventListener("click", () => {
       const pid2 = el.getAttribute("data-pid");
@@ -705,20 +790,30 @@ async function runSearch({ silent = false, forbidPid = null } = {}) {
 
     let { chosen, alternatives } = pickDestination(origin, effMax, category, styles);
 
-    // evita duplicato immediato (cambia meta)
+    // forbid immediate specific pid (e.g. “cambia meta”)
     if (forbidPid && chosen?.pid === forbidPid) {
-      const target = effMax;
+      const tmp = new Set(SESSION_SEEN);
+      tmp.add(forbidPid);
+
       const visited = getVisitedSet();
       const recentSet = getRecentSet();
-      const oLat = Number(origin.lat), oLon = Number(origin.lon);
+      const target = effMax;
+      const beautyMin = minBeautyForMinutes(target);
 
       const candidates = [];
+      const oLat = Number(origin.lat), oLon = Number(origin.lon);
+
       for (const p of MACRO.places) {
         const lat = Number(p.lat), lon = Number(p.lon);
         if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
 
+        if (isBadPlaceName(p.name)) continue;
+
+        const beauty = Number(p.beauty_score);
+        if (Number.isFinite(beauty) && beauty < beautyMin) continue;
+
         const pid = safeIdFromPlace(p);
-        if (pid === forbidPid) continue;
+
         if (visited.has(pid)) continue;
         if (!matchesCategory(p, category)) continue;
         if (!matchesStyle(p, styles)) continue;
@@ -727,6 +822,7 @@ async function runSearch({ silent = false, forbidPid = null } = {}) {
         const driveMin = estCarMinutesFromKm(km);
         if (driveMin > target) continue;
         if (km < 1.2) continue;
+        if (tmp.has(pid)) continue;
 
         const isChicca = String(p.visibility || "").toLowerCase() === "chicca";
         let s = baseScorePlace({ driveMin, targetMin: target, beautyScore: p.beauty_score, isChicca });
@@ -735,9 +831,9 @@ async function runSearch({ silent = false, forbidPid = null } = {}) {
         candidates.push({ place: p, pid, km, driveMin, score: Number(s.toFixed(4)) });
       }
 
-      candidates.sort((a, b) => (b.score - a.score) || (a.driveMin - b.driveMin));
+      candidates.sort((a,b)=> (b.score-a.score) || (a.driveMin-b.driveMin));
       chosen = candidates[0] || null;
-      alternatives = candidates.slice(1, 3);
+      alternatives = candidates.slice(1,3);
     }
 
     renderResult(origin, maxMinutesInput, chosen, alternatives, { category, effMax });
@@ -832,5 +928,6 @@ restoreOrigin();
 bindOriginButtons();
 bindMainButtons();
 
+// preload macro
 loadMacro().catch(() => {});
 hideStatus();
