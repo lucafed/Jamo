@@ -1,17 +1,9 @@
 // scripts/build_macro_from_area.mjs
-// Build macro AUTO-ONLY (offline) from:
-// - public/data/areas.json
-// - public/data/bbox/<areaId>.json          (places inside bbox for that area)
-// - public/data/pois_eu_uk.json             (POIs)
-// - public/data/curated_destinations_eu_uk.json (optional curated picks)
+// Build macro AUTO-ONLY (offline) from bbox + pois + curated.
+// Must NEVER crash in "build all" workflows: if bbox missing, write placeholder macro and exit 0.
 //
 // Usage:
 //   node scripts/build_macro_from_area.mjs it_abruzzo
-//
-// Output (aligned with macros_index.json paths):
-// - Italy regions: public/data/macros/it_macro_01_<region>.json
-// - EU country macros (eu_macro_xx / euuk_country_xx) kept compatible via rules below
-// - Generic: public/data/macros/macro_<areaId>.json
 
 import fs from "fs";
 import path from "path";
@@ -98,78 +90,38 @@ function uniquePush(arr, item, byKey = "id") {
   arr.push(item);
 }
 
-// -------------------- load inputs --------------------
-const areas = readJsonSafe(AREAS_FILE, []);
-const area = Array.isArray(areas) ? areas.find(a => a.id === areaId) : null;
-if (!area) {
-  console.error("❌ Area not found in areas.json:", areaId);
-  process.exit(1);
+function outFilenameForArea(areaId) {
+  // Must match macros_index.json paths
+  if (areaId.startsWith("it_")) return `it_macro_01_${areaId.replace(/^it_/, "")}.json`;
+  if (areaId.startsWith("eu_") && areaId.length === 5) return `eu_macro_${areaId.replace(/^eu_/, "")}.json`;
+  if (areaId.startsWith("euuk_country_")) return `${areaId}.json`;
+  return `macro_${areaId}.json`;
 }
 
-const bboxFile = path.join(BBOX_DIR, `${areaId}.json`);
-if (!fs.existsSync(bboxFile)) {
-  console.error("❌ BBox file missing:", bboxFile);
-  process.exit(1);
+function ensureHeader(area) {
+  return {
+    id: `macro_${areaId}`,
+    name: `Macro — ${area?.name || areaId} (AUTO-ONLY)`,
+    version: "4.1.0",
+    updated_at: new Date().toISOString().slice(0, 10),
+    coverage: {
+      area_id: areaId,
+      area_name: area?.name || areaId,
+      country: area?.country || area?.iso2 || area?.cc || null,
+    },
+    rules: { mode: "car_only", offline_and_stable: true },
+    schema: {
+      place_fields: [
+        "id","name","type","area","country","lat","lon",
+        "tags","visibility","beauty_score","why",
+        "family","things_to_do"
+      ]
+    },
+    places: []
+  };
 }
 
-const bboxRaw = readJsonSafe(bboxFile, null);
-const bboxPlaces = Array.isArray(bboxRaw?.places) ? bboxRaw.places : Array.isArray(bboxRaw) ? bboxRaw : [];
-
-const poisRaw = readJsonSafe(POIS_FILE, null);
-const poiList = Array.isArray(poisRaw?.pois) ? poisRaw.pois : Array.isArray(poisRaw?.items) ? poisRaw.items : Array.isArray(poisRaw) ? poisRaw : [];
-
-// curated can have different schemas; accept .places, .items, array
-const curatedRaw = readJsonSafe(CURATED, null);
-const curatedList =
-  Array.isArray(curatedRaw?.places) ? curatedRaw.places :
-  Array.isArray(curatedRaw?.items) ? curatedRaw.items :
-  Array.isArray(curatedRaw) ? curatedRaw :
-  [];
-
-// -------------------- grid index for POIs --------------------
-const CELL = 0.09; // ~10km lat; fast enough
-const grid = new Map();
-
-function gridKey(lat, lon) {
-  const a = Math.floor(lat / CELL);
-  const b = Math.floor(lon / CELL);
-  return `${a}:${b}`;
-}
-
-for (const poi of poiList) {
-  const ll = getLatLon(poi);
-  if (!ll) continue;
-  const k = gridKey(ll.lat, ll.lon);
-  if (!grid.has(k)) grid.set(k, []);
-  grid.get(k).push({
-    ...poi,
-    lat: ll.lat,
-    lon: ll.lon,
-    name: String(poi?.name || ""),
-    types: Array.isArray(poi?.types) ? poi.types : Array.isArray(poi?.type) ? poi.type : poi?.type ? [poi.type] : []
-  });
-}
-
-function nearbyPois(lat, lon, kmRadius = 8) {
-  const a = Math.floor(lat / CELL);
-  const b = Math.floor(lon / CELL);
-  const bucket = [];
-  for (let da = -1; da <= 1; da++) {
-    for (let db = -1; db <= 1; db++) {
-      const k = `${a + da}:${b + db}`;
-      const arr = grid.get(k);
-      if (arr && arr.length) bucket.push(...arr);
-    }
-  }
-  const res = [];
-  for (const poi of bucket) {
-    const d = haversineKm(lat, lon, poi.lat, poi.lon);
-    if (d <= kmRadius) res.push(poi);
-  }
-  return res;
-}
-
-// -------------------- tagging + classification --------------------
+// -------------------- tagging/classification --------------------
 function tagAdd(set, ...tags) {
   for (const t of tags) {
     const k = norm(t);
@@ -183,14 +135,13 @@ function tagsFromPoi(poi) {
   const types = Array.isArray(poi?.types) ? poi.types.map(norm) : [];
   const has = (w) => n.includes(w) || types.some(t => t.includes(w));
 
-  // from dataset categories (mare/montagna/natura/relax/bambini)
   if (types.includes("mare") || has("beach") || has("spiaggia")) tagAdd(out, "mare", "spiagge");
   if (types.includes("montagna") || has("mount") || has("monte")) tagAdd(out, "montagna", "panorama");
-  if (types.includes("natura") || has("park") || has("parco") || has("reserve") || has("riserva")) tagAdd(out, "natura");
+  if (types.includes("natura") || has("park") || has("parco") || has("riserva") || has("reserve")) tagAdd(out, "natura");
   if (types.includes("relax") || has("terme") || has("spa") || has("hot spring")) tagAdd(out, "relax", "terme");
   if (types.includes("bambini") || has("theme park") || has("amusement") || has("luna park")) tagAdd(out, "famiglie", "bambini");
 
-  // extra “family expand” by name (important!)
+  // family expand
   if (has("zoo") || has("acquario") || has("aquarium")) tagAdd(out, "famiglie", "bambini", "animali");
   if (has("playground") || has("area giochi") || has("giochi")) tagAdd(out, "famiglie", "bambini");
   if (has("funivia") || has("cable car")) tagAdd(out, "famiglie", "panorama");
@@ -201,8 +152,7 @@ function tagsFromPoi(poi) {
   if (has("castle") || has("castello") || has("fort")) tagAdd(out, "storia", "castello");
   if (has("abbey") || has("abbazia") || has("church") || has("cattedrale") || has("santuario")) tagAdd(out, "storia");
 
-  // food signals (for “cosa fare vicino”)
-  if (has("ristor") || has("tratt") || has("oster") || has("cantina") || has("wine")) tagAdd(out, "cibo", "food");
+  if (has("ristor") || has("tratt") || has("oster") || has("cantina") || has("wine")) tagAdd(out, "cibo");
 
   return out;
 }
@@ -211,19 +161,17 @@ function normalizeType(rawType, rawName, tags) {
   const t = norm(rawType);
   const n = norm(rawName);
 
+  if (tags.has("famiglie") || tags.has("bambini")) return "family";
+  if (tags.has("storia") || tags.has("castello") || tags.has("museo")) return "storia";
   if (tags.has("mare") || tags.has("spiagge") || n.includes("spiaggia")) return "mare";
   if (tags.has("montagna") || n.includes("monte")) return "montagna";
-  if (tags.has("storia") || tags.has("castello") || tags.has("museo") || n.includes("abbazia")) return "storia";
   if (tags.has("relax") || tags.has("terme")) return "relax";
-  if (tags.has("famiglie") || tags.has("bambini")) return "family";
   if (tags.has("natura") || tags.has("lago") || tags.has("trekking")) return "natura";
 
-  // fallback
   if (t === "citta" || t === "città" || t === "city") return "citta";
   if (t === "borgo" || t === "village") return "borgo";
   if (t) return t;
 
-  if (n.includes("parco") || n.includes("riserva")) return "natura";
   return "borgo";
 }
 
@@ -234,10 +182,50 @@ function normalizeVisibility(rawVis, pop = 0) {
   return pop >= 15000 ? "conosciuta" : "chicca";
 }
 
+function buildFamily(nearPois, tags, pop = 0) {
+  let score = 0;
+  const names = nearPois.map(p => norm(p.name)).join(" ");
+  const has = (w) => names.includes(w) || tags.has(w);
+
+  if (has("parco") || has("park") || tags.has("natura")) score += 0.20;
+  if (has("playground") || has("area giochi") || has("giochi")) score += 0.20;
+  if (has("zoo") || has("acquario") || has("aquarium") || has("animali")) score += 0.22;
+  if (has("theme park") || has("amusement") || has("luna park")) score += 0.22;
+  if (tags.has("lago")) score += 0.10;
+  if (tags.has("mare")) score += 0.10;
+  if (pop >= 30000) score += 0.05;
+
+  score = clamp(score, 0, 1);
+
+  return { score: Number(score.toFixed(2)), bimbi: score >= 0.35, ragazzi: score >= 0.25 };
+}
+
+function buildThingsToDo(nearPois) {
+  const arr = [...nearPois];
+  arr.sort((a, b) => (Number(b.beauty_score || 0) - Number(a.beauty_score || 0)) || String(a.name).localeCompare(String(b.name)));
+
+  const attractions = [];
+  const nature = [];
+  const food = [];
+
+  for (const p of arr) {
+    const n = norm(p.name);
+    if (attractions.length < 12 && (n.includes("museo") || n.includes("museum") || n.includes("castello") || n.includes("abbazia") || n.includes("zoo") || n.includes("acquario") || n.includes("parco") || n.includes("theme"))) {
+      attractions.push(p.name); continue;
+    }
+    if (nature.length < 12 && (n.includes("parco") || n.includes("riserva") || n.includes("lago") || n.includes("gole") || n.includes("cascata") || n.includes("trail") || n.includes("sentier"))) {
+      nature.push(p.name); continue;
+    }
+    if (food.length < 10 && (n.includes("ristor") || n.includes("tratt") || n.includes("oster") || n.includes("cantina") || n.includes("wine"))) {
+      food.push(p.name); continue;
+    }
+  }
+
+  return { attractions, nature, food };
+}
+
 function computeBeautyScore({ pop = 0, poiCount = 0, tags, visibility, familyScore = 0 }) {
   let s = visibility === "chicca" ? 0.86 : 0.80;
-
-  // POI density bonus
   s += clamp(Math.log10(1 + poiCount) / 2.2, 0, 0.18);
 
   if (tags.has("mare") || tags.has("spiagge")) s += 0.06;
@@ -247,74 +235,7 @@ function computeBeautyScore({ pop = 0, poiCount = 0, tags, visibility, familySco
   if (tags.has("famiglie") || tags.has("bambini")) s += 0.03 + clamp(familyScore * 0.06, 0, 0.06);
 
   if (pop >= 500000) s -= 0.05;
-
   return Number(clamp(s, 0.68, 1.0).toFixed(2));
-}
-
-function buildFamily(nearPois, tags, pop = 0) {
-  // score from signals
-  let score = 0;
-  const names = nearPois.map(p => norm(p.name)).join(" ");
-
-  const has = (w) => names.includes(w) || tags.has(w);
-
-  if (has("parco") || has("park") || tags.has("natura")) score += 0.20;
-  if (has("playground") || has("area giochi") || has("giochi")) score += 0.20;
-  if (has("zoo") || has("acquario") || has("aquarium") || has("animali")) score += 0.22;
-  if (has("theme park") || has("amusement") || has("luna park")) score += 0.22;
-  if (tags.has("lago")) score += 0.10;
-  if (tags.has("mare")) score += 0.10;
-
-  // small towns can still be good for family if POIs show it
-  if (pop >= 30000) score += 0.05;
-
-  score = clamp(score, 0, 1);
-
-  return {
-    score: Number(score.toFixed(2)),
-    bimbi: score >= 0.35,
-    ragazzi: score >= 0.25
-  };
-}
-
-function buildThingsToDo(nearPois) {
-  // Keep it simple & stable offline: pick top items by “beauty_score” if present, else by name
-  const arr = [...nearPois].slice(0);
-
-  arr.sort((a, b) => {
-    const A = Number(a.beauty_score || 0);
-    const B = Number(b.beauty_score || 0);
-    if (B !== A) return B - A;
-    return String(a.name).localeCompare(String(b.name));
-  });
-
-  const attractions = [];
-  const nature = [];
-  const food = [];
-
-  for (const p of arr) {
-    const n = norm(p.name);
-    if (attractions.length < 10) {
-      if (n.includes("museum") || n.includes("museo") || n.includes("castello") || n.includes("abbazia") || n.includes("zoo") || n.includes("acquario") || n.includes("parco") || n.includes("theme")) {
-        attractions.push(p.name);
-        continue;
-      }
-    }
-    if (nature.length < 10) {
-      if (n.includes("parco") || n.includes("riserva") || n.includes("lago") || n.includes("gole") || n.includes("cascata") || n.includes("trail") || n.includes("sentier")) {
-        nature.push(p.name);
-        continue;
-      }
-    }
-    if (food.length < 8) {
-      if (n.includes("ristor") || n.includes("tratt") || n.includes("oster") || n.includes("cantina") || n.includes("wine")) {
-        food.push(p.name);
-        continue;
-      }
-    }
-  }
-
-  return { attractions, nature, food };
 }
 
 function whyFrom(type, tags, poiCount, family) {
@@ -330,62 +251,82 @@ function whyFrom(type, tags, poiCount, family) {
   if (tags.has("trekking")) out.push("Ideale per passeggiate e trekking.");
   if (poiCount >= 10) out.push("Tante cose da fare nei dintorni.");
   else if (poiCount >= 5) out.push("Diversi punti di interesse vicini.");
-
   return out.slice(0, 4);
 }
 
-// -------------------- output filename strategy --------------------
-function outFilenameForArea(areaId) {
-  // matches your macros_index.json paths (important)
-  if (areaId.startsWith("it_")) {
-    const slug = areaId.replace(/^it_/, "");
-    return `it_macro_01_${slug}.json`;
-  }
-  // if you ever add eu_macro_xx entries:
-  if (areaId.startsWith("eu_") && areaId.length === 5) {
-    const cc = areaId.replace(/^eu_/, "");
-    return `eu_macro_${cc}.json`;
-  }
-  // if you generate euuk_country_xx datasets:
-  if (areaId.startsWith("euuk_country_")) {
-    return `${areaId}.json`;
-  }
-  return `macro_${areaId}.json`;
-}
-
-function ensureHeader() {
-  return {
-    id: `macro_${areaId}`,
-    name: `Macro — ${area?.name || areaId} (AUTO-ONLY) — Mete offline`,
-    version: "4.0.0",
-    updated_at: new Date().toISOString().slice(0, 10),
-    coverage: {
-      area_id: areaId,
-      area_name: area?.name || areaId,
-      country: area?.country || area?.iso2 || area?.cc || null,
-    },
-    rules: {
-      mode: "car_only",
-      offline_and_stable: true
-    },
-    schema: {
-      place_fields: [
-        "id","name","type","area","country","lat","lon",
-        "tags","visibility","beauty_score","why",
-        "family","things_to_do"
-      ]
-    },
-    places: []
-  };
-}
-
-// -------------------- build --------------------
+// -------------------- main --------------------
 function main() {
-  const out = ensureHeader();
+  const areas = readJsonSafe(AREAS_FILE, []);
+  const area = Array.isArray(areas) ? areas.find(a => a.id === areaId) : null;
 
-  // 1) Add curated first (if they match this area by country or area name)
-  // We do NOT require perfect match; we keep curated “good stuff”.
-  const areaCountry = String(area?.country || area?.iso2 || "").toUpperCase();
+  const out = ensureHeader(area);
+
+  // Always write output (even placeholder) to avoid 404 + keep workflows green
+  const outFile = path.join(OUT_DIR, outFilenameForArea(areaId));
+
+  // If bbox missing -> placeholder + exit 0 (IMPORTANT for "build all")
+  const bboxFile = path.join(BBOX_DIR, `${areaId}.json`);
+  if (!fs.existsSync(bboxFile)) {
+    out.notes = `BBox mancante (${path.relative(ROOT, bboxFile)}). Generata macro vuota per evitare 404.`;
+    writeJsonCompact(outFile, out);
+    console.log("⚠️ BBox missing. Wrote placeholder macro:", outFile);
+    process.exit(0);
+  }
+
+  const bboxRaw = readJsonSafe(bboxFile, null);
+  const bboxPlaces = Array.isArray(bboxRaw?.places) ? bboxRaw.places : Array.isArray(bboxRaw) ? bboxRaw : [];
+
+  // POIs optional (should exist, but don't crash)
+  const poisRaw = readJsonSafe(POIS_FILE, null);
+  const poiList = Array.isArray(poisRaw?.pois) ? poisRaw.pois : Array.isArray(poisRaw?.items) ? poisRaw.items : Array.isArray(poisRaw) ? poisRaw : [];
+
+  // curated optional
+  const curatedRaw = readJsonSafe(CURATED, null);
+  const curatedList =
+    Array.isArray(curatedRaw?.places) ? curatedRaw.places :
+    Array.isArray(curatedRaw?.items) ? curatedRaw.items :
+    Array.isArray(curatedRaw) ? curatedRaw :
+    [];
+
+  // Grid index for POIs
+  const CELL = 0.09;
+  const grid = new Map();
+  const gridKey = (lat, lon) => `${Math.floor(lat / CELL)}:${Math.floor(lon / CELL)}`;
+
+  for (const poi of poiList) {
+    const ll = getLatLon(poi);
+    if (!ll) continue;
+    const k = gridKey(ll.lat, ll.lon);
+    if (!grid.has(k)) grid.set(k, []);
+    grid.get(k).push({
+      ...poi,
+      lat: ll.lat,
+      lon: ll.lon,
+      name: String(poi?.name || ""),
+      types: Array.isArray(poi?.types) ? poi.types : poi?.type ? [poi.type] : []
+    });
+  }
+
+  function nearbyPois(lat, lon, kmRadius = 8) {
+    const a = Math.floor(lat / CELL);
+    const b = Math.floor(lon / CELL);
+    const bucket = [];
+    for (let da = -1; da <= 1; da++) {
+      for (let db = -1; db <= 1; db++) {
+        const arr = grid.get(`${a + da}:${b + db}`);
+        if (arr && arr.length) bucket.push(...arr);
+      }
+    }
+    const res = [];
+    for (const poi of bucket) {
+      const d = haversineKm(lat, lon, poi.lat, poi.lon);
+      if (d <= kmRadius) res.push(poi);
+    }
+    return res;
+  }
+
+  // Add curated first (best picks), soft match by country/area
+  const areaCountry = String(area?.country || area?.iso2 || area?.cc || "").toUpperCase();
   const areaNameNorm = norm(area?.name || "");
 
   for (const c of curatedList) {
@@ -396,12 +337,9 @@ function main() {
     const cCountry = String(c?.country || c?.cc || "").toUpperCase();
     const cAreaNorm = norm(c?.area || c?.region || "");
 
-    // If area is country: match country
-    // If area is region: allow region name match OR country match
     const match =
       (areaCountry && cCountry && cCountry === areaCountry) ||
-      (areaNameNorm && cAreaNorm && cAreaNorm.includes(areaNameNorm)) ||
-      (areaNameNorm && norm(name).includes(areaNameNorm));
+      (areaNameNorm && cAreaNorm && cAreaNorm.includes(areaNameNorm));
 
     if (!match) continue;
 
@@ -426,18 +364,15 @@ function main() {
     });
   }
 
-  // 2) Build from bbox places (main mass)
+  // Build places from bbox
   for (const bp of bboxPlaces) {
     const name = String(bp?.name || "");
     const ll = getLatLon(bp);
     if (!name || !ll) continue;
 
     const pop = Number(bp?.population || 0);
-
-    // nearby POIs within 8km (family near home)
     const near = nearbyPois(ll.lat, ll.lon, 8);
 
-    // tags from bbox + poi signals
     const tags = new Set();
     if (Array.isArray(bp.tags)) bp.tags.forEach(t => tagAdd(tags, t));
     if (Array.isArray(bp.vibes)) bp.vibes.forEach(v => tagAdd(tags, v));
@@ -447,7 +382,6 @@ function main() {
       for (const x of t) tags.add(x);
     }
 
-    // name hints
     const n = norm(name);
     if (n.includes("castel") || n.includes("fortezza")) tagAdd(tags, "storia", "castello");
     if (n.includes("abbazia") || n.includes("eremo") || n.includes("santuario")) tagAdd(tags, "storia");
@@ -455,41 +389,25 @@ function main() {
     if (n.includes("parco")) tagAdd(tags, "natura", "famiglie");
     if (n.includes("spiaggia") || n.includes("lido")) tagAdd(tags, "mare", "spiagge");
 
-    // IMPORTANT: do NOT discard if tags empty — assign sensible defaults
     if (tags.size === 0) {
       if (pop >= 80000) tagAdd(tags, "citta");
       else if (pop >= 8000) tagAdd(tags, "borgo");
       else tagAdd(tags, "borgo");
     }
 
-    // normalize type + visibility
     const type = normalizeType(bp.type, name, tags);
     const visibility = normalizeVisibility(bp.visibility, pop);
-
-    // build family + things_to_do
     const family = buildFamily(near, tags, pop);
     const things_to_do = buildThingsToDo(near);
 
-    // if family score is high, force tags
     if (family.score >= 0.35) tagAdd(tags, "famiglie", "bambini");
 
-    // beauty
-    const beauty = computeBeautyScore({
-      pop,
-      poiCount: near.length,
-      tags,
-      visibility,
-      familyScore: family.score
-    });
+    const beauty = computeBeautyScore({ pop, poiCount: near.length, tags, visibility, familyScore: family.score });
 
-    // area/country
     const country = String(bp?.country || bp?.cc || areaCountry || "").toUpperCase() || null;
 
-    // id stable
-    const id = String(bp?.id || safeIdFrom(name, ll.lat, ll.lon, "gn"));
-
     uniquePush(out.places, {
-      id,
+      id: String(bp?.id || safeIdFrom(name, ll.lat, ll.lon, "gn")),
       name,
       type,
       area: String(area?.name || bp?.area || bp?.region || "—"),
@@ -505,28 +423,18 @@ function main() {
     });
   }
 
-  // 3) Dedup by name (keep higher beauty)
+  // Dedup by name+country (keep higher beauty)
   const byName = new Map();
   for (const p of out.places) {
     const k = norm(p.name) + "|" + (p.country || "");
     const prev = byName.get(k);
     if (!prev) byName.set(k, p);
-    else {
-      const a = Number(prev.beauty_score) || 0;
-      const b = Number(p.beauty_score) || 0;
-      if (b > a) byName.set(k, p);
-    }
+    else if ((Number(p.beauty_score) || 0) > (Number(prev.beauty_score) || 0)) byName.set(k, p);
   }
-  out.places = [...byName.values()];
+  out.places = [...byName.values()].sort((a, b) => (Number(b.beauty_score) || 0) - (Number(a.beauty_score) || 0));
 
-  // 4) Sort by beauty desc
-  out.places.sort((a, b) => (Number(b.beauty_score) || 0) - (Number(a.beauty_score) || 0));
-
-  // 5) Write output
-  const outFile = path.join(OUT_DIR, outFilenameForArea(areaId));
   writeJsonCompact(outFile, out);
 
-  // summary
   const total = out.places.length;
   const fam = out.places.filter(x => x.type === "family" || x.tags?.includes("famiglie") || (x.family?.score || 0) >= 0.35).length;
   const sto = out.places.filter(x => x.type === "storia").length;
@@ -534,7 +442,6 @@ function main() {
 
   console.log("✅ Macro generato:", outFile);
   console.log("Places:", total, "| family:", fam, "| storia:", sto, "| borghi:", bor);
-  console.log("Top sample:", out.places[0]?.name, "-", out.places[0]?.type, "-", out.places[0]?.beauty_score);
 }
 
 main();
