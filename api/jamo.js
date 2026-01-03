@@ -1,9 +1,7 @@
-// /api/jamo.js — CAR ONLY (offline, stable macro) — v3.1
-// Uses: public/data/macros/it_macro_01_abruzzo.json
-//
+// /api/jamo.js — CAR ONLY — v4.0 (EU+UK macro auto-select + sane near-distance)
 // POST body:
 // {
-//   origin?: { lat:number, lon?:number, lng?:number, label?:string },
+//   origin?: { lat:number, lon?:number, lng?:number, label?:string, country_code?:string },
 //   originText?: string,            // optional: server will call /api/geocode?q=
 //   maxMinutes: number,
 //   flavor?: "classici"|"chicche"|"famiglia",
@@ -11,7 +9,7 @@
 //   weekIds?: string[]
 // }
 //
-// Response:
+// Response (compatible):
 // {
 //   ok:true,
 //   input:{...},
@@ -63,7 +61,7 @@ function tryParseLatLon(text) {
   const lon = Number(m[2]);
   if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
   if (lat < -90 || lat > 90 || lon < -180 || lon > 180) return null;
-  return { lat, lon, label: "Coordinate inserite" };
+  return { lat, lon, label: "Coordinate inserite", country_code: "" };
 }
 
 function gmapsLink(origin, dest) {
@@ -102,7 +100,8 @@ function flavorMatch(p, flavor) {
       tags.includes("parco_nazionale") ||
       tags.includes("animali") ||
       tags.includes("spiagge") ||
-      tags.includes("relax")
+      tags.includes("relax") ||
+      type === "family"
     );
   }
 
@@ -115,11 +114,19 @@ function flavorMatch(p, flavor) {
 }
 
 function estimateCarMinutes(km) {
+  // più realistico sulle brevi distanze (no +8 fisso)
   const k = Math.max(0, Number(km) || 0);
-  const urban = Math.min(k, 15);
-  const extra = Math.max(0, k - 15);
-  const min = (urban / 35) * 60 + (extra / 75) * 60 + 6;
-  return Math.round(clamp(min, 5, 24 * 60));
+  const urban = Math.min(k, 12);
+  const extra = Math.max(0, k - 12);
+  const min = (urban / 32) * 60 + (extra / 78) * 60;
+
+  // overhead scalare
+  const overhead =
+    k < 3  ? 2 :
+    k < 10 ? 4 :
+    k < 30 ? 6 : 8;
+
+  return Math.round(clamp(min + overhead, 3, 24 * 60));
 }
 
 function scoreCandidate(p, eta, km, targetMin, flavor, isPrimaryRegion) {
@@ -134,8 +141,8 @@ function scoreCandidate(p, eta, km, targetMin, flavor, isPrimaryRegion) {
 
   let flavorBoost = 0;
   if (flavor === "famiglia") {
-    if (tags.includes("bambini") || type === "bambini") flavorBoost += 0.12;
-    if (tags.includes("famiglie") || tags.includes("famiglia")) flavorBoost += 0.10;
+    if (tags.includes("bambini") || type === "bambini" || type === "family") flavorBoost += 0.12;
+    if (tags.includes("famiglie") || tags.includes("famiglia") || tags.includes("family")) flavorBoost += 0.10;
     if (tags.includes("animali") || tags.includes("parco_nazionale")) flavorBoost += 0.06;
   } else if (flavor === "chicche") {
     if (vis === "chicca" || tags.includes("chicca") || type === "chicca") flavorBoost += 0.14;
@@ -161,7 +168,7 @@ function scoreCandidate(p, eta, km, targetMin, flavor, isPrimaryRegion) {
 /**
  * server-side call to /api/geocode?q=... on SAME host
  * expects geocode API:
- * { ok:true, result:{ label, lat, lon }, ... }
+ * { ok:true, result:{ label, lat, lon, country_code? }, ... }
  */
 async function geocodeOnSameHost(req, text) {
   const q = String(text || "").trim();
@@ -195,7 +202,27 @@ async function geocodeOnSameHost(req, text) {
   const lon = Number(j.result.lon);
   if (!Number.isFinite(lat) || !Number.isFinite(lon)) throw new Error("GEOCODE failed: invalid coords");
 
-  return { lat, lon, label: j.result.label || q };
+  const cc = String(j.result.country_code || "").toUpperCase();
+  return { lat, lon, label: j.result.label || q, country_code: cc };
+}
+
+// --------- MACRO SELECT (country first, fallback all) ----------
+function macroPathForCountry(countryCode) {
+  const cc = String(countryCode || "").trim().toLowerCase();
+
+  // Prefer country macro if exists
+  if (cc) {
+    const countryMacro = path.join(process.cwd(), "public", "data", "macros", `euuk_country_${cc}.json`);
+    if (fs.existsSync(countryMacro)) return countryMacro;
+  }
+
+  // fallback: all EU+UK
+  const all = path.join(process.cwd(), "public", "data", "macros", "euuk_macro_all.json");
+  if (fs.existsSync(all)) return all;
+
+  // last resort: any known IT macro (if repository has it)
+  const itAbruzzo = path.join(process.cwd(), "public", "data", "macros", "it_macro_01_abruzzo.json");
+  return itAbruzzo;
 }
 
 function outPlace(p, originObj, eta, km) {
@@ -248,31 +275,35 @@ export default async function handler(req, res) {
     const o = body.origin || null;
     const oLat = Number(o?.lat);
     const oLon = Number(o?.lon ?? o?.lng);
+    const oCC = String(o?.country_code || "").toUpperCase();
 
     if (Number.isFinite(oLat) && Number.isFinite(oLon)) {
-      originObj = { lat: oLat, lon: oLon, label: o?.label || "" };
+      originObj = { lat: oLat, lon: oLon, label: o?.label || "", country_code: oCC };
     } else if (body.originText && String(body.originText).trim().length >= 2) {
       const g = await geocodeOnSameHost(req, String(body.originText));
-      originObj = { lat: g.lat, lon: g.lon, label: g.label || String(body.originText) };
+      originObj = { lat: g.lat, lon: g.lon, label: g.label || String(body.originText), country_code: String(g.country_code || "").toUpperCase() };
     } else {
       return res.status(400).json({ error: "origin must be {lat, lon} or originText" });
     }
 
-    // Load macro
-    const macroPath = path.join(process.cwd(), "public", "data", "macros", "it_macro_01_abruzzo.json");
-    const macro = readJsonSafe(macroPath, null);
+    // Load macro dynamically
+    const chosenMacroPath = macroPathForCountry(originObj.country_code);
+    const macro = readJsonSafe(chosenMacroPath, null);
     if (!macro) {
       return res.status(500).json({
         error: "Macro file not found or invalid JSON",
-        hint: "Expected: public/data/macros/it_macro_01_abruzzo.json"
+        hint: `Expected macro at: ${chosenMacroPath}`
       });
     }
 
-    const primaryRegion = macro?.coverage?.primary_region || "Abruzzo";
     const places = Array.isArray(macro.places) ? macro.places : [];
     if (!places.length) {
       return res.status(500).json({ error: "Macro has no places[]" });
     }
+
+    // primary region logic (soft boost only)
+    const primaryRegion = macro?.coverage?.primary_region || "";
+    const primaryCountry = String(originObj.country_code || "").toUpperCase();
 
     // Normalize & filter validity + visited/week
     const normalized = places
@@ -295,7 +326,7 @@ export default async function handler(req, res) {
         const tags = getTags(p);
         const type = norm(p.type);
         return (
-          tags.includes("famiglie") || tags.includes("bambini") ||
+          tags.includes("famiglie") || tags.includes("bambini") || tags.includes("family") ||
           type === "mare" || type === "natura" || type === "relax" ||
           tags.includes("spiagge") || tags.includes("lago") || tags.includes("parco_nazionale")
         );
@@ -304,15 +335,23 @@ export default async function handler(req, res) {
       for (const e of extra) if (!ids.has(String(e.id))) pool.push(e);
     }
 
-    // Compute distance/time + region flag
+    // Compute distance/time + primary flag
     const enriched = pool
       .map((p) => {
         const km = haversineKm(originObj.lat, originObj.lon, p.lat, p.lon);
         const eta = estimateCarMinutes(km);
-        const isPrimary = (norm(p.area) === norm(primaryRegion));
+
+        const pArea = norm(p.area);
+        const pCountry = String(p.country || "").toUpperCase();
+
+        const isPrimary =
+          (!!primaryRegion && pArea && pArea === norm(primaryRegion)) ||
+          (!!primaryCountry && pCountry && pCountry === primaryCountry);
+
         return { ...p, _km: km, _eta: eta, _isPrimary: isPrimary };
       })
-      .filter(p => p._km >= 1.2); // scarta “sei già lì”
+      // ✅ FIX: non scartare "vicino", basta 200m
+      .filter(p => p._km >= 0.2);
 
     const primary = enriched.filter(p => p._isPrimary);
     const others = enriched.filter(p => !p._isPrimary);
@@ -325,7 +364,7 @@ export default async function handler(req, res) {
         const within = list.filter(p => p._eta <= cap);
         if (within.length >= 8) return within;
       }
-      return list.slice().sort((a, b) => a._eta - b._eta).slice(0, 90);
+      return list.slice().sort((a, b) => a._eta - b._eta).slice(0, 120);
     }
 
     let candidateList = pickWithin(primary);
@@ -348,7 +387,11 @@ export default async function handler(req, res) {
         input: { origin: originObj, maxMinutes, flavor },
         top: null,
         alternatives: [],
-        message: "Nessuna meta trovata nel dataset per i filtri scelti."
+        message: "Nessuna meta trovata nel dataset per i filtri scelti.",
+        debug: {
+          macro_file: path.basename(chosenMacroPath),
+          country_code: originObj.country_code || ""
+        }
       });
     }
 
@@ -370,14 +413,17 @@ export default async function handler(req, res) {
         origin: originObj,
         maxMinutes,
         flavor,
-        primary_region: primaryRegion
+        primary_region: primaryRegion || "",
+        macro_file: path.basename(chosenMacroPath)
       },
       top,
       alternatives,
       debug: {
         macro: macro.id || "macro",
+        macro_file: path.basename(chosenMacroPath),
         total_places: places.length,
         pool_after_flavor: pool.length,
+        origin_country_code: originObj.country_code || "",
         used_primary_first: true
       }
     });
