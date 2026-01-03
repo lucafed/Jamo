@@ -2,8 +2,6 @@ name: Build ALL macros (auto-only)
 
 on:
   workflow_dispatch: {}
-  schedule:
-    - cron: "0 5 * * 1" # ogni lunedì alle 05:00 UTC
   push:
     paths:
       - "scripts/build_macro_from_area.mjs"
@@ -11,18 +9,14 @@ on:
       - "public/data/bbox/**"
       - "public/data/pois_eu_uk.json"
       - "public/data/curated_destinations_eu_uk.json"
+      - ".github/workflows/build-macros-all.yml"
 
 permissions:
   contents: write
 
-concurrency:
-  group: build-all-macros
-  cancel-in-progress: true
-
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -32,17 +26,30 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Build macros for all areas
+      - name: Build all macros from areas.json
         run: |
           node -e "
-          const fs=require('fs');
-          const areas=JSON.parse(fs.readFileSync('public/data/areas.json','utf8'));
+          const fs = require('fs');
+          const { execSync } = require('child_process');
+
+          const raw = JSON.parse(fs.readFileSync('public/data/areas.json','utf8'));
+          const areas = Array.isArray(raw)
+            ? raw
+            : Array.isArray(raw.areas)
+            ? raw.areas
+            : Array.isArray(raw.items)
+            ? raw.items
+            : [];
+
+          if (!areas.length) {
+            console.error('❌ areas.json non contiene una lista (array) in raw / raw.areas / raw.items');
+            process.exit(1);
+          }
+
           for (const a of areas) {
+            if (!a || !a.id) continue;
             console.log('▶ Building macro for', a.id);
-            require('child_process').execSync(
-              'node scripts/build_macro_from_area.mjs ' + a.id,
-              { stdio:'inherit' }
-            );
+            execSync('node scripts/build_macro_from_area.mjs ' + a.id, { stdio: 'inherit' });
           }
           "
 
@@ -50,10 +57,13 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add public/data/macros
+
+          # aggiungi tutte le macro generate
+          git add public/data/macros/*.json
+
           if git diff --cached --quiet; then
-            echo "No macro changes"
+            echo "No changes"
           else
-            git commit -m "chore: rebuild all auto-only macros"
+            git commit -m "chore: build all macros (auto-only)"
             git push
           fi
