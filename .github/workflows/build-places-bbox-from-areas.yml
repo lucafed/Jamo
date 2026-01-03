@@ -1,0 +1,70 @@
+name: Build places bbox (from areas.json)
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: "0 6 * * 1" # ogni lunedì alle 06:00 UTC
+  push:
+    paths:
+      - "public/data/areas.json"
+      - "scripts/build_places_bbox_from_areas.mjs"
+      - ".github/workflows/build-places-bbox-from-areas.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-places-bbox-from-areas
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Prepare temp dir
+        run: mkdir -p .tmp
+
+      - name: Cache GeoNames cities500.zip
+        uses: actions/cache@v4
+        with:
+          path: .tmp/cities500.zip
+          key: geonames-cities500-v1
+
+      - name: Download GeoNames cities500.zip (if missing)
+        run: |
+          if [ ! -f ".tmp/cities500.zip" ]; then
+            echo "Downloading cities500.zip..."
+            curl -L "https://download.geonames.org/export/dump/cities500.zip" -o .tmp/cities500.zip
+          else
+            echo "Using cached cities500.zip"
+          fi
+
+      - name: Extract cities500.txt
+        run: |
+          unzip -p .tmp/cities500.zip cities500.txt > .tmp/cities500.txt
+          wc -l .tmp/cities500.txt
+
+      - name: Build bbox for all areas
+        run: node scripts/build_places_bbox_from_areas.mjs .tmp/cities500.txt
+
+      - name: Commit generated bbox files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add public/data/bbox/*.json
+
+          if git diff --cached --quiet; then
+            echo "No changes"
+          else
+            git commit -m "chore: build bbox places from areas.json"
+            git push
+          fi
