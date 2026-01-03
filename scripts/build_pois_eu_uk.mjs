@@ -1,5 +1,5 @@
 // scripts/build_pois_eu_uk.mjs
-// Genera public/data/pois_eu_uk.json con POI "veri" (mare/montagna/natura/relax/bambini)
+// Genera public/data/pois_eu_uk.json con POI "veri" (EU+UK) e FAMILY forte
 // Fonte: Wikidata SPARQL (WDQS)
 // Uso: node scripts/build_pois_eu_uk.mjs
 
@@ -15,21 +15,39 @@ const EU_UK = [
 ];
 
 // Categorie -> Wikidata QID principali
+// Nota: qui potenziamo FAMILY: non solo parchi a tema, ma anche zoo, acquari, parchi, playground.
 const CATEGORIES = [
-  { type: "mare",      label: "Beaches",         qids: ["Q40080"] },  // beach
-  { type: "montagna",  label: "Mountains",       qids: ["Q8502"] },   // mountain
-  { type: "natura",    label: "National parks",  qids: ["Q46169"] },  // national park
-  { type: "relax",     label: "Hot springs",     qids: ["Q179734"] }, // hot spring
-  { type: "bambini",   label: "Theme parks",     qids: ["Q152060"] }  // amusement/theme park
+  // natura / outdoor
+  { type: "mare",      label: "Beaches",        qids: ["Q40080"] },   // beach
+  { type: "montagna",  label: "Mountains",      qids: ["Q8502"] },    // mountain
+  { type: "natura",    label: "National parks", qids: ["Q46169"] },   // national park
+
+  // relax
+  { type: "relax",     label: "Hot springs",    qids: ["Q179734"] },  // hot spring
+
+  // FAMILY (molto più ampio)
+  // amusement/theme park, zoo, aquarium, park, playground
+  { type: "bambini",   label: "Family places",  qids: [
+      "Q152060",   // amusement park / theme park
+      "Q43501",    // zoo
+      "Q2281788",  // aquarium
+      "Q22698",    // park
+      "Q18972"     // playground
+    ]
+  },
+
+  // (opzionale ma utile per trovare “storia” vicina casa)
+  { type: "storia",    label: "Museums",        qids: ["Q33506"] },   // museum
+  { type: "storia",    label: "Castles",        qids: ["Q23413"] },   // castle
 ];
 
 // --- tuning anti-crash ---
 const WDQS_ENDPOINT = "https://query.wikidata.org/sparql";
 
 // LIMIT basso = risposte non troncate. Prendiamo qualità via ORDER BY.
-const LIMIT_DEFAULT = 900;
+const LIMIT_DEFAULT = 650;
 // se JSON.parse fallisce, riproviamo con limiti più bassi
-const LIMIT_FALLBACKS = [600, 400, 250, 150];
+const LIMIT_FALLBACKS = [450, 320, 220, 140];
 
 function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
 
@@ -40,9 +58,8 @@ function norm(s) {
     .trim();
 }
 
-function makeId(wd, type) {
-  const w = String(wd || "").replace(/^.*\/(Q\d+)$/, "$1");
-  return `wd_${type}_${w}`;
+function qidFromUrl(wdUrl) {
+  return String(wdUrl || "").replace(/^.*\/(Q\d+)$/, "$1");
 }
 
 function toBeautyScore(sitelinks) {
@@ -59,9 +76,7 @@ async function fetchTextWithRetry(url, opts = {}, tries = 5) {
       const r = await fetch(url, opts);
       const text = await r.text();
 
-      // WDQS a volte risponde 429/503: qui vogliamo retry
       if (!r.ok) throw new Error(`HTTP ${r.status}: ${text.slice(0, 220)}`);
-
       return text;
     } catch (e) {
       lastErr = e;
@@ -76,10 +91,6 @@ async function fetchTextWithRetry(url, opts = {}, tries = 5) {
 function sparqlQueryFor(countryIso2, cat, limit) {
   const valuesQ = cat.qids.map(q => `wd:${q}`).join(" ");
 
-  // NOTA:
-  // - OPTIONAL sitelinks
-  // - ORDER BY desc(sitelinks) per prendere “cose belle/nota” prima
-  // - LIMIT basso per evitare risposte troncate
   return `
 SELECT ?item ?itemLabel ?coord ?countryCode ?sitelinks WHERE {
   VALUES ?cc { "${countryIso2}" }
@@ -119,29 +130,44 @@ async function fetchWdqsJson(countryIso2, cat) {
     const text = await fetchTextWithRetry(url, {
       headers: {
         "accept": "application/sparql-results+json",
-        "user-agent": "JamoPOIBuilder/1.1 (github-actions; contact: none)"
+        "user-agent": "JamoPOIBuilder/1.2 (github-actions; contact: none)"
       }
     });
 
     try {
       return JSON.parse(text);
     } catch (e) {
-      // tipico caso: risposta troncata o html “strano”
       console.log(`  ${countryIso2}: JSON.parse failed with LIMIT=${lim}. retrying with smaller LIMIT…`);
-      // una pausa prima di riprovare
       await new Promise(res => setTimeout(res, 800));
     }
   }
-
-  // se siamo qui, niente da fare
   return null;
+}
+
+function addType(tagsSet, type) {
+  const t = norm(type);
+  if (t) tagsSet.add(t);
+}
+
+function inferTagsFromTypes(types) {
+  const s = new Set();
+  const t = new Set((types || []).map(norm));
+
+  if (t.has("mare")) { s.add("mare"); s.add("spiagge"); s.add("relax"); }
+  if (t.has("montagna")) { s.add("montagna"); s.add("panorama"); s.add("trekking"); }
+  if (t.has("natura")) { s.add("natura"); s.add("trekking"); s.add("family"); }
+  if (t.has("relax")) { s.add("relax"); s.add("terme"); }
+  if (t.has("bambini")) { s.add("bambini"); s.add("famiglie"); s.add("family"); s.add("attivita"); }
+  if (t.has("storia")) { s.add("storia"); s.add("musei"); }
+
+  return [...s];
 }
 
 async function run() {
   console.log("Building POIs EU+UK via Wikidata…");
 
-  const all = [];
-  const seen = new Set();
+  // Dedup robusto: unisci per QID (stesso item) e accumula types
+  const byQid = new Map(); // qid -> poi
 
   for (const cat of CATEGORIES) {
     console.log(`\nCategory: ${cat.type} (${cat.label})`);
@@ -157,7 +183,6 @@ async function run() {
       const rows = Array.isArray(json?.results?.bindings) ? json.results.bindings : [];
       if (!rows.length) {
         process.stdout.write(`  ${iso2}: 0\n`);
-        // pausa piccola
         await new Promise(res => setTimeout(res, 150));
         continue;
       }
@@ -172,65 +197,89 @@ async function run() {
         const sitelinks = Number(r?.sitelinks?.value || 0);
 
         if (!item || !label || !coord) continue;
+
         const p = parseWKTPoint(coord);
         if (!p) continue;
 
-        const id = makeId(item, cat.type);
-        if (seen.has(id)) continue;
-        seen.add(id);
+        const qid = qidFromUrl(item);
+        const country = cc === "GB" ? "UK" : cc;
 
-        all.push({
-          id,
-          name: label,
-          country: cc === "GB" ? "UK" : cc,
-          lat: p.lat,
-          lng: p.lon,
-          types: [cat.type],
-          visibility: sitelinks >= 35 ? "conosciuta" : "chicca",
-          beauty_score: toBeautyScore(sitelinks),
-          source: "wikidata",
-          wd: item.replace(/^.*\/(Q\d+)$/, "$1"),
-          tags: []
-        });
+        const existing = byQid.get(qid);
 
-        countAdded++;
+        if (!existing) {
+          byQid.set(qid, {
+            id: `wd_${qid}`,
+            wd: qid,
+            name: label,
+            country,
+            lat: p.lat,
+            lng: p.lon,
+            types: [cat.type],                 // verrà arricchito
+            visibility: sitelinks >= 35 ? "conosciuta" : "chicca",
+            beauty_score: toBeautyScore(sitelinks),
+            source: "wikidata",
+            tags: []                            // verrà calcolato
+          });
+          countAdded++;
+        } else {
+          // stesso item ricade in più categorie: aggiungi type e aggiorna score se migliore
+          if (!existing.types.includes(cat.type)) existing.types.push(cat.type);
+          existing.beauty_score = Math.max(existing.beauty_score || 0, toBeautyScore(sitelinks));
+          // se per qualche motivo cambia label, tieni quella “più lunga” (di solito più descrittiva)
+          if ((label || "").length > (existing.name || "").length) existing.name = label;
+        }
       }
 
       process.stdout.write(`  ${iso2}: +${countAdded}\n`);
-
-      // pausa “gentile” con WDQS
       await new Promise(res => setTimeout(res, 220));
     }
   }
 
-  // Dedup: stesso nome + paese + tipo -> tieni beauty_score maggiore
+  // Finalize tags + sort
+  const pois = [...byQid.values()].map(p => {
+    const tags = inferTagsFromTypes(p.types);
+    return { ...p, tags };
+  });
+
+  // Dedup extra: stesso nome+country+coord ~ (3 decimali) => tieni beauty maggiore e unisci types
   const dedup = new Map();
-  for (const p of all) {
-    const k = `${norm(p.name)}|${p.country}|${p.types[0]}`;
+  for (const p of pois) {
+    const k = `${norm(p.name)}|${p.country}|${p.lat.toFixed(3)}|${p.lng.toFixed(3)}`;
     const prev = dedup.get(k);
-    if (!prev || (p.beauty_score > prev.beauty_score)) dedup.set(k, p);
+    if (!prev) dedup.set(k, p);
+    else {
+      const types = Array.from(new Set([...(prev.types||[]), ...(p.types||[])]));
+      const tags = Array.from(new Set([...(prev.tags||[]), ...(p.tags||[])]));
+      dedup.set(k, {
+        ...prev,
+        types,
+        tags,
+        beauty_score: Math.max(prev.beauty_score||0, p.beauty_score||0),
+      });
+    }
   }
 
-  const pois = [...dedup.values()];
-  pois.sort((a,b)=> (b.beauty_score||0) - (a.beauty_score||0));
+  const finalPois = [...dedup.values()];
+  finalPois.sort((a,b)=> (b.beauty_score||0) - (a.beauty_score||0));
 
   const out = {
-    version: "1.1",
+    version: "1.2",
     updated: new Date().toISOString().slice(0,10),
     regions: ["EU","UK"],
-    pois
+    pois: finalPois
   };
 
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
   fs.writeFileSync(OUT, JSON.stringify(out), "utf8");
 
   console.log("\nSaved:", OUT);
-  console.log("POIs:", pois.length);
+  console.log("POIs:", finalPois.length);
 
-  for (const t of ["mare","montagna","natura","relax","bambini"]) {
-    const n = pois.filter(x => x.types?.includes(t)).length;
-    console.log(`Type ${t}:`, n);
+  const typesCount = {};
+  for (const p of finalPois) {
+    for (const t of (p.types||[])) typesCount[t] = (typesCount[t]||0) + 1;
   }
+  console.log("Types:", typesCount);
 }
 
 run().catch(e=>{
