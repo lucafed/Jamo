@@ -1,0 +1,59 @@
+name: Build ALL macros (auto-only)
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: "0 5 * * 1" # ogni lunedì alle 05:00 UTC
+  push:
+    paths:
+      - "scripts/build_macro_from_area.mjs"
+      - "public/data/areas.json"
+      - "public/data/bbox/**"
+      - "public/data/pois_eu_uk.json"
+      - "public/data/curated_destinations_eu_uk.json"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-all-macros
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Build macros for all areas
+        run: |
+          node -e "
+          const fs=require('fs');
+          const areas=JSON.parse(fs.readFileSync('public/data/areas.json','utf8'));
+          for (const a of areas) {
+            console.log('▶ Building macro for', a.id);
+            require('child_process').execSync(
+              'node scripts/build_macro_from_area.mjs ' + a.id,
+              { stdio:'inherit' }
+            );
+          }
+          "
+
+      - name: Commit generated macros
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/data/macros
+          if git diff --cached --quiet; then
+            echo "No macro changes"
+          else
+            git commit -m "chore: rebuild all auto-only macros"
+            git push
+          fi
