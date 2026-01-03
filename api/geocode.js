@@ -1,10 +1,10 @@
-// /api/geocode.js — Robust geocoding (OFFLINE index first, Nominatim fallback) — v2.0
+// /api/geocode.js — Robust geocoding (OFFLINE index first, Nominatim fallback) — v2.1 FIXED
 // Supports:
 //   GET  /api/geocode?q=...
 //   POST /api/geocode { q: "..." }
 //
 // Returns:
-//   { ok:true, result:{ label, lat, lon }, candidates:[...] }
+//   { ok:true, result:{ label, lat, lon, country_code }, candidates:[...] }
 //   { ok:false, error:"..." }
 
 import fs from "fs";
@@ -20,7 +20,7 @@ const INDEX_PATH = path.join(process.cwd(), "public", "data", "places_index_eu_u
 const NOMINATIM_EMAIL = process.env.NOMINATIM_EMAIL || "";
 const NOMINATIM_UA =
   process.env.NOMINATIM_UA ||
-  `Jamo/2.0 (Vercel; ${NOMINATIM_EMAIL || "no-email"})`;
+  `Jamo/2.1 (Vercel; ${NOMINATIM_EMAIL || "no-email"})`;
 
 // ---- helpers ----
 function now() { return Date.now(); }
@@ -46,8 +46,13 @@ function shortLabel(displayName) {
   return parts.slice(0, 3).join(", ") || displayName || "";
 }
 
-function okResult(label, lat, lon) {
-  return { label: String(label || "").trim(), lat: Number(lat), lon: Number(lon) };
+function okResult(label, lat, lon, country_code = "") {
+  return {
+    label: String(label || "").trim(),
+    lat: Number(lat),
+    lon: Number(lon),
+    country_code: String(country_code || "").toUpperCase()
+  };
 }
 
 // ---- OFFLINE INDEX (cold-start cached in memory) ----
@@ -100,8 +105,6 @@ function offlineSearch(q) {
   }
 
   // 2) StartsWith / Contains match (limit)
-  //   - prima cerca "startsWith" per query corte
-  //   - poi "contains" come fallback
   const places = INDEX.places;
   const maxScan = Math.min(places.length, 200000); // safety
   const starts = [];
@@ -128,29 +131,22 @@ function offlineSearch(q) {
 
 function pickBestOffline(hits, qRaw) {
   // Heuristics:
-  // - se query contiene "italia" / ", it" / provincia ecc: preferisci IT
-  const q = norm(qRaw);
-  const wantsIT = q.includes(" it") || q.includes(" italia") || q.includes("roma") || q.includes("laquila") || q.includes("l aquila");
+  // - population helps to avoid random tiny places
+  // - slight preference for exact name match
   let best = null;
   let bestScore = -1;
+
+  const qn = norm(qRaw);
 
   for (const p of hits) {
     const lat = Number(p.lat);
     const lon = Number(p.lng ?? p.lon);
     if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
 
-    const country = String(p.country || "").toUpperCase();
     const pop = Number(p.population || 0);
 
-    // base score: population helps to avoid random tiny places
     let s = Math.log10(Math.max(1000, pop));
-
-    if (wantsIT && country === "IT") s += 3;
-    if (!wantsIT && country === "IT") s += 1; // Italia spesso utile nel tuo caso
-
-    // penalizza “omonomi” strani
-    const pn = norm(p.name);
-    if (pn === norm(qRaw)) s += 2;
+    if (norm(p.name) === qn) s += 2;
 
     if (s > bestScore) {
       bestScore = s;
@@ -161,10 +157,12 @@ function pickBestOffline(hits, qRaw) {
 }
 
 function buildOfflineResponse(best, hits) {
+  const cc = String(best.country || "").toUpperCase();
   const result = okResult(
-    `${best.name}${best.country ? ", " + best.country : ""}`,
+    `${best.name}${cc ? ", " + cc : ""}`,
     best.lat,
-    best.lng ?? best.lon
+    best.lng ?? best.lon,
+    cc
   );
 
   const candidates = hits
@@ -173,7 +171,7 @@ function buildOfflineResponse(best, hits) {
       const lon = Number(p.lng ?? p.lon);
       if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
       return {
-        label: `${p.name}${p.country ? ", " + p.country : ""}`,
+        label: `${p.name}${p.country ? ", " + String(p.country).toUpperCase() : ""}`,
         lat,
         lon,
         country_code: String(p.country || "").toUpperCase()
@@ -187,11 +185,9 @@ function buildOfflineResponse(best, hits) {
 
 // ---- NOMINATIM fallback ----
 async function nominatimSearch(q, req) {
-  // Nominatim vuole identificazione + idealmente email
-  // aggiungiamo anche `email=` in query se disponibile
   const base =
     "https://nominatim.openstreetmap.org/search" +
-    `?format=jsonv2&limit=5&addressdetails=1&accept-language=it` +
+    `?format=jsonv2&limit=5&addressdetails=1&accept-language=it,en` +
     `&q=${encodeURIComponent(q)}` +
     (NOMINATIM_EMAIL ? `&email=${encodeURIComponent(NOMINATIM_EMAIL)}` : "");
 
@@ -199,7 +195,6 @@ async function nominatimSearch(q, req) {
     headers: {
       "User-Agent": NOMINATIM_UA,
       "Accept": "application/json",
-      // Referer “carino” (non obbligatorio ma aiuta a sembrare legit)
       "Referer": `${(req.headers["x-forwarded-proto"] || "https")}://${(req.headers["x-forwarded-host"] || req.headers.host)}/`
     }
   });
@@ -213,9 +208,8 @@ async function nominatimSearch(q, req) {
     return { ok: false, error: "Nessun risultato trovato", source: "nominatim" };
   }
 
-  // prefer IT if present
-  const it = arr.find(x => (x.address?.country_code || "").toLowerCase() === "it");
-  const best = it || arr[0];
+  // ✅ FIX: niente bias IT — prendiamo il primo risultato di Nominatim (di solito è il best)
+  const best = arr[0];
 
   const lat = Number(best.lat);
   const lon = Number(best.lon);
@@ -223,7 +217,8 @@ async function nominatimSearch(q, req) {
     return { ok: false, error: "Risultato senza coordinate valide", source: "nominatim" };
   }
 
-  const result = okResult(shortLabel(best.display_name), lat, lon);
+  const cc = String(best.address?.country_code || "").toUpperCase();
+  const result = okResult(shortLabel(best.display_name), lat, lon, cc);
 
   const candidates = arr
     .slice(0, 5)
@@ -231,7 +226,7 @@ async function nominatimSearch(q, req) {
       label: shortLabel(x.display_name),
       lat: Number(x.lat),
       lon: Number(x.lon),
-      country_code: (x.address?.country_code || "").toUpperCase()
+      country_code: String(x.address?.country_code || "").toUpperCase()
     }))
     .filter(x => Number.isFinite(x.lat) && Number.isFinite(x.lon));
 
