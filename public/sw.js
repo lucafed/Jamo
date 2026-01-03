@@ -1,76 +1,69 @@
-// sw.js — Jamo PWA cache strategy (fix "stale CSS/JS forever")
-const VERSION = "jamo-v3"; // <- aumenta quando fai cambi grossi
-const STATIC_CACHE = `${VERSION}-static`;
-const RUNTIME_CACHE = `${VERSION}-runtime`;
+// sw.js — v5 (fix: no stale app.js, no stale API)
+// Strategy:
+// - index.html + app.js + style.css: NETWORK FIRST (always try fresh)
+// - /api/* : NETWORK ONLY (never cache API responses)
+// - /data/* : STALE-WHILE-REVALIDATE (cache ok, but update in background)
 
-// Asset di base (solo quelli veramente "core")
+const CACHE_VERSION = "jamo-v5"; // <-- bump this any time you deploy changes
 const CORE_ASSETS = [
-  "/",
+  "/",              // may map to index.html
   "/index.html",
-  "/style.css",
   "/app.js",
+  "/style.css",
   "/manifest.webmanifest",
-  "/icons/icon-192.png",
-  "/icons/icon-512.png",
-  "/icons/maskable-512.png",
 ];
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(STATIC_CACHE).then((cache) => cache.addAll(CORE_ASSETS))
-  );
-  self.skipWaiting();
+  event.waitUntil((async () => {
+    const cache = await caches.open(CACHE_VERSION);
+    await cache.addAll(CORE_ASSETS.map(u => new Request(u, { cache: "reload" })));
+    await self.skipWaiting();
+  })());
 });
 
 self.addEventListener("activate", (event) => {
-  event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(
-        keys.map((k) => {
-          if (k !== STATIC_CACHE && k !== RUNTIME_CACHE) return caches.delete(k);
-          return null;
-        })
-      )
-    )
-  );
-  self.clients.claim();
+  event.waitUntil((async () => {
+    // delete old caches
+    const keys = await caches.keys();
+    await Promise.all(keys.map(k => (k === CACHE_VERSION ? null : caches.delete(k))));
+    await self.clients.claim();
+  })());
 });
 
-// Helpers
-function isHTML(req) {
-  return req.mode === "navigate" || (req.headers.get("accept") || "").includes("text/html");
+function isApi(reqUrl) {
+  return reqUrl.pathname.startsWith("/api/");
 }
-function isStatic(reqUrl) {
+
+function isData(reqUrl) {
+  return reqUrl.pathname.startsWith("/data/");
+}
+
+function isCore(reqUrl) {
   return (
-    reqUrl.pathname.endsWith(".css") ||
-    reqUrl.pathname.endsWith(".js") ||
-    reqUrl.pathname.endsWith(".webmanifest") ||
-    reqUrl.pathname.endsWith(".png") ||
-    reqUrl.pathname.endsWith(".svg") ||
-    reqUrl.pathname.endsWith(".jpg") ||
-    reqUrl.pathname.endsWith(".jpeg") ||
-    reqUrl.pathname.endsWith(".webp") ||
-    reqUrl.pathname.endsWith(".ico")
+    reqUrl.pathname === "/" ||
+    reqUrl.pathname === "/index.html" ||
+    reqUrl.pathname === "/app.js" ||
+    reqUrl.pathname === "/style.css"
   );
 }
 
-// Strategy 1: Network-first per HTML (evita "index vecchio" che rompe tutto)
+// NETWORK FIRST for core assets
 async function networkFirst(request) {
-  const cache = await caches.open(RUNTIME_CACHE);
+  const cache = await caches.open(CACHE_VERSION);
   try {
     const fresh = await fetch(request);
-    // cache solo risposte ok
     if (fresh && fresh.ok) cache.put(request, fresh.clone());
     return fresh;
-  } catch (err) {
+  } catch {
     const cached = await cache.match(request);
-    return cached || caches.match("/index.html");
+    if (cached) return cached;
+    throw new Error("offline");
   }
 }
 
-// Strategy 2: Stale-while-revalidate per static (CSS/JS/icons)
+// STALE WHILE REVALIDATE for data
 async function staleWhileRevalidate(request) {
-  const cache = await caches.open(RUNTIME_CACHE);
+  const cache = await caches.open(CACHE_VERSION);
   const cached = await cache.match(request);
 
   const fetchPromise = fetch(request)
@@ -80,39 +73,42 @@ async function staleWhileRevalidate(request) {
     })
     .catch(() => null);
 
-  // rispondi subito col cached se c’è, intanto aggiorna in background
-  return cached || (await fetchPromise) || cached;
+  return cached || (await fetchPromise) || new Response("offline", { status: 503 });
 }
 
 self.addEventListener("fetch", (event) => {
-  const req = event.request;
-  if (req.method !== "GET") return;
+  const url = new URL(event.request.url);
 
-  const url = new URL(req.url);
-
-  // solo stessa origin
+  // Only handle same-origin GET requests
+  if (event.request.method !== "GET") return;
   if (url.origin !== self.location.origin) return;
 
-  // HTML: network-first
-  if (isHTML(req)) {
-    event.respondWith(networkFirst(req));
+  // ✅ API: never cache (prevents weird “flash then disappear”)
+  if (isApi(url)) {
+    event.respondWith(fetch(event.request));
     return;
   }
 
-  // Static: stale-while-revalidate
-  if (isStatic(url)) {
-    event.respondWith(staleWhileRevalidate(req));
+  // ✅ Core assets: network-first (always update)
+  if (isCore(url)) {
+    event.respondWith(networkFirst(event.request));
     return;
   }
 
-  // Default: cache-first semplice (runtime)
-  event.respondWith(
-    caches.open(RUNTIME_CACHE).then(async (cache) => {
-      const cached = await cache.match(req);
-      if (cached) return cached;
-      const fresh = await fetch(req);
-      if (fresh && fresh.ok) cache.put(req, fresh.clone());
-      return fresh;
-    })
-  );
+  // ✅ Data json: cache ok but refresh
+  if (isData(url)) {
+    event.respondWith(staleWhileRevalidate(event.request));
+    return;
+  }
+
+  // default: try cache, fallback network
+  event.respondWith((async () => {
+    const cache = await caches.open(CACHE_VERSION);
+    const cached = await cache.match(event.request);
+    if (cached) return cached;
+
+    const fresh = await fetch(event.request);
+    if (fresh && fresh.ok) cache.put(event.request, fresh.clone());
+    return fresh;
+  })());
 });
