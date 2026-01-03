@@ -1,16 +1,15 @@
-/* Jamo — Auto-only — app.js v4.0 (EU+UK ALL)
+/* Jamo — Auto-only — app.js v4.1 (EU+UK ALL)
  * FIXES:
+ * - Better category detection (BORGHIs / STORIA / FAMILY) with tag + name heuristics (IT+EN)
+ * - Less aggressive quality filter (keeps small borghi & history places)
  * - Uses ONLY euuk_macro_all.json (no regional 404)
- * - Reset “proposte di oggi” works + can re-run search
- * - Better destination quality (filters junk/industrial/zone names)
- * - Strong “info buttons”: Cosa vedere, Cosa fare, Foto, Ristoranti, Wiki
- * - Monetization links: Booking, GYG, Tiqets (robust), Amazon, Flights/Trains/Bus
+ * - Reset “proposte di oggi” works + reruns search
  */
 
 const $ = (id) => document.getElementById(id);
 
 // -------------------- SETTINGS --------------------
-const MACRO_URL = "/data/macros/euuk_macro_all.json"; // ✅ ONE macro for all EU+UK (+ IT)
+const MACRO_URL = "/data/macros/euuk_macro_all.json"; // ONE macro for all EU+UK (+ IT)
 
 // driving estimator (offline)
 const ROAD_FACTOR = 1.25;
@@ -19,18 +18,17 @@ const FIXED_OVERHEAD_MIN = 8;
 
 // ROTATION
 const RECENT_TTL_MS = 1000 * 60 * 60 * 20; // ~20h: “oggi”
-const RECENT_MAX = 140;
+const RECENT_MAX = 160;
 let SESSION_SEEN = new Set();
 let LAST_SHOWN_PID = null;
 
-// Monetization IDs (fill with your real IDs)
-const BOOKING_AID = ""; // Booking affiliate id (aid)
-const AMAZON_TAG  = ""; // Amazon tag (es: tuonome-21)
-const GYG_PID     = ""; // GetYourGuide partner_id
-const TIQETS_PID  = ""; // Tiqets partner
+// Monetization IDs
+const BOOKING_AID = "";
+const AMAZON_TAG  = "";
+const GYG_PID     = "";
+const TIQETS_PID  = "";
 
-// Optional: WhatsApp lead (simple local monetization)
-// Example: const WHATSAPP_NUMBER = "39333XXXXXXX"; // +39...
+// Optional WhatsApp lead
 const WHATSAPP_NUMBER = "";
 
 // -------------------- UTIL --------------------
@@ -78,82 +76,63 @@ function mapsDirUrl(oLat, oLon, dLat, dLon) {
   return `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(oLat + "," + oLon)}&destination=${encodeURIComponent(dLat + "," + dLon)}&travelmode=driving`;
 }
 
-// -------------------- “INFO” LINKS (instant value) --------------------
+// -------------------- QUICK “INFO” LINKS --------------------
 function googleThingsToDoUrl(placeName, countryCode = "") {
-  // Google “things to do” style query
-  const q = `${placeName}${countryCode ? " " + countryCode : ""} cosa vedere`;
-  return `https://www.google.com/search?q=${encodeURIComponent(q)}&tbm=pts`; // pts = places/things to do UI (works in many locales)
+  const q = `${placeName}${countryCode ? " " + countryCode : ""} things to do cosa vedere`;
+  return `https://www.google.com/search?q=${encodeURIComponent(q)}&tbm=pts`;
 }
-
 function googleWhatToDoUrl(placeName, countryCode = "") {
-  const q = `${placeName}${countryCode ? " " + countryCode : ""} cosa fare attività`;
+  const q = `${placeName}${countryCode ? " " + countryCode : ""} activities cosa fare`;
   return `https://www.google.com/search?q=${encodeURIComponent(q)}`;
 }
-
 function googleImagesUrl(placeName, countryCode = "") {
   const q = `${placeName}${countryCode ? " " + countryCode : ""}`;
   return `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(q)}`;
 }
-
 function googleRestaurantsUrl(placeName, countryCode = "") {
-  const q = `${placeName}${countryCode ? " " + countryCode : ""} ristoranti`;
+  const q = `${placeName}${countryCode ? " " + countryCode : ""} restaurants ristoranti`;
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
 }
-
 function wikipediaUrl(placeName, countryCode = "") {
-  // try IT Wikipedia; if not found user can switch language
-  const title = String(placeName || "").trim().replace(/\s+/g, "_");
-  // fallback search if title not exact
   const q = `${placeName}${countryCode ? " " + countryCode : ""}`;
   return `https://it.wikipedia.org/w/index.php?search=${encodeURIComponent(q)}`;
 }
 
-// -------------------- Monetization URLs (robust) --------------------
+// -------------------- Monetization URLs --------------------
 function bookingUrl(placeName, countryCode = "", affId = "") {
   const q = `${placeName}${countryCode ? ", " + countryCode : ""}`;
   const base = `https://www.booking.com/searchresults.html?ss=${encodeURIComponent(q)}`;
   return affId ? `${base}&aid=${encodeURIComponent(affId)}` : base;
 }
-
 function getYourGuideUrl(placeName, countryCode = "", affId = "") {
   const q = `${placeName}${countryCode ? " " + countryCode : ""}`;
   const base = `https://www.getyourguide.com/s/?q=${encodeURIComponent(q)}`;
   return affId ? `${base}&partner_id=${encodeURIComponent(affId)}` : base;
 }
-
 function tiqetsUrl(placeName, countryCode = "", affId = "") {
-  // Tiqets è “capriccioso” sugli slug → usiamo search robusto, non pagina diretta
   const q = `${placeName}${countryCode ? " " + countryCode : ""}`;
   const base = `https://www.tiqets.com/it/search/?query=${encodeURIComponent(q)}`;
   return affId ? `${base}&partner=${encodeURIComponent(affId)}` : base;
 }
-
 function amazonEssentialsUrl(tag = "") {
   const base = `https://www.amazon.it/s?k=${encodeURIComponent("accessori viaggio")}`;
   return tag ? `${base}&tag=${encodeURIComponent(tag)}` : base;
 }
-
-// Flights / Trains / Bus (no routes, just search pages)
 function flightsUrl(placeName, countryCode = "") {
   const q = `${placeName}${countryCode ? " " + countryCode : ""}`;
-  // Google Flights query (simple)
-  return `https://www.google.com/travel/flights?q=${encodeURIComponent("voli per " + q)}`;
+  return `https://www.google.com/travel/flights?q=${encodeURIComponent("flights to " + q)}`;
 }
-
 function trainsUrl(placeName, countryCode = "") {
   const q = `${placeName}${countryCode ? " " + countryCode : ""}`;
   return `https://www.thetrainline.com/it/search?searchTerm=${encodeURIComponent(q)}`;
 }
-
 function busUrl(placeName, countryCode = "") {
   const q = `${placeName}${countryCode ? " " + countryCode : ""}`;
   return `https://www.omio.com/search-frontend/results/${encodeURIComponent(q)}`;
 }
-
-// WhatsApp lead (local guides / custom itineraries)
 function whatsappLeadUrl(placeName) {
   if (!WHATSAPP_NUMBER) return "";
-  const msg = `Ciao! Vorrei info/itinerario per: ${placeName}.`;
+  const msg = `Ciao! Vorrei un itinerario/consigli per: ${placeName}.`;
   return `https://wa.me/${WHATSAPP_NUMBER.replace(/\D/g, "")}?text=${encodeURIComponent(msg)}`;
 }
 
@@ -175,9 +154,7 @@ function getOrigin() {
   if (Number.isFinite(lat) && Number.isFinite(lon)) return { label, lat, lon };
 
   const raw = localStorage.getItem("jamo_origin");
-  if (raw) {
-    try { return JSON.parse(raw); } catch {}
-  }
+  if (raw) { try { return JSON.parse(raw); } catch {} }
   return null;
 }
 
@@ -191,20 +168,15 @@ function getVisitedSet() {
     return new Set();
   }
 }
-
 function saveVisitedSet(set) {
   localStorage.setItem("jamo_visited", JSON.stringify([...set]));
 }
-
 function markVisited(placeId) {
   const s = getVisitedSet();
   s.add(placeId);
   saveVisitedSet(s);
 }
-
-function resetVisited() {
-  localStorage.removeItem("jamo_visited");
-}
+function resetVisited() { localStorage.removeItem("jamo_visited"); }
 
 function loadRecent() {
   const raw = localStorage.getItem("jamo_recent");
@@ -216,21 +188,17 @@ function loadRecent() {
     return [];
   }
 }
-
 function saveRecent(list) {
   localStorage.setItem("jamo_recent", JSON.stringify(list.slice(0, RECENT_MAX)));
 }
-
 function cleanupRecent(list) {
   const t = Date.now();
   return list.filter(x => x && x.pid && (t - (x.ts || 0) <= RECENT_TTL_MS));
 }
-
 function addRecent(pid) {
   const t = Date.now();
   let list = cleanupRecent(loadRecent());
   list.unshift({ pid, ts: t });
-  // de-dup keeping newest
   const seen = new Set();
   list = list.filter(x => {
     if (seen.has(x.pid)) return false;
@@ -239,13 +207,11 @@ function addRecent(pid) {
   });
   saveRecent(list);
 }
-
 function getRecentSet() {
   const list = cleanupRecent(loadRecent());
   saveRecent(list);
   return new Set(list.map(x => x.pid));
 }
-
 function resetRotation() {
   localStorage.removeItem("jamo_recent");
   SESSION_SEEN = new Set();
@@ -274,13 +240,11 @@ function initChips(containerId, { multi = false } = {}) {
     }
   });
 }
-
 function getActiveCategory() {
   const el = $("categoryChips");
   const active = el?.querySelector(".chip.active");
   return active?.dataset.cat || "ovunque";
 }
-
 function getActiveStyles() {
   const el = $("styleChips");
   const actives = [...(el?.querySelectorAll(".chip.active") || [])].map(c => c.dataset.style);
@@ -289,7 +253,6 @@ function getActiveStyles() {
     wantClassici: actives.includes("classici"),
   };
 }
-
 function showStatus(type, text) {
   const box = $("statusBox");
   const t = $("statusText");
@@ -300,7 +263,6 @@ function showStatus(type, text) {
   t.textContent = text;
   box.style.display = "block";
 }
-
 function hideStatus() {
   $("statusBox").style.display = "none";
   $("statusText").textContent = "";
@@ -308,7 +270,6 @@ function hideStatus() {
 
 // -------------------- DATA loading --------------------
 let MACRO = null;
-
 async function loadMacro() {
   const r = await fetch(MACRO_URL, { cache: "no-store" });
   if (!r.ok) throw new Error(`Macro non trovato (${r.status}) → ${MACRO_URL}`);
@@ -330,111 +291,144 @@ async function geocodeLabel(label) {
   if (!j.result || !Number.isFinite(Number(j.result.lat)) || !Number.isFinite(Number(j.result.lon))) {
     throw new Error("Geocoding fallito (coordinate non valide)");
   }
-  return j.result; // {label, lat, lon}
+  return j.result;
 }
 
-// -------------------- QUALITY FILTERS (anti “mete brutte”) --------------------
-function isJunkPlaceName(name) {
+// -------------------- QUALITY FILTERS (less aggressive) --------------------
+function isClearlyJunkPlaceName(name) {
   const n = normName(name);
   if (!n) return true;
 
-  // super “no”
-  const badTokens = [
-    "nucleo industriale", "zona industriale", "area industriale", "interporto",
-    "zona artigianale", "area artigianale", "polo industriale",
-    "centro commerciale", "outlet", "iper", "shopping center",
-    "svincolo", "uscita", "casello", "stazione di servizio", "autogrill",
-    "deposito", "capannone", "magazzino", "cimitero", "discarica",
-    "zona", "area", "frazione", "contrada"
+  // BAD ONLY if strongly utilitarian/industrial
+  const badStrong = [
+    "nucleo industriale", "zona industriale", "area industriale", "polo industriale",
+    "zona artigianale", "area artigianale", "interporto",
+    "svincolo", "uscita", "casello", "autogrill", "stazione di servizio",
+    "deposito", "magazzino", "capannone", "discarica",
+    "centro commerciale", "shopping center", "outlet"
   ];
-
-  // se contiene questi pattern + non contiene nulla di “turistico”, scarta
-  const containsBad = badTokens.some(t => n.includes(t));
-  if (!containsBad) return false;
-
-  const goodHints = [
-    "castello","abbazia","eremo","museo","cattedrale","santuario","duomo",
-    "spiaggia","lido","costa","parco","riserva","gole","cascata","lago",
-    "borgo","centro storico","belvedere","monte","vetta","rifugio",
-    "terme","sentiero","trek","treno storico","faro","porto","isola"
-  ];
-
-  const containsGood = goodHints.some(t => n.includes(t));
-  return !containsGood;
+  return badStrong.some(t => n.includes(t));
 }
 
 function hasTouristicSignals(place) {
   const type = String(place.type || "").toLowerCase();
   const tags = (place.tags || []).map(t => String(t).toLowerCase());
-  const name = String(place.name || "");
+  const n = normName(place.name || "");
 
-  if (["mare","montagna","natura","storia","relax","bambini","borgo","citta"].includes(type)) return true;
-  if (tags.includes("spiagge") || tags.includes("trabocchi") || tags.includes("museo") || tags.includes("castello") ||
-      tags.includes("abbazia") || tags.includes("lago") || tags.includes("gole") || tags.includes("cascata") ||
-      tags.includes("parco") || tags.includes("trekking") || tags.includes("panorama") || tags.includes("fotografico"))
-    return true;
+  // if type is one of ours, ok
+  if (["mare","montagna","natura","storia","relax","bambini","borgo","citta","city"].includes(type)) return true;
 
-  // name hints
-  const n = normName(name);
-  if (n.includes("castello") || n.includes("abbazia") || n.includes("eremo") || n.includes("spiaggia") ||
-      n.includes("riserva") || n.includes("parco") || n.includes("gole") || n.includes("cascata") ||
-      n.includes("lago") || n.includes("belvedere"))
-    return true;
+  // tags signal
+  const goodTags = [
+    "borgo","oldtown","old_town","historic","heritage",
+    "storia","history","museo","museum","castello","castle","abbazia","abbey","church","cathedral","duomo",
+    "spiagge","beach","sea","mare","coast","trabocchi",
+    "parco","park","national_park","parco_nazionale","riserva","reserve",
+    "lago","lake","gole","canyon","cascata","waterfall",
+    "panorama","viewpoint","fotografico",
+    "terme","spa","relax",
+    "family","kids","bambini","zoo","aquarium","themepark","attraction"
+  ];
+  if (tags.some(t => goodTags.includes(t))) return true;
+
+  // name signal (IT+EN)
+  const goodNameHints = [
+    "borgo","centro storico","old town","historic centre","historic center",
+    "castel","castello","rocca","forte","fortress","castle",
+    "abbazia","abbey","monastero","monastery","duomo","cattedrale","cathedral","church","basilica","santuario",
+    "museo","museum","archeo","archaeo","anfiteatro","amphitheatre","amphitheater","teatro romano",
+    "spiaggia","beach","lido","coast","costa",
+    "parco","park","riserva","reserve","canyon","gole","cascata","waterfall","lago","lake",
+    "terme","spa","belvedere","viewpoint"
+  ];
+  if (goodNameHints.some(x => n.includes(x))) return true;
 
   return false;
 }
 
-// -------------------- FILTERS --------------------
+// -------------------- FILTERS (UPGRADED) --------------------
 function matchesCategory(place, cat) {
   if (!cat || cat === "ovunque") return true;
 
   const type = String(place.type || "").toLowerCase();
   const tags = (place.tags || []).map(t => String(t).toLowerCase());
+  const n = normName(place.name || "");
 
-  if (cat === "citta") return type === "citta" || tags.includes("citta");
-  if (cat === "borghi") return type === "borgo" || tags.includes("borgo");
-  if (cat === "mare") return (
-    type === "mare" ||
-    tags.includes("mare") ||
-    tags.includes("trabocchi") ||
-    tags.includes("spiagge") ||
-    tags.includes("spiaggia") ||
-    tags.includes("lido")
-  );
-  if (cat === "montagna") return type === "montagna" || tags.includes("montagna") || tags.includes("neve");
-  if (cat === "natura") return (
-    type === "natura" ||
-    tags.includes("natura") ||
-    tags.includes("lago") ||
-    tags.includes("parco_nazionale") ||
-    tags.includes("gole") ||
-    tags.includes("cascate") ||
-    tags.includes("riserva")
-  );
-  if (cat === "storia") return (
-    type === "storia" ||
-    tags.includes("storia") ||
-    tags.includes("castello") ||
-    tags.includes("abbazia") ||
-    tags.includes("museo")
-  );
-  if (cat === "relax") return type === "relax" || tags.includes("relax") || tags.includes("terme") || tags.includes("spa");
-  if (cat === "family") return (
-    type === "bambini" ||
-    tags.includes("famiglie") ||
-    tags.includes("bambini") ||
-    tags.includes("family") ||
-    tags.includes("animali") ||
-    tags.includes("parco_avventura") ||
-    tags.includes("luna_park") ||
-    tags.includes("acquario")
-  );
+  const hasAnyTag = (...xs) => xs.some(x => tags.includes(x));
+  const nameHasAny = (...xs) => xs.some(x => n.includes(x));
+
+  if (cat === "citta") {
+    return type === "citta" || type === "city" || hasAnyTag("citta","city") || nameHasAny("city","citta");
+  }
+
+  if (cat === "borghi") {
+    // ✅ borghi are often "borgo" type or name has castel/rocca/old town
+    return (
+      type === "borgo" ||
+      hasAnyTag("borgo","oldtown","old_town","historic","heritage") ||
+      nameHasAny("borgo","centro storico","old town","historic centre","historic center","castel","castello","rocca")
+    );
+  }
+
+  if (cat === "mare") {
+    return (
+      type === "mare" ||
+      hasAnyTag("mare","sea","beach","spiagge","spiaggia","coast","costa","lido","trabocchi") ||
+      nameHasAny("spiaggia","beach","lido","marina","costa","coast","faro","harbour","porto")
+    );
+  }
+
+  if (cat === "montagna") {
+    return (
+      type === "montagna" ||
+      hasAnyTag("montagna","mountain","neve","snow","ski") ||
+      nameHasAny("monte","mount","mountain","peak","vetta","rifugio","ski","roccaraso")
+    );
+  }
+
+  if (cat === "natura") {
+    return (
+      type === "natura" ||
+      hasAnyTag("natura","nature","lago","lake","parco","park","national_park","parco_nazionale","riserva","reserve","canyon","gole","cascata","waterfall","sentiero","trail","trekking") ||
+      nameHasAny("parco","park","riserva","reserve","gole","canyon","cascata","waterfall","lago","lake","sentiero","trail")
+    );
+  }
+
+  if (cat === "storia") {
+    return (
+      type === "storia" ||
+      hasAnyTag("storia","history","museo","museum","castello","castle","abbazia","abbey","cathedral","duomo","church","archeology","archaeology","heritage") ||
+      nameHasAny(
+        "castello","castle","rocca","forte","fortress",
+        "abbazia","abbey","monastero","monastery",
+        "duomo","cattedrale","cathedral","basilica","church","chiesa","santuario",
+        "museo","museum","archeo","archaeo","anfiteatro","amphitheatre","amphitheater","teatro romano","roman theatre",
+        "palazzo","villa","necropolis","necropoli"
+      )
+    );
+  }
+
+  if (cat === "relax") {
+    return (
+      type === "relax" ||
+      hasAnyTag("relax","spa","terme","thermal","wellness") ||
+      nameHasAny("terme","spa","thermal","wellness")
+    );
+  }
+
+  if (cat === "family") {
+    return (
+      type === "bambini" ||
+      hasAnyTag("famiglie","family","kids","bambini","children","zoo","aquarium","themepark","attraction","playground","park") ||
+      nameHasAny("zoo","aquarium","acquario","parco","park","playground","family","kids","bambini","children","luna park","theme park","fun")
+    );
+  }
 
   return true;
 }
 
 function matchesStyle(place, { wantChicche, wantClassici }) {
-  const vis = String(place.visibility || "").toLowerCase(); // "chicca" | "conosciuta"
+  const vis = String(place.visibility || "").toLowerCase();
   if (!wantChicche && !wantClassici) return true;
   if (vis === "chicca") return !!wantChicche;
   return !!wantClassici;
@@ -459,7 +453,6 @@ function rotationPenalty(pid, recentSet) {
 function effectiveMaxMinutes(maxMinutes, category) {
   const m = Number(maxMinutes);
   if (!Number.isFinite(m)) return 120;
-
   if (category === "mare" && m < 75) {
     const widened = Math.round(m * 1.35);
     return clamp(widened, m, 180);
@@ -483,9 +476,9 @@ function buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited =
     const lon = Number(p.lon);
     if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
 
-    // ✅ quality: avoid junk + keep tourism signals
-    if (isJunkPlaceName(p.name)) continue;
-    if (!hasTouristicSignals(p)) continue;
+    // ✅ less aggressive:
+    // - only skip if clearly junk AND not touristic
+    if (isClearlyJunkPlaceName(p.name) && !hasTouristicSignals(p)) continue;
 
     if (!matchesCategory(p, category)) continue;
     if (!matchesStyle(p, styles)) continue;
@@ -507,29 +500,19 @@ function buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited =
       isChicca
     });
 
-    // Extra boost for clearly “wow” tags (keeps results beautiful)
+    // small boost for “wow” hints
     const tags = (p.tags || []).map(x => String(x).toLowerCase());
-    if (tags.includes("panorama") || tags.includes("fotografico")) s += 0.03;
+    const n = normName(p.name || "");
+    if (tags.includes("panorama") || tags.includes("fotografico") || n.includes("belvedere") || n.includes("viewpoint")) s += 0.03;
     if (tags.includes("spiagge") || tags.includes("castello") || tags.includes("abbazia") || tags.includes("gole") || tags.includes("cascata")) s += 0.04;
+    if (n.includes("castello") || n.includes("castle") || n.includes("abbazia") || n.includes("abbey")) s += 0.03;
 
-    if (!ignoreRotation) {
-      s = s - rotationPenalty(pid, recentSet);
-    }
+    if (!ignoreRotation) s = s - rotationPenalty(pid, recentSet);
 
-    candidates.push({
-      place: p,
-      pid,
-      km,
-      driveMin,
-      score: Number(s.toFixed(4))
-    });
+    candidates.push({ place: p, pid, km, driveMin, score: Number(s.toFixed(4)) });
   }
 
-  candidates.sort((a, b) => {
-    if (b.score !== a.score) return b.score - a.score;
-    return a.driveMin - b.driveMin;
-  });
-
+  candidates.sort((a, b) => (b.score - a.score) || (a.driveMin - b.driveMin));
   return candidates;
 }
 
@@ -541,29 +524,22 @@ function pickDestination(origin, maxMinutes, category, styles) {
   if (candidates.length === 0) {
     candidates = buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited: true, ignoreRotation: true });
   }
-
   const chosen = candidates[0] || null;
   const alternatives = candidates.slice(1, 3);
-  return { chosen, alternatives, totalCandidates: candidates.length };
+  return { chosen, alternatives };
 }
 
-// -------------------- RENDER HELPERS --------------------
+// -------------------- RENDER --------------------
 function quickInfoButtonsHtml(placeName, countryCode = "IT") {
-  const ttd = googleThingsToDoUrl(placeName, countryCode);
-  const todo = googleWhatToDoUrl(placeName, countryCode);
-  const img = googleImagesUrl(placeName, countryCode);
-  const eat = googleRestaurantsUrl(placeName, countryCode);
-  const wiki = wikipediaUrl(placeName, countryCode);
-
   return `
     <div class="card" style="margin-top:12px;">
       <div class="small muted">Info subito</div>
       <div class="row wrap gap" style="margin-top:10px;">
-        <a class="btn" target="_blank" rel="noopener" href="${ttd}">👀 Cosa vedere</a>
-        <a class="btn" target="_blank" rel="noopener" href="${todo}">🎯 Cosa fare</a>
-        <a class="btn" target="_blank" rel="noopener" href="${img}">📷 Foto</a>
-        <a class="btn" target="_blank" rel="noopener" href="${eat}">🍝 Ristoranti</a>
-        <a class="btn btn-ghost" target="_blank" rel="noopener" href="${wiki}">📚 Wiki</a>
+        <a class="btn" target="_blank" rel="noopener" href="${googleThingsToDoUrl(placeName, countryCode)}">👀 Cosa vedere</a>
+        <a class="btn" target="_blank" rel="noopener" href="${googleWhatToDoUrl(placeName, countryCode)}">🎯 Cosa fare</a>
+        <a class="btn" target="_blank" rel="noopener" href="${googleImagesUrl(placeName, countryCode)}">📷 Foto</a>
+        <a class="btn" target="_blank" rel="noopener" href="${googleRestaurantsUrl(placeName, countryCode)}">🍝 Ristoranti</a>
+        <a class="btn btn-ghost" target="_blank" rel="noopener" href="${wikipediaUrl(placeName, countryCode)}">📚 Wiki</a>
       </div>
     </div>
   `;
@@ -574,21 +550,18 @@ function monetBoxHtml(placeName, countryCode = "IT") {
   return `
     <div class="card" style="margin-top:12px;">
       <div class="small muted">Prenota / Scopri (monetizzabile)</div>
-
       <div class="row wrap gap" style="margin-top:10px;">
         <a class="btn" target="_blank" rel="noopener" href="${bookingUrl(placeName, countryCode, BOOKING_AID)}">🏨 Hotel</a>
         <a class="btn" target="_blank" rel="noopener" href="${getYourGuideUrl(placeName, countryCode, GYG_PID)}">🎟️ Tour</a>
         <a class="btn" target="_blank" rel="noopener" href="${tiqetsUrl(placeName, countryCode, TIQETS_PID)}">🏛️ Biglietti</a>
         <a class="btn btn-ghost" target="_blank" rel="noopener" href="${amazonEssentialsUrl(AMAZON_TAG)}">🧳 Essenziali</a>
       </div>
-
       <div class="row wrap gap" style="margin-top:10px;">
         <a class="btn btn-ghost" target="_blank" rel="noopener" href="${flightsUrl(placeName, countryCode)}">✈️ Voli</a>
         <a class="btn btn-ghost" target="_blank" rel="noopener" href="${trainsUrl(placeName, countryCode)}">🚆 Treni</a>
         <a class="btn btn-ghost" target="_blank" rel="noopener" href="${busUrl(placeName, countryCode)}">🚌 Bus</a>
         ${wa ? `<a class="btn btn-ghost" target="_blank" rel="noopener" href="${wa}">💬 WhatsApp</a>` : ""}
       </div>
-
       <div class="small muted" style="margin-top:8px;">
         Inserisci i tuoi ID affiliato in app.js (BOOKING_AID / GYG_PID / TIQETS_PID / AMAZON_TAG)
       </div>
@@ -623,10 +596,7 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives, meta = {}) 
   const area = $("resultArea");
   const category = meta.category || "ovunque";
 
-  if (!chosen) {
-    renderNoResult(maxMinutesShown, category);
-    return;
-  }
+  if (!chosen) { renderNoResult(maxMinutesShown, category); return; }
 
   const p = chosen.place;
   const pid = chosen.pid;
@@ -636,15 +606,12 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives, meta = {}) 
 
   const placeUrl = mapsPlaceUrl(p.lat, p.lon);
   const dirUrl = mapsDirUrl(origin.lat, origin.lon, p.lat, p.lon);
+  const country = p.country || "IT";
 
   const why = Array.isArray(p.why) ? p.why.slice(0, 4) : [];
   const whyHtml = why.length
-    ? `<ul style="margin:10px 0 0; padding-left:18px; color: var(--muted);">
-         ${why.map(x => `<li>${x}</li>`).join("")}
-       </ul>`
+    ? `<ul style="margin:10px 0 0; padding-left:18px; color: var(--muted);">${why.map(x => `<li>${x}</li>`).join("")}</ul>`
     : "";
-
-  const country = p.country || "IT";
 
   const altHtml = (alternatives || []).length ? `
     <div class="card" style="margin-top:12px;">
@@ -653,23 +620,20 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives, meta = {}) 
         ${(alternatives || []).map(a => {
           const ap = a.place;
           const aPid = a.pid;
-          const aIsChicca = String(ap.visibility || "").toLowerCase() === "chicca";
-          const aBadge = aIsChicca ? "✨" : "✅";
+          const aCountry = ap.country || "IT";
           const aPlaceUrl = mapsPlaceUrl(ap.lat, ap.lon);
           const aDirUrl = mapsDirUrl(origin.lat, origin.lon, ap.lat, ap.lon);
-          const aCountry = ap.country || "IT";
+          const aIsChicca = String(ap.visibility || "").toLowerCase() === "chicca";
+          const aBadge = aIsChicca ? "✨" : "✅";
 
           return `
-            <div class="card" data-alt="1" data-pid="${aPid}"
-                 style="padding:12px 12px; cursor:pointer; border-color: rgba(255,255,255,.12);">
+            <div class="card" data-alt="1" data-pid="${aPid}" style="padding:12px; cursor:pointer; border-color: rgba(255,255,255,.12);">
               <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
                 <div>
                   <div style="font-weight:800; font-size:16px; line-height:1.2;">
                     ${ap.name} <span class="small muted">(${aBadge})</span>
                   </div>
-                  <div class="small muted" style="margin-top:4px;">
-                    ~${a.driveMin} min • ${fmtKm(a.km)} • ${ap.type || "meta"}
-                  </div>
+                  <div class="small muted" style="margin-top:4px;">~${a.driveMin} min • ${fmtKm(a.km)} • ${ap.type || "meta"}</div>
                 </div>
                 <div class="pill" style="white-space:nowrap;">Scegli</div>
               </div>
@@ -718,7 +682,7 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives, meta = {}) 
     ${altHtml}
   `;
 
-  // track shown (for rotation)
+  // rotation track
   LAST_SHOWN_PID = pid;
   SESSION_SEEN.add(pid);
   addRecent(pid);
@@ -732,14 +696,13 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives, meta = {}) 
     runSearch({ silent: true, forbidPid: pid });
   });
 
-  // ✅ FIX: reset now re-runs search too
   $("btnResetRotation")?.addEventListener("click", () => {
     resetRotation();
     showStatus("ok", "Reset fatto ✅ Ora rilancio la ricerca…");
     runSearch({ silent: true });
   });
 
-  // Alternatives clickable
+  // alternative click
   [...area.querySelectorAll('[data-alt="1"][data-pid]')].forEach((el) => {
     el.addEventListener("click", () => {
       const pid2 = el.getAttribute("data-pid");
@@ -777,14 +740,11 @@ async function runSearch({ silent = false, forbidPid = null } = {}) {
     const maxMinutesInput = clamp(Number($("maxMinutes").value) || 120, 10, 600);
     const category = getActiveCategory();
     const styles = getActiveStyles();
-
     const effMax = effectiveMaxMinutes(maxMinutesInput, category);
 
     let { chosen, alternatives } = pickDestination(origin, effMax, category, styles);
 
-    // forbid immediate pid
     if (forbidPid && chosen?.pid === forbidPid) {
-      // just mark it as session seen and rerun once
       SESSION_SEEN.add(forbidPid);
       ({ chosen, alternatives } = pickDestination(origin, effMax, category, styles));
     }
@@ -821,9 +781,7 @@ function restoreOrigin() {
   if (raw) {
     try {
       const o = JSON.parse(raw);
-      if (Number.isFinite(Number(o?.lat)) && Number.isFinite(Number(o?.lon))) {
-        setOrigin(o);
-      }
+      if (Number.isFinite(Number(o?.lat)) && Number.isFinite(Number(o?.lon))) setOrigin(o);
     } catch {}
   }
 }
@@ -833,13 +791,10 @@ function bindOriginButtons() {
     $("originStatus").textContent = "📍 Sto leggendo il GPS…";
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        const lat = pos.coords.latitude;
-        const lon = pos.coords.longitude;
-        setOrigin({ label: "La mia posizione", lat, lon });
+        setOrigin({ label: "La mia posizione", lat: pos.coords.latitude, lon: pos.coords.longitude });
         showStatus("ok", "Partenza GPS impostata ✅");
       },
-      (err) => {
-        console.error(err);
+      () => {
         $("originStatus").textContent = "❌ GPS non disponibile (permessi?)";
         showStatus("err", "GPS non disponibile. Scrivi un luogo e usa “Usa questo luogo”.");
       },
@@ -855,7 +810,6 @@ function bindOriginButtons() {
       setOrigin({ label: result.label || label, lat: result.lat, lon: result.lon });
       showStatus("ok", "Partenza impostata ✅");
     } catch (e) {
-      console.error(e);
       $("originStatus").textContent = `❌ ${String(e.message || e)}`;
       showStatus("err", `Geocoding fallito: ${String(e.message || e)}`);
     }
@@ -864,7 +818,6 @@ function bindOriginButtons() {
 
 function bindMainButtons() {
   $("btnFind")?.addEventListener("click", () => runSearch());
-
   $("btnResetVisited")?.addEventListener("click", () => {
     resetVisited();
     showStatus("ok", "Visitati resettati ✅");
@@ -882,6 +835,5 @@ restoreOrigin();
 bindOriginButtons();
 bindMainButtons();
 
-// preload macro
 loadMacro().catch(() => {});
 hideStatus();
