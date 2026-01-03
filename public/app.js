@@ -1,38 +1,39 @@
-/* Jamo — Auto-only — app.js v4.2 (EU+UK ALL + FAMILY BOOST)
- * FIXES:
- * - Family category is now VERY inclusive (parks/lakes/easy nature/borghi + kids POIs)
- * - Adds "Family vicino casa" list (8–12 nearby ideas) when category=family
- * - Family scoring boost prioritizes easy/near/family-signals
+/* Jamo — Auto-only — app.js v4.0 (FULL FIX)
+ * - Macro loader: macros_index.json + robust fallback (no more 404 crashes)
+ * - Better category matching (family/storia/borghi) + smart widening
+ * - Working reset "proposte di oggi"
+ * - Immediate links: Foto / Cosa vedere / Cosa fare / Ristoranti / Wiki (+ Flights/Trains/Bus)
+ * - Bigger monetization buttons
+ * - If macro contains things_to_do/family -> show Family panel + things nearby
  */
 
 const $ = (id) => document.getElementById(id);
 
-// -------------------- SETTINGS --------------------
-const MACRO_URL = "/data/macros/euuk_macro_all.json";
+// -------------------- DATA SOURCES --------------------
+const MACROS_INDEX_URL = "/data/macros/macros_index.json";
 
-// driving estimator (offline)
+// Fallback macro that MUST exist (you have it in repo)
+const FALLBACK_MACRO_URLS = [
+  "/data/macros/euuk_macro_all.json",
+  "/data/macros/it_macro_01_abruzzo.json",
+];
+
+// -------------------- ROUTING / ESTIMATOR --------------------
 const ROAD_FACTOR = 1.25;
 const AVG_KMH = 72;
 const FIXED_OVERHEAD_MIN = 8;
 
-// ROTATION
-const RECENT_TTL_MS = 1000 * 60 * 60 * 20;
+// -------------------- ROTATION --------------------
+const RECENT_TTL_MS = 1000 * 60 * 60 * 20; // ~20h
 const RECENT_MAX = 160;
 let SESSION_SEEN = new Set();
 let LAST_SHOWN_PID = null;
 
-// Monetization IDs
-const BOOKING_AID = "";
-const AMAZON_TAG  = "";
-const GYG_PID     = "";
-const TIQETS_PID  = "";
-
-// Optional WhatsApp lead
-const WHATSAPP_NUMBER = "";
-
-// Family "vicino casa" defaults
-const FAMILY_NEARBY_MAX_MIN = 60; // idee immediate entro 60 min
-const FAMILY_NEARBY_LIMIT = 12;
+// -------------------- MONETIZATION IDS (fill yours) --------------------
+const BOOKING_AID = ""; // Booking.com affiliate id (aid)
+const AMAZON_TAG  = ""; // Amazon tag
+const GYG_PID     = ""; // GetYourGuide partner_id
+const TIQETS_PID  = ""; // Tiqets partner
 
 // -------------------- UTIL --------------------
 function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
@@ -60,71 +61,79 @@ function normName(s) {
 }
 
 function safeIdFromPlace(p) {
-  return p.id || `p_${normName(p.name)}_${String(p.lat).slice(0,6)}_${String(p.lon).slice(0,6)}`;
+  return p.id || `p_${normName(p.name)}_${String(p.lat).slice(0, 6)}_${String(p.lon ?? p.lng).slice(0, 6)}`;
 }
 
 function estCarMinutesFromKm(km) {
   const roadKm = km * ROAD_FACTOR;
   const driveMin = (roadKm / AVG_KMH) * 60;
-  return Math.round(clamp(driveMin + FIXED_OVERHEAD_MIN, 8, 900));
+  return Math.round(clamp(driveMin + FIXED_OVERHEAD_MIN, 6, 900));
 }
 
 function fmtKm(km) { return `${Math.round(km)} km`; }
 
+// -------------------- MAPS + INFO LINKS --------------------
 function mapsPlaceUrl(lat, lon) {
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(lat + "," + lon)}`;
 }
-
 function mapsDirUrl(oLat, oLon, dLat, dLon) {
   return `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(oLat + "," + oLon)}&destination=${encodeURIComponent(dLat + "," + dLon)}&travelmode=driving`;
 }
-
-// -------------------- QUICK “INFO” LINKS --------------------
-function googleThingsToDoUrl(placeName, countryCode = "") {
-  const q = `${placeName}${countryCode ? " " + countryCode : ""} cosa vedere things to do`;
-  return `https://www.google.com/search?q=${encodeURIComponent(q)}&tbm=pts`;
-}
-function googleWhatToDoUrl(placeName, countryCode = "") {
-  const q = `${placeName}${countryCode ? " " + countryCode : ""} cosa fare activities`;
-  return `https://www.google.com/search?q=${encodeURIComponent(q)}`;
-}
-function googleImagesUrl(placeName, countryCode = "") {
-  const q = `${placeName}${countryCode ? " " + countryCode : ""}`;
-  return `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(q)}`;
-}
-function googleRestaurantsUrl(placeName, countryCode = "") {
-  const q = `${placeName}${countryCode ? " " + countryCode : ""} ristoranti restaurants`;
+function gmapsQueryUrl(q) {
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
 }
-function wikipediaUrl(placeName, countryCode = "") {
-  const q = `${placeName}${countryCode ? " " + countryCode : ""}`;
-  return `https://it.wikipedia.org/w/index.php?search=${encodeURIComponent(q)}`;
+function googleImagesUrl(q) {
+  return `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(q)}`;
+}
+function googleThingsToDoUrl(q) {
+  // "cosa vedere" / "cosa fare"
+  return `https://www.google.com/search?q=${encodeURIComponent("cosa vedere " + q)}`;
+}
+function googleDoUrl(q) {
+  return `https://www.google.com/search?q=${encodeURIComponent("cosa fare " + q)}`;
+}
+function wikiUrl(title) {
+  // IT wikipedia search
+  return `https://it.wikipedia.org/w/index.php?search=${encodeURIComponent(title)}`;
+}
+function restaurantsUrl(q) {
+  return gmapsQueryUrl(`${q} ristoranti`);
+}
+function eventsUrl(q) {
+  // simple, offline-safe: google search "eventi + luogo"
+  return `https://www.google.com/search?q=${encodeURIComponent("eventi " + q)}`;
 }
 
-// -------------------- Monetization URLs --------------------
-function bookingUrl(placeName, countryCode = "", affId = "") {
-  const q = `${placeName}${countryCode ? ", " + countryCode : ""}`;
-  const base = `https://www.booking.com/searchresults.html?ss=${encodeURIComponent(q)}`;
+// transport (no routes, just search page)
+function flightsUrl(cityOrPlace) {
+  return `https://www.google.com/travel/flights?q=${encodeURIComponent(cityOrPlace)}`;
+}
+function trainsUrl(cityOrPlace) {
+  return `https://www.thetrainline.com/it?search=${encodeURIComponent(cityOrPlace)}`;
+}
+function busUrl(cityOrPlace) {
+  return `https://www.omio.it/search?query=${encodeURIComponent(cityOrPlace)}`;
+}
+
+// -------------------- Monetization URLs (robust) --------------------
+function bookingUrl(q, countryCode = "", affId = "") {
+  const query = `${q}${countryCode ? ", " + countryCode : ""}`;
+  const base = `https://www.booking.com/searchresults.html?ss=${encodeURIComponent(query)}`;
   return affId ? `${base}&aid=${encodeURIComponent(affId)}` : base;
 }
-function getYourGuideUrl(placeName, countryCode = "", affId = "") {
-  const q = `${placeName}${countryCode ? " " + countryCode : ""}`;
+function getYourGuideUrl(q, affId = "") {
+  // GYG is picky: prefer query-only search (works better)
   const base = `https://www.getyourguide.com/s/?q=${encodeURIComponent(q)}`;
   return affId ? `${base}&partner_id=${encodeURIComponent(affId)}` : base;
 }
-function tiqetsUrl(placeName, countryCode = "", affId = "") {
-  const q = `${placeName}${countryCode ? " " + countryCode : ""}`;
-  const base = `https://www.tiqets.com/it/search/?query=${encodeURIComponent(q)}`;
+function tiqetsUrl(q, affId = "") {
+  // Tiqets query page sometimes 404 with certain locales/paths: use root + query
+  const base = `https://www.tiqets.com/en/search/?query=${encodeURIComponent(q)}`;
   return affId ? `${base}&partner=${encodeURIComponent(affId)}` : base;
 }
 function amazonEssentialsUrl(tag = "") {
-  const base = `https://www.amazon.it/s?k=${encodeURIComponent("accessori viaggio bambini")}`;
+  const base = `https://www.amazon.it/s?k=${encodeURIComponent("accessori viaggio")}#`;
   return tag ? `${base}&tag=${encodeURIComponent(tag)}` : base;
-}
-function whatsappLeadUrl(placeName) {
-  if (!WHATSAPP_NUMBER) return "";
-  const msg = `Ciao! Mi consigli un'idea FAMILY vicino a ${placeName}? (itinerario facile con bambini)`;
-  return `https://wa.me/${WHATSAPP_NUMBER.replace(/\D/g, "")}?text=${encodeURIComponent(msg)}`;
 }
 
 // -------------------- STORAGE: origin + visited + recent --------------------
@@ -141,7 +150,6 @@ function getOrigin() {
   const lat = Number($("originLat").value);
   const lon = Number($("originLon").value);
   const label = ($("originLabel").value || "").trim();
-
   if (Number.isFinite(lat) && Number.isFinite(lon)) return { label, lat, lon };
 
   const raw = localStorage.getItem("jamo_origin");
@@ -157,16 +165,27 @@ function getVisitedSet() {
     return new Set(Array.isArray(arr) ? arr : []);
   } catch { return new Set(); }
 }
-function saveVisitedSet(set) { localStorage.setItem("jamo_visited", JSON.stringify([...set])); }
-function markVisited(placeId) { const s = getVisitedSet(); s.add(placeId); saveVisitedSet(s); }
-function resetVisited() { localStorage.removeItem("jamo_visited"); }
+function saveVisitedSet(set) {
+  localStorage.setItem("jamo_visited", JSON.stringify([...set]));
+}
+function markVisited(placeId) {
+  const s = getVisitedSet();
+  s.add(placeId);
+  saveVisitedSet(s);
+}
+function resetVisited() {
+  localStorage.removeItem("jamo_visited");
+}
 
 function loadRecent() {
   const raw = localStorage.getItem("jamo_recent");
   if (!raw) return [];
-  try { const arr = JSON.parse(raw); return Array.isArray(arr) ? arr : []; } catch { return []; }
+  try { return Array.isArray(JSON.parse(raw)) ? JSON.parse(raw) : []; }
+  catch { return []; }
 }
-function saveRecent(list) { localStorage.setItem("jamo_recent", JSON.stringify(list.slice(0, RECENT_MAX))); }
+function saveRecent(list) {
+  localStorage.setItem("jamo_recent", JSON.stringify(list.slice(0, RECENT_MAX)));
+}
 function cleanupRecent(list) {
   const t = Date.now();
   return list.filter(x => x && x.pid && (t - (x.ts || 0) <= RECENT_TTL_MS));
@@ -190,7 +209,7 @@ function resetRotation() {
   LAST_SHOWN_PID = null;
 }
 
-// -------------------- UI (chips) --------------------
+// -------------------- UI state (chips) --------------------
 function initChips(containerId, { multi = false } = {}) {
   const el = $(containerId);
   if (!el) return;
@@ -202,7 +221,9 @@ function initChips(containerId, { multi = false } = {}) {
     if (!multi) {
       [...el.querySelectorAll(".chip")].forEach(c => c.classList.remove("active"));
       chip.classList.add("active");
-    } else chip.classList.toggle("active");
+    } else {
+      chip.classList.toggle("active");
+    }
 
     if (containerId === "timeChips") {
       const v = Number(chip.dataset.min);
@@ -210,15 +231,20 @@ function initChips(containerId, { multi = false } = {}) {
     }
   });
 }
+
 function getActiveCategory() {
   const el = $("categoryChips");
   const active = el?.querySelector(".chip.active");
   return active?.dataset.cat || "ovunque";
 }
+
 function getActiveStyles() {
   const el = $("styleChips");
   const actives = [...(el?.querySelectorAll(".chip.active") || [])].map(c => c.dataset.style);
-  return { wantChicche: actives.includes("chicche"), wantClassici: actives.includes("classici") };
+  return {
+    wantChicche: actives.includes("chicche"),
+    wantClassici: actives.includes("classici"),
+  };
 }
 
 function showStatus(type, text) {
@@ -231,17 +257,99 @@ function showStatus(type, text) {
   t.textContent = text;
   box.style.display = "block";
 }
-function hideStatus() { $("statusBox").style.display = "none"; $("statusText").textContent = ""; }
 
-// -------------------- DATA --------------------
+function hideStatus() {
+  $("statusBox").style.display = "none";
+  $("statusText").textContent = "";
+}
+
+// -------------------- MACRO LOADING (NO MORE 404) --------------------
+let MACROS_INDEX = null;
 let MACRO = null;
-async function loadMacro() {
-  const r = await fetch(MACRO_URL, { cache: "no-store" });
-  if (!r.ok) throw new Error(`Macro non trovato (${r.status}) → ${MACRO_URL}`);
-  const j = await r.json();
-  if (!j?.places || !Array.isArray(j.places)) throw new Error("Macro invalido: manca places[]");
-  MACRO = j;
+let MACRO_SOURCE_URL = null;
+
+async function fetchJson(url) {
+  const r = await fetch(url, { cache: "no-store" });
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  return await r.json();
+}
+
+async function loadMacrosIndexSafe() {
+  try {
+    MACROS_INDEX = await fetchJson(MACROS_INDEX_URL);
+    return MACROS_INDEX;
+  } catch (e) {
+    // Index not required; we can still use fallback macro
+    MACROS_INDEX = null;
+    return null;
+  }
+}
+
+async function tryLoadMacro(url) {
+  const r = await fetch(url, { cache: "no-store" });
+  if (!r.ok) return null;
+  const j = await r.json().catch(() => null);
+  if (!j?.places || !Array.isArray(j.places) || j.places.length === 0) return null;
   return j;
+}
+
+function inferScopeFromOriginLabel(label) {
+  const s = normName(label || "");
+  // super simple: if label contains a country/region in EU, still ok; we default to EUUK all
+  // if label contains italian things, prefer italy country macro if exists
+  if (s.includes("italia") || s.includes("italy") || s.includes("l aquila") || s.includes("roma") || s.includes("pescara")) return "IT";
+  return "EUUK";
+}
+
+async function loadBestMacroForOrigin(origin) {
+  if (!origin) origin = getOrigin();
+
+  // If user previously picked a macro, try it first
+  const saved = localStorage.getItem("jamo_macro_url");
+  if (saved) {
+    const m = await tryLoadMacro(saved);
+    if (m) { MACRO = m; MACRO_SOURCE_URL = saved; return m; }
+  }
+
+  // Load index if present
+  await loadMacrosIndexSafe();
+
+  // Prefer EUUK all to avoid missing region files
+  const preferredScope = inferScopeFromOriginLabel(origin?.label || "");
+
+  const candidates = [];
+  if (MACROS_INDEX?.items?.length) {
+    // Always include euuk_macro_all if present
+    const euukAll = MACROS_INDEX.items.find(x => x.id === "euuk_macro_all" || x.path?.includes("euuk_macro_all.json"));
+    if (euukAll?.path) candidates.push(euukAll.path);
+
+    // Include euuk_country_it if IT
+    if (preferredScope === "IT") {
+      const itCountry = MACROS_INDEX.items.find(x => x.id === "euuk_country_it" || (x.scope === "country" && x.country === "IT" && x.path?.includes("euuk_country_it.json")));
+      if (itCountry?.path) candidates.unshift(itCountry.path);
+    }
+  }
+
+  // Append hard fallbacks
+  for (const u of FALLBACK_MACRO_URLS) candidates.push(u);
+
+  // Try in order
+  for (const url of candidates) {
+    const m = await tryLoadMacro(url);
+    if (m) {
+      MACRO = m;
+      MACRO_SOURCE_URL = url;
+      localStorage.setItem("jamo_macro_url", url);
+      return m;
+    }
+  }
+
+  throw new Error("Macro non trovato: nessun dataset valido disponibile.");
+}
+
+async function ensureMacroLoaded() {
+  if (MACRO) return MACRO;
+  return await loadBestMacroForOrigin(getOrigin());
 }
 
 // -------------------- GEOCODING --------------------
@@ -250,145 +358,89 @@ async function geocodeLabel(label) {
   if (!q) throw new Error("Scrivi un luogo (es: L'Aquila, Roma, Via Roma 10)");
   const r = await fetch(`/api/geocode?q=${encodeURIComponent(q)}`, { method: "GET" });
   const j = await r.json().catch(() => null);
-
   if (!j) throw new Error("Geocoding fallito (risposta vuota)");
   if (!j.ok) throw new Error(j.error || "Geocoding fallito");
   if (!j.result || !Number.isFinite(Number(j.result.lat)) || !Number.isFinite(Number(j.result.lon))) {
     throw new Error("Geocoding fallito (coordinate non valide)");
   }
-  return j.result;
+  return j.result; // {label, lat, lon}
 }
 
-// -------------------- FAMILY SIGNALS --------------------
-function familySignals(place) {
-  const tags = (place.tags || []).map(t => String(t).toLowerCase());
-  const n = normName(place.name || "");
-  const type = String(place.type || "").toLowerCase();
-
-  // strong kids-specific
-  const strong = [
-    "zoo","aquarium","acquario","theme park","themepark","parco divertimenti","luna park",
-    "playground","area giochi","kids","children","bambini","family","fattoria didattica","farm",
-    "parco avventura","adventure park"
-  ];
-  if (strong.some(x => n.includes(x)) || tags.some(t => strong.includes(t))) return 3;
-
-  // medium: parks/lakes/beaches/easy nature (great with family)
-  const mediumTags = ["park","parco","lago","lake","beach","spiaggia","mare","natura","riserva","reserve","viewpoint","panorama"];
-  const mediumName = ["parco","park","lago","lake","spiaggia","beach","riserva","reserve","belvedere","viewpoint","cascata","waterfall"];
-  if (
-    mediumTags.some(x => tags.includes(x)) ||
-    mediumName.some(x => n.includes(x)) ||
-    ["natura","mare","relax","borgo","citta","city"].includes(type)
-  ) return 2;
-
-  // light: museums/castles can still be family-friendly
-  const light = ["museo","museum","castello","castle","abbazia","abbey","centro storico","old town"];
-  if (light.some(x => n.includes(x)) || tags.some(t => light.includes(t))) return 1;
-
-  return 0;
+// -------------------- FILTERS (IMPROVED) --------------------
+function placeTags(place) {
+  return (place.tags || []).map(t => String(t).toLowerCase());
 }
 
-function familyWhyQuick(place) {
-  const n = normName(place.name || "");
-  const tags = (place.tags || []).map(t => String(t).toLowerCase());
+function isFamilyPlace(place) {
+  const tags = placeTags(place);
+  const t = String(place.type || "").toLowerCase();
+  if (t === "family" || t === "bambini") return true;
 
-  // short ideas (no AI needed, deterministic)
-  const ideas = [];
+  // accepts many variants
+  if (tags.includes("famiglie") || tags.includes("family") || tags.includes("bambini") || tags.includes("animali")) return true;
 
-  if (n.includes("parco") || tags.includes("parco") || tags.includes("park")) ideas.push("Passeggiata + area verde (easy).");
-  if (n.includes("lago") || tags.includes("lago") || tags.includes("lake")) ideas.push("Giro lago + foto + merenda.");
-  if (n.includes("spiaggia") || tags.includes("beach") || tags.includes("mare")) ideas.push("Spiaggia facile (se stagione) + passeggio.");
-  if (n.includes("cascata") || tags.includes("waterfall")) ideas.push("Mini-trekking semplice (scarpe comode).");
-  if (n.includes("zoo") || tags.includes("zoo")) ideas.push("Animali + attività per bambini.");
-  if (n.includes("acquario") || tags.includes("aquarium")) ideas.push("Visita indoor perfetta anche se piove.");
-  if (n.includes("castello") || tags.includes("castle")) ideas.push("Castello = visita breve + wow per i bimbi.");
+  // if macro has family object
+  if (place.family && (place.family.bimbi || place.family.ragazzi || (Number(place.family.score) || 0) >= 0.2)) return true;
 
-  if (ideas.length === 0) ideas.push("Gita easy + passeggio + gelato.");
+  // fallback: if has "parco" "zoo" etc in name
+  const n = normName(place.name);
+  if (n.includes("parco") || n.includes("zoo") || n.includes("acquario") || n.includes("area giochi") || n.includes("playground")) return true;
 
-  return ideas.slice(0, 3);
+  return false;
 }
 
-// -------------------- FILTERS --------------------
 function matchesCategory(place, cat) {
   if (!cat || cat === "ovunque") return true;
 
   const type = String(place.type || "").toLowerCase();
-  const tags = (place.tags || []).map(t => String(t).toLowerCase());
-  const n = normName(place.name || "");
+  const tags = placeTags(place);
+  const n = normName(place.name);
 
-  const hasAnyTag = (...xs) => xs.some(x => tags.includes(x));
-  const nameHasAny = (...xs) => xs.some(x => n.includes(x));
-
-  if (cat === "citta") {
-    return type === "citta" || type === "city" || hasAnyTag("citta","city") || nameHasAny("city","citta");
-  }
-
-  if (cat === "borghi") {
-    return (
-      type === "borgo" ||
-      hasAnyTag("borgo","oldtown","old_town","historic","heritage") ||
-      nameHasAny("borgo","centro storico","old town","historic centre","historic center","castel","castello","rocca")
-    );
-  }
-
-  if (cat === "mare") {
-    return (
-      type === "mare" ||
-      hasAnyTag("mare","sea","beach","spiagge","spiaggia","coast","costa","lido","trabocchi") ||
-      nameHasAny("spiaggia","beach","lido","marina","costa","coast","faro","harbour","porto")
-    );
-  }
-
-  if (cat === "montagna") {
-    return (
-      type === "montagna" ||
-      hasAnyTag("montagna","mountain","neve","snow","ski") ||
-      nameHasAny("monte","mount","mountain","peak","vetta","rifugio","ski")
-    );
-  }
-
-  if (cat === "natura") {
-    return (
-      type === "natura" ||
-      hasAnyTag("natura","nature","lago","lake","parco","park","national_park","parco_nazionale","riserva","reserve","canyon","gole","cascata","waterfall","sentiero","trail","trekking") ||
-      nameHasAny("parco","park","riserva","reserve","gole","canyon","cascata","waterfall","lago","lake","sentiero","trail")
-    );
-  }
-
-  if (cat === "storia") {
-    return (
-      type === "storia" ||
-      hasAnyTag("storia","history","museo","museum","castello","castle","abbazia","abbey","cathedral","duomo","church","archaeology","heritage") ||
-      nameHasAny("castello","castle","rocca","forte","fortress","abbazia","abbey","duomo","cattedrale","cathedral","basilica","church","chiesa","museo","museum","archeo","anfiteatro","amphitheatre","teatro romano","roman theatre")
-    );
-  }
-
-  if (cat === "relax") {
-    return (
-      type === "relax" ||
-      hasAnyTag("relax","spa","terme","thermal","wellness") ||
-      nameHasAny("terme","spa","thermal","wellness")
-    );
-  }
-
-  if (cat === "family") {
-    // ✅ SUPER-INCLUSIVE:
-    // - anything with familySignals >= 2
-    // - plus parks/lakes/beaches/borghi (great for kids) unless obviously "nightlife"
-    const sig = familySignals(place);
-    if (sig >= 2) return true;
-
-    const anti = ["nightclub","club","discoteca","casino"];
-    if (anti.some(x => n.includes(x))) return false;
-
-    // fallback: places that are generally family friendly (easy categories)
-    if (["natura","mare","borgo","citta","city","relax"].includes(type)) return true;
-    if (hasAnyTag("parco","park","lago","lake","beach","spiaggia","mare","natura")) return true;
-    if (nameHasAny("parco","park","lago","lake","spiaggia","beach","belvedere","viewpoint")) return true;
-
-    return false;
-  }
+  if (cat === "citta") return type === "citta" || tags.includes("citta") || tags.includes("city");
+  if (cat === "borghi") return type === "borgo" || tags.includes("borgo") || n.includes("borgo") || n.includes("old town");
+  if (cat === "mare") return (
+    type === "mare" ||
+    tags.includes("mare") ||
+    tags.includes("trabocchi") ||
+    tags.includes("spiagge") ||
+    tags.includes("spiaggia") ||
+    tags.includes("lido") ||
+    n.includes("spiaggia") ||
+    n.includes("beach")
+  );
+  if (cat === "montagna") return (
+    type === "montagna" ||
+    tags.includes("montagna") ||
+    tags.includes("neve") ||
+    n.includes("monte") ||
+    n.includes("mount")
+  );
+  if (cat === "natura") return (
+    type === "natura" ||
+    tags.includes("natura") ||
+    tags.includes("lago") ||
+    tags.includes("gole") ||
+    tags.includes("cascata") ||
+    tags.includes("riserva") ||
+    tags.includes("parco") ||
+    n.includes("parco") ||
+    n.includes("lake") ||
+    n.includes("waterfall")
+  );
+  if (cat === "storia") return (
+    type === "storia" ||
+    tags.includes("storia") ||
+    tags.includes("castello") ||
+    tags.includes("abbazia") ||
+    tags.includes("museo") ||
+    n.includes("castello") ||
+    n.includes("abbazia") ||
+    n.includes("museum") ||
+    n.includes("cathedral") ||
+    n.includes("fort")
+  );
+  if (cat === "relax") return type === "relax" || tags.includes("relax") || tags.includes("terme") || tags.includes("spa");
+  if (cat === "family") return isFamilyPlace(place);
 
   return true;
 }
@@ -400,38 +452,36 @@ function matchesStyle(place, { wantChicche, wantClassici }) {
   return !!wantClassici;
 }
 
+function baseScorePlace({ driveMin, targetMin, beautyScore, familyBoost, isChicca }) {
+  const t = clamp(1 - Math.abs(driveMin - targetMin) / Math.max(25, targetMin * 0.9), 0, 1);
+  const b = clamp(Number(beautyScore) || 0.70, 0.35, 1);
+  const c = isChicca ? 0.05 : 0;
+  const f = clamp(familyBoost || 0, 0, 0.12);
+  return 0.58 * t + 0.33 * b + c + f;
+}
+
 function rotationPenalty(pid, recentSet) {
   let pen = 0;
-  if (pid && pid === LAST_SHOWN_PID) pen += 0.28;
-  if (SESSION_SEEN.has(pid)) pen += 0.22;
-  if (recentSet.has(pid)) pen += 0.14;
+  if (pid && pid === LAST_SHOWN_PID) pen += 0.22;
+  if (SESSION_SEEN.has(pid)) pen += 0.18;
+  if (recentSet.has(pid)) pen += 0.10;
   return pen;
 }
 
-function baseScorePlace({ driveMin, targetMin, beautyScore, isChicca, familyMode, familySig }) {
-  const t = clamp(1 - Math.abs(driveMin - targetMin) / Math.max(25, targetMin * 0.85), 0, 1);
-  const b = clamp(Number(beautyScore) || 0.78, 0.4, 1);
-  const c = isChicca ? 0.06 : 0;
-
-  let s = 0.60 * t + 0.36 * b + c;
-
-  // ✅ family boost (prefer easy + strong signals)
-  if (familyMode) {
-    // stronger signals matter
-    s += 0.06 * clamp(familySig / 3, 0, 1);
-    // prefer closer (kids)
-    if (driveMin <= 35) s += 0.04;
-    else if (driveMin <= 55) s += 0.02;
-  }
-
-  return s;
-}
-
-// -------------------- TIME “SMART” --------------------
+// -------------------- TIME SMART WIDENING --------------------
 function effectiveMaxMinutes(maxMinutes, category) {
   const m = Number(maxMinutes);
   if (!Number.isFinite(m)) return 120;
+
+  // family often needs a bit more range, but keep it sane
+  if (category === "family" && m < 60) return clamp(Math.round(m * 1.4), m, 150);
+
+  // mare needs more sometimes
   if (category === "mare" && m < 75) return clamp(Math.round(m * 1.35), m, 180);
+
+  // storia at 30 sometimes too strict - gently widen
+  if (category === "storia" && m < 45) return clamp(Math.round(m * 1.25), m, 120);
+
   return clamp(m, 10, 600);
 }
 
@@ -439,18 +489,16 @@ function effectiveMaxMinutes(maxMinutes, category) {
 function buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited = false, ignoreRotation = false } = {}) {
   const visited = getVisitedSet();
   const recentSet = getRecentSet();
-
   const target = Number(maxMinutes);
+
   const oLat = Number(origin.lat);
   const oLon = Number(origin.lon);
-
-  const familyMode = category === "family";
 
   const candidates = [];
 
   for (const p of MACRO.places) {
     const lat = Number(p.lat);
-    const lon = Number(p.lon);
+    const lon = Number(p.lon ?? p.lng);
     if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
 
     if (!matchesCategory(p, category)) continue;
@@ -462,30 +510,29 @@ function buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited =
     const km = haversineKm(oLat, oLon, lat, lon);
     const driveMin = estCarMinutesFromKm(km);
 
+    // keep “nearby” results, allow closer than before for family
     if (driveMin > target) continue;
-    if (km < 1.2) continue;
+    if (km < (category === "family" ? 0.6 : 1.2)) continue;
 
     const isChicca = String(p.visibility || "").toLowerCase() === "chicca";
-    const familySig = familySignals(p);
+
+    // family boost if category is family OR place is family-friendly
+    const familyBoost =
+      (category === "family" || isFamilyPlace(p))
+        ? clamp((Number(p.family?.score) || 0.3) * 0.12, 0, 0.12)
+        : 0;
 
     let s = baseScorePlace({
       driveMin,
       targetMin: target,
       beautyScore: p.beauty_score,
-      isChicca,
-      familyMode,
-      familySig
+      familyBoost,
+      isChicca
     });
 
-    // small boosts
-    const tags = (p.tags || []).map(x => String(x).toLowerCase());
-    const n = normName(p.name || "");
-    if (tags.includes("panorama") || n.includes("belvedere") || n.includes("viewpoint")) s += 0.03;
-    if (tags.includes("spiagge") || tags.includes("castle") || tags.includes("castello") || tags.includes("abbazia")) s += 0.04;
+    if (!ignoreRotation) s = s - rotationPenalty(pid, recentSet);
 
-    if (!ignoreRotation) s -= rotationPenalty(pid, recentSet);
-
-    candidates.push({ place: p, pid, km, driveMin, score: Number(s.toFixed(4)), familySig });
+    candidates.push({ place: p, pid, km, driveMin, score: Number(s.toFixed(4)) });
   }
 
   candidates.sort((a, b) => (b.score - a.score) || (a.driveMin - b.driveMin));
@@ -494,151 +541,153 @@ function buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited =
 
 function pickDestination(origin, maxMinutes, category, styles) {
   let candidates = buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited: false, ignoreRotation: false });
+
+  // If empty, progressively relax
   if (candidates.length === 0) candidates = buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited: false, ignoreRotation: true });
   if (candidates.length === 0) candidates = buildCandidates(origin, maxMinutes, category, styles, { ignoreVisited: true, ignoreRotation: true });
 
   const chosen = candidates[0] || null;
   const alternatives = candidates.slice(1, 3);
-  return { chosen, alternatives, candidates };
+  return { chosen, alternatives, totalCandidates: candidates.length };
 }
 
-// -------------------- RENDER HELPERS --------------------
-function quickInfoButtonsHtml(placeName, countryCode = "IT") {
+// -------------------- UI HELPERS: big buttons --------------------
+function quickLinksHtml(place, origin) {
+  const name = place?.name || "";
+  const country = place?.country || place?.area || "";
+  const q = country ? `${name}, ${country}` : name;
+
+  const placeUrl = mapsPlaceUrl(place.lat, place.lon ?? place.lng);
+  const dirUrl = mapsDirUrl(origin.lat, origin.lon, place.lat, place.lon ?? place.lng);
+
   return `
     <div class="card" style="margin-top:12px;">
-      <div class="small muted">Info subito</div>
+      <div class="row wrap gap" style="margin-top:2px;">
+        <a class="btn" target="_blank" rel="noopener" href="${placeUrl}">🗺️ Maps</a>
+        <a class="btn" target="_blank" rel="noopener" href="${dirUrl}">🚗 Percorso</a>
+      </div>
+
       <div class="row wrap gap" style="margin-top:10px;">
-        <a class="btn" target="_blank" rel="noopener" href="${googleThingsToDoUrl(placeName, countryCode)}">👀 Cosa vedere</a>
-        <a class="btn" target="_blank" rel="noopener" href="${googleWhatToDoUrl(placeName, countryCode)}">🎯 Cosa fare</a>
-        <a class="btn" target="_blank" rel="noopener" href="${googleImagesUrl(placeName, countryCode)}">📷 Foto</a>
-        <a class="btn" target="_blank" rel="noopener" href="${googleRestaurantsUrl(placeName, countryCode)}">🍝 Ristoranti</a>
-        <a class="btn btn-ghost" target="_blank" rel="noopener" href="${wikipediaUrl(placeName, countryCode)}">📚 Wiki</a>
+        <a class="btn btn-ghost" target="_blank" rel="noopener" href="${googleImagesUrl(q)}">📸 Foto</a>
+        <a class="btn btn-ghost" target="_blank" rel="noopener" href="${googleThingsToDoUrl(q)}">👀 Cosa vedere</a>
+        <a class="btn btn-ghost" target="_blank" rel="noopener" href="${googleDoUrl(q)}">🎯 Cosa fare</a>
+        <a class="btn btn-ghost" target="_blank" rel="noopener" href="${restaurantsUrl(q)}">🍝 Ristoranti</a>
+        <a class="btn btn-ghost" target="_blank" rel="noopener" href="${wikiUrl(q)}">📚 Wiki</a>
       </div>
-    </div>
-  `;
-}
 
-function monetBoxHtml(placeName, countryCode = "IT") {
-  const wa = whatsappLeadUrl(placeName);
-  return `
-    <div class="card" style="margin-top:12px;">
-      <div class="small muted">Prenota / Scopri (monetizzabile)</div>
       <div class="row wrap gap" style="margin-top:10px;">
-        <a class="btn" target="_blank" rel="noopener" href="${bookingUrl(placeName, countryCode, BOOKING_AID)}">🏨 Hotel</a>
-        <a class="btn" target="_blank" rel="noopener" href="${getYourGuideUrl(placeName, countryCode, GYG_PID)}">🎟️ Tour</a>
-        <a class="btn" target="_blank" rel="noopener" href="${tiqetsUrl(placeName, countryCode, TIQETS_PID)}">🏛️ Biglietti</a>
-        <a class="btn btn-ghost" target="_blank" rel="noopener" href="${amazonEssentialsUrl(AMAZON_TAG)}">🧳 Essenziali</a>
-        ${wa ? `<a class="btn btn-ghost" target="_blank" rel="noopener" href="${wa}">💬 WhatsApp</a>` : ""}
-      </div>
-      <div class="small muted" style="margin-top:8px;">
-        Inserisci i tuoi ID affiliato in app.js (BOOKING_AID / GYG_PID / TIQETS_PID / AMAZON_TAG)
+        <a class="btn btn-ghost" target="_blank" rel="noopener" href="${eventsUrl(q)}">📅 Eventi</a>
+        <a class="btn btn-ghost" target="_blank" rel="noopener" href="${flightsUrl(q)}">✈️ Voli</a>
+        <a class="btn btn-ghost" target="_blank" rel="noopener" href="${trainsUrl(q)}">🚆 Treni</a>
+        <a class="btn btn-ghost" target="_blank" rel="noopener" href="${busUrl(q)}">🚌 Bus</a>
       </div>
     </div>
   `;
 }
 
-function familyNearbyHtml(list, origin) {
-  if (!list || list.length === 0) return "";
+function familyPanelHtml(place) {
+  const fam = place.family || null;
+  const ttd = place.things_to_do || null;
+
+  // if macro doesn't provide it, we still show a generic family hint using tags
+  const tags = placeTags(place);
+  const isFam = isFamilyPlace(place);
+
+  const score = fam ? (Number(fam.score) || 0) : (isFam ? 0.4 : 0);
+  const bimbi = fam ? !!fam.bimbi : (tags.includes("bambini") || tags.includes("famiglie"));
+  const ragazzi = fam ? !!fam.ragazzi : (tags.includes("family") || tags.includes("famiglie"));
+
+  const toList = (arr) => (Array.isArray(arr) && arr.length)
+    ? `<ul style="margin:8px 0 0; padding-left:18px; color: var(--muted);">
+         ${arr.slice(0, 8).map(x => `<li>${x}</li>`).join("")}
+       </ul>`
+    : `<div class="small muted" style="margin-top:6px;">Nessun dettaglio salvato offline: usa “Cosa vedere / Cosa fare”.</div>`;
+
+  return `
+    <div class="card" style="margin-top:12px; border-color: rgba(0,224,255,.35);">
+      <div class="pill">👨‍👩‍👧‍👦 Famiglia</div>
+      <div class="small muted" style="margin-top:6px;">
+        Consigliata: <b>${score >= 0.35 ? "Sì" : "Dipende"}</b>
+        • Bimbi: <b>${bimbi ? "Sì" : "—"}</b>
+        • Ragazzi: <b>${ragazzi ? "Sì" : "—"}</b>
+      </div>
+
+      ${ttd ? `
+        <div class="small" style="margin-top:10px; font-weight:800;">🎟️ Attrazioni vicine</div>
+        ${toList(ttd.attractions)}
+
+        <div class="small" style="margin-top:10px; font-weight:800;">🌿 Natura / Passeggiate</div>
+        ${toList(ttd.nature)}
+
+        <div class="small" style="margin-top:10px; font-weight:800;">🍝 Food (segnali)</div>
+        ${toList(ttd.food)}
+      ` : `
+        <div class="small muted" style="margin-top:10px;">
+          Tip: apri “Ristoranti” e “Eventi” per idee family immediate.
+        </div>
+      `}
+    </div>
+  `;
+}
+
+function monetBoxHtml(placeName, country = "") {
+  const q = country ? `${placeName}, ${country}` : placeName;
 
   return `
     <div class="card" style="margin-top:12px;">
-      <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
-        <div class="small muted">👨‍👩‍👧‍👦 Family vicino casa (idee immediate)</div>
-        <div class="pill">entro ~${FAMILY_NEARBY_MAX_MIN} min</div>
+      <div class="small muted">💸 Prenota al volo (link monetizzabili)</div>
+
+      <div class="row wrap gap" style="margin-top:10px;">
+        <a class="btn" target="_blank" rel="noopener" href="${bookingUrl(q, "", BOOKING_AID)}">🏨 Hotel</a>
+        <a class="btn" target="_blank" rel="noopener" href="${getYourGuideUrl(q, GYG_PID)}">🎟️ Tour</a>
+        <a class="btn" target="_blank" rel="noopener" href="${tiqetsUrl(q, TIQETS_PID)}">🏛️ Biglietti</a>
+        <a class="btn" target="_blank" rel="noopener" href="${amazonEssentialsUrl(AMAZON_TAG)}">🧳 Essenziali</a>
       </div>
 
       <div class="small muted" style="margin-top:8px;">
-        Toccane una per vedere foto / cosa fare / percorso.
-      </div>
-
-      <div style="margin-top:10px; display:flex; flex-direction:column; gap:10px;">
-        ${list.map(x => {
-          const p = x.place;
-          const country = p.country || "IT";
-          const placeUrl = mapsPlaceUrl(p.lat, p.lon);
-          const dirUrl = mapsDirUrl(origin.lat, origin.lon, p.lat, p.lon);
-          const ideas = familyWhyQuick(p).join(" • ");
-
-          return `
-            <div class="card" style="padding:12px; border-color: rgba(255,255,255,.12);">
-              <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
-                <div>
-                  <div style="font-weight:800; font-size:15px; line-height:1.2;">
-                    ${p.name} <span class="small muted">(${p.type || "meta"})</span>
-                  </div>
-                  <div class="small muted" style="margin-top:4px;">
-                    ~${x.driveMin} min • ${fmtKm(x.km)} • ${ideas}
-                  </div>
-                </div>
-                <div class="pill">Family</div>
-              </div>
-
-              <div class="row wrap gap" style="margin-top:10px;">
-                <a class="btn" href="${googleImagesUrl(p.name, country)}" target="_blank" rel="noopener">📷 Foto</a>
-                <a class="btn" href="${googleWhatToDoUrl(p.name, country)}" target="_blank" rel="noopener">🎯 Cosa fare</a>
-                <a class="btn btn-ghost" href="${placeUrl}" target="_blank" rel="noopener">Maps</a>
-                <a class="btn btn-ghost" href="${dirUrl}" target="_blank" rel="noopener">Percorso</a>
-              </div>
-            </div>
-          `;
-        }).join("")}
+        (Per monetizzare: inserisci i tuoi ID in app.js: BOOKING_AID / GYG_PID / TIQETS_PID / AMAZON_TAG)
       </div>
     </div>
   `;
 }
 
-// -------------------- RENDER MAIN RESULT --------------------
-function renderNoResult(maxMinutesShown, category) {
-  const area = $("resultArea");
-  const extra = (category === "family")
-    ? `Consiglio: prova 45–90 min. Family “vicino casa” ti dovrebbe mostrare comunque idee immediate.`
-    : `Prova ad aumentare i minuti o cambiare categoria/stile.`;
-
-  area.innerHTML = `
-    <div class="card errbox">
-      <div class="small">❌ Nessuna meta trovata entro ${maxMinutesShown} min con i filtri attuali.</div>
-      <div class="small muted" style="margin-top:6px;">${extra}</div>
-      <div class="row wrap gap" style="margin-top:12px;">
-        <button class="btn" id="btnResetRotation">🧽 Reset “proposte di oggi”</button>
-      </div>
-    </div>
-  `;
-
-  $("btnResetRotation")?.addEventListener("click", () => {
-    resetRotation();
-    showStatus("ok", "Reset fatto ✅ Ora rilancio la ricerca…");
-    runSearch({ silent: true });
-  });
-}
-
+// -------------------- RENDER --------------------
 function renderResult(origin, maxMinutesShown, chosen, alternatives, meta = {}) {
   const area = $("resultArea");
   const category = meta.category || "ovunque";
-  const familyNearbyBlock = meta.familyNearbyHtml || "";
 
   if (!chosen) {
-    area.innerHTML = familyNearbyBlock + `<div style="margin-top:12px;"></div>`;
-    renderNoResult(maxMinutesShown, category);
+    const extra = `Prova ad aumentare i minuti o cambiare categoria/stile.`;
+    area.innerHTML = `
+      <div class="card errbox">
+        <div class="small">❌ Nessuna meta trovata entro ${maxMinutesShown} min con i filtri attuali.</div>
+        <div class="small muted" style="margin-top:6px;">${extra}</div>
+        <div class="row wrap gap" style="margin-top:12px;">
+          <button class="btn btn-ghost" id="btnResetRotation">🧽 Reset “proposte di oggi”</button>
+        </div>
+      </div>
+    `;
+    $("btnResetRotation")?.addEventListener("click", () => {
+      resetRotation();
+      showStatus("ok", "Reset fatto ✅ Ora ti ripropongo mete anche già viste oggi.");
+      // optional auto-run
+      runSearch({ silent: true });
+    });
     return;
   }
 
   const p = chosen.place;
   const pid = chosen.pid;
-  const country = p.country || "IT";
 
   const isChicca = String(p.visibility || "").toLowerCase() === "chicca";
   const badge = isChicca ? "✨ chicca" : "✅ classica";
-
-  const placeUrl = mapsPlaceUrl(p.lat, p.lon);
-  const dirUrl = mapsDirUrl(origin.lat, origin.lon, p.lat, p.lon);
+  const country = p.country || p.area || "—";
 
   const why = Array.isArray(p.why) ? p.why.slice(0, 4) : [];
   const whyHtml = why.length
-    ? `<ul style="margin:10px 0 0; padding-left:18px; color: var(--muted);">${why.map(x => `<li>${x}</li>`).join("")}</ul>`
-    : "";
-
-  const familyIdeas = (category === "family")
-    ? `<div class="small muted" style="margin-top:8px;">👨‍👩‍👧‍👦 Idee family: <b>${familyWhyQuick(p).join(" • ")}</b></div>`
+    ? `<ul style="margin:10px 0 0; padding-left:18px; color: var(--muted);">
+         ${why.map(x => `<li>${x}</li>`).join("")}
+       </ul>`
     : "";
 
   const altHtml = (alternatives || []).length ? `
@@ -648,32 +697,30 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives, meta = {}) 
         ${(alternatives || []).map(a => {
           const ap = a.place;
           const aPid = a.pid;
-          const aCountry = ap.country || "IT";
-          const aPlaceUrl = mapsPlaceUrl(ap.lat, ap.lon);
-          const aDirUrl = mapsDirUrl(origin.lat, origin.lon, ap.lat, ap.lon);
           const aIsChicca = String(ap.visibility || "").toLowerCase() === "chicca";
           const aBadge = aIsChicca ? "✨" : "✅";
-          const ideas = (category === "family") ? ` • ${familyWhyQuick(ap).join(" • ")}` : "";
+          const q = (ap.country || ap.area) ? `${ap.name}, ${ap.country || ap.area}` : ap.name;
 
           return `
-            <div class="card" data-alt="1" data-pid="${aPid}" style="padding:12px; cursor:pointer; border-color: rgba(255,255,255,.12);">
+            <div class="card" data-alt="1" data-pid="${aPid}"
+                 style="padding:12px; cursor:pointer; border-color: rgba(255,255,255,.14);">
               <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
                 <div>
-                  <div style="font-weight:800; font-size:16px; line-height:1.2;">
+                  <div style="font-weight:900; font-size:16px; line-height:1.2;">
                     ${ap.name} <span class="small muted">(${aBadge})</span>
                   </div>
                   <div class="small muted" style="margin-top:4px;">
-                    ~${a.driveMin} min • ${fmtKm(a.km)} • ${ap.type || "meta"}${ideas}
+                    ~${a.driveMin} min • ${fmtKm(a.km)} • ${ap.type || "meta"}
                   </div>
                 </div>
                 <div class="pill" style="white-space:nowrap;">Scegli</div>
               </div>
 
               <div class="row wrap gap" style="margin-top:10px;">
-                <a class="btn btn-ghost" href="${aPlaceUrl}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Maps</a>
-                <a class="btn btn-ghost" href="${aDirUrl}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Percorso</a>
-                <a class="btn btn-ghost" href="${googleImagesUrl(ap.name, aCountry)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Foto</a>
-                <a class="btn btn-ghost" href="${googleWhatToDoUrl(ap.name, aCountry)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Cosa fare</a>
+                <a class="btn btn-ghost" href="${mapsPlaceUrl(ap.lat, ap.lon ?? ap.lng)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Maps</a>
+                <a class="btn btn-ghost" href="${googleImagesUrl(q)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Foto</a>
+                <a class="btn btn-ghost" href="${googleThingsToDoUrl(q)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Cosa vedere</a>
+                <a class="btn btn-ghost" href="${restaurantsUrl(q)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Ristoranti</a>
               </div>
             </div>
           `;
@@ -682,58 +729,54 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives, meta = {}) 
     </div>
   ` : "";
 
+  // main render
   area.innerHTML = `
-    ${familyNearbyBlock}
-
-    <div class="card okbox" style="margin-top:12px;">
+    <div class="card okbox">
       <div class="pill">🚗 auto • ~${chosen.driveMin} min • ${fmtKm(chosen.km)} • ${badge}</div>
-      <div class="resultTitle">${p.name}, ${country}</div>
+      <div class="resultTitle">${p.name} <span class="small muted">(${country})</span></div>
 
       <div class="small muted" style="margin-top:6px;">
         Categoria: <b>${p.type || "meta"}</b> • Punteggio: <b>${chosen.score}</b>
+        ${MACRO_SOURCE_URL ? ` • <span class="muted">dataset: ${MACRO_SOURCE_URL.split("/").pop()}</span>` : ""}
       </div>
 
-      <div class="row wrap gap" style="margin-top:12px;">
-        <a class="btn" href="${placeUrl}" target="_blank" rel="noopener">🗺️ Maps</a>
-        <a class="btn" href="${dirUrl}" target="_blank" rel="noopener">🚗 Percorso</a>
-        <a class="btn" href="${googleImagesUrl(p.name, country)}" target="_blank" rel="noopener">📷 Foto</a>
-        <a class="btn" href="${googleWhatToDoUrl(p.name, country)}" target="_blank" rel="noopener">🎯 Cosa fare</a>
-      </div>
-
-      ${familyIdeas}
       ${whyHtml}
 
       <div class="row wrap gap" style="margin-top:12px;">
         <button class="btn btn-ghost" id="btnVisited">✅ Già visitato</button>
         <button class="btn" id="btnChange">🔁 Cambia meta</button>
-        <button class="btn btn-ghost" id="btnResetRotation">🧽 Reset “proposte di oggi”</button>
+        <button class="btn btn-ghost" id="btnResetRotation">🧽 Reset “oggi”</button>
       </div>
     </div>
 
-    ${quickInfoButtonsHtml(p.name, country)}
+    ${quickLinksHtml(p, origin)}
+    ${familyPanelHtml(p)}
     ${monetBoxHtml(p.name, country)}
     ${altHtml}
   `;
 
-  // rotation
+  // rotation tracking
   LAST_SHOWN_PID = pid;
   SESSION_SEEN.add(pid);
   addRecent(pid);
 
+  // buttons
   $("btnVisited")?.addEventListener("click", () => {
     markVisited(pid);
     showStatus("ok", "Segnato come visitato ✅ (non te lo ripropongo più).");
   });
 
-  $("btnChange")?.addEventListener("click", () => runSearch({ silent: true, forbidPid: pid }));
+  $("btnChange")?.addEventListener("click", () => {
+    runSearch({ silent: true, forbidPid: pid });
+  });
 
   $("btnResetRotation")?.addEventListener("click", () => {
     resetRotation();
-    showStatus("ok", "Reset fatto ✅ Ora rilancio la ricerca…");
+    showStatus("ok", "Reset fatto ✅ Ora posso ripescare anche mete già proposte oggi/sessione.");
     runSearch({ silent: true });
   });
 
-  // alternative click
+  // Alternative click -> render as main
   [...area.querySelectorAll('[data-alt="1"][data-pid]')].forEach((el) => {
     el.addEventListener("click", () => {
       const pid2 = el.getAttribute("data-pid");
@@ -746,7 +789,7 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives, meta = {}) 
 
       const remaining = (alternatives || []).filter(x => x.pid !== pid2);
       const newAlternatives = [
-        { place: chosen.place, pid: chosen.pid, km: chosen.km, driveMin: chosen.driveMin, score: chosen.score },
+        { place: p, pid: pid, km: chosen.km, driveMin: chosen.driveMin, score: chosen.score },
         ...remaining
       ].slice(0, 2);
 
@@ -756,51 +799,12 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives, meta = {}) 
   });
 }
 
-// -------------------- FAMILY NEARBY LIST --------------------
-function buildFamilyNearby(origin) {
-  if (!MACRO || !origin) return [];
-  const oLat = Number(origin.lat);
-  const oLon = Number(origin.lon);
-  if (!Number.isFinite(oLat) || !Number.isFinite(oLon)) return [];
-
-  const visited = getVisitedSet();
-
-  const out = [];
-  for (const p of MACRO.places) {
-    const lat = Number(p.lat), lon = Number(p.lon);
-    if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
-
-    // must be family-ish
-    const sig = familySignals(p);
-    const type = String(p.type || "").toLowerCase();
-    if (sig === 0 && !["natura","mare","borgo","citta","city","relax"].includes(type)) continue;
-
-    const pid = safeIdFromPlace(p);
-    if (visited.has(pid)) continue;
-
-    const km = haversineKm(oLat, oLon, lat, lon);
-    const driveMin = estCarMinutesFromKm(km);
-    if (driveMin > FAMILY_NEARBY_MAX_MIN) continue;
-    if (km < 1.2) continue;
-
-    // score: prefer closer + stronger family signal
-    let s = 0;
-    s += clamp(1 - (driveMin / FAMILY_NEARBY_MAX_MIN), 0, 1) * 0.6;
-    s += clamp(sig / 3, 0, 1) * 0.3;
-    s += clamp((Number(p.beauty_score) || 0.75), 0.4, 1) * 0.1;
-
-    out.push({ place: p, pid, km, driveMin, score: Number(s.toFixed(4)) });
-  }
-
-  out.sort((a,b)=> (b.score-a.score) || (a.driveMin-b.driveMin));
-  return out.slice(0, FAMILY_NEARBY_LIMIT);
-}
-
 // -------------------- MAIN SEARCH --------------------
 async function runSearch({ silent = false, forbidPid = null } = {}) {
   try {
     if (!silent) hideStatus();
-    if (!MACRO) await loadMacro();
+
+    await ensureMacroLoaded();
 
     const origin = getOrigin();
     if (!origin || !Number.isFinite(Number(origin.lat)) || !Number.isFinite(Number(origin.lon))) {
@@ -811,25 +815,64 @@ async function runSearch({ silent = false, forbidPid = null } = {}) {
     const maxMinutesInput = clamp(Number($("maxMinutes").value) || 120, 10, 600);
     const category = getActiveCategory();
     const styles = getActiveStyles();
-    const effMax = effectiveMaxMinutes(maxMinutesInput, category);
 
-    // family nearby block
-    const familyNearby = (category === "family") ? buildFamilyNearby(origin) : [];
-    const familyNearbyBlock = (category === "family") ? familyNearbyHtml(familyNearby, origin) : "";
+    const effMax = effectiveMaxMinutes(maxMinutesInput, category);
 
     let { chosen, alternatives } = pickDestination(origin, effMax, category, styles);
 
+    // forbid immediate specific pid (cambia meta)
     if (forbidPid && chosen?.pid === forbidPid) {
-      SESSION_SEEN.add(forbidPid);
-      ({ chosen, alternatives } = pickDestination(origin, effMax, category, styles));
+      const tmp = new Set(SESSION_SEEN);
+      tmp.add(forbidPid);
+
+      const visited = getVisitedSet();
+      const recentSet = getRecentSet();
+      const target = effMax;
+
+      const candidates = [];
+      const oLat = Number(origin.lat), oLon = Number(origin.lon);
+
+      for (const p of MACRO.places) {
+        const lat = Number(p.lat), lon = Number(p.lon ?? p.lng);
+        if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
+
+        const pid = safeIdFromPlace(p);
+        if (visited.has(pid)) continue;
+        if (!matchesCategory(p, category)) continue;
+        if (!matchesStyle(p, styles)) continue;
+
+        const km = haversineKm(oLat, oLon, lat, lon);
+        const driveMin = estCarMinutesFromKm(km);
+        if (driveMin > target) continue;
+        if (km < (category === "family" ? 0.6 : 1.2)) continue;
+        if (tmp.has(pid)) continue;
+
+        const isChicca = String(p.visibility || "").toLowerCase() === "chicca";
+        const familyBoost =
+          (category === "family" || isFamilyPlace(p))
+            ? clamp((Number(p.family?.score) || 0.3) * 0.12, 0, 0.12)
+            : 0;
+
+        let s = baseScorePlace({ driveMin, targetMin: target, beautyScore: p.beauty_score, familyBoost, isChicca });
+        s = s - rotationPenalty(pid, recentSet);
+
+        candidates.push({ place: p, pid, km, driveMin, score: Number(s.toFixed(4)) });
+      }
+
+      candidates.sort((a, b) => (b.score - a.score) || (a.driveMin - b.driveMin));
+      chosen = candidates[0] || null;
+      alternatives = candidates.slice(1, 3);
     }
 
-    renderResult(origin, maxMinutesInput, chosen, alternatives, { category, effMax, familyNearbyHtml: familyNearbyBlock });
+    renderResult(origin, maxMinutesInput, chosen, alternatives, { category, effMax });
 
     if (!chosen) {
       showStatus("warn", `Nessuna meta entro ${maxMinutesInput} min. Prova ad aumentare i minuti o cambiare filtri.`);
     } else if (!silent) {
-      showStatus("ok", `Meta trovata ✅ (~${chosen.driveMin} min in auto)`);
+      const extra = (effMax !== maxMinutesInput)
+        ? ` (ho allargato a ~${effMax} min per non lasciarti a secco)`
+        : "";
+      showStatus("ok", `Meta trovata ✅ (~${chosen.driveMin} min in auto)${extra}`);
     }
   } catch (e) {
     console.error(e);
@@ -862,11 +905,18 @@ function bindOriginButtons() {
   $("btnUseGPS")?.addEventListener("click", () => {
     $("originStatus").textContent = "📍 Sto leggendo il GPS…";
     navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setOrigin({ label: "La mia posizione", lat: pos.coords.latitude, lon: pos.coords.longitude });
+      async (pos) => {
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+        setOrigin({ label: "La mia posizione", lat, lon });
         showStatus("ok", "Partenza GPS impostata ✅");
+
+        // also reload best macro for this origin
+        MACRO = null;
+        await ensureMacroLoaded().catch(() => {});
       },
-      () => {
+      (err) => {
+        console.error(err);
         $("originStatus").textContent = "❌ GPS non disponibile (permessi?)";
         showStatus("err", "GPS non disponibile. Scrivi un luogo e usa “Usa questo luogo”.");
       },
@@ -881,7 +931,12 @@ function bindOriginButtons() {
       const result = await geocodeLabel(label);
       setOrigin({ label: result.label || label, lat: result.lat, lon: result.lon });
       showStatus("ok", "Partenza impostata ✅");
+
+      // reload best macro for this origin
+      MACRO = null;
+      await ensureMacroLoaded().catch(() => {});
     } catch (e) {
+      console.error(e);
       $("originStatus").textContent = `❌ ${String(e.message || e)}`;
       showStatus("err", `Geocoding fallito: ${String(e.message || e)}`);
     }
@@ -890,14 +945,14 @@ function bindOriginButtons() {
 
 function bindMainButtons() {
   $("btnFind")?.addEventListener("click", () => runSearch());
+
   $("btnResetVisited")?.addEventListener("click", () => {
     resetVisited();
     showStatus("ok", "Visitati resettati ✅");
-    runSearch({ silent: true });
   });
 }
 
-// init
+// init chips
 initChips("timeChips", { multi: false });
 initChips("categoryChips", { multi: false });
 initChips("styleChips", { multi: true });
@@ -907,5 +962,7 @@ restoreOrigin();
 bindOriginButtons();
 bindMainButtons();
 
-loadMacro().catch(() => {});
+// preload macro + index
+loadMacrosIndexSafe().catch(() => {});
+ensureMacroLoaded().catch(() => {});
 hideStatus();
