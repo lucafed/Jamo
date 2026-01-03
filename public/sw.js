@@ -1,114 +1,117 @@
-// sw.js — v5 (fix: no stale app.js, no stale API)
-// Strategy:
-// - index.html + app.js + style.css: NETWORK FIRST (always try fresh)
-// - /api/* : NETWORK ONLY (never cache API responses)
-// - /data/* : STALE-WHILE-REVALIDATE (cache ok, but update in background)
+/* Jamo SW — v6.0
+ * Goals:
+ * 1) app.js ALWAYS fresh (network-first)
+ * 2) API always fresh (network-only)
+ * 3) data cached for speed (stale-while-revalidate)
+ */
 
-const CACHE_VERSION = "jamo-v5"; // <-- bump this any time you deploy changes
-const CORE_ASSETS = [
-  "/",              // may map to index.html
+const VERSION = "jamo-sw-v6";
+const SHELL_CACHE = `${VERSION}-shell`;
+const DATA_CACHE  = `${VERSION}-data`;
+
+// Minimal app shell (add more if you want)
+const SHELL_ASSETS = [
+  "/",
   "/index.html",
-  "/app.js",
   "/style.css",
-  "/manifest.webmanifest",
+  "/manifest.webmanifest"
 ];
 
+// --- install: cache shell ---
 self.addEventListener("install", (event) => {
   event.waitUntil((async () => {
-    const cache = await caches.open(CACHE_VERSION);
-    await cache.addAll(CORE_ASSETS.map(u => new Request(u, { cache: "reload" })));
-    await self.skipWaiting();
+    const cache = await caches.open(SHELL_CACHE);
+    await cache.addAll(SHELL_ASSETS.map(u => new Request(u, { cache: "reload" })));
+    self.skipWaiting();
   })());
 });
 
+// --- activate: cleanup old caches ---
 self.addEventListener("activate", (event) => {
   event.waitUntil((async () => {
-    // delete old caches
     const keys = await caches.keys();
-    await Promise.all(keys.map(k => (k === CACHE_VERSION ? null : caches.delete(k))));
-    await self.clients.claim();
+    await Promise.all(
+      keys.map(k => {
+        if (!k.startsWith("jamo-sw-")) return null;
+        if (k === SHELL_CACHE || k === DATA_CACHE) return null;
+        return caches.delete(k);
+      })
+    );
+    self.clients.claim();
   })());
 });
 
-function isApi(reqUrl) {
-  return reqUrl.pathname.startsWith("/api/");
+function isSameOrigin(url) {
+  try { return new URL(url).origin === self.location.origin; } catch { return false; }
 }
 
-function isData(reqUrl) {
-  return reqUrl.pathname.startsWith("/data/");
-}
-
-function isCore(reqUrl) {
-  return (
-    reqUrl.pathname === "/" ||
-    reqUrl.pathname === "/index.html" ||
-    reqUrl.pathname === "/app.js" ||
-    reqUrl.pathname === "/style.css"
-  );
-}
-
-// NETWORK FIRST for core assets
-async function networkFirst(request) {
-  const cache = await caches.open(CACHE_VERSION);
+async function networkFirst(req, cacheName) {
+  const cache = await caches.open(cacheName);
   try {
-    const fresh = await fetch(request);
-    if (fresh && fresh.ok) cache.put(request, fresh.clone());
+    const fresh = await fetch(req);
+    if (fresh && fresh.ok) cache.put(req, fresh.clone());
     return fresh;
   } catch {
-    const cached = await cache.match(request);
-    if (cached) return cached;
-    throw new Error("offline");
+    const cached = await cache.match(req);
+    return cached || new Response("", { status: 504, statusText: "Offline" });
   }
 }
 
-// STALE WHILE REVALIDATE for data
-async function staleWhileRevalidate(request) {
-  const cache = await caches.open(CACHE_VERSION);
-  const cached = await cache.match(request);
+async function staleWhileRevalidate(req, cacheName) {
+  const cache = await caches.open(cacheName);
+  const cached = await cache.match(req);
 
-  const fetchPromise = fetch(request)
+  const fetchPromise = fetch(req)
     .then((fresh) => {
-      if (fresh && fresh.ok) cache.put(request, fresh.clone());
+      if (fresh && fresh.ok) cache.put(req, fresh.clone());
       return fresh;
     })
     .catch(() => null);
 
-  return cached || (await fetchPromise) || new Response("offline", { status: 503 });
+  return cached || (await fetchPromise) || new Response("", { status: 504, statusText: "Offline" });
 }
 
+async function networkOnly(req) {
+  return fetch(req);
+}
+
+// --- fetch routing ---
 self.addEventListener("fetch", (event) => {
-  const url = new URL(event.request.url);
+  const req = event.request;
+  const url = req.url;
 
-  // Only handle same-origin GET requests
-  if (event.request.method !== "GET") return;
-  if (url.origin !== self.location.origin) return;
+  // Only GET handled
+  if (req.method !== "GET") return;
 
-  // ✅ API: never cache (prevents weird “flash then disappear”)
-  if (isApi(url)) {
-    event.respondWith(fetch(event.request));
+  // Only same-origin
+  if (!isSameOrigin(url)) return;
+
+  const u = new URL(url);
+
+  // 1) app.js must be fresh (network-first)
+  if (u.pathname === "/app.js") {
+    event.respondWith(networkFirst(req, SHELL_CACHE));
     return;
   }
 
-  // ✅ Core assets: network-first (always update)
-  if (isCore(url)) {
-    event.respondWith(networkFirst(event.request));
+  // 2) API must be fresh (network-only)
+  if (u.pathname.startsWith("/api/")) {
+    event.respondWith(networkOnly(req));
     return;
   }
 
-  // ✅ Data json: cache ok but refresh
-  if (isData(url)) {
-    event.respondWith(staleWhileRevalidate(event.request));
+  // 3) data files cached (stale-while-revalidate)
+  if (u.pathname.startsWith("/data/")) {
+    event.respondWith(staleWhileRevalidate(req, DATA_CACHE));
     return;
   }
 
-  // default: try cache, fallback network
-  event.respondWith((async () => {
-    const cache = await caches.open(CACHE_VERSION);
-    const cached = await cache.match(event.request);
-    if (cached) return cached;
+  // 4) html/css shell (network-first)
+  if (u.pathname === "/" || u.pathname.endsWith(".html") || u.pathname.endsWith(".css")) {
+    event.respondWith(networkFirst(req, SHELL_CACHE));
+    return;
+  }
 
-    const fresh = await fetch(event.request);
-    if (fresh && fresh.ok) cache.put(event.request, fresh.clone());
-    return fresh;
-  })());
+  // 5) everything else: SWR is ok
+  event.respondWith(staleWhileRevalidate(req, SHELL_CACHE));
 });
