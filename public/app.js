@@ -1,10 +1,11 @@
-/* Jamo — Auto-only — app.js v6.0
- * ✅ Progressive: offline first, then live
- * ✅ Live status: no / tentato / sì (+ live_items)
- * ✅ Anti-race token
- * ✅ Family ranking: theme parks, zoo, aquarium, kid attractions > all
- * ✅ Water parks seasonal: penalized in winter unless indoor/cov/covered
- * ✅ Cards: more “immediate” with OSM static map image + "cosa si fa" + chips + monetization box
+/* Jamo — Auto-only — app.js v6.1 (FULL)
+ * - Offline macro first, then Live (Overpass) merge
+ * - Live status: no / tentato / sì (+ live_items)
+ * - Anti-race token (no results popping back)
+ * - Family ranking: theme park / zoo / aquarium / attractions for kids
+ * - Water parks seasonal: penalized in winter unless indoor/coperto
+ * - Cards: immediate (OSM static map image + "cosa si fa" + chips + links + monetization)
+ * - NEVER show "Meta": live elements without a meaningful name are discarded or labeled from tags
  */
 
 const $ = (id) => document.getElementById(id);
@@ -17,7 +18,7 @@ const FALLBACK_MACRO_URLS = [
 ];
 const LIVE_DESTINATIONS_API = "/api/destinations";
 
-// -------------------- MONETIZATION IDS (fill yours) --------------------
+// -------------------- MONETIZATION IDS --------------------
 const BOOKING_AID = ""; // Booking.com affiliate id (aid)
 const AMAZON_TAG  = ""; // Amazon tag
 const GYG_PID     = ""; // GetYourGuide partner_id
@@ -320,32 +321,33 @@ async function ensureMacroLoaded() {
 
 // -------------------- SEASONALITY --------------------
 function isWinterNow() {
-  // Northern hemisphere heuristic: Nov–Mar = winter-ish for water parks
   const m = new Date().getMonth() + 1; // 1..12
   return (m === 11 || m === 12 || m === 1 || m === 2 || m === 3);
+}
+function placeTags(place) {
+  return (place?.tags || []).map(t => String(t).toLowerCase());
 }
 function looksIndoor(place) {
   const n = normName(place?.name);
   const tags = placeTags(place);
-  if (n.includes("indoor") || n.includes("coperto") || n.includes("covered") || n.includes("al chiuso")) return true;
-  if (tags.includes("indoor")) return true;
-  return false;
-}
-
-// -------------------- FILTERS / CATEGORY --------------------
-function placeTags(place) {
-  return (place?.tags || []).map(t => String(t).toLowerCase());
+  return (
+    n.includes("indoor") || n.includes("coperto") || n.includes("covered") || n.includes("al chiuso") ||
+    tags.includes("indoor")
+  );
 }
 function hasAnyName(place) {
   return String(place?.name || "").trim().length > 0;
 }
-
 function isThermeSpa(place) {
   const tags = placeTags(place);
   const n = normName(place.name);
   return tags.includes("spa") || tags.includes("hot_spring") || tags.includes("public_bath") || n.includes("terme") || n.includes("spa");
 }
-
+function isWaterPark(place) {
+  const tags = placeTags(place);
+  const n = normName(place.name);
+  return tags.includes("water_park") || n.includes("parco acquatico") || n.includes("aquapark") || n.includes("water park");
+}
 function isBigAttraction(place) {
   const tags = placeTags(place);
   const n = normName(place.name);
@@ -368,13 +370,6 @@ function isBigAttraction(place) {
 
   return false;
 }
-
-function isWaterPark(place) {
-  const tags = placeTags(place);
-  const n = normName(place.name);
-  return tags.includes("water_park") || n.includes("parco acquatico") || n.includes("aquapark") || n.includes("water park");
-}
-
 function isTinyPark(place) {
   const tags = placeTags(place);
   const n = normName(place.name);
@@ -383,7 +378,6 @@ function isTinyPark(place) {
   const notReserve = !(tags.includes("national_park") || tags.includes("nature_reserve"));
   return looksPark && notStrong && notReserve;
 }
-
 function isFamilyPlace(place) {
   const t = String(place.type || "").toLowerCase();
   if (t === "family" || t === "bambini") return true;
@@ -395,12 +389,10 @@ function isFamilyPlace(place) {
   const n = normName(place.name);
   if (n.includes("zoo") || n.includes("acquario") || n.includes("piscina") || n.includes("parco acquatico")) return true;
 
-  // Terme ok per family (come richiesto), ma non devono dominare
   if (isThermeSpa(place)) return true;
 
   return false;
 }
-
 function isHistoryPlace(place) {
   const tags = placeTags(place);
   const n = normName(place.name);
@@ -428,6 +420,7 @@ function isHistoryPlace(place) {
   return false;
 }
 
+// -------------------- CATEGORY MATCH --------------------
 function matchesCategory(place, cat) {
   if (!cat || cat === "ovunque") return true;
 
@@ -446,7 +439,6 @@ function matchesCategory(place, cat) {
 
   return true;
 }
-
 function matchesStyle(place, { wantChicche, wantClassici }) {
   const vis = String(place.visibility || "").toLowerCase();
   if (!wantChicche && !wantClassici) return true;
@@ -462,37 +454,27 @@ function rotationPenalty(pid, recentSet) {
   if (recentSet.has(pid)) pen += 0.10;
   return pen;
 }
-
 function attractionBoostFamily(place) {
-  // family: prioritize tourist attractions for kids
   const tags = placeTags(place);
   const n = normName(place.name);
 
-  // Hard winners
   if (tags.includes("theme_park") || n.includes("parco divertimenti")) return 0.34;
   if (tags.includes("zoo") || n.includes("zoo")) return 0.28;
   if (tags.includes("aquarium") || n.includes("acquario")) return 0.28;
   if (tags.includes("attraction")) return 0.22;
 
-  // Water parks: great, but seasonal
   if (isWaterPark(place)) {
-    if (looksIndoor(place)) return 0.26; // indoor is fine in winter
-    if (isWinterNow()) return 0.06;      // winter penalty
-    return 0.26;                         // summer good
+    if (looksIndoor(place)) return 0.26;
+    if (isWinterNow()) return 0.06;
+    return 0.26;
   }
 
-  // Pools can be ok
   if (tags.includes("swimming_pool") || n.includes("piscina")) return 0.14;
-
-  // Terme: allowed but never top by default
   if (isThermeSpa(place)) return 0.08;
-
-  // Big attraction heuristic
   if (isBigAttraction(place)) return 0.20;
 
   return 0.0;
 }
-
 function baseScorePlace({ driveMin, targetMin, beautyScore, isChicca, extraBoost }) {
   const t = clamp(1 - Math.abs(driveMin - targetMin) / Math.max(25, targetMin * 0.9), 0, 1);
   const b = clamp(Number(beautyScore) || 0.70, 0.35, 1);
@@ -529,7 +511,6 @@ function apiCatFromUi(cat) {
   const allowed = new Set(["family", "borghi", "citta", "mare", "natura", "storia", "ovunque"]);
   return allowed.has(c) ? c : "ovunque";
 }
-
 function tagsToArray(tagsObj = {}) {
   const out = [];
   const push = (x) => { if (x && !out.includes(x)) out.push(x); };
@@ -544,38 +525,81 @@ function tagsToArray(tagsObj = {}) {
   push(tagsObj.building);
   push(tagsObj.place);
 
-  return out.filter(Boolean).map(x => String(x).toLowerCase()).slice(0, 16);
+  // a bit extra (helps filtering)
+  push(tagsObj.boundary);
+  push(tagsObj.waterway);
+
+  return out.filter(Boolean).map(x => String(x).toLowerCase()).slice(0, 18);
 }
 
+/* ✅ FIX: never return "Meta"
+ * - if name missing: build from tags + city
+ * - if cannot build: return null (discard)
+ */
 function elementToPlace(el) {
   const tags = el?.tags || {};
-  const name =
-    String(tags.name || tags["name:it"] || tags["name:en"] || tags.brand || tags.operator || "").trim() ||
-    "Meta";
 
   const lat = Number(el.lat ?? el.center?.lat);
   const lon = Number(el.lon ?? el.center?.lon);
   if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
 
+  const tourism  = String(tags.tourism || "").toLowerCase();
+  const leisure  = String(tags.leisure || "").toLowerCase();
+  const amenity  = String(tags.amenity || "").toLowerCase();
+  const historic = String(tags.historic || "").toLowerCase();
+  const natural  = String(tags.natural || "").toLowerCase();
+
+  const nameRaw = String(
+    tags.name || tags["name:it"] || tags["name:en"] || tags.brand || tags.operator || ""
+  ).trim();
+
+  const city =
+    String(tags["addr:city"] || tags["is_in:city"] || tags["addr:suburb"] || tags["addr:town"] || "").trim();
+
+  function labelFromTags() {
+    if (tourism === "theme_park") return "Parco divertimenti";
+    if (leisure === "water_park") return "Parco acquatico";
+    if (tourism === "zoo" || amenity === "zoo") return "Zoo";
+    if (tourism === "aquarium" || amenity === "aquarium") return "Acquario";
+    if (tourism === "museum") return "Museo";
+    if (tourism === "attraction") return "Attrazione";
+    if (amenity === "spa" || amenity === "public_bath" || natural === "hot_spring") return "Terme / Spa";
+    if (historic) return "Luogo storico";
+    if (natural === "beach") return "Spiaggia";
+    if (natural === "peak") return "Vetta / Monte";
+    if (String(tags.waterway || "").toLowerCase() === "waterfall") return "Cascata";
+    return "";
+  }
+
+  let name = nameRaw;
+  if (!name) {
+    const base = labelFromTags();
+    if (!base) return null; // ✅ discard useless unnamed stuff
+    name = city ? `${base} (${city})` : base;
+  }
+
   const tagArr = tagsToArray(tags);
 
   let type = "meta";
-  const tourism = String(tags.tourism || "").toLowerCase();
-  const leisure = String(tags.leisure || "").toLowerCase();
-  const amenity = String(tags.amenity || "").toLowerCase();
-  const historic = String(tags.historic || "").toLowerCase();
-  const building = String(tags.building || "").toLowerCase();
-  const manMade = String(tags.man_made || "").toLowerCase();
-
-  if (tourism === "theme_park" || leisure === "water_park" || tourism === "zoo" || amenity === "zoo" || tourism === "aquarium" || amenity === "aquarium" || tourism === "attraction") type = "family";
-  else if (amenity === "spa" || amenity === "public_bath" || String(tags.natural || "").toLowerCase() === "hot_spring") type = "relax";
-  else if (historic || tourism === "museum" || tourism === "gallery" || manMade === "tower" || building === "church" || building === "cathedral" || building === "chapel") type = "storia";
-  else if (String(tags.natural || "").toLowerCase() === "beach") type = "mare";
+  if (
+    tourism === "theme_park" ||
+    leisure === "water_park" ||
+    tourism === "zoo" || amenity === "zoo" ||
+    tourism === "aquarium" || amenity === "aquarium" ||
+    tourism === "attraction"
+  ) type = "family";
+  else if (amenity === "spa" || amenity === "public_bath" || natural === "hot_spring") type = "relax";
+  else if (historic || tourism === "museum" || tourism === "gallery") type = "storia";
+  else if (natural === "beach") type = "mare";
   else if (String(tags.boundary || "").toLowerCase() === "national_park" || leisure === "nature_reserve") type = "natura";
 
   const strong =
-    tourism === "theme_park" || leisure === "water_park" || tourism === "attraction" ||
-    tourism === "museum" || historic === "castle" || historic === "archaeological_site";
+    tourism === "theme_park" ||
+    leisure === "water_park" ||
+    tourism === "attraction" ||
+    tourism === "museum" ||
+    historic === "castle" ||
+    historic === "archaeological_site";
 
   return {
     id: `osm_${el.type}_${el.id}`,
@@ -585,7 +609,8 @@ function elementToPlace(el) {
     type,
     visibility: "classica",
     tags: tagArr,
-    beauty_score: strong ? 0.80 : 0.62
+    beauty_score: strong ? 0.80 : 0.62,
+    area: city || ""
   };
 }
 
@@ -607,6 +632,7 @@ async function fetchLivePlaces(origin, radiusKm, uiCategory, token) {
   const elements = j?.data?.elements || j?.elements || [];
   const places = Array.isArray(elements) ? elements.map(elementToPlace).filter(Boolean) : [];
 
+  // Dedup by id
   const seen = new Set();
   const uniq = places.filter(p => (seen.has(p.id) ? false : (seen.add(p.id), true)));
 
@@ -636,7 +662,6 @@ function buildCandidatesFromPlaces(placesArr, origin, maxMinutes, category, styl
     if (!matchesCategory(p, category)) continue;
     if (!matchesStyle(p, styles)) continue;
 
-    // Family: avoid tiny city parks
     if (category === "family" && isTinyPark(p)) continue;
 
     const pid = safeIdFromPlace(p);
@@ -721,7 +746,7 @@ function amazonEssentialsUrl(tag = "") {
   return tag ? `${base}&tag=${encodeURIComponent(tag)}` : base;
 }
 
-// -------------------- CARD HELPERS (more “immediate”) --------------------
+// -------------------- CARD HELPERS --------------------
 function typeBadge(place, category) {
   const t = String(place?.type || "").toLowerCase();
   const tags = placeTags(place);
@@ -780,7 +805,6 @@ function microWhatToDo(place, category) {
     return "Visita culturale: centro storico, monumenti e luoghi iconici.";
   }
 
-  // generic
   if (tags.includes("viewpoint")) return "Belvedere: panorama e foto.";
   if (tags.includes("museum")) return "Museo: visita culturale.";
   return "Esplora, foto, cibo e cose da fare nei dintorni.";
@@ -808,7 +832,6 @@ function chipsFromPlace(place, category) {
     if (tags.includes("archaeological_site") || n.includes("archeolog")) push("🏺 Archeologia");
   }
 
-  // add some generic tags
   if (tags.includes("attraction")) push("📸 Foto top");
   if (tags.includes("viewpoint")) push("👀 Panorama");
   if (tags.includes("nature_reserve") || tags.includes("national_park")) push("🌿 Natura");
@@ -901,7 +924,7 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives, meta = {}) 
           • score: ${chosen.score}
         </div>
 
-        <div style="margin-top:10px; font-weight:700;">Cosa si fa</div>
+        <div style="margin-top:10px; font-weight:800;">Cosa si fa</div>
         <div class="small muted" style="margin-top:4px; line-height:1.35;">${what}</div>
 
         ${chips.length ? `
@@ -930,35 +953,6 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives, meta = {}) 
     </div>
 
     ${monetBoxHtml(p.name, country)}
-
-    ${(alternatives || []).length ? `
-      <div class="card" style="margin-top:12px;">
-        <div class="small muted">Alternative</div>
-        <div style="margin-top:10px; display:flex; flex-direction:column; gap:10px;">
-          ${(alternatives || []).map(a => {
-            const ap = a.place;
-            const alat = Number(ap.lat);
-            const alon = Number(ap.lon ?? ap.lng);
-            const ab = typeBadge(ap, meta?.category || getActiveCategory());
-            const amap = osmStaticImg(alat, alon, a.km < 20 ? 12 : a.km < 60 ? 10 : 8);
-            return `
-              <div class="card" style="padding:0; overflow:hidden; border-color: rgba(255,255,255,.14);">
-                <img src="${amap}" alt="mappa ${ap.name}" style="width:100%; display:block; border-bottom:1px solid var(--border);">
-                <div style="padding:12px;">
-                  <div style="font-weight:900; font-size:16px; line-height:1.2;">${ab.emoji} ${ap.name}</div>
-                  <div class="small muted" style="margin-top:4px;">~${a.driveMin} min • ${fmtKm(a.km)} • ${ab.label}</div>
-                  <div class="row wrap gap" style="margin-top:10px;">
-                    <a class="btn btn-ghost" href="${mapsPlaceUrl(alat, alon)}" target="_blank" rel="noopener">Maps</a>
-                    <a class="btn btn-ghost" href="${googleImagesUrl(ap.name)}" target="_blank" rel="noopener">Foto</a>
-                    <a class="btn btn-ghost" href="${googleThingsToDoUrl(ap.name)}" target="_blank" rel="noopener">Cosa vedere</a>
-                  </div>
-                </div>
-              </div>
-            `;
-          }).join("")}
-        </div>
-      </div>
-    ` : ""}
   `;
 
   // rotation tracking
@@ -1000,8 +994,10 @@ async function runSearch({ silent = false, forbidPid = null } = {}) {
     const styles = getActiveStyles();
     const effMax = effectiveMaxMinutes(maxMinutesInput, category);
 
-    // ✅ Clear immediately (no “old result”)
-    clearResultAreaWithSpinner(category === "family" ? "🔎 Cerco attrazioni family…" : (category === "storia" ? "🔎 Cerco luoghi storici…" : "🔎 Cerco mete…"));
+    clearResultAreaWithSpinner(
+      category === "family" ? "🔎 Cerco attrazioni family…" :
+      (category === "storia" ? "🔎 Cerco luoghi storici…" : "🔎 Cerco mete…")
+    );
     setLoadingUI(true, "🔎 Cerco…");
 
     await ensureMacroLoaded();
@@ -1089,7 +1085,6 @@ async function runSearch({ silent = false, forbidPid = null } = {}) {
           liveCandidates = liveCandidates.filter(c => c.pid !== forbidPid);
         }
 
-        // soften if empty
         if (!liveCandidates.length) {
           liveCandidates = buildCandidatesFromPlaces(mergedPlaces, origin, Math.round(effMax * 1.15), category, styles, {
             ignoreVisited: false, ignoreRotation: true
@@ -1108,7 +1103,6 @@ async function runSearch({ silent = false, forbidPid = null } = {}) {
 
         const shouldReplace =
           !macroChosen ||
-          // for storia: prefer live if exists (it’s more “fresh”)
           (category === "storia" && liveChosen) ||
           (liveChosen && liveChosen.score > (macroChosen?.score ?? 0) + 0.03);
 
@@ -1121,7 +1115,6 @@ async function runSearch({ silent = false, forbidPid = null } = {}) {
             macroFile: MACRO_SOURCE_URL ? MACRO_SOURCE_URL.split("/").pop() : ""
           });
         } else if (macroChosen) {
-          // live happened but didn’t beat offline: update meta to show live attempted
           renderResult(origin, maxMinutesInput, macroChosen, macroAlts, {
             category,
             liveUsed: false,
@@ -1131,7 +1124,6 @@ async function runSearch({ silent = false, forbidPid = null } = {}) {
           });
         }
       } else if (macroChosen && !isStaleToken(token)) {
-        // live attempted but 0 results
         renderResult(origin, maxMinutesInput, macroChosen, macroAlts, {
           category,
           liveUsed: false,
