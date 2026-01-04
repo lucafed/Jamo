@@ -1,263 +1,233 @@
-// /api/destinations.js — Overpass LIVE destinations (EU/UK) — v4.0
-// GET params:
-//   lat, lon (required)
-//   radiusKm (optional, default 80, min 5, max 350)
-//   cat (optional): ovunque|family|storia|borghi|citta|mare|natura
+// /api/destinations.js — LIVE places via Overpass (EU/UK) — v3.2
+// GET /api/destinations?lat=..&lon=..&radiusKm=..&cat=family|mare|borghi|storia|natura|montagna|citta|relax|ovunque
 //
-// Returns:
-//   { ok:true, meta:{...}, data:{...overpass json...} }
-//   { ok:false, error:"...", details?:... }
+// Returns: { ok:true, data:<overpass json>, meta:{cat,radiusKm,count} }
 
 const OVERPASS = "https://overpass-api.de/api/interpreter";
 
-// conservative caps: live is a helper, not a whole world DB
-const DEFAULT_RADIUS_KM = 80;
-const MIN_RADIUS_KM = 5;
-const MAX_RADIUS_KM = 350;
-const TIMEOUT_SEC = 25;
-
-// hard cap output (Overpass "out ... 400" is a soft cap but helps)
-const OUT_LIMIT = 450;
-
-function toNum(x) {
-  const n = Number(x);
-  return Number.isFinite(n) ? n : null;
+function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
+function normCat(s) {
+  const x = String(s || "").toLowerCase().trim();
+  return x || "ovunque";
+}
+function around(radiusM, lat, lon) {
+  return `(around:${radiusM},${lat},${lon})`;
 }
 
-function clamp(n, a, b) {
-  return Math.max(a, Math.min(b, n));
-}
+/**
+ * IMPORTANT CHANGES vs older versions:
+ * - Uses nwr (node/way/relation)
+ * - DOES NOT require ["name"] in query (name can be missing or in name:it/brand/operator)
+ * - Uses `out center tags` to get coordinates for ways/relations
+ * - Wider tag coverage for mare/natura/storia/family
+ */
+function buildQuery(cat, radiusM, lat, lon) {
+  const a = around(radiusM, lat, lon);
 
-function cleanCat(x) {
-  const c = String(x || "ovunque").toLowerCase().trim();
-  const allowed = new Set(["ovunque", "family", "storia", "borghi", "citta", "mare", "natura"]);
-  return allowed.has(c) ? c : "ovunque";
-}
+  // Small generic fallback: towns/villages (helps "borghi/citta" even if other tags fail)
+  const PLACES = `
+    nwr${a}["place"~"^(city|town|village)$"];
+  `;
 
-// Build category-specific Overpass blocks (nwr = node/way/relation)
-function buildCatQuery(cat, radiusM, lat, lon) {
-  // NOTE:
-  // - Use nwr so we catch ways/relations (big parks, historic sites, beaches, etc.)
-  // - Prefer "tourism/leisure/historic/natural" meaningful tags
-  // - Avoid tiny noise like generic leisure=park (too broad) and generic playground (too many)
-  //
-  // The app already filters/boosts; here we just pull better candidates.
-
-  const around = `(around:${radiusM},${lat},${lon})`;
-
-  if (cat === "family") {
-    // "Touristic family" set:
-    // - theme parks, water parks, zoos, aquariums, major attractions
-    // - swimming pools (nice for kids) + indoor play centers (where tagged)
-    // We intentionally DO NOT pull generic leisure=park/playground (too many micro-parks)
-    return `
-      nwr${around}["tourism"="theme_park"];
-      nwr${around}["leisure"="water_park"];
-      nwr${around}["tourism"="zoo"];
-      nwr${around}["amenity"="zoo"];
-      nwr${around}["tourism"="aquarium"];
-      nwr${around}["amenity"="aquarium"];
-      nwr${around}["tourism"="attraction"];
-      nwr${around}["attraction"];
-      nwr${around}["amenity"="water_park"];
-      nwr${around}["leisure"="amusement_arcade"];
-      nwr${around}["leisure"="sports_centre"]["sport"="swimming"];
-      nwr${around}["leisure"="swimming_pool"];
-      nwr${around}["amenity"="swimming_pool"];
-      nwr${around}["leisure"="trampoline_park"];
-      nwr${around}["leisure"="indoor_play"];
-      nwr${around}["leisure"="play_centre"];
-    `;
-  }
-
-  if (cat === "storia") {
-    // Make "history" actually work:
-    // - castles/forts/ruins/towers/monuments/memorials/archaeological sites
-    // - museums/galleries
-    // - heritage tagged stuff
-    // We avoid pulling every church; if you want we can add selective place_of_worship later.
-    return `
-      nwr${around}["historic"="castle"];
-      nwr${around}["historic"="fort"];
-      nwr${around}["historic"="ruins"];
-      nwr${around}["historic"="archaeological_site"];
-      nwr${around}["historic"="monument"];
-      nwr${around}["historic"="memorial"];
-      nwr${around}["historic"="tower"];
-      nwr${around}["historic"="city_gate"];
-      nwr${around}["historic"="battlefield"];
-      nwr${around}["heritage"];
-
-      nwr${around}["tourism"="museum"];
-      nwr${around}["tourism"="gallery"];
-      nwr${around}["tourism"="attraction"]["historic"];
-      nwr${around}["tourism"="attraction"]["heritage"];
-    `;
-  }
-
-  if (cat === "borghi") {
-    // Villages/hamlets + "old town" / historic centers where tagged
-    return `
-      node${around}["place"~"^(village|hamlet)$"]["name"];
-      nwr${around}["place"~"^(village|hamlet)$"]["name"];
-      nwr${around}["historic"="city_gate"]["name"];
-      nwr${around}["historic"]["name"]["tourism"="attraction"];
-      nwr${around}["tourism"="attraction"]["name"]["old_name"];
-    `;
-  }
-
-  if (cat === "citta") {
-    return `
-      node${around}["place"~"^(city|town)$"]["name"];
-      nwr${around}["place"~"^(city|town)$"]["name"];
-    `;
-  }
+  let block = "";
 
   if (cat === "mare") {
-    // Beaches + seaside attractions + viewpoints + marinas
-    return `
-      nwr${around}["natural"="beach"];
-      nwr${around}["tourism"="beach_resort"];
-      nwr${around}["leisure"="marina"];
-      nwr${around}["man_made"="pier"];
-      nwr${around}["tourism"="attraction"]["name"]["natural"="beach"];
-      nwr${around}["tourism"="viewpoint"];
+    block = `
+      // beaches and seaside
+      nwr${a}["natural"="beach"];
+      nwr${a}["tourism"="beach_resort"];
+      nwr${a}["leisure"="beach_resort"];
+      nwr${a}["natural"="coastline"];
+      nwr${a}["seamark:type"="beach"];
+      nwr${a}["seamark:landmark:category"="beach"];
+
+      // seaside leisure / viewpoints near coast
+      nwr${a}["tourism"="viewpoint"];
+      nwr${a}["tourism"="attraction"]["natural"="beach"];
+      nwr${a}["tourism"="attraction"]["natural"="coastline"];
     `;
   }
 
-  if (cat === "natura") {
-    return `
-      nwr${around}["boundary"="national_park"];
-      nwr${around}["leisure"="nature_reserve"];
-      nwr${around}["natural"="peak"];
-      nwr${around}["waterway"="waterfall"];
-      nwr${around}["tourism"="viewpoint"];
-      nwr${around}["natural"="gorge"];
-      nwr${around}["natural"="cave_entrance"];
-      nwr${around}["natural"="hot_spring"];
+  else if (cat === "natura") {
+    block = `
+      // protected areas
+      nwr${a}["boundary"="national_park"];
+      nwr${a}["boundary"="protected_area"];
+      nwr${a}["leisure"="nature_reserve"];
+
+      // highlights
+      nwr${a}["natural"="peak"];
+      nwr${a}["natural"="ridge"];
+      nwr${a}["natural"="gorge"];
+      nwr${a}["natural"="waterfall"];
+      nwr${a}["waterway"="waterfall"];
+      nwr${a}["natural"="cave_entrance"];
+      nwr${a}["natural"="spring"];
+      nwr${a}["natural"="hot_spring"];
+      nwr${a}["natural"="lake"];
+      nwr${a}["water"="lake"];
+      nwr${a}["natural"="wood"];
+
+      // parks + viewpoints
+      nwr${a}["leisure"="park"];
+      nwr${a}["tourism"="viewpoint"];
     `;
   }
 
-  // ovunque: mix "touristic & meaningful" (not too noisy)
-  return `
-    nwr${around}["tourism"="attraction"];
-    nwr${around}["tourism"="museum"];
-    nwr${around}["tourism"="theme_park"];
-    nwr${around}["leisure"="water_park"];
-    nwr${around}["tourism"="zoo"];
-    nwr${around}["tourism"="aquarium"];
-    nwr${around}["historic"="castle"];
-    nwr${around}["historic"="archaeological_site"];
-    nwr${around}["natural"="beach"];
-    nwr${around}["boundary"="national_park"];
-    nwr${around}["leisure"="nature_reserve"];
-    nwr${around}["tourism"="viewpoint"];
-  `;
-}
+  else if (cat === "storia") {
+    block = `
+      // historic generic (monuments, ruins, etc.)
+      nwr${a}["historic"];
+      nwr${a}["ruins"];
+      nwr${a}["castle_type"];
+      nwr${a}["historic"="castle"];
+      nwr${a}["historic"="fort"];
+      nwr${a}["historic"="archaeological_site"];
+      nwr${a}["historic"="monument"];
+      nwr${a}["historic"="memorial"];
 
-// Optional post-filter in Overpass:
-// Keep only elements with a real name OR a strong tag that we can label later.
-// (We cannot do complex OR name fallback in Overpass, but we can reduce noise.)
-function buildStrongFilter() {
-  // We keep:
-  // - named features
-  // - OR strong categories even if unnamed (theme_park/water_park/zoo/aquarium/museum/castle/beach/national_park/viewpoint)
-  // This avoids tons of unnamed micro-objects.
-  return `
-    (
-      .all["name"];
-      .all["tourism"="theme_park"];
-      .all["leisure"="water_park"];
-      .all["tourism"="zoo"];
-      .all["amenity"="zoo"];
-      .all["tourism"="aquarium"];
-      .all["amenity"="aquarium"];
-      .all["tourism"="museum"];
-      .all["historic"="castle"];
-      .all["historic"="archaeological_site"];
-      .all["natural"="beach"];
-      .all["boundary"="national_park"];
-      .all["leisure"="nature_reserve"];
-      .all["tourism"="viewpoint"];
-    )->.keep;
-  `;
+      // museums / attractions
+      nwr${a}["tourism"="museum"];
+      nwr${a}["tourism"="attraction"];
+      nwr${a}["tourism"="artwork"];
+      nwr${a}["amenity"="theatre"];
+    `;
+  }
+
+  else if (cat === "family") {
+    block = `
+      // theme parks / amusement / attractions
+      nwr${a}["tourism"="theme_park"];
+      nwr${a}["leisure"="amusement_park"];
+      nwr${a}["tourism"="attraction"];
+      nwr${a}["attraction"];
+
+      // water parks / pools
+      nwr${a}["leisure"="water_park"];
+      nwr${a}["amenity"="water_park"];
+      nwr${a}["amenity"="swimming_pool"];
+      nwr${a}["leisure"="swimming_pool"];
+
+      // zoo / aquarium
+      nwr${a}["tourism"="zoo"];
+      nwr${a}["amenity"="zoo"];
+      nwr${a}["tourism"="aquarium"];
+      nwr${a}["amenity"="aquarium"];
+
+      // playground / indoor fun (named OR not named)
+      nwr${a}["leisure"="playground"];
+      nwr${a}["leisure"="amusement_arcade"];
+      nwr${a}["leisure"="trampoline_park"];
+      nwr${a}["sport"="climbing"];
+
+      // also allow spas (you said ok in family)
+      nwr${a}["amenity"="spa"];
+      nwr${a}["leisure"="spa"];
+      nwr${a}["amenity"="public_bath"];
+      nwr${a}["amenity"="sauna"];
+      nwr${a}["natural"="hot_spring"];
+    `;
+  }
+
+  else if (cat === "relax") {
+    block = `
+      nwr${a}["amenity"="spa"];
+      nwr${a}["leisure"="spa"];
+      nwr${a}["natural"="hot_spring"];
+      nwr${a}["amenity"="public_bath"];
+      nwr${a}["amenity"="sauna"];
+      nwr${a}["leisure"="sauna"];
+    `;
+  }
+
+  else if (cat === "montagna") {
+    block = `
+      nwr${a}["natural"="peak"];
+      nwr${a}["natural"="ridge"];
+      nwr${a}["tourism"="viewpoint"];
+      nwr${a}["aerialway"];
+      nwr${a}["sport"="skiing"];
+      nwr${a}["piste:type"];
+    `;
+  }
+
+  else if (cat === "borghi") {
+    block = `
+      ${PLACES}
+      nwr${a}["place"="village"];
+      nwr${a}["tourism"="attraction"]["historic"];
+      nwr${a}["historic"="citywalls"];
+      nwr${a}["historic"="castle"];
+    `;
+  }
+
+  else if (cat === "citta") {
+    block = `
+      nwr${a}["place"~"^(city|town)$"];
+      nwr${a}["tourism"="attraction"];
+      nwr${a}["tourism"="museum"];
+      nwr${a}["historic"];
+    `;
+  }
+
+  else {
+    // ovunque
+    block = `
+      ${PLACES}
+      nwr${a}["tourism"="attraction"];
+      nwr${a}["tourism"="viewpoint"];
+      nwr${a}["historic"];
+      nwr${a}["natural"="beach"];
+      nwr${a}["natural"="peak"];
+      nwr${a}["leisure"="water_park"];
+      nwr${a}["tourism"="theme_park"];
+      nwr${a}["boundary"="national_park"];
+      nwr${a}["leisure"="nature_reserve"];
+    `;
+  }
+
+  // Always include PLACES so the response isn't empty (helps near inland too)
+  const ql = `
+[out:json][timeout:25];
+(
+  ${block}
+  ${PLACES}
+);
+out center tags qt 600;
+`;
+  return ql;
 }
 
 export default async function handler(req, res) {
   try {
-    const lat = toNum(req.query.lat);
-    const lon = toNum(req.query.lon);
+    const lat = Number(req.query.lat);
+    const lon = Number(req.query.lon);
+    const radiusKm = clamp(Number(req.query.radiusKm || 120), 5, 450);
+    const radiusM = Math.round(radiusKm * 1000);
+    const cat = normCat(req.query.cat);
 
-    if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+    if (!isFinite(lat) || !isFinite(lon)) {
       return res.status(400).json({ ok: false, error: "Invalid lat/lon" });
     }
 
-    const cat = cleanCat(req.query.cat);
-    const radiusKm = clamp(
-      toNum(req.query.radiusKm ?? DEFAULT_RADIUS_KM) ?? DEFAULT_RADIUS_KM,
-      MIN_RADIUS_KM,
-      MAX_RADIUS_KM
-    );
-    const radiusM = Math.round(radiusKm * 1000);
-
-    // Overpass query
-    // - gather to .all
-    // - then strong filter -> .keep
-    // - output tags + center (so ways/relations have center coords)
-    const catBlock = buildCatQuery(cat, radiusM, lat, lon);
-
-    const query = `
-[out:json][timeout:${TIMEOUT_SEC}];
-(
-  ${catBlock}
-)->.all;
-
-${buildStrongFilter()}
-
-(.keep;)->.out;
-out tags center qt ${OUT_LIMIT};
-`;
+    const query = buildQuery(cat, radiusM, lat, lon);
 
     const r = await fetch(OVERPASS, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" },
-      body: "data=" + encodeURIComponent(query),
+      body: "data=" + encodeURIComponent(query)
     });
 
     const txt = await r.text();
     if (!r.ok) {
-      return res.status(502).json({
-        ok: false,
-        error: "Overpass error",
-        details: txt.slice(0, 800),
-        meta: { cat, radiusKm },
-      });
+      return res.status(502).json({ ok: false, error: "Overpass error", details: txt.slice(0, 500) });
     }
 
-    let data = null;
-    try { data = JSON.parse(txt); } catch {
-      return res.status(502).json({
-        ok: false,
-        error: "Overpass returned non-JSON",
-        details: txt.slice(0, 800),
-        meta: { cat, radiusKm },
-      });
-    }
+    const data = JSON.parse(txt);
+    const count = Array.isArray(data?.elements) ? data.elements.length : 0;
 
-    // Cache: short (live)
-    res.setHeader("Cache-Control", "public, s-maxage=240, stale-while-revalidate=1200");
-
-    return res.status(200).json({
-      ok: true,
-      meta: {
-        cat,
-        radiusKm,
-        radiusM,
-        timeoutSec: TIMEOUT_SEC,
-        outLimit: OUT_LIMIT,
-      },
-      data,
-    });
+    res.setHeader("Cache-Control", "public, s-maxage=120, stale-while-revalidate=900");
+    return res.status(200).json({ ok: true, data, meta: { cat, radiusKm, count } });
 
   } catch (e) {
     return res.status(500).json({ ok: false, error: "Server error", details: String(e) });
