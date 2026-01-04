@@ -1,356 +1,293 @@
-// /api/destinations.js — LIVE places via Overpass (EU/UK) — v4.0 (NO TIMEOUT)
-// GET /api/destinations?lat=..&lon=..&radiusKm=..&cat=family|mare|borghi|storia|natura|montagna|citta|relax|ovunque
+// /api/destinations.js — LIVE destinations via Overpass (FAST + FALLBACK + CACHE) — v3.0
+// GET /api/destinations?lat=...&lon=...&radiusKm=...&cat=...
 //
-// Strategy:
-// - Progressive tiers (A -> B -> C) with small-to-large radii to avoid Overpass timeouts.
-// - Uses nwr (node/way/relation) + out center to get coords for ways/relations.
-// - Avoids huge generic selectors like ["historic"] without constraints.
-// - Returns meta.alt_kind for "mare" fallback to "acqua" (lake/river) if no beach found.
+// Returns:
+// { ok:true, data:{ elements:[...] }, meta:{ cat, radiusKm, endpoint, cached, ms } }
+// { ok:false, error:"...", meta:{ ... } }
 
-const OVERPASS = "https://overpass-api.de/api/interpreter";
+const TTL_MS = 1000 * 60 * 30; // 30 min cache
+const cache = new Map(); // key -> { ts, payload }
 
-function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
-function normCat(s) {
-  const x = String(s || "").toLowerCase().trim();
-  return x || "ovunque";
-}
-function around(radiusM, lat, lon) {
-  return `(around:${radiusM},${lat},${lon})`;
-}
-
-function buildQL(parts, radiusM, lat, lon, limit = 220) {
-  const a = around(radiusM, lat, lon);
-  const body = parts.map(p => p(a)).join("\n");
-  return `
-[out:json][timeout:22];
-(
-${body}
-);
-out center tags qt ${limit};
-`;
-}
-
-// ---- TIER DEFINITIONS ----
-// Each tier is an array of functions (a) => `nwr${a}["k"="v"];` etc.
-// Keep them focused to avoid huge scans.
-
-const TIERS = {
-  // FAMILY: tier A = tourist attractions; tier B = strong family; tier C = fallback (parks/spa/etc.)
-  family: [
-    { // A
-      name: "A",
-      limit: 240,
-      q: [
-        (a)=>`nwr${a}["tourism"="theme_park"];`,
-        (a)=>`nwr${a}["leisure"="amusement_park"];`,
-        (a)=>`nwr${a}["leisure"="water_park"];`,
-        (a)=>`nwr${a}["amenity"="water_park"];`,
-        (a)=>`nwr${a}["tourism"="zoo"];`,
-        (a)=>`nwr${a}["tourism"="aquarium"];`,
-        (a)=>`nwr${a}["tourism"="attraction"]["attraction"];`,
-        (a)=>`nwr${a}["tourism"="attraction"]["name"];`,
-      ],
-    },
-    { // B
-      name: "B",
-      limit: 260,
-      q: [
-        (a)=>`nwr${a}["amenity"="swimming_pool"];`,
-        (a)=>`nwr${a}["leisure"="swimming_pool"];`,
-        (a)=>`nwr${a}["leisure"="amusement_arcade"];`,
-        (a)=>`nwr${a}["leisure"="trampoline_park"];`,
-        (a)=>`nwr${a}["sport"="climbing"];`,
-        (a)=>`nwr${a}["leisure"="playground"];`,
-      ],
-    },
-    { // C (fallback, includes spas because you said OK, but LAST)
-      name: "C",
-      limit: 280,
-      q: [
-        (a)=>`nwr${a}["leisure"="park"];`,
-        (a)=>`nwr${a}["tourism"="museum"];`,
-        (a)=>`nwr${a}["amenity"="spa"];`,
-        (a)=>`nwr${a}["leisure"="spa"];`,
-        (a)=>`nwr${a}["natural"="hot_spring"];`,
-        (a)=>`nwr${a}["amenity"="public_bath"];`,
-      ],
-    },
-  ],
-
-  // MARE: only true sea beach in main tiers. If none -> alt_kind "acqua" (lakes/rivers)
-  mare: [
-    {
-      name: "A",
-      limit: 220,
-      q: [
-        (a)=>`nwr${a}["natural"="beach"];`,
-        (a)=>`nwr${a}["tourism"="beach_resort"];`,
-        (a)=>`nwr${a}["leisure"="beach_resort"];`,
-      ],
-    },
-    {
-      name: "B",
-      limit: 220,
-      q: [
-        (a)=>`nwr${a}["seamark:type"="beach"];`,
-        (a)=>`nwr${a}["seamark:landmark:category"="beach"];`,
-      ],
-    },
-  ],
-
-  // NATURA: strong natural highlights, avoid generic "natural" without value constraints
-  natura: [
-    {
-      name: "A",
-      limit: 260,
-      q: [
-        (a)=>`nwr${a}["boundary"="national_park"];`,
-        (a)=>`nwr${a}["leisure"="nature_reserve"];`,
-        (a)=>`nwr${a}["boundary"="protected_area"];`,
-      ],
-    },
-    {
-      name: "B",
-      limit: 300,
-      q: [
-        (a)=>`nwr${a}["natural"="waterfall"];`,
-        (a)=>`nwr${a}["waterway"="waterfall"];`,
-        (a)=>`nwr${a}["natural"="gorge"];`,
-        (a)=>`nwr${a}["natural"="cave_entrance"];`,
-        (a)=>`nwr${a}["natural"="peak"];`,
-        (a)=>`nwr${a}["tourism"="viewpoint"];`,
-      ],
-    },
-    {
-      name: "C",
-      limit: 300,
-      q: [
-        (a)=>`nwr${a}["natural"="lake"];`,
-        (a)=>`nwr${a}["water"="lake"];`,
-        (a)=>`nwr${a}["leisure"="park"];`,
-        (a)=>`nwr${a}["natural"="spring"];`,
-      ],
-    },
-  ],
-
-  // STORIA: constrain historic values, avoid exploding "historic" wildcard
-  storia: [
-    {
-      name: "A",
-      limit: 260,
-      q: [
-        (a)=>`nwr${a}["historic"~"^(castle|fort|archaeological_site|ruins|monument|memorial)$"];`,
-        (a)=>`nwr${a}["tourism"="museum"];`,
-      ],
-    },
-    {
-      name: "B",
-      limit: 280,
-      q: [
-        (a)=>`nwr${a}["amenity"="theatre"];`,
-        (a)=>`nwr${a}["tourism"="attraction"]["historic"~"^(castle|fort|archaeological_site|ruins)$"];`,
-        (a)=>`nwr${a}["tourism"="artwork"];`,
-      ],
-    },
-    {
-      name: "C",
-      limit: 280,
-      q: [
-        (a)=>`nwr${a}["historic"="city_gate"];`,
-        (a)=>`nwr${a}["historic"="citywalls"];`,
-        (a)=>`nwr${a}["historic"="church"];`, // common but still bounded
-      ],
-    },
-  ],
-
-  // BOR GHI / CITTA: cheap and safe
-  borghi: [
-    { name:"A", limit: 260, q: [(a)=>`nwr${a}["place"="village"];`, (a)=>`nwr${a}["place"="town"];`] },
-  ],
-  citta: [
-    { name:"A", limit: 260, q: [(a)=>`nwr${a}["place"~"^(city|town)$"];`] },
-  ],
-  montagna: [
-    { name:"A", limit: 280, q: [(a)=>`nwr${a}["natural"="peak"];`, (a)=>`nwr${a}["tourism"="viewpoint"];`] },
-    { name:"B", limit: 280, q: [(a)=>`nwr${a}["sport"="skiing"];`, (a)=>`nwr${a}["aerialway"];`] },
-  ],
-  relax: [
-    { name:"A", limit: 260, q: [(a)=>`nwr${a}["amenity"="spa"];`, (a)=>`nwr${a}["leisure"="spa"];`, (a)=>`nwr${a}["natural"="hot_spring"];`, (a)=>`nwr${a}["amenity"="public_bath"];`] },
-  ],
-  ovunque: [
-    { name:"A", limit: 220, q: [(a)=>`nwr${a}["tourism"="attraction"];`, (a)=>`nwr${a}["tourism"="viewpoint"];`, (a)=>`nwr${a}["place"~"^(city|town|village)$"];`] },
-  ],
-};
-
-// For "mare": fallback to lakes/rivers if beach none found
-const MARE_FALLBACK_ACQUA = [
-  (a)=>`nwr${a}["natural"="lake"];`,
-  (a)=>`nwr${a}["water"="lake"];`,
-  (a)=>`nwr${a}["waterway"="river"];`,
-  (a)=>`nwr${a}["waterway"="riverbank"];`,
-  (a)=>`nwr${a}["tourism"="viewpoint"];`,
+const OVERPASS_ENDPOINTS = [
+  "https://overpass-api.de/api/interpreter",
+  "https://overpass.kumi.systems/api/interpreter",
+  "https://overpass.nchc.org.tw/api/interpreter",
 ];
 
-// ---- fetch helper ----
-async function overpassFetch(query) {
-  const r = await fetch(OVERPASS, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" },
-    body: "data=" + encodeURIComponent(query),
-  });
-  const txt = await r.text();
-  if (!r.ok) return { ok: false, status: r.status, text: txt };
-  let data = null;
-  try { data = JSON.parse(txt); } catch {}
-  if (!data) return { ok: false, status: 502, text: "Invalid JSON from Overpass" };
-  return { ok: true, data };
+function now() { return Date.now(); }
+function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
+
+function pickQueryByCat(cat) {
+  // NOTE: Queries are intentionally "tight" to avoid timeouts.
+  // We focus on tourist/attraction objects, not generic POIs.
+
+  // Helpers: we use `nwr` (node/way/relation)
+  // around:radius_m,lat,lon
+  // out center qt; -> faster response with center for ways/relations
+
+  const baseOut = "out center qt;";
+
+  switch (String(cat || "ovunque").toLowerCase()) {
+    case "family":
+      return `
+        (
+          nwr["tourism"="theme_park"](around:R,LA,LO);
+          nwr["leisure"="water_park"](around:R,LA,LO);
+          nwr["tourism"="zoo"](around:R,LA,LO);
+          nwr["tourism"="aquarium"](around:R,LA,LO);
+          nwr["tourism"="attraction"](around:R,LA,LO);
+          nwr["amenity"="aquarium"](around:R,LA,LO);
+          nwr["amenity"="zoo"](around:R,LA,LO);
+          nwr["leisure"="swimming_pool"](around:R,LA,LO);
+          nwr["leisure"="sports_centre"]["sport"="swimming"](around:R,LA,LO);
+          nwr["leisure"="amusement_arcade"](around:R,LA,LO);
+          nwr["leisure"="playground"](around:R,LA,LO);
+        );
+        ${baseOut}
+      `;
+
+    case "relax":
+      return `
+        (
+          nwr["amenity"="spa"](around:R,LA,LO);
+          nwr["leisure"="spa"](around:R,LA,LO);
+          nwr["natural"="hot_spring"](around:R,LA,LO);
+          nwr["amenity"="public_bath"](around:R,LA,LO);
+          nwr["tourism"="spa"](around:R,LA,LO);
+        );
+        ${baseOut}
+      `;
+
+    case "storia":
+      return `
+        (
+          nwr["tourism"="museum"](around:R,LA,LO);
+          nwr["historic"](around:R,LA,LO);
+          nwr["historic"="castle"](around:R,LA,LO);
+          nwr["historic"="ruins"](around:R,LA,LO);
+          nwr["historic"="archaeological_site"](around:R,LA,LO);
+          nwr["historic"="monument"](around:R,LA,LO);
+          nwr["tourism"="attraction"](around:R,LA,LO);
+        );
+        ${baseOut}
+      `;
+
+    case "natura":
+      return `
+        (
+          nwr["boundary"="national_park"](around:R,LA,LO);
+          nwr["leisure"="nature_reserve"](around:R,LA,LO);
+          nwr["natural"="peak"](around:R,LA,LO);
+          nwr["waterway"="waterfall"](around:R,LA,LO);
+          nwr["natural"="waterfall"](around:R,LA,LO);
+          nwr["tourism"="viewpoint"](around:R,LA,LO);
+          nwr["tourism"="attraction"](around:R,LA,LO);
+        );
+        ${baseOut}
+      `;
+
+    case "mare":
+      return `
+        (
+          nwr["natural"="beach"](around:R,LA,LO);
+          nwr["tourism"="viewpoint"](around:R,LA,LO);
+          nwr["tourism"="attraction"](around:R,LA,LO);
+          nwr["leisure"="marina"](around:R,LA,LO);
+        );
+        ${baseOut}
+      `;
+
+    case "borghi":
+      return `
+        (
+          nwr["place"="village"](around:R,LA,LO);
+          nwr["place"="hamlet"](around:R,LA,LO);
+          nwr["tourism"="attraction"](around:R,LA,LO);
+          nwr["tourism"="viewpoint"](around:R,LA,LO);
+          nwr["historic"](around:R,LA,LO);
+        );
+        ${baseOut}
+      `;
+
+    case "citta":
+      return `
+        (
+          nwr["place"="city"](around:R,LA,LO);
+          nwr["place"="town"](around:R,LA,LO);
+          nwr["tourism"="attraction"](around:R,LA,LO);
+          nwr["tourism"="museum"](around:R,LA,LO);
+          nwr["historic"](around:R,LA,LO);
+        );
+        ${baseOut}
+      `;
+
+    case "ovunque":
+    default:
+      return `
+        (
+          nwr["tourism"="attraction"](around:R,LA,LO);
+          nwr["tourism"="viewpoint"](around:R,LA,LO);
+          nwr["tourism"="museum"](around:R,LA,LO);
+          nwr["historic"](around:R,LA,LO);
+          nwr["natural"="beach"](around:R,LA,LO);
+          nwr["natural"="peak"](around:R,LA,LO);
+          nwr["waterway"="waterfall"](around:R,LA,LO);
+          nwr["leisure"="water_park"](around:R,LA,LO);
+          nwr["tourism"="theme_park"](around:R,LA,LO);
+          nwr["tourism"="zoo"](around:R,LA,LO);
+          nwr["tourism"="aquarium"](around:R,LA,LO);
+          nwr["amenity"="spa"](around:R,LA,LO);
+          nwr["natural"="hot_spring"](around:R,LA,LO);
+        );
+        ${baseOut}
+      `;
+  }
 }
 
-function countElements(data) {
-  return Array.isArray(data?.elements) ? data.elements.length : 0;
+function buildOverpassQL({ lat, lon, radiusM, cat, maxSize }) {
+  // out:json + timeout + maxsize
+  const body = pickQueryByCat(cat)
+    .replaceAll("R", String(radiusM))
+    .replaceAll("LA", String(lat))
+    .replaceAll("LO", String(lon));
+
+  const timeout = 22; // seconds (kept moderate; we also enforce fetch timeout)
+  const ms = clamp(Number(maxSize) || 64_000_000, 16_000_000, 128_000_000);
+
+  return `
+    [out:json][timeout:${timeout}][maxsize:${ms}];
+    ${body}
+  `;
 }
 
-function isTimeoutRemark(data) {
-  const rem = String(data?.remark || "");
-  return rem.toLowerCase().includes("timed out");
-}
+async function fetchWithTimeout(url, { method = "POST", body, timeoutMs = 12000 } = {}) {
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), timeoutMs);
 
-function mergeDatasets(list) {
-  // merge by (type,id)
-  const seen = new Set();
-  const out = { version: 0.6, generator: "Jamo merge", elements: [] };
-  for (const d of list) {
-    const els = Array.isArray(d?.elements) ? d.elements : [];
-    for (const e of els) {
-      const k = `${e.type}:${e.id}`;
-      if (seen.has(k)) continue;
-      seen.add(k);
-      out.elements.push(e);
+  try {
+    const r = await fetch(url, {
+      method,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+        "Accept": "application/json",
+        "User-Agent": "Jamo/3.0 (Overpass proxy; Vercel)"
+      },
+      body,
+      signal: ctrl.signal,
+    });
+
+    if (!r.ok) {
+      const txt = await r.text().catch(() => "");
+      return { ok: false, status: r.status, error: `HTTP ${r.status}`, raw: txt.slice(0, 300) };
     }
+
+    const j = await r.json().catch(() => null);
+    if (!j || !Array.isArray(j.elements)) {
+      return { ok: false, status: 200, error: "Invalid JSON from Overpass" };
+    }
+    return { ok: true, status: 200, json: j };
+
+  } catch (e) {
+    const isAbort = String(e?.name || "").includes("Abort");
+    return { ok: false, status: 0, error: isAbort ? "timeout" : String(e?.message || e) };
+  } finally {
+    clearTimeout(t);
+  }
+}
+
+function normalizeElements(j, limit = 900) {
+  // Limit + ensure tags/name exist
+  const out = [];
+  for (const el of (j?.elements || [])) {
+    if (!el) continue;
+    const tags = el.tags || {};
+    const name = tags.name || tags["name:it"] || tags.brand || tags.operator || "";
+    if (!String(name || "").trim()) continue;
+
+    // must have coordinates (node) OR center (way/relation)
+    const lat = Number(el.lat ?? el.center?.lat);
+    const lon = Number(el.lon ?? el.center?.lon);
+    if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
+
+    out.push(el);
+    if (out.length >= limit) break;
   }
   return out;
 }
 
-// Progressive radii: starts small to avoid timeouts and speed up.
-function radiiKmPlan(requestedKm) {
-  const maxKm = clamp(Number(requestedKm) || 120, 5, 450);
-
-  // Good defaults: 10/20/35/60/90/120... but never exceed requested
-  const plan = [10, 20, 35, 60, 90, 120, 180, 240, 320, 450].filter(x => x <= maxKm);
-
-  // If requested is small (<10) then single
-  if (!plan.length) return [maxKm];
-
-  // Ensure last equals requested (so user gets full range)
-  if (plan[plan.length - 1] !== maxKm) plan.push(maxKm);
-
-  return plan;
-}
-
 export default async function handler(req, res) {
+  const t0 = now();
+
   try {
-    const lat = Number(req.query.lat);
-    const lon = Number(req.query.lon);
-    const reqRadiusKm = clamp(Number(req.query.radiusKm || 120), 5, 450);
-    const cat = normCat(req.query.cat);
-
-    if (!isFinite(lat) || !isFinite(lon)) {
-      return res.status(400).json({ ok: false, error: "Invalid lat/lon" });
+    if (req.method !== "GET") {
+      return res.status(405).json({ ok: false, error: "Use GET" });
     }
 
-    const tiers = TIERS[cat] || TIERS.ovunque;
-    const radii = radiiKmPlan(reqRadiusKm);
+    const lat = Number(req.query?.lat);
+    const lon = Number(req.query?.lon);
+    const radiusKm = clamp(Number(req.query?.radiusKm) || 60, 5, 300);
+    const cat = String(req.query?.cat || "ovunque").toLowerCase();
 
-    let usedTier = null;
-    let usedRadiusKm = null;
-    let altKind = ""; // for mare fallback: "acqua"
-    const attempts = [];
-    let bestData = null;
+    if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+      return res.status(400).json({ ok: false, error: "Missing/invalid lat/lon" });
+    }
 
-    // 1) Progressive tier & radius
-    outer: for (const t of tiers) {
-      for (const km of radii) {
-        const radiusM = Math.round(km * 1000);
-        const ql = buildQL(t.q, radiusM, lat, lon, t.limit);
-        const r = await overpassFetch(ql);
+    const radiusM = Math.round(radiusKm * 1000);
+    const key = `${cat}:${lat.toFixed(4)}:${lon.toFixed(4)}:${radiusKm}`;
 
-        if (!r.ok) {
-          // Overpass errors - keep attempt
-          attempts.push({ tier: t.name, radiusKm: km, ok: false, status: r.status });
-          continue;
-        }
+    // cache hit
+    const hit = cache.get(key);
+    if (hit && (now() - hit.ts) < TTL_MS) {
+      return res.status(200).json({
+        ok: true,
+        data: hit.payload,
+        meta: { cat, radiusKm, endpoint: hit.endpoint, cached: true, ms: now() - t0 }
+      });
+    }
 
-        const data = r.data;
-        const cnt = countElements(data);
-        const timedOut = isTimeoutRemark(data);
+    const ql = buildOverpassQL({ lat, lon, radiusM, cat, maxSize: 64_000_000 });
+    const body = `data=${encodeURIComponent(ql)}`;
 
-        attempts.push({ tier: t.name, radiusKm: km, ok: true, count: cnt, timedOut });
-
-        // If timeout -> try smaller radius next, do not accept
-        if (timedOut) continue;
-
-        // Accept if we have enough results or if it's the last radius of this tier
-        if (cnt >= 18 || km === radii[radii.length - 1]) {
-          usedTier = t.name;
-          usedRadiusKm = km;
-          bestData = data;
-          break outer;
-        }
-
-        // else: keep searching bigger within same tier
-        bestData = data; // keep last non-timeout
-        usedTier = t.name;
-        usedRadiusKm = km;
+    // Try endpoints in order with a tight timeout each
+    let lastErr = null;
+    for (const endpoint of OVERPASS_ENDPOINTS) {
+      const r = await fetchWithTimeout(endpoint, { method: "POST", body, timeoutMs: 12000 });
+      if (!r.ok) {
+        lastErr = { endpoint, ...r };
+        continue;
       }
+
+      const elements = normalizeElements(r.json, 900);
+      const payload = { ...r.json, elements };
+
+      cache.set(key, { ts: now(), payload, endpoint });
+
+      return res.status(200).json({
+        ok: true,
+        data: payload,
+        meta: { cat, radiusKm, endpoint, cached: false, ms: now() - t0 }
+      });
     }
 
-    // 2) Mare fallback to "acqua" if no beach found
-    if (cat === "mare") {
-      const cnt = countElements(bestData);
-      if (!bestData || cnt === 0 || isTimeoutRemark(bestData)) {
-        // fallback plan (still progressive but simpler)
-        altKind = "acqua";
-        const fbAttempts = [];
-        let fbData = null;
-        for (const km of radii) {
-          const radiusM = Math.round(km * 1000);
-          const ql = buildQL(MARE_FALLBACK_ACQUA, radiusM, lat, lon, 240);
-          const r = await overpassFetch(ql);
-          if (!r.ok) { fbAttempts.push({ tier:"F", radiusKm: km, ok:false, status:r.status }); continue; }
-          const data = r.data;
-          const c = countElements(data);
-          const timedOut = isTimeoutRemark(data);
-          fbAttempts.push({ tier:"F", radiusKm: km, ok:true, count:c, timedOut });
-          if (timedOut) continue;
-          fbData = data;
-          if (c >= 18) { usedTier = "F"; usedRadiusKm = km; break; }
-          usedTier = "F"; usedRadiusKm = km;
-        }
-        attempts.push(...fbAttempts);
-        bestData = fbData || bestData;
-      }
-    }
-
-    const finalCount = countElements(bestData);
-
-    // Cache short to avoid hammering Overpass while user taps
-    res.setHeader("Cache-Control", "public, s-maxage=90, stale-while-revalidate=600");
-
+    // all failed
     return res.status(200).json({
-      ok: true,
-      data: bestData || { version: 0.6, generator: "Jamo empty", elements: [] },
+      ok: false,
+      error: `Overpass error (${lastErr?.error || "unknown"})`,
       meta: {
         cat,
-        requestedRadiusKm: reqRadiusKm,
-        usedRadiusKm: usedRadiusKm ?? null,
-        usedTier: usedTier ?? null,
-        count: finalCount,
-        alt_kind: altKind || "",
-        attempts: attempts.slice(0, 18), // keep small
-      },
+        radiusKm,
+        cached: false,
+        endpoint: lastErr?.endpoint || "",
+        detail: lastErr?.raw || "",
+        ms: now() - t0
+      }
     });
 
   } catch (e) {
-    return res.status(500).json({ ok: false, error: "Server error", details: String(e) });
+    return res.status(200).json({
+      ok: false,
+      error: String(e?.message || e),
+      meta: { ms: now() - t0 }
+    });
   }
 }
