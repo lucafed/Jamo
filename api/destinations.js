@@ -1,10 +1,12 @@
-// /api/destinations.js — Jamo LIVE destinations (Overpass) — v2.0
-// Goal: tons of category-specific POIs, fast, resilient, cache.
-// Query strategy: multiple small Overpass queries (avoid timeouts) + endpoint fallback.
-// Returns: { ok:true, data:{elements:[...]}, meta:{cat,radiusKm,count,fromCache,endpoint,elapsedMs,notes:[] } }
+// /api/destinations.js — Jamo LIVE destinations (Overpass) — v3.0
+// Goals:
+// - category-first POIs (touristic attractions, not random towns)
+// - resilient: partial results, multi-endpoint, per-query timeout, never "hard fail"
+// - less spam: viewpoints only if named, parks more meaningful
+// - cache + safer outputs for the client
 
 const TTL_MS = 1000 * 60 * 20; // 20 min cache
-const cache = new Map(); // key -> { ts, data }
+const cache = new Map(); // key -> { ts, data, endpoint }
 
 const OVERPASS_ENDPOINTS = [
   "https://overpass-api.de/api/interpreter",
@@ -26,14 +28,14 @@ function normCat(c) {
 }
 
 function cacheKey({ lat, lon, radiusKm, cat }) {
-  // round to reduce cache fragmentation
+  // round to reduce fragmentation
   const la = Math.round(lat * 100) / 100; // ~1km
   const lo = Math.round(lon * 100) / 100;
   const rk = Math.round(radiusKm);
   return `${cat}:${rk}:${la}:${lo}`;
 }
 
-async function fetchWithTimeout(url, { method = "POST", body, headers = {} } = {}, timeoutMs = 14000) {
+async function fetchWithTimeout(url, { method = "POST", body, headers = {} } = {}, timeoutMs = 13000) {
   const ctrl = new AbortController();
   const t = setTimeout(() => ctrl.abort(), timeoutMs);
   try {
@@ -53,275 +55,277 @@ async function fetchWithTimeout(url, { method = "POST", body, headers = {} } = {
 }
 
 function overpassBody(query) {
-  // Overpass expects "data=<query>"
   return `data=${encodeURIComponent(query)}`;
 }
 
-function buildAround(radiusM, lat, lon) {
+function around(radiusM, lat, lon) {
   return `around:${radiusM},${lat},${lon}`;
 }
 
+function mkHeader(timeoutSec = 12, maxsize = 1073741824) {
+  // maxsize high but safe; still depends on endpoint.
+  return `[out:json][timeout:${timeoutSec}][maxsize:${maxsize}];`;
+}
+
 /**
- * Build small queries per category.
- * We prioritize "touristic/attraction" stuff and keep results high-volume.
+ * IMPORTANT:
+ * - keep each query SMALL
+ * - avoid huge "viewpoint" floods
+ * - avoid "place=town/village" in family/natura/etc (those belong to borghi/citta)
+ * - ask for named items when noisy
  */
 function buildQueries(cat, radiusM, lat, lon) {
-  const A = buildAround(radiusM, lat, lon);
+  const A = around(radiusM, lat, lon);
 
-  // NOTE: we intentionally query mostly NODES first (fast),
-  // plus some ways/relations where it matters (parks, beaches, historic sites).
-  // Keep each query small to avoid timeouts.
+  // Common “quality” filters:
+  // - Named where helpful (reduces spam)
+  const NAMED_VIEWPOINT = `nwr[tourism=viewpoint][name](${A});`;
+  const NAMED_ATTR = `nwr[tourism=attraction][name](${A});`;
 
-  if (cat === "relax") {
-    return [
-      // Terme / hot springs / thermal / spa
-      `
-[out:json][timeout:12];
-(
-  node[amenity=spa](${A});
-  node[leisure=spa](${A});
-  node[natural=hot_spring](${A});
-  node[amenity=public_bath](${A});
-  node["healthcare"="sauna"](${A});
-  node["sauna"="yes"](${A});
-  node["thermal"="yes"](${A});
-  node["name"~"terme|spa|thermal|benessere",i](${A});
-);
-out tags center 350;
-      `.trim(),
-      // Piscine / wellness centers / resort style relax
-      `
-[out:json][timeout:12];
-(
-  node[leisure=swimming_pool](${A});
-  node[amenity=swimming_pool](${A});
-  node[leisure=fitness_centre](${A});
-  node["sport"="swimming"](${A});
-  node["tourism"="resort"](${A});
-  node["tourism"="hotel"]["spa"="yes"](${A});
-);
-out tags center 350;
-      `.trim(),
-      // Scenic “relax” chicche: viewpoints / picnic areas / quiet parks
-      `
-[out:json][timeout:12];
-(
-  node[tourism=viewpoint](${A});
-  node[leisure=picnic_table](${A});
-  node[leisure=park](${A});
-);
-out tags center 350;
-      `.trim(),
-    ];
-  }
-
+  // FAMILY: "hard attractions" first, then soft, then optional spa
   if (cat === "family") {
     return [
-      // Big attractions: theme park / amusement / water park / zoo / aquarium
+      // 1) HARD ATTRACTIONS (what you really want)
       `
-[out:json][timeout:12];
+${mkHeader(12)}
 (
-  node[tourism=theme_park](${A});
-  way[tourism=theme_park](${A});
-  node[leisure=amusement_arcade](${A});
-  node[leisure=water_park](${A});
-  way[leisure=water_park](${A});
-  node[tourism=zoo](${A});
-  way[tourism=zoo](${A});
-  node[tourism=aquarium](${A});
-  node[amenity=aquarium](${A});
-  node[tourism=attraction](${A});
-  node["name"~"parco divertimenti|parco acquatico|acquapark|aqua park|water park|luna park|zoo|acquario",i](${A});
+  nwr[tourism=theme_park](${A});
+  nwr[leisure=water_park](${A});
+  nwr[leisure=amusement_arcade](${A});
+  nwr[tourism=zoo](${A});
+  nwr[tourism=aquarium](${A});
+  nwr[amenity=aquarium](${A});
+  nwr[leisure=trampoline_park](${A});
+  nwr[leisure=playground][name](${A});       /* named playgrounds only */
+  nwr[leisure=park][name](${A});             /* named parks only */
+  nwr["tourism"="information"]["information"="visitor_centre"](${A});
+  nwr["name"~"parco avventura|adventure park|funivia|zip line|luna park|acquapark|aqua ?park|water ?park|parco divertimenti|zoo|acquario",i](${A});
 );
-out tags center 450;
+out tags center 300;
       `.trim(),
-      // Kids places: playground / trampoline / indoor play / pools
+
+      // 2) POOLS / SPORTS / KID INDOOR (still good for family)
       `
-[out:json][timeout:12];
+${mkHeader(12)}
 (
-  node[leisure=playground](${A});
-  way[leisure=playground](${A});
-  node["playground"="yes"](${A});
-  node[leisure=trampoline_park](${A});
-  node["leisure"="sports_centre"]["sport"="swimming"](${A});
-  node[leisure=swimming_pool](${A});
-  node[amenity=swimming_pool](${A});
-  node["name"~"parco giochi|area giochi|gonfiabili|trampolin|kids|bambin",i](${A});
+  nwr[leisure=swimming_pool](${A});
+  nwr[amenity=swimming_pool](${A});
+  nwr[leisure=sports_centre]["sport"="swimming"](${A});
+  nwr["name"~"kids|bambin|gonfiabil|area giochi|parco giochi|indoor play|play center|ludoteca",i](${A});
 );
-out tags center 450;
+out tags center 260;
       `.trim(),
-      // Family “always something”: parks, viewpoints, beaches, museums (kid-friendly option), animal farms
+
+      // 3) SOFT FAMILY fallback (ONLY named to avoid spam)
       `
-[out:json][timeout:12];
+${mkHeader(12)}
 (
-  node[leisure=park](${A});
-  way[leisure=park](${A});
-  node[tourism=viewpoint](${A});
-  node[tourism=museum](${A});
-  node["tourism"="information"]["information"="visitor_centre"](${A});
-  node["animal"="yes"](${A});
-  node["name"~"fattoria|parco avventura|avventura|funivia|lago|cascata",i](${A});
+  ${NAMED_ATTR}
+  ${NAMED_VIEWPOINT}
+  nwr[tourism=museum][name](${A});   /* kid-friendly option */
+  nwr["name"~"fattoria|agriturismo|parco|lago|cascata",i](${A});
 );
-out tags center 450;
+out tags center 220;
       `.trim(),
-      // (Optional) terme/spa also allowed in family (per tua richiesta)
+
+      // 4) SPA/TERME allowed, but will be ranked lower client-side
       `
-[out:json][timeout:12];
+${mkHeader(12)}
 (
-  node[amenity=spa](${A});
-  node[natural=hot_spring](${A});
-  node["name"~"terme|spa|thermal",i](${A});
+  nwr[amenity=spa](${A});
+  nwr[leisure=spa](${A});
+  nwr[natural=hot_spring](${A});
+  nwr[amenity=public_bath](${A});
+  nwr["name"~"terme|spa|thermal|benessere",i](${A});
 );
-out tags center 250;
+out tags center 160;
       `.trim(),
     ];
   }
 
-  if (cat === "mare") {
+  // RELAX: terme/spa + quiet places (named viewpoints / named parks / lakes)
+  if (cat === "relax") {
     return [
       `
-[out:json][timeout:12];
+${mkHeader(12)}
 (
-  node[natural=beach](${A});
-  way[natural=beach](${A});
-  node["tourism"="attraction"]["name"~"spiaggia|lido|mare",i](${A});
-  node["natural"="coastline"](${A});
+  nwr[amenity=spa](${A});
+  nwr[leisure=spa](${A});
+  nwr[natural=hot_spring](${A});
+  nwr[amenity=public_bath](${A});
+  nwr["healthcare"="sauna"](${A});
+  nwr["sauna"="yes"](${A});
+  nwr["thermal"="yes"](${A});
+  nwr["name"~"terme|spa|thermal|benessere|wellness",i](${A});
 );
-out tags center 450;
+out tags center 320;
       `.trim(),
       `
-[out:json][timeout:12];
+${mkHeader(12)}
 (
-  node[leisure=marina](${A});
-  node[harbour=yes](${A});
-  node["tourism"="viewpoint"](${A});
+  nwr[leisure=swimming_pool](${A});
+  nwr["tourism"="hotel"]["spa"="yes"](${A});
+  nwr["tourism"="resort"](${A});
 );
-out tags center 350;
+out tags center 220;
+      `.trim(),
+      `
+${mkHeader(12)}
+(
+  ${NAMED_VIEWPOINT}
+  nwr[leisure=park][name](${A});
+  nwr[natural=water][name](${A});
+  nwr["name"~"lago|belvedere|terrazza|panoram",i](${A});
+);
+out tags center 180;
       `.trim(),
     ];
   }
 
+  // NATURA: waterfalls/peaks/springs/parks/reserves/trailheads + named viewpoints only
   if (cat === "natura") {
     return [
       `
-[out:json][timeout:12];
+${mkHeader(12)}
 (
-  node[tourism=viewpoint](${A});
-  node[natural=waterfall](${A});
-  node[natural=peak](${A});
-  node[natural=spring](${A});
-  node[natural=wood](${A});
-  node[leisure=park](${A});
-  way[leisure=park](${A});
-  node[boundary=national_park](${A});
-  way[boundary=national_park](${A});
-  node[leisure=nature_reserve](${A});
-  way[leisure=nature_reserve](${A});
-  node["name"~"cascata|lago|gola|riserva|parco|sentiero",i](${A});
+  nwr[natural=waterfall](${A});
+  nwr[natural=peak](${A});
+  nwr[natural=spring](${A});
+  nwr[leisure=nature_reserve](${A});
+  nwr[boundary=national_park](${A});
+  nwr[leisure=park][name](${A});            /* named parks only */
+  ${NAMED_VIEWPOINT}
+  nwr["highway"="path"]["name"~"sentiero|trail",i](${A});
+  nwr["name"~"cascata|lago|gola|riserva|parco|sentiero|forra",i](${A});
 );
-out tags center 550;
+out tags center 360;
       `.trim(),
     ];
   }
 
+  // STORIA: castles/ruins/archaeology/museums/monuments + named “old town/centro storico”
   if (cat === "storia") {
     return [
       `
-[out:json][timeout:12];
+${mkHeader(12)}
 (
-  node[historic=castle](${A});
-  way[historic=castle](${A});
-  node[historic=ruins](${A});
-  node[historic=archaeological_site](${A});
-  node[tourism=museum](${A});
-  node[historic=monument](${A});
-  node[historic=memorial](${A});
-  node["name"~"castello|rocca|forte|abbazia|museo|anfiteatro|tempio|scavi|necropolis|necropoli",i](${A});
+  nwr[historic=castle](${A});
+  nwr[historic=ruins](${A});
+  nwr[historic=archaeological_site](${A});
+  nwr[tourism=museum](${A});
+  nwr[historic=monument](${A});
+  nwr[historic=memorial](${A});
+  nwr["name"~"castello|rocca|forte|abbazia|museo|anfiteatro|tempio|scavi|necropol|duomo|basilica",i](${A});
 );
-out tags center 650;
+out tags center 420;
       `.trim(),
-      // Town centers / old towns (useful if you're 20 minutes from L'Aquila etc.)
       `
-[out:json][timeout:12];
+${mkHeader(12)}
 (
-  node[place=town](${A});
-  node[place=village](${A});
-  node["tourism"="attraction"]["historic"](${A});
-  node["name"~"centro storico|borgo|citta vecchia",i](${A});
+  nwr["name"~"centro storico|citt(a|à) vecchia|borgo storico|old town",i](${A});
+  nwr[tourism=attraction][historic](${A});
 );
-out tags center 350;
+out tags center 220;
       `.trim(),
     ];
   }
 
+  // MARE: beaches + marinas + seaside attractions (avoid coastline noise)
+  if (cat === "mare") {
+    return [
+      `
+${mkHeader(12)}
+(
+  nwr[natural=beach](${A});
+  nwr["name"~"spiaggia|lido|baia|cala",i](${A});
+  nwr[tourism=attraction]["name"~"spiaggia|mare|lido|baia|cala",i](${A});
+);
+out tags center 320;
+      `.trim(),
+      `
+${mkHeader(12)}
+(
+  nwr[leisure=marina](${A});
+  nwr[harbour=yes](${A});
+  ${NAMED_VIEWPOINT}
+);
+out tags center 220;
+      `.trim(),
+    ];
+  }
+
+  // BORGHI: villages/hamlets (named) + borough keywords
   if (cat === "borghi") {
     return [
       `
-[out:json][timeout:12];
+${mkHeader(12)}
 (
-  node[place=village](${A});
-  node[place=hamlet](${A});
-  node["name"~"borgo",i](${A});
+  nwr[place=village][name](${A});
+  nwr[place=hamlet][name](${A});
+  nwr["name"~"borgo",i](${A});
 );
-out tags center 450;
+out tags center 380;
       `.trim(),
     ];
   }
 
+  // CITTA: towns/cities + attractions
   if (cat === "citta") {
     return [
       `
-[out:json][timeout:12];
+${mkHeader(12)}
 (
-  node[place=city](${A});
-  node[place=town](${A});
-  node["tourism"="attraction"](${A});
+  nwr[place=city][name](${A});
+  nwr[place=town][name](${A});
+  ${NAMED_ATTR}
+  nwr["name"~"centro storico|piazza|duomo|cattedrale",i](${A});
 );
-out tags center 450;
+out tags center 360;
       `.trim(),
     ];
   }
 
+  // MONTAGNA: peaks + viewpoints(named) + shelters/ropeways
   if (cat === "montagna") {
     return [
       `
-[out:json][timeout:12];
+${mkHeader(12)}
 (
-  node[natural=peak](${A});
-  node[natural=mountain_range](${A});
-  node["name"~"monte|cima|rifugio|passo",i](${A});
-  node[tourism=viewpoint](${A});
+  nwr[natural=peak](${A});
+  ${NAMED_VIEWPOINT}
+  nwr[tourism=alpine_hut](${A});
+  nwr["aerialway"](${A});
+  nwr["name"~"monte|cima|rifugio|passo|funivia",i](${A});
 );
-out tags center 450;
+out tags center 320;
       `.trim(),
     ];
   }
 
-  // ovunque: general attractions + viewpoints + parks + museums + castles
+  // OVUNQUE: “best of” without viewpoint flood
   return [
     `
-[out:json][timeout:12];
+${mkHeader(12)}
 (
-  node[tourism=attraction](${A});
-  node[tourism=viewpoint](${A});
-  node[tourism=museum](${A});
-  node[historic=castle](${A});
-  node[leisure=park](${A});
-  node[natural=waterfall](${A});
-  node[natural=beach](${A});
-  node[amenity=spa](${A});
-  node["name"~"castello|rocca|museo|cascata|lago|parco|terme|spa|spiaggia",i](${A});
+  ${NAMED_ATTR}
+  nwr[tourism=museum](${A});
+  nwr[historic=castle](${A});
+  nwr[natural=waterfall](${A});
+  nwr[natural=beach](${A});
+  nwr[amenity=spa](${A});
+  ${NAMED_VIEWPOINT}
+  nwr["name"~"castello|rocca|museo|cascata|lago|parco|terme|spa|spiaggia|abbazia",i](${A});
 );
-out tags center 650;
+out tags center 520;
     `.trim(),
   ];
 }
 
-function mergeElements(results) {
+function mergeElements(jsonResults) {
   const seen = new Set();
   const out = [];
 
-  for (const j of results) {
+  for (const j of jsonResults) {
     const els = Array.isArray(j?.elements) ? j.elements : [];
     for (const el of els) {
       const key = `${el.type}:${el.id}`;
@@ -333,48 +337,79 @@ function mergeElements(results) {
   return out;
 }
 
+/**
+ * Run queries with resilience:
+ * - Try endpoints in order
+ * - For each endpoint, run each query with per-query timeout
+ * - If some queries fail, still return partial results (ok:true)
+ */
 async function runOverpassQueries(queries) {
   const notes = [];
   const started = now();
 
   for (const endpoint of OVERPASS_ENDPOINTS) {
-    try {
-      const results = [];
-      for (let i = 0; i < queries.length; i++) {
-        const q = queries[i];
-        // small per-query timeout; if one fails, try next endpoint
-        const j = await fetchWithTimeout(endpoint, { method: "POST", body: overpassBody(q) }, 15000);
+    const results = [];
+    let successCount = 0;
+
+    for (let i = 0; i < queries.length; i++) {
+      const q = queries[i];
+      try {
+        // slightly smaller timeout per query = less dead time
+        const j = await fetchWithTimeout(endpoint, { method: "POST", body: overpassBody(q) }, 12500);
         results.push(j);
+        successCount++;
+      } catch (e) {
+        notes.push(`q${i}_fail:${String(e?.message || e)}`);
+        // continue with other queries on SAME endpoint (partial)
       }
+    }
+
+    // If we got anything at all from this endpoint -> return partial/complete
+    if (successCount > 0) {
       const elements = mergeElements(results);
       return {
         ok: true,
         endpoint,
         elements,
         elapsedMs: now() - started,
-        notes,
+        notes: notes.length ? notes : ["ok_partial_or_full"],
       };
-    } catch (e) {
-      notes.push(`endpoint_fail: ${String(e?.message || e)}`);
-      continue;
     }
+
+    // otherwise try next endpoint
+    notes.push(`endpoint_fail:${endpoint}`);
   }
 
-  return { ok: false, endpoint: "", elements: [], elapsedMs: now() - started, notes };
+  // Hard failure on all endpoints: still return ok:true with empty elements,
+  // so the client can show “LIVE provato ma non disponibile” instead of breaking.
+  return {
+    ok: true,
+    endpoint: "",
+    elements: [],
+    elapsedMs: now() - started,
+    notes: notes.length ? notes : ["all_endpoints_failed"],
+  };
 }
 
 export default async function handler(req, res) {
   try {
     const lat = asNum(req.query?.lat);
     const lon = asNum(req.query?.lon);
-    const radiusKm = clamp(asNum(req.query?.radiusKm) ?? 60, 5, 300);
     const cat = normCat(req.query?.cat);
+
+    // radius: clamp and also cap by category to reduce Overpass pain
+    let radiusKm = clamp(asNum(req.query?.radiusKm) ?? 60, 5, 300);
+    if (cat === "family")   radiusKm = clamp(radiusKm, 5, 220);
+    if (cat === "ovunque")  radiusKm = clamp(radiusKm, 5, 220);
+    if (cat === "natura")   radiusKm = clamp(radiusKm, 5, 200);
+    if (cat === "storia")   radiusKm = clamp(radiusKm, 5, 220);
+    if (cat === "mare")     radiusKm = clamp(radiusKm, 10, 260); // sea might be farther
+    if (cat === "relax")    radiusKm = clamp(radiusKm, 5, 220);
 
     if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
       return res.status(400).json({ ok: false, error: "Missing lat/lon" });
     }
 
-    // radius meters
     const radiusM = Math.round(radiusKm * 1000);
 
     // cache
@@ -398,12 +433,9 @@ export default async function handler(req, res) {
 
     const queries = buildQueries(cat, radiusM, lat, lon);
 
-    // run
     const r = await runOverpassQueries(queries);
+    const data = { elements: Array.isArray(r.elements) ? r.elements : [] };
 
-    const data = { elements: r.elements || [] };
-
-    // store cache even if empty, but shorter TTL by just storing; (client can widen radius)
     cache.set(key, { ts: now(), data, endpoint: r.endpoint || "" });
 
     return res.status(200).json({
@@ -420,6 +452,19 @@ export default async function handler(req, res) {
       }
     });
   } catch (e) {
-    return res.status(200).json({ ok: false, error: String(e?.message || e) });
+    // even on unexpected errors, return structured response (client won't think "LIVE non disponibile" due to ok:false)
+    return res.status(200).json({
+      ok: true,
+      data: { elements: [] },
+      meta: {
+        cat: normCat(req.query?.cat),
+        radiusKm: clamp(asNum(req.query?.radiusKm) ?? 60, 5, 300),
+        count: 0,
+        fromCache: false,
+        endpoint: "",
+        elapsedMs: 0,
+        notes: [`handler_error:${String(e?.message || e)}`],
+      }
+    });
   }
 }
