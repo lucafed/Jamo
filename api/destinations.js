@@ -1,6 +1,8 @@
-// /api/destinations.js — Jamo LIVE destinations (Overpass) — v3.0
+// /api/destinations.js — Jamo LIVE destinations (Overpass) — v3.1 (FIXED)
 // - Tiered queries per category (CORE -> SECONDARY -> FALLBACK)
-// - Avoid "parks everywhere" (parks only as fallback and filtered)
+// - FAMILY fixed: no more generic tourism=attraction in CORE (was causing random results)
+// - Added missing categories support + alias mapping (theme_park, kids_museum, viewpoints, hiking, spa/history/nature/sea/city/mountain)
+// - Safer "parks fallback" (kept filtered) + better family fallback keywords
 // - Partial-results mode: if one query fails, still return what we got
 // - Endpoint fallback + per-query timeout
 // Returns: { ok:true, data:{elements:[...]}, meta:{cat,radiusKm,count,fromCache,endpoint,elapsedMs,notes:[] } }
@@ -14,18 +16,111 @@ const OVERPASS_ENDPOINTS = [
   "https://overpass.openstreetmap.ru/api/interpreter",
 ];
 
-function now() { return Date.now(); }
-function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
+function now() {
+  return Date.now();
+}
+function clamp(n, a, b) {
+  return Math.max(a, Math.min(b, n));
+}
 
 function asNum(x) {
   const n = Number(x);
   return Number.isFinite(n) ? n : null;
 }
 
+/**
+ * Category normalization with aliases.
+ * Keep internal keys stable because cacheKey depends on cat string.
+ */
 function normCat(c) {
   const s = String(c || "ovunque").toLowerCase().trim();
-  const allowed = new Set(["ovunque","family","relax","natura","storia","mare","borghi","citta","montagna"]);
-  return allowed.has(s) ? s : "ovunque";
+
+  // Aliases (UI / future-proof)
+  const alias = new Map([
+    // defaults
+    ["*", "ovunque"],
+    ["any", "ovunque"],
+    ["anywhere", "ovunque"],
+    ["all", "ovunque"],
+    ["ovunque", "ovunque"],
+
+    // family
+    ["family", "family"],
+    ["famiglia", "family"],
+    ["famiglie", "family"],
+    ["kids", "family"],
+
+    // theme parks
+    ["theme_park", "theme_park"],
+    ["themepark", "theme_park"],
+    ["parcodivertimenti", "theme_park"],
+    ["divertimento", "theme_park"],
+
+    // kids museums
+    ["kids_museum", "kids_museum"],
+    ["children_museum", "kids_museum"],
+    ["museibambini", "kids_museum"],
+    ["museobambini", "kids_museum"],
+
+    // relax/spa
+    ["relax", "relax"],
+    ["spa", "relax"],
+    ["wellness", "relax"],
+
+    // nature
+    ["natura", "natura"],
+    ["nature", "natura"],
+    ["outdoor", "natura"],
+
+    // sea
+    ["mare", "mare"],
+    ["sea", "mare"],
+    ["beach", "mare"],
+
+    // history
+    ["storia", "storia"],
+    ["history", "storia"],
+    ["cultura", "storia"],
+
+    // borghi
+    ["borghi", "borghi"],
+    ["borgo", "borghi"],
+    ["villages", "borghi"],
+
+    // city
+    ["citta", "citta"],
+    ["città", "citta"],
+    ["city", "citta"],
+    ["town", "citta"],
+
+    // mountain/hiking/viewpoints
+    ["montagna", "montagna"],
+    ["mountain", "montagna"],
+    ["hiking", "hiking"],
+    ["trekking", "hiking"],
+    ["viewpoints", "viewpoints"],
+    ["viewpoint", "viewpoints"],
+    ["panorama", "viewpoints"],
+  ]);
+
+  const internal = alias.get(s) || (alias.has("*") ? alias.get("*") : "ovunque");
+  const allowed = new Set([
+    "ovunque",
+    "family",
+    "theme_park",
+    "kids_museum",
+    "relax",
+    "natura",
+    "mare",
+    "storia",
+    "borghi",
+    "citta",
+    "montagna",
+    "hiking",
+    "viewpoints",
+  ]);
+
+  return allowed.has(internal) ? internal : "ovunque";
 }
 
 function cacheKey({ lat, lon, radiusKm, cat }) {
@@ -41,7 +136,10 @@ async function fetchWithTimeout(url, { method = "POST", body, headers = {} } = {
   try {
     const r = await fetch(url, {
       method,
-      headers: { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8", ...headers },
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+        ...headers,
+      },
       body,
       signal: ctrl.signal,
     });
@@ -79,30 +177,32 @@ function mergeElements(results) {
 
 /**
  * Build tiered queries:
- * - CORE: what the category promises (attractions true)
+ * - CORE: what the category promises (true attractions)
  * - SECONDARY: still relevant but wider
  * - FALLBACK: only if needed, filtered (avoid generic parks)
- *
- * IMPORTANT:
- * - We mostly use nodes (fast) + some ways for large POIs (theme parks, beaches, big parks)
- * - We keep each query reasonably small
  */
 function buildTieredQueries(cat, radiusM, lat, lon) {
   const A = around(radiusM, lat, lon);
 
-  // Helper: filtered parks only (avoid tiny city parks)
-  // We accept parks only if:
-  // - name contains "avventura|faunistico|safari|giardino botanico|botanico|parco naturale|riserva"
-  // - OR has tourism=attraction
-  // - OR has leisure=park AND (way with area) (best effort: Overpass can compute area via way, we just ask ways)
+  // Filtered parks only (avoid tiny city parks)
   const FALLBACK_PARKS = `
 [out:json][timeout:12];
 (
   node[leisure=park]["tourism"="attraction"](${A});
-  node[leisure=park]["name"~"avventura|faunistico|safari|botanico|giardino|parco naturale|riserva|lag(o|hi)|cascat(a|e)",i](${A});
-  way[leisure=park]["name"~"avventura|faunistico|safari|botanico|giardino|parco naturale|riserva|lag(o|hi)|cascat(a|e)",i](${A});
+  node[leisure=park]["name"~"avventura|faunistico|safari|botanico|giardino botanico|parco naturale|riserva|cascat(a|e)|gola|canyon",i](${A});
+  way[leisure=park]["name"~"avventura|faunistico|safari|botanico|giardino botanico|parco naturale|riserva|cascat(a|e)|gola|canyon",i](${A});
 );
 out tags center 350;
+  `.trim();
+
+  // Common: viewpoints / scenic
+  const VIEWPOINTS = `
+[out:json][timeout:12];
+(
+  node[tourism=viewpoint](${A});
+  node["name"~"belvedere|panoram(a|ico)|viewpoint|scenic",i](${A});
+);
+out tags center 450;
   `.trim();
 
   // ---------------- RELAX ----------------
@@ -118,7 +218,7 @@ out tags center 350;
   node["thermal"="yes"](${A});
   node["name"~"terme|spa|thermal|benessere",i](${A});
 );
-out tags center 450;
+out tags center 650;
     `.trim();
 
     const SECONDARY = `
@@ -129,28 +229,27 @@ out tags center 450;
   node["sport"="swimming"](${A});
   node["tourism"="resort"](${A});
   node["tourism"="hotel"]["spa"="yes"](${A});
-  node[tourism=viewpoint](${A});
-  node[leisure=picnic_table](${A});
+  ${VIEWPOINTS.replace("[out:json][timeout:12];", "")}
 );
-out tags center 350;
+out tags center 450;
     `.trim();
 
     const FALLBACK = `
 [out:json][timeout:12];
 (
-  node[tourism=viewpoint](${A});
+  ${VIEWPOINTS.replace("[out:json][timeout:12];", "")}
   node[natural=waterfall](${A});
   node[natural=spring](${A});
 );
-out tags center 250;
+out tags center 350;
     `.trim();
 
     return [CORE, SECONDARY, FALLBACK];
   }
 
-  // ---------------- FAMILY ----------------
-  if (cat === "family") {
-    // CORE: real attractions for families
+  // ---------------- THEME PARK ----------------
+  // (specific: amusement/water/zoo/aquarium/adventure parks)
+  if (cat === "theme_park") {
     const CORE = `
 [out:json][timeout:12];
 (
@@ -162,41 +261,104 @@ out tags center 250;
   way[tourism=zoo](${A});
   node[tourism=aquarium](${A});
   node[amenity=aquarium](${A});
-  node[tourism=attraction](${A});
-  node[leisure=amusement_arcade](${A});
-  node["name"~"parco divertimenti|parco acquatico|acquapark|aqua\\s?park|water\\s?park|luna\\s?park|zoo|acquario|giostre|funivia",i](${A});
+  node["name"~"parco divertimenti|theme\\s?park|amusement\\s?park|parco acquatico|acquapark|aqua\\s?park|water\\s?park|luna\\s?park|lunapark|zoo|acquario|aquarium|giostre|safari|faunistico",i](${A});
 );
-out tags center 550;
+out tags center 800;
     `.trim();
 
-    // SECONDARY: kids-specific / activity places (still good)
     const SECONDARY = `
 [out:json][timeout:12];
 (
   node[leisure=playground](${A});
   way[leisure=playground](${A});
   node[leisure=trampoline_park](${A});
-  node["name"~"parco\\s?giochi|area\\s?giochi|gonfiabil|trampolin|kids|bambin|family",i](${A});
-  node["tourism"="information"]["information"="visitor_centre"](${A});
-  node["name"~"parco\\s?avventura|avventura|fattoria|didattica|safari|faunistico",i](${A});
-  node[amenity=cinema](${A});
-  node[amenity=bowling_alley](${A});
+  node["name"~"parco\\s?avventura|adventure\\s?park|zip\\s?line|zipline|fattoria|didattica|petting\\s?zoo",i](${A});
 );
 out tags center 450;
     `.trim();
 
-    // FALLBACK: terme/piscine + parks filtrati (NON parchetto)
+    return [CORE, SECONDARY, FALLBACK_PARKS];
+  }
+
+  // ---------------- KIDS MUSEUM ----------------
+  if (cat === "kids_museum") {
+    const CORE = `
+[out:json][timeout:12];
+(
+  node[tourism=museum]["name"~"bambin|kids|children|science\\s?center|planetari|interactive|interattiv",i](${A});
+  way[tourism=museum]["name"~"bambin|kids|children|science\\s?center|planetari|interactive|interattiv",i](${A});
+  node["name"~"museo\\s?dei\\s?bambini|children\\s?museum|science\\s?center|planetario|planetarium",i](${A});
+);
+out tags center 800;
+    `.trim();
+
+    const SECONDARY = `
+[out:json][timeout:12];
+(
+  node[tourism=museum](${A});
+  way[tourism=museum](${A});
+);
+out tags center 450;
+    `.trim();
+
+    return [CORE, SECONDARY];
+  }
+
+  // ---------------- FAMILY ----------------
+  if (cat === "family") {
+    // CORE: real family attractions ONLY (no generic tourism=attraction here)
+    const CORE = `
+[out:json][timeout:12];
+(
+  node[tourism=theme_park](${A});
+  way[tourism=theme_park](${A});
+  node[leisure=water_park](${A});
+  way[leisure=water_park](${A});
+  node[tourism=zoo](${A});
+  way[tourism=zoo](${A});
+  node[tourism=aquarium](${A});
+  node[amenity=aquarium](${A});
+
+  node[leisure=playground](${A});
+  way[leisure=playground](${A});
+  node[leisure=trampoline_park](${A});
+
+  node[tourism=museum]["name"~"bambin|kids|children|science\\s?center|planetari|interactive|interattiv",i](${A});
+  node["name"~"museo\\s?dei\\s?bambini|children\\s?museum|science\\s?center|planetario|planetarium",i](${A});
+
+  node["name"~"parco divertimenti|theme\\s?park|amusement\\s?park|parco acquatico|acquapark|aqua\\s?park|water\\s?park|luna\\s?park|lunapark|zoo|acquario|aquarium|giostre|parco\\s?giochi|area\\s?giochi|gonfiabil|trampolin",i](${A});
+);
+out tags center 900;
+    `.trim();
+
+    // SECONDARY: good-but-wider, still filtered by name/intent
+    const SECONDARY = `
+[out:json][timeout:12];
+(
+  node["tourism"="information"]["information"="visitor_centre"](${A});
+  node["name"~"parco\\s?avventura|adventure\\s?park|zip\\s?line|zipline|fattoria|didattica|petting\\s?zoo|safari|faunistico",i](${A});
+  node[amenity=cinema](${A});
+  node[amenity=bowling_alley](${A});
+
+  // tourism=attraction ONLY if name suggests family/kids
+  node[tourism=attraction]["name"~"family|famigl|bambin|kids|children|parco\\s?giochi|playground|zoo|acquario|aquarium|lunapark|luna\\s?park|giostre|acquapark|water\\s?park|science\\s?center|planetari",i](${A});
+);
+out tags center 550;
+    `.trim();
+
+    // FALLBACK: pools/spa (still family-friendly)
     const FALLBACK = `
 [out:json][timeout:12];
 (
-  node[amenity=spa](${A});
-  node[natural=hot_spring](${A});
   node[leisure=swimming_pool](${A});
   node[amenity=swimming_pool](${A});
+  node[amenity=spa](${A});
+  node[natural=hot_spring](${A});
 );
-out tags center 300;
+out tags center 450;
     `.trim();
 
+    // LAST RESORT: filtered parks (no generic "park" spam)
     return [CORE, SECONDARY, FALLBACK, FALLBACK_PARKS];
   }
 
@@ -207,19 +369,19 @@ out tags center 300;
 (
   node[natural=beach](${A});
   way[natural=beach](${A});
-  node["name"~"spiaggia|lido|baia|mare",i](${A});
   node[leisure=marina](${A});
+  node["name"~"spiaggia|lido|baia|mare",i](${A});
 );
-out tags center 550;
+out tags center 900;
     `.trim();
 
     const SECONDARY = `
 [out:json][timeout:12];
 (
-  node[tourism=viewpoint](${A});
+  ${VIEWPOINTS.replace("[out:json][timeout:12];", "")}
   node[amenity=restaurant]["name"~"lido|spiaggia|mare",i](${A});
 );
-out tags center 300;
+out tags center 350;
     `.trim();
 
     return [CORE, SECONDARY];
@@ -231,7 +393,6 @@ out tags center 300;
 [out:json][timeout:12];
 (
   node[natural=waterfall](${A});
-  node[natural=peak](${A});
   node[natural=spring](${A});
   node[natural=wood](${A});
   node[leisure=nature_reserve](${A});
@@ -240,16 +401,16 @@ out tags center 300;
   way[boundary=national_park](${A});
   node["name"~"cascata|lago|gola|riserva|parco naturale|sentiero|eremo",i](${A});
 );
-out tags center 650;
+out tags center 900;
     `.trim();
 
     const SECONDARY = `
 [out:json][timeout:12];
 (
-  node[tourism=viewpoint](${A});
+  ${VIEWPOINTS.replace("[out:json][timeout:12];", "")}
   node["tourism"="attraction"]["name"~"cascata|lago|gola|panoram|belvedere",i](${A});
 );
-out tags center 350;
+out tags center 450;
     `.trim();
 
     return [CORE, SECONDARY, FALLBACK_PARKS];
@@ -265,11 +426,12 @@ out tags center 350;
   node[historic=ruins](${A});
   node[historic=archaeological_site](${A});
   node[tourism=museum](${A});
+  way[tourism=museum](${A});
   node[historic=monument](${A});
   node[historic=memorial](${A});
   node["name"~"castello|rocca|forte|abbazia|museo|anfiteatro|tempio|scavi|necropol|eremo",i](${A});
 );
-out tags center 750;
+out tags center 950;
     `.trim();
 
     const SECONDARY = `
@@ -278,7 +440,7 @@ out tags center 750;
   node["tourism"="attraction"]["historic"](${A});
   node["name"~"centro\\s?storico|citta\\s?vecchia|borgo\\s?antico",i](${A});
 );
-out tags center 350;
+out tags center 450;
     `.trim();
 
     return [CORE, SECONDARY];
@@ -292,16 +454,18 @@ out tags center 350;
   node[place=village](${A});
   node[place=hamlet](${A});
   node["name"~"borgo|castel|rocca|monte|san\\s",i](${A});
+  node["name"~"centro\\s?storico|borgo\\s?antico",i](${A});
 );
-out tags center 550;
+out tags center 800;
     `.trim();
 
     const SECONDARY = `
 [out:json][timeout:12];
 (
-  node["name"~"centro\\s?storico|borgo\\s?antico",i](${A});
+  node[historic=castle](${A});
+  node[tourism=viewpoint](${A});
 );
-out tags center 250;
+out tags center 300;
     `.trim();
 
     return [CORE, SECONDARY];
@@ -317,18 +481,57 @@ out tags center 250;
   node["name"~"centro|piazza|duomo",i](${A});
   node[tourism=attraction](${A});
 );
-out tags center 550;
+out tags center 800;
     `.trim();
 
     const SECONDARY = `
 [out:json][timeout:12];
 (
   node[tourism=museum](${A});
+  way[tourism=museum](${A});
   node[historic=monument](${A});
+);
+out tags center 350;
+    `.trim();
+
+    return [CORE, SECONDARY];
+  }
+
+  // ---------------- HIKING ----------------
+  if (cat === "hiking") {
+    const CORE = `
+[out:json][timeout:12];
+(
+  node[natural=peak](${A});
+  node["name"~"trek|trekking|hike|hiking|sentiero|trail|via\\s?ferrata|ferrata|rifugio|cima|vetta",i](${A});
+  node[amenity=shelter](${A});
+  node[tourism=alpine_hut](${A});
+);
+out tags center 900;
+    `.trim();
+
+    const SECONDARY = `
+[out:json][timeout:12];
+(
+  node[tourism=viewpoint](${A});
 );
 out tags center 300;
     `.trim();
 
+    return [CORE, SECONDARY];
+  }
+
+  // ---------------- VIEWPOINTS ----------------
+  if (cat === "viewpoints") {
+    const CORE = VIEWPOINTS;
+    const SECONDARY = `
+[out:json][timeout:12];
+(
+  node[natural=peak](${A});
+  node["name"~"panoram|belvedere|viewpoint|scenic",i](${A});
+);
+out tags center 450;
+    `.trim();
     return [CORE, SECONDARY];
   }
 
@@ -341,8 +544,9 @@ out tags center 300;
   node["name"~"monte|cima|passo|rifugio",i](${A});
   node[tourism=viewpoint](${A});
   node[amenity=shelter](${A});
+  node[tourism=alpine_hut](${A});
 );
-out tags center 550;
+out tags center 900;
     `.trim();
 
     return [CORE];
@@ -355,27 +559,21 @@ out tags center 550;
   node[tourism=attraction](${A});
   node[tourism=viewpoint](${A});
   node[tourism=museum](${A});
+  way[tourism=museum](${A});
   node[historic=castle](${A});
   node[natural=waterfall](${A});
   node[natural=beach](${A});
   node[amenity=spa](${A});
   node["name"~"castello|rocca|museo|cascata|lago|terme|spa|spiaggia|belvedere|panorama",i](${A});
 );
-out tags center 800;
+out tags center 1100;
   `.trim();
 
   return [CORE, FALLBACK_PARKS];
 }
 
 /**
- * Run tiered queries:
- * - Execute CORE first
- * - If enough results, stop early (speed)
- * - Else run SECONDARY, then FALLBACK
- *
- * Partial-results approach:
- * - If one query fails on an endpoint, we still keep results from successful queries
- * - If endpoint is failing hard, try next endpoint
+ * Run tiered queries with endpoint fallback + partial-results mode.
  */
 async function runTiered(queries, { softEnough = 80 } = {}) {
   const notes = [];
@@ -397,10 +595,9 @@ async function runTiered(queries, { softEnough = 80 } = {}) {
           // continue: keep partial results
         }
 
-        // early stop if enough elements
+        // early stop if enough elements (only within CORE/SECONDARY to keep relevance high)
         const mergedSoFar = mergeElements(results);
         if (mergedSoFar.length >= softEnough && i <= 1) {
-          // if CORE/SECONDARY already good, stop for speed
           return {
             ok: true,
             endpoint,
@@ -412,7 +609,7 @@ async function runTiered(queries, { softEnough = 80 } = {}) {
       }
 
       const elements = mergeElements(results);
-      // If we got something (even partial), accept it
+
       if (elements.length > 0) {
         return {
           ok: true,
@@ -423,10 +620,8 @@ async function runTiered(queries, { softEnough = 80 } = {}) {
         };
       }
 
-      // If nothing and there were failures, try next endpoint
       notes.push(`endpoint_empty_failed:${failed}`);
       continue;
-
     } catch (e) {
       notes.push(`endpoint_crash:${String(e?.message || e)}`);
       continue;
@@ -464,19 +659,24 @@ export default async function handler(req, res) {
           endpoint: hit.endpoint || "",
           elapsedMs: 0,
           notes: ["cache_hit"],
-        }
+        },
       });
     }
 
     const queries = buildTieredQueries(cat, radiusM, lat, lon);
 
-    // tuning per category: family needs more, nature/history can be fewer
+    // tuning per category
     const softEnough =
       cat === "family" ? 120 :
+      cat === "theme_park" ? 90 :
+      cat === "kids_museum" ? 60 :
       cat === "ovunque" ? 120 :
-      cat === "relax" ? 90 :
-      cat === "mare" ? 60 :
-      cat === "storia" ? 80 :
+      cat === "relax" ? 80 :
+      cat === "mare" ? 70 :
+      cat === "storia" ? 90 :
+      cat === "natura" ? 90 :
+      cat === "viewpoints" ? 70 :
+      cat === "hiking" ? 80 :
       80;
 
     const r = await runTiered(queries, { softEnough });
@@ -496,10 +696,10 @@ export default async function handler(req, res) {
         endpoint: r.endpoint || "",
         elapsedMs: r.elapsedMs || 0,
         notes: r.notes || [],
-      }
+      },
     });
-
   } catch (e) {
+    // Keep 200 to avoid breaking clients, but signal ok:false
     return res.status(200).json({ ok: false, error: String(e?.message || e) });
   }
-}
+      }
