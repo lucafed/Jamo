@@ -1,117 +1,92 @@
-/* Jamo SW — v6.0
- * Goals:
- * 1) app.js ALWAYS fresh (network-first)
- * 2) API always fresh (network-only)
- * 3) data cached for speed (stale-while-revalidate)
- */
+/* sw.js — Jamo (safe cache)
+   - Never cache app.js / css / api
+   - Network-first for freshness
+   - Cache only static assets for offline
+*/
 
-const VERSION = "jamo-sw-v6";
-const SHELL_CACHE = `${VERSION}-shell`;
-const DATA_CACHE  = `${VERSION}-data`;
+const CACHE_NAME = "jamo-cache-v6"; // <-- cambia numero ad ogni deploy
 
-// Minimal app shell (add more if you want)
-const SHELL_ASSETS = [
-  "/",
+const STATIC_ASSETS = [
+  "/",               // index
   "/index.html",
+  "/manifest.webmanifest",
   "/style.css",
-  "/manifest.webmanifest"
+  // icone se le hai (aggiungi i path reali se esistono)
+  // "/icons/icon-192.png",
+  // "/icons/icon-512.png",
 ];
 
-// --- install: cache shell ---
+// Install
 self.addEventListener("install", (event) => {
-  event.waitUntil((async () => {
-    const cache = await caches.open(SHELL_CACHE);
-    await cache.addAll(SHELL_ASSETS.map(u => new Request(u, { cache: "reload" })));
-    self.skipWaiting();
-  })());
+  self.skipWaiting();
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS)).catch(() => {})
+  );
 });
 
-// --- activate: cleanup old caches ---
+// Activate
 self.addEventListener("activate", (event) => {
   event.waitUntil((async () => {
+    // pulizia vecchie cache
     const keys = await caches.keys();
-    await Promise.all(
-      keys.map(k => {
-        if (!k.startsWith("jamo-sw-")) return null;
-        if (k === SHELL_CACHE || k === DATA_CACHE) return null;
-        return caches.delete(k);
-      })
-    );
-    self.clients.claim();
+    await Promise.all(keys.map((k) => (k !== CACHE_NAME ? caches.delete(k) : Promise.resolve())));
+    await self.clients.claim();
   })());
 });
 
-function isSameOrigin(url) {
-  try { return new URL(url).origin === self.location.origin; } catch { return false; }
+// Helpers
+function isBypass(url) {
+  // NON cacheare mai queste risorse (sempre rete)
+  return (
+    url.pathname.startsWith("/api/") ||
+    url.pathname === "/app.js" ||
+    url.pathname.startsWith("/app.js") ||
+    url.pathname === "/style.css" ||
+    url.pathname.startsWith("/style.css")
+  );
 }
 
-async function networkFirst(req, cacheName) {
-  const cache = await caches.open(cacheName);
-  try {
-    const fresh = await fetch(req);
-    if (fresh && fresh.ok) cache.put(req, fresh.clone());
-    return fresh;
-  } catch {
-    const cached = await cache.match(req);
-    return cached || new Response("", { status: 504, statusText: "Offline" });
-  }
+function isDataFile(url) {
+  return url.pathname.startsWith("/data/") && url.pathname.endsWith(".json");
 }
 
-async function staleWhileRevalidate(req, cacheName) {
-  const cache = await caches.open(cacheName);
-  const cached = await cache.match(req);
-
-  const fetchPromise = fetch(req)
-    .then((fresh) => {
-      if (fresh && fresh.ok) cache.put(req, fresh.clone());
-      return fresh;
-    })
-    .catch(() => null);
-
-  return cached || (await fetchPromise) || new Response("", { status: 504, statusText: "Offline" });
-}
-
-async function networkOnly(req) {
-  return fetch(req);
-}
-
-// --- fetch routing ---
 self.addEventListener("fetch", (event) => {
   const req = event.request;
-  const url = req.url;
-
-  // Only GET handled
   if (req.method !== "GET") return;
 
-  // Only same-origin
-  if (!isSameOrigin(url)) return;
+  const url = new URL(req.url);
 
-  const u = new URL(url);
+  // Solo stesso origin
+  if (url.origin !== self.location.origin) return;
 
-  // 1) app.js must be fresh (network-first)
-  if (u.pathname === "/app.js") {
-    event.respondWith(networkFirst(req, SHELL_CACHE));
+  // Bypass totale per API e file “sempre fresh”
+  if (isBypass(url)) {
+    event.respondWith(fetch(req));
     return;
   }
 
-  // 2) API must be fresh (network-only)
-  if (u.pathname.startsWith("/api/")) {
-    event.respondWith(networkOnly(req));
-    return;
-  }
+  // Network-first per tutto (così non rimani mai “indietro”)
+  event.respondWith((async () => {
+    try {
+      const net = await fetch(req);
+      // Cache solo se è una risposta ok e se è roba statica o /data/*.json
+      if (net && net.ok && (isDataFile(url) || STATIC_ASSETS.includes(url.pathname))) {
+        const cache = await caches.open(CACHE_NAME);
+        cache.put(req, net.clone()).catch(() => {});
+      }
+      return net;
+    } catch (e) {
+      // Offline fallback: prova cache
+      const cached = await caches.match(req);
+      if (cached) return cached;
 
-  // 3) data files cached (stale-while-revalidate)
-  if (u.pathname.startsWith("/data/")) {
-    event.respondWith(staleWhileRevalidate(req, DATA_CACHE));
-    return;
-  }
+      // Se è una pagina, prova index
+      if (req.headers.get("accept")?.includes("text/html")) {
+        const cachedIndex = await caches.match("/index.html");
+        if (cachedIndex) return cachedIndex;
+      }
 
-  // 4) html/css shell (network-first)
-  if (u.pathname === "/" || u.pathname.endsWith(".html") || u.pathname.endsWith(".css")) {
-    event.respondWith(networkFirst(req, SHELL_CACHE));
-    return;
-  }
-
-  // 5) everything else: SWR is ok
-  event.respondWith(staleWhileRevalidate(req, SHELL_CACHE));
+      throw e;
+    }
+  })());
 });
