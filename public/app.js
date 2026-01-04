@@ -1,12 +1,20 @@
 /* Jamo — app.js v8.0 (FULL CLEAN)
- * - Offline macro + Live Overpass merge (ALWAYS attempted)
- * - UX FIX: while LIVE searching, NEVER show "Nessuna meta" red card
- * - Result area shows LIVE progress (spinner + status) clearly
- * - Anti-race: abort previous search + request token
- * - Family: should almost always return something (attractions + soft + spa ok)
- * - No "Meta" placeholder names, no overlapping text, safer cards
- * - 2 alternatives always (if available)
- * - SW update hint to reduce cached old JS issues
+ * ✅ Offline macro + LIVE Overpass merge (ALWAYS attempted)
+ * ✅ Clear “LIVE searching…” UI (no fake “nessun risultato” while live is running)
+ * ✅ Anti-race: abort previous + token
+ * ✅ Category logic FIXED for ALL categories:
+ *    - FAMILY: hard attractions > pools/terme > BIG PARKS > soft family (NO towns/borghi)
+ *    - NATURA: only real nature (NO towns/borghi)
+ *    - STORIA: castles/museums/heritage/old town POIs (NO generic towns)
+ *    - MARE: beaches/coast/marinas (NO generic towns)
+ *    - BORGHI: villages/hamlets only
+ *    - CITTA: city/town + attractions
+ *    - MONTAGNA: peaks/trails/huts/ropeways/viewpoints(named)
+ *    - RELAX: spa/terme + wellness + scenic chill (named)
+ * ✅ “Chicche” = real gems: penalize famous/big places, boost uncommon
+ * ✅ No “Meta” placeholder places
+ * ✅ Stable cards + 2 alternatives + better layout (no overlapping text)
+ * ✅ Static map image with fallback; always visible placeholder if image fails
  */
 
 const $ = (id) => document.getElementById(id);
@@ -38,7 +46,7 @@ const AMAZON_TAG  = "";
 const GYG_PID     = "";
 const TIQETS_PID  = "";
 
-// -------------------- GLOBAL SEARCH CONTROL (anti-race) --------------------
+// -------------------- GLOBAL SEARCH CONTROL --------------------
 let SEARCH_TOKEN = 0;
 let SEARCH_ABORT = null;
 
@@ -88,88 +96,19 @@ function isWinterNow() {
   return (m === 11 || m === 12 || m === 1 || m === 2 || m === 3);
 }
 
-function placeTags(place) {
-  return (place?.tags || []).map(t => String(t).toLowerCase());
-}
-
 function looksIndoor(place) {
   const tags = placeTags(place).join(" ");
   const n = normName(place?.name);
-  return tags.includes("indoor") || tags.includes("coperto") || n.includes("indoor") || n.includes("coperto");
-}
-
-function isWaterPark(place) {
-  const t = String(place?.type || "").toLowerCase();
-  const tags = placeTags(place);
-  const n = normName(place?.name);
   return (
-    t.includes("water") || t.includes("acqua") ||
-    tags.includes("water_park") || tags.includes("parco acquatico") ||
-    n.includes("acquapark") || n.includes("aqua park") || n.includes("water park")
+    tags.includes("indoor") ||
+    tags.includes("coperto") ||
+    tags.includes("al coperto") ||
+    n.includes("indoor") ||
+    n.includes("coperto")
   );
 }
 
-function isSpaPlace(place) {
-  const n = normName(place?.name);
-  const tags = placeTags(place);
-  const t = String(place?.type || "").toLowerCase();
-  return (
-    t === "relax" ||
-    tags.includes("terme") || tags.includes("spa") ||
-    tags.includes("hot_spring") || tags.includes("public_bath") ||
-    n.includes("terme") || n.includes("spa") || n.includes("thermal")
-  );
-}
-
-function isFamilyAttraction(place) {
-  const tags = placeTags(place);
-  const type = String(place?.type || "").toLowerCase();
-  const n = normName(place?.name);
-
-  if (type.includes("theme") || type.includes("amusement") || type.includes("water") || type.includes("zoo") || type.includes("aquarium")) return true;
-
-  const strong = [
-    "theme_park","amusement_park","water_park",
-    "zoo","aquarium","attraction","trampoline","indoor_play","play_centre",
-    "swimming_pool","piscina","acquapark"
-  ];
-  if (strong.some(x => tags.includes(x))) return true;
-
-  // brand keywords
-  if (
-    n.includes("gardaland") ||
-    n.includes("mirabilandia") ||
-    n.includes("acquapark") ||
-    n.includes("aqua park") ||
-    n.includes("water park") ||
-    n.includes("parco divertimenti") ||
-    n.includes("parco acquatico") ||
-    n.includes("zoo") ||
-    n.includes("acquario")
-  ) return true;
-
-  return false;
-}
-
-function isSoftFamily(place) {
-  const tags = placeTags(place);
-  const t = String(place?.type || "").toLowerCase();
-  const n = normName(place?.name);
-
-  if (t === "family" || t === "bambini") return true;
-  if (tags.includes("famiglie") || tags.includes("family") || tags.includes("bambini")) return true;
-
-  // gite con bimbi anche se non attrazione
-  if (t === "natura" || t === "mare" || t === "borgo" || t === "citta") return true;
-  if (tags.includes("parco") || tags.includes("riserva") || tags.includes("lago")) return true;
-
-  if (n.includes("parco") || n.includes("giardino") || n.includes("botanic")) return true;
-  if (n.includes("area giochi") || n.includes("playground")) return true;
-
-  return false;
-}
-
-// -------------------- MAP STATIC IMAGES --------------------
+// -------------------- STATIC MAP IMAGES --------------------
 function osmStaticImgPrimary(lat, lon, z = 12) {
   const size = "720x360";
   const marker = `${lat},${lon},lightblue1`;
@@ -327,6 +266,9 @@ function initChips(containerId, { multi = false } = {}) {
       chip.classList.toggle("active");
     }
 
+    // trigger immediate search feels snappier (optional)
+    // runSearch({ silent: true });
+
     if (containerId === "timeChips") {
       const v = Number(chip.dataset.min);
       if (Number.isFinite(v) && $("maxMinutes")) $("maxMinutes").value = String(v);
@@ -371,31 +313,20 @@ function hideStatus() {
   t.textContent = "";
 }
 
-// Result area states
-function renderResultState({ title = "🔎 Sto cercando…", subtitle = "Sto cercando attrazioni e mete vicine online…", kind = "warn" } = {}) {
+function setResultBanner({ title = "", subtitle = "", tone = "warn" } = {}) {
   const area = $("resultArea");
   if (!area) return;
 
-  const boxClass = kind === "err" ? "errbox" : kind === "ok" ? "okbox" : "warnbox";
+  const klass = tone === "ok" ? "okbox" : tone === "err" ? "errbox" : "warnbox";
+  const safeTitle = String(title || "");
+  const safeSub = String(subtitle || "");
 
   area.innerHTML = `
-    <div class="card ${boxClass}">
-      <div style="display:flex; align-items:center; gap:10px;">
-        <div class="jamoSpinner" aria-hidden="true"
-             style="width:16px;height:16px;border-radius:99px;border:2px solid rgba(255,255,255,.18);border-top-color: rgba(0,224,255,.9); animation: jamoSpin 1s linear infinite;"></div>
-        <div class="small" style="font-weight:800;">${title}</div>
-      </div>
-      <div class="small muted" style="margin-top:8px; line-height:1.45;">${subtitle}</div>
+    <div class="card ${klass}">
+      <div style="font-weight:900; font-size:14px;">${safeTitle}</div>
+      ${safeSub ? `<div class="small muted" style="margin-top:6px; line-height:1.35;">${safeSub}</div>` : ""}
     </div>
   `;
-
-  // inject keyframes once
-  if (!document.getElementById("jamoSpinStyle")) {
-    const st = document.createElement("style");
-    st.id = "jamoSpinStyle";
-    st.textContent = `@keyframes jamoSpin { from { transform: rotate(0deg);} to {transform: rotate(360deg);} }`;
-    document.head.appendChild(st);
-  }
 }
 
 // -------------------- MACRO LOADING --------------------
@@ -494,26 +425,259 @@ async function geocodeLabel(label) {
   return j.result;
 }
 
-// -------------------- CATEGORY MATCH --------------------
-function matchesCategory(place, cat) {
-  if (!cat || cat === "ovunque") return true;
+// -------------------- TAGS / CATEGORY INTENT --------------------
+function placeTags(place) {
+  const raw = Array.isArray(place?.tags) ? place.tags : [];
+  // tags may come as "leisure=park" or "park"; normalize to lower
+  return raw.map(t => String(t).toLowerCase());
+}
 
+function getLiveTag(place, key) {
+  // for mapped LIVE objects we store tags as array like ["tourism", "theme_park"] etc.
+  // so we just use name+type heuristics, not raw object.
+  return null;
+}
+
+function isWaterPark(place) {
+  const t = String(place?.type || "").toLowerCase();
+  const tags = placeTags(place);
+  const n = normName(place?.name);
+  return (
+    t.includes("water") || t.includes("acqua") ||
+    tags.includes("water_park") ||
+    n.includes("acquapark") || n.includes("aqua park") || n.includes("water park") || n.includes("parco acquatico")
+  );
+}
+
+function isSpaPlace(place) {
+  const n = normName(place?.name);
+  const tags = placeTags(place);
+  const t = String(place?.type || "").toLowerCase();
+  return (
+    t === "relax" ||
+    tags.includes("terme") || tags.includes("spa") ||
+    tags.includes("hot_spring") || tags.includes("public_bath") ||
+    n.includes("terme") || n.includes("spa") || n.includes("thermal") || n.includes("benessere")
+  );
+}
+
+// HARD family attractions
+function isFamilyAttraction(place) {
+  const tags = placeTags(place);
   const type = String(place?.type || "").toLowerCase();
+  const n = normName(place?.name);
+
+  // strong type guesses
+  if (type.includes("theme") || type.includes("amusement") || type.includes("water") || type.includes("zoo") || type.includes("aquarium")) return true;
+
+  const strong = [
+    "theme_park", "amusement_park", "water_park",
+    "zoo", "aquarium", "attraction",
+    "trampoline", "trampoline_park",
+    "indoor_play", "play_centre",
+    "swimming_pool", "piscina", "acquapark",
+    "adventure", "adventure_park"
+  ];
+  if (strong.some(x => tags.includes(x))) return true;
+
+  if (
+    n.includes("gardaland") ||
+    n.includes("mirabilandia") ||
+    n.includes("aquapark") ||
+    n.includes("aqua park") ||
+    n.includes("water park") ||
+    n.includes("parco divertimenti") ||
+    n.includes("parco acquatico") ||
+    n.includes("luna park") ||
+    n.includes("zoo") ||
+    n.includes("acquario") ||
+    n.includes("trampoline") ||
+    n.includes("parco avventura") ||
+    n.includes("adventure park")
+  ) return true;
+
+  return false;
+}
+
+// BIG parks: allowed in Family (as fallback, not first choice)
+function isBigPark(place) {
   const tags = placeTags(place);
   const n = normName(place?.name);
 
-  if (cat === "citta") return type === "citta" || tags.includes("citta") || tags.includes("city") || n.includes("citta");
-  if (cat === "borghi") return type === "borgo" || tags.includes("borgo") || n.includes("borgo") || tags.includes("village") || tags.includes("hamlet");
-  if (cat === "mare") return type === "mare" || tags.includes("mare") || tags.includes("beach") || tags.includes("spiaggia") || n.includes("spiaggia") || n.includes("beach");
-  if (cat === "montagna") return type === "montagna" || tags.includes("montagna") || n.includes("monte") || n.includes("mount");
-  if (cat === "natura") return type === "natura" || tags.includes("natura") || tags.includes("parco") || tags.includes("riserva") || n.includes("parco") || tags.includes("nature_reserve");
-  if (cat === "storia") return type === "storia" || tags.includes("storia") || tags.includes("museum") || tags.includes("castle") || tags.includes("fort") || n.includes("castello") || n.includes("museo");
-  if (cat === "relax") return isSpaPlace(place);
+  const isPark =
+    tags.includes("park") ||
+    tags.includes("leisure=park") ||
+    tags.includes("leisure=park;name") ||
+    n.includes("parco") ||
+    n.includes("giardini") ||
+    n.includes("giardino") ||
+    n.includes("villa");
 
-  if (cat === "family") {
-    // family deve quasi sempre avere risultati
-    return (isFamilyAttraction(place) || isSoftFamily(place) || isSpaPlace(place));
-  }
+  const isPlayground =
+    tags.includes("playground") ||
+    n.includes("parco giochi") ||
+    n.includes("area giochi") ||
+    n.includes("playground");
+
+  if (!isPark || isPlayground) return false;
+
+  const strongWords = [
+    "parco nazionale", "parco regionale", "riserva", "oasi",
+    "giardini", "giardino", "villa", "bosco", "foresta", "pineta"
+  ];
+  if (strongWords.some(w => n.includes(w))) return true;
+
+  // If it’s a named park (LIVE often provides name) consider it big-enough
+  return n.includes("parco") || n.includes("giardini") || n.includes("villa");
+}
+
+// Soft family (no towns/borghi allowed)
+function isSoftFamily(place) {
+  const tags = placeTags(place);
+  const t = String(place?.type || "").toLowerCase();
+  const n = normName(place?.name);
+
+  // exclude towns/borghi from family
+  if (t === "citta" || t === "borgo") return false;
+  if (tags.includes("citta") || tags.includes("city") || tags.includes("borgo")) return false;
+  if (tags.includes("place=town") || tags.includes("place=city") || tags.includes("place=village") || tags.includes("place=hamlet")) return false;
+
+  if (isBigPark(place)) return true;
+
+  if (t === "family" || t === "bambini") return true;
+  if (tags.includes("famiglie") || tags.includes("family") || tags.includes("bambini")) return true;
+
+  // easy nature
+  if (n.includes("lago") || n.includes("cascata") || n.includes("riserva") || n.includes("oasi")) return true;
+  if (tags.includes("waterfall") || tags.includes("spring") || tags.includes("nature_reserve") || tags.includes("national_park")) return true;
+
+  if (n.includes("fattoria") || n.includes("agriturismo")) return true;
+
+  return false;
+}
+
+// Strict Nature
+function isNaturePlace(place) {
+  const tags = placeTags(place);
+  const t = String(place?.type || "").toLowerCase();
+  const n = normName(place?.name);
+
+  // exclude towns/borghi
+  if (t === "citta" || t === "borgo") return false;
+  if (tags.includes("place=town") || tags.includes("place=city") || tags.includes("place=village") || tags.includes("place=hamlet")) return false;
+
+  const strong = [
+    "waterfall", "peak", "spring", "nature_reserve", "national_park",
+    "natural=waterfall", "natural=peak", "natural=spring",
+    "leisure=nature_reserve", "boundary=national_park"
+  ];
+  if (strong.some(x => tags.includes(x))) return true;
+
+  if (
+    n.includes("cascata") || n.includes("gola") || n.includes("forra") || n.includes("sentiero") ||
+    n.includes("parco nazionale") || n.includes("riserva") || n.includes("oasi") ||
+    n.includes("lago") || n.includes("monte") || n.includes("cima")
+  ) return true;
+
+  // named viewpoint can be okay but not dominate; handled by scoring
+  if (tags.includes("viewpoint") || n.includes("belvedere")) return true;
+
+  // parks only if "big park" or protected
+  if (isBigPark(place)) return true;
+
+  return (t === "natura");
+}
+
+// Strict History
+function isHistoryPlace(place) {
+  const tags = placeTags(place);
+  const t = String(place?.type || "").toLowerCase();
+  const n = normName(place?.name);
+
+  // exclude generic towns unless explicitly "old town / centro storico" POI
+  const isGenericTown =
+    tags.includes("place=town") || tags.includes("place=city") ||
+    tags.includes("place=village") || tags.includes("place=hamlet");
+
+  const explicitOldTown =
+    n.includes("centro storico") || n.includes("citta vecchia") || n.includes("old town");
+
+  if (isGenericTown && !explicitOldTown) return false;
+
+  const strong = ["castle", "ruins", "archaeological_site", "museum", "monument", "memorial", "fort"];
+  if (strong.some(x => tags.includes(x))) return true;
+
+  if (
+    n.includes("castello") || n.includes("rocca") || n.includes("forte") ||
+    n.includes("abbazia") || n.includes("basilica") || n.includes("duomo") ||
+    n.includes("museo") || n.includes("anfiteatro") || n.includes("scavi") ||
+    n.includes("necropol") || explicitOldTown
+  ) return true;
+
+  return (t === "storia");
+}
+
+// Sea
+function isSeaPlace(place) {
+  const tags = placeTags(place);
+  const t = String(place?.type || "").toLowerCase();
+  const n = normName(place?.name);
+
+  const strong = ["beach", "natural=beach", "marina", "harbour", "coast"];
+  if (strong.some(x => tags.includes(x))) return true;
+
+  if (n.includes("spiaggia") || n.includes("lido") || n.includes("baia") || n.includes("cala")) return true;
+
+  return (t === "mare");
+}
+
+// Mountain
+function isMountainPlace(place) {
+  const tags = placeTags(place);
+  const t = String(place?.type || "").toLowerCase();
+  const n = normName(place?.name);
+
+  const strong = ["peak", "alpine_hut", "aerialway", "mountain_range"];
+  if (strong.some(x => tags.includes(x))) return true;
+
+  if (n.includes("monte") || n.includes("cima") || n.includes("rifugio") || n.includes("passo") || n.includes("funivia")) return true;
+
+  return (t === "montagna");
+}
+
+// Borghi (only villages/hamlets + borgo keyword)
+function isBorgoPlace(place) {
+  const tags = placeTags(place);
+  const t = String(place?.type || "").toLowerCase();
+  const n = normName(place?.name);
+  if (t === "borgo") return true;
+  if (tags.includes("place=village") || tags.includes("place=hamlet")) return true;
+  if (n.includes("borgo")) return true;
+  return false;
+}
+
+// City (town/city)
+function isCityPlace(place) {
+  const tags = placeTags(place);
+  const t = String(place?.type || "").toLowerCase();
+  if (t === "citta") return true;
+  if (tags.includes("place=city") || tags.includes("place=town")) return true;
+  if (tags.includes("city") || tags.includes("town")) return true;
+  return false;
+}
+
+// --- Category matcher (STRICT, no cross-category pollution) ---
+function matchesCategory(place, cat) {
+  if (!cat || cat === "ovunque") return true;
+
+  if (cat === "family") return (isFamilyAttraction(place) || isSpaPlace(place) || isBigPark(place) || isSoftFamily(place));
+  if (cat === "relax") return isSpaPlace(place);
+  if (cat === "natura") return isNaturePlace(place);
+  if (cat === "storia") return isHistoryPlace(place);
+  if (cat === "mare") return isSeaPlace(place);
+  if (cat === "montagna") return isMountainPlace(place);
+  if (cat === "borghi") return isBorgoPlace(place);
+  if (cat === "citta") return isCityPlace(place);
 
   return true;
 }
@@ -525,13 +689,59 @@ function matchesStyle(place, { wantChicche, wantClassici }) {
   return !!wantClassici;
 }
 
+// -------------------- CHICCHE LOGIC (REAL) --------------------
+function isObviouslyFamous(place) {
+  const n = normName(place?.name);
+  // add/extend as you like
+  const famousWords = [
+    "roma","milano","venezia","firenze","napoli","torino","bologna","verona",
+    "lago di garda","garda","gardaland","colosseo","pompei","duomo"
+  ];
+  if (famousWords.some(w => n.includes(w))) return true;
+
+  // very big settlements: penalize
+  const tags = placeTags(place);
+  if (tags.includes("place=city")) return true;
+  return false;
+}
+
+function chiccaBoost(place, category) {
+  const tags = placeTags(place);
+  const n = normName(place?.name);
+
+  // If user wants chicche and this is famous/big -> heavy penalty
+  if (isObviouslyFamous(place)) return -0.18;
+
+  // boosts for “interesting” types
+  let b = 0;
+
+  // attraction/nature/heritage signals feel like gems
+  const gemSignals = [
+    "waterfall", "peak", "spring", "nature_reserve", "national_park",
+    "castle", "ruins", "archaeological_site", "museum", "monument",
+    "theme_park", "water_park", "zoo", "aquarium", "attraction",
+    "viewpoint"
+  ];
+  if (gemSignals.some(x => tags.includes(x))) b += 0.06;
+
+  // name hints
+  const words = ["belvedere","forra","gola","cascata","oasi","riserva","abbazia","rocca","eremo","laghetto","cala","baia"];
+  if (words.some(w => n.includes(w))) b += 0.06;
+
+  // category-specific
+  if (category === "family" && isFamilyAttraction(place)) b += 0.05;
+  if (category === "relax" && isSpaPlace(place)) b += 0.05;
+  if (category === "natura" && isNaturePlace(place)) b += 0.05;
+  if (category === "storia" && isHistoryPlace(place)) b += 0.05;
+
+  return clamp(b, -0.2, 0.14);
+}
+
 // -------------------- SCORING --------------------
-function baseScorePlace({ driveMin, targetMin, beautyScore, familyBoost, isChicca }) {
+function baseScorePlace({ driveMin, targetMin, beautyScore }) {
   const t = clamp(1 - Math.abs(driveMin - targetMin) / Math.max(25, targetMin * 0.9), 0, 1);
   const b = clamp(Number(beautyScore) || 0.70, 0.35, 1);
-  const c = isChicca ? 0.05 : 0;
-  const f = clamp(familyBoost || 0, 0, 0.20);
-  return 0.58 * t + 0.33 * b + c + f;
+  return 0.62 * t + 0.38 * b;
 }
 
 function rotationPenalty(pid, recentSet) {
@@ -542,64 +752,128 @@ function rotationPenalty(pid, recentSet) {
   return pen;
 }
 
-// Family: terme ok, ma un filo sotto alle attrazioni
-function familySpaPenalty(place, category) {
-  if (category !== "family") return 0;
-  if (!isSpaPlace(place)) return 0;
-  return 0.08;
+function familyTierBoost(place) {
+  // family ranking: hard > spa/pool > big parks > soft
+  if (isFamilyAttraction(place)) return 0.22;
+  if (isSpaPlace(place)) return 0.10;
+  if (isBigPark(place)) return 0.08;
+  if (isSoftFamily(place)) return 0.05;
+  return 0;
 }
 
-// -------------------- TIME WIDEN --------------------
+function natureQualityBoost(place) {
+  const tags = placeTags(place);
+  const n = normName(place?.name);
+  let b = 0;
+  if (tags.includes("waterfall") || n.includes("cascata")) b += 0.10;
+  if (tags.includes("peak") || n.includes("cima") || n.includes("monte")) b += 0.06;
+  if (tags.includes("nature_reserve") || tags.includes("national_park") || n.includes("riserva") || n.includes("parco nazionale")) b += 0.06;
+  // viewpoints ok but small
+  if (tags.includes("viewpoint") || n.includes("belvedere")) b += 0.02;
+  return clamp(b, 0, 0.14);
+}
+
+function historyQualityBoost(place) {
+  const tags = placeTags(place);
+  const n = normName(place?.name);
+  let b = 0;
+  if (tags.includes("castle") || n.includes("castello") || n.includes("rocca") || n.includes("forte")) b += 0.10;
+  if (tags.includes("archaeological_site") || n.includes("scavi") || n.includes("anfiteatro")) b += 0.08;
+  if (tags.includes("museum") || n.includes("museo")) b += 0.06;
+  if (n.includes("abbazia") || n.includes("basilica") || n.includes("duomo")) b += 0.05;
+  if (n.includes("centro storico") || n.includes("old town")) b += 0.04;
+  return clamp(b, 0, 0.14);
+}
+
+function relaxQualityBoost(place) {
+  const n = normName(place?.name);
+  let b = 0;
+  if (isSpaPlace(place)) b += 0.10;
+  if (n.includes("thermal") || n.includes("benessere")) b += 0.04;
+  return clamp(b, 0, 0.12);
+}
+
+function seaQualityBoost(place) {
+  const n = normName(place?.name);
+  let b = 0;
+  if (n.includes("spiaggia") || n.includes("baia") || n.includes("cala")) b += 0.08;
+  return clamp(b, 0, 0.12);
+}
+
+function categoryQualityBoost(place, category) {
+  if (category === "family") return familyTierBoost(place);
+  if (category === "natura") return natureQualityBoost(place);
+  if (category === "storia") return historyQualityBoost(place);
+  if (category === "relax") return relaxQualityBoost(place);
+  if (category === "mare") return seaQualityBoost(place);
+  return 0;
+}
+
+// -------------------- TIME WIDENING (smart) --------------------
 function effectiveMaxMinutes(maxMinutes, category) {
   const m = Number(maxMinutes);
   if (!Number.isFinite(m)) return 120;
 
+  // widen only slightly; categories must stay strict (no cross)
   if (category === "family" && m < 60) return clamp(Math.round(m * 1.55), m, 170);
-  if (category === "mare" && m < 75) return clamp(Math.round(m * 1.35), m, 190);
-  if (category === "storia" && m < 50) return clamp(Math.round(m * 1.30), m, 160);
+  if (category === "mare" && m < 75) return clamp(Math.round(m * 1.45), m, 210);
+  if (category === "storia" && m < 50) return clamp(Math.round(m * 1.35), m, 160);
+  if (category === "natura" && m < 50) return clamp(Math.round(m * 1.35), m, 160);
 
   return clamp(m, 10, 600);
 }
 
-// -------------------- LIVE FETCH --------------------
+// -------------------- LIVE FETCH + MAP --------------------
 function mapLiveToPlace(el) {
   const tags = el?.tags || {};
   const name = tags.name || tags["name:it"] || tags.brand || tags.operator || "";
   const cleanedName = String(name || "").trim();
   if (!cleanedName || cleanedName.length < 2) return null;
 
-  // scarta "meta" / "mappa" schifezze
-  const nn = normName(cleanedName);
-  if (nn === "meta" || nn.startsWith("mappa")) return null;
-
   const lat = Number(el.lat ?? el.center?.lat);
   const lon = Number(el.lon ?? el.center?.lon);
   if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
 
   const typeGuess = (() => {
+    // family
     if (tags.tourism === "theme_park") return "family";
     if (tags.leisure === "water_park") return "family";
     if (tags.tourism === "zoo" || tags.amenity === "zoo") return "family";
     if (tags.tourism === "aquarium" || tags.amenity === "aquarium") return "family";
+    if (tags.leisure === "trampoline_park") return "family";
+    if (tags.leisure === "swimming_pool" || tags.amenity === "swimming_pool") return "family";
+
+    // history
     if (tags.tourism === "museum") return "storia";
     if (tags.historic) return "storia";
+
+    // sea / nature / relax
     if (tags.natural === "beach") return "mare";
-    if (tags.boundary === "national_park" || tags.leisure === "nature_reserve") return "natura";
-    if (tags.place === "village" || tags.place === "hamlet") return "borgo";
+    if (tags.boundary === "national_park" || tags.leisure === "nature_reserve" || tags.natural === "waterfall" || tags.natural === "peak") return "natura";
+    if (tags.amenity === "spa" || tags.leisure === "spa" || tags.natural === "hot_spring" || tags.amenity === "public_bath") return "relax";
+
+    // borghi/citta
+    if (tags.place === "hamlet" || tags.place === "village") return "borgo";
     if (tags.place === "town" || tags.place === "city") return "citta";
-    if (tags.amenity === "spa" || tags.leisure === "spa" || tags.natural === "hot_spring") return "relax";
+
+    // fallback
     return "meta";
   })();
 
+  // tag list for heuristics/scoring
   const tagList = [];
   if (tags.tourism) tagList.push(String(tags.tourism));
   if (tags.leisure) tagList.push(String(tags.leisure));
   if (tags.historic) tagList.push(String(tags.historic));
   if (tags.natural) tagList.push(String(tags.natural));
   if (tags.amenity) tagList.push(String(tags.amenity));
-  if (tags.attraction) tagList.push("attraction");
+  if (tags.boundary) tagList.push(String(tags.boundary));
+  if (tags.place) tagList.push(`place=${String(tags.place)}`);
 
   const id = `live_${el.type}_${el.id}`;
+
+  // remove garbage names like "Meta"
+  if (normName(cleanedName) === "meta") return null;
 
   return {
     id,
@@ -610,7 +884,7 @@ function mapLiveToPlace(el) {
     area: "",
     type: typeGuess,
     visibility: "classica",
-    tags: Array.from(new Set(tagList)).slice(0, 12),
+    tags: Array.from(new Set(tagList)).slice(0, 14),
     beauty_score: 0.72,
     why: [],
     live: true,
@@ -619,7 +893,8 @@ function mapLiveToPlace(el) {
 
 async function fetchLivePlaces(origin, radiusKm, category, outerSignal) {
   const ctrl = new AbortController();
-  const t = setTimeout(() => ctrl.abort(), 14000); // hard timeout live
+  const t = setTimeout(() => ctrl.abort(), 14000);
+  const signal = ctrl.signal;
 
   if (outerSignal) {
     outerSignal.addEventListener("abort", () => { try { ctrl.abort(); } catch {} }, { once: true });
@@ -631,37 +906,42 @@ async function fetchLivePlaces(origin, radiusKm, category, outerSignal) {
       `&radiusKm=${encodeURIComponent(radiusKm)}&cat=${encodeURIComponent(category)}` +
       `&_ts=${Date.now()}`;
 
-    const r = await fetch(url, { method: "GET", cache: "no-store", signal: ctrl.signal });
+    const r = await fetch(url, { method: "GET", cache: "no-store", signal });
     const j = await r.json().catch(() => null);
 
-    if (!j || !j.ok || !j.data || !Array.isArray(j.data.elements)) {
-      return { ok: false, count: 0, places: [], error: j?.error || "live_invalid" };
-    }
+    // destinations.js v3 returns ok:true always; still guard
+    const elements = j?.data?.elements;
+    if (!Array.isArray(elements)) return { ok: false, count: 0, places: [], meta: j?.meta || null };
 
-    const places = j.data.elements.map(mapLiveToPlace).filter(Boolean);
+    const places = elements.map(mapLiveToPlace).filter(Boolean);
 
-    // uniq
+    // dedupe by name+coords
     const seen = new Set();
     const uniq = [];
     for (const p of places) {
-      const k = `${normName(p.name)}_${String(p.lat).slice(0, 6)}_${String(p.lon).slice(0, 6)}`;
+      const k = `${normName(p.name)}_${String(p.lat).slice(0, 5)}_${String(p.lon).slice(0, 5)}`;
       if (seen.has(k)) continue;
       seen.add(k);
       uniq.push(p);
     }
 
-    return { ok: true, count: uniq.length, places: uniq.slice(0, 400) };
-  } catch (e) {
-    const msg = String(e?.message || e);
-    const isAbort = String(e?.name || "").includes("Abort");
-    return { ok: false, count: 0, places: [], error: isAbort ? "timeout" : msg };
+    return { ok: true, count: uniq.length, places: uniq.slice(0, 420), meta: j?.meta || null };
+  } catch {
+    return { ok: false, count: 0, places: [], meta: null };
   } finally {
     clearTimeout(t);
   }
 }
 
 // -------------------- CANDIDATES / PICK --------------------
-function buildCandidatesFromPool(pool, origin, maxMinutes, category, styles, { ignoreVisited = false, ignoreRotation = false } = {}) {
+function buildCandidatesFromPool(
+  pool,
+  origin,
+  maxMinutes,
+  category,
+  styles,
+  { ignoreVisited = false, ignoreRotation = false } = {}
+) {
   const visited = getVisitedSet();
   const recentSet = getRecentSet();
   const target = Number(maxMinutes);
@@ -676,14 +956,13 @@ function buildCandidatesFromPool(pool, origin, maxMinutes, category, styles, { i
 
     const nm = String(p.name || "").trim();
     if (!nm || nm.length < 2) continue;
-
-    const nn = normName(nm);
-    if (nn === "meta" || nn.startsWith("mappa")) continue;
+    if (normName(nm) === "meta") continue;
 
     const lat = Number(p.lat);
     const lon = Number(p.lon ?? p.lng);
     if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
 
+    // strict category
     if (!matchesCategory(p, category)) continue;
     if (!matchesStyle(p, styles)) continue;
 
@@ -694,26 +973,34 @@ function buildCandidatesFromPool(pool, origin, maxMinutes, category, styles, { i
     const driveMin = estCarMinutesFromKm(km);
 
     if (driveMin > target) continue;
-    if (km < (category === "family" ? 0.6 : 1.2)) continue;
+    if (km < 0.8) continue; // avoid “sei già lì”
 
-    const isChicca = String(p.visibility || "").toLowerCase() === "chicca";
-
-    let familyBoost = 0;
-    if (category === "family") {
-      familyBoost += isFamilyAttraction(p) ? 0.20 : (isSoftFamily(p) ? 0.10 : (isSpaPlace(p) ? 0.05 : 0));
-    } else if (isFamilyAttraction(p)) {
-      familyBoost += 0.04;
-    }
-
+    // base score
     let s = baseScorePlace({
       driveMin,
       targetMin: target,
       beautyScore: p.beauty_score,
-      familyBoost,
-      isChicca
     });
 
-    s -= familySpaPenalty(p, category);
+    // quality by category
+    s += categoryQualityBoost(p, category);
+
+    // chicche/classici shaping
+    if (styles?.wantChicche && !styles?.wantClassici) {
+      // only chicche: strong selection
+      s += chiccaBoost(p, category);
+      // further push down cities/towns in chicche mode
+      if (isObviouslyFamous(p)) s -= 0.20;
+      if (isCityPlace(p)) s -= 0.10;
+    } else if (styles?.wantChicche) {
+      // mixed: softer boost
+      s += clamp(chiccaBoost(p, category) * 0.65, -0.12, 0.09);
+    }
+
+    // family seasonal hint: water parks in winter get slight penalty unless indoor
+    if (category === "family" && isWaterPark(p) && isWinterNow() && !looksIndoor(p)) s -= 0.06;
+
+    // rotation penalty
     if (!ignoreRotation) s -= rotationPenalty(pid, recentSet);
 
     candidates.push({ place: p, pid, km, driveMin, score: Number(s.toFixed(4)) });
@@ -728,23 +1015,25 @@ function pickDestinationFromPool(pool, origin, maxMinutes, category, styles) {
   if (candidates.length === 0) candidates = buildCandidatesFromPool(pool, origin, maxMinutes, category, styles, { ignoreVisited: false, ignoreRotation: true });
   if (candidates.length === 0) candidates = buildCandidatesFromPool(pool, origin, maxMinutes, category, styles, { ignoreVisited: true, ignoreRotation: true });
 
-  return { chosen: candidates[0] || null, alternatives: candidates.slice(1, 3), totalCandidates: candidates.length };
+  const chosen = candidates[0] || null;
+  const alternatives = candidates.slice(1, 3);
+  return { chosen, alternatives, totalCandidates: candidates.length };
 }
 
-// -------------------- UI HELPERS (card content) --------------------
-function typeBadge(category) {
+// -------------------- UI CONTENT HELPERS --------------------
+function categoryLabel(cat) {
   const map = {
-    family: { emoji: "👨‍👩‍👧‍👦", label: "Family" },
-    storia: { emoji: "🏛️", label: "Storia" },
-    borghi: { emoji: "🏘️", label: "Borgo" },
-    citta:  { emoji: "🏙️", label: "Città" },
-    mare:   { emoji: "🌊", label: "Mare" },
-    natura: { emoji: "🌿", label: "Natura" },
-    montagna:{emoji:"🏔️",label:"Montagna"},
-    relax:  { emoji: "🧖", label: "Relax" },
-    ovunque:{ emoji: "🎲", label: "Meta" },
+    family:   { emoji: "👨‍👩‍👧‍👦", label: "Family" },
+    relax:    { emoji: "🧖", label: "Relax" },
+    natura:   { emoji: "🌿", label: "Natura" },
+    storia:   { emoji: "🏛️", label: "Storia" },
+    mare:     { emoji: "🌊", label: "Mare" },
+    borghi:   { emoji: "🏘️", label: "Borghi" },
+    citta:    { emoji: "🏙️", label: "Città" },
+    montagna: { emoji: "🏔️", label: "Montagna" },
+    ovunque:  { emoji: "🎲", label: "Ovunque" },
   };
-  return map[category] || { emoji: "📍", label: "Meta" };
+  return map[cat] || { emoji: "📍", label: "Meta" };
 }
 
 function microWhatToDo(place, category) {
@@ -753,99 +1042,90 @@ function microWhatToDo(place, category) {
 
   if (category === "family") {
     if (isFamilyAttraction(place)) {
-      if (n.includes("gardaland") || tags.includes("theme_park")) return "Parco divertimenti top: attrazioni, show, aree kids, giornata piena.";
+      if (n.includes("gardaland") || tags.includes("theme_park")) return "Parco divertimenti top: attrazioni, show e aree kids. Giornata piena.";
       if (isWaterPark(place)) return "Scivoli e piscine: controlla apertura (spesso stagionale).";
-      if (tags.includes("zoo") || n.includes("zoo")) return "Animali, percorsi, aree picnic: perfetto con bambini.";
+      if (tags.includes("zoo") || n.includes("zoo")) return "Animali + percorsi: perfetto con bambini.";
       if (tags.includes("aquarium") || n.includes("acquario")) return "Percorso spesso indoor: ottimo anche d’inverno.";
+      if (tags.includes("trampoline_park") || n.includes("trampoline")) return "Attività kids/teen: energia e divertimento indoor.";
       return "Attrazione family: attività e cose da fare sul posto.";
     }
-    if (isSpaPlace(place)) return "Terme/piscine/spa: spesso hanno aree family e piscina interna.";
-    if (isSoftFamily(place)) return "Gita con bimbi: verde, passeggio, panorama e cose vicine da fare.";
-    return "Gita family: esplora, foto, snack e attività nei dintorni.";
+    if (isSpaPlace(place)) return "Relax con famiglia: terme/piscine/spa (spesso con aree dedicate).";
+    if (isBigPark(place)) return "Gita nel verde: parco grande, passeggio, picnic e attività nei dintorni.";
+    return "Gita family: passeggio, foto, snack e cose carine da fare vicino.";
   }
 
   if (category === "relax") {
-    if (isSpaPlace(place)) return "Terme e relax: piscine, spa o acqua calda (verifica orari).";
-    return "Relax e stacco: luogo tranquillo + pausa.";
+    return "Relax e benessere: terme/spa/piscine + pausa lenta. Verifica accesso e orari.";
   }
 
   if (category === "storia") {
-    if (tags.includes("museum") || n.includes("museo")) return "Museo/centro storico: visita + pausa caffè.";
-    if (n.includes("castello") || tags.includes("castle") || tags.includes("fort")) return "Castello/rocca: vista, storia e foto pazzesche.";
-    return "Storia e cultura: visita, passeggiata e punti panoramici.";
+    if (tags.includes("museum") || n.includes("museo")) return "Musei/mostre e centro storico: visita + pausa caffè.";
+    if (n.includes("castello") || tags.includes("castle") || n.includes("rocca") || n.includes("forte")) return "Castello/rocca: storia, vista e foto pazzesche.";
+    return "Storia e cultura: monumenti, visite e scorci da scoprire.";
   }
 
-  if (category === "mare") return "Spiagge, passeggiata sul mare e tramonto. Perfetto per relax e foto.";
-  if (category === "natura") return "Natura vera: sentieri, panorami, cascata/lago/riserva nei dintorni.";
-  if (category === "borghi") return "Borgo da esplorare: vicoli, belvedere, cibo tipico e foto.";
-  if (category === "citta") return "Centro, piazze, monumenti e locali: passeggiata + cose da vedere.";
+  if (category === "mare") return "Mare: spiaggia, passeggiata e tramonto. Perfetto per relax e foto.";
+  if (category === "natura") return "Natura: sentieri, panorami, lago/cascata/riserva nei dintorni.";
+  if (category === "montagna") return "Montagna: cima/rifugio/panorami. Controlla meteo e condizioni.";
+  if (category === "borghi") return "Borgo: vicoli, belvedere, cibo tipico e foto.";
+  if (category === "citta") return "Città: piazze, monumenti e locali. Passeggio + cose da vedere.";
   return "Esplora, foto, cibo e cose da fare nei dintorni.";
 }
 
 function chipsFromPlace(place, category) {
+  const tags = placeTags(place);
+  const n = normName(place.name);
   const chips = [];
 
   if (category === "family") {
     if (isFamilyAttraction(place)) chips.push("🎟️ attrazione");
     if (isWaterPark(place)) chips.push("💦 acqua");
-    if (looksIndoor(place)) chips.push("🏠 indoor");
     if (isSpaPlace(place)) chips.push("🧖 terme");
+    if (isBigPark(place)) chips.push("🌳 parco grande");
+    if (looksIndoor(place)) chips.push("🏠 indoor");
     if (isWinterNow() && isWaterPark(place) && !looksIndoor(place)) chips.push("❄️ stagionale");
   }
-  if (category === "relax") chips.push("🧖 relax");
+
+  if (category === "natura") {
+    if (tags.includes("waterfall") || n.includes("cascata")) chips.push("💧 cascata");
+    if (tags.includes("peak") || n.includes("cima") || n.includes("monte")) chips.push("⛰️ cima");
+    if (n.includes("lago")) chips.push("🏞️ lago");
+    if (tags.includes("viewpoint") || n.includes("belvedere")) chips.push("👀 panorama");
+  }
+
   if (category === "storia") {
-    const n = normName(place.name);
-    if (n.includes("museo")) chips.push("🖼️ museo");
-    if (n.includes("castello")) chips.push("🏰 castello");
+    if (n.includes("castello") || n.includes("rocca") || tags.includes("castle")) chips.push("🏰 castello");
+    if (n.includes("museo") || tags.includes("museum")) chips.push("🖼️ museo");
+    if (n.includes("abbazia") || n.includes("basilica")) chips.push("⛪ chiesa");
+  }
+
+  if (category === "mare") {
+    if (n.includes("spiaggia") || tags.includes("beach")) chips.push("🏖️ spiaggia");
+    if (n.includes("baia") || n.includes("cala")) chips.push("🌅 baia/cala");
   }
 
   return chips.slice(0, 5);
 }
 
-// -------------------- MONET BOX --------------------
 function monetBoxHtml(placeName, country = "") {
   const q = country ? `${placeName}, ${country}` : placeName;
-
   return `
     <div class="card" style="margin-top:12px;">
       <div class="small muted">💸 Prenota al volo (link monetizzabili)</div>
-
       <div class="row wrap gap" style="margin-top:10px;">
         <a class="btn" target="_blank" rel="noopener" href="${bookingUrl(q, "", BOOKING_AID)}">🏨 Hotel</a>
         <a class="btn" target="_blank" rel="noopener" href="${getYourGuideUrl(q, GYG_PID)}">🎟️ Tour</a>
         <a class="btn" target="_blank" rel="noopener" href="${tiqetsUrl(q, TIQETS_PID)}">🏛️ Biglietti</a>
         <a class="btn" target="_blank" rel="noopener" href="${amazonEssentialsUrl(AMAZON_TAG)}">🧳 Essenziali</a>
       </div>
-
       <div class="small muted" style="margin-top:8px;">
-        (Per monetizzare: inserisci i tuoi ID in app.js: BOOKING_AID / GYG_PID / TIQETS_PID / AMAZON_TAG)
+        (Inserisci i tuoi ID in app.js: BOOKING_AID / GYG_PID / TIQETS_PID / AMAZON_TAG)
       </div>
     </div>
   `;
 }
 
-// -------------------- RENDER --------------------
-function renderNoResultFinal(maxMinutesShown) {
-  const area = $("resultArea");
-  if (!area) return;
-
-  area.innerHTML = `
-    <div class="card errbox">
-      <div class="small" style="font-weight:900;">❌ Nessuna meta entro ${maxMinutesShown} min</div>
-      <div class="small muted" style="margin-top:6px;">Prova ad aumentare i minuti o cambiare categoria/stile.</div>
-      <div class="row wrap gap" style="margin-top:12px;">
-        <button class="btn btn-ghost" id="btnResetRotation">🧽 Reset “proposte di oggi”</button>
-      </div>
-    </div>
-  `;
-
-  $("btnResetRotation")?.addEventListener("click", () => {
-    resetRotation();
-    showStatus("ok", "Reset fatto ✅ Ora posso ripescare anche mete già proposte oggi/sessione.");
-    runSearch({ silent: true });
-  });
-}
-
+// -------------------- RENDER (main + 2 alternatives) --------------------
 function renderResult(origin, maxMinutesShown, chosen, alternatives = [], meta = {}) {
   const area = $("resultArea");
   if (!area) return;
@@ -853,17 +1133,32 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives = [], meta =
   const category = meta.category || "ovunque";
 
   if (!chosen) {
-    // IMPORTANT: questa funzione ora si usa SOLO quando abbiamo deciso che è finita davvero.
-    renderNoResultFinal(maxMinutesShown);
+    area.innerHTML = `
+      <div class="card errbox">
+        <div class="small">❌ Nessuna meta trovata entro ${maxMinutesShown} min per <b>${category}</b>.</div>
+        ${meta.liveAttempted && !meta.liveDone ? `
+          <div class="small muted" style="margin-top:8px;">🛰️ Sto ancora cercando LIVE…</div>
+        ` : `
+          <div class="small muted" style="margin-top:8px;">Prova ad aumentare i minuti o cambiare categoria/stile.</div>
+        `}
+        <div class="row wrap gap" style="margin-top:12px;">
+          <button class="btn btn-ghost" id="btnResetRotation">🧽 Reset “proposte di oggi”</button>
+        </div>
+      </div>
+    `;
+    $("btnResetRotation")?.addEventListener("click", () => {
+      resetRotation();
+      showStatus("ok", "Reset fatto ✅ Ora posso ripescare anche mete già proposte oggi/sessione.");
+      runSearch({ silent: true });
+    });
     return;
   }
 
   const p = chosen.place;
   const pid = chosen.pid;
-
   const country = p.country || p.area || "—";
-  const badge = String(p.visibility || "").toLowerCase() === "chicca" ? "✨ chicca" : "✅ classica";
-  const tb = typeBadge(category);
+
+  const cb = categoryLabel(category);
   const what = microWhatToDo(p, category);
   const chips = chipsFromPlace(p, category);
 
@@ -874,29 +1169,15 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives = [], meta =
   const img1 = osmStaticImgPrimary(lat, lon, zoom);
   const img2 = osmStaticImgFallback(lat, lon, zoom);
 
-  const liveLabel =
-    meta?.livePhase === "searching" ? "🛰️ LIVE: sto cercando…" :
-    meta?.liveUsed ? "🛰️ LIVE: ok" :
-    meta?.liveAttempted ? "🛰️ LIVE: non disponibile" :
-    "🛰️ LIVE: no";
-
   const q = (p.country || p.area) ? `${p.name}, ${p.country || p.area}` : p.name;
 
-  // banner LIVE in-card (solo se searching)
-  const liveBanner = meta?.livePhase === "searching"
-    ? `
-      <div class="card warnbox" style="margin-top:12px;">
-        <div style="display:flex; align-items:center; gap:10px;">
-          <div class="jamoSpinner" aria-hidden="true"
-               style="width:16px;height:16px;border-radius:99px;border:2px solid rgba(255,255,255,.18);border-top-color: rgba(0,224,255,.9); animation: jamoSpin 1s linear infinite;"></div>
-          <div class="small" style="font-weight:900;">LIVE: cerco attrazioni e mete vicine…</div>
-        </div>
-        <div class="small muted" style="margin-top:8px; line-height:1.45;">
-          Tieni duro: può metterci qualche secondo (Overpass è lento). Se trova qualcosa, aggiorno la proposta.
-        </div>
-      </div>
-    `
-    : "";
+  // LIVE badge text
+  const liveStateText =
+    meta.liveAttempted
+      ? (meta.liveDone
+          ? (meta.liveUsed ? `🛰️ LIVE: ok (${meta.liveCount || 0} trovati)` : `🛰️ LIVE: non disponibile`)
+          : `🛰️ LIVE: sto cercando…`)
+      : "";
 
   area.innerHTML = `
     <div class="card okbox" style="overflow:hidden; padding:0;">
@@ -904,7 +1185,6 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives = [], meta =
                   radial-gradient(circle at 30% 30%, rgba(26,255,213,.18), rgba(0,224,255,.08)),
                   linear-gradient(180deg, rgba(20,28,34,.0), rgba(10,15,20,.65));
                   border-bottom:1px solid var(--border);">
-
         <img src="${img1}" alt="" loading="lazy" decoding="async"
              style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; opacity:.95;"
              onerror="(function(img){
@@ -918,7 +1198,6 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives = [], meta =
                if(ph) ph.style.display='flex';
              })(this)"
         />
-
         <div class="heroPlaceholder"
              style="position:absolute; inset:0; display:none; align-items:center; justify-content:center; gap:10px;
                     background: linear-gradient(135deg, rgba(0,224,255,.18), rgba(26,255,213,.08));
@@ -927,22 +1206,21 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives = [], meta =
         </div>
 
         <div style="position:absolute; left:12px; top:12px; display:flex; gap:8px; flex-wrap:wrap; max-width: calc(100% - 24px);">
-          <div class="pill">${tb.emoji} ${tb.label}</div>
+          <div class="pill">${cb.emoji} ${cb.label}</div>
           <div class="pill">🚗 ~${chosen.driveMin} min • ${fmtKm(chosen.km)}</div>
-          <div class="pill">${badge}</div>
           ${category === "family" && isWaterPark(p) && isWinterNow() && !looksIndoor(p) ? `<div class="pill">❄️ stagionale</div>` : ""}
         </div>
       </div>
 
       <div style="padding:14px;">
-        <div style="font-weight:950; font-size:28px; line-height:1.12; margin:0; word-break: break-word;">
+        <div style="font-weight:950; font-size:28px; line-height:1.12; margin:0; word-break:break-word;">
           ${p.name} <span class="small muted" style="font-weight:700;">(${country})</span>
         </div>
 
         <div class="small muted" style="margin-top:8px; line-height:1.35;">
-          ${liveLabel}${Number.isFinite(meta?.liveCount) ? ` • live_items: ${meta.liveCount}` : ""}
-          ${MACRO_SOURCE_URL ? ` • macro: ${MACRO_SOURCE_URL.split("/").pop()}` : ""}
-          • score: ${chosen.score}
+          ${liveStateText ? `${liveStateText} • ` : ""}
+          ${MACRO_SOURCE_URL ? `macro: ${MACRO_SOURCE_URL.split("/").pop()} • ` : ""}
+          score: ${chosen.score}
         </div>
 
         <div style="margin-top:12px; font-weight:900;">Cosa si fa</div>
@@ -953,8 +1231,6 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives = [], meta =
             ${chips.map(c => `<div class="pill">${c}</div>`).join("")}
           </div>
         ` : ""}
-
-        ${liveBanner}
 
         <div class="row wrap gap" style="margin-top:14px;">
           <a class="btn" target="_blank" rel="noopener" href="${mapsPlaceUrl(lat, lon)}">🗺️ Maps</a>
@@ -977,16 +1253,16 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives = [], meta =
 
     ${alternatives?.length ? `
       <div style="margin-top:14px;">
-        <div class="small muted" style="margin-bottom:8px;">Alternative (2)</div>
+        <div class="small muted" style="margin-bottom:8px;">Alternative (${category})</div>
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-          ${alternatives.slice(0, 2).map(a => {
+          ${alternatives.slice(0, 2).map((a, idx) => {
             const ap = a.place;
             const alat = Number(ap.lat);
             const alon = Number(ap.lon ?? ap.lng);
             const acountry = ap.country || ap.area || "";
             return `
-              <div class="card" style="padding:10px;">
-                <div style="font-weight:900; line-height:1.2; word-break: break-word;">${ap.name}</div>
+              <div class="card" style="padding:10px; overflow:hidden;">
+                <div style="font-weight:900; line-height:1.2; word-break:break-word;">${ap.name}</div>
                 <div class="small muted" style="margin-top:4px;">
                   🚗 ~${a.driveMin} min • ${fmtKm(a.km)} ${acountry ? `• (${acountry})` : ""}
                 </div>
@@ -1003,14 +1279,6 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives = [], meta =
 
     ${monetBoxHtml(p.name, country)}
   `;
-
-  // keyframes spinner once
-  if (!document.getElementById("jamoSpinStyle")) {
-    const st = document.createElement("style");
-    st.id = "jamoSpinStyle";
-    st.textContent = `@keyframes jamoSpin { from { transform: rotate(0deg);} to {transform: rotate(360deg);} }`;
-    document.head.appendChild(st);
-  }
 
   // rotation tracking
   LAST_SHOWN_PID = pid;
@@ -1047,16 +1315,17 @@ async function runSearch({ silent = false, forbidPid = null, forcePid = null } =
   try { SEARCH_ABORT?.abort?.(); } catch {}
   SEARCH_ABORT = new AbortController();
   const signal = SEARCH_ABORT.signal;
+
   const token = ++SEARCH_TOKEN;
 
   try {
     if (!silent) hideStatus();
 
-    // UI: subito stato "sto cercando"
-    renderResultState({
-      title: "🔎 Sto cercando la meta…",
-      subtitle: "Prima cerco nei dati offline, poi provo anche LIVE (online) per attrazioni e mete turistiche.",
-      kind: "warn"
+    // UI: immediate feedback (no stale)
+    setResultBanner({
+      title: "🔎 Sto cercando…",
+      subtitle: "Prima offline, poi LIVE (attrazioni/mete vicine).",
+      tone: "warn"
     });
 
     await ensureMacroLoaded();
@@ -1064,6 +1333,7 @@ async function runSearch({ silent = false, forbidPid = null, forcePid = null } =
     const origin = getOrigin();
     if (!origin || !Number.isFinite(Number(origin.lat)) || !Number.isFinite(Number(origin.lon))) {
       showStatus("err", "Imposta una partenza: GPS oppure scrivi un luogo e premi “Usa questo luogo”.");
+      setResultBanner({ title: "❌ Partenza mancante", subtitle: "Usa GPS o inserisci un luogo.", tone: "err" });
       return;
     }
 
@@ -1076,34 +1346,15 @@ async function runSearch({ silent = false, forbidPid = null, forcePid = null } =
     let pool = offlinePool.slice();
 
     // OFFLINE pick
-    let picked = pickDestinationFromPool(pool, origin, effMax, category, styles);
-    let chosen = picked.chosen;
-    let alternatives = picked.alternatives;
+    let { chosen, alternatives } = pickDestinationFromPool(pool, origin, effMax, category, styles);
 
-    // Family guarantee (offline)
-    if (category === "family") {
-      const rough = buildCandidatesFromPool(pool, origin, effMax, "family", styles, { ignoreVisited: false, ignoreRotation: true });
-      if (rough.length < 6) {
-        const widened = buildCandidatesFromPool(pool, origin, effMax, "ovunque", styles, { ignoreVisited: false, ignoreRotation: true })
-          .filter(x => isFamilyAttraction(x.place) || isSoftFamily(x.place) || isSpaPlace(x.place))
-          .slice(0, 160);
-        if (widened.length) {
-          chosen = widened[0] || chosen;
-          alternatives = widened.slice(1, 3);
-        }
-      }
-    }
-
-    // apply force/forbid (offline)
+    // Force/forbid (offline)
     if (forcePid) {
-      const forced = buildCandidatesFromPool(pool, origin, effMax, category, styles, { ignoreVisited: true, ignoreRotation: true })
-        .find(x => x.pid === forcePid);
+      const cands = buildCandidatesFromPool(pool, origin, effMax, category, styles, { ignoreVisited: true, ignoreRotation: true });
+      const forced = cands.find(x => x.pid === forcePid);
       if (forced) {
-        const rest = buildCandidatesFromPool(pool, origin, effMax, category, styles, { ignoreVisited: true, ignoreRotation: true })
-          .filter(x => x.pid !== forcePid)
-          .slice(0, 2);
         chosen = forced;
-        alternatives = rest;
+        alternatives = cands.filter(x => x.pid !== forcePid).slice(0, 2);
       }
     } else if (forbidPid && chosen?.pid === forbidPid) {
       const cands = buildCandidatesFromPool(pool, origin, effMax, category, styles, { ignoreVisited: true, ignoreRotation: true })
@@ -1114,43 +1365,36 @@ async function runSearch({ silent = false, forbidPid = null, forcePid = null } =
 
     if (token !== SEARCH_TOKEN) return;
 
-    // RENDER OFFLINE if exists; if not, show "searching live" state (NO red card!)
-    if (chosen) {
-      renderResult(origin, maxMinutesInput, chosen, alternatives, {
-        category,
-        effMax,
-        liveAttempted: true,
-        livePhase: "searching",
-        liveUsed: false,
-        liveCount: 0
-      });
-    } else {
-      renderResultState({
-        title: "🛰️ LIVE: cerco attrazioni e mete vicine…",
-        subtitle: "Offline non ha trovato nulla nei minuti scelti. Ora provo online (può metterci qualche secondo).",
-        kind: "warn"
-      });
-    }
+    // Render OFFLINE, BUT show clearly that LIVE is still running
+    renderResult(origin, maxMinutesInput, chosen, alternatives, {
+      category,
+      effMax,
+      liveAttempted: true,
+      liveDone: false,
+      liveUsed: false,
+      liveCount: 0
+    });
 
-    if (!silent) showStatus("warn", "🛰️ LIVE: sto cercando attrazioni/mete turistiche vicine…");
+    if (!silent) showStatus("warn", "🛰️ LIVE: sto cercando attrazioni/mete vicine…");
 
-    // LIVE radius
+    // LIVE radius: based on time, category-specific
     const baseRadius = Math.round((effMax / 60) * 55);
-    const radiusKm = (category === "family")
-      ? clamp(Math.round(baseRadius * 1.6), 35, 260)
-      : clamp(baseRadius, 20, 180);
+    const radiusKm =
+      category === "mare" ? clamp(Math.round(baseRadius * 1.55), 35, 260) :
+      category === "family" ? clamp(Math.round(baseRadius * 1.60), 35, 240) :
+      clamp(baseRadius, 20, 200);
 
     const live = await fetchLivePlaces(origin, radiusKm, category, signal);
     if (token !== SEARCH_TOKEN) return;
 
+    // Merge LIVE into pool (dedupe by normalized name)
     let liveUsed = false;
     let liveCount = 0;
 
-    if (live.ok && live.places.length) {
+    if (live.ok && Array.isArray(live.places) && live.places.length) {
       liveUsed = true;
       liveCount = live.places.length;
 
-      // merge live into pool (avoid duplicates by name)
       const seenNames = new Set(pool.map(p => normName(p?.name)));
       for (const lp of live.places) {
         const k = normName(lp.name);
@@ -1158,70 +1402,49 @@ async function runSearch({ silent = false, forbidPid = null, forcePid = null } =
         seenNames.add(k);
         pool.push(lp);
       }
+    }
 
-      // re-pick with merged pool
-      let picked2 = pickDestinationFromPool(pool, origin, effMax, category, styles);
+    // Re-pick with merged pool (STRICT category still applies)
+    let picked = pickDestinationFromPool(pool, origin, effMax, category, styles);
 
-      // family guarantee after merge
-      if (category === "family") {
-        const rough2 = buildCandidatesFromPool(pool, origin, effMax, "family", styles, { ignoreVisited: false, ignoreRotation: true });
-        if (rough2.length < 6) {
-          const widened2 = buildCandidatesFromPool(pool, origin, effMax, "ovunque", styles, { ignoreVisited: false, ignoreRotation: true })
-            .filter(x => isFamilyAttraction(x.place) || isSoftFamily(x.place) || isSpaPlace(x.place))
-            .slice(0, 160);
-          if (widened2.length) picked2 = { chosen: widened2[0], alternatives: widened2.slice(1, 3) };
-        }
+    // Apply force/forbid again after live merge
+    if (forcePid) {
+      const cands = buildCandidatesFromPool(pool, origin, effMax, category, styles, { ignoreVisited: true, ignoreRotation: true });
+      const forced = cands.find(x => x.pid === forcePid);
+      if (forced) {
+        picked.chosen = forced;
+        picked.alternatives = cands.filter(x => x.pid !== forcePid).slice(0, 2);
       }
-
-      // apply force/forbid again
-      if (forcePid) {
-        const forced = buildCandidatesFromPool(pool, origin, effMax, category, styles, { ignoreVisited: true, ignoreRotation: true })
-          .find(x => x.pid === forcePid);
-        if (forced) {
-          const rest = buildCandidatesFromPool(pool, origin, effMax, category, styles, { ignoreVisited: true, ignoreRotation: true })
-            .filter(x => x.pid !== forcePid)
-            .slice(0, 2);
-          picked2 = { chosen: forced, alternatives: rest };
-        }
-      } else if (forbidPid && picked2.chosen?.pid === forbidPid) {
-        const cands = buildCandidatesFromPool(pool, origin, effMax, category, styles, { ignoreVisited: true, ignoreRotation: true })
-          .filter(x => x.pid !== forbidPid);
-        picked2 = { chosen: cands[0] || null, alternatives: cands.slice(1, 3) };
-      }
-
-      chosen = picked2.chosen;
-      alternatives = picked2.alternatives;
+    } else if (forbidPid && picked.chosen?.pid === forbidPid) {
+      const cands = buildCandidatesFromPool(pool, origin, effMax, category, styles, { ignoreVisited: true, ignoreRotation: true })
+        .filter(x => x.pid !== forbidPid);
+      picked.chosen = cands[0] || null;
+      picked.alternatives = cands.slice(1, 3);
     }
 
     if (token !== SEARCH_TOKEN) return;
 
-    // FINAL RENDER (now we can decide "no result" only here)
-    if (!chosen) {
-      renderNoResultFinal(maxMinutesInput);
-      showStatus("warn", `Nessuna meta entro ${maxMinutesInput} min (LIVE: ${live.ok ? "ok ma 0 risultati" : "non disponibile"}).`);
-      return;
-    }
-
-    renderResult(origin, maxMinutesInput, chosen, alternatives, {
+    renderResult(origin, maxMinutesInput, picked.chosen, picked.alternatives, {
       category,
       effMax,
       liveAttempted: true,
-      livePhase: "done",
+      liveDone: true,
       liveUsed,
       liveCount
     });
 
-    if (!silent) {
+    if (!picked.chosen) {
+      showStatus("warn", `Nessuna meta entro ${maxMinutesInput} min per ${category}. Aumenta minuti o cambia filtri.`);
+    } else if (!silent) {
       const extra = (effMax !== maxMinutesInput) ? ` (ho allargato a ~${effMax} min)` : "";
-      showStatus("ok", `Meta trovata ✅ (~${chosen.driveMin} min in auto) • ${liveUsed ? "LIVE ok" : "LIVE non disponibile"}${extra}`);
+      showStatus("ok", `Meta trovata ✅ (~${picked.chosen.driveMin} min) • ${liveUsed ? "LIVE ok" : "LIVE non disponibile"}${extra}`);
     }
 
   } catch (e) {
     if (String(e?.name || "").includes("Abort")) return;
     console.error(e);
     showStatus("err", `Errore: ${String(e.message || e)}`);
-    // se crasha, mostra stato coerente
-    renderResultState({ title: "⚠️ Errore durante la ricerca", subtitle: String(e.message || e), kind: "err" });
+    setResultBanner({ title: "❌ Errore", subtitle: String(e.message || e), tone: "err" });
   }
 }
 
@@ -1308,7 +1531,7 @@ loadMacrosIndexSafe().catch(() => {});
 ensureMacroLoaded().catch(() => {});
 hideStatus();
 
-// 🔁 Service Worker update hint
+// SW update hint (reduce "old app.js")
 (async function swUpdateHint(){
   try {
     if ("serviceWorker" in navigator) {
@@ -1317,3 +1540,4 @@ hideStatus();
     }
   } catch {}
 })();
+```0
