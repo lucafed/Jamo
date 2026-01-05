@@ -1,53 +1,82 @@
-/* sw.js — Jamo (safe cache)
-   - Never cache app.js / css / api
-   - Network-first for freshness
-   - Cache only static assets for offline
-*/
+/* Jamo — sw.js v2 (SAFE CACHE)
+ * Goals:
+ * - NEVER cache /api (LIVE must be fresh)
+ * - Cache static assets (app.js, style.css, index.html) with SWR
+ * - Cache /data with SWR (fast + updates)
+ * - Easy bust: bump SW_VERSION
+ */
 
-const CACHE_NAME = "jamo-cache-v6"; // <-- cambia numero ad ogni deploy
+const SW_VERSION = "jamo-sw-v2.0.0";
+const STATIC_CACHE = `static-${SW_VERSION}`;
+const DATA_CACHE   = `data-${SW_VERSION}`;
 
 const STATIC_ASSETS = [
-  "/",               // index
+  "/",            // optional (depends on hosting)
   "/index.html",
-  "/manifest.webmanifest",
   "/style.css",
-  // icone se le hai (aggiungi i path reali se esistono)
-  // "/icons/icon-192.png",
-  // "/icons/icon-512.png",
+  "/app.js",
+  "/manifest.webmanifest",
 ];
 
-// Install
 self.addEventListener("install", (event) => {
-  self.skipWaiting();
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS)).catch(() => {})
-  );
+  event.waitUntil((async () => {
+    const cache = await caches.open(STATIC_CACHE);
+    // Best effort: some hosts don't allow caching "/" directly
+    await Promise.allSettled(STATIC_ASSETS.map((u) => cache.add(u)));
+    self.skipWaiting();
+  })());
 });
 
-// Activate
 self.addEventListener("activate", (event) => {
   event.waitUntil((async () => {
-    // pulizia vecchie cache
     const keys = await caches.keys();
-    await Promise.all(keys.map((k) => (k !== CACHE_NAME ? caches.delete(k) : Promise.resolve())));
+    await Promise.all(
+      keys.map((k) => {
+        if (k !== STATIC_CACHE && k !== DATA_CACHE) return caches.delete(k);
+      })
+    );
     await self.clients.claim();
   })());
 });
 
-// Helpers
-function isBypass(url) {
-  // NON cacheare mai queste risorse (sempre rete)
+function isApi(reqUrl) {
+  return reqUrl.pathname.startsWith("/api/");
+}
+function isData(reqUrl) {
+  return reqUrl.pathname.startsWith("/data/");
+}
+function isStatic(reqUrl) {
+  // treat these as static-ish assets (including cache-busted)
   return (
-    url.pathname.startsWith("/api/") ||
-    url.pathname === "/app.js" ||
-    url.pathname.startsWith("/app.js") ||
-    url.pathname === "/style.css" ||
-    url.pathname.startsWith("/style.css")
+    reqUrl.pathname === "/" ||
+    reqUrl.pathname === "/index.html" ||
+    reqUrl.pathname === "/app.js" ||
+    reqUrl.pathname === "/style.css" ||
+    reqUrl.pathname === "/manifest.webmanifest" ||
+    reqUrl.pathname.endsWith(".png") ||
+    reqUrl.pathname.endsWith(".jpg") ||
+    reqUrl.pathname.endsWith(".jpeg") ||
+    reqUrl.pathname.endsWith(".webp") ||
+    reqUrl.pathname.endsWith(".svg") ||
+    reqUrl.pathname.endsWith(".ico")
   );
 }
 
-function isDataFile(url) {
-  return url.pathname.startsWith("/data/") && url.pathname.endsWith(".json");
+// Stale-while-revalidate
+async function swr(request, cacheName) {
+  const cache = await caches.open(cacheName);
+  const cached = await cache.match(request);
+
+  const fetchPromise = fetch(request)
+    .then((resp) => {
+      // only cache ok responses
+      if (resp && resp.ok) cache.put(request, resp.clone());
+      return resp;
+    })
+    .catch(() => null);
+
+  // Return cached immediately if present, else wait network
+  return cached || (await fetchPromise) || new Response("", { status: 504 });
 }
 
 self.addEventListener("fetch", (event) => {
@@ -56,37 +85,30 @@ self.addEventListener("fetch", (event) => {
 
   const url = new URL(req.url);
 
-  // Solo stesso origin
+  // Only handle same-origin
   if (url.origin !== self.location.origin) return;
 
-  // Bypass totale per API e file “sempre fresh”
-  if (isBypass(url)) {
-    event.respondWith(fetch(req));
+  // ✅ 1) NEVER cache API (LIVE)
+  if (isApi(url)) {
+    event.respondWith(fetch(req).catch(() => new Response(JSON.stringify({
+      ok: false,
+      error: "Network error (api)",
+    }), { status: 200, headers: { "Content-Type": "application/json" } })));
     return;
   }
 
-  // Network-first per tutto (così non rimani mai “indietro”)
-  event.respondWith((async () => {
-    try {
-      const net = await fetch(req);
-      // Cache solo se è una risposta ok e se è roba statica o /data/*.json
-      if (net && net.ok && (isDataFile(url) || STATIC_ASSETS.includes(url.pathname))) {
-        const cache = await caches.open(CACHE_NAME);
-        cache.put(req, net.clone()).catch(() => {});
-      }
-      return net;
-    } catch (e) {
-      // Offline fallback: prova cache
-      const cached = await caches.match(req);
-      if (cached) return cached;
+  // ✅ 2) Cache /data with SWR
+  if (isData(url)) {
+    event.respondWith(swr(req, DATA_CACHE));
+    return;
+  }
 
-      // Se è una pagina, prova index
-      if (req.headers.get("accept")?.includes("text/html")) {
-        const cachedIndex = await caches.match("/index.html");
-        if (cachedIndex) return cachedIndex;
-      }
+  // ✅ 3) Cache static with SWR
+  if (isStatic(url)) {
+    event.respondWith(swr(req, STATIC_CACHE));
+    return;
+  }
 
-      throw e;
-    }
-  })());
+  // Default: network-first (no cache)
+  event.respondWith(fetch(req).catch(() => caches.match(req)));
 });
