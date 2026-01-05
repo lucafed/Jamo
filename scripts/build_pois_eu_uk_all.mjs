@@ -1,16 +1,24 @@
 // scripts/build_pois_eu_uk_all.mjs
 // Build POIs EU+UK (offline dataset) for GitHub Pages (NO /api needed)
-// Output:
-// - public/data/pois_eu_uk.json (all)
-// - public/data/pois_index_eu_uk.json (index)
-// - public/data/pois/<category>.json (split)
+// Output (✅ fixed paths):
+// - public/data/pois/pois_eu_uk.json          (ALL)
+// - public/data/pois/index.json               (index)
+// - public/data/pois/<category>.json          (split)
+//
+// ✅ Fix principali:
+// - UK -> GB (ISO3166-1 corretto per Overpass)
+// - Niente mega-area EUUK: fetch per-country (molto più affidabile)
+// - Quasi tutto richiede ["name"] per evitare milioni di risultati
+// - Dedup robusto
+//
+// Run:
+//   node scripts/build_pois_eu_uk_all.mjs
 
 import fs from "fs";
 import path from "path";
 
 const ROOT = process.cwd();
-const OUT_DIR = path.join(ROOT, "public/data");
-const OUT_POIS_DIR = path.join(OUT_DIR, "pois");
+const OUT_DIR = path.join(ROOT, "public", "data", "pois");
 
 const OVERPASS_ENDPOINTS = [
   "https://overpass-api.de/api/interpreter",
@@ -25,7 +33,7 @@ function ensureDir(p){
   if (!fs.existsSync(p)) fs.mkdirSync(p, { recursive: true });
 }
 
-async function fetchWithTimeout(url, body, timeoutMs = 30000) {
+async function fetchWithTimeout(url, body, timeoutMs = 60000) {
   const ctrl = new AbortController();
   const t = setTimeout(() => ctrl.abort(), timeoutMs);
   try {
@@ -46,133 +54,126 @@ async function fetchWithTimeout(url, body, timeoutMs = 30000) {
 
 function opBody(q){ return `data=${encodeURIComponent(q)}`; }
 
-// EU+UK area (Overpass uses ISO3166-1 codes sometimes; easiest: union of Europe + UK by relation areas)
-// Practical approach: query by multiple country areas.
-// -> Inizia con una lista: EU27 + UK + EEA/Schengen se vuoi. Qui metto EU + UK “pratici”.
-// Se vuoi aggiungere paesi, basta aggiungere ISO.
+// ✅ EU27 + GB (UK -> GB)
 const COUNTRIES = [
-  "AT","BE","BG","CY","CZ","DE","DK","EE","ES","FI","FR","GR","HR","HU","IE","IT","LT","LU","LV","MT","NL","PL","PT","RO","SE","SI","SK","UK"
+  "AT","BE","BG","CY","CZ","DE","DK","EE","ES","FI","FR","GR","HR","HU","IE","IT","LT","LU","LV","MT","NL","PL","PT","RO","SE","SI","SK","GB"
 ];
 
-// Genera il blocco aree: area["ISO3166-1"="IT"]->.aIT;
-function areaDefs() {
-  return COUNTRIES.map(c => `area["ISO3166-1"="${c}"]->.a${c};`).join("\n");
-}
-// Unione: (.aIT;.aFR;...;)->.EUUK;
-function areaUnion() {
-  return `(${COUNTRIES.map(c => `.a${c};`).join("")})->.EUUK;`;
-}
-
-// --------- CATEGORIE “INTERESSANTI” (puoi editarle qui) ---------
-// L’idea: family = zoo, theme parks, water parks, aquariums, kids museums, playground (non troppo spam),
-// storia = castle, ruins, archaeological, museum, monument
-// natura = waterfalls, peaks, springs, nature reserves, national parks, caves
-// mare = beaches, marinas, viewpoints costieri
-// relax = spa, hot springs, public bath
-// borghi/citta = place=hamlet/village/town/city (ma attenzione: sono tanti → meglio tenerli come “macro”, non come POI)
+// --------- CATEGORIE POI (mirate) ---------
+// NOTE: per evitare dataset enorme/ingestibile, molti blocchi richiedono ["name"].
+// Le categorie "borghi/citta" NON conviene farle POI: sono macro (come già fai).
 const CATEGORIES = {
   family: `
 (
-  nwr["tourism"="theme_park"](area.EUUK);
-  nwr["leisure"="water_park"](area.EUUK);
-  nwr["tourism"="zoo"](area.EUUK);
-  nwr["tourism"="aquarium"](area.EUUK);
-  nwr["amenity"="aquarium"](area.EUUK);
-  nwr["tourism"="attraction"]["name"~"children|kids|bambin|children\\s?museum|museo dei bambini|science\\s?center|planetari",i](area.EUUK);
-  nwr["tourism"="museum"]["name"~"children|kids|bambin|children\\s?museum|museo dei bambini|science\\s?center|planetari",i](area.EUUK);
+  nwr["tourism"="theme_park"]["name"](area.A);
+  nwr["leisure"="water_park"]["name"](area.A);
+  nwr["tourism"="zoo"]["name"](area.A);
+  nwr["tourism"="aquarium"]["name"](area.A);
 
-  // playground: solo se ha name (riduce spam)
-  nwr["leisure"="playground"]["name"](area.EUUK);
+  // kids museum / science center: solo se name match
+  nwr["tourism"="museum"]["name"~"children|kids|bambin|children\\s?museum|museo dei bambini|science\\s?center|planetari|planetarium",i](area.A);
+  nwr["tourism"="attraction"]["name"~"children|kids|bambin|children\\s?museum|museo dei bambini|science\\s?center|planetari|planetarium",i](area.A);
+
+  // playground SOLO se named (riduce tantissimo)
+  nwr["leisure"="playground"]["name"](area.A);
+
+  // “family keywords” su attraction (named)
+  nwr["tourism"="attraction"]["name"~"parco\\s?divertimenti|lunapark|luna\\s?park|giostre|parco\\s?avventura|safari",i](area.A);
 );
 `,
 
   theme_park: `
 (
-  nwr["tourism"="theme_park"](area.EUUK);
-  nwr["leisure"="water_park"](area.EUUK);
-  nwr["leisure"="amusement_arcade"](area.EUUK);
-  nwr["tourism"="attraction"]["name"~"parco divertimenti|lunapark|luna\\s?park|giostre|water\\s?park|acquapark|aqua\\s?park",i](area.EUUK);
+  nwr["tourism"="theme_park"]["name"](area.A);
+  nwr["leisure"="water_park"]["name"](area.A);
+  nwr["leisure"="amusement_arcade"]["name"](area.A);
+  nwr["tourism"="attraction"]["name"~"parco\\s?divertimenti|lunapark|luna\\s?park|giostre|water\\s?park|acquapark|aqua\\s?park|parco\\s?acquatico",i](area.A);
 );
 `,
 
   kids_museum: `
 (
-  nwr["tourism"="museum"]["name"~"children|kids|bambin|children\\s?museum|museo dei bambini|science\\s?center|planetari|planetarium",i](area.EUUK);
-  nwr["tourism"="attraction"]["name"~"children|kids|bambin|children\\s?museum|museo dei bambini|science\\s?center|planetari|planetarium",i](area.EUUK);
+  nwr["tourism"="museum"]["name"~"children|kids|bambin|children\\s?museum|museo dei bambini|science\\s?center|planetari|planetarium",i](area.A);
+  nwr["amenity"="planetarium"]["name"](area.A);
+  nwr["tourism"="attraction"]["name"~"children|kids|bambin|children\\s?museum|museo dei bambini|science\\s?center|planetari|planetarium",i](area.A);
 );
 `,
 
   storia: `
 (
-  nwr["historic"="castle"](area.EUUK);
-  nwr["historic"="ruins"](area.EUUK);
-  nwr["historic"="archaeological_site"](area.EUUK);
-  nwr["tourism"="museum"](area.EUUK);
-  nwr["historic"="monument"](area.EUUK);
-  nwr["historic"="memorial"](area.EUUK);
+  nwr["historic"="castle"]["name"](area.A);
+  nwr["historic"="ruins"]["name"](area.A);
+  nwr["historic"="archaeological_site"]["name"](area.A);
+  nwr["historic"="monument"]["name"](area.A);
+  nwr["historic"="memorial"]["name"](area.A);
+  nwr["tourism"="museum"]["name"](area.A);
 );
 `,
 
   natura: `
 (
-  nwr["natural"="waterfall"](area.EUUK);
-  nwr["natural"="peak"](area.EUUK);
-  nwr["natural"="spring"](area.EUUK);
-  nwr["leisure"="nature_reserve"](area.EUUK);
-  nwr["boundary"="national_park"](area.EUUK);
-  nwr["natural"="cave_entrance"](area.EUUK);
+  nwr["natural"="waterfall"]["name"](area.A);
+  nwr["natural"="peak"]["name"](area.A);
+  nwr["natural"="spring"]["name"](area.A);
+  nwr["leisure"="nature_reserve"]["name"](area.A);
+  nwr["boundary"="national_park"]["name"](area.A);
+  nwr["natural"="cave_entrance"]["name"](area.A);
 );
 `,
 
   mare: `
 (
-  nwr["natural"="beach"](area.EUUK);
-  nwr["leisure"="marina"](area.EUUK);
-  nwr["tourism"="viewpoint"]["name"~"sea|mare|coast|costa|spiaggia|beach",i](area.EUUK);
+  nwr["natural"="beach"]["name"](area.A);
+  nwr["leisure"="marina"]["name"](area.A);
+  nwr["tourism"="viewpoint"]["name"~"sea|mare|coast|costa|spiaggia|beach",i](area.A);
 );
 `,
 
   relax: `
 (
-  nwr["amenity"="spa"](area.EUUK);
-  nwr["leisure"="spa"](area.EUUK);
-  nwr["natural"="hot_spring"](area.EUUK);
-  nwr["amenity"="public_bath"](area.EUUK);
-  nwr["thermal"="yes"](area.EUUK);
+  nwr["amenity"="spa"]["name"](area.A);
+  nwr["leisure"="spa"]["name"](area.A);
+  nwr["natural"="hot_spring"]["name"](area.A);
+  nwr["amenity"="public_bath"]["name"](area.A);
+  nwr["thermal"="yes"]["name"](area.A);
 );
 `,
 
   viewpoints: `
 (
-  nwr["tourism"="viewpoint"](area.EUUK);
-  nwr["name"~"belvedere|panoram|viewpoint|scenic|terrazza|vista",i](area.EUUK);
+  nwr["tourism"="viewpoint"]["name"](area.A);
+  nwr["name"~"belvedere|panoram|viewpoint|scenic|terrazza|vista",i](area.A);
 );
 `,
 
   hiking: `
 (
-  nwr["information"="guidepost"](area.EUUK);
-  nwr["amenity"="shelter"](area.EUUK);
-  nwr["name"~"sentiero|trail|trek|trekking|hike|hiking|via\\s?ferrata|rifugio|anello",i](area.EUUK);
+  nwr["information"="guidepost"]["name"](area.A);
+  nwr["amenity"="shelter"]["name"](area.A);
+
+  // route=hiking può essere enorme: limitiamoci a named
+  nwr["route"="hiking"]["name"](area.A);
+
+  // keyword named
+  nwr["name"~"sentiero|trail|trek|trekking|hike|hiking|via\\s?ferrata|rifugio|anello",i](area.A);
 );
 `,
 };
 
-// Query wrapper
-function buildQuery(catKey) {
+// Query wrapper per singolo paese
+function buildQueryForCountry(catKey, iso2) {
   return `
-[out:json][timeout:180];
-${areaDefs()}
-${areaUnion()}
+[out:json][timeout:120];
+area["ISO3166-1"="${iso2}"]->.A;
 ${CATEGORIES[catKey]}
 out tags center;
-  `.trim();
+`.trim();
 }
 
 // Normalizza in “place” compatibile con la tua app
-function mapElementToPlace(el, catKey) {
+function mapElementToPlace(el, catKey, iso2) {
   const tags = el.tags || {};
-  const name = tags.name || tags["name:it"] || tags.brand || tags.operator || "";
+  const name = tags.name || tags["name:it"] || tags["name:en"] || tags.brand || tags.operator || "";
   const lat = Number(el.lat ?? el.center?.lat);
   const lon = Number(el.lon ?? el.center?.lon);
   if (!name || !Number.isFinite(lat) || !Number.isFinite(lon)) return null;
@@ -180,28 +181,30 @@ function mapElementToPlace(el, catKey) {
   // tag list compatta k=v (utile per matching)
   const tagList = [];
   const pushKV = (k) => { if (tags[k] != null) tagList.push(`${k}=${tags[k]}`); };
-  ["tourism","leisure","historic","natural","amenity","information","place","boundary"].forEach(pushKV);
+  ["tourism","leisure","historic","natural","amenity","information","place","boundary","route","sport","piste:type"].forEach(pushKV);
 
   return {
-    id: `poi_${catKey}_${el.type}_${el.id}`,
+    id: `poi_${catKey}_${iso2}_${el.type}_${el.id}`,
     name: String(name).trim(),
     lat,
     lon,
-    type: catKey,               // usiamo catKey come type per filtro
-    primary_category: catKey,    // coerente con enrichment
+    type: catKey,               // catKey come type per filtro
+    primary_category: catKey,
+    country: iso2,              // ✅ utile per debug/filtri
     visibility: "classica",
     beauty_score: 0.72,
-    tags: Array.from(new Set(tagList)).slice(0, 18),
+    tags: Array.from(new Set(tagList)).slice(0, 24),
     live: false,
     source: "overpass_build",
   };
 }
 
 function dedupPlaces(places) {
+  // dedup su name + approx coords + category
   const seen = new Set();
   const out = [];
   for (const p of places) {
-    const k = `${p.name.toLowerCase()}_${String(p.lat).slice(0,6)}_${String(p.lon).slice(0,6)}`;
+    const k = `${p.primary_category}|${p.name.toLowerCase()}|${String(p.lat).slice(0,6)}|${String(p.lon).slice(0,6)}`;
     if (seen.has(k)) continue;
     seen.add(k);
     out.push(p);
@@ -216,22 +219,25 @@ async function runOverpass(query) {
   for (const endpoint of OVERPASS_ENDPOINTS) {
     for (let attempt = 1; attempt <= 3; attempt++) {
       try {
-        const j = await fetchWithTimeout(endpoint, body, 60000);
+        const j = await fetchWithTimeout(endpoint, body, 70000);
         return { ok: true, endpoint, json: j };
       } catch (e) {
         lastErr = e;
-        await sleep(600 * attempt);
+        await sleep(700 * attempt);
       }
     }
   }
   return { ok: false, endpoint: "", json: null, error: String(lastErr?.message || lastErr) };
 }
 
+function writeJson(filePath, obj) {
+  fs.writeFileSync(filePath, JSON.stringify(obj), "utf8");
+}
+
 async function main() {
   ensureDir(OUT_DIR);
-  ensureDir(OUT_POIS_DIR);
 
-  const meta = {
+  const metaBase = {
     built_at: nowIso(),
     countries: COUNTRIES,
     categories: Object.keys(CATEGORIES),
@@ -239,49 +245,68 @@ async function main() {
   };
 
   const allByCat = {};
-  const all = [];
+  for (const catKey of Object.keys(CATEGORIES)) allByCat[catKey] = [];
 
+  // --- fetch per category per country ---
   for (const catKey of Object.keys(CATEGORIES)) {
-    console.log(`🛰️ Fetch category: ${catKey}`);
-    const q = buildQuery(catKey);
-    const r = await runOverpass(q);
+    console.log(`\n🧩 Category: ${catKey}`);
 
-    if (!r.ok || !r.json) {
-      console.log(`❌ ${catKey} failed: ${r.error || "unknown"}`);
-      meta.notes.push(`fail_${catKey}`);
-      allByCat[catKey] = [];
-      continue;
+    for (const iso2 of COUNTRIES) {
+      console.log(`  🛰️ ${iso2} ...`);
+
+      const q = buildQueryForCountry(catKey, iso2);
+      const r = await runOverpass(q);
+
+      if (!r.ok || !r.json) {
+        console.log(`  ❌ ${iso2} failed (${catKey}): ${r.error || "unknown"}`);
+        metaBase.notes.push(`fail_${catKey}_${iso2}`);
+        continue;
+      }
+
+      const els = Array.isArray(r.json.elements) ? r.json.elements : [];
+      const mapped = els.map(el => mapElementToPlace(el, catKey, iso2)).filter(Boolean);
+      const dedup = dedupPlaces(mapped);
+
+      console.log(`  ✅ ${iso2}: ${dedup.length} items (endpoint: ${r.endpoint})`);
+      allByCat[catKey].push(...dedup);
+
+      // piccola pausa per non martellare
+      await sleep(250);
     }
 
-    const els = Array.isArray(r.json.elements) ? r.json.elements : [];
-    const mapped = dedupPlaces(els.map(el => mapElementToPlace(el, catKey)).filter(Boolean));
-
-    console.log(`✅ ${catKey}: ${mapped.length} items (endpoint: ${r.endpoint})`);
-    allByCat[catKey] = mapped;
-    all.push(...mapped);
+    // dedup categoria globale
+    allByCat[catKey] = dedupPlaces(allByCat[catKey]);
 
     // write split
-    fs.writeFileSync(
-      path.join(OUT_POIS_DIR, `${catKey}.json`),
-      JSON.stringify({ meta: { ...meta, category: catKey, endpoint: r.endpoint }, places: mapped }),
-      "utf8"
+    writeJson(
+      path.join(OUT_DIR, `${catKey}.json`),
+      {
+        meta: { ...metaBase, category: catKey },
+        places: allByCat[catKey],
+      }
     );
+
+    console.log(`  📦 ${catKey} TOTAL unique: ${allByCat[catKey].length}`);
   }
 
-  const allDedup = dedupPlaces(all);
+  // --- all merged ---
+  const all = dedupPlaces(Object.values(allByCat).flat());
 
   // index
   const index = {
-    meta,
-    counts: Object.fromEntries(Object.entries(allByCat).map(([k,v]) => [k, v.length])),
-    total: allDedup.length,
+    meta: metaBase,
+    counts: Object.fromEntries(Object.entries(allByCat).map(([k, v]) => [k, v.length])),
+    total: all.length,
     files: Object.keys(allByCat).map(k => ({ category: k, path: `/data/pois/${k}.json`, count: allByCat[k].length })),
   };
 
-  fs.writeFileSync(path.join(OUT_DIR, "pois_index_eu_uk.json"), JSON.stringify(index), "utf8");
-  fs.writeFileSync(path.join(OUT_DIR, "pois_eu_uk.json"), JSON.stringify({ meta, places: allDedup }), "utf8");
+  // ✅ write index + all in the right folder
+  writeJson(path.join(OUT_DIR, "index.json"), index);
+  writeJson(path.join(OUT_DIR, "pois_eu_uk.json"), { meta: metaBase, places: all });
 
-  console.log(`🎉 DONE: total unique POIs = ${allDedup.length}`);
+  console.log(`\n🎉 DONE: total unique POIs = ${all.length}`);
+  console.log(`➡️ Wrote: public/data/pois/pois_eu_uk.json`);
+  console.log(`➡️ Wrote: public/data/pois/index.json + per-category files`);
 }
 
 main().catch((e) => {
