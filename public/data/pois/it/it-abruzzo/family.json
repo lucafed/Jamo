@@ -1,1 +1,1004 @@
-{"elements":[]}
+{
+  "ok": true,
+  "region": "it-abruzzo",
+  "category": "family",
+  "generatedAt": "2026-01-05T11:02:19.378Z",
+  "bbox": [
+    13,
+    41.9,
+    14.9,
+    42.9
+  ],
+  "count": 72,
+  "endpoint": "https://overpass-api.de/api/interpreter",
+  "notes": [],
+  "pois": [
+    {
+      "id": "node_2192656006",
+      "name": "Anello",
+      "lat": 41.9397559,
+      "lon": 13.1485309,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Anello"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9264458773",
+      "name": "Maxi Zoo",
+      "lat": 42.3563539,
+      "lon": 13.3908013,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Maxi Zoo",
+        "name": "Maxi Zoo"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_5526081568",
+      "name": "Parco giochi delle feste",
+      "lat": 42.5292977,
+      "lon": 13.0833889,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Parco giochi delle feste"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12846533482",
+      "name": "Centro visita del lupo",
+      "lat": 42.16765,
+      "lon": 13.8645476,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "contact:phone": "+390859808009",
+        "contact:website": "https://www.ilbosso.com/centro-visita-del-lupo/",
+        "fee": "yes",
+        "name": "Centro visita del lupo",
+        "operator": "Cooperativa Il Bosso",
+        "tourism": "zoo"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_4403402542",
+      "name": "\"Parchetto\"",
+      "lat": 42.2136772,
+      "lon": 13.9115653,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "\"Parchetto\"",
+        "operator": "Comune di Tocco da Casauria"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_1484105700",
+      "name": "Parco Robert Baden Powell",
+      "lat": 42.3116547,
+      "lon": 14.0711462,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Parco Robert Baden Powell"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11518689995",
+      "name": "Patatrac",
+      "lat": 42.3388521,
+      "lon": 14.1593606,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Patatrac"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_6913852794",
+      "name": "Zooart",
+      "lat": 42.3565989,
+      "lon": 14.4058471,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "arts_centre",
+        "name": "Zooart",
+        "operator": "ZooArt",
+        "website": "https://www.zooartortona.it/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8809215427",
+      "name": "ZooPlanet",
+      "lat": 42.056527,
+      "lon": 14.7625875,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "name": "ZooPlanet"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10219567497",
+      "name": "Parco giochi comunale",
+      "lat": 42.4750506,
+      "lon": 13.9896365,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Parco giochi comunale"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_3757870428",
+      "name": "Parco Castellaro parco giochi",
+      "lat": 42.5875551,
+      "lon": 14.0287583,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Parco Castellaro parco giochi"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11866318695",
+      "name": "Adrizoo",
+      "lat": 42.4078907,
+      "lon": 14.1598446,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "name": "Adrizoo",
+        "opening_hours": "Mo-Fr 09:00-19:30; Sa 09:30-19:30",
+        "phone": "+39 085 446 3630",
+        "website": "https://www.adrizoo.com/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12416449592",
+      "name": "Istituto Zooprofilattico Sperimentale",
+      "lat": 42.4363715,
+      "lon": 14.1780427,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "research_institute",
+        "name": "Istituto Zooprofilattico Sperimentale",
+        "opening_hours": "Mo-Fr 08:00-13:45,15:30-17:00; Sa 08:00-12:00",
+        "phone": "+39 085 54308",
+        "website": "https://www.izs.it/IZS/Engine/RAServePG.php"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8298164572",
+      "name": "Acquariolandia",
+      "lat": 42.4806648,
+      "lon": 14.1930588,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "name": "Acquariolandia",
+        "opening_hours": "Mo-Sa 08:30-13:00,16:00-20:00; Th 08:30-13:00",
+        "phone": "+39 085 471 0229"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_6115775057",
+      "name": "Parco giochi Maria Madre di Dio",
+      "lat": 42.4408813,
+      "lon": 14.2517272,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Parco giochi Maria Madre di Dio"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7591461882",
+      "name": "Acquario Art",
+      "lat": 42.4610557,
+      "lon": 14.2112468,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "name": "Acquario Art",
+        "opening_hours": "Mo-We,Fr 09:00-13:00,16:00-20:00; Th 16:00-20:00; Sa 09:00-12:30,16:00-20:00",
+        "phone": "+39 085 691351",
+        "website": "https://www.acquarioart.com/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8750690787",
+      "name": "Maxi Zoo",
+      "lat": 42.4865187,
+      "lon": 14.1850225,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Maxi Zoo",
+        "name": "Maxi Zoo",
+        "opening_hours": "Mo-Sa 09:00-20:00; Su 09:30-13:00,15:30-20:00"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_5303808078",
+      "name": "Parco Giochi di Porta Romana",
+      "lat": 42.8537636,
+      "lon": 13.5624608,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Parco Giochi di Porta Romana"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_4448741089",
+      "name": "Zoo In",
+      "lat": 42.852223,
+      "lon": 13.5893225,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "name": "Zoo In",
+        "operator": "Marcello Carfagna"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_5401658965",
+      "name": "Maxi Zoo",
+      "lat": 42.8994315,
+      "lon": 13.8942671,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Maxi Zoo",
+        "name": "Maxi Zoo"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_988889307",
+      "name": "Zoolandia",
+      "lat": 42.4245648,
+      "lon": 14.2837961,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "name": "Zoolandia"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_989246244",
+      "name": "Parco Giochi Sole",
+      "lat": 42.4227096,
+      "lon": 14.2867639,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Parco Giochi Sole"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_6103623082",
+      "name": "Parco Giochi Merope",
+      "lat": 42.430321,
+      "lon": 14.2762084,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Parco Giochi Merope"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_989246233",
+      "name": "Parco Giochi Mare",
+      "lat": 42.4228383,
+      "lon": 14.2869167,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Parco Giochi Mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10772865218",
+      "name": "IperZoo",
+      "lat": 42.4342329,
+      "lon": 14.2611035,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "name": "IperZoo",
+        "phone": "+390854511361"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_562746041",
+      "name": "Parco giochi di Viale Rendina",
+      "lat": 42.3453876,
+      "lon": 13.3987626,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Parco giochi di Viale Rendina"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_28347508",
+      "name": "Parco giochi di Cansatessa",
+      "lat": 42.3871554,
+      "lon": 13.340972,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Parco giochi di Cansatessa"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_439039695",
+      "name": "Parco giochi",
+      "lat": 42.8946842,
+      "lon": 13.1525732,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Parco giochi"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_489092993",
+      "name": "Parco giochi Lago di Scanno",
+      "lat": 41.9175045,
+      "lon": 13.8732573,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Parco giochi Lago di Scanno"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_471824940",
+      "name": "parco giochi Parrocchia San Rocco",
+      "lat": 42.0386604,
+      "lon": 13.4317784,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "parco giochi Parrocchia San Rocco"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_909125100",
+      "name": "Il Regno dei Mazzamurelli",
+      "lat": 42.2942899,
+      "lon": 13.6510579,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "name": "Il Regno dei Mazzamurelli",
+        "tourism": "theme_park",
+        "website": "https://www.ilregnodeimazzamurelli.it/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_628657302",
+      "name": "Villa comunale",
+      "lat": 42.0875909,
+      "lon": 14.2157472,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Villa comunale"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_711957930",
+      "name": "Giardino Italo Calvino",
+      "lat": 42.2126496,
+      "lon": 14.0252831,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Giardino Italo Calvino"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_330100723",
+      "name": "Parco Avventura Majella",
+      "lat": 42.1769644,
+      "lon": 14.1705937,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Parco Avventura Majella",
+        "opening_hours": "Mar-Jun Sa,Su 10:00-19:00; Apr 01,Apr 25,Apr 26 10:00-19:00; Jun 17-Sep 22 10:00-19:00; Sep 28,Sep 29 10:00-19:00; Jul-Aug 10:00-20:00; Oct 10:00-18:00; Nov 01,Nov 10:00-17:00",
+        "phone": "+39 0871 335 544",
+        "sport": "climbing_adventure",
+        "tourism": "theme_park",
+        "website": "https://www.parconaturalemajella.it/parco-avventura"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_934754308",
+      "name": "Parco della Gioia",
+      "lat": 42.2152595,
+      "lon": 14.1885335,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Parco della Gioia",
+        "website": "https://abruzzoweb.it/rapino-inaugurato-il-parco-della-gioia-un-luogo-di-tutti/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_879183638",
+      "name": "La Contea Gentile",
+      "lat": 42.2731087,
+      "lon": 14.1912706,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "name": "La Contea Gentile",
+        "operator": "Nicolas Gentile",
+        "tourism": "theme_park",
+        "website": "https://www.laconteagentile.it/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_1073623244",
+      "name": "Il Boscetto",
+      "lat": 42.3641089,
+      "lon": 14.0747637,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Il Boscetto"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_1292867951",
+      "name": "McDonald's PlayPlace",
+      "lat": 42.3443788,
+      "lon": 14.1353015,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "brand": "McDonald's",
+        "leisure": "playground",
+        "name": "McDonald's PlayPlace",
+        "operator": "McDonalds"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_1311027674",
+      "name": "L'Antico Ippocastano",
+      "lat": 42.2842417,
+      "lon": 14.2542219,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "L'Antico Ippocastano",
+        "opening_hours": "24/7"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_704264121",
+      "name": "Il Parco Samuele",
+      "lat": 42.1688781,
+      "lon": 14.3286773,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Il Parco Samuele"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_859632533",
+      "name": "Piampalazzo",
+      "lat": 42.1119815,
+      "lon": 14.5707375,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Piampalazzo"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_869147790",
+      "name": "Pineta San Giacomo",
+      "lat": 42.1008844,
+      "lon": 14.5825254,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Pineta San Giacomo"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_936710146",
+      "name": "Parco della Convivialità",
+      "lat": 42.1497464,
+      "lon": 14.5825033,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Parco della Convivialità"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_27812715",
+      "name": "Il Parco delle Meriviglie",
+      "lat": 42.2275325,
+      "lon": 14.397277,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "contact:phone": "+39 0872 7071",
+        "leisure": "playground",
+        "name": "Il Parco delle Meriviglie",
+        "operator": "Comune di Lanciano"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_27812716",
+      "name": "Parco Giochi \"Orso Bernardo\"",
+      "lat": 42.2280088,
+      "lon": 14.3961354,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Parco Giochi \"Orso Bernardo\"",
+        "operator": "Comune di Lanciano, Accessorato alle Politiche Ambientali"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_1426406893",
+      "name": "Eco Parco Guastameroli",
+      "lat": 42.2712497,
+      "lon": 14.3861413,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Eco Parco Guastameroli"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_605355387",
+      "name": "Zoo d'Abruzzo",
+      "lat": 42.2739477,
+      "lon": 14.4476545,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "alt_name": "Area Faunistica di Rocca San Giovanni",
+        "contact:phone": "+39 0872 618012",
+        "name": "Zoo d'Abruzzo",
+        "tourism": "zoo",
+        "website": "https://www.zooabruzzo.it/",
+        "wikidata": "Q20010227",
+        "wikipedia": "it:Zoo d'Abruzzo"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_732401480",
+      "name": "Piazza Aldo D'Adamo",
+      "lat": 42.3470489,
+      "lon": 14.3952669,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Piazza Aldo D'Adamo",
+        "operator": "Comune"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_439228538",
+      "name": "Piazza del Popolo",
+      "lat": 42.3507774,
+      "lon": 14.4012946,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Piazza del Popolo"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_916744830",
+      "name": "Giardini dell'infanzia",
+      "lat": 42.350651,
+      "lon": 14.4027759,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Giardini dell'infanzia"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_860179185",
+      "name": "Parco Giochi Ciavocco",
+      "lat": 42.3586892,
+      "lon": 14.4046718,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Parco Giochi Ciavocco"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_548363534",
+      "name": "Parco Don Nino",
+      "lat": 41.9672231,
+      "lon": 14.777096,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Parco Don Nino"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_425498716",
+      "name": "Pineta \"Roberto Suriani\"",
+      "lat": 42.0999306,
+      "lon": 14.7211732,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Pineta \"Roberto Suriani\"",
+        "operator": "Comune di Vasto"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_130678724",
+      "name": "Acqualand del Vasto",
+      "lat": 42.1500605,
+      "lon": 14.6965756,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "contact:phone": "+39 0873 310130;+39 0873 310709",
+        "leisure": "water_park",
+        "name": "Acqualand del Vasto",
+        "opening_hours": "PH,Mo-Su 10:00-18:00",
+        "website": "https://aqualandvasto.com/",
+        "wikidata": "Q3621088",
+        "wikipedia": "it:Aqualand del Vasto"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_1312002333",
+      "name": "Giardini Pasquale De Antoniis",
+      "lat": 42.6556494,
+      "lon": 13.7094095,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Giardini Pasquale De Antoniis"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_1395687540",
+      "name": "Peter Pan",
+      "lat": 42.4580713,
+      "lon": 13.9218771,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Peter Pan"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_866714046",
+      "name": "Parco Monumento",
+      "lat": 42.4360683,
+      "lon": 13.9852842,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Parco Monumento"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_1360849095",
+      "name": "Parco giochi San Romualdo",
+      "lat": 42.551301,
+      "lon": 13.9448076,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Parco giochi San Romualdo"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_1056753590",
+      "name": "Giardino degli Ulivi",
+      "lat": 42.4331868,
+      "lon": 14.1109977,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Giardino degli Ulivi"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_859869118",
+      "name": "Parco Giochi Vilaggio Dafne",
+      "lat": 42.4779966,
+      "lon": 14.1681428,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Parco Giochi Vilaggio Dafne"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_1163637563",
+      "name": "Playland",
+      "lat": 42.4664415,
+      "lon": 14.1846768,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Playland",
+        "opening_hours": "Mo-Su 07:00-02:00"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_60207928",
+      "name": "Parco Franco Lattanzio",
+      "lat": 42.5088349,
+      "lon": 14.1631451,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Parco Franco Lattanzio"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_988927522",
+      "name": "Parco 150\" Unita D'Italia",
+      "lat": 42.5125221,
+      "lon": 14.1587793,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Parco 150\" Unita D'Italia"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_99581742",
+      "name": "Onda Blu",
+      "lat": 42.7819954,
+      "lon": 13.9383054,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "contact:phone": "+39 0861 7791",
+        "leisure": "water_park",
+        "name": "Onda Blu",
+        "opening_hours": "Jun 22-Sep 1: Mo-Su 10:00-18:30",
+        "sport": "swimming",
+        "tourism": "theme_park",
+        "website": "https://www.acquaparkondablu.it/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_228950380",
+      "name": "Bambinopoli",
+      "lat": 42.7586249,
+      "lon": 13.9657368,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Bambinopoli"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_541022681",
+      "name": "Parco per bambini",
+      "lat": 42.8111279,
+      "lon": 13.7272111,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Parco per bambini"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_619413574",
+      "name": "Parco giochi Comunale Sergio De Angelis",
+      "lat": 42.8967511,
+      "lon": 13.6679959,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Parco giochi Comunale Sergio De Angelis"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_303604674",
+      "name": "Parco della Montagnola",
+      "lat": 42.8205039,
+      "lon": 13.8385788,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Parco della Montagnola"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_1096729192",
+      "name": "Area Kids",
+      "lat": 42.8369261,
+      "lon": 13.8931553,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Area Kids",
+        "opening_hours": "Mo-Su 16:30-19:00; Sa-Su 10:00-13:00"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_1096326485",
+      "name": "McDonald's PlayPlace",
+      "lat": 42.8359012,
+      "lon": 13.8937813,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "brand": "McDonald's",
+        "leisure": "playground",
+        "name": "McDonald's PlayPlace"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_646503506",
+      "name": "Parco anfiteatro",
+      "lat": 42.8826307,
+      "lon": 13.910071,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Parco anfiteatro",
+        "operator": "comunale"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_650401429",
+      "name": "Baby park",
+      "lat": 42.4203787,
+      "lon": 14.2926708,
+      "category": "family",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Baby park"
+      },
+      "beauty_score": 0.72
+    }
+  ]
+}

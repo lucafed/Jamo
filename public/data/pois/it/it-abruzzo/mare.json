@@ -1,1 +1,4472 @@
-{"elements":[{"id":"osm_node_70990636","name":"Francavilla al Mare","lat":42.4168011,"lon":14.2914819,"type":"mare","visibility":"classica","tags":["place=town"]},{"id":"osm_node_245971954","name":"Pescara sud - Francavilla al Mare","lat":42.3945245,"lon":14.2888201,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_276086708","name":"Teatro del Mare","lat":42.5199041,"lon":14.157411,"type":"mare","visibility":"classica","tags":["amenity=theatre"]},{"id":"osm_node_305461266","name":"Cafè del Mare","lat":42.5178199,"lon":14.1605111,"type":"mare","visibility":"classica","tags":["amenity=cafe"]},{"id":"osm_node_367744922","name":"Lido delle Sirene","lat":42.4550649,"lon":14.2399548,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_376569696","name":"Pescara sud - Francavilla al Mare","lat":42.3998286,"lon":14.2841245,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_426864691","name":"Lido Pinalba","lat":42.4888022,"lon":14.1914049,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_426865853","name":"Baia Papaya","lat":42.4854921,"lon":14.1949585,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_432860140","name":"Ai Caduti del Mare","lat":42.4225219,"lon":14.2890173,"type":"mare","visibility":"classica","tags":["historic=monument"]},{"id":"osm_node_443615295","name":"Francavilla al Mare","lat":42.4212652,"lon":14.2879487,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_452996765","name":"Marese","lat":42.8688798,"lon":13.464543,"type":"mare","visibility":"classica","tags":["place=hamlet"]},{"id":"osm_node_452996771","name":"Ponte Marese","lat":42.8706437,"lon":13.4545273,"type":"mare","visibility":"classica","tags":["place=hamlet"]},{"id":"osm_node_501613746","name":"Voglia di Mare","lat":42.5033169,"lon":14.1755323,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_501615028","name":"Stella del Mare","lat":42.5042497,"lon":14.1747146,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_501634142","name":"Verdemare","lat":42.5049601,"lon":14.1740543,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_597673746","name":"Casalbordino Lido","lat":42.1942432,"lon":14.6333032,"type":"mare","visibility":"classica","tags":["place=quarter"]},{"id":"osm_node_630781905","name":"Miramare","lat":42.4756336,"lon":14.2085227,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_631557423","name":"La Brasserie sul Mare","lat":42.5100678,"lon":14.1688139,"type":"mare","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_657932436","name":"Un mare di delizie","lat":42.516241,"lon":14.1598737,"type":"mare","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_668617074","name":"Margazzill Idee dal Mare","lat":42.5053813,"lon":14.119871,"type":"mare","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_688869705","name":"Profumi di Mare","lat":42.4546009,"lon":14.1899167,"type":"mare","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_777991516","name":"Palombaia","lat":42.3260631,"lon":13.283006,"type":"mare","visibility":"classica","tags":["place=hamlet"]},{"id":"osm_node_777991678","name":"Palombaia di Sassa","lat":42.3584895,"lon":13.3148295,"type":"mare","visibility":"classica","tags":["place=village"]},{"id":"osm_node_900706748","name":"Mare Blu","lat":42.4362559,"lon":14.2645909,"type":"mare","visibility":"classica","tags":["tourism=hotel"]},{"id":"osm_node_900719092","name":"Caffetteria Bar del Mare","lat":42.4394532,"lon":14.2600215,"type":"mare","visibility":"classica","tags":["amenity=cafe"]},{"id":"osm_node_989246233","name":"Parco Giochi Mare","lat":42.4228383,"lon":14.2869167,"type":"mare","visibility":"classica","tags":["leisure=playground"]},{"id":"osm_node_1030471430","name":"Cologna Spiaggia","lat":42.7246645,"lon":13.9805542,"type":"mare","visibility":"classica","tags":["place=village"]},{"id":"osm_node_1395428147","name":"Tortoreto Lido","lat":42.8039627,"lon":13.9432708,"type":"mare","visibility":"classica","tags":["place=village"]},{"id":"osm_node_1508590309","name":"Palmarelli M.G.","lat":42.3514089,"lon":14.1759935,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_1533342580","name":"Mare in collina","lat":42.3657326,"lon":14.1676268,"type":"mare","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_2036644354","name":"Vallemare","lat":42.351751,"lon":14.1085651,"type":"mare","visibility":"classica","tags":["place=suburb"]},{"id":"osm_node_2036652011","name":"Scuola Elementare Vallemare","lat":42.3514776,"lon":14.1094885,"type":"mare","visibility":"classica","tags":["amenity=school"]},{"id":"osm_node_2088257300","name":"Ristorante Lido Serenella","lat":42.7468583,"lon":13.9753869,"type":"mare","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_2326165030","name":"Lido pineta","lat":42.8224608,"lon":13.936613,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_2430923373","name":"Ai Caduti del Mare","lat":42.2306977,"lon":14.5493808,"type":"mare","visibility":"classica","tags":["historic=memorial"]},{"id":"osm_node_2536844341","name":"Monte Marelli","lat":42.2926438,"lon":13.1161714,"type":"mare","visibility":"classica","tags":["natural=peak"]},{"id":"osm_node_2959729098","name":"Chalet Lido","lat":42.8607392,"lon":13.9264359,"type":"mare","visibility":"classica","tags":["leisure=beach_resort","amenity=restaurant"]},{"id":"osm_node_3010204344","name":"Vasto-Spiaggia di Casarza","lat":42.1182605,"lon":14.7188181,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_3129245004","name":"Hotel Mare Blu","lat":42.5927905,"lon":14.0805516,"type":"mare","visibility":"classica","tags":["tourism=hotel"]},{"id":"osm_node_3129252604","name":"Mare Blu Resort","lat":42.5925165,"lon":14.0801753,"type":"mare","visibility":"classica","tags":["tourism=hotel"]},{"id":"osm_node_3309189980","name":"Hotel Miramare","lat":42.601317,"lon":14.0734731,"type":"mare","visibility":"classica","tags":["tourism=hotel"]},{"id":"osm_node_3309197515","name":"Hotel Miramare Dipendenza","lat":42.6011769,"lon":14.0735799,"type":"mare","visibility":"classica","tags":["tourism=hotel"]},{"id":"osm_node_3681928068","name":"Hotel Miramare","lat":42.307868,"lon":14.4457551,"type":"mare","visibility":"classica","tags":["tourism=hotel"]},{"id":"osm_node_3681989573","name":"Monumento ai Caduti in Mare","lat":42.3098743,"lon":14.4446588,"type":"mare","visibility":"classica","tags":["tourism=artwork"]},{"id":"osm_node_3681989574","name":"Granomare","lat":42.3090437,"lon":14.4455691,"type":"mare","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_3683594919","name":"Gastropescheria \"Blu Mare\"","lat":42.3075249,"lon":14.4445004,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_4369806050","name":"Vallemare","lat":42.4828142,"lon":13.1134678,"type":"mare","visibility":"classica","tags":["place=hamlet"]},{"id":"osm_node_4370242939","name":"Marechiaro","lat":42.7542291,"lon":13.9687306,"type":"mare","visibility":"classica","tags":["amenity=cafe"]},{"id":"osm_node_4370292688","name":"Lido Paola","lat":42.7486671,"lon":13.9738345,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_4370292689","name":"Lido Cesare","lat":42.7482716,"lon":13.9741901,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_4370292690","name":"Lido Arcobaleno","lat":42.7474183,"lon":13.9748993,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_4370292691","name":"Lido Miramare","lat":42.7479541,"lon":13.974556,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_4370292692","name":"Lido Negril","lat":42.745551,"lon":13.975932,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_4377781086","name":"Palmaretta","lat":42.8187118,"lon":13.5071479,"type":"mare","visibility":"classica","tags":["place=hamlet"]},{"id":"osm_node_4390124918","name":"Tortoreto Lido","lat":42.7809173,"lon":13.9481584,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_4390124919","name":"Tortoreto Lido","lat":42.812396,"lon":13.9306999,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_4446541789","name":"Da Maurizio Cucina d'Amare","lat":42.8538026,"lon":13.5920142,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_4451623689","name":"La perla del mare","lat":42.849814,"lon":13.6152449,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_4493235744","name":"Spiaggia dei Libertini","lat":42.1781074,"lon":14.6891225,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_node_4554042059","name":"Europa mare","lat":42.5170748,"lon":14.1618734,"type":"mare","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_4554042304","name":"lido Tamanaco","lat":42.5215411,"lon":14.1570556,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_4620311153","name":"Tensostruttura di Palombaia","lat":42.3288688,"lon":13.2826138,"type":"mare","visibility":"classica","tags":["amenity=social_facility"]},{"id":"osm_node_4870550762","name":"Albergo Celidonio","lat":42.0965946,"lon":14.0227576,"type":"mare","visibility":"classica","tags":["tourism=hotel"]},{"id":"osm_node_4879542128","name":"Mareri","lat":42.2665146,"lon":13.0903155,"type":"mare","visibility":"classica","tags":["place=hamlet"]},{"id":"osm_node_4879542149","name":"Castello di Mareri","lat":42.2670471,"lon":13.0900059,"type":"mare","visibility":"classica","tags":["historic=castle"]},{"id":"osm_node_4879542361","name":"Grotta di Santa Filippa Mareri","lat":42.2757674,"lon":13.0992932,"type":"mare","visibility":"classica","tags":["natural=cave_entrance"]},{"id":"osm_node_4887750524","name":"Lido delle Rose","lat":42.4353606,"lon":14.2677889,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_4887750526","name":"Lido È Nata Una Stella","lat":42.4335386,"lon":14.270815,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_4887750527","name":"Lido Bayahibe","lat":42.4351731,"lon":14.268076,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_4950752721","name":"Lido di Itaca","lat":42.5814886,"lon":14.0929555,"type":"mare","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_5032987521","name":"A un Passo dal Mare","lat":42.1943908,"lon":14.6333654,"type":"mare","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_5105469855","name":"La Votte di Mare","lat":42.1128089,"lon":14.7111072,"type":"mare","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_5478144521","name":"B&B Villa Maria al Mare","lat":42.2475358,"lon":14.5150961,"type":"mare","visibility":"classica","tags":["tourism=hostel"]},{"id":"osm_node_5592637102","name":"Ombrina Mare 2","lat":42.323409,"lon":14.533455,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_5603492558","name":"Lido Venere","lat":42.561975,"lon":14.1098088,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_5631233204","name":"Lido Las Vegas","lat":42.5603648,"lon":14.1118446,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_5631233219","name":"Lido Baracoa Silvi","lat":42.5556054,"lon":14.1167611,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_5631233230","name":"Lido Nettuno","lat":42.5594343,"lon":14.1126305,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_5641426222","name":"Lido Olimpia","lat":42.5544566,"lon":14.1174754,"type":"mare","visibility":"classica","tags":["amenity=cafe"]},{"id":"osm_node_5641839621","name":"Relais Borgo sul Mare","lat":42.5643005,"lon":14.0908777,"type":"mare","visibility":"classica","tags":["tourism=guest_house"]},{"id":"osm_node_5831876541","name":"Collemare","lat":42.3252638,"lon":13.3027672,"type":"mare","visibility":"classica","tags":["place=hamlet"]},{"id":"osm_node_6166580082","name":"Vignola a Mare","lat":42.1448288,"lon":14.7173554,"type":"mare","visibility":"classica","tags":["place=neighbourhood"]},{"id":"osm_node_6166623552","name":"Spiaggia di San Nicola","lat":42.1323539,"lon":14.7195542,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_node_6236579420","name":"Colle Amarena","lat":41.9283444,"lon":14.6476942,"type":"mare","visibility":"classica","tags":["natural=peak"]},{"id":"osm_node_6241789247","name":"Lido Riccio","lat":42.3808416,"lon":14.3675692,"type":"mare","visibility":"classica","tags":["place=hamlet"]},{"id":"osm_node_6253888743","name":"Contrada Montevecchio/Marina di Vasto-Lungomare","lat":42.0971521,"lon":14.7190612,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_6337513640","name":"Fosso Mazzimarello","lat":42.027772,"lon":14.4415478,"type":"mare","visibility":"classica","tags":["place=locality"]},{"id":"osm_node_6341889403","name":"Tamarete","lat":42.3398083,"lon":14.3804368,"type":"mare","visibility":"classica","tags":["place=hamlet"]},{"id":"osm_node_6385250413","name":"Amarena","lat":41.9275786,"lon":14.6409761,"type":"mare","visibility":"classica","tags":["place=hamlet"]},{"id":"osm_node_6414944962","name":"Levante - Mare e  Monti","lat":42.347439,"lon":13.3983484,"type":"mare","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_6465803229","name":"Fontana Celidona","lat":41.9761547,"lon":13.8265981,"type":"mare","visibility":"classica","tags":["amenity=drinking_water"]},{"id":"osm_node_6480662091","name":"Porticciolo dell'Acquabella","lat":42.3354867,"lon":14.4231361,"type":"mare","visibility":"classica","tags":["leisure=marina"]},{"id":"osm_node_6587235586","name":"Lido Eldorado","lat":42.345249,"lon":14.4122642,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_6689714444","name":"Santa Chelidonia","lat":41.9536998,"lon":13.1045513,"type":"mare","visibility":"classica","tags":["historic=ruins","amenity=place_of_worship"]},{"id":"osm_node_6728440795","name":"Ai Caduti del Mare","lat":42.3527643,"lon":14.4042188,"type":"mare","visibility":"classica","tags":["historic=monument"]},{"id":"osm_node_6728450457","name":"Ai Lavoratori del Mare","lat":42.3527762,"lon":14.4042698,"type":"mare","visibility":"classica","tags":["historic=monument"]},{"id":"osm_node_6837245930","name":"Ristorante Mare Vivo","lat":42.4232856,"lon":14.1903143,"type":"mare","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_6935822377","name":"Mazzeschi - Marella","lat":42.3473629,"lon":13.3981377,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_7005947485","name":"Lungomare Cristoforo Colombo","lat":42.4604048,"lon":14.2313891,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_7126292470","name":"Chitarrina Osteria di mare","lat":42.4617241,"lon":14.2123466,"type":"mare","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_7366163668","name":"Il Gusto del Mare","lat":42.4600946,"lon":14.2253242,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_7513572910","name":"Macelleria Polidori","lat":42.52529,"lon":13.2444303,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_7526240620","name":"Profumi di mare","lat":42.4556948,"lon":14.2235878,"type":"mare","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_7527233199","name":"Rifugiomare Agriturismo","lat":42.2729466,"lon":14.4940933,"type":"mare","visibility":"classica","tags":["tourism=guest_house"]},{"id":"osm_node_7538442240","name":"Baramares","lat":42.4044694,"lon":14.3206574,"type":"mare","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_7581350084","name":"A Prua Mare","lat":42.4641895,"lon":14.2217145,"type":"mare","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_7615776900","name":"Filippo Cucina Di Mare","lat":42.4617504,"lon":14.2255079,"type":"mare","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_7630362568","name":"Loft \"Terrazza Mare & Monti\"","lat":42.2190537,"lon":14.2829753,"type":"mare","visibility":"classica","tags":["tourism=apartment"]},{"id":"osm_node_7643890913","name":"Stazione di Montesilvano Spiaggia","lat":42.5141768,"lon":14.1541096,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_7658701929","name":"Ristorante Marechiaro da Bruno","lat":42.4711576,"lon":14.2156473,"type":"mare","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_7658729114","name":"Lido Marechiaro","lat":42.4710037,"lon":14.2158963,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_7671793112","name":"Arena del Mare","lat":42.4677431,"lon":14.2218272,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_7672918769","name":"Lido Oriente","lat":42.4692648,"lon":14.2188678,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_7684473842","name":"Lungomare Matteotti Civico 91","lat":42.471432,"lon":14.2148087,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_7773774861","name":"Monumento ai caduti in mare","lat":42.7978427,"lon":13.9460122,"type":"mare","visibility":"classica","tags":["historic=memorial"]},{"id":"osm_node_7879204946","name":"Bar Pizzeria Mareblu","lat":42.4497423,"lon":14.246851,"type":"mare","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_7886381995","name":"Caduti del mare","lat":42.4661552,"lon":14.2252981,"type":"mare","visibility":"classica","tags":["historic=monument"]},{"id":"osm_node_7938032785","name":"Ad un passo dal mare","lat":42.4943015,"lon":13.9906906,"type":"mare","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_8094266530","name":"Villareia;Vallemare","lat":42.3485735,"lon":14.1134972,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_8094266531","name":"Vallemare;Villareia","lat":42.3484715,"lon":14.113706,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_8094425582","name":"Vallemare;Cepagatti","lat":42.3562991,"lon":14.0916234,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_8099925341","name":"Vallemare","lat":42.3661993,"lon":14.1188003,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_8124840194","name":"Lino Sapori di Mare e Monti","lat":42.3620727,"lon":14.3822264,"type":"mare","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_8133694756","name":"Francavilla al Mare;Pescara","lat":42.4427267,"lon":14.2500496,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_8133694757","name":"Pescara;Francavilla al Mare","lat":42.4431227,"lon":14.2496763,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_8231293067","name":"Via Vestina a Mare","lat":42.464811,"lon":14.103428,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_8262197308","name":"Monumento ai caduti del mare","lat":42.0704071,"lon":14.7783656,"type":"mare","visibility":"classica","tags":["historic=memorial"]},{"id":"osm_node_8299764293","name":"Pescheria Pianeta Mare","lat":42.4811466,"lon":14.192489,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_8343174669","name":"Francavilla al Mare","lat":42.4194496,"lon":14.2656947,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_8344904404","name":"Francavilla al Mare","lat":42.402219,"lon":14.3203505,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_8344907810","name":"Francavilla al Mare","lat":42.4038786,"lon":14.3211063,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_8348488321","name":"Le Delizie Del Mare","lat":42.4933428,"lon":14.1778109,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_8414775637","name":"Farel Di Polidori Elena","lat":42.3403914,"lon":14.3198534,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_8531250132","name":"Trattoria Ponte del Mare","lat":42.4640418,"lon":14.2261141,"type":"mare","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_8532860956","name":"Lido Bora Bora","lat":42.4524113,"lon":14.2434901,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_8533045035","name":"Lido il Corallo","lat":42.4469325,"lon":14.2506649,"type":"mare","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_8536615773","name":"Lungomare Matteotti civico","lat":42.4678794,"lon":14.2209259,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_8536656864","name":"Lido Gilda","lat":42.4694573,"lon":14.2185508,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_8536877186","name":"Lido L'Adriatica","lat":42.4723984,"lon":14.213523,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_8567605215","name":"Fermata Lido Riccio","lat":42.3784453,"lon":14.3716923,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_8664085757","name":"Francavilla al Mare","lat":42.3903991,"lon":14.3141012,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_8664085758","name":"Francavilla al Mare","lat":42.3904471,"lon":14.3139669,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_8693717349","name":"Pizzeria Castellammare by Morbido","lat":42.4556303,"lon":14.2171188,"type":"mare","visibility":"classica","tags":["amenity=fast_food"]},{"id":"osm_node_8710190439","name":"Caduti del Mare","lat":42.6467891,"lon":14.039553,"type":"mare","visibility":"classica","tags":["historic=monument"]},{"id":"osm_node_8726240754","name":"Miramare","lat":42.6070595,"lon":14.0706023,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_8847981178","name":"Pian di Mare","lat":42.326296,"lon":14.2348704,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_8910659200","name":"Spiaggia della Sirenetta","lat":42.1067643,"lon":14.7176412,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_node_9049944501","name":"Tutto mare","lat":42.8582076,"lon":13.9261034,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_9123584365","name":"Lido Nautilus Ristorante","lat":42.4425236,"lon":14.2568426,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_9123584373","name":"Lido Bagno Marcello","lat":42.4415283,"lon":14.2583235,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_9135536408","name":"Ebrezza Bistrot Vista Mare","lat":42.3059169,"lon":14.4497432,"type":"mare","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_9530345916","name":"Piccolo Porto di Pesca di Casarza","lat":42.1193435,"lon":14.719975,"type":"mare","visibility":"classica","tags":["leisure=marina"]},{"id":"osm_node_9603606610","name":"Livio e il mare","lat":42.4722712,"lon":14.1775508,"type":"mare","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_9604975705","name":"BellavistaMare","lat":42.6862742,"lon":14.0114581,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_9653243254","name":"Albergo Lido","lat":42.5596421,"lon":14.1105086,"type":"mare","visibility":"classica","tags":["tourism=guest_house"]},{"id":"osm_node_9694767198","name":"Trattoria del mare da Tatillo","lat":42.4727145,"lon":14.194848,"type":"mare","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_9773261561","name":"Lido Asteria","lat":42.4295087,"lon":14.2776394,"type":"mare","visibility":"classica","tags":["amenity=bar"]},{"id":"osm_node_9832554048","name":"Lido Serenella","lat":42.4210262,"lon":14.2914932,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_9875798218","name":"Albergo Lido","lat":42.4707899,"lon":14.2155555,"type":"mare","visibility":"classica","tags":["tourism=hotel"]},{"id":"osm_node_9899732687","name":"Bar Mare & Monti","lat":42.6483696,"lon":14.0392221,"type":"mare","visibility":"classica","tags":["amenity=bar"]},{"id":"osm_node_9899816677","name":"Restaurant Mare & Monti","lat":42.6482855,"lon":14.0392696,"type":"mare","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_9972908955","name":"Mareglioso Nord-Est","lat":42.2767653,"lon":13.9110624,"type":"mare","visibility":"classica","tags":["tourism=viewpoint"]},{"id":"osm_node_9988487226","name":"Molino Mare","lat":42.1034116,"lon":14.7175514,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_9994606885","name":"Madonna del Mare","lat":42.7409534,"lon":13.978899,"type":"mare","visibility":"classica","tags":["historic=wayside_shrine"]},{"id":"osm_node_10019323742","name":"La Locanda del Mare","lat":42.3083132,"lon":14.44457,"type":"mare","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_10091553417","name":"Pescara;Francavilla al Mare","lat":42.4445006,"lon":14.2531574,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_10568163814","name":"Francavilla Al Mare","lat":42.3826152,"lon":14.2676511,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_10576313918","name":"Verdemare","lat":42.3961903,"lon":14.2811501,"type":"mare","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_10683091797","name":"Vallemare","lat":42.3739892,"lon":14.1224695,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_10726477245","name":"Lido Hotel Adriatico","lat":42.0957027,"lon":14.7264418,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_10726477250","name":"Lido Twins","lat":42.0966916,"lon":14.7250596,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_10726477251","name":"Lido Caravel","lat":42.0972277,"lon":14.7244968,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_10726477252","name":"Lido Maremaje","lat":42.0982723,"lon":14.7232441,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_10729768061","name":"Lido dell'Hotel Florida","lat":42.5701253,"lon":14.1026769,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_10783749033","name":"Marea Viaggi","lat":42.424491,"lon":14.2777876,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_10815809746","name":"Spiaggia Libera","lat":42.4382981,"lon":14.2630686,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_10815820264","name":"Addio Mare ... Disse La Pannocchia","lat":42.4368708,"lon":14.2636723,"type":"mare","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_10815820303","name":"Lido Nausica Beach","lat":42.4380799,"lon":14.2634243,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_10815828942","name":"Lido Urania","lat":42.4386608,"lon":14.2625001,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_10815828975","name":"Lido Siesta","lat":42.439876,"lon":14.2606835,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_10823817919","name":"Lido Sabbia D'Oro Bau Miao Beach","lat":42.4447302,"lon":14.2537467,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_10823817920","name":"Lido Albatros","lat":42.4440576,"lon":14.2546396,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_10823817921","name":"Baia Delle Sirene","lat":42.4438288,"lon":14.2550119,"type":"mare","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_10823817926","name":"Lido San Marco","lat":42.4403032,"lon":14.2600936,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_10823817927","name":"Hotel Mare Blu","lat":42.4368071,"lon":14.2654443,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_10823817928","name":"Lido Rudygia","lat":42.436673,"lon":14.265735,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_10823817933","name":"Lido Venus","lat":42.4362807,"lon":14.2663421,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_10823817945","name":"Lido Luna Rossa","lat":42.42899,"lon":14.2791277,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_10823817946","name":"Lido Il Faro","lat":42.4286006,"lon":14.2798668,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_10823817947","name":"Stella Del Mare","lat":42.4277973,"lon":14.2811151,"type":"mare","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_10823817948","name":"Lido Sirenetta","lat":42.4275856,"lon":14.2813693,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_10823817949","name":"Lido Conca D'Oro","lat":42.4343794,"lon":14.2694087,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_10823817950","name":"Lido La Tramontana","lat":42.4371163,"lon":14.2649659,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_10823817951","name":"Lido Bianco","lat":42.4405887,"lon":14.2596582,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_10836566696","name":"Lido Stella Del Mare","lat":42.4278292,"lon":14.2810563,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_10836620786","name":"Lido Lo Squalo","lat":42.432796,"lon":14.272041,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_10841493206","name":"Lido Merope","lat":42.4305648,"lon":14.2759073,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_10841493207","name":"Lido Drago Verde","lat":42.4310463,"lon":14.274984,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_10859770813","name":"La Tana Del Mare","lat":42.4155851,"lon":14.2963659,"type":"mare","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_10880401772","name":"L'Altracarne Mammarella","lat":42.5318965,"lon":13.8860495,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_10885976192","name":"Stadio Del Mare","lat":42.4059941,"lon":14.3173782,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_10889186773","name":"Lido Peppone","lat":42.4076414,"lon":14.3147378,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_10892627011","name":"Lido Mambo","lat":42.4086793,"lon":14.3132593,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_10892627056","name":"Spiaggia Libera","lat":42.4100867,"lon":14.3107051,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_10892661493","name":"Pianeta Mare","lat":42.411876,"lon":14.3071314,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_10901260133","name":"Lido Il Gabbiano","lat":42.4171148,"lon":14.2981654,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_10910824455","name":"Lido OltreMare","lat":42.4176806,"lon":14.2972506,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_10910824456","name":"OltreMare","lat":42.4176969,"lon":14.2972249,"type":"mare","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_10910863279","name":"Lido Sirena","lat":42.4202397,"lon":14.2927805,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_10914450401","name":"Lido Cortesito","lat":42.421477,"lon":14.2906962,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_10921086815","name":"Lido Mare Nostrum","lat":42.4229325,"lon":14.2884763,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_10921086824","name":"Lido La Bussola","lat":42.4237639,"lon":14.2872457,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_10921443883","name":"Lido La Riviera Da Eraldo","lat":42.4249535,"lon":14.2854471,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_10921443891","name":"Lido Bluemarine","lat":42.4252472,"lon":14.2850792,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_10921443898","name":"Lido Conchiglia Azzurra","lat":42.425705,"lon":14.284462,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_10921449011","name":"Lido Orizzonte Beach","lat":42.4261494,"lon":14.2837958,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_10971279345","name":"Pescheria Mare Blu","lat":42.1002063,"lon":14.7194027,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_11016252451","name":"Ristorante Altamarea","lat":42.1018316,"lon":14.719279,"type":"mare","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_11027583399","name":"Amazon Hub Locker - Lidovino","lat":42.0633352,"lon":14.7764555,"type":"mare","visibility":"classica","tags":["amenity=parcel_locker"]},{"id":"osm_node_11084216419","name":"Amare beach","lat":42.8048985,"lon":13.9430122,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_11084223751","name":"Frontemare","lat":42.7838141,"lon":13.953564,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_11084262711","name":"Lady G mare","lat":42.800323,"lon":13.9448758,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_11084262713","name":"Righi a mare","lat":42.8032944,"lon":13.9438677,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_11084287089","name":"Garden lido","lat":42.8132262,"lon":13.939398,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_11084299535","name":"Marechiaro","lat":42.8182482,"lon":13.9376631,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_11084299540","name":"Doge spiaggia","lat":42.8205435,"lon":13.937274,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_11084299542","name":"Eucaliptus spiaggia","lat":42.8231086,"lon":13.9364463,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_11084299545","name":"Hotel lido beach","lat":42.8252478,"lon":13.9357404,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_11109608240","name":"FronteMare","lat":42.3587244,"lon":14.4049678,"type":"mare","visibility":"classica","tags":["amenity=bar"]},{"id":"osm_node_11200500478","name":"Piazza Caduti del Mare (Porto)","lat":42.3584518,"lon":14.4077513,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_11330912581","name":"Armata di Mare","lat":42.5122844,"lon":14.1204293,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_11358071427","name":"Monumento ai caduti del mare","lat":42.754881,"lon":13.9687666,"type":"mare","visibility":"classica","tags":["historic=memorial"]},{"id":"osm_node_11358299184","name":"Marechiaro","lat":42.6844575,"lon":14.011543,"type":"mare","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_11358322194","name":"Lido Luigi","lat":42.6763253,"lon":14.0180325,"type":"mare","visibility":"classica","tags":["amenity=cafe"]},{"id":"osm_node_11358347422","name":"Lido Altamira","lat":42.6679572,"lon":14.0253477,"type":"mare","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_11390324927","name":"Lido Punto Verde","lat":42.3978476,"lon":14.3340388,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_11428630655","name":"Lungomare Colombo, civico 52","lat":42.4613878,"lon":14.2302295,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_11741736732","name":"Mare e Monti","lat":41.9711278,"lon":14.7778393,"type":"mare","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_11818066123","name":"Arredamenti Mammarella","lat":42.4189826,"lon":14.1664992,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_11879257015","name":"MareAzzurro","lat":42.4491551,"lon":14.2159088,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_11919261231","name":"DAMADIMARE casa vacanze","lat":42.5147251,"lon":14.1597328,"type":"mare","visibility":"classica","tags":["tourism=guest_house"]},{"id":"osm_node_11945554027","name":"Cologna Spiaggia","lat":42.7339931,"lon":13.9753121,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_11945554031","name":"Cologna Spiaggia","lat":42.7340398,"lon":13.975402,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_11987616898","name":"Montagnamare","lat":42.307816,"lon":14.1845948,"type":"mare","visibility":"classica","tags":["tourism=guest_house"]},{"id":"osm_node_12059168399","name":"Un Mare Di Freschezza","lat":42.357464,"lon":14.1403854,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_12083867508","name":"Heidi Oltremare","lat":42.2077394,"lon":14.5972564,"type":"mare","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_12085148409","name":"Aria di mare","lat":42.204713,"lon":14.5941313,"type":"mare","visibility":"classica","tags":["tourism=apartment"]},{"id":"osm_node_12090866595","name":"Hotel Marebello","lat":42.8010607,"lon":13.9428927,"type":"mare","visibility":"classica","tags":["tourism=hotel"]},{"id":"osm_node_12091976548","name":"Residence Anchise Mare","lat":42.8277536,"lon":13.9311377,"type":"mare","visibility":"classica","tags":["tourism=hotel"]},{"id":"osm_node_12093897353","name":"Lido La Foce","lat":42.2769047,"lon":14.4929196,"type":"mare","visibility":"classica","tags":["amenity=bar"]},{"id":"osm_node_12101901159","name":"La Pecora al Mare","lat":42.474967,"lon":14.2095278,"type":"mare","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_12118721820","name":"Madonna del Mare","lat":42.814282,"lon":13.9388711,"type":"mare","visibility":"classica","tags":["historic=monument"]},{"id":"osm_node_12139947923","name":"Cologna Spiaggia","lat":42.7320135,"lon":13.9754684,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_12139948551","name":"Cologna Spiaggia","lat":42.726166,"lon":13.9703282,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_12197486537","name":"Via Lungomare, area psarcheggio","lat":42.2448127,"lon":14.5203491,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_12215531605","name":"Tortoreto Lido","lat":42.8052252,"lon":13.938774,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_12277290734","name":"Tamarete Zona Artigianale","lat":42.3343817,"lon":14.3834947,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_12383967655","name":"Fonte Mare Gelato","lat":42.5940941,"lon":13.4920932,"type":"mare","visibility":"classica","tags":["natural=spring"]},{"id":"osm_node_12434055356","name":"Colle Mare","lat":42.5621105,"lon":13.420081,"type":"mare","visibility":"classica","tags":["natural=peak"]},{"id":"osm_node_12523107259","name":"Bar Alimentari Marella","lat":42.7582239,"lon":13.2989014,"type":"mare","visibility":"classica","tags":["amenity=bar"]},{"id":"osm_node_12635235846","name":"aMare","lat":42.7542725,"lon":13.9678488,"type":"mare","visibility":"classica","tags":["tourism=hotel"]},{"id":"osm_node_12698428534","name":"Lido Portofino","lat":42.7751188,"lon":13.9574902,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_12698428565","name":"Costa Verde Mare","lat":42.7721355,"lon":13.9588924,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_12698428568","name":"Spiaggia Residence Gambinus","lat":42.7715299,"lon":13.9591751,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_12698428570","name":"Lido Blu","lat":42.7706563,"lon":13.9596592,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_12698428599","name":"Lido Paradiso","lat":42.7652101,"lon":13.962633,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_12698965800","name":"Cristallo Mare","lat":42.7617196,"lon":13.9646049,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_12704300665","name":"Lido Alta Marea","lat":42.7560034,"lon":13.9688954,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_12704300667","name":"Venere Mare","lat":42.7568428,"lon":13.9685214,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_12704300675","name":"Lido Caprice","lat":42.7597676,"lon":13.9661401,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_12704362207","name":"Lido Serenella","lat":42.7468917,"lon":13.9753504,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_12704364729","name":"Lido Arlecchino","lat":42.7547189,"lon":13.9699397,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_12704364730","name":"Lido Azzurro Mare","lat":42.7553151,"lon":13.9693823,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_12754588701","name":"Ferro Battuto Mammarella","lat":42.3815562,"lon":14.1914722,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_12788445932","name":"Lido Le Marinelle","lat":42.0708578,"lon":14.7777545,"type":"mare","visibility":"classica","tags":["leisure=beach_resort"]},{"id":"osm_node_12820441445","name":"Spiaggetta","lat":42.8955476,"lon":13.4532024,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_node_12878885885","name":"Lido Aurora","lat":42.474031,"lon":14.2108603,"type":"mare","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_12921245939","name":"Il gusto del mare","lat":42.4228064,"lon":14.1579186,"type":"mare","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_12980354354","name":"Torino di Sangro (C. Mare) dir Lanciano","lat":42.1962594,"lon":14.5451748,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_12980354355","name":"Torino di Sangro (C. Mare) dir Torino di Sangro","lat":42.1962735,"lon":14.5450575,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_13039065216","name":"Fronte Mare","lat":42.2338806,"lon":14.5444809,"type":"mare","visibility":"classica","tags":["amenity=bar"]},{"id":"osm_node_13039768453","name":"Circolo Velico \"Amici da Mare\"","lat":42.8777528,"lon":13.9218986,"type":"mare","visibility":"classica","tags":[]},{"id":"osm_node_13141265001","name":"Lido L’Ombrellone","lat":42.5489964,"lon":14.1235734,"type":"mare","visibility":"classica","tags":["amenity=cafe"]},{"id":"osm_node_13161610933","name":"Mare gastronomia","lat":42.2265328,"lon":14.3995156,"type":"mare","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_way_46767761","name":"Spiaggia di Casalbordino","lat":42.1939154,"lon":14.6382307,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_way_46795024","name":"Spiaggia di Vasto Marina","lat":42.0941985,"lon":14.7350138,"type":"mare","visibility":"classica","tags":["tourism=attraction","natural=beach"]},{"id":"osm_way_61376678","name":"Spiaggia di Petacciato Marina","lat":42.0350778,"lon":14.8570321,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_way_61379090","name":"Spiaggia del Lungomare Nord","lat":42.0179497,"lon":14.9171429,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_way_61556505","name":"Spiaggia di Cala D'Or","lat":42.0425786,"lon":14.8384626,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_way_102317430","name":"Spiaggia di Santo Stefano","lat":42.2003348,"lon":14.617688,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_way_144372931","name":"Lido Saraceni","lat":42.3442223,"lon":14.4131049,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_way_144373005","name":"Spiaggia della Ritorna","lat":42.3593589,"lon":14.4085029,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_way_144373023","name":"Spiaggia dei Ripari di Giobbe","lat":42.3716963,"lon":14.392226,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_way_148977364","name":"Spiaggia della Grotta del Saraceno","lat":42.152595,"lon":14.7184467,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_way_148985833","name":"Spiaggia delle Morge","lat":42.2070997,"lon":14.60045,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_way_297168601","name":"Spiaggia di Casarza","lat":42.1188961,"lon":14.7202637,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_way_364037451","name":"Maruccio","lat":42.3071198,"lon":14.4487902,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_way_364037454","name":"Rocco Mancini","lat":42.3035425,"lon":14.4540508,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_way_364110719","name":"Spiaggia di Cala Turchino","lat":42.3005652,"lon":14.4589871,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_way_459594389","name":"Spiaggia libera","lat":42.5192223,"lon":14.1599719,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_way_459615566","name":"Spiaggia libera","lat":42.5109785,"lon":14.1685048,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_way_459615567","name":"Spiaggia libera","lat":42.5105059,"lon":14.1690604,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_way_459615568","name":"Spiaggia libera","lat":42.5092438,"lon":14.1705469,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_way_459615569","name":"Spiaggia libera, accessibile per disabili","lat":42.5087859,"lon":14.1708591,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_way_459615570","name":"spiaggia libera","lat":42.5081067,"lon":14.1714016,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_way_459615572","name":"Spiaggia libera","lat":42.5069807,"lon":14.1724421,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_way_459615591","name":"Spiaggia libera","lat":42.4995806,"lon":14.1796799,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_way_459615598","name":"Spiaggia libera","lat":42.4968877,"lon":14.1822808,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_way_459615614","name":"Spiaggia libera","lat":42.4927166,"lon":14.1870369,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_way_515527678","name":"Spiaggia di Torre del Cerrano","lat":42.5848055,"lon":14.0901635,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_way_516932889","name":"Spiaggia di Calata Cintioni","lat":42.3128722,"lon":14.4408564,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_way_524670480","name":"Spiaggia di Punta Aderci","lat":42.1796206,"lon":14.685098,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_way_639851200","name":"Borgo San Pietro","lat":42.270409,"lon":13.0598795,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_way_639851201","name":"Borgo San Pietro","lat":42.268423,"lon":13.0621153,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_way_659656797","name":"Spiaggia della Canale","lat":42.1402315,"lon":14.7187147,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_way_659656798","name":"Spiaggia di Vignola a Mare","lat":42.1451769,"lon":14.7183827,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_way_659657814","name":"Spiggia della Foce Lebba","lat":42.1653656,"lon":14.7170975,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_way_661217811","name":"Spiaggia di Mottagrossa","lat":42.1821766,"lon":14.6754169,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_way_661217812","name":"Spiaggia di Torre Sinello","lat":42.1901158,"lon":14.6518587,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_way_661296024","name":"Spiaggia di Torricella","lat":42.1275804,"lon":14.7219044,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_way_666659441","name":"Spiaggia di Punta Ferruccio","lat":42.3758132,"lon":14.3829248,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_way_666663827","name":"Spiaggia di Punta Acquabella","lat":42.3305839,"lon":14.4244427,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_way_666663828","name":"Spiaggia di Ripari Bardella","lat":42.3196734,"lon":14.4334662,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_way_701565036","name":"Spiaggia Lido Le Morge","lat":42.2172879,"lon":14.5779339,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_way_798444368","name":"Spiaggia libera","lat":42.4740187,"lon":14.2119585,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_way_809579262","name":"Spiaggia libera","lat":42.4616913,"lon":14.2319438,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_way_844611715","name":"Spiaggia Libera Tutti","lat":42.4451674,"lon":14.2533587,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_way_899150692","name":"Spiaggia accessibile per disabili","lat":42.5182602,"lon":14.1609458,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_way_1054180132","name":"Spiaggia libera","lat":42.4587297,"lon":14.2348845,"type":"mare","visibility":"classica","tags":["natural=beach"]},{"id":"osm_way_1267186034","name":"Spiaggia libera","lat":42.4575788,"lon":14.2367137,"type":"mare","visibility":"classica","tags":["natural=beach"]}]}
+{
+  "ok": true,
+  "region": "it-abruzzo",
+  "category": "mare",
+  "generatedAt": "2026-01-05T11:05:07.463Z",
+  "bbox": [
+    13,
+    41.9,
+    14.9,
+    42.9
+  ],
+  "count": 330,
+  "endpoint": "https://overpass-api.de/api/interpreter",
+  "notes": [],
+  "pois": [
+    {
+      "id": "node_6689714444",
+      "name": "Santa Chelidonia",
+      "lat": 41.9536998,
+      "lon": 13.1045513,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "place_of_worship",
+        "historic": "ruins",
+        "name": "Santa Chelidonia"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_4879542128",
+      "name": "Mareri",
+      "lat": 42.2665146,
+      "lon": 13.0903155,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Mareri",
+        "place": "hamlet"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_4879542149",
+      "name": "Castello di Mareri",
+      "lat": 42.2670471,
+      "lon": 13.0900059,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "historic": "castle",
+        "name": "Castello di Mareri"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_4879542361",
+      "name": "Grotta di Santa Filippa Mareri",
+      "lat": 42.2757674,
+      "lon": 13.0992932,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Grotta di Santa Filippa Mareri",
+        "natural": "cave_entrance"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_2536844341",
+      "name": "Monte Marelli",
+      "lat": 42.2926438,
+      "lon": 13.1161714,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Monte Marelli",
+        "natural": "peak"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_777991516",
+      "name": "Palombaia",
+      "lat": 42.3260631,
+      "lon": 13.283006,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "alt_name": "Palombaia di Tornimparte",
+        "name": "Palombaia",
+        "place": "hamlet",
+        "wikidata": "Q18426867"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_5831876541",
+      "name": "Collemare",
+      "lat": 42.3252638,
+      "lon": 13.3027672,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Collemare",
+        "place": "hamlet",
+        "wikidata": "Q18426672"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_4620311153",
+      "name": "Tensostruttura di Palombaia",
+      "lat": 42.3288688,
+      "lon": 13.2826138,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "social_facility",
+        "name": "Tensostruttura di Palombaia"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_777991678",
+      "name": "Palombaia di Sassa",
+      "lat": 42.3584895,
+      "lon": 13.3148295,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Palombaia di Sassa",
+        "place": "village",
+        "wikidata": "Q18426866"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_6414944962",
+      "name": "Levante - Mare e  Monti",
+      "lat": 42.347439,
+      "lon": 13.3983484,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Levante - Mare e  Monti",
+        "opening_hours": "Tu-Su 19:00-22:30; Mo closed"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_6935822377",
+      "name": "Mazzeschi - Marella",
+      "lat": 42.3473629,
+      "lon": 13.3981377,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Mazzeschi - Marella"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_4369806050",
+      "name": "Vallemare",
+      "lat": 42.4828142,
+      "lon": 13.1134678,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Vallemare",
+        "place": "hamlet",
+        "wikidata": "Q18454358"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7513572910",
+      "name": "Macelleria Polidori",
+      "lat": 42.52529,
+      "lon": 13.2444303,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Macelleria Polidori"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12434055356",
+      "name": "Colle Mare",
+      "lat": 42.5621105,
+      "lon": 13.420081,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Colle Mare",
+        "natural": "peak"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12523107259",
+      "name": "Bar Alimentari Marella",
+      "lat": 42.7582239,
+      "lon": 13.2989014,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "bar",
+        "name": "Bar Alimentari Marella"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_6465803229",
+      "name": "Fontana Celidona",
+      "lat": 41.9761547,
+      "lon": 13.8265981,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "drinking_water",
+        "name": "Fontana Celidona"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_4870550762",
+      "name": "Albergo Celidonio",
+      "lat": 42.0965946,
+      "lon": 14.0227576,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Albergo Celidonio",
+        "tourism": "hotel"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9972908955",
+      "name": "Mareglioso Nord-Est",
+      "lat": 42.2767653,
+      "lon": 13.9110624,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Mareglioso Nord-Est",
+        "tourism": "viewpoint"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8094425582",
+      "name": "Vallemare;Cepagatti",
+      "lat": 42.3562991,
+      "lon": 14.0916234,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Vallemare;Cepagatti"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_2036644354",
+      "name": "Vallemare",
+      "lat": 42.351751,
+      "lon": 14.1085651,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Vallemare",
+        "place": "suburb"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_2036652011",
+      "name": "Scuola Elementare Vallemare",
+      "lat": 42.3514776,
+      "lon": 14.1094885,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "school",
+        "name": "Scuola Elementare Vallemare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8094266530",
+      "name": "Villareia;Vallemare",
+      "lat": 42.3485735,
+      "lon": 14.1134972,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Villareia;Vallemare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8094266531",
+      "name": "Vallemare;Villareia",
+      "lat": 42.3484715,
+      "lon": 14.113706,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Vallemare;Villareia"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8099925341",
+      "name": "Vallemare",
+      "lat": 42.3661993,
+      "lon": 14.1188003,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Vallemare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10683091797",
+      "name": "Vallemare",
+      "lat": 42.3739892,
+      "lon": 14.1224695,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Vallemare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12059168399",
+      "name": "Un Mare Di Freschezza",
+      "lat": 42.357464,
+      "lon": 14.1403854,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Un Mare Di Freschezza",
+        "opening_hours": "Tu-Fr 07:00-13:00,16:30-20:00; Sa 08:00-13:00"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11987616898",
+      "name": "Montagnamare",
+      "lat": 42.307816,
+      "lon": 14.1845948,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Montagnamare",
+        "tourism": "guest_house"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8847981178",
+      "name": "Pian di Mare",
+      "lat": 42.326296,
+      "lon": 14.2348704,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Pian di Mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_1508590309",
+      "name": "Palmarelli M.G.",
+      "lat": 42.3514089,
+      "lon": 14.1759935,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Palmarelli M.G."
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_1533342580",
+      "name": "Mare in collina",
+      "lat": 42.3657326,
+      "lon": 14.1676268,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Mare in collina",
+        "opening_hours": "Tu-Sa 12:00-16:00,19:00-24:00; Su 12:00-16:00"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_6385250413",
+      "name": "Amarena",
+      "lat": 41.9275786,
+      "lon": 14.6409761,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Amarena",
+        "place": "hamlet"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_6236579420",
+      "name": "Colle Amarena",
+      "lat": 41.9283444,
+      "lon": 14.6476942,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Colle Amarena",
+        "natural": "peak"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_6337513640",
+      "name": "Fosso Mazzimarello",
+      "lat": 42.027772,
+      "lon": 14.4415478,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Fosso Mazzimarello",
+        "place": "locality"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7630362568",
+      "name": "Loft \"Terrazza Mare & Monti\"",
+      "lat": 42.2190537,
+      "lon": 14.2829753,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Loft \"Terrazza Mare & Monti\"",
+        "opening_hours": "Mo-Sa 16:30-20:00; Su 8:30-20:00",
+        "operator": "Nunzio Di Castelnuovo",
+        "tourism": "apartment",
+        "website": "https://loft-terrazza-mare-monti.business.site/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_13161610933",
+      "name": "Mare gastronomia",
+      "lat": 42.2265328,
+      "lon": 14.3995156,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Mare gastronomia",
+        "phone": "+393669716912"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8414775637",
+      "name": "Farel Di Polidori Elena",
+      "lat": 42.3403914,
+      "lon": 14.3198534,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Farel Di Polidori Elena",
+        "phone": "+39 0871 962 285"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9135536408",
+      "name": "Ebrezza Bistrot Vista Mare",
+      "lat": 42.3059169,
+      "lon": 14.4497432,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Ebrezza Bistrot Vista Mare",
+        "phone": "+39 0872 618825"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_3681928068",
+      "name": "Hotel Miramare",
+      "lat": 42.307868,
+      "lon": 14.4457551,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Hotel Miramare",
+        "tourism": "hotel"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_3681989573",
+      "name": "Monumento ai Caduti in Mare",
+      "lat": 42.3098743,
+      "lon": 14.4446588,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Monumento ai Caduti in Mare",
+        "tourism": "artwork"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_3681989574",
+      "name": "Granomare",
+      "lat": 42.3090437,
+      "lon": 14.4455691,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Granomare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_3683594919",
+      "name": "Gastropescheria \"Blu Mare\"",
+      "lat": 42.3075249,
+      "lon": 14.4445004,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Gastropescheria \"Blu Mare\""
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10019323742",
+      "name": "La Locanda del Mare",
+      "lat": 42.3083132,
+      "lon": 14.44457,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "La Locanda del Mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12277290734",
+      "name": "Tamarete Zona Artigianale",
+      "lat": 42.3343817,
+      "lon": 14.3834947,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Tamarete Zona Artigianale",
+        "operator": "Protezione Civile Regione Abruzzo"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_6341889403",
+      "name": "Tamarete",
+      "lat": 42.3398083,
+      "lon": 14.3804368,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Tamarete",
+        "place": "hamlet"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_6587235586",
+      "name": "Lido Eldorado",
+      "lat": 42.345249,
+      "lon": 14.4122642,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "no",
+        "leisure": "beach_resort",
+        "name": "Lido Eldorado"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8124840194",
+      "name": "Lino Sapori di Mare e Monti",
+      "lat": 42.3620727,
+      "lon": 14.3822264,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "contact:phone": "+39 350 566 7658",
+        "name": "Lino Sapori di Mare e Monti",
+        "website": "https://ristorantelinosapori.it/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8567605215",
+      "name": "Fermata Lido Riccio",
+      "lat": 42.3784453,
+      "lon": 14.3716923,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Fermata Lido Riccio",
+        "operator": "Napoleone"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_6728440795",
+      "name": "Ai Caduti del Mare",
+      "lat": 42.3527643,
+      "lon": 14.4042188,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "historic": "monument",
+        "name": "Ai Caduti del Mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_6728450457",
+      "name": "Ai Lavoratori del Mare",
+      "lat": 42.3527762,
+      "lon": 14.4042698,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "historic": "monument",
+        "name": "Ai Lavoratori del Mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11109608240",
+      "name": "FronteMare",
+      "lat": 42.3587244,
+      "lon": 14.4049678,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "bar",
+        "name": "FronteMare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11200500478",
+      "name": "Piazza Caduti del Mare (Porto)",
+      "lat": 42.3584518,
+      "lon": 14.4077513,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Piazza Caduti del Mare (Porto)",
+        "operator": "Protezione Civile Regione Abruzzo"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_6480662091",
+      "name": "Porticciolo dell'Acquabella",
+      "lat": 42.3354867,
+      "lon": 14.4231361,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "no",
+        "leisure": "marina",
+        "name": "Porticciolo dell'Acquabella"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12980354354",
+      "name": "Torino di Sangro (C. Mare) dir Lanciano",
+      "lat": 42.1962594,
+      "lon": 14.5451748,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Torino di Sangro (C. Mare) dir Lanciano",
+        "operator": "Di Fonzo"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12980354355",
+      "name": "Torino di Sangro (C. Mare) dir Torino di Sangro",
+      "lat": 42.1962735,
+      "lon": 14.5450575,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Torino di Sangro (C. Mare) dir Torino di Sangro",
+        "operator": "Di Fonzo"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_5478144521",
+      "name": "B&B Villa Maria al Mare",
+      "lat": 42.2475358,
+      "lon": 14.5150961,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "B&B Villa Maria al Mare",
+        "tourism": "hostel"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12197486537",
+      "name": "Via Lungomare, area psarcheggio",
+      "lat": 42.2448127,
+      "lon": 14.5203491,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Via Lungomare, area psarcheggio",
+        "operator": "Protezione Civile Regione Abruzzo"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7527233199",
+      "name": "Rifugiomare Agriturismo",
+      "lat": 42.2729466,
+      "lon": 14.4940933,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Rifugiomare Agriturismo",
+        "tourism": "guest_house"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_13039065216",
+      "name": "Fronte Mare",
+      "lat": 42.2338806,
+      "lon": 14.5444809,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "bar",
+        "name": "Fronte Mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_2430923373",
+      "name": "Ai Caduti del Mare",
+      "lat": 42.2306977,
+      "lon": 14.5493808,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "historic": "memorial",
+        "name": "Ai Caduti del Mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12085148409",
+      "name": "Aria di mare",
+      "lat": 42.204713,
+      "lon": 14.5941313,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Aria di mare",
+        "tourism": "apartment"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12083867508",
+      "name": "Heidi Oltremare",
+      "lat": 42.2077394,
+      "lon": 14.5972564,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Heidi Oltremare",
+        "website": "https://m.facebook.com/p/Heidi-Oltremare-100063648459385/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_597673746",
+      "name": "Casalbordino Lido",
+      "lat": 42.1942432,
+      "lon": 14.6333032,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Casalbordino Lido",
+        "place": "quarter"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_5032987521",
+      "name": "A un Passo dal Mare",
+      "lat": 42.1943908,
+      "lon": 14.6333654,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "contact:phone": "+39 0873 918029",
+        "name": "A un Passo dal Mare",
+        "name:it": "A un Passo dal Mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12093897353",
+      "name": "Lido La Foce",
+      "lat": 42.2769047,
+      "lon": 14.4929196,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "bar",
+        "name": "Lido La Foce"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_5592637102",
+      "name": "Ombrina Mare 2",
+      "lat": 42.323409,
+      "lon": 14.533455,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Ombrina Mare 2",
+        "operator": "Rockhopper Italia",
+        "website": "https://sanvitobenecomune.wordpress.com/no-ombrina-mare-2/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11741736732",
+      "name": "Mare e Monti",
+      "lat": 41.9711278,
+      "lon": 14.7778393,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Mare e Monti"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11027583399",
+      "name": "Amazon Hub Locker - Lidovino",
+      "lat": 42.0633352,
+      "lon": 14.7764555,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "parcel_locker",
+        "brand": "Amazon Hub",
+        "name": "Amazon Hub Locker - Lidovino"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_6253888743",
+      "name": "Contrada Montevecchio/Marina di Vasto-Lungomare",
+      "lat": 42.0971521,
+      "lon": 14.7190612,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Contrada Montevecchio/Marina di Vasto-Lungomare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9988487226",
+      "name": "Molino Mare",
+      "lat": 42.1034116,
+      "lon": 14.7175514,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Molino Mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11016252451",
+      "name": "Ristorante Altamarea",
+      "lat": 42.1018316,
+      "lon": 14.719279,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Ristorante Altamarea"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10726477250",
+      "name": "Lido Twins",
+      "lat": 42.0966916,
+      "lon": 14.7250596,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido Twins"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10726477245",
+      "name": "Lido Hotel Adriatico",
+      "lat": 42.0957027,
+      "lon": 14.7264418,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido Hotel Adriatico"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10726477251",
+      "name": "Lido Caravel",
+      "lat": 42.0972277,
+      "lon": 14.7244968,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido Caravel"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10726477252",
+      "name": "Lido Maremaje",
+      "lat": 42.0982723,
+      "lon": 14.7232441,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido Maremaje"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10971279345",
+      "name": "Pescheria Mare Blu",
+      "lat": 42.1002063,
+      "lon": 14.7194027,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Pescheria Mare Blu"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8910659200",
+      "name": "Spiaggia della Sirenetta",
+      "lat": 42.1067643,
+      "lon": 14.7176412,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "alt_name": "Spiaggia Libera di Vasto Marina",
+        "fee": "no",
+        "name": "Spiaggia della Sirenetta",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_5105469855",
+      "name": "La Votte di Mare",
+      "lat": 42.1128089,
+      "lon": 14.7111072,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "contact:phone": "+39 0873 367478",
+        "name": "La Votte di Mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8262197308",
+      "name": "Monumento ai caduti del mare",
+      "lat": 42.0704071,
+      "lon": 14.7783656,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "historic": "memorial",
+        "name": "Monumento ai caduti del mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12788445932",
+      "name": "Lido Le Marinelle",
+      "lat": 42.0708578,
+      "lon": 14.7777545,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "beach_resort",
+        "name": "Lido Le Marinelle"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_3010204344",
+      "name": "Vasto-Spiaggia di Casarza",
+      "lat": 42.1182605,
+      "lon": 14.7188181,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Vasto-Spiaggia di Casarza"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9530345916",
+      "name": "Piccolo Porto di Pesca di Casarza",
+      "lat": 42.1193435,
+      "lon": 14.719975,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "marina",
+        "name": "Piccolo Porto di Pesca di Casarza",
+        "operator": "Comune di Vasto"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_6166623552",
+      "name": "Spiaggia di San Nicola",
+      "lat": 42.1323539,
+      "lon": 14.7195542,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spiaggia di San Nicola",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_6166580082",
+      "name": "Vignola a Mare",
+      "lat": 42.1448288,
+      "lon": 14.7173554,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Vignola a Mare",
+        "place": "neighbourhood"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_4493235744",
+      "name": "Spiaggia dei Libertini",
+      "lat": 42.1781074,
+      "lon": 14.6891225,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spiaggia dei Libertini",
+        "natural": "beach",
+        "website": "https://www.puntaderci.it/la-riserva.html"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12383967655",
+      "name": "Fonte Mare Gelato",
+      "lat": 42.5940941,
+      "lon": 13.4920932,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Fonte Mare Gelato",
+        "natural": "spring"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10880401772",
+      "name": "L'Altracarne Mammarella",
+      "lat": 42.5318965,
+      "lon": 13.8860495,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "L'Altracarne Mammarella",
+        "operator": "L'Altracarne S.p.A."
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7938032785",
+      "name": "Ad un passo dal mare",
+      "lat": 42.4943015,
+      "lon": 13.9906906,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Ad un passo dal mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8231293067",
+      "name": "Via Vestina a Mare",
+      "lat": 42.464811,
+      "lon": 14.103428,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Via Vestina a Mare",
+        "operator": "GTM"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12754588701",
+      "name": "Ferro Battuto Mammarella",
+      "lat": 42.3815562,
+      "lon": 14.1914722,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Ferro Battuto Mammarella"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12921245939",
+      "name": "Il gusto del mare",
+      "lat": 42.4228064,
+      "lon": 14.1579186,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Il gusto del mare",
+        "opening_hours": "Tu-Sa 19:30-23:00"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11818066123",
+      "name": "Arredamenti Mammarella",
+      "lat": 42.4189826,
+      "lon": 14.1664992,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Arredamenti Mammarella",
+        "phone": "+39 085 446 0456",
+        "website": "https://www.arredamenti-mammarella.com/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_6837245930",
+      "name": "Ristorante Mare Vivo",
+      "lat": 42.4232856,
+      "lon": 14.1903143,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "contact:phone": "+39 085 446 2876",
+        "name": "Ristorante Mare Vivo"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_688869705",
+      "name": "Profumi di Mare",
+      "lat": 42.4546009,
+      "lon": 14.1899167,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Profumi di Mare",
+        "opening_hours": "Tu-Sa 09:00-00:00; Su 09:00-16:00",
+        "phone": "+39 085 412033",
+        "website": "https://www.profumidimarevillaraspa.it/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9603606610",
+      "name": "Livio e il mare",
+      "lat": 42.4722712,
+      "lon": 14.1775508,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Livio e il mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9694767198",
+      "name": "Trattoria del mare da Tatillo",
+      "lat": 42.4727145,
+      "lon": 14.194848,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Trattoria del mare da Tatillo",
+        "opening_hours": "Tu-Sa 11:00-18:30, 18:00-23:00; Su 11:00-16:00; Mo off",
+        "phone": "+39 085 205 8672"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8299764293",
+      "name": "Pescheria Pianeta Mare",
+      "lat": 42.4811466,
+      "lon": 14.192489,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Pescheria Pianeta Mare",
+        "phone": "+39 085 72379"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11879257015",
+      "name": "MareAzzurro",
+      "lat": 42.4491551,
+      "lon": 14.2159088,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "MareAzzurro",
+        "opening_hours": "Mo-Sa 09:00-13:00,16:00-20:00; Su 09:00-13:00",
+        "phone": "+39 085 201 0670",
+        "website": "https://www.mareazzurro.eu/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8693717349",
+      "name": "Pizzeria Castellammare by Morbido",
+      "lat": 42.4556303,
+      "lon": 14.2171188,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "fast_food",
+        "name": "Pizzeria Castellammare by Morbido",
+        "opening_hours": "Tu-Su 16:00-24:00"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7526240620",
+      "name": "Profumi di mare",
+      "lat": 42.4556948,
+      "lon": 14.2235878,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Profumi di mare",
+        "opening_hours": "Tu-Sa 11:30-14:30,18:45-22:00; Su 11:30-14:30",
+        "phone": "+39 085 911 8263",
+        "website": "https://profumidimarepescara.it/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8133694756",
+      "name": "Francavilla al Mare;Pescara",
+      "lat": 42.4427267,
+      "lon": 14.2500496,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Francavilla al Mare;Pescara"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8133694757",
+      "name": "Pescara;Francavilla al Mare",
+      "lat": 42.4431227,
+      "lon": 14.2496763,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Pescara;Francavilla al Mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_900719092",
+      "name": "Caffetteria Bar del Mare",
+      "lat": 42.4394532,
+      "lon": 14.2600215,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "cafe",
+        "name": "Caffetteria Bar del Mare",
+        "phone": "+390854982089",
+        "website": "https://www.bardelmare.it/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9123584365",
+      "name": "Lido Nautilus Ristorante",
+      "lat": 42.4425236,
+      "lon": 14.2568426,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "beach_resort",
+        "name": "Lido Nautilus Ristorante",
+        "opening_hours": "Mo-Su 11:30-15:30, 18:30-22:30",
+        "website": "https://lidonautilusfrancavilla.it"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9123584373",
+      "name": "Lido Bagno Marcello",
+      "lat": 42.4415283,
+      "lon": 14.2583235,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido Bagno Marcello",
+        "opening_hours": "Tu-Su 08:00-22:30; Mo 08:00-20:00",
+        "operator": "Marcello Sandro & Claudio & C.",
+        "phone": "+39 085 498 1739"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10823817920",
+      "name": "Lido Albatros",
+      "lat": 42.4440576,
+      "lon": 14.2546396,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "beach_resort",
+        "name": "Lido Albatros"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10823817921",
+      "name": "Baia Delle Sirene",
+      "lat": 42.4438288,
+      "lon": 14.2550119,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Baia Delle Sirene",
+        "phone": "+3908567563",
+        "website": "https://baia-delle-sirene-seafood-restaurant.business.site/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10823817926",
+      "name": "Lido San Marco",
+      "lat": 42.4403032,
+      "lon": 14.2600936,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido San Marco",
+        "phone": "+393382820271",
+        "website": "https://lido-san-marco.business.site/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10823817951",
+      "name": "Lido Bianco",
+      "lat": 42.4405887,
+      "lon": 14.2596582,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido Bianco"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7879204946",
+      "name": "Bar Pizzeria Mareblu",
+      "lat": 42.4497423,
+      "lon": 14.246851,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Bar Pizzeria Mareblu"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_367744922",
+      "name": "Lido delle Sirene",
+      "lat": 42.4550649,
+      "lon": 14.2399548,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "contact:phone": "+39 085 66929",
+        "leisure": "beach_resort",
+        "name": "Lido delle Sirene"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8532860956",
+      "name": "Lido Bora Bora",
+      "lat": 42.4524113,
+      "lon": 14.2434901,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "beach_resort",
+        "name": "Lido Bora Bora"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8533045035",
+      "name": "Lido il Corallo",
+      "lat": 42.4469325,
+      "lon": 14.2506649,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Lido il Corallo",
+        "opening_hours": "Mo-Su 09:00-23:00",
+        "phone": "+390854514490",
+        "website": "http://www.lidoilcorallo.it/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10091553417",
+      "name": "Pescara;Francavilla al Mare",
+      "lat": 42.4445006,
+      "lon": 14.2531574,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Pescara;Francavilla al Mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10823817919",
+      "name": "Lido Sabbia D'Oro Bau Miao Beach",
+      "lat": 42.4447302,
+      "lon": 14.2537467,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido Sabbia D'Oro Bau Miao Beach",
+        "website": "https://www.sabbiadorobaumiaobeach.com/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7126292470",
+      "name": "Chitarrina Osteria di mare",
+      "lat": 42.4617241,
+      "lon": 14.2123466,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Chitarrina Osteria di mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7672918769",
+      "name": "Lido Oriente",
+      "lat": 42.4692648,
+      "lon": 14.2188678,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "beach_resort",
+        "name": "Lido Oriente",
+        "opening_hours": "Tu-Sa 12:30-15:30,19:30-23:00; Su 12:30-15:30",
+        "phone": "+39 085 421 6571"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8536615773",
+      "name": "Lungomare Matteotti civico",
+      "lat": 42.4678794,
+      "lon": 14.2209259,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Lungomare Matteotti civico",
+        "operator": "GTM"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8536656864",
+      "name": "Lido Gilda",
+      "lat": 42.4694573,
+      "lon": 14.2185508,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "beach_resort",
+        "name": "Lido Gilda"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7366163668",
+      "name": "Il Gusto del Mare",
+      "lat": 42.4600946,
+      "lon": 14.2253242,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Il Gusto del Mare",
+        "phone": "+39 085 65639"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7615776900",
+      "name": "Filippo Cucina Di Mare",
+      "lat": 42.4617504,
+      "lon": 14.2255079,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Filippo Cucina Di Mare",
+        "opening_hours": "We-Sa 12:30-14:30,20:00-22:00; Su 12:30-14:30",
+        "phone": "+39 085 219 3571"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8531250132",
+      "name": "Trattoria Ponte del Mare",
+      "lat": 42.4640418,
+      "lon": 14.2261141,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Trattoria Ponte del Mare",
+        "opening_hours": "Mo,We 12:00-15:00,19:00-22:30; Th-Su 12:00-15:00,19:00-23:00",
+        "phone": "+39 085 694287"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7005947485",
+      "name": "Lungomare Cristoforo Colombo",
+      "lat": 42.4604048,
+      "lon": 14.2313891,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Lungomare Cristoforo Colombo"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11428630655",
+      "name": "Lungomare Colombo, civico 52",
+      "lat": 42.4613878,
+      "lon": 14.2302295,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Lungomare Colombo, civico 52"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7581350084",
+      "name": "A Prua Mare",
+      "lat": 42.4641895,
+      "lon": 14.2217145,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "A Prua Mare",
+        "opening_hours": "Tu-Sa 11:00-15:00,18:30-24:00; Su 10:30-16:00",
+        "website": "https://www.apruamare.it/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7671793112",
+      "name": "Arena del Mare",
+      "lat": 42.4677431,
+      "lon": 14.2218272,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "no",
+        "leisure": "beach_resort",
+        "name": "Arena del Mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7886381995",
+      "name": "Caduti del mare",
+      "lat": 42.4661552,
+      "lon": 14.2252981,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "historic": "monument",
+        "name": "Caduti del mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_630781905",
+      "name": "Miramare",
+      "lat": 42.4756336,
+      "lon": 14.2085227,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Miramare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8536877186",
+      "name": "Lido L'Adriatica",
+      "lat": 42.4723984,
+      "lon": 14.213523,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "no",
+        "leisure": "beach_resort",
+        "name": "Lido L'Adriatica",
+        "phone": "+39 085 212 1153"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12101901159",
+      "name": "La Pecora al Mare",
+      "lat": 42.474967,
+      "lon": 14.2095278,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "La Pecora al Mare",
+        "phone": "+39 327 461 4926",
+        "website": "https://lapecoraalmare.com"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12878885885",
+      "name": "Lido Aurora",
+      "lat": 42.474031,
+      "lon": 14.2108603,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Lido Aurora"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7658701929",
+      "name": "Ristorante Marechiaro da Bruno",
+      "lat": 42.4711576,
+      "lon": 14.2156473,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Ristorante Marechiaro da Bruno",
+        "opening_hours": "Mo-Su 12:00-15:00,19:30-23:00; We off",
+        "website": "https://www.ristorante-marechiaro.it"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7658729114",
+      "name": "Lido Marechiaro",
+      "lat": 42.4710037,
+      "lon": 14.2158963,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido Marechiaro",
+        "opening_hours": "Mo-Su 07:00-24:00"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7684473842",
+      "name": "Lungomare Matteotti Civico 91",
+      "lat": 42.471432,
+      "lon": 14.2148087,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Lungomare Matteotti Civico 91",
+        "operator": "GTM"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9875798218",
+      "name": "Albergo Lido",
+      "lat": 42.4707899,
+      "lon": 14.2155555,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Albergo Lido",
+        "tourism": "hotel"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_668617074",
+      "name": "Margazzill Idee dal Mare",
+      "lat": 42.5053813,
+      "lon": 14.119871,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Margazzill Idee dal Mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11330912581",
+      "name": "Armata di Mare",
+      "lat": 42.5122844,
+      "lon": 14.1204293,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Armata di Mare",
+        "phone": "+39 085 95501",
+        "website": "https://www.cittasantangelovillage.com/negozi/armata-di-mare-jeans/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7643890913",
+      "name": "Stazione di Montesilvano Spiaggia",
+      "lat": 42.5141768,
+      "lon": 14.1541096,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Stazione di Montesilvano Spiaggia",
+        "wikidata": "Q24940707",
+        "wikipedia": "it:Stazione di Montesilvano Spiaggia"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_5641839621",
+      "name": "Relais Borgo sul Mare",
+      "lat": 42.5643005,
+      "lon": 14.0908777,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Relais Borgo sul Mare",
+        "tourism": "guest_house"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10729768061",
+      "name": "Lido dell'Hotel Florida",
+      "lat": 42.5701253,
+      "lon": 14.1026769,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "beach_resort",
+        "name": "Lido dell'Hotel Florida"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_4950752721",
+      "name": "Lido di Itaca",
+      "lat": 42.5814886,
+      "lon": 14.0929555,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Lido di Itaca",
+        "name:it": "Lido di Itaca"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_13141265001",
+      "name": "Lido L’Ombrellone",
+      "lat": 42.5489964,
+      "lon": 14.1235734,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "cafe",
+        "name": "Lido L’Ombrellone",
+        "opening_hours": "Mo-Su 08:00-20:00",
+        "phone": "+393450848818"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_5603492558",
+      "name": "Lido Venere",
+      "lat": 42.561975,
+      "lon": 14.1098088,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "beach_resort",
+        "name": "Lido Venere"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_5631233204",
+      "name": "Lido Las Vegas",
+      "lat": 42.5603648,
+      "lon": 14.1118446,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido Las Vegas"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_5631233230",
+      "name": "Lido Nettuno",
+      "lat": 42.5594343,
+      "lon": 14.1126305,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "beach_resort",
+        "name": "Lido Nettuno"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9653243254",
+      "name": "Albergo Lido",
+      "lat": 42.5596421,
+      "lon": 14.1105086,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Albergo Lido",
+        "phone": "+39 085 930 314",
+        "tourism": "guest_house",
+        "website": "http://www.pensionelido.it"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_5631233219",
+      "name": "Lido Baracoa Silvi",
+      "lat": 42.5556054,
+      "lon": 14.1167611,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "beach_resort",
+        "name": "Lido Baracoa Silvi"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_5641426222",
+      "name": "Lido Olimpia",
+      "lat": 42.5544566,
+      "lon": 14.1174754,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "cafe",
+        "name": "Lido Olimpia"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8348488321",
+      "name": "Le Delizie Del Mare",
+      "lat": 42.4933428,
+      "lon": 14.1778109,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Le Delizie Del Mare",
+        "opening_hours": "Tu-Sa 08:30-13:00,16:00-19:00; Su 10:00-13:00",
+        "phone": "+39 085 75625"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_501613746",
+      "name": "Voglia di Mare",
+      "lat": 42.5033169,
+      "lon": 14.1755323,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "beach_resort",
+        "name": "Voglia di Mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_501615028",
+      "name": "Stella del Mare",
+      "lat": 42.5042497,
+      "lon": 14.1747146,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "beach_resort",
+        "name": "Stella del Mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_501634142",
+      "name": "Verdemare",
+      "lat": 42.5049601,
+      "lon": 14.1740543,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "beach_resort",
+        "name": "Verdemare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_426864691",
+      "name": "Lido Pinalba",
+      "lat": 42.4888022,
+      "lon": 14.1914049,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "beach_resort",
+        "name": "Lido Pinalba"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_426865853",
+      "name": "Baia Papaya",
+      "lat": 42.4854921,
+      "lon": 14.1949585,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Baia Papaya"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_657932436",
+      "name": "Un mare di delizie",
+      "lat": 42.516241,
+      "lon": 14.1598737,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Un mare di delizie"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11919261231",
+      "name": "DAMADIMARE casa vacanze",
+      "lat": 42.5147251,
+      "lon": 14.1597328,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "DAMADIMARE casa vacanze",
+        "tourism": "guest_house"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_631557423",
+      "name": "La Brasserie sul Mare",
+      "lat": 42.5100678,
+      "lon": 14.1688139,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "La Brasserie sul Mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_276086708",
+      "name": "Teatro del Mare",
+      "lat": 42.5199041,
+      "lon": 14.157411,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "theatre",
+        "name": "Teatro del Mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_305461266",
+      "name": "Cafè del Mare",
+      "lat": 42.5178199,
+      "lon": 14.1605111,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "cafe",
+        "name": "Cafè del Mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_4554042059",
+      "name": "Europa mare",
+      "lat": 42.5170748,
+      "lon": 14.1618734,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Europa mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_4554042304",
+      "name": "lido Tamanaco",
+      "lat": 42.5215411,
+      "lon": 14.1570556,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "beach_resort",
+        "name": "lido Tamanaco"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8710190439",
+      "name": "Caduti del Mare",
+      "lat": 42.6467891,
+      "lon": 14.039553,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "historic": "monument",
+        "name": "Caduti del Mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9899732687",
+      "name": "Bar Mare & Monti",
+      "lat": 42.6483696,
+      "lon": 14.0392221,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "bar",
+        "name": "Bar Mare & Monti"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9899816677",
+      "name": "Restaurant Mare & Monti",
+      "lat": 42.6482855,
+      "lon": 14.0392696,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Restaurant Mare & Monti"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11358322194",
+      "name": "Lido Luigi",
+      "lat": 42.6763253,
+      "lon": 14.0180325,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "cafe",
+        "name": "Lido Luigi"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9604975705",
+      "name": "BellavistaMare",
+      "lat": 42.6862742,
+      "lon": 14.0114581,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "beach_resort",
+        "name": "BellavistaMare",
+        "website": "https://bellavistamare.it/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11358299184",
+      "name": "Marechiaro",
+      "lat": 42.6844575,
+      "lon": 14.011543,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Marechiaro"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11358347422",
+      "name": "Lido Altamira",
+      "lat": 42.6679572,
+      "lon": 14.0253477,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Lido Altamira"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7773774861",
+      "name": "Monumento ai caduti in mare",
+      "lat": 42.7978427,
+      "lon": 13.9460122,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "historic": "memorial",
+        "name": "Monumento ai caduti in mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12139948551",
+      "name": "Cologna Spiaggia",
+      "lat": 42.726166,
+      "lon": 13.9703282,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Cologna Spiaggia"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_1030471430",
+      "name": "Cologna Spiaggia",
+      "lat": 42.7246645,
+      "lon": 13.9805542,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Cologna Spiaggia",
+        "place": "village"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12139947923",
+      "name": "Cologna Spiaggia",
+      "lat": 42.7320135,
+      "lon": 13.9754684,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Cologna Spiaggia"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11945554027",
+      "name": "Cologna Spiaggia",
+      "lat": 42.7339931,
+      "lon": 13.9753121,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Cologna Spiaggia"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11945554031",
+      "name": "Cologna Spiaggia",
+      "lat": 42.7340398,
+      "lon": 13.975402,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Cologna Spiaggia"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_4370292692",
+      "name": "Lido Negril",
+      "lat": 42.745551,
+      "lon": 13.975932,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "beach_resort",
+        "name": "Lido Negril"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9994606885",
+      "name": "Madonna del Mare",
+      "lat": 42.7409534,
+      "lon": 13.978899,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "historic": "wayside_shrine",
+        "name": "Madonna del Mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_4370242939",
+      "name": "Marechiaro",
+      "lat": 42.7542291,
+      "lon": 13.9687306,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "cafe",
+        "name": "Marechiaro"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11358071427",
+      "name": "Monumento ai caduti del mare",
+      "lat": 42.754881,
+      "lon": 13.9687666,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "historic": "memorial",
+        "name": "Monumento ai caduti del mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12635235846",
+      "name": "aMare",
+      "lat": 42.7542725,
+      "lon": 13.9678488,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "aMare",
+        "phone": "+39 333 114 5027",
+        "tourism": "hotel"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12704300665",
+      "name": "Lido Alta Marea",
+      "lat": 42.7560034,
+      "lon": 13.9688954,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido Alta Marea"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12704300667",
+      "name": "Venere Mare",
+      "lat": 42.7568428,
+      "lon": 13.9685214,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Venere Mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12704364729",
+      "name": "Lido Arlecchino",
+      "lat": 42.7547189,
+      "lon": 13.9699397,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "beach_resort",
+        "name": "Lido Arlecchino"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12704364730",
+      "name": "Lido Azzurro Mare",
+      "lat": 42.7553151,
+      "lon": 13.9693823,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "beach_resort",
+        "name": "Lido Azzurro Mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12698428599",
+      "name": "Lido Paradiso",
+      "lat": 42.7652101,
+      "lon": 13.962633,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "beach_resort",
+        "name": "Lido Paradiso"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12698965800",
+      "name": "Cristallo Mare",
+      "lat": 42.7617196,
+      "lon": 13.9646049,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "beach_resort",
+        "name": "Cristallo Mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12704300675",
+      "name": "Lido Caprice",
+      "lat": 42.7597676,
+      "lon": 13.9661401,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido Caprice"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12698428568",
+      "name": "Spiaggia Residence Gambinus",
+      "lat": 42.7715299,
+      "lon": 13.9591751,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "beach_resort",
+        "name": "Spiaggia Residence Gambinus"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12698428570",
+      "name": "Lido Blu",
+      "lat": 42.7706563,
+      "lon": 13.9596592,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "beach_resort",
+        "name": "Lido Blu"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_2088257300",
+      "name": "Ristorante Lido Serenella",
+      "lat": 42.7468583,
+      "lon": 13.9753869,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Ristorante Lido Serenella"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_4370292688",
+      "name": "Lido Paola",
+      "lat": 42.7486671,
+      "lon": 13.9738345,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido Paola"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_4370292689",
+      "name": "Lido Cesare",
+      "lat": 42.7482716,
+      "lon": 13.9741901,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido Cesare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_4370292690",
+      "name": "Lido Arcobaleno",
+      "lat": 42.7474183,
+      "lon": 13.9748993,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido Arcobaleno"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_4370292691",
+      "name": "Lido Miramare",
+      "lat": 42.7479541,
+      "lon": 13.974556,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido Miramare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12704362207",
+      "name": "Lido Serenella",
+      "lat": 42.7468917,
+      "lon": 13.9753504,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "beach_resort",
+        "name": "Lido Serenella"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12698428534",
+      "name": "Lido Portofino",
+      "lat": 42.7751188,
+      "lon": 13.9574902,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido Portofino"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12698428565",
+      "name": "Costa Verde Mare",
+      "lat": 42.7721355,
+      "lon": 13.9588924,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Costa Verde Mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_4390124918",
+      "name": "Tortoreto Lido",
+      "lat": 42.7809173,
+      "lon": 13.9481584,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Tortoreto Lido"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11084223751",
+      "name": "Frontemare",
+      "lat": 42.7838141,
+      "lon": 13.953564,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Frontemare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_3309189980",
+      "name": "Hotel Miramare",
+      "lat": 42.601317,
+      "lon": 14.0734731,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Hotel Miramare",
+        "operator": "Mila srl",
+        "phone": "+39 085 9490513",
+        "tourism": "hotel",
+        "website": "https://www.miramarepineto.com/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_3309197515",
+      "name": "Hotel Miramare Dipendenza",
+      "lat": 42.6011769,
+      "lon": 14.0735799,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Hotel Miramare Dipendenza",
+        "operator": "Mila srl",
+        "phone": "+39 085 9490513",
+        "tourism": "hotel",
+        "website": "https://www.miramarepineto.com/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8726240754",
+      "name": "Miramare",
+      "lat": 42.6070595,
+      "lon": 14.0706023,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Miramare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_3129245004",
+      "name": "Hotel Mare Blu",
+      "lat": 42.5927905,
+      "lon": 14.0805516,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Hotel Mare Blu",
+        "phone": "+39 085 9490545",
+        "tourism": "hotel",
+        "website": "https://www.hotelmareblu.com/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_3129252604",
+      "name": "Mare Blu Resort",
+      "lat": 42.5925165,
+      "lon": 14.0801753,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Mare Blu Resort",
+        "phone": "+39 085 9493396",
+        "tourism": "hotel",
+        "website": "https://www.hotelmareblu.com/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_4377781086",
+      "name": "Palmaretta",
+      "lat": 42.8187118,
+      "lon": 13.5071479,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Palmaretta",
+        "place": "hamlet"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_452996771",
+      "name": "Ponte Marese",
+      "lat": 42.8706437,
+      "lon": 13.4545273,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Ponte Marese",
+        "place": "hamlet",
+        "wikidata": "Q18496644"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_452996765",
+      "name": "Marese",
+      "lat": 42.8688798,
+      "lon": 13.464543,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Marese",
+        "place": "hamlet",
+        "wikidata": "Q18496540"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12820441445",
+      "name": "Spiaggetta",
+      "lat": 42.8955476,
+      "lon": 13.4532024,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spiaggetta",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_4451623689",
+      "name": "La perla del mare",
+      "lat": 42.849814,
+      "lon": 13.6152449,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "La perla del mare",
+        "opening_hours": "Tu,Fr 08:00-14:00,16:00-20:00; We-Th,Sa 08:00-13:00; Mo,Su,PH off",
+        "phone": "+39 0736 349938"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_4446541789",
+      "name": "Da Maurizio Cucina d'Amare",
+      "lat": 42.8538026,
+      "lon": 13.5920142,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Da Maurizio Cucina d'Amare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_1395428147",
+      "name": "Tortoreto Lido",
+      "lat": 42.8039627,
+      "lon": 13.9432708,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Tortoreto Lido",
+        "place": "village"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11084262711",
+      "name": "Lady G mare",
+      "lat": 42.800323,
+      "lon": 13.9448758,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lady G mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11084262713",
+      "name": "Righi a mare",
+      "lat": 42.8032944,
+      "lon": 13.9438677,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Righi a mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12090866595",
+      "name": "Hotel Marebello",
+      "lat": 42.8010607,
+      "lon": 13.9428927,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Hotel Marebello",
+        "phone": "+39 0861 786 383",
+        "tourism": "hotel",
+        "website": "https://www.hotelmarebelloabruzzo.it/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12215531605",
+      "name": "Tortoreto Lido",
+      "lat": 42.8052252,
+      "lon": 13.938774,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Tortoreto Lido"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11084216419",
+      "name": "Amare beach",
+      "lat": 42.8048985,
+      "lon": 13.9430122,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Amare beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_4390124919",
+      "name": "Tortoreto Lido",
+      "lat": 42.812396,
+      "lon": 13.9306999,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Tortoreto Lido"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11084287089",
+      "name": "Garden lido",
+      "lat": 42.8132262,
+      "lon": 13.939398,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Garden lido"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12118721820",
+      "name": "Madonna del Mare",
+      "lat": 42.814282,
+      "lon": 13.9388711,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "historic": "monument",
+        "name": "Madonna del Mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_2326165030",
+      "name": "Lido pineta",
+      "lat": 42.8224608,
+      "lon": 13.936613,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido pineta",
+        "website": "http://www.lapinetina.it/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11084299535",
+      "name": "Marechiaro",
+      "lat": 42.8182482,
+      "lon": 13.9376631,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Marechiaro"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11084299540",
+      "name": "Doge spiaggia",
+      "lat": 42.8205435,
+      "lon": 13.937274,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Doge spiaggia"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11084299542",
+      "name": "Eucaliptus spiaggia",
+      "lat": 42.8231086,
+      "lon": 13.9364463,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Eucaliptus spiaggia"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12091976548",
+      "name": "Residence Anchise Mare",
+      "lat": 42.8277536,
+      "lon": 13.9311377,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Residence Anchise Mare",
+        "phone": "+39 086 175 3206",
+        "tourism": "hotel",
+        "website": "https://www.anchisemare.com/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11084299545",
+      "name": "Hotel lido beach",
+      "lat": 42.8252478,
+      "lon": 13.9357404,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Hotel lido beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9049944501",
+      "name": "Tutto mare",
+      "lat": 42.8582076,
+      "lon": 13.9261034,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Tutto mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_2959729098",
+      "name": "Chalet Lido",
+      "lat": 42.8607392,
+      "lon": 13.9264359,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "leisure": "beach_resort",
+        "name": "Chalet Lido"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_13039768453",
+      "name": "Circolo Velico \"Amici da Mare\"",
+      "lat": 42.8777528,
+      "lon": 13.9218986,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Circolo Velico \"Amici da Mare\"",
+        "sport": "sailing"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10568163814",
+      "name": "Francavilla Al Mare",
+      "lat": 42.3826152,
+      "lon": 14.2676511,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Francavilla Al Mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10576313918",
+      "name": "Verdemare",
+      "lat": 42.3961903,
+      "lon": 14.2811501,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Verdemare",
+        "phone": "+393402708779"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_376569696",
+      "name": "Pescara sud - Francavilla al Mare",
+      "lat": 42.3998286,
+      "lon": 14.2841245,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Pescara sud - Francavilla al Mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_245971954",
+      "name": "Pescara sud - Francavilla al Mare",
+      "lat": 42.3945245,
+      "lon": 14.2888201,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Pescara sud - Francavilla al Mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8343174669",
+      "name": "Francavilla al Mare",
+      "lat": 42.4194496,
+      "lon": 14.2656947,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Francavilla al Mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10783749033",
+      "name": "Marea Viaggi",
+      "lat": 42.424491,
+      "lon": 14.2777876,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Marea Viaggi",
+        "phone": "+390854913070",
+        "website": "https://mareaviaggi.it/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9773261561",
+      "name": "Lido Asteria",
+      "lat": 42.4295087,
+      "lon": 14.2776394,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "bar",
+        "name": "Lido Asteria"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10823817945",
+      "name": "Lido Luna Rossa",
+      "lat": 42.42899,
+      "lon": 14.2791277,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido Luna Rossa"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10823817946",
+      "name": "Lido Il Faro",
+      "lat": 42.4286006,
+      "lon": 14.2798668,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido Il Faro",
+        "phone": "+390854912581"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10841493206",
+      "name": "Lido Merope",
+      "lat": 42.4305648,
+      "lon": 14.2759073,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido Merope"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10841493207",
+      "name": "Lido Drago Verde",
+      "lat": 42.4310463,
+      "lon": 14.274984,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido Drago Verde"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10823817947",
+      "name": "Stella Del Mare",
+      "lat": 42.4277973,
+      "lon": 14.2811151,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Stella Del Mare",
+        "phone": "+393357617877"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10823817948",
+      "name": "Lido Sirenetta",
+      "lat": 42.4275856,
+      "lon": 14.2813693,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido Sirenetta",
+        "phone": "+390854914075"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10836566696",
+      "name": "Lido Stella Del Mare",
+      "lat": 42.4278292,
+      "lon": 14.2810563,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido Stella Del Mare",
+        "phone": "+393357617877"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10921443883",
+      "name": "Lido La Riviera Da Eraldo",
+      "lat": 42.4249535,
+      "lon": 14.2854471,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido La Riviera Da Eraldo"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10921443891",
+      "name": "Lido Bluemarine",
+      "lat": 42.4252472,
+      "lon": 14.2850792,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido Bluemarine"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10921443898",
+      "name": "Lido Conchiglia Azzurra",
+      "lat": 42.425705,
+      "lon": 14.284462,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido Conchiglia Azzurra",
+        "phone": "+393209013113"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10921449011",
+      "name": "Lido Orizzonte Beach",
+      "lat": 42.4261494,
+      "lon": 14.2837958,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido Orizzonte Beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_70990636",
+      "name": "Francavilla al Mare",
+      "lat": 42.4168011,
+      "lon": 14.2914819,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Francavilla al Mare",
+        "place": "town",
+        "wikidata": "Q51225"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10859770813",
+      "name": "La Tana Del Mare",
+      "lat": 42.4155851,
+      "lon": 14.2963659,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "La Tana Del Mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10901260133",
+      "name": "Lido Il Gabbiano",
+      "lat": 42.4171148,
+      "lon": 14.2981654,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido Il Gabbiano",
+        "phone": "+393336590337"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10910824455",
+      "name": "Lido OltreMare",
+      "lat": 42.4176806,
+      "lon": 14.2972506,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido OltreMare",
+        "phone": "+393394631094"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10910824456",
+      "name": "OltreMare",
+      "lat": 42.4176969,
+      "lon": 14.2972249,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "OltreMare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10892627056",
+      "name": "Spiaggia Libera",
+      "lat": 42.4100867,
+      "lon": 14.3107051,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "no",
+        "leisure": "beach_resort",
+        "name": "Spiaggia Libera"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10892661493",
+      "name": "Pianeta Mare",
+      "lat": 42.411876,
+      "lon": 14.3071314,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Pianeta Mare",
+        "phone": "+393496861609",
+        "website": "http://lidopianetamare.it/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_432860140",
+      "name": "Ai Caduti del Mare",
+      "lat": 42.4225219,
+      "lon": 14.2890173,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "historic": "monument",
+        "name": "Ai Caduti del Mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_443615295",
+      "name": "Francavilla al Mare",
+      "lat": 42.4212652,
+      "lon": 14.2879487,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Francavilla al Mare",
+        "operator": "RFI",
+        "wikidata": "Q20009402",
+        "wikipedia": "it:Stazione di Francavilla al Mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_989246233",
+      "name": "Parco Giochi Mare",
+      "lat": 42.4228383,
+      "lon": 14.2869167,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Parco Giochi Mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9832554048",
+      "name": "Lido Serenella",
+      "lat": 42.4210262,
+      "lon": 14.2914932,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido Serenella",
+        "phone": "+39 085 862 5227"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10910863279",
+      "name": "Lido Sirena",
+      "lat": 42.4202397,
+      "lon": 14.2927805,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido Sirena"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10914450401",
+      "name": "Lido Cortesito",
+      "lat": 42.421477,
+      "lon": 14.2906962,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido Cortesito",
+        "phone": "+393388654428"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10921086815",
+      "name": "Lido Mare Nostrum",
+      "lat": 42.4229325,
+      "lon": 14.2884763,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido Mare Nostrum",
+        "phone": "+393478768205"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10921086824",
+      "name": "Lido La Bussola",
+      "lat": 42.4237639,
+      "lon": 14.2872457,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido La Bussola"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8664085757",
+      "name": "Francavilla al Mare",
+      "lat": 42.3903991,
+      "lon": 14.3141012,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Francavilla al Mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8664085758",
+      "name": "Francavilla al Mare",
+      "lat": 42.3904471,
+      "lon": 14.3139669,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Francavilla al Mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7538442240",
+      "name": "Baramares",
+      "lat": 42.4044694,
+      "lon": 14.3206574,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "contact:phone": "+39 085 817525",
+        "name": "Baramares",
+        "opening_hours": "Tu-Su 16:30-00:00"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8344904404",
+      "name": "Francavilla al Mare",
+      "lat": 42.402219,
+      "lon": 14.3203505,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Francavilla al Mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8344907810",
+      "name": "Francavilla al Mare",
+      "lat": 42.4038786,
+      "lon": 14.3211063,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Francavilla al Mare"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11390324927",
+      "name": "Lido Punto Verde",
+      "lat": 42.3978476,
+      "lon": 14.3340388,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "beach_resort",
+        "name": "Lido Punto Verde"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10885976192",
+      "name": "Stadio Del Mare",
+      "lat": 42.4059941,
+      "lon": 14.3173782,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Stadio Del Mare",
+        "operator": "Protezione Civile Regione Abruzzo"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10889186773",
+      "name": "Lido Peppone",
+      "lat": 42.4076414,
+      "lon": 14.3147378,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido Peppone",
+        "phone": "+393335878257"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10892627011",
+      "name": "Lido Mambo",
+      "lat": 42.4086793,
+      "lon": 14.3132593,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido Mambo"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_900706748",
+      "name": "Mare Blu",
+      "lat": 42.4362559,
+      "lon": 14.2645909,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Mare Blu",
+        "phone": "+39085810032",
+        "tourism": "hotel",
+        "website": "https://www.marebluhotel.it/?lang=en"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10815820264",
+      "name": "Addio Mare ... Disse La Pannocchia",
+      "lat": 42.4368708,
+      "lon": 14.2636723,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Addio Mare ... Disse La Pannocchia"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10823817927",
+      "name": "Hotel Mare Blu",
+      "lat": 42.4368071,
+      "lon": 14.2654443,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Hotel Mare Blu"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10823817928",
+      "name": "Lido Rudygia",
+      "lat": 42.436673,
+      "lon": 14.265735,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido Rudygia",
+        "phone": "+393477875635"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10823817933",
+      "name": "Lido Venus",
+      "lat": 42.4362807,
+      "lon": 14.2663421,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido Venus",
+        "phone": "+390859118289",
+        "website": "https://lidovenus.it/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10823817950",
+      "name": "Lido La Tramontana",
+      "lat": 42.4371163,
+      "lon": 14.2649659,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido La Tramontana",
+        "phone": "+39085810252"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_4887750524",
+      "name": "Lido delle Rose",
+      "lat": 42.4353606,
+      "lon": 14.2677889,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido delle Rose"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_4887750526",
+      "name": "Lido È Nata Una Stella",
+      "lat": 42.4335386,
+      "lon": 14.270815,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido È Nata Una Stella",
+        "phone": "+393334460880",
+        "website": "https://www.enataunastella.it/contatti.php"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_4887750527",
+      "name": "Lido Bayahibe",
+      "lat": 42.4351731,
+      "lon": 14.268076,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "beach_resort",
+        "name": "Lido Bayahibe",
+        "phone": "+39085816790"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10823817949",
+      "name": "Lido Conca D'Oro",
+      "lat": 42.4343794,
+      "lon": 14.2694087,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "beach_resort",
+        "name": "Lido Conca D'Oro"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10836620786",
+      "name": "Lido Lo Squalo",
+      "lat": 42.432796,
+      "lon": 14.272041,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido Lo Squalo",
+        "phone": "+393441169909"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10815809746",
+      "name": "Spiaggia Libera",
+      "lat": 42.4382981,
+      "lon": 14.2630686,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "no",
+        "leisure": "beach_resort",
+        "name": "Spiaggia Libera"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10815820303",
+      "name": "Lido Nausica Beach",
+      "lat": 42.4380799,
+      "lon": 14.2634243,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido Nausica Beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10815828942",
+      "name": "Lido Urania",
+      "lat": 42.4386608,
+      "lon": 14.2625001,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido Urania",
+        "phone": "+393891628689"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10815828975",
+      "name": "Lido Siesta",
+      "lat": 42.439876,
+      "lon": 14.2606835,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "beach_resort",
+        "name": "Lido Siesta"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_6241789247",
+      "name": "Lido Riccio",
+      "lat": 42.3808416,
+      "lon": 14.3675692,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Lido Riccio",
+        "place": "hamlet"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_639851201",
+      "name": "Borgo San Pietro",
+      "lat": 42.268423,
+      "lon": 13.0621153,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Borgo San Pietro",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_639851200",
+      "name": "Borgo San Pietro",
+      "lat": 42.270409,
+      "lon": 13.0598795,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Borgo San Pietro",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_516932889",
+      "name": "Spiaggia di Calata Cintioni",
+      "lat": 42.3128722,
+      "lon": 14.4408564,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spiaggia di Calata Cintioni",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_666663828",
+      "name": "Spiaggia di Ripari Bardella",
+      "lat": 42.3196734,
+      "lon": 14.4334662,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spiaggia di Ripari Bardella",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_364037454",
+      "name": "Rocco Mancini",
+      "lat": 42.3035425,
+      "lon": 14.4540508,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Rocco Mancini",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_364037451",
+      "name": "Maruccio",
+      "lat": 42.3071198,
+      "lon": 14.4487902,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Maruccio",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_364110719",
+      "name": "Spiaggia di Cala Turchino",
+      "lat": 42.3005652,
+      "lon": 14.4589871,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spiaggia di Cala Turchino",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_144372931",
+      "name": "Lido Saraceni",
+      "lat": 42.3442223,
+      "lon": 14.4131049,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Lido Saraceni",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_144373023",
+      "name": "Spiaggia dei Ripari di Giobbe",
+      "lat": 42.3716963,
+      "lon": 14.392226,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spiaggia dei Ripari di Giobbe",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_666659441",
+      "name": "Spiaggia di Punta Ferruccio",
+      "lat": 42.3758132,
+      "lon": 14.3829248,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spiaggia di Punta Ferruccio",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_144373005",
+      "name": "Spiaggia della Ritorna",
+      "lat": 42.3593589,
+      "lon": 14.4085029,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spiaggia della Ritorna",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_666663827",
+      "name": "Spiaggia di Punta Acquabella",
+      "lat": 42.3305839,
+      "lon": 14.4244427,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spiaggia di Punta Acquabella",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_102317430",
+      "name": "Spiaggia di Santo Stefano",
+      "lat": 42.2003348,
+      "lon": 14.617688,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spiaggia di Santo Stefano",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_148985833",
+      "name": "Spiaggia delle Morge",
+      "lat": 42.2070997,
+      "lon": 14.60045,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spiaggia delle Morge",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_701565036",
+      "name": "Spiaggia Lido Le Morge",
+      "lat": 42.2172879,
+      "lon": 14.5779339,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spiaggia Lido Le Morge",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_661217811",
+      "name": "Spiaggia di Mottagrossa",
+      "lat": 42.1821766,
+      "lon": 14.6754169,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spiaggia di Mottagrossa",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_46767761",
+      "name": "Spiaggia di Casalbordino",
+      "lat": 42.1939154,
+      "lon": 14.6382307,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spiaggia di Casalbordino",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_661217812",
+      "name": "Spiaggia di Torre Sinello",
+      "lat": 42.1901158,
+      "lon": 14.6518587,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spiaggia di Torre Sinello",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_61556505",
+      "name": "Spiaggia di Cala D'Or",
+      "lat": 42.0425786,
+      "lon": 14.8384626,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spiaggia di Cala D'Or",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_61376678",
+      "name": "Spiaggia di Petacciato Marina",
+      "lat": 42.0350778,
+      "lon": 14.8570321,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spiaggia di Petacciato Marina",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_46795024",
+      "name": "Spiaggia di Vasto Marina",
+      "lat": 42.0941985,
+      "lon": 14.7350138,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spiaggia di Vasto Marina",
+        "natural": "beach",
+        "tourism": "attraction"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_297168601",
+      "name": "Spiaggia di Casarza",
+      "lat": 42.1188961,
+      "lon": 14.7202637,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spiaggia di Casarza",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_661296024",
+      "name": "Spiaggia di Torricella",
+      "lat": 42.1275804,
+      "lon": 14.7219044,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spiaggia di Torricella",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_659656798",
+      "name": "Spiaggia di Vignola a Mare",
+      "lat": 42.1451769,
+      "lon": 14.7183827,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spiaggia di Vignola a Mare",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_659656797",
+      "name": "Spiaggia della Canale",
+      "lat": 42.1402315,
+      "lon": 14.7187147,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spiaggia della Canale",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_148977364",
+      "name": "Spiaggia della Grotta del Saraceno",
+      "lat": 42.152595,
+      "lon": 14.7184467,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spiaggia della Grotta del Saraceno",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_659657814",
+      "name": "Spiggia della Foce Lebba",
+      "lat": 42.1653656,
+      "lon": 14.7170975,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spiggia della Foce Lebba",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_61379090",
+      "name": "Spiaggia del Lungomare Nord",
+      "lat": 42.0179497,
+      "lon": 14.9171429,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spiaggia del Lungomare Nord",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_524670480",
+      "name": "Spiaggia di Punta Aderci",
+      "lat": 42.1796206,
+      "lon": 14.685098,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spiaggia di Punta Aderci",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_1267186034",
+      "name": "Spiaggia libera",
+      "lat": 42.4575788,
+      "lon": 14.2367137,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "no",
+        "name": "Spiaggia libera",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_844611715",
+      "name": "Spiaggia Libera Tutti",
+      "lat": 42.4451674,
+      "lon": 14.2533587,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spiaggia Libera Tutti",
+        "natural": "beach",
+        "website": "https://www.arcipescara.org/spiaggia-libera-tutti/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_809579262",
+      "name": "Spiaggia libera",
+      "lat": 42.4616913,
+      "lon": 14.2319438,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "no",
+        "name": "Spiaggia libera",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_798444368",
+      "name": "Spiaggia libera",
+      "lat": 42.4740187,
+      "lon": 14.2119585,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spiaggia libera",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_1054180132",
+      "name": "Spiaggia libera",
+      "lat": 42.4587297,
+      "lon": 14.2348845,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "fee": "no",
+        "name": "Spiaggia libera",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_515527678",
+      "name": "Spiaggia di Torre del Cerrano",
+      "lat": 42.5848055,
+      "lon": 14.0901635,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spiaggia di Torre del Cerrano",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_459615598",
+      "name": "Spiaggia libera",
+      "lat": 42.4968877,
+      "lon": 14.1822808,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spiaggia libera",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_459615591",
+      "name": "Spiaggia libera",
+      "lat": 42.4995806,
+      "lon": 14.1796799,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spiaggia libera",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_459615568",
+      "name": "Spiaggia libera",
+      "lat": 42.5092438,
+      "lon": 14.1705469,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spiaggia libera",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_459615569",
+      "name": "Spiaggia libera, accessibile per disabili",
+      "lat": 42.5087859,
+      "lon": 14.1708591,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spiaggia libera, accessibile per disabili",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_459615570",
+      "name": "spiaggia libera",
+      "lat": 42.5081067,
+      "lon": 14.1714016,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "spiaggia libera",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_459615572",
+      "name": "Spiaggia libera",
+      "lat": 42.5069807,
+      "lon": 14.1724421,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spiaggia libera",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_459615614",
+      "name": "Spiaggia libera",
+      "lat": 42.4927166,
+      "lon": 14.1870369,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spiaggia libera",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_459615566",
+      "name": "Spiaggia libera",
+      "lat": 42.5109785,
+      "lon": 14.1685048,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spiaggia libera",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_459615567",
+      "name": "Spiaggia libera",
+      "lat": 42.5105059,
+      "lon": 14.1690604,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spiaggia libera",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_459594389",
+      "name": "Spiaggia libera",
+      "lat": 42.5192223,
+      "lon": 14.1599719,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spiaggia libera",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "way_899150692",
+      "name": "Spiaggia accessibile per disabili",
+      "lat": 42.5182602,
+      "lon": 14.1609458,
+      "category": "mare",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spiaggia accessibile per disabili",
+        "natural": "beach"
+      },
+      "beauty_score": 0.72
+    }
+  ]
+}

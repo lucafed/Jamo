@@ -1,0 +1,731 @@
+{
+  "ok": true,
+  "region": "it-abruzzo",
+  "category": "citta",
+  "generatedAt": "2026-01-05T11:07:10.638Z",
+  "bbox": [
+    13,
+    41.9,
+    14.9,
+    42.9
+  ],
+  "count": 49,
+  "endpoint": "https://overpass-api.de/api/interpreter",
+  "notes": [],
+  "pois": [
+    {
+      "id": "node_70992371",
+      "name": "Carsoli",
+      "lat": 42.098927,
+      "lon": 13.084888,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Carsoli",
+        "place": "town",
+        "wikidata": "Q30023852",
+        "wikipedia": "it:Carsoli"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_70992933",
+      "name": "Tagliacozzo",
+      "lat": 42.069327,
+      "lon": 13.254692,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Tagliacozzo",
+        "place": "town",
+        "wikidata": "Q30030985",
+        "wikipedia": "it:Tagliacozzo"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_72961883",
+      "name": "Borgorose",
+      "lat": 42.1933543,
+      "lon": 13.2338183,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Borgorose",
+        "place": "town"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_70990193",
+      "name": "L'Aquila",
+      "lat": 42.3489203,
+      "lon": 13.3979672,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "L'Aquila",
+        "place": "city",
+        "wikidata": "Q3476",
+        "wikipedia": "it:L'Aquila"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_68507585",
+      "name": "Norcia",
+      "lat": 42.7924117,
+      "lon": 13.0929279,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Norcia",
+        "name:it": "Norcia",
+        "place": "town",
+        "website": "https://www.comune.norcia.pg.it/",
+        "wikidata": "Q20494",
+        "wikipedia": "it:Norcia"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_72961383",
+      "name": "Amatrice",
+      "lat": 42.6292367,
+      "lon": 13.2891755,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Amatrice",
+        "place": "town",
+        "wikidata": "Q30022194"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_70992240",
+      "name": "Avezzano",
+      "lat": 42.0347963,
+      "lon": 13.4265048,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Avezzano",
+        "place": "town",
+        "wikidata": "Q30022445",
+        "wikipedia": "it:Avezzano"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_70992527",
+      "name": "Celano",
+      "lat": 42.0843238,
+      "lon": 13.5462069,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Celano",
+        "place": "town",
+        "wikidata": "Q50079",
+        "wikipedia": "it:Celano"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_70992630",
+      "name": "Rocca di Mezzo",
+      "lat": 42.2051312,
+      "lon": 13.5192689,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Rocca di Mezzo",
+        "place": "town",
+        "wikidata": "Q30029441"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_70993435",
+      "name": "Popoli Terme",
+      "lat": 42.1713106,
+      "lon": 13.832817,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Popoli Terme",
+        "place": "town",
+        "wikidata": "Q30029064"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_70992946",
+      "name": "Sulmona",
+      "lat": 42.0474231,
+      "lon": 13.927011,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Sulmona",
+        "place": "town",
+        "website": "https://www.comune.sulmona.aq.it/",
+        "wikidata": "Q50157",
+        "wikipedia": "it:Sulmona"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_70992731",
+      "name": "Pratola Peligna",
+      "lat": 42.098314,
+      "lon": 13.8739802,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Pratola Peligna",
+        "place": "town",
+        "wikidata": "Q30029153",
+        "wikipedia": "it:Pratola Peligna"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_70991848",
+      "name": "Guardiagrele",
+      "lat": 42.1954758,
+      "lon": 14.2197122,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Guardiagrele",
+        "place": "town"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_70993325",
+      "name": "Cepagatti",
+      "lat": 42.3643016,
+      "lon": 14.0717952,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Cepagatti",
+        "place": "town",
+        "wikidata": "Q51355",
+        "wikipedia": "it:Cepagatti"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_70990208",
+      "name": "Chieti",
+      "lat": 42.3446529,
+      "lon": 14.1659738,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Chieti",
+        "place": "city",
+        "website": "https://www.comune.chieti.it/",
+        "wikidata": "Q13138",
+        "wikipedia": "it:Chieti"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_67284184",
+      "name": "Montenero di Bisaccia",
+      "lat": 41.9573191,
+      "lon": 14.7808937,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Montenero di Bisaccia",
+        "place": "town"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_70991551",
+      "name": "Casoli",
+      "lat": 42.1147159,
+      "lon": 14.290695,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Casoli",
+        "place": "town"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_70991478",
+      "name": "Atessa",
+      "lat": 42.0718059,
+      "lon": 14.4489025,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Atessa",
+        "place": "town"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_70991841",
+      "name": "Gissi",
+      "lat": 42.0212271,
+      "lon": 14.5457485,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Gissi",
+        "place": "town"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_70990260",
+      "name": "Casalbordino",
+      "lat": 42.1506013,
+      "lon": 14.5847977,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Casalbordino",
+        "place": "town"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_70991800",
+      "name": "Lanciano",
+      "lat": 42.2305316,
+      "lon": 14.3907794,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Lanciano",
+        "name:it": "Lanciano",
+        "place": "town",
+        "wikidata": "Q8645"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_70990834",
+      "name": "Ortona",
+      "lat": 42.349643,
+      "lon": 14.403913,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Ortona",
+        "place": "town",
+        "wikidata": "Q51256"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_70990598",
+      "name": "Fossacesia",
+      "lat": 42.2446332,
+      "lon": 14.4829037,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Fossacesia",
+        "place": "town"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_70991066",
+      "name": "San Salvo",
+      "lat": 42.0433265,
+      "lon": 14.7272302,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "San Salvo",
+        "place": "town",
+        "wikidata": "Q51288"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_70992107",
+      "name": "Vasto",
+      "lat": 42.12434,
+      "lon": 14.705923,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Vasto",
+        "place": "town",
+        "website": "http://www.comune.vasto.ch.it/",
+        "wikidata": "Q51313",
+        "wikipedia": "it:Vasto"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_70993620",
+      "name": "Montorio al Vomano",
+      "lat": 42.5827062,
+      "lon": 13.6325193,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Montorio al Vomano",
+        "place": "town",
+        "wikidata": "Q51454",
+        "wikipedia": "it:Montorio al Vomano"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_70990245",
+      "name": "Teramo",
+      "lat": 42.6612893,
+      "lon": 13.6983524,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Teramo",
+        "name:it": "Teramo",
+        "place": "city",
+        "wikidata": "Q13137"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_70993765",
+      "name": "Civitella del Tronto",
+      "lat": 42.773446,
+      "lon": 13.672291,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Civitella del Tronto",
+        "place": "town",
+        "wikidata": "Q51440",
+        "wikipedia": "it:Civitella del Tronto"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_70993456",
+      "name": "Penne",
+      "lat": 42.4582153,
+      "lon": 13.9273256,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Penne",
+        "place": "town",
+        "wikidata": "Q51376",
+        "wikipedia": "it:Penne (Italia)"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_70993449",
+      "name": "Pianella",
+      "lat": 42.3960111,
+      "lon": 14.0462697,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Pianella",
+        "place": "town",
+        "wikidata": "Q51378",
+        "wikipedia": "it:Pianella"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_70993297",
+      "name": "Loreto Aprutino",
+      "lat": 42.434634,
+      "lon": 13.9832322,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Loreto Aprutino",
+        "place": "town",
+        "wikidata": "Q51369",
+        "wikipedia": "it:Loreto Aprutino"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_70993833",
+      "name": "Atri",
+      "lat": 42.5797836,
+      "lon": 13.97535,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Atri",
+        "place": "town",
+        "website": "https://www.comune.atri.te.it",
+        "wikidata": "Q51420",
+        "wikipedia": "it:Atri"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_70993479",
+      "name": "Spoltore",
+      "lat": 42.4552037,
+      "lon": 14.1406198,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spoltore",
+        "place": "town",
+        "wikidata": "Q51400"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_1221403361",
+      "name": "San Giovanni Teatino",
+      "lat": 42.4105412,
+      "lon": 14.2010296,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "San Giovanni Teatino",
+        "place": "town"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_1778115456",
+      "name": "Pescara",
+      "lat": 42.469613,
+      "lon": 14.2059269,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Pescara",
+        "place": "city",
+        "website": "https://www.comune.pescara.it/",
+        "wikidata": "Q2704",
+        "wikipedia": "it:Pescara"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_70993279",
+      "name": "Città Sant'Angelo",
+      "lat": 42.518144,
+      "lon": 14.059203,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Città Sant'Angelo",
+        "place": "town",
+        "wikidata": "Q51356",
+        "wikipedia": "it:Città Sant'Angelo"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_70993342",
+      "name": "Montesilvano",
+      "lat": 42.5136032,
+      "lon": 14.1516203,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Montesilvano",
+        "place": "town",
+        "website": "https://www.comune.montesilvano.pe.it/",
+        "wikidata": "Q51372",
+        "wikipedia": "it:Montesilvano"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_70993644",
+      "name": "Silvi Marina",
+      "lat": 42.5527448,
+      "lon": 14.1173634,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Silvi Marina",
+        "place": "town",
+        "wikidata": "Q51467",
+        "wikipedia": "it:Silvi"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_70993908",
+      "name": "Roseto degli Abruzzi",
+      "lat": 42.677577,
+      "lon": 14.0144636,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Roseto degli Abruzzi",
+        "place": "town",
+        "website": "https://www.comune.roseto.te.it/",
+        "wikidata": "Q2081",
+        "wikipedia": "it:Roseto degli Abruzzi"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_70993885",
+      "name": "Mosciano Sant'Angelo",
+      "lat": 42.7493491,
+      "lon": 13.8880309,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Mosciano Sant'Angelo",
+        "place": "town",
+        "wikidata": "Q51456",
+        "wikipedia": "it:Mosciano Sant'Angelo"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_70993632",
+      "name": "Giulianova",
+      "lat": 42.7535708,
+      "lon": 13.9667861,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Giulianova",
+        "place": "town",
+        "wikidata": "Q51450",
+        "wikipedia": "it:Giulianova"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_3715237646",
+      "name": "Pineto",
+      "lat": 42.6077714,
+      "lon": 14.0671028,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Pineto",
+        "place": "town",
+        "wikidata": "Q51462",
+        "wikipedia": "it:Pineto"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_70978814",
+      "name": "Ascoli Piceno",
+      "lat": 42.8546185,
+      "lon": 13.5755038,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Ascoli Piceno",
+        "name:it": "Ascoli Piceno",
+        "place": "city",
+        "wikidata": "Q49280470"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_70993912",
+      "name": "Sant'Egidio alla Vibrata",
+      "lat": 42.821048,
+      "lon": 13.717891,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Sant'Egidio alla Vibrata",
+        "place": "town",
+        "wikidata": "Q51464",
+        "wikipedia": "it:Sant'Egidio alla Vibrata"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_70993891",
+      "name": "Nereto",
+      "lat": 42.8189452,
+      "lon": 13.8160547,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Nereto",
+        "place": "town",
+        "wikidata": "Q51457",
+        "wikipedia": "it:Nereto"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_1395445928",
+      "name": "Tortoreto",
+      "lat": 42.8039462,
+      "lon": 13.9136469,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Tortoreto",
+        "place": "town"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_70993807",
+      "name": "Alba Adriatica",
+      "lat": 42.8343422,
+      "lon": 13.927816,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Alba Adriatica",
+        "place": "town"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_70993666",
+      "name": "Martinsicuro",
+      "lat": 42.8851442,
+      "lon": 13.9155354,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Martinsicuro",
+        "place": "town",
+        "wikidata": "Q51452"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_70990636",
+      "name": "Francavilla al Mare",
+      "lat": 42.4168011,
+      "lon": 14.2914819,
+      "category": "citta",
+      "visibility": "classica",
+      "tags": {
+        "name": "Francavilla al Mare",
+        "place": "town",
+        "wikidata": "Q51225"
+      },
+      "beauty_score": 0.72
+    }
+  ]
+}

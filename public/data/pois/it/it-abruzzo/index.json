@@ -1,1 +1,97 @@
-{"region":"it-abruzzo","updated_at":"2026-01-05","categories":{"family":{"count":0,"file":"family.json","endpoint":""},"theme_park":{"count":5,"file":"theme_park.json","endpoint":"https://overpass-api.de/api/interpreter"},"kids_museum":{"count":0,"file":"kids_museum.json","endpoint":"https://overpass.kumi.systems/api/interpreter"},"storia":{"count":670,"file":"storia.json","endpoint":"https://overpass-api.de/api/interpreter"},"natura":{"count":1580,"file":"natura.json","endpoint":"https://overpass.kumi.systems/api/interpreter"},"mare":{"count":330,"file":"mare.json","endpoint":"https://overpass.kumi.systems/api/interpreter"},"relax":{"count":180,"file":"relax.json","endpoint":"https://overpass-api.de/api/interpreter"},"viewpoints":{"count":1568,"file":"viewpoints.json","endpoint":"https://overpass-api.de/api/interpreter"},"hiking":{"count":305,"file":"hiking.json","endpoint":"https://overpass-api.de/api/interpreter"}}}
+{
+  "region": "it-abruzzo",
+  "generatedAt": "2026-01-05T11:01:31.136Z",
+  "bbox": [
+    13,
+    41.9,
+    14.9,
+    42.9
+  ],
+  "categories": {
+    "family": {
+      "count": 72,
+      "file": "/data/pois/it/it-abruzzo/family.json",
+      "endpoint": "https://overpass-api.de/api/interpreter",
+      "elapsedMs": 48242,
+      "notes": []
+    },
+    "theme_park": {
+      "count": 9,
+      "file": "/data/pois/it/it-abruzzo/theme_park.json",
+      "endpoint": "https://overpass-api.de/api/interpreter",
+      "elapsedMs": 23422,
+      "notes": []
+    },
+    "kids_museum": {
+      "count": 0,
+      "file": "/data/pois/it/it-abruzzo/kids_museum.json",
+      "endpoint": "https://overpass-api.de/api/interpreter",
+      "elapsedMs": 92115,
+      "notes": []
+    },
+    "relax": {
+      "count": 182,
+      "file": "/data/pois/it/it-abruzzo/relax.json",
+      "endpoint": "https://overpass-api.de/api/interpreter",
+      "elapsedMs": 24198,
+      "notes": []
+    },
+    "mare": {
+      "count": 330,
+      "file": "/data/pois/it/it-abruzzo/mare.json",
+      "endpoint": "https://overpass-api.de/api/interpreter",
+      "elapsedMs": 25750,
+      "notes": []
+    },
+    "natura": {
+      "count": 2047,
+      "file": "/data/pois/it/it-abruzzo/natura.json",
+      "endpoint": "https://overpass-api.de/api/interpreter",
+      "elapsedMs": 32549,
+      "notes": []
+    },
+    "storia": {
+      "count": 853,
+      "file": "/data/pois/it/it-abruzzo/storia.json",
+      "endpoint": "https://overpass-api.de/api/interpreter",
+      "elapsedMs": 30587,
+      "notes": []
+    },
+    "borghi": {
+      "count": 2766,
+      "file": "/data/pois/it/it-abruzzo/borghi.json",
+      "endpoint": "https://overpass-api.de/api/interpreter",
+      "elapsedMs": 34244,
+      "notes": []
+    },
+    "citta": {
+      "count": 49,
+      "file": "/data/pois/it/it-abruzzo/citta.json",
+      "endpoint": "https://overpass-api.de/api/interpreter",
+      "elapsedMs": 23191,
+      "notes": []
+    },
+    "montagna": {
+      "count": 1858,
+      "file": "/data/pois/it/it-abruzzo/montagna.json",
+      "endpoint": "https://overpass-api.de/api/interpreter",
+      "elapsedMs": 24374,
+      "notes": []
+    },
+    "viewpoints": {
+      "count": 1568,
+      "file": "/data/pois/it/it-abruzzo/viewpoints.json",
+      "endpoint": "https://overpass-api.de/api/interpreter",
+      "elapsedMs": 32415,
+      "notes": []
+    },
+    "hiking": {
+      "count": 247,
+      "file": "/data/pois/it/it-abruzzo/hiking.json",
+      "endpoint": "https://overpass-api.de/api/interpreter",
+      "elapsedMs": 28720,
+      "notes": []
+    }
+  },
+  "notes": []
+}

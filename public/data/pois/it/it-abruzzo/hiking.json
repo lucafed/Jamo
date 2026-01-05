@@ -1,1 +1,3495 @@
-{"elements":[{"id":"osm_node_297029836","name":"Calascio","lat":42.3282592,"lon":13.6978903,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_445338267","name":"Piccianello","lat":42.4841115,"lon":13.9911881,"type":"hiking","visibility":"classica","tags":["place=hamlet"]},{"id":"osm_node_528762315","name":"Il Rifugio del Pastore","lat":42.365455,"lon":13.725814,"type":"hiking","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_643166688","name":"Via Vestina","lat":42.511373,"lon":14.1444453,"type":"hiking","visibility":"classica","tags":["amenity=shelter"]},{"id":"osm_node_692972823","name":"Forca di Presta","lat":42.789918,"lon":13.2605581,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_954701567","name":"Monte Cofanello","lat":42.3453937,"lon":13.6207285,"type":"hiking","visibility":"classica","tags":["natural=peak"]},{"id":"osm_node_1177715742","name":"Rifugio Pomilio","lat":42.1607388,"lon":14.1324463,"type":"hiking","visibility":"classica","tags":[]},{"id":"osm_node_1226618348","name":"Club Alpino Italiano","lat":41.9078133,"lon":14.3715807,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_1327859731","name":"Rifugio Fonte Vetica","lat":42.4255874,"lon":13.7415796,"type":"hiking","visibility":"classica","tags":["tourism=alpine_hut"]},{"id":"osm_node_1349494075","name":"Il Vaduccio","lat":42.4592159,"lon":13.5973336,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_1360105047","name":"Ponte della Lama","lat":42.4677479,"lon":13.3551521,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_1362209500","name":"Il rifugio dei sapori","lat":42.6881451,"lon":13.5008351,"type":"hiking","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_1831997250","name":"Rifugio Jaccio della Madonna","lat":42.1176711,"lon":13.9747874,"type":"hiking","visibility":"classica","tags":["amenity=shelter"]},{"id":"osm_node_2108573231","name":"Monte Pianello della Macchia","lat":42.8167446,"lon":13.3022106,"type":"hiking","visibility":"classica","tags":["natural=peak"]},{"id":"osm_node_2139394442","name":"Rifugio Monte Corvo","lat":42.1749901,"lon":13.8785607,"type":"hiking","visibility":"classica","tags":["amenity=shelter"]},{"id":"osm_node_2147124052","name":"Rifugio Colle delle Vacche","lat":42.1190897,"lon":13.9255777,"type":"hiking","visibility":"classica","tags":["amenity=shelter"]},{"id":"osm_node_2147124058","name":"Iaccio Rosso","lat":42.1157633,"lon":13.9469339,"type":"hiking","visibility":"classica","tags":["amenity=shelter"]},{"id":"osm_node_2192656006","name":"Anello","lat":41.9397559,"lon":13.1485309,"type":"hiking","visibility":"classica","tags":["leisure=playground"]},{"id":"osm_node_2249336383","name":"Rifugio della Forestale","lat":42.1442092,"lon":14.0585108,"type":"hiking","visibility":"classica","tags":["amenity=shelter"]},{"id":"osm_node_2277020190","name":"Addiaccio della chiesa","lat":42.0949091,"lon":14.0585416,"type":"hiking","visibility":"classica","tags":["amenity=shelter"]},{"id":"osm_node_2343454913","name":"Rifugio Fagus","lat":42.0698965,"lon":13.1860508,"type":"hiking","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_2488156095","name":"Monte Iarvanello","lat":42.6640395,"lon":13.0829599,"type":"hiking","visibility":"classica","tags":["natural=peak"]},{"id":"osm_node_2935570971","name":"mtb murgia bike","lat":42.3908914,"lon":14.1049001,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_2974815410","name":"Valico Monte Salviano","lat":42.0174902,"lon":13.4045924,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_3049242085","name":"Sentiero CAI 297 Monte Bertona;Impollinators path","lat":42.414989,"lon":13.867363,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_3612394038","name":"Vado di Siella","lat":42.4196198,"lon":13.7657188,"type":"hiking","visibility":"classica","tags":["tourism=information","natural=saddle"]},{"id":"osm_node_3986163748","name":"Rifugio Aranello","lat":41.9167188,"lon":13.5959496,"type":"hiking","visibility":"classica","tags":["tourism=alpine_hut"]},{"id":"osm_node_4241102891","name":"rifugio Fiumata","lat":42.6251089,"lon":13.4260151,"type":"hiking","visibility":"classica","tags":["amenity=shelter"]},{"id":"osm_node_4371144692","name":"Basanello","lat":42.4248578,"lon":13.2565917,"type":"hiking","visibility":"classica","tags":["place=hamlet"]},{"id":"osm_node_4376596049","name":"Pizzeria Il sentiero","lat":42.8518612,"lon":13.6412463,"type":"hiking","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_4419262010","name":"Poggio Paganello","lat":42.8790569,"lon":13.4695342,"type":"hiking","visibility":"classica","tags":["place=hamlet"]},{"id":"osm_node_4572831094","name":"Bivacco Pischioli","lat":42.1584204,"lon":14.1778508,"type":"hiking","visibility":"classica","tags":["amenity=shelter"]},{"id":"osm_node_4668501751","name":"Club Alpino Italiano","lat":42.1520958,"lon":14.0986647,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_4668501757","name":"Club Alpino Italiano","lat":42.1578461,"lon":14.0775772,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_4671491601","name":"Club Alpino Italiano","lat":42.1472664,"lon":14.0572969,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_4671491656","name":"Club Alpino Italiano","lat":42.1469148,"lon":14.0552988,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_4671944018","name":"Club Alpino Italiano","lat":42.1593861,"lon":14.0304668,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_4671951840","name":"Club Alpino Italiano","lat":42.1671067,"lon":14.032312,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_4672332485","name":"Club Alpino Italiano","lat":42.1207002,"lon":13.9634828,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_4672332486","name":"Club Alpino Italiano","lat":42.1130363,"lon":13.9943785,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_4676251548","name":"Club Alpino Italiano","lat":42.1912465,"lon":14.0336588,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_4676251549","name":"Club Alpino Italiano","lat":42.1762005,"lon":14.038349,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_4676251550","name":"Club Alpino Italiano","lat":42.1578522,"lon":14.0729519,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_4676251551","name":"Club Alpino Italiano","lat":42.1643306,"lon":14.0726074,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_4676251559","name":"Club Alpino Italiano","lat":42.1846994,"lon":14.0397834,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_4676251802","name":"Club Alpino Italiano","lat":42.1696902,"lon":14.0839797,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_4697075203","name":"Club Alpino Italiano","lat":42.1625476,"lon":13.8823956,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_4697075204","name":"Club Alpino Italiano","lat":42.1600119,"lon":13.8772983,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_4697075222","name":"Club Alpino Italiano","lat":42.160386,"lon":13.8598045,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_4711336752","name":"Club Alpino Italiano","lat":42.1724231,"lon":14.0820648,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_4711336775","name":"Club Alpino Italiano","lat":42.1723483,"lon":14.0306746,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_4711336788","name":"Club Alpino Italiano","lat":42.1707389,"lon":14.0271523,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_4750716499","name":"Club Alpino Italiano","lat":41.974217,"lon":14.0605073,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_4802621551","name":"725 metri s.l.m.","lat":42.2491805,"lon":13.1649076,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_5004769164","name":"Campo Imperatore","lat":42.4462321,"lon":13.5565586,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_5004769165","name":"Passo del Lupo","lat":42.4438716,"lon":13.5439132,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_5004769166","name":"La Portella","lat":42.448612,"lon":13.53988,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_5004769167","name":"Campo Pericoli","lat":42.4556988,"lon":13.5453479,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_5004769168","name":"CAI L’Aquila","lat":42.4590968,"lon":13.5588921,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_5004769169","name":"Sella di Monte Aquila","lat":42.4544203,"lon":13.5585799,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_5004769170","name":"Sella di Monte Aquila","lat":42.4555614,"lon":13.5595994,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_5049618859","name":"bivio forchetta calderone","lat":42.4687565,"lon":13.5706017,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_5135377180","name":"Bivio Punta Trento","lat":42.167802,"lon":13.4001987,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_5741342814","name":"Zona di protezione A","lat":42.8027766,"lon":13.2595372,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_5758515375","name":"Rifugio Maddalena","lat":42.0022378,"lon":13.2189237,"type":"hiking","visibility":"classica","tags":["tourism=alpine_hut"]},{"id":"osm_node_6187820240","name":"rifugio Enel","lat":42.6284257,"lon":13.4405523,"type":"hiking","visibility":"classica","tags":["amenity=shelter"]},{"id":"osm_node_6193176374","name":"Recinto - Senza tetto, protezione da cani e cinghiali.","lat":42.0173788,"lon":13.1121228,"type":"hiking","visibility":"classica","tags":["amenity=shelter"]},{"id":"osm_node_6338160356","name":"Pianello","lat":42.0790255,"lon":14.3992324,"type":"hiking","visibility":"classica","tags":["place=hamlet"]},{"id":"osm_node_6340653096","name":"Survivor - Trekking & Carp fishing","lat":42.3470528,"lon":13.3981439,"type":"hiking","visibility":"classica","tags":[]},{"id":"osm_node_6653250722","name":"Fonte Falla","lat":42.3647135,"lon":13.0467437,"type":"hiking","visibility":"classica","tags":["amenity=shelter"]},{"id":"osm_node_6672654906","name":"Sella del Brecciaio","lat":42.4674003,"lon":13.5538409,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_6740120949","name":"Ruderi Castello Preturo","lat":42.3820659,"lon":13.2925129,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_6740123187","name":"Regione Abruzzo","lat":42.3785443,"lon":13.2960149,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_6740123275","name":"Regione Abruzzo","lat":42.3775526,"lon":13.2936773,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_6740123276","name":"Madonella Preturo","lat":42.3779437,"lon":13.2920603,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_6740123277","name":"Regione Abruzzo","lat":42.3783543,"lon":13.2933826,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_6740123278","name":"Preturo","lat":42.3784173,"lon":13.293457,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_6835706001","name":"Campo Imperatore","lat":42.4241607,"lon":13.7049037,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_7109282862","name":"Vecchio sentiero cascate","lat":42.0643184,"lon":14.3025797,"type":"hiking","visibility":"classica","tags":[]},{"id":"osm_node_7110250495","name":"Rifugio La Serra","lat":42.1187154,"lon":13.5409214,"type":"hiking","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_7160511367","name":"Il Lago","lat":42.7661862,"lon":13.5892135,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_7160541692","name":"Cresta EST","lat":42.7630762,"lon":13.6099565,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_7167401070","name":"Rifugio Diruto (Valle della Pera?)","lat":42.4470166,"lon":13.100882,"type":"hiking","visibility":"classica","tags":["historic=ruins"]},{"id":"osm_node_7283283855","name":"Montagna dei Fiori","lat":42.7653828,"lon":13.5971557,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_7476422959","name":"Fosso Cannavine","lat":42.6630579,"lon":13.391068,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_7476422962","name":"Sella di Pizzo di Sevo","lat":42.6643124,"lon":13.354952,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_7476423017","name":"Cima Lepri","lat":42.6516172,"lon":13.3685482,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_7476423019","name":"La Storna","lat":42.6553045,"lon":13.4153487,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_7476423020","name":"Stazzi della Morricana","lat":42.6578189,"lon":13.398849,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_7524320259","name":"Valle dell'Obito","lat":42.2035368,"lon":13.0341059,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_7524320260","name":"Alla F.te le Forche (M.te Filone)","lat":42.2033685,"lon":13.0247704,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_7527233199","name":"Rifugiomare Agriturismo","lat":42.2729466,"lon":14.4940933,"type":"hiking","visibility":"classica","tags":["tourism=guest_house"]},{"id":"osm_node_7572645817","name":"Porta Cartara","lat":42.8483068,"lon":13.5708243,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_7603570477","name":"ORIE300006","lat":42.613659,"lon":13.3485394,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_7603570478","name":"ORIE300005","lat":42.6086032,"lon":13.349949,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_7603585187","name":"ORIE300004","lat":42.6069168,"lon":13.3591213,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_7610502491","name":"C.so V. Emanuele II, civ.310 Bar Lucio","lat":42.4696326,"lon":14.2064961,"type":"hiking","visibility":"classica","tags":["amenity=shelter"]},{"id":"osm_node_7612832109","name":"300012","lat":42.6286681,"lon":13.375715,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_7612832110","name":"Club Alpino Italiano","lat":42.6257691,"lon":13.3578964,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_7660653663","name":"Cso V. Emanuele II, civ.123","lat":42.4665156,"lon":14.2102039,"type":"hiking","visibility":"classica","tags":["amenity=shelter"]},{"id":"osm_node_7674136721","name":"Sorgente Pane e Cacio","lat":42.5822629,"lon":13.3927116,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_7674136750","name":"Il Coppo","lat":42.5506187,"lon":13.4136329,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_7689531039","name":"Santa Lucia","lat":42.4982536,"lon":13.664716,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_7689531049","name":"Isola del gran sasso","lat":42.5004618,"lon":13.6633797,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_7689531062","name":"Isola del gran sasso","lat":42.5012245,"lon":13.6623661,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_7756578233","name":"Valle dell'acqua santa","lat":42.4714213,"lon":13.355001,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_7756578234","name":"Passo Belvedere","lat":42.4696359,"lon":13.4159628,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_7756688641","name":"Piano di Emidio","lat":42.404909,"lon":13.784381,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_7756802136","name":"Giancarlo Vuanello","lat":42.4046908,"lon":13.7833446,"type":"hiking","visibility":"classica","tags":["historic=wayside_cross"]},{"id":"osm_node_7761671992","name":"Rifugio delle Aquile","lat":42.6934379,"lon":13.6182285,"type":"hiking","visibility":"classica","tags":["tourism=alpine_hut","amenity=restaurant"]},{"id":"osm_node_7812395258","name":"San Martino","lat":42.4908637,"lon":13.4455692,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_7812395259","name":"Masseria Vaccareccia","lat":42.4778404,"lon":13.4586901,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_7817353580","name":"Rifugio Cima alta","lat":42.5009874,"lon":13.5792896,"type":"hiking","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_7856330743","name":"Il Rifugio della Rocca","lat":42.3278718,"lon":13.6911084,"type":"hiking","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_7881827216","name":"Fonte Rifugio Mazzaroni","lat":42.8947204,"lon":13.2701885,"type":"hiking","visibility":"classica","tags":["natural=spring"]},{"id":"osm_node_7926125492","name":"300011","lat":42.6285849,"lon":13.3613886,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_7937923673","name":"Camping dell'Apostolo Tommaso","lat":42.3090104,"lon":14.0901181,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_7956283047","name":"Il Rifugio","lat":42.4641463,"lon":14.1924832,"type":"hiking","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_8066716743","name":"Passo di Sasso Borghese","lat":42.867322,"lon":13.235497,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_8071946478","name":"Valico di San Paolo","lat":42.7431584,"lon":13.4486228,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_8071946479","name":"San Martino","lat":42.7360207,"lon":13.4496316,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_8071946480","name":"Monte Pidocchi","lat":42.713168,"lon":13.415871,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_8134288241","name":"Viale Aldo Moro, civ.6","lat":42.5210531,"lon":14.151536,"type":"hiking","visibility":"classica","tags":["amenity=shelter"]},{"id":"osm_node_8223979386","name":"Cso V. Emanuele II, civ.239","lat":42.4684386,"lon":14.2079525,"type":"hiking","visibility":"classica","tags":["amenity=shelter"]},{"id":"osm_node_8369398930","name":"direzione S. Egidio - LH1 - E378","lat":42.6676682,"lon":13.3085954,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_8385010041","name":"300/53","lat":42.6943722,"lon":13.2585279,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_8385010042","name":"Club Alpino Italiano Amatrice","lat":42.7311478,"lon":13.1910219,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_8385376421","name":"373/3","lat":42.6877552,"lon":13.3150599,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_8388509281","name":"Club Alpino Italiano","lat":42.6577831,"lon":13.1968081,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_8388622212","name":"ORIE369","lat":42.6173836,"lon":13.3453891,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_8394233891","name":"ORIE362005","lat":42.6116402,"lon":13.2965543,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_8394956550","name":"ORIE300002","lat":42.5899305,"lon":13.3653876,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_8394981418","name":"ORIE300001","lat":42.5817181,"lon":13.3712534,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_8395059460","name":"ORIE300003","lat":42.5933021,"lon":13.3651705,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_8402225882","name":"ORIE3000007","lat":42.6162719,"lon":13.3476361,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_8406153581","name":"ORIE300/08","lat":42.6196335,"lon":13.3498812,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_8409631508","name":"300013","lat":42.6291326,"lon":13.3773302,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_8409631509","name":"300010","lat":42.6279304,"lon":13.3603872,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_8409748968","name":"300017","lat":42.6302883,"lon":13.3349669,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_8409748970","name":"300016","lat":42.6380801,"lon":13.3389966,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_8409748971","name":"300015","lat":42.6400064,"lon":13.3527055,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_8409748972","name":"300014","lat":42.6379904,"lon":13.3577922,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_8467396771","name":"300/20","lat":42.6217782,"lon":13.3277312,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_8467429915","name":"300/18","lat":42.6297039,"lon":13.3345366,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_8467557733","name":"300/19","lat":42.625903,"lon":13.3312879,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_8467577621","name":"300/21","lat":42.6235517,"lon":13.318951,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_8468070922","name":"300/22","lat":42.6236055,"lon":13.3165006,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_8468088750","name":"300/23","lat":42.6243349,"lon":13.3142025,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_8468403883","name":"300/24","lat":42.6261851,"lon":13.3060871,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_8468799442","name":"300/25","lat":42.6261689,"lon":13.3052851,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_8469150606","name":"300/26","lat":42.6263151,"lon":13.3051405,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_8469438988","name":"300/28","lat":42.6268948,"lon":13.2966341,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_8470062168","name":"300/27","lat":42.6258069,"lon":13.3023041,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_8494433381","name":"300/29","lat":42.6286154,"lon":13.2917902,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_8494449175","name":"300/30","lat":42.6283754,"lon":13.2914528,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_8494455710","name":"300/33","lat":42.6323551,"lon":13.2866088,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_8494457633","name":"300/35","lat":42.6344361,"lon":13.2834407,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_8494489132","name":"300/34","lat":42.6327477,"lon":13.2862124,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_8529608121","name":"Vado di Sole","lat":42.4632113,"lon":13.8378659,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_8582536621","name":"Orsogna, Ortona, Autostrda A14","lat":42.3174268,"lon":14.3425245,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_8629175271","name":"Via Pastine","lat":42.2515198,"lon":14.0370723,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_8697614123","name":"Casacanditella","lat":42.2516109,"lon":14.201166,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_8730445902","name":"ARPA","lat":42.3982851,"lon":14.13937,"type":"hiking","visibility":"classica","tags":["amenity=shelter"]},{"id":"osm_node_8909784377","name":"Casino Vezzani","lat":42.31298,"lon":14.3571264,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_9209267900","name":"Rifugio","lat":42.7100879,"lon":13.2088789,"type":"hiking","visibility":"classica","tags":["tourism=alpine_hut"]},{"id":"osm_node_9252597836","name":"Rifugio Prato San Rocco","lat":42.2206467,"lon":13.3364435,"type":"hiking","visibility":"classica","tags":["tourism=alpine_hut"]},{"id":"osm_node_9352517229","name":"Caciara della Spaccaculi","lat":42.7854692,"lon":13.6194123,"type":"hiking","visibility":"classica","tags":["amenity=shelter"]},{"id":"osm_node_9439283942","name":"Pian dell'Oro","lat":42.7223303,"lon":13.6084977,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_9443990611","name":"Rifugio di Canale","lat":42.1377951,"lon":13.654669,"type":"hiking","visibility":"classica","tags":["tourism=wilderness_hut"]},{"id":"osm_node_9517181768","name":"Rifugio Fratta Montanara","lat":42.696845,"lon":13.6016978,"type":"hiking","visibility":"classica","tags":["tourism=alpine_hut","amenity=restaurant"]},{"id":"osm_node_9519246106","name":"ARPA","lat":42.1511651,"lon":14.0178825,"type":"hiking","visibility":"classica","tags":["amenity=shelter"]},{"id":"osm_node_9688344517","name":"Fosso delle Farfalle","lat":42.2857981,"lon":14.4695682,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_9688344618","name":"Sic Fosso delle Farfalle","lat":42.2884726,"lon":14.4730887,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_9692950608","name":"PUNTO DI POSA 2021.03","lat":42.630746,"lon":13.3352519,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_9713852281","name":"Rifugio 100 Fonti","lat":42.5902951,"lon":13.4398391,"type":"hiking","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_9770474347","name":"Rifugio Porcini","lat":42.4942178,"lon":13.0266046,"type":"hiking","visibility":"classica","tags":["tourism=alpine_hut"]},{"id":"osm_node_9783650653","name":"GTM","lat":42.4353497,"lon":14.2369528,"type":"hiking","visibility":"classica","tags":["amenity=shelter"]},{"id":"osm_node_9810807900","name":"Rifugio La Fossa","lat":42.0305228,"lon":13.129047,"type":"hiking","visibility":"classica","tags":["tourism=wilderness_hut"]},{"id":"osm_node_9817061271","name":"Grotta del Colle","lat":42.2098729,"lon":14.1716948,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_9933958052","name":"ATA","lat":42.8108193,"lon":13.5817492,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_9933958053","name":"ATA","lat":42.8161174,"lon":13.5830142,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_9933959976","name":"ATA","lat":42.8098029,"lon":13.5781641,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_9934017838","name":"ATA","lat":42.8142631,"lon":13.5747055,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_9935083842","name":"Il Rifugio di Danilo","lat":42.1248874,"lon":14.026838,"type":"hiking","visibility":"classica","tags":["amenity=bar"]},{"id":"osm_node_9942208539","name":"ARPA","lat":42.3759763,"lon":14.1169529,"type":"hiking","visibility":"classica","tags":["amenity=shelter"]},{"id":"osm_node_9955127439","name":"Club Alpino Italiano","lat":42.1414028,"lon":13.5328469,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_9955127441","name":"Club Alpino Italiano","lat":42.1370013,"lon":13.5419852,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_9955127442","name":"Club Alpino Italiano","lat":42.1356518,"lon":13.5516002,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_9955127444","name":"Club Alpino Italiano","lat":42.1254941,"lon":13.5810113,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_9955554097","name":"Fontana Medievale","lat":42.1560447,"lon":14.1975294,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_9966135771","name":"Colle del Bicchero","lat":42.1629124,"lon":13.3971244,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_9966135772","name":"Colle dell'Orso","lat":42.1708496,"lon":13.3961511,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_9976785694","name":"Club Alpino Italiano","lat":42.60496,"lon":13.299647,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_9979802208","name":"ARPA","lat":42.4004614,"lon":14.1413499,"type":"hiking","visibility":"classica","tags":["amenity=shelter"]},{"id":"osm_node_10159258709","name":"Prato Comune","lat":42.7997822,"lon":13.3284309,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_10223095498","name":"Piccianello Asc.","lat":42.4848194,"lon":13.9898611,"type":"hiking","visibility":"classica","tags":[]},{"id":"osm_node_10296924918","name":"Contrada Pizzuto","lat":42.3083644,"lon":13.8663179,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_10296925047","name":"Contrada Canale","lat":42.3074163,"lon":13.8656721,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_10298116507","name":"Fonte Moro","lat":42.3207983,"lon":13.861679,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_10303258238","name":"Ricovero Grotta dei Diavoli","lat":42.0811482,"lon":14.1239405,"type":"hiking","visibility":"classica","tags":["natural=cave_entrance","amenity=shelter"]},{"id":"osm_node_10304476315","name":"Le Plaie","lat":42.3365072,"lon":13.9604084,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_10309053467","name":"Cda Colli","lat":42.2786642,"lon":13.8632575,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_10611780434","name":"Parco Nazionale del Gran Sasso e Monti della Laga","lat":42.7670055,"lon":13.54095,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_10611780435","name":"Parco Nazionale del Gran Sasso e Monti della Laga","lat":42.7679235,"lon":13.5428714,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_10611780436","name":"Parco Nazionale del Gran Sasso e Monti della Laga","lat":42.761455,"lon":13.5385399,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_10701859141","name":"Rifugio Da Pepita","lat":42.4133122,"lon":14.2793187,"type":"hiking","visibility":"classica","tags":["amenity=animal_boarding"]},{"id":"osm_node_10736820871","name":"Club Alpino Italiano - Sezione Castelli - Rifugio Enrico Faiani","lat":42.467206,"lon":13.729951,"type":"hiking","visibility":"classica","tags":[]},{"id":"osm_node_10741047973","name":"Il Rifugio Di Diana","lat":42.4218258,"lon":14.256109,"type":"hiking","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_10814551307","name":"Pista del Lupo","lat":42.5583032,"lon":13.7663338,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_10916174062","name":"Rifugio Pian delle Scagne","lat":41.9757293,"lon":13.2735124,"type":"hiking","visibility":"classica","tags":["tourism=wilderness_hut"]},{"id":"osm_node_10993137022","name":"Casino Vezzani, Villa Mascitti, Parco dei Mulini","lat":42.3154132,"lon":14.3460963,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_10993137023","name":"Casino Vezzani, Villa Mascitti, Parco dei Mulini","lat":42.3098279,"lon":14.3476287,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_11020954132","name":"Pizzo Cefalone","lat":42.4507899,"lon":13.5237347,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_11050647695","name":"CAI","lat":42.133339,"lon":13.3865042,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_11150618048","name":"CAI","lat":41.9653398,"lon":13.1484427,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_11150618049","name":"I Tre Confini","lat":41.9679269,"lon":13.1447782,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_11151904695","name":"CAI","lat":42.1445139,"lon":13.3949338,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_11645001904","name":"Rifugio Pelino","lat":41.9729898,"lon":13.8903615,"type":"hiking","visibility":"classica","tags":["tourism=wilderness_hut"]},{"id":"osm_node_11780129862","name":"Colle di Bacchettone sentiero CAI 297","lat":42.4026738,"lon":13.8506219,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_11780159244","name":"M. Bertona Segnale verticale Sentiero CAI 297","lat":42.3998426,"lon":13.8533345,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_11780166132","name":"Pietra Rossa Sentiero CAI 297","lat":42.4133065,"lon":13.8530838,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_11780199380","name":"Segnale verticale sentiero CAI 297","lat":42.3969595,"lon":13.85128,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_11804242944","name":"incrocio 516-517","lat":42.7868605,"lon":13.3874282,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_11851520014","name":"Bivio Pito-Pozza","lat":42.7349398,"lon":13.4330798,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_11931878065","name":"Forchetta","lat":42.7258827,"lon":13.5980472,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_11951875450","name":"La Giumenta","lat":42.4952669,"lon":13.5504539,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_12023036203","name":"Bivacco San Lorenzo","lat":42.6840047,"lon":13.3340867,"type":"hiking","visibility":"classica","tags":["amenity=shelter"]},{"id":"osm_node_12047831177","name":"BI-6","lat":42.5338345,"lon":14.1356925,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_12055449470","name":"Santanello","lat":42.3930747,"lon":13.8799596,"type":"hiking","visibility":"classica","tags":["place=hamlet"]},{"id":"osm_node_12106443672","name":"Pacentro","lat":42.0454116,"lon":13.9749406,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_12120688375","name":"Sentiero Escursionistico-Religioso dell'Abruzzo \"Beato Pier Giorgio Frassati\"","lat":42.44145,"lon":13.8221362,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_12141611436","name":"Rifugio Degli Alpini","lat":42.795814,"lon":13.2998787,"type":"hiking","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_12149795394","name":"Agriturismo il sentiero delle fate","lat":42.8287641,"lon":13.2133887,"type":"hiking","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_12223978267","name":"Casetta Enel","lat":42.6441501,"lon":13.4369422,"type":"hiking","visibility":"classica","tags":["amenity=shelter"]},{"id":"osm_node_12250093005","name":"HIKE STORE","lat":42.3244638,"lon":13.5900358,"type":"hiking","visibility":"classica","tags":["amenity=bicycle_rental"]},{"id":"osm_node_12258957342","name":"ARPA","lat":42.24528,"lon":14.3097864,"type":"hiking","visibility":"classica","tags":["amenity=shelter"]},{"id":"osm_node_12317908790","name":"Passione Montagna Trail & Running","lat":42.0351584,"lon":13.4305052,"type":"hiking","visibility":"classica","tags":[]},{"id":"osm_node_12344079323","name":"Forca Canapine","lat":42.7487922,"lon":13.1995009,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_12386722372","name":"Appennino Bike Tour [ABT]","lat":42.2987662,"lon":13.494724,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_12433833494","name":"Le Pianocchie","lat":42.546396,"lon":13.4141117,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_12523049029","name":"Sentiero dei Mietitori","lat":42.7992289,"lon":13.2736534,"type":"hiking","visibility":"classica","tags":[]},{"id":"osm_node_12523049030","name":"Sentiero Monte Vettore - Lago di Pilato","lat":42.7901059,"lon":13.2605856,"type":"hiking","visibility":"classica","tags":[]},{"id":"osm_node_12594092101","name":"FIAB","lat":42.8606694,"lon":13.5851748,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_12597716251","name":"Rio S.Giacomo","lat":42.5301793,"lon":13.5664125,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_12609816768","name":"Vena dell'Aschiero","lat":42.503768,"lon":13.5709433,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_12650566966","name":"Pietra Stretta","lat":42.7135974,"lon":13.5871662,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_12728784331","name":"Il Cammino di San Domenico Abate","lat":41.9340578,"lon":13.8448307,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_12730719298","name":"Pineto","lat":42.6520023,"lon":14.0345864,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_12749832170","name":"Valle dell'Inferno","lat":42.3942432,"lon":14.2520429,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_12749832171","name":"Valle dell'Inferno","lat":42.3836856,"lon":14.2092085,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_12778894928","name":"Rifugio Campitelli","lat":42.048985,"lon":13.1486408,"type":"hiking","visibility":"classica","tags":["tourism=wilderness_hut"]},{"id":"osm_node_12809089403","name":"Gigi Panei 1","lat":42.1831559,"lon":13.3301465,"type":"hiking","visibility":"classica","tags":["amenity=shelter"]},{"id":"osm_node_12810082590","name":"Fosso della Cavata","lat":42.6441124,"lon":13.4368558,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_12810082591","name":"Fonte di Storre","lat":42.638326,"lon":13.4444366,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_12810082592","name":"La Fronte","lat":42.6335411,"lon":13.4512148,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_12810082596","name":"Ponte Flammagno","lat":42.6318013,"lon":13.4539584,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_12823302246","name":"Percorso Cascate di Forcella","lat":42.7978552,"lon":13.4274199,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_12828572665","name":"Piana Grande","lat":42.5040855,"lon":13.5123141,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_12828572668","name":"Fosso Venacquaro","lat":42.5046351,"lon":13.5124417,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_12828572670","name":"Bivio S.Onofrio","lat":42.5144173,"lon":13.5140341,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_12828572671","name":"Coste Farinello","lat":42.5289634,"lon":13.509733,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_12849156316","name":"Il Cammino dei Calanchi grigio-azzurri","lat":42.8996592,"lon":13.6643862,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_12850292520","name":"Funivia La Madonnina","lat":42.4887532,"lon":13.568689,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_12856884133","name":"Grancia Cistercense S.Maria del Monte","lat":42.3887464,"lon":13.6326543,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_12877199355","name":"Malafede","lat":42.5355342,"lon":13.5859083,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_12877199356","name":"Colle del Fiele","lat":42.5343424,"lon":13.5867003,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_12895403307","name":"Bivio 300I-SI","lat":42.5889633,"lon":13.4317276,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_12895403308","name":"Fosso della Laghetta","lat":42.582874,"lon":13.4016862,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_12899220054","name":"Rifugio Val d'Arano","lat":42.1394982,"lon":13.5267684,"type":"hiking","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_12912708120","name":"Bosco di Pagliara","lat":42.4700478,"lon":13.6826335,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_12912708121","name":"Bosco di Pagliara","lat":42.4673911,"lon":13.6748537,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_12943210599","name":"Fornacetta","lat":42.8370323,"lon":13.577986,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_12943413455","name":"S.P 47A","lat":42.619327,"lon":13.5036242,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_12943413457","name":"Fonte Spugna","lat":42.6187527,"lon":13.4941842,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_12943413458","name":"Prati di Lame","lat":42.6227376,"lon":13.487893,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_12944766132","name":"Palestra delle Aquile","lat":42.5148099,"lon":13.5696886,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_12986499744","name":"Club Alpino Italiano","lat":42.7683763,"lon":13.6114269,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_12986499745","name":"Club Alpino Italiano","lat":42.7775001,"lon":13.615473,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_12989495380","name":"Club Alpino Italiano","lat":42.7927672,"lon":13.5843533,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_12989495381","name":"Club Alpino Italiano","lat":42.792842,"lon":13.5955569,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_12989935277","name":"Club Alpino Italiano","lat":42.7521601,"lon":13.6153287,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_12989935278","name":"Club Alpino Italiano","lat":42.7528432,"lon":13.6063106,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_12996673863","name":"Vado di Corno","lat":42.4531517,"lon":13.5962026,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_13004914978","name":"Madonna del Lago","lat":42.347205,"lon":13.644946,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_13013536609","name":"Club Alpino Italiano","lat":42.7268945,"lon":13.6091954,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_13061549772","name":"Val di Foro","lat":42.3950932,"lon":14.3226957,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_13069415678","name":"bivio diga, San Benedetto, Colli lungo lago","lat":42.6398959,"lon":13.2697718,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_13094422460","name":"Albergo Diruto","lat":42.4931778,"lon":13.5726291,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_13130421417","name":"Contrada Ripari","lat":42.3196748,"lon":14.4297809,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_13149022772","name":"Il Rifugio dei Marsi","lat":42.8543525,"lon":13.4776704,"type":"hiking","visibility":"classica","tags":["tourism=guest_house"]},{"id":"osm_node_13161856388","name":"Sentiero per tutti","lat":42.7866313,"lon":13.2594375,"type":"hiking","visibility":"classica","tags":[]},{"id":"osm_node_13166599253","name":"Brecciaio","lat":42.1475277,"lon":14.390877,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_13207112988","name":"La Forchetta","lat":42.5092303,"lon":13.5898734,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_13208651461","name":"Sella della Scinderella","lat":42.4179323,"lon":13.578158,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_13208651463","name":"Scindarella","lat":42.4313254,"lon":13.5693777,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_13208651464","name":"Monte Scindarella-Cima Nord Ovest","lat":42.4318736,"lon":13.5744452,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_13233055489","name":"Rifugio Bruno Pomilio","lat":42.1608437,"lon":14.1325822,"type":"hiking","visibility":"classica","tags":["tourism=chalet"]},{"id":"osm_node_13281577512","name":"Pezze Della Macchia","lat":41.9040571,"lon":13.3507326,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_13285723177","name":"Fonte delle Trocche","lat":42.7159211,"lon":13.6297283,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_13302365015","name":"Ponte del Mulino","lat":42.6401645,"lon":13.5624546,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_13302365019","name":"Bivio Villa Riccio","lat":42.644896,"lon":13.5510394,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_13302365020","name":"Fonte Spinero","lat":42.6489519,"lon":13.5448192,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_13329208147","name":"Club Alpino Italiano","lat":42.8039291,"lon":13.6043821,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_13329208148","name":"Club Alpino Italiano","lat":42.7974721,"lon":13.5966962,"type":"hiking","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_13329208149","name":"Club Alpino Italiano","lat":42.7950196,"lon":13.5976215,"type":"hiking","visibility":"classica","tags":["tourism=information"]}]}
+{
+  "ok": true,
+  "region": "it-abruzzo",
+  "category": "hiking",
+  "generatedAt": "2026-01-05T11:08:38.095Z",
+  "bbox": [
+    13,
+    41.9,
+    14.9,
+    42.9
+  ],
+  "count": 247,
+  "endpoint": "https://overpass-api.de/api/interpreter",
+  "notes": [],
+  "pois": [
+    {
+      "id": "node_2192656006",
+      "name": "Anello",
+      "lat": 41.9397559,
+      "lon": 13.1485309,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "playground",
+        "name": "Anello"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_13281577512",
+      "name": "Pezze Della Macchia",
+      "lat": 41.9040571,
+      "lon": 13.3507326,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Pezze Della Macchia",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11150618049",
+      "name": "I Tre Confini",
+      "lat": 41.9679269,
+      "lon": 13.1447782,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "I Tre Confini",
+        "operator": "CAI",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_6193176374",
+      "name": "Recinto - Senza tetto, protezione da cani e cinghiali.",
+      "lat": 42.0173788,
+      "lon": 13.1121228,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "shelter",
+        "name": "Recinto - Senza tetto, protezione da cani e cinghiali."
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9810807900",
+      "name": "Rifugio La Fossa",
+      "lat": 42.0305228,
+      "lon": 13.129047,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "name": "Rifugio La Fossa",
+        "tourism": "wilderness_hut"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12778894928",
+      "name": "Rifugio Campitelli",
+      "lat": 42.048985,
+      "lon": 13.1486408,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "name": "Rifugio Campitelli",
+        "tourism": "wilderness_hut"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_2343454913",
+      "name": "Rifugio Fagus",
+      "lat": 42.0698965,
+      "lon": 13.1860508,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Rifugio Fagus",
+        "phone": "+39 3497597056"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_5758515375",
+      "name": "Rifugio Maddalena",
+      "lat": 42.0022378,
+      "lon": 13.2189237,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "name": "Rifugio Maddalena",
+        "tourism": "alpine_hut"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10916174062",
+      "name": "Rifugio Pian delle Scagne",
+      "lat": 41.9757293,
+      "lon": 13.2735124,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "name": "Rifugio Pian delle Scagne",
+        "operator": "Comune di Cappadocia",
+        "tourism": "wilderness_hut"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_2974815410",
+      "name": "Valico Monte Salviano",
+      "lat": 42.0174902,
+      "lon": 13.4045924,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Valico Monte Salviano",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_5135377180",
+      "name": "Bivio Punta Trento",
+      "lat": 42.167802,
+      "lon": 13.4001987,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Bivio Punta Trento",
+        "operator": "CAI",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9966135771",
+      "name": "Colle del Bicchero",
+      "lat": 42.1629124,
+      "lon": 13.3971244,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Colle del Bicchero",
+        "operator": "CAI",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7524320260",
+      "name": "Alla F.te le Forche (M.te Filone)",
+      "lat": 42.2033685,
+      "lon": 13.0247704,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Alla F.te le Forche (M.te Filone)",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7524320259",
+      "name": "Valle dell'Obito",
+      "lat": 42.2035368,
+      "lon": 13.0341059,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Valle dell'Obito",
+        "operator": "Riserva Navegna e Cervia",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_4802621551",
+      "name": "725 metri s.l.m.",
+      "lat": 42.2491805,
+      "lon": 13.1649076,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "725 metri s.l.m.",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_6653250722",
+      "name": "Fonte Falla",
+      "lat": 42.3647135,
+      "lon": 13.0467437,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "shelter",
+        "name": "Fonte Falla"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12809089403",
+      "name": "Gigi Panei 1",
+      "lat": 42.1831559,
+      "lon": 13.3301465,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "shelter",
+        "name": "Gigi Panei 1"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9252597836",
+      "name": "Rifugio Prato San Rocco",
+      "lat": 42.2206467,
+      "lon": 13.3364435,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "name": "Rifugio Prato San Rocco",
+        "operator": "Azienda Agricola Monte San Rocco",
+        "phone": "+393483156450",
+        "tourism": "alpine_hut"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9966135772",
+      "name": "Colle dell'Orso",
+      "lat": 42.1708496,
+      "lon": 13.3961511,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Colle dell'Orso",
+        "operator": "CAI",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_6740123276",
+      "name": "Madonella Preturo",
+      "lat": 42.3779437,
+      "lon": 13.2920603,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Madonella Preturo",
+        "operator": "Regione Abruzzo",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_6740123278",
+      "name": "Preturo",
+      "lat": 42.3784173,
+      "lon": 13.293457,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Preturo",
+        "operator": "Regione Abruzzo",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_6340653096",
+      "name": "Survivor - Trekking & Carp fishing",
+      "lat": 42.3470528,
+      "lon": 13.3981439,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "name": "Survivor - Trekking & Carp fishing",
+        "opening_hours": "Mo closed; Tu-Fr 10:30-13:30,16:00-20:00; Sa 10:30-20:00; Su 16:00-20:00",
+        "phone": "+39 347 186 5481;+39 3280571889",
+        "website": "https://www.survivor-aq.it/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7167401070",
+      "name": "Rifugio Diruto (Valle della Pera?)",
+      "lat": 42.4470166,
+      "lon": 13.100882,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "historic": "ruins",
+        "name": "Rifugio Diruto (Valle della Pera?)"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9770474347",
+      "name": "Rifugio Porcini",
+      "lat": 42.4942178,
+      "lon": 13.0266046,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "fee": "no",
+        "name": "Rifugio Porcini",
+        "tourism": "alpine_hut"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_4371144692",
+      "name": "Basanello",
+      "lat": 42.4248578,
+      "lon": 13.2565917,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "name": "Basanello",
+        "place": "hamlet",
+        "wikidata": "Q18426993"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_6740120949",
+      "name": "Ruderi Castello Preturo",
+      "lat": 42.3820659,
+      "lon": 13.2925129,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Ruderi Castello Preturo",
+        "operator": "Regione Abruzzo",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_1360105047",
+      "name": "Ponte della Lama",
+      "lat": 42.4677479,
+      "lon": 13.3551521,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Ponte della Lama",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7756578233",
+      "name": "Valle dell'acqua santa",
+      "lat": 42.4714213,
+      "lon": 13.355001,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Valle dell'acqua santa",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7756578234",
+      "name": "Passo Belvedere",
+      "lat": 42.4696359,
+      "lon": 13.4159628,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Passo Belvedere",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12433833494",
+      "name": "Le Pianocchie",
+      "lat": 42.546396,
+      "lon": 13.4141117,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Le Pianocchie",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7674136750",
+      "name": "Il Coppo",
+      "lat": 42.5506187,
+      "lon": 13.4136329,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Il Coppo",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8394981418",
+      "name": "ORIE300001",
+      "lat": 42.5817181,
+      "lon": 13.3712534,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "ORIE300001",
+        "operator": "Club Alpino Italiano",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7674136721",
+      "name": "Sorgente Pane e Cacio",
+      "lat": 42.5822629,
+      "lon": 13.3927116,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Sorgente Pane e Cacio",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12895403308",
+      "name": "Fosso della Laghetta",
+      "lat": 42.582874,
+      "lon": 13.4016862,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Fosso della Laghetta",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_2488156095",
+      "name": "Monte Iarvanello",
+      "lat": 42.6640395,
+      "lon": 13.0829599,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "name": "Monte Iarvanello",
+        "natural": "peak"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9209267900",
+      "name": "Rifugio",
+      "lat": 42.7100879,
+      "lon": 13.2088789,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "name": "Rifugio",
+        "tourism": "alpine_hut"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12344079323",
+      "name": "Forca Canapine",
+      "lat": 42.7487922,
+      "lon": 13.1995009,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Forca Canapine",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8394233891",
+      "name": "ORIE362005",
+      "lat": 42.6116402,
+      "lon": 13.2965543,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "ORIE362005",
+        "operator": "Club Alpino Italiano",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_13069415678",
+      "name": "bivio diga, San Benedetto, Colli lungo lago",
+      "lat": 42.6398959,
+      "lon": 13.2697718,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "bivio diga, San Benedetto, Colli lungo lago",
+        "operator": "CAI Amatrice",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8494457633",
+      "name": "300/35",
+      "lat": 42.6344361,
+      "lon": 13.2834407,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "300/35",
+        "operator": "CAI Amatrice",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8494455710",
+      "name": "300/33",
+      "lat": 42.6323551,
+      "lon": 13.2866088,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "300/33",
+        "operator": "CAI Amatrice",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8494489132",
+      "name": "300/34",
+      "lat": 42.6327477,
+      "lon": 13.2862124,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "300/34",
+        "operator": "CAI Amatrice",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8469438988",
+      "name": "300/28",
+      "lat": 42.6268948,
+      "lon": 13.2966341,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "300/28",
+        "operator": "CAI Amatrice",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8470062168",
+      "name": "300/27",
+      "lat": 42.6258069,
+      "lon": 13.3023041,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "300/27",
+        "operator": "CAI Amatrice",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8468403883",
+      "name": "300/24",
+      "lat": 42.6261851,
+      "lon": 13.3060871,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "300/24",
+        "operator": "CAI Amatrice",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8468799442",
+      "name": "300/25",
+      "lat": 42.6261689,
+      "lon": 13.3052851,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "300/25",
+        "operator": "CAI Amatrice",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8469150606",
+      "name": "300/26",
+      "lat": 42.6263151,
+      "lon": 13.3051405,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "300/26",
+        "operator": "CAI Amatrice",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8468070922",
+      "name": "300/22",
+      "lat": 42.6236055,
+      "lon": 13.3165006,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "300/22",
+        "operator": "CAI Amatrice",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8468088750",
+      "name": "300/23",
+      "lat": 42.6243349,
+      "lon": 13.3142025,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "300/23",
+        "operator": "CAI Amatrice",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8494433381",
+      "name": "300/29",
+      "lat": 42.6286154,
+      "lon": 13.2917902,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "300/29",
+        "operator": "CAI Amatrice",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8494449175",
+      "name": "300/30",
+      "lat": 42.6283754,
+      "lon": 13.2914528,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "300/30",
+        "operator": "CAI Amatrice",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8369398930",
+      "name": "direzione S. Egidio - LH1 - E378",
+      "lat": 42.6676682,
+      "lon": 13.3085954,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "direzione S. Egidio - LH1 - E378",
+        "operator": "Club Alpino Italiano",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8385376421",
+      "name": "373/3",
+      "lat": 42.6877552,
+      "lon": 13.3150599,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "373/3",
+        "operator": "Club Alpino Italiano Amatrice",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8394956550",
+      "name": "ORIE300002",
+      "lat": 42.5899305,
+      "lon": 13.3653876,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "ORIE300002",
+        "operator": "Club Alpino Italiano",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8395059460",
+      "name": "ORIE300003",
+      "lat": 42.5933021,
+      "lon": 13.3651705,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "ORIE300003",
+        "operator": "Club Alpino Italiano",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7603570477",
+      "name": "ORIE300006",
+      "lat": 42.613659,
+      "lon": 13.3485394,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "ORIE300006",
+        "operator": "Club Alpino Italiano",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7603570478",
+      "name": "ORIE300005",
+      "lat": 42.6086032,
+      "lon": 13.349949,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "ORIE300005",
+        "operator": "Club Alpino Italiano",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7603585187",
+      "name": "ORIE300004",
+      "lat": 42.6069168,
+      "lon": 13.3591213,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "ORIE300004",
+        "operator": "Club Alpino Italiano",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8467577621",
+      "name": "300/21",
+      "lat": 42.6235517,
+      "lon": 13.318951,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "300/21",
+        "operator": "CAI Amatrice",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8467396771",
+      "name": "300/20",
+      "lat": 42.6217782,
+      "lon": 13.3277312,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "300/20",
+        "operator": "CAI Amatrice",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8467557733",
+      "name": "300/19",
+      "lat": 42.625903,
+      "lon": 13.3312879,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "300/19",
+        "operator": "CAI Amatrice",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8409748968",
+      "name": "300017",
+      "lat": 42.6302883,
+      "lon": 13.3349669,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "300017",
+        "operator": "Club Alpino Italiano",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8467429915",
+      "name": "300/18",
+      "lat": 42.6297039,
+      "lon": 13.3345366,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "300/18",
+        "operator": "CAI Amatrice",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9692950608",
+      "name": "PUNTO DI POSA 2021.03",
+      "lat": 42.630746,
+      "lon": 13.3352519,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "PUNTO DI POSA 2021.03",
+        "operator": "CAI Amatrice",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8409748970",
+      "name": "300016",
+      "lat": 42.6380801,
+      "lon": 13.3389966,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "300016",
+        "operator": "Club Alpino Italiano",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8388622212",
+      "name": "ORIE369",
+      "lat": 42.6173836,
+      "lon": 13.3453891,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "ORIE369",
+        "operator": "Club Alpino Italiano",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8402225882",
+      "name": "ORIE3000007",
+      "lat": 42.6162719,
+      "lon": 13.3476361,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "ORIE3000007",
+        "operator": "Club Alpino Italiano",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8406153581",
+      "name": "ORIE300/08",
+      "lat": 42.6196335,
+      "lon": 13.3498812,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "ORIE300/08",
+        "operator": "Club Alpino Italiano",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8409748971",
+      "name": "300015",
+      "lat": 42.6400064,
+      "lon": 13.3527055,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "300015",
+        "operator": "Club Alpino Italiano",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7926125492",
+      "name": "300011",
+      "lat": 42.6285849,
+      "lon": 13.3613886,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "300011",
+        "operator": "Club Alpino Italiano",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8409631509",
+      "name": "300010",
+      "lat": 42.6279304,
+      "lon": 13.3603872,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "300010",
+        "operator": "Club Alpino Italiano",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8409748972",
+      "name": "300014",
+      "lat": 42.6379904,
+      "lon": 13.3577922,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "300014",
+        "operator": "Club Alpino Italiano",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7612832109",
+      "name": "300012",
+      "lat": 42.6286681,
+      "lon": 13.375715,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "300012",
+        "operator": "Club Alpino Italiano",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8409631508",
+      "name": "300013",
+      "lat": 42.6291326,
+      "lon": 13.3773302,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "300013",
+        "operator": "Club Alpino Italiano",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7476423017",
+      "name": "Cima Lepri",
+      "lat": 42.6516172,
+      "lon": 13.3685482,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Cima Lepri",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7476422962",
+      "name": "Sella di Pizzo di Sevo",
+      "lat": 42.6643124,
+      "lon": 13.354952,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Sella di Pizzo di Sevo",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12023036203",
+      "name": "Bivacco San Lorenzo",
+      "lat": 42.6840047,
+      "lon": 13.3340867,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "shelter",
+        "name": "Bivacco San Lorenzo"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7476422959",
+      "name": "Fosso Cannavine",
+      "lat": 42.6630579,
+      "lon": 13.391068,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Fosso Cannavine",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7476423020",
+      "name": "Stazzi della Morricana",
+      "lat": 42.6578189,
+      "lon": 13.398849,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Stazzi della Morricana",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7476423019",
+      "name": "La Storna",
+      "lat": 42.6553045,
+      "lon": 13.4153487,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "La Storna",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8385010041",
+      "name": "300/53",
+      "lat": 42.6943722,
+      "lon": 13.2585279,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "300/53",
+        "operator": "Club Alpino Italiano Amatrice",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_692972823",
+      "name": "Forca di Presta",
+      "lat": 42.789918,
+      "lon": 13.2605581,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Forca di Presta",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12523049030",
+      "name": "Sentiero Monte Vettore - Lago di Pilato",
+      "lat": 42.7901059,
+      "lon": 13.2605856,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "name": "Sentiero Monte Vettore - Lago di Pilato"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_13161856388",
+      "name": "Sentiero per tutti",
+      "lat": 42.7866313,
+      "lon": 13.2594375,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "name": "Sentiero per tutti"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12141611436",
+      "name": "Rifugio Degli Alpini",
+      "lat": 42.795814,
+      "lon": 13.2998787,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Rifugio Degli Alpini",
+        "opening_hours": "\"solo pranzo, chiuso di sera\"",
+        "phone": "+393804991615"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8071946480",
+      "name": "Monte Pidocchi",
+      "lat": 42.713168,
+      "lon": 13.415871,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Monte Pidocchi",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11804242944",
+      "name": "incrocio 516-517",
+      "lat": 42.7868605,
+      "lon": 13.3874282,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "incrocio 516-517",
+        "operator": "Club Alpino Italiano",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_5741342814",
+      "name": "Zona di protezione A",
+      "lat": 42.8027766,
+      "lon": 13.2595372,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Zona di protezione A",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12149795394",
+      "name": "Agriturismo il sentiero delle fate",
+      "lat": 42.8287641,
+      "lon": 13.2133887,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Agriturismo il sentiero delle fate"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12523049029",
+      "name": "Sentiero dei Mietitori",
+      "lat": 42.7992289,
+      "lon": 13.2736534,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "name": "Sentiero dei Mietitori"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_2108573231",
+      "name": "Monte Pianello della Macchia",
+      "lat": 42.8167446,
+      "lon": 13.3022106,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "name": "Monte Pianello della Macchia",
+        "natural": "peak"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8066716743",
+      "name": "Passo di Sasso Borghese",
+      "lat": 42.867322,
+      "lon": 13.235497,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Passo di Sasso Borghese",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7881827216",
+      "name": "Fonte Rifugio Mazzaroni",
+      "lat": 42.8947204,
+      "lon": 13.2701885,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "alt_name": "Fonte Banditella",
+        "name": "Fonte Rifugio Mazzaroni",
+        "natural": "spring"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10159258709",
+      "name": "Prato Comune",
+      "lat": 42.7997822,
+      "lon": 13.3284309,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Prato Comune",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_3986163748",
+      "name": "Rifugio Aranello",
+      "lat": 41.9167188,
+      "lon": 13.5959496,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "name": "Rifugio Aranello",
+        "tourism": "alpine_hut"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12728784331",
+      "name": "Il Cammino di San Domenico Abate",
+      "lat": 41.9340578,
+      "lon": 13.8448307,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Il Cammino di San Domenico Abate",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12317908790",
+      "name": "Passione Montagna Trail & Running",
+      "lat": 42.0351584,
+      "lon": 13.4305052,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "name": "Passione Montagna Trail & Running",
+        "phone": "+39 3925792473"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7110250495",
+      "name": "Rifugio La Serra",
+      "lat": 42.1187154,
+      "lon": 13.5409214,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Rifugio La Serra",
+        "phone": "+39 328 344 8261"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12899220054",
+      "name": "Rifugio Val d'Arano",
+      "lat": 42.1394982,
+      "lon": 13.5267684,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Rifugio Val d'Arano",
+        "phone": "+39 389 946 5655",
+        "website": "https://www.rifugiovaldarano.it/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9443990611",
+      "name": "Rifugio di Canale",
+      "lat": 42.1377951,
+      "lon": 13.654669,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "name": "Rifugio di Canale",
+        "tourism": "wilderness_hut"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12386722372",
+      "name": "Appennino Bike Tour [ABT]",
+      "lat": 42.2987662,
+      "lon": 13.494724,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Appennino Bike Tour [ABT]",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12250093005",
+      "name": "HIKE STORE",
+      "lat": 42.3244638,
+      "lon": 13.5900358,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "bicycle_rental",
+        "fee": "yes",
+        "name": "HIKE STORE",
+        "operator": "Timaja SRL"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_954701567",
+      "name": "Monte Cofanello",
+      "lat": 42.3453937,
+      "lon": 13.6207285,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "name": "Monte Cofanello",
+        "natural": "peak"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_13004914978",
+      "name": "Madonna del Lago",
+      "lat": 42.347205,
+      "lon": 13.644946,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Madonna del Lago",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7856330743",
+      "name": "Il Rifugio della Rocca",
+      "lat": 42.3278718,
+      "lon": 13.6911084,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Il Rifugio della Rocca"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_297029836",
+      "name": "Calascio",
+      "lat": 42.3282592,
+      "lon": 13.6978903,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Calascio",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_528762315",
+      "name": "Il Rifugio del Pastore",
+      "lat": 42.365455,
+      "lon": 13.725814,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Il Rifugio del Pastore"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11645001904",
+      "name": "Rifugio Pelino",
+      "lat": 41.9729898,
+      "lon": 13.8903615,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "name": "Rifugio Pelino",
+        "tourism": "wilderness_hut"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12106443672",
+      "name": "Pacentro",
+      "lat": 42.0454116,
+      "lon": 13.9749406,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Pacentro",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_2147124052",
+      "name": "Rifugio Colle delle Vacche",
+      "lat": 42.1190897,
+      "lon": 13.9255777,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "shelter",
+        "name": "Rifugio Colle delle Vacche"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_2147124058",
+      "name": "Iaccio Rosso",
+      "lat": 42.1157633,
+      "lon": 13.9469339,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "shelter",
+        "name": "Iaccio Rosso"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_1831997250",
+      "name": "Rifugio Jaccio della Madonna",
+      "lat": 42.1176711,
+      "lon": 13.9747874,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "shelter",
+        "contact:phone": "+39 085 920013",
+        "name": "Rifugio Jaccio della Madonna"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9935083842",
+      "name": "Il Rifugio di Danilo",
+      "lat": 42.1248874,
+      "lon": 14.026838,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "bar",
+        "name": "Il Rifugio di Danilo",
+        "opening_hours": "Mo-Su 06:00-20:00;Jul-Aug 06:00-24:00",
+        "operator": "Bar Maiella S.r.l.s."
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_2277020190",
+      "name": "Addiaccio della chiesa",
+      "lat": 42.0949091,
+      "lon": 14.0585416,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "shelter",
+        "name": "Addiaccio della chiesa"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10303258238",
+      "name": "Ricovero Grotta dei Diavoli",
+      "lat": 42.0811482,
+      "lon": 14.1239405,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "shelter",
+        "name": "Ricovero Grotta dei Diavoli",
+        "natural": "cave_entrance"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_2249336383",
+      "name": "Rifugio della Forestale",
+      "lat": 42.1442092,
+      "lon": 14.0585108,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "shelter",
+        "name": "Rifugio della Forestale"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_1177715742",
+      "name": "Rifugio Pomilio",
+      "lat": 42.1607388,
+      "lon": 14.1324463,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "man_made": "tower",
+        "name": "Rifugio Pomilio"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_13233055489",
+      "name": "Rifugio Bruno Pomilio",
+      "lat": 42.1608437,
+      "lon": 14.1325822,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "name": "Rifugio Bruno Pomilio",
+        "operator": "CAI Chieti",
+        "phone": "+39 0871 447 830",
+        "tourism": "chalet",
+        "wikidata": "Q60784900",
+        "wikipedia": "it:Rifugio Bruno Pomilio"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_4572831094",
+      "name": "Bivacco Pischioli",
+      "lat": 42.1584204,
+      "lon": 14.1778508,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "shelter",
+        "name": "Bivacco Pischioli"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9955554097",
+      "name": "Fontana Medievale",
+      "lat": 42.1560447,
+      "lon": 14.1975294,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Fontana Medievale",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_2139394442",
+      "name": "Rifugio Monte Corvo",
+      "lat": 42.1749901,
+      "lon": 13.8785607,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "shelter",
+        "name": "Rifugio Monte Corvo"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8629175271",
+      "name": "Via Pastine",
+      "lat": 42.2515198,
+      "lon": 14.0370723,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Via Pastine",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10309053467",
+      "name": "Cda Colli",
+      "lat": 42.2786642,
+      "lon": 13.8632575,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Cda Colli",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10296924918",
+      "name": "Contrada Pizzuto",
+      "lat": 42.3083644,
+      "lon": 13.8663179,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Contrada Pizzuto",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10296925047",
+      "name": "Contrada Canale",
+      "lat": 42.3074163,
+      "lon": 13.8656721,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Contrada Canale",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10298116507",
+      "name": "Fonte Moro",
+      "lat": 42.3207983,
+      "lon": 13.861679,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Fonte Moro",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10304476315",
+      "name": "Le Plaie",
+      "lat": 42.3365072,
+      "lon": 13.9604084,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Le Plaie",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9817061271",
+      "name": "Grotta del Colle",
+      "lat": 42.2098729,
+      "lon": 14.1716948,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Grotta del Colle",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8697614123",
+      "name": "Casacanditella",
+      "lat": 42.2516109,
+      "lon": 14.201166,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Casacanditella",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7937923673",
+      "name": "Camping dell'Apostolo Tommaso",
+      "lat": 42.3090104,
+      "lon": 14.0901181,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Camping dell'Apostolo Tommaso",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7109282862",
+      "name": "Vecchio sentiero cascate",
+      "lat": 42.0643184,
+      "lon": 14.3025797,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "name": "Vecchio sentiero cascate"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_6338160356",
+      "name": "Pianello",
+      "lat": 42.0790255,
+      "lon": 14.3992324,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "name": "Pianello",
+        "place": "hamlet"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_13166599253",
+      "name": "Brecciaio",
+      "lat": 42.1475277,
+      "lon": 14.390877,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Brecciaio",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10993137023",
+      "name": "Casino Vezzani, Villa Mascitti, Parco dei Mulini",
+      "lat": 42.3098279,
+      "lon": 14.3476287,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Casino Vezzani, Villa Mascitti, Parco dei Mulini",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8909784377",
+      "name": "Casino Vezzani",
+      "lat": 42.31298,
+      "lon": 14.3571264,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Casino Vezzani",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8582536621",
+      "name": "Orsogna, Ortona, Autostrda A14",
+      "lat": 42.3174268,
+      "lon": 14.3425245,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Orsogna, Ortona, Autostrda A14",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10993137022",
+      "name": "Casino Vezzani, Villa Mascitti, Parco dei Mulini",
+      "lat": 42.3154132,
+      "lon": 14.3460963,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Casino Vezzani, Villa Mascitti, Parco dei Mulini",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9688344517",
+      "name": "Fosso delle Farfalle",
+      "lat": 42.2857981,
+      "lon": 14.4695682,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Fosso delle Farfalle",
+        "name:it": "Fosso delle Farfalle",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_13130421417",
+      "name": "Contrada Ripari",
+      "lat": 42.3196748,
+      "lon": 14.4297809,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Contrada Ripari",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7527233199",
+      "name": "Rifugiomare Agriturismo",
+      "lat": 42.2729466,
+      "lon": 14.4940933,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "name": "Rifugiomare Agriturismo",
+        "tourism": "guest_house"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9688344618",
+      "name": "Sic Fosso delle Farfalle",
+      "lat": 42.2884726,
+      "lon": 14.4730887,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Sic Fosso delle Farfalle",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7812395259",
+      "name": "Masseria Vaccareccia",
+      "lat": 42.4778404,
+      "lon": 13.4586901,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Masseria Vaccareccia",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11020954132",
+      "name": "Pizzo Cefalone",
+      "lat": 42.4507899,
+      "lon": 13.5237347,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Pizzo Cefalone",
+        "operator": "Parco Nazionale Gran Sasso e Monti della Laga",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_13208651461",
+      "name": "Sella della Scinderella",
+      "lat": 42.4179323,
+      "lon": 13.578158,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Sella della Scinderella",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_5004769165",
+      "name": "Passo del Lupo",
+      "lat": 42.4438716,
+      "lon": 13.5439132,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Passo del Lupo",
+        "operator": "CAI L’Aquila",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_5004769166",
+      "name": "La Portella",
+      "lat": 42.448612,
+      "lon": 13.53988,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "La Portella",
+        "operator": "CAI L’Aquila",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_5004769167",
+      "name": "Campo Pericoli",
+      "lat": 42.4556988,
+      "lon": 13.5453479,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Campo Pericoli",
+        "operator": "CAI L’Aquila",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_13208651463",
+      "name": "Scindarella",
+      "lat": 42.4313254,
+      "lon": 13.5693777,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Scindarella",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_13208651464",
+      "name": "Monte Scindarella-Cima Nord Ovest",
+      "lat": 42.4318736,
+      "lon": 13.5744452,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Monte Scindarella-Cima Nord Ovest",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_5004769164",
+      "name": "Campo Imperatore",
+      "lat": 42.4462321,
+      "lon": 13.5565586,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Campo Imperatore",
+        "operator": "CAI L’Aquila",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_5004769169",
+      "name": "Sella di Monte Aquila",
+      "lat": 42.4544203,
+      "lon": 13.5585799,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Sella di Monte Aquila",
+        "operator": "CAI L’Aquila",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_5004769170",
+      "name": "Sella di Monte Aquila",
+      "lat": 42.4555614,
+      "lon": 13.5595994,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Sella di Monte Aquila",
+        "operator": "CAI L’Aquila",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_6672654906",
+      "name": "Sella del Brecciaio",
+      "lat": 42.4674003,
+      "lon": 13.5538409,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Sella del Brecciaio",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_5049618859",
+      "name": "bivio forchetta calderone",
+      "lat": 42.4687565,
+      "lon": 13.5706017,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "bivio forchetta calderone",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12996673863",
+      "name": "Vado di Corno",
+      "lat": 42.4531517,
+      "lon": 13.5962026,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Vado di Corno",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_1349494075",
+      "name": "Il Vaduccio",
+      "lat": 42.4592159,
+      "lon": 13.5973336,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Il Vaduccio",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7812395258",
+      "name": "San Martino",
+      "lat": 42.4908637,
+      "lon": 13.4455692,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "San Martino",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12828572665",
+      "name": "Piana Grande",
+      "lat": 42.5040855,
+      "lon": 13.5123141,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Piana Grande",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12828572668",
+      "name": "Fosso Venacquaro",
+      "lat": 42.5046351,
+      "lon": 13.5124417,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Fosso Venacquaro",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12828572670",
+      "name": "Bivio S.Onofrio",
+      "lat": 42.5144173,
+      "lon": 13.5140341,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Bivio S.Onofrio",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12828572671",
+      "name": "Coste Farinello",
+      "lat": 42.5289634,
+      "lon": 13.509733,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Coste Farinello",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11951875450",
+      "name": "La Giumenta",
+      "lat": 42.4952669,
+      "lon": 13.5504539,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "La Giumenta",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12850292520",
+      "name": "Funivia La Madonnina",
+      "lat": 42.4887532,
+      "lon": 13.568689,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Funivia La Madonnina",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_13094422460",
+      "name": "Albergo Diruto",
+      "lat": 42.4931778,
+      "lon": 13.5726291,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Albergo Diruto",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12609816768",
+      "name": "Vena dell'Aschiero",
+      "lat": 42.503768,
+      "lon": 13.5709433,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Vena dell'Aschiero",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12944766132",
+      "name": "Palestra delle Aquile",
+      "lat": 42.5148099,
+      "lon": 13.5696886,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Palestra delle Aquile",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12597716251",
+      "name": "Rio S.Giacomo",
+      "lat": 42.5301793,
+      "lon": 13.5664125,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Rio S.Giacomo",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7817353580",
+      "name": "Rifugio Cima alta",
+      "lat": 42.5009874,
+      "lon": 13.5792896,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Rifugio Cima alta"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_13207112988",
+      "name": "La Forchetta",
+      "lat": 42.5092303,
+      "lon": 13.5898734,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "La Forchetta",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12877199355",
+      "name": "Malafede",
+      "lat": 42.5355342,
+      "lon": 13.5859083,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Malafede",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12877199356",
+      "name": "Colle del Fiele",
+      "lat": 42.5343424,
+      "lon": 13.5867003,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Colle del Fiele",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12856884133",
+      "name": "Grancia Cistercense S.Maria del Monte",
+      "lat": 42.3887464,
+      "lon": 13.6326543,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Grancia Cistercense S.Maria del Monte",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_6835706001",
+      "name": "Campo Imperatore",
+      "lat": 42.4241607,
+      "lon": 13.7049037,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Campo Imperatore",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12912708121",
+      "name": "Bosco di Pagliara",
+      "lat": 42.4673911,
+      "lon": 13.6748537,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Bosco di Pagliara",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12912708120",
+      "name": "Bosco di Pagliara",
+      "lat": 42.4700478,
+      "lon": 13.6826335,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Bosco di Pagliara",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10736820871",
+      "name": "Club Alpino Italiano - Sezione Castelli - Rifugio Enrico Faiani",
+      "lat": 42.467206,
+      "lon": 13.729951,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "name": "Club Alpino Italiano - Sezione Castelli - Rifugio Enrico Faiani",
+        "operator": "Club Alpino Italiano",
+        "website": "caicastelli.it"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7756688641",
+      "name": "Piano di Emidio",
+      "lat": 42.404909,
+      "lon": 13.784381,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Piano di Emidio",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7756802136",
+      "name": "Giancarlo Vuanello",
+      "lat": 42.4046908,
+      "lon": 13.7833446,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "historic": "wayside_cross",
+        "name": "Giancarlo Vuanello"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_1327859731",
+      "name": "Rifugio Fonte Vetica",
+      "lat": 42.4255874,
+      "lon": 13.7415796,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "name": "Rifugio Fonte Vetica",
+        "operator": "Corpo Forestale dello Stato",
+        "tourism": "alpine_hut"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_3612394038",
+      "name": "Vado di Siella",
+      "lat": 42.4196198,
+      "lon": 13.7657188,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Vado di Siella",
+        "natural": "saddle",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12120688375",
+      "name": "Sentiero Escursionistico-Religioso dell'Abruzzo \"Beato Pier Giorgio Frassati\"",
+      "lat": 42.44145,
+      "lon": 13.8221362,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "board",
+        "name": "Sentiero Escursionistico-Religioso dell'Abruzzo \"Beato Pier Giorgio Frassati\"",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8529608121",
+      "name": "Vado di Sole",
+      "lat": 42.4632113,
+      "lon": 13.8378659,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Vado di Sole",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7689531049",
+      "name": "Isola del gran sasso",
+      "lat": 42.5004618,
+      "lon": 13.6633797,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Isola del gran sasso",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7689531062",
+      "name": "Isola del gran sasso",
+      "lat": 42.5012245,
+      "lon": 13.6623661,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Isola del gran sasso",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7689531039",
+      "name": "Santa Lucia",
+      "lat": 42.4982536,
+      "lon": 13.664716,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Santa Lucia",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10814551307",
+      "name": "Pista del Lupo",
+      "lat": 42.5583032,
+      "lon": 13.7663338,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Pista del Lupo",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12895403307",
+      "name": "Bivio 300I-SI",
+      "lat": 42.5889633,
+      "lon": 13.4317276,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Bivio 300I-SI",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9713852281",
+      "name": "Rifugio 100 Fonti",
+      "lat": 42.5902951,
+      "lon": 13.4398391,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Rifugio 100 Fonti"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_4241102891",
+      "name": "rifugio Fiumata",
+      "lat": 42.6251089,
+      "lon": 13.4260151,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "shelter",
+        "name": "rifugio Fiumata"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_6187820240",
+      "name": "rifugio Enel",
+      "lat": 42.6284257,
+      "lon": 13.4405523,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "shelter",
+        "name": "rifugio Enel"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12810082591",
+      "name": "Fonte di Storre",
+      "lat": 42.638326,
+      "lon": 13.4444366,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Fonte di Storre",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12810082592",
+      "name": "La Fronte",
+      "lat": 42.6335411,
+      "lon": 13.4512148,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "La Fronte",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12810082596",
+      "name": "Ponte Flammagno",
+      "lat": 42.6318013,
+      "lon": 13.4539584,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Ponte Flammagno",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12943413457",
+      "name": "Fonte Spugna",
+      "lat": 42.6187527,
+      "lon": 13.4941842,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Fonte Spugna",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12943413458",
+      "name": "Prati di Lame",
+      "lat": 42.6227376,
+      "lon": 13.487893,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Prati di Lame",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12943413455",
+      "name": "S.P 47A",
+      "lat": 42.619327,
+      "lon": 13.5036242,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "S.P 47A",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12223978267",
+      "name": "Casetta Enel",
+      "lat": 42.6441501,
+      "lon": 13.4369422,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "shelter",
+        "name": "Casetta Enel"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12810082590",
+      "name": "Fosso della Cavata",
+      "lat": 42.6441124,
+      "lon": 13.4368558,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Fosso della Cavata",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_1362209500",
+      "name": "Il rifugio dei sapori",
+      "lat": 42.6881451,
+      "lon": 13.5008351,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Il rifugio dei sapori"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_13302365015",
+      "name": "Ponte del Mulino",
+      "lat": 42.6401645,
+      "lon": 13.5624546,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Ponte del Mulino",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_13302365019",
+      "name": "Bivio Villa Riccio",
+      "lat": 42.644896,
+      "lon": 13.5510394,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Bivio Villa Riccio",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_13302365020",
+      "name": "Fonte Spinero",
+      "lat": 42.6489519,
+      "lon": 13.5448192,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Fonte Spinero",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7761671992",
+      "name": "Rifugio delle Aquile",
+      "lat": 42.6934379,
+      "lon": 13.6182285,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Rifugio delle Aquile",
+        "tourism": "alpine_hut"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11851520014",
+      "name": "Bivio Pito-Pozza",
+      "lat": 42.7349398,
+      "lon": 13.4330798,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Bivio Pito-Pozza",
+        "operator": "Club Alpino Italiano",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8071946479",
+      "name": "San Martino",
+      "lat": 42.7360207,
+      "lon": 13.4496316,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "San Martino",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8071946478",
+      "name": "Valico di San Paolo",
+      "lat": 42.7431584,
+      "lon": 13.4486228,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Valico di San Paolo",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12823302246",
+      "name": "Percorso Cascate di Forcella",
+      "lat": 42.7978552,
+      "lon": 13.4274199,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Percorso Cascate di Forcella",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9517181768",
+      "name": "Rifugio Fratta Montanara",
+      "lat": 42.696845,
+      "lon": 13.6016978,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Rifugio Fratta Montanara",
+        "opening_hours": "Sa-Su",
+        "tourism": "alpine_hut"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12650566966",
+      "name": "Pietra Stretta",
+      "lat": 42.7135974,
+      "lon": 13.5871662,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Pietra Stretta",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_13285723177",
+      "name": "Fonte delle Trocche",
+      "lat": 42.7159211,
+      "lon": 13.6297283,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Fonte delle Trocche",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11931878065",
+      "name": "Forchetta",
+      "lat": 42.7258827,
+      "lon": 13.5980472,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Forchetta",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9439283942",
+      "name": "Pian dell'Oro",
+      "lat": 42.7223303,
+      "lon": 13.6084977,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Pian dell'Oro",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7160511367",
+      "name": "Il Lago",
+      "lat": 42.7661862,
+      "lon": 13.5892135,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Il Lago",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7283283855",
+      "name": "Montagna dei Fiori",
+      "lat": 42.7653828,
+      "lon": 13.5971557,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Montagna dei Fiori",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7160541692",
+      "name": "Cresta EST",
+      "lat": 42.7630762,
+      "lon": 13.6099565,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Cresta EST",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9352517229",
+      "name": "Caciara della Spaccaculi",
+      "lat": 42.7854692,
+      "lon": 13.6194123,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "shelter",
+        "name": "Caciara della Spaccaculi"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11780199380",
+      "name": "Segnale verticale sentiero CAI 297",
+      "lat": 42.3969595,
+      "lon": 13.85128,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Segnale verticale sentiero CAI 297",
+        "operator": "m.1557",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11780129862",
+      "name": "Colle di Bacchettone sentiero CAI 297",
+      "lat": 42.4026738,
+      "lon": 13.8506219,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Colle di Bacchettone sentiero CAI 297",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11780159244",
+      "name": "M. Bertona Segnale verticale Sentiero CAI 297",
+      "lat": 42.3998426,
+      "lon": 13.8533345,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "M. Bertona Segnale verticale Sentiero CAI 297",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12055449470",
+      "name": "Santanello",
+      "lat": 42.3930747,
+      "lon": 13.8799596,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "name": "Santanello",
+        "place": "hamlet"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11780166132",
+      "name": "Pietra Rossa Sentiero CAI 297",
+      "lat": 42.4133065,
+      "lon": 13.8530838,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Pietra Rossa Sentiero CAI 297",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_3049242085",
+      "name": "Sentiero CAI 297 Monte Bertona;Impollinators path",
+      "lat": 42.414989,
+      "lon": 13.867363,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "fee": "no",
+        "information": "guidepost",
+        "name": "Sentiero CAI 297 Monte Bertona;Impollinators path",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_445338267",
+      "name": "Piccianello",
+      "lat": 42.4841115,
+      "lon": 13.9911881,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "name": "Piccianello",
+        "place": "hamlet"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10223095498",
+      "name": "Piccianello Asc.",
+      "lat": 42.4848194,
+      "lon": 13.9898611,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "name": "Piccianello Asc."
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_2935570971",
+      "name": "mtb murgia bike",
+      "lat": 42.3908914,
+      "lon": 14.1049001,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "mtb murgia bike",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12749832171",
+      "name": "Valle dell'Inferno",
+      "lat": 42.3836856,
+      "lon": 14.2092085,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Valle dell'Inferno",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12749832170",
+      "name": "Valle dell'Inferno",
+      "lat": 42.3942432,
+      "lon": 14.2520429,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Valle dell'Inferno",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10741047973",
+      "name": "Il Rifugio Di Diana",
+      "lat": 42.4218258,
+      "lon": 14.256109,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Il Rifugio Di Diana",
+        "phone": "+39085810307",
+        "website": "https://il-rifugio-di-diana.business.site/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7956283047",
+      "name": "Il Rifugio",
+      "lat": 42.4641463,
+      "lon": 14.1924832,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Il Rifugio",
+        "opening_hours": "Su-Fr 17:00-23:58; Sa 17:00-00:20",
+        "phone": "+39 085 203 8164",
+        "website": "https://it-it.facebook.com/pages/category/Restaurant/Pizzeria-Il-Rifugio-257498504860824/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7610502491",
+      "name": "C.so V. Emanuele II, civ.310 Bar Lucio",
+      "lat": 42.4696326,
+      "lon": 14.2064961,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "shelter",
+        "name": "C.so V. Emanuele II, civ.310 Bar Lucio",
+        "operator": "GTM"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8223979386",
+      "name": "Cso V. Emanuele II, civ.239",
+      "lat": 42.4684386,
+      "lon": 14.2079525,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "shelter",
+        "name": "Cso V. Emanuele II, civ.239",
+        "operator": "GTM"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7660653663",
+      "name": "Cso V. Emanuele II, civ.123",
+      "lat": 42.4665156,
+      "lon": 14.2102039,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "shelter",
+        "name": "Cso V. Emanuele II, civ.123",
+        "operator": "GTM"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_643166688",
+      "name": "Via Vestina",
+      "lat": 42.511373,
+      "lon": 14.1444453,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "shelter",
+        "name": "Via Vestina",
+        "operator": "GTM"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8134288241",
+      "name": "Viale Aldo Moro, civ.6",
+      "lat": 42.5210531,
+      "lon": 14.151536,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "shelter",
+        "name": "Viale Aldo Moro, civ.6",
+        "operator": "GTM"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12047831177",
+      "name": "BI-6",
+      "lat": 42.5338345,
+      "lon": 14.1356925,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "BI-6",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_4419262010",
+      "name": "Poggio Paganello",
+      "lat": 42.8790569,
+      "lon": 13.4695342,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "name": "Poggio Paganello",
+        "place": "hamlet"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_13149022772",
+      "name": "Il Rifugio dei Marsi",
+      "lat": 42.8543525,
+      "lon": 13.4776704,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "name": "Il Rifugio dei Marsi",
+        "tourism": "guest_house"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9933959976",
+      "name": "ATA",
+      "lat": 42.8098029,
+      "lon": 13.5781641,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "ATA",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9934017838",
+      "name": "ATA",
+      "lat": 42.8142631,
+      "lon": 13.5747055,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "ATA",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12943210599",
+      "name": "Fornacetta",
+      "lat": 42.8370323,
+      "lon": 13.577986,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Fornacetta",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7572645817",
+      "name": "Porta Cartara",
+      "lat": 42.8483068,
+      "lon": 13.5708243,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Porta Cartara",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9933958052",
+      "name": "ATA",
+      "lat": 42.8108193,
+      "lon": 13.5817492,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "ATA",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9933958053",
+      "name": "ATA",
+      "lat": 42.8161174,
+      "lon": 13.5830142,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "ATA",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_4376596049",
+      "name": "Pizzeria Il sentiero",
+      "lat": 42.8518612,
+      "lon": 13.6412463,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Pizzeria Il sentiero"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12849156316",
+      "name": "Il Cammino dei Calanchi grigio-azzurri",
+      "lat": 42.8996592,
+      "lon": 13.6643862,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Il Cammino dei Calanchi grigio-azzurri",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10701859141",
+      "name": "Rifugio Da Pepita",
+      "lat": 42.4133122,
+      "lon": 14.2793187,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "animal_boarding",
+        "name": "Rifugio Da Pepita"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_13061549772",
+      "name": "Val di Foro",
+      "lat": 42.3950932,
+      "lon": 14.3226957,
+      "category": "hiking",
+      "visibility": "classica",
+      "tags": {
+        "information": "guidepost",
+        "name": "Val di Foro",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    }
+  ]
+}

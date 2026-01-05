@@ -1,1 +1,2573 @@
-{"elements":[{"id":"osm_node_70980560","name":"Acquasanta Terme","lat":42.769944,"lon":13.410185,"type":"relax","visibility":"classica","tags":["place=village"]},{"id":"osm_node_70993378","name":"Caramanico Terme","lat":42.156446,"lon":14.0031895,"type":"relax","visibility":"classica","tags":["place=village"]},{"id":"osm_node_70993435","name":"Popoli Terme","lat":42.1713106,"lon":13.832817,"type":"relax","visibility":"classica","tags":["place=town"]},{"id":"osm_node_75251540","name":"The Space Cinema","lat":42.5218808,"lon":14.1503445,"type":"relax","visibility":"classica","tags":["amenity=cinema"]},{"id":"osm_node_98287810","name":"Interspar","lat":42.4163703,"lon":14.1558083,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_100888559","name":"Villa Raspa","lat":42.4535633,"lon":14.1864206,"type":"relax","visibility":"classica","tags":["place=village"]},{"id":"osm_node_203398457","name":"Interspar","lat":42.4271022,"lon":14.1857981,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_282505865","name":"Scafa-San Valentino-Caramanico Terme","lat":42.2673498,"lon":13.998473,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_452630245","name":"Intermesoli","lat":42.5354579,"lon":13.5413413,"type":"relax","visibility":"classica","tags":["place=hamlet"]},{"id":"osm_node_597503049","name":"Galleria Di Nenno Spazio Arte","lat":42.229397,"lon":14.3925401,"type":"relax","visibility":"classica","tags":["tourism=gallery"]},{"id":"osm_node_646787601","name":"Eurospar","lat":42.48049,"lon":14.1933357,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_672555230","name":"Il Ruspante","lat":42.8540364,"lon":13.582855,"type":"relax","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_859523480","name":"Fonte della Sparviera","lat":42.8488394,"lon":13.1577868,"type":"relax","visibility":"classica","tags":["amenity=drinking_water"]},{"id":"osm_node_938924475","name":"Luisa Spagnoli","lat":42.8536144,"lon":13.576089,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_944203956","name":"Espansione","lat":42.42827,"lon":14.27675,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_989246221","name":"Espansione","lat":42.4227228,"lon":14.2871756,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_1373189547","name":"Cassa di Risparmio","lat":42.43505,"lon":13.9842021,"type":"relax","visibility":"classica","tags":["amenity=bank"]},{"id":"osm_node_1488281269","name":"Terme di Cotilia","lat":42.3771144,"lon":13.0023168,"type":"relax","visibility":"classica","tags":["place=village"]},{"id":"osm_node_1508580868","name":"Cassa di Risparmio della Provincia di Chieti - Agenzia 1","lat":42.3528738,"lon":14.1724636,"type":"relax","visibility":"classica","tags":["amenity=bank"]},{"id":"osm_node_1515976018","name":"Farmacia Spatocco","lat":42.3527232,"lon":14.1677393,"type":"relax","visibility":"classica","tags":["amenity=pharmacy"]},{"id":"osm_node_1775080889","name":"Despar","lat":42.2187448,"lon":14.3842387,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_1851761079","name":"Banca Popolare di Ancona Acquasanta Terme","lat":42.7703138,"lon":13.4107999,"type":"relax","visibility":"classica","tags":["amenity=bank"]},{"id":"osm_node_1851761080","name":"Bar Terme","lat":42.7706232,"lon":13.4111539,"type":"relax","visibility":"classica","tags":["amenity=bar"]},{"id":"osm_node_2304262708","name":"Spazio Enel","lat":42.6636548,"lon":13.6938071,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_2304263431","name":"Spazio Enel","lat":42.8537642,"lon":13.5615112,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_2311459214","name":"Spazio Enel","lat":42.29444,"lon":13.96958,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_2311459235","name":"Spazio Enel","lat":42.06753,"lon":14.44291,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_2311459286","name":"Spazio Enel","lat":42.65908,"lon":13.89403,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_2311459320","name":"Spazio Enel","lat":42.39643,"lon":14.04613,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_2311459333","name":"Spazio Enel","lat":42.4363218,"lon":13.3015446,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_2311459359","name":"Spazio Enel","lat":42.06925,"lon":13.252,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_2311459408","name":"Spazio Enel","lat":42.45021,"lon":13.93547,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_2311459431","name":"Spazio Enel","lat":42.26751,"lon":14.00214,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_2311459479","name":"Spazio Enel","lat":42.65948,"lon":13.70389,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_2311459493","name":"Spazio Enel","lat":42.2922,"lon":13.3000982,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_2311459503","name":"Spazio Enel","lat":42.56166,"lon":14.10698,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_2311459525","name":"Spazio Enel","lat":42.4565246,"lon":14.2253402,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_2311464574","name":"Spazio Enel","lat":42.79238,"lon":13.09443,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_2454763431","name":"Pizzo d'Intermesoli","lat":42.4725261,"lon":13.5272376,"type":"relax","visibility":"classica","tags":["natural=peak"]},{"id":"osm_node_2466663539","name":"Colle Spagone","lat":42.8895508,"lon":13.0723598,"type":"relax","visibility":"classica","tags":["natural=peak"]},{"id":"osm_node_2510241824","name":"Colle Sparticuore","lat":42.5379075,"lon":13.0356169,"type":"relax","visibility":"classica","tags":["natural=peak"]},{"id":"osm_node_2546732837","name":"Colle Sparviero","lat":42.3653625,"lon":13.6546289,"type":"relax","visibility":"classica","tags":["natural=peak"]},{"id":"osm_node_2603568411","name":"Piscina Comunale","lat":42.0554237,"lon":14.7388498,"type":"relax","visibility":"classica","tags":["leisure=swimming_pool"]},{"id":"osm_node_2733501910","name":"De Cecco spaccio aziendale","lat":42.0969764,"lon":14.207956,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_2782982332","name":"Despar","lat":42.0877279,"lon":14.2065987,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_2783062727","name":"DelVerde spaccio aziendale","lat":42.0964434,"lon":14.2065994,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_2970444547","name":"Vetta Settentrionale d'Intermesoli","lat":42.4819459,"lon":13.5233542,"type":"relax","visibility":"classica","tags":["natural=peak"]},{"id":"osm_node_2985778837","name":"Punto Benessere","lat":42.3542105,"lon":14.1379083,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_3302576156","name":"Entrata nella Gola dell'Inferno Spaccato","lat":42.4479746,"lon":13.7591934,"type":"relax","visibility":"classica","tags":["natural=cave_entrance"]},{"id":"osm_node_3355831721","name":"Spazio Enel","lat":42.4698467,"lon":14.1933043,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_3491508134","name":"Ravone della Vespa","lat":42.0936213,"lon":14.0709867,"type":"relax","visibility":"classica","tags":["place=locality"]},{"id":"osm_node_3741554337","name":"Despar","lat":42.3654693,"lon":14.0727365,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_3760993394","name":"Farmacia Spatocco","lat":42.6937843,"lon":13.7872487,"type":"relax","visibility":"classica","tags":["amenity=pharmacy"]},{"id":"osm_node_3798688144","name":"Ospanesco","lat":42.2234017,"lon":13.1032062,"type":"relax","visibility":"classica","tags":["place=hamlet"]},{"id":"osm_node_3889811847","name":"Vespasia","lat":42.7925049,"lon":13.0916765,"type":"relax","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_3922922143","name":"Spaccio di Pietro","lat":42.7568878,"lon":13.8397414,"type":"relax","visibility":"classica","tags":["place=hamlet"]},{"id":"osm_node_3992500257","name":"Spaccarelli","lat":42.2303467,"lon":14.3423674,"type":"relax","visibility":"classica","tags":["place=hamlet"]},{"id":"osm_node_4365031378","name":"Collespada","lat":42.6646067,"lon":13.2334094,"type":"relax","visibility":"classica","tags":["place=hamlet"]},{"id":"osm_node_4446696790","name":"A spasso per il mondo","lat":42.8535733,"lon":13.5729758,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_4484344190","name":"Risparmio Casa","lat":42.5041502,"lon":14.1629465,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_4801573471","name":"La bottega del benessere","lat":42.0333101,"lon":13.4246514,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_4935301615","name":"Statua di Carlo II di Spagna","lat":42.3514033,"lon":13.3975303,"type":"relax","visibility":"classica","tags":["tourism=artwork","historic=yes"]},{"id":"osm_node_5105469861","name":"La Spasetta","lat":42.1121484,"lon":14.709572,"type":"relax","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_5373568423","name":"Spazio Vivo di Giovanni Potenza","lat":42.711022,"lon":13.909516,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_5597888939","name":"Despar","lat":42.4655332,"lon":14.2065614,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_5677166666","name":"Hotel Seapark Spa Resort","lat":42.770581,"lon":13.9573862,"type":"relax","visibility":"classica","tags":["tourism=hotel"]},{"id":"osm_node_5780586750","name":"Tabaccheria \"Sparano Raffaele\"","lat":42.3507423,"lon":13.4000203,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_5851194495","name":"Lo Spaccio di Rigo","lat":42.8691719,"lon":13.7460912,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_5884289381","name":"Ristorante dell’Hotel Terme Maiella","lat":42.1594171,"lon":14.0069488,"type":"relax","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_5928818132","name":"Fondazione Cassa di Risparmio della Provincia dell'Aquila","lat":42.3535503,"lon":13.4011254,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_6242232640","name":"Frantoio Azienda Agricola Spagnoli","lat":42.0481846,"lon":13.989554,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_6281447639","name":"Ripe dello Spagnolo","lat":42.3174581,"lon":14.1473664,"type":"relax","visibility":"classica","tags":["place=locality"]},{"id":"osm_node_6415615732","name":"Essere & Co. - Centro Benessere","lat":42.3506515,"lon":13.39361,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_6442596515","name":"Comune dell'Aquila Politiche per il Benessere della Persona","lat":42.3591972,"lon":13.3947375,"type":"relax","visibility":"classica","tags":["amenity=townhall"]},{"id":"osm_node_6507199367","name":"360º Benessere","lat":42.346533,"lon":13.3988318,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_6587085432","name":"Spazio Conad","lat":42.3444958,"lon":14.3811447,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_6612644362","name":"Despar Santa Lucia","lat":42.1794799,"lon":14.3333079,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_6615571619","name":"Risparmio Casa","lat":42.2357093,"lon":14.4070556,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_6689475197","name":"Lu Vurghe","lat":42.779695,"lon":13.4136336,"type":"relax","visibility":"classica","tags":["natural=hot_spring"]},{"id":"osm_node_6793128668","name":"Risparmio Casa","lat":42.4073761,"lon":14.1633606,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_6834047150","name":"Sparagn e Cumbarisc","lat":42.1111602,"lon":14.709046,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_7098030448","name":"BIOAPTA - Spaccio aziendale","lat":42.5941153,"lon":13.6972245,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_7107896206","name":"Luisa Spagnoli","lat":42.4716306,"lon":14.208229,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_7167696479","name":"Ascoli Calcio 1898 FC SpA","lat":42.8537246,"lon":13.580707,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_7209377704","name":"Eurospar","lat":42.452236,"lon":14.2230635,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_7466345444","name":"Di Lorenzo e Spazioso","lat":42.4485864,"lon":14.2008355,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_7467755278","name":"Spazio010","lat":42.4593049,"lon":14.2173943,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_7467830377","name":"Moda e Benessere","lat":42.4682545,"lon":14.2086226,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_7513837478","name":"Erboristeria Voglia di Benessere","lat":42.4586622,"lon":14.2195919,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_7518809570","name":"Spazio Conad","lat":42.6812532,"lon":13.7599139,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_7519679167","name":"New Style Parrucchiere By Lelio Spadolini","lat":42.4564793,"lon":14.2222346,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_7554126682","name":"Piaggio & C. Spa Del Rossi Claudio & C. Sas","lat":42.4633609,"lon":14.2211799,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_7570215733","name":"Energia e Benessere","lat":42.4708893,"lon":14.2065996,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_7572146936","name":"Centro Estetico Oasi Benessere e Bellezza","lat":42.4666908,"lon":14.212308,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_7576149792","name":"Fonte di Benessere","lat":42.4618426,"lon":14.2227085,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_7577112399","name":"Mondo Baffo Toelettatura & SPA Petshop","lat":42.4596143,"lon":14.2265459,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_7578011858","name":"Saicosatispalmi","lat":42.4619478,"lon":14.2213849,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_7613041404","name":"Luisa Spagnoli","lat":42.4650708,"lon":14.2122934,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_7625369393","name":"Libreria Emporio del Benessere I Luoghi dell'Anima","lat":42.4641678,"lon":14.2121614,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_7626011264","name":"Respawn Zone Gaming Bar","lat":42.4645061,"lon":14.2123112,"type":"relax","visibility":"classica","tags":["leisure=amusement_arcade"]},{"id":"osm_node_7648829509","name":"SO.G.E.T. Spa - Società Gestione Entrate e Tributi","lat":42.4671839,"lon":14.2145022,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_7671820624","name":"Toga Massaggi & Benessere","lat":42.4685967,"lon":14.2193096,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_7778278101","name":"Monte Spaccato","lat":42.6267915,"lon":13.4014769,"type":"relax","visibility":"classica","tags":["natural=peak"]},{"id":"osm_node_7875998317","name":"Espander Communication","lat":42.6563677,"lon":14.0170768,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_7884216689","name":"Interspar","lat":42.5737211,"lon":14.0959957,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_7945575603","name":"Officina Benessere","lat":42.0532402,"lon":14.7295502,"type":"relax","visibility":"classica","tags":["leisure=fitness_centre"]},{"id":"osm_node_7972747266","name":"Despar","lat":42.2990495,"lon":14.4446026,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_8063918355","name":"Villa Raspa (Frazione di Spoltore)","lat":42.4601428,"lon":14.180304,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_8091514835","name":"Case Sparse (Cda di Montefino)","lat":42.5365162,"lon":13.8841272,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_8171342522","name":"Despar","lat":42.5453559,"lon":14.1206778,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_8239776192","name":"BeautyShine Estetica e Benessere","lat":42.4597365,"lon":14.2267268,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_8428731308","name":"Despar","lat":42.3371912,"lon":14.3166414,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_8486684818","name":"Via Rio Sparto civ.112","lat":42.4468467,"lon":14.2123357,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_8486684819","name":"Via Rio Sparto","lat":42.4467329,"lon":14.2124705,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_8489443303","name":"Max Risparmio","lat":42.452344,"lon":14.2263687,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_8498292971","name":"Spazio Pingue","lat":42.0587971,"lon":13.9217244,"type":"relax","visibility":"classica","tags":["amenity=events_venue"]},{"id":"osm_node_8569727151","name":"Spazio Agip","lat":42.5315432,"lon":14.1249919,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_8611675619","name":"Caramanico Terme","lat":42.1638321,"lon":14.0040064,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_8650559756","name":"Villa Raspa","lat":42.4582497,"lon":14.1930598,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_8650559757","name":"Villa Raspa","lat":42.4579783,"lon":14.1926329,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_8652921942","name":"Life 120 Lo Spaccio","lat":42.4860032,"lon":14.1873568,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_8656133097","name":"Via rio Sparto civ 225","lat":42.4484505,"lon":14.213991,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_8656133098","name":"Via Rio Sparto civ. 72","lat":42.4486577,"lon":14.2138609,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_8676286685","name":"Vivere Iulia Intermediazioni Immobiliari","lat":42.4611855,"lon":14.2192757,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_8690581714","name":"Body & Soul - estetica e benessere","lat":42.4558546,"lon":14.2161438,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_8748930215","name":"Dm3 Urban Spa - Concept for hair and body","lat":42.4614203,"lon":14.217863,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_8756264521","name":"Centro Informazioni Caramanico Terme","lat":42.1578946,"lon":14.0033024,"type":"relax","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_8761847905","name":"Sasso Spaccato","lat":42.7964021,"lon":13.3806087,"type":"relax","visibility":"classica","tags":["place=locality"]},{"id":"osm_node_8764670474","name":"Piazza di Spagna","lat":42.4552169,"lon":14.2263427,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_8775845190","name":"Camillo Spadano Fitness","lat":42.4476675,"lon":14.2129068,"type":"relax","visibility":"classica","tags":["leisure=sports_centre"]},{"id":"osm_node_8856293304","name":"Via Piana - Donico - Nodo P4.1 - Rete natura 2000 - S.I.C./Z.S.C. Calanchi di Bucchianico (Ripe dello Spagnolo)","lat":42.3026767,"lon":14.1832784,"type":"relax","visibility":"classica","tags":["tourism=information"]},{"id":"osm_node_9005056319","name":"Open Space","lat":42.4239933,"lon":14.1843249,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_9101644149","name":"Mercatone Al Risparmio","lat":41.9548736,"lon":14.3530166,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_9193563228","name":"Aipa spa","lat":42.8516425,"lon":13.5863084,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_9352517229","name":"Caciara della Spaccaculi","lat":42.7854692,"lon":13.6194123,"type":"relax","visibility":"classica","tags":["amenity=shelter"]},{"id":"osm_node_9514563703","name":"Caramanico Terme","lat":42.150266,"lon":14.0044257,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_9759701515","name":"Parafarmacia Benessere","lat":42.3568884,"lon":14.4034767,"type":"relax","visibility":"classica","tags":["amenity=pharmacy"]},{"id":"osm_node_9809233714","name":"Despar","lat":42.5784144,"lon":13.9788653,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_9945077854","name":"Spazio Enel","lat":42.2898838,"lon":14.0055626,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_9966631217","name":"Piscina Comunale","lat":41.9567712,"lon":13.6452351,"type":"relax","visibility":"classica","tags":["leisure=swimming_pool"]},{"id":"osm_node_10044075252","name":"Agenzia Immobiliare Espansione","lat":42.4463019,"lon":14.2499684,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_10097979315","name":"Estetica & Benessere","lat":42.4554473,"lon":14.1790605,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_10110973190","name":"MIVV SpA","lat":42.7938161,"lon":13.7861496,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_10110984703","name":"Metallurgica Abruzzese Spa","lat":42.7815853,"lon":13.9266539,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_10280590532","name":"Masseria Spadone","lat":42.3601513,"lon":13.9019832,"type":"relax","visibility":"classica","tags":["tourism=guest_house"]},{"id":"osm_node_10313017900","name":"Palestra Spazio Libero","lat":42.5139093,"lon":14.1508328,"type":"relax","visibility":"classica","tags":["leisure=fitness_centre"]},{"id":"osm_node_10582281900","name":"DeSpar","lat":42.4924139,"lon":13.9985038,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_10839239115","name":"Fisiobenessere","lat":42.4311063,"lon":14.2727079,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_10959254160","name":"Spazio Enel","lat":42.3571962,"lon":14.1454648,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_11086610901","name":"Dibè - Centro Estetico e Spa","lat":42.4614598,"lon":14.2272916,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_11136687243","name":"Despar","lat":42.4733952,"lon":14.1018423,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_11209557913","name":"Risparmio Casa","lat":42.4568926,"lon":14.2206057,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_11269853776","name":"Parco Villa Raspa","lat":42.4563705,"lon":14.1858213,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_11478616189","name":"Istituto Superiore \"Bertrando Spaventa\"","lat":42.5193031,"lon":14.0613014,"type":"relax","visibility":"classica","tags":["amenity=school"]},{"id":"osm_node_11542658048","name":"Museo tecnologico di Telespazio","lat":41.9761313,"lon":13.5984678,"type":"relax","visibility":"classica","tags":["tourism=museum"]},{"id":"osm_node_11563933468","name":"Spazio Enel","lat":42.8203795,"lon":13.8178738,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_11958314208","name":"Caramanico Terme incluso nella lista dei Borghi più belli d'Italia","lat":42.1571484,"lon":14.0023246,"type":"relax","visibility":"classica","tags":["tourism=attraction"]},{"id":"osm_node_11998738523","name":"Despan","lat":42.4084892,"lon":14.1639444,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_12232174661","name":"Casa Gaspare","lat":42.8592926,"lon":13.7077856,"type":"relax","visibility":"classica","tags":["tourism=guest_house"]},{"id":"osm_node_12309009868","name":"Despar","lat":42.3195717,"lon":14.2485045,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_12335286164","name":"Fonte Spagna","lat":42.5021599,"lon":13.3936436,"type":"relax","visibility":"classica","tags":["natural=spring"]},{"id":"osm_node_12423118954","name":"Spazio Real Estate","lat":42.4621222,"lon":14.2139513,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_12458566864","name":"Spazio Casa","lat":42.7524805,"lon":13.9569268,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_12495926037","name":"Farmacia Gasparroni","lat":42.80581,"lon":13.9413059,"type":"relax","visibility":"classica","tags":["amenity=pharmacy"]},{"id":"osm_node_12497918524","name":"Claudia Estetica & spa","lat":42.3617612,"lon":14.1982258,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_12564896581","name":"Despar","lat":42.7415797,"lon":13.9705784,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_12655250701","name":"Parrucchiera Laura Spagnoli","lat":42.0947725,"lon":13.08116,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_12702193416","name":"Narciso Hair Spa","lat":42.8531057,"lon":13.5751615,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_12784178730","name":"Aspark Owl","lat":42.8781431,"lon":13.8243209,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_12817026735","name":"Piazza di Spagna","lat":42.3772496,"lon":14.1469079,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_12825598787","name":"Spapizar","lat":42.350409,"lon":13.3978791,"type":"relax","visibility":"classica","tags":["amenity=restaurant"]},{"id":"osm_node_12828190518","name":"Spazio 58","lat":42.4712772,"lon":14.2068456,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_12947080480","name":"Farmacia Spavieri","lat":42.2299314,"lon":14.3912657,"type":"relax","visibility":"classica","tags":["amenity=pharmacy"]},{"id":"osm_node_12990486388","name":"Tabaccheria Lo Spaccio del Doganiere","lat":42.8667827,"lon":13.7706518,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_13015175146","name":"Spazio Enel","lat":42.4691969,"lon":14.2130822,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_13017339439","name":"Spazio Enel","lat":42.4546578,"lon":14.1894686,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_13075458893","name":"Spazio Enel Partner","lat":42.8532623,"lon":13.5882924,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_13112347657","name":"Monumento a Silvio Spaventa","lat":42.0349927,"lon":14.3664958,"type":"relax","visibility":"classica","tags":["tourism=artwork"]},{"id":"osm_node_13137580477","name":"Spacco","lat":42.1398206,"lon":14.5961523,"type":"relax","visibility":"classica","tags":[]},{"id":"osm_node_13428899017","name":"Spalto destro","lat":42.6220287,"lon":13.3837724,"type":"relax","visibility":"classica","tags":[]}]}
+{
+  "ok": true,
+  "region": "it-abruzzo",
+  "category": "relax",
+  "generatedAt": "2026-01-05T11:04:41.063Z",
+  "bbox": [
+    13,
+    41.9,
+    14.9,
+    42.9
+  ],
+  "count": 182,
+  "endpoint": "https://overpass-api.de/api/interpreter",
+  "notes": [],
+  "pois": [
+    {
+      "id": "node_1488281269",
+      "name": "Terme di Cotilia",
+      "lat": 42.3771144,
+      "lon": 13.0023168,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Terme di Cotilia",
+        "place": "village"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12655250701",
+      "name": "Parrucchiera Laura Spagnoli",
+      "lat": 42.0947725,
+      "lon": 13.08116,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Parrucchiera Laura Spagnoli",
+        "opening_hours": "Tu-Sa 09:00-13:00, 14:00-19:00",
+        "phone": "+39 333 362 8869",
+        "website": "http://parrucchieralaura.it/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_2311459359",
+      "name": "Spazio Enel",
+      "lat": 42.06925,
+      "lon": 13.252,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Enel",
+        "name": "Spazio Enel",
+        "opening_hours": "Tu 15:00-18:00",
+        "operator": "Enel",
+        "phone": "+39 800 900800",
+        "website": "https://www.enel.it/punto-enel/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_3798688144",
+      "name": "Ospanesco",
+      "lat": 42.2234017,
+      "lon": 13.1032062,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Ospanesco",
+        "place": "hamlet"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_2311459493",
+      "name": "Spazio Enel",
+      "lat": 42.2922,
+      "lon": 13.3000982,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Enel",
+        "name": "Spazio Enel",
+        "opening_hours": "Mo-Fr 15:00-19:00; Mo-Sa 09:00-13:00",
+        "operator": "Enel",
+        "phone": "+39 800 900800",
+        "website": "https://www.enel.it/punto-enel/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_6415615732",
+      "name": "Essere & Co. - Centro Benessere",
+      "lat": 42.3506515,
+      "lon": 13.39361,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Essere & Co. - Centro Benessere"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_4935301615",
+      "name": "Statua di Carlo II di Spagna",
+      "lat": 42.3514033,
+      "lon": 13.3975303,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "historic": "yes",
+        "name": "Statua di Carlo II di Spagna",
+        "tourism": "artwork"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_5780586750",
+      "name": "Tabaccheria \"Sparano Raffaele\"",
+      "lat": 42.3507423,
+      "lon": 13.4000203,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Tabaccheria \"Sparano Raffaele\"",
+        "phone": "+39 0862 62039"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_6507199367",
+      "name": "360º Benessere",
+      "lat": 42.346533,
+      "lon": 13.3988318,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "360º Benessere",
+        "opening_hours": "Mo-Fr 09:00-19:00",
+        "phone": "+39 0862 581179",
+        "website": "https://www.360gradibenessere.it/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12825598787",
+      "name": "Spapizar",
+      "lat": 42.350409,
+      "lon": 13.3978791,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Spapizar"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_6442596515",
+      "name": "Comune dell'Aquila Politiche per il Benessere della Persona",
+      "lat": 42.3591972,
+      "lon": 13.3947375,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "townhall",
+        "name": "Comune dell'Aquila Politiche per il Benessere della Persona",
+        "opening_hours": "Mo-Th 09:30-13:30; We 15:30-17:30",
+        "phone": "+39 0862 645521",
+        "website": "https://trasparenza.comune.laquila.it/index.php?id_oggetto=13&id_cat=0&id_doc=14625"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_5928818132",
+      "name": "Fondazione Cassa di Risparmio della Provincia dell'Aquila",
+      "lat": 42.3535503,
+      "lon": 13.4011254,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Fondazione Cassa di Risparmio della Provincia dell'Aquila",
+        "short_name": "Fondazione Carispaq"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_2510241824",
+      "name": "Colle Sparticuore",
+      "lat": 42.5379075,
+      "lon": 13.0356169,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Colle Sparticuore",
+        "natural": "peak"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_2311459333",
+      "name": "Spazio Enel",
+      "lat": 42.4363218,
+      "lon": 13.3015446,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Enel",
+        "name": "Spazio Enel",
+        "opening_hours": "Th 16:00-17:30; Mo 08:15-11:00",
+        "operator": "Enel",
+        "phone": "+39 800 900800",
+        "website": "https://www.enel.it/punto-enel/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12335286164",
+      "name": "Fonte Spagna",
+      "lat": 42.5021599,
+      "lon": 13.3936436,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Fonte Spagna",
+        "natural": "spring"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_3889811847",
+      "name": "Vespasia",
+      "lat": 42.7925049,
+      "lon": 13.0916765,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Vespasia"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_2311464574",
+      "name": "Spazio Enel",
+      "lat": 42.79238,
+      "lon": 13.09443,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Enel",
+        "name": "Spazio Enel",
+        "opening_hours": "Mo-Fr 09:00-13:00",
+        "operator": "Enel",
+        "phone": "+39 800 900 800",
+        "website": "https://www.enel.it/punto-enel/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_4365031378",
+      "name": "Collespada",
+      "lat": 42.6646067,
+      "lon": 13.2334094,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Collespada",
+        "place": "hamlet"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_13428899017",
+      "name": "Spalto destro",
+      "lat": 42.6220287,
+      "lon": 13.3837724,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spalto destro"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7778278101",
+      "name": "Monte Spaccato",
+      "lat": 42.6267915,
+      "lon": 13.4014769,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Monte Spaccato",
+        "natural": "peak"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_70980560",
+      "name": "Acquasanta Terme",
+      "lat": 42.769944,
+      "lon": 13.410185,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Acquasanta Terme",
+        "place": "village"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_1851761079",
+      "name": "Banca Popolare di Ancona Acquasanta Terme",
+      "lat": 42.7703138,
+      "lon": 13.4107999,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "bank",
+        "name": "Banca Popolare di Ancona Acquasanta Terme",
+        "operator": "UBI Banca; Banca Popolare di Ancona"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_1851761080",
+      "name": "Bar Terme",
+      "lat": 42.7706232,
+      "lon": 13.4111539,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "bar",
+        "name": "Bar Terme"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8761847905",
+      "name": "Sasso Spaccato",
+      "lat": 42.7964021,
+      "lon": 13.3806087,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Sasso Spaccato",
+        "place": "locality"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_6689475197",
+      "name": "Lu Vurghe",
+      "lat": 42.779695,
+      "lon": 13.4136336,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Lu Vurghe",
+        "natural": "hot_spring"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_2466663539",
+      "name": "Colle Spagone",
+      "lat": 42.8895508,
+      "lon": 13.0723598,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Colle Spagone",
+        "natural": "peak"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_859523480",
+      "name": "Fonte della Sparviera",
+      "lat": 42.8488394,
+      "lon": 13.1577868,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "drinking_water",
+        "name": "Fonte della Sparviera"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9966631217",
+      "name": "Piscina Comunale",
+      "lat": 41.9567712,
+      "lon": 13.6452351,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "swimming_pool",
+        "name": "Piscina Comunale"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_4801573471",
+      "name": "La bottega del benessere",
+      "lat": 42.0333101,
+      "lon": 13.4246514,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "La bottega del benessere"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11542658048",
+      "name": "Museo tecnologico di Telespazio",
+      "lat": 41.9761313,
+      "lon": 13.5984678,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "contact:phone": "+39 06 4079 6589;+39 06 4079 1",
+        "contact:website": "https://www.telespazio.com/it/business/space-centres-teleports/fucino-space-centre",
+        "name": "Museo tecnologico di Telespazio",
+        "tourism": "museum",
+        "wikidata": "Q111379306",
+        "wikipedia": "it:Museo tecnologico di Telespazio"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_70993435",
+      "name": "Popoli Terme",
+      "lat": 42.1713106,
+      "lon": 13.832817,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Popoli Terme",
+        "place": "town",
+        "wikidata": "Q30029064"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_2546732837",
+      "name": "Colle Sparviero",
+      "lat": 42.3653625,
+      "lon": 13.6546289,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Colle Sparviero",
+        "natural": "peak"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8498292971",
+      "name": "Spazio Pingue",
+      "lat": 42.0587971,
+      "lon": 13.9217244,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "events_venue",
+        "name": "Spazio Pingue"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_6242232640",
+      "name": "Frantoio Azienda Agricola Spagnoli",
+      "lat": 42.0481846,
+      "lon": 13.989554,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Frantoio Azienda Agricola Spagnoli",
+        "website": "https://www.romanoliveoil.com/i-produttori/azienda-agricola-biologica-augusto-spagnoli/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9514563703",
+      "name": "Caramanico Terme",
+      "lat": 42.150266,
+      "lon": 14.0044257,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Caramanico Terme"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_70993378",
+      "name": "Caramanico Terme",
+      "lat": 42.156446,
+      "lon": 14.0031895,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Caramanico Terme",
+        "place": "village"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8756264521",
+      "name": "Centro Informazioni Caramanico Terme",
+      "lat": 42.1578946,
+      "lon": 14.0033024,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "information": "office",
+        "name": "Centro Informazioni Caramanico Terme",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11958314208",
+      "name": "Caramanico Terme incluso nella lista dei Borghi più belli d'Italia",
+      "lat": 42.1571484,
+      "lon": 14.0023246,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Caramanico Terme incluso nella lista dei Borghi più belli d'Italia",
+        "opening_hours": "24/7",
+        "tourism": "attraction"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_5884289381",
+      "name": "Ristorante dell’Hotel Terme Maiella",
+      "lat": 42.1594171,
+      "lon": 14.0069488,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Ristorante dell’Hotel Terme Maiella"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8611675619",
+      "name": "Caramanico Terme",
+      "lat": 42.1638321,
+      "lon": 14.0040064,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Caramanico Terme"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_3491508134",
+      "name": "Ravone della Vespa",
+      "lat": 42.0936213,
+      "lon": 14.0709867,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Ravone della Vespa",
+        "place": "locality"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_2782982332",
+      "name": "Despar",
+      "lat": 42.0877279,
+      "lon": 14.2065987,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Spar",
+        "name": "Despar",
+        "opening_hours": "Mo-Sa 08:30-13:00,16:30-20:00",
+        "phone": "+39 0872 718307"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_2733501910",
+      "name": "De Cecco spaccio aziendale",
+      "lat": 42.0969764,
+      "lon": 14.207956,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "De Cecco spaccio aziendale"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_2783062727",
+      "name": "DelVerde spaccio aziendale",
+      "lat": 42.0964434,
+      "lon": 14.2065994,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "DelVerde spaccio aziendale"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_282505865",
+      "name": "Scafa-San Valentino-Caramanico Terme",
+      "lat": 42.2673498,
+      "lon": 13.998473,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Scafa-San Valentino-Caramanico Terme",
+        "operator": "RFI",
+        "wikidata": "Q16609875",
+        "wikipedia": "it:Stazione di Scafa-San Valentino-Caramanico Terme"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_2311459431",
+      "name": "Spazio Enel",
+      "lat": 42.26751,
+      "lon": 14.00214,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Enel",
+        "name": "Spazio Enel",
+        "opening_hours": "Tu-Th 09:00-12:00",
+        "operator": "Enel",
+        "website": "https://www.enel.it/punto-enel/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10280590532",
+      "name": "Masseria Spadone",
+      "lat": 42.3601513,
+      "lon": 13.9019832,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Masseria Spadone",
+        "tourism": "guest_house",
+        "website": "https://www.masseriaspadone.it"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_2311459214",
+      "name": "Spazio Enel",
+      "lat": 42.29444,
+      "lon": 13.96958,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Enel",
+        "name": "Spazio Enel",
+        "opening_hours": "Mo-Sa 09:00-13:00",
+        "operator": "Enel",
+        "website": "https://www.enel.it/punto-enel/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9945077854",
+      "name": "Spazio Enel",
+      "lat": 42.2898838,
+      "lon": 14.0055626,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spazio Enel",
+        "operator": "Enel"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_6281447639",
+      "name": "Ripe dello Spagnolo",
+      "lat": 42.3174581,
+      "lon": 14.1473664,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Ripe dello Spagnolo",
+        "place": "locality"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_3741554337",
+      "name": "Despar",
+      "lat": 42.3654693,
+      "lon": 14.0727365,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Spar",
+        "name": "Despar",
+        "opening_hours": "Tu-Sa 08:00-13:00, 16:00-20:00; Su-Mo 08:00-13:00"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12005744070",
+      "name": "Centro Nuoto Cepagatti",
+      "lat": 42.3653227,
+      "lon": 14.1004794,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Centro Nuoto Cepagatti",
+        "opening_hours": "Mo-Sa 09:00-21:00",
+        "phone": "+39 085 976 9167",
+        "sport": "swimming",
+        "website": "https://www.centronuotocepagatti.it/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_2985778837",
+      "name": "Punto Benessere",
+      "lat": 42.3542105,
+      "lon": 14.1379083,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Punto Benessere"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10959254160",
+      "name": "Spazio Enel",
+      "lat": 42.3571962,
+      "lon": 14.1454648,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spazio Enel",
+        "opening_hours": "Mo-Fr 08:30-13:00,15:00-17:00",
+        "operator": "Enel",
+        "phone": "+39 0871 782 169",
+        "website": "https://www.enel.it/spazio-enel/chieti/centro-servizi-di-fausto-bellante/9051/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12817026735",
+      "name": "Piazza di Spagna",
+      "lat": 42.3772496,
+      "lon": 14.1469079,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Piazza di Spagna",
+        "opening_hours": "Mo-We,Fr,Sa 09:00-13:00,16:00-20:00; Th 09:00-13:00"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8856293304",
+      "name": "Via Piana - Donico - Nodo P4.1 - Rete natura 2000 - S.I.C./Z.S.C. Calanchi di Bucchianico (Ripe dello Spagnolo)",
+      "lat": 42.3026767,
+      "lon": 14.1832784,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "information": "board",
+        "name": "Via Piana - Donico - Nodo P4.1 - Rete natura 2000 - S.I.C./Z.S.C. Calanchi di Bucchianico (Ripe dello Spagnolo)",
+        "tourism": "information"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12309009868",
+      "name": "Despar",
+      "lat": 42.3195717,
+      "lon": 14.2485045,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Spar",
+        "name": "Despar"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_1515976018",
+      "name": "Farmacia Spatocco",
+      "lat": 42.3527232,
+      "lon": 14.1677393,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "pharmacy",
+        "name": "Farmacia Spatocco",
+        "opening_hours": "Mo-Sa 08:00-14:00; Mo-Fr 15:30-21:00; Su, PH off",
+        "operator": "Dr. Angelo Spatocco",
+        "phone": "+39 0871 348 610",
+        "website": "https://www.farmaciediturno.org/orariofarmacia.asp?idf=10584"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_1508580868",
+      "name": "Cassa di Risparmio della Provincia di Chieti - Agenzia 1",
+      "lat": 42.3528738,
+      "lon": 14.1724636,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "bank",
+        "name": "Cassa di Risparmio della Provincia di Chieti - Agenzia 1"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12497918524",
+      "name": "Claudia Estetica & spa",
+      "lat": 42.3617612,
+      "lon": 14.1982258,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Claudia Estetica & spa",
+        "phone": "+39 334 221 1133",
+        "website": "https://centauroweb.it/negozi/claudia-estetica-spa/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9101644149",
+      "name": "Mercatone Al Risparmio",
+      "lat": 41.9548736,
+      "lon": 14.3530166,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Mercatone Al Risparmio"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_13112347657",
+      "name": "Monumento a Silvio Spaventa",
+      "lat": 42.0349927,
+      "lon": 14.3664958,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Monumento a Silvio Spaventa",
+        "tourism": "artwork",
+        "wikidata": "Q3862628",
+        "wikipedia": "it:Monumento a Silvio Spaventa"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_2311459235",
+      "name": "Spazio Enel",
+      "lat": 42.06753,
+      "lon": 14.44291,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Enel",
+        "name": "Spazio Enel",
+        "opening_hours": "Tu-Th 09:00-10:00,17:00-18:00; Mo-We 12:00-14:00",
+        "operator": "Enel",
+        "website": "https://www.enel.it/punto-enel/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_13137580477",
+      "name": "Spacco",
+      "lat": 42.1398206,
+      "lon": 14.5961523,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spacco"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_6612644362",
+      "name": "Despar Santa Lucia",
+      "lat": 42.1794799,
+      "lon": 14.3333079,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Despar Santa Lucia",
+        "opening_hours": "Mo-Sa 08:00-13:00,16:30-20:00",
+        "phone": "+39 0872 757692",
+        "website": "https://www.santaluciasupermercati.it"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_3992500257",
+      "name": "Spaccarelli",
+      "lat": 42.2303467,
+      "lon": 14.3423674,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spaccarelli",
+        "place": "hamlet",
+        "wikipedia": "it:/Frazioni di Lanciano#Spaccarelli - Candeloro - Costa di Chieti"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_1775080889",
+      "name": "Despar",
+      "lat": 42.2187448,
+      "lon": 14.3842387,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Spar",
+        "name": "Despar",
+        "operator": "Despar"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12947080480",
+      "name": "Farmacia Spavieri",
+      "lat": 42.2299314,
+      "lon": 14.3912657,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "pharmacy",
+        "contact:phone": "+39 0872 713417",
+        "name": "Farmacia Spavieri",
+        "opening_hours": "Mo-Sa 08:45-13:15,16:00-20:00,Su 10:00-13:00"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_597503049",
+      "name": "Galleria Di Nenno Spazio Arte",
+      "lat": 42.229397,
+      "lon": 14.3925401,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Galleria Di Nenno Spazio Arte",
+        "tourism": "gallery"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_6615571619",
+      "name": "Risparmio Casa",
+      "lat": 42.2357093,
+      "lon": 14.4070556,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Risparmio Casa",
+        "name": "Risparmio Casa"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8428731308",
+      "name": "Despar",
+      "lat": 42.3371912,
+      "lon": 14.3166414,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Spar",
+        "name": "Despar",
+        "opening_hours": "Mo-Sa 07:30-13:00, 16:00-19:30",
+        "operator": "Supermercato Salemme Despar",
+        "phone": "+39 0871 961 432"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7972747266",
+      "name": "Despar",
+      "lat": 42.2990495,
+      "lon": 14.4446026,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Spar",
+        "name": "Despar",
+        "opening_hours": "Mo-We,Fr,Sa 08:00-13:00,16:00-20:00",
+        "website": "https://www.despar.it/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_6587085432",
+      "name": "Spazio Conad",
+      "lat": 42.3444958,
+      "lon": 14.3811447,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Spazio Conad",
+        "name": "Spazio Conad",
+        "opening_hours": "Mo-Sa 09:00-19:00; Su off",
+        "operator": "Conad",
+        "phone": "+39 085 90551",
+        "website": "https://www.conad.it/ricerca-negozi/negozio.009729.html"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9759701515",
+      "name": "Parafarmacia Benessere",
+      "lat": 42.3568884,
+      "lon": 14.4034767,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "pharmacy",
+        "name": "Parafarmacia Benessere"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7945575603",
+      "name": "Officina Benessere",
+      "lat": 42.0532402,
+      "lon": 14.7295502,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "fitness_centre",
+        "name": "Officina Benessere",
+        "sport": "fitness;gymnastics"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_2603568411",
+      "name": "Piscina Comunale",
+      "lat": 42.0554237,
+      "lon": 14.7388498,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "swimming_pool",
+        "name": "Piscina Comunale",
+        "sport": "swimming"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_5105469861",
+      "name": "La Spasetta",
+      "lat": 42.1121484,
+      "lon": 14.709572,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "La Spasetta"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_6834047150",
+      "name": "Sparagn e Cumbarisc",
+      "lat": 42.1111602,
+      "lon": 14.709046,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Sparagn e Cumbarisc",
+        "name": "Sparagn e Cumbarisc",
+        "opening_hours": "Mo-Sa 10:30-13:00,17:00-20:00; Su 17:00-20:00",
+        "operator": "Anastasia Massone",
+        "website": "https://sparagn.it/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_2970444547",
+      "name": "Vetta Settentrionale d'Intermesoli",
+      "lat": 42.4819459,
+      "lon": 13.5233542,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Vetta Settentrionale d'Intermesoli",
+        "natural": "peak",
+        "wikidata": "Q31641110"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_2454763431",
+      "name": "Pizzo d'Intermesoli",
+      "lat": 42.4725261,
+      "lon": 13.5272376,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Pizzo d'Intermesoli",
+        "natural": "peak",
+        "wikidata": "Q31620832",
+        "wikipedia": "it:Pizzo Intermesoli"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_452630245",
+      "name": "Intermesoli",
+      "lat": 42.5354579,
+      "lon": 13.5413413,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Intermesoli",
+        "place": "hamlet"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_3302576156",
+      "name": "Entrata nella Gola dell'Inferno Spaccato",
+      "lat": 42.4479746,
+      "lon": 13.7591934,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Entrata nella Gola dell'Inferno Spaccato",
+        "natural": "cave_entrance"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9352517229",
+      "name": "Caciara della Spaccaculi",
+      "lat": 42.7854692,
+      "lon": 13.6194123,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "shelter",
+        "name": "Caciara della Spaccaculi"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7098030448",
+      "name": "BIOAPTA - Spaccio aziendale",
+      "lat": 42.5941153,
+      "lon": 13.6972245,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "BIOAPTA - Spaccio aziendale"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_2304262708",
+      "name": "Spazio Enel",
+      "lat": 42.6636548,
+      "lon": 13.6938071,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Enel",
+        "name": "Spazio Enel",
+        "opening_hours": "Mo-Fr 08:30-12:00, 14:00-15:30",
+        "operator": "Enel",
+        "phone": "+39 800 900 800",
+        "website": "https://www.enel.it/punto-enel/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_2311459479",
+      "name": "Spazio Enel",
+      "lat": 42.65948,
+      "lon": 13.70389,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Enel",
+        "name": "Spazio Enel",
+        "opening_hours": "Mo-Fr 16:00-19:30; Mo-Sa 09:00-13:00",
+        "operator": "Enel",
+        "phone": "+39 800 900 800",
+        "website": "https://www.enel.it/punto-enel/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7518809570",
+      "name": "Spazio Conad",
+      "lat": 42.6812532,
+      "lon": 13.7599139,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Spazio Conad",
+        "contact:phone": "+39 0861 558901",
+        "name": "Spazio Conad",
+        "opening_hours": "Mo-Su 09:00-21:00",
+        "operator": "Conad",
+        "website": "https://www.conad.it/ricerca-negozi/negozio.007405.html"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_3760993394",
+      "name": "Farmacia Spatocco",
+      "lat": 42.6937843,
+      "lon": 13.7872487,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "pharmacy",
+        "name": "Farmacia Spatocco",
+        "phone": "+39 086 158134"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10110973190",
+      "name": "MIVV SpA",
+      "lat": 42.7938161,
+      "lon": 13.7861496,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "MIVV SpA",
+        "phone": "+39 086181201",
+        "website": "http://www.mivv.it/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_3922922143",
+      "name": "Spaccio di Pietro",
+      "lat": 42.7568878,
+      "lon": 13.8397414,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spaccio di Pietro",
+        "place": "hamlet"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_2311459408",
+      "name": "Spazio Enel",
+      "lat": 42.45021,
+      "lon": 13.93547,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Enel",
+        "name": "Spazio Enel",
+        "opening_hours": "Tu-Th 09:00-12:00",
+        "operator": "Enel",
+        "website": "https://www.enel.it/punto-enel/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_2311459320",
+      "name": "Spazio Enel",
+      "lat": 42.39643,
+      "lon": 14.04613,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Enel",
+        "name": "Spazio Enel",
+        "opening_hours": "Mo-Fr 09:00-12:00; Tu 15:00-17:30",
+        "operator": "Enel",
+        "website": "https://www.enel.it/punto-enel/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_1373189547",
+      "name": "Cassa di Risparmio",
+      "lat": 42.43505,
+      "lon": 13.9842021,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "bank",
+        "name": "Cassa di Risparmio"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8091514835",
+      "name": "Case Sparse (Cda di Montefino)",
+      "lat": 42.5365162,
+      "lon": 13.8841272,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Case Sparse (Cda di Montefino)"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10582281900",
+      "name": "DeSpar",
+      "lat": 42.4924139,
+      "lon": 13.9985038,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Spar",
+        "name": "DeSpar",
+        "opening_hours": "Mo-Sa 08:00-20:00"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9809233714",
+      "name": "Despar",
+      "lat": 42.5784144,
+      "lon": 13.9788653,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Spar",
+        "name": "Despar"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11136687243",
+      "name": "Despar",
+      "lat": 42.4733952,
+      "lon": 14.1018423,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Spar",
+        "name": "Despar"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_6793128668",
+      "name": "Risparmio Casa",
+      "lat": 42.4073761,
+      "lon": 14.1633606,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Risparmio Casa",
+        "name": "Risparmio Casa",
+        "opening_hours": "Mo-Sa 09:00-20:00; Su 09:00-13:00,15:00-20:00",
+        "operator": "ANTOGEST S.R.L.",
+        "phone": "+39 085 219 1277"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11998738523",
+      "name": "Despan",
+      "lat": 42.4084892,
+      "lon": 14.1639444,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Despan",
+        "phone": "+39 085 446 1330",
+        "website": "http://despan.it/new/azienda.html"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_98287810",
+      "name": "Interspar",
+      "lat": 42.4163703,
+      "lon": 14.1558083,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Spar",
+        "name": "Interspar",
+        "opening_hours": "Mo-Su 09:00-21:00",
+        "phone": "+39 085 918 9528"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9005056319",
+      "name": "Open Space",
+      "lat": 42.4239933,
+      "lon": 14.1843249,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Open Space",
+        "opening_hours": "Mo-Fr 09:00-17:00"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_203398457",
+      "name": "Interspar",
+      "lat": 42.4271022,
+      "lon": 14.1857981,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Spar",
+        "name": "Interspar",
+        "opening_hours": "Mo-Su 08:30-21:00; Dec 08,Jan 06 08:30-21:00; Dec 24,Dec 31 08:30-19:00",
+        "operator": "Maiora s.r.l.",
+        "phone": "+39 085 918 9513",
+        "website": "https://portedipescara.it/negozi/interspar/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10097979315",
+      "name": "Estetica & Benessere",
+      "lat": 42.4554473,
+      "lon": 14.1790605,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "alt_name": "Estetica e Benessere",
+        "name": "Estetica & Benessere",
+        "opening_hours": "Mo-Fr 09:00-19:00; Sa 09:00-13:00; Su off",
+        "operator": "Giovanna Manzi",
+        "phone": "+39 085 421 3974",
+        "website": "https://esteticaebenessereg.it/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_100888559",
+      "name": "Villa Raspa",
+      "lat": 42.4535633,
+      "lon": 14.1864206,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Villa Raspa",
+        "place": "village"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11269853776",
+      "name": "Parco Villa Raspa",
+      "lat": 42.4563705,
+      "lon": 14.1858213,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Parco Villa Raspa",
+        "operator": "Protezione Civile Regione Abruzzo"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_13017339439",
+      "name": "Spazio Enel",
+      "lat": 42.4546578,
+      "lon": 14.1894686,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spazio Enel",
+        "operator": "Enel"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7466345444",
+      "name": "Di Lorenzo e Spazioso",
+      "lat": 42.4485864,
+      "lon": 14.2008355,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Di Lorenzo e Spazioso",
+        "opening_hours": "Mo-Sa 07:30-12:30, 14:30-18:30",
+        "phone": "+39 085 51412"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8063918355",
+      "name": "Villa Raspa (Frazione di Spoltore)",
+      "lat": 42.4601428,
+      "lon": 14.180304,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Villa Raspa (Frazione di Spoltore)"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8650559756",
+      "name": "Villa Raspa",
+      "lat": 42.4582497,
+      "lon": 14.1930598,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Villa Raspa"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8650559757",
+      "name": "Villa Raspa",
+      "lat": 42.4579783,
+      "lon": 14.1926329,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Villa Raspa"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_3355831721",
+      "name": "Spazio Enel",
+      "lat": 42.4698467,
+      "lon": 14.1933043,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spazio Enel",
+        "opening_hours": "Mo-Fr 09:00-13:00, 16:00-19:30; Sa-Su off",
+        "operator": "Enel",
+        "phone": "+39 085 2030153",
+        "website": "https://www.enel.it/spazio-enel/pescara/ro-ma-srl/5942/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_5597888939",
+      "name": "Despar",
+      "lat": 42.4655332,
+      "lon": 14.2065614,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Spar",
+        "name": "Despar"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_646787601",
+      "name": "Eurospar",
+      "lat": 42.48049,
+      "lon": 14.1933357,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Eurospar",
+        "name": "Eurospar",
+        "opening_hours": "Mo-Sa 08:00-21:30; Su 08:30-13:30",
+        "operator": "Maiora S.r.l.",
+        "phone": "+39 085 75420"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7570215733",
+      "name": "Energia e Benessere",
+      "lat": 42.4708893,
+      "lon": 14.2065996,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Energia e Benessere",
+        "opening_hours": "Tu-Fr 09:00-16:00; Sa 09:00-13:00",
+        "operator": "D'Elia Patrizia",
+        "phone": "+39  085 421 2479"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12828190518",
+      "name": "Spazio 58",
+      "lat": 42.4712772,
+      "lon": 14.2068456,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spazio 58"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8486684818",
+      "name": "Via Rio Sparto civ.112",
+      "lat": 42.4468467,
+      "lon": 14.2123357,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Via Rio Sparto civ.112",
+        "operator": "GTM"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8486684819",
+      "name": "Via Rio Sparto",
+      "lat": 42.4467329,
+      "lon": 14.2124705,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Via Rio Sparto",
+        "operator": "GTM"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8656133097",
+      "name": "Via rio Sparto civ 225",
+      "lat": 42.4484505,
+      "lon": 14.213991,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Via rio Sparto civ 225",
+        "operator": "GTM"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8656133098",
+      "name": "Via Rio Sparto civ. 72",
+      "lat": 42.4486577,
+      "lon": 14.2138609,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Via Rio Sparto civ. 72",
+        "operator": "GTM"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8775845190",
+      "name": "Camillo Spadano Fitness",
+      "lat": 42.4476675,
+      "lon": 14.2129068,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Camillo Spadano Fitness",
+        "opening_hours": "Mar 21-Sep 20 Mo-Fr 07:00-20:00; Mar 21-Sep 20 Sa 08:00-13:00; Aug Sa off; Sep 21-Mar 20 Mo-Fr 07:00-21:00; Sep 21-Mar 20 Sa 08:00-15:00; Sep 21-Mar 20 Su 09:00-13:00",
+        "phone": "+39 085 33387;+39 391 493 9728",
+        "sport": "swimming;fitness;gym",
+        "website": "https://www.camillospadanofitness.it/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8690581714",
+      "name": "Body & Soul - estetica e benessere",
+      "lat": 42.4558546,
+      "lon": 14.2161438,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Body & Soul - estetica e benessere",
+        "opening_hours": "Mo-Fr 09:30-19:30"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11209557913",
+      "name": "Risparmio Casa",
+      "lat": 42.4568926,
+      "lon": 14.2206057,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Risparmio Casa",
+        "name": "Risparmio Casa",
+        "opening_hours": "Mo-Sa 08:30-20:00; Su 08:30-13:00,15:30-20:00; Dec 24,Dec 31 08:30-18:30; Dec 25,Dec 26,Jan 01,Jan 06 off",
+        "operator": "CASALGEST S.R.L.",
+        "phone": "+39 085 889 1446",
+        "website": "https://www.risparmiocasa.com/store/pescara/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_2311459525",
+      "name": "Spazio Enel",
+      "lat": 42.4565246,
+      "lon": 14.2253402,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Enel",
+        "name": "Spazio Enel",
+        "opening_hours": "Tu-Sa 09:30-13:00; Mo-Sa 16:00-20:00",
+        "operator": "Enel",
+        "website": "https://www.enel.it/punto-enel/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7209377704",
+      "name": "Eurospar",
+      "lat": 42.452236,
+      "lon": 14.2230635,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Eurospar",
+        "name": "Eurospar",
+        "opening_hours": "Mo-Sa 08:00-21:00; Su 09:00-13:00"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7519679167",
+      "name": "New Style Parrucchiere By Lelio Spadolini",
+      "lat": 42.4564793,
+      "lon": 14.2222346,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "New Style Parrucchiere By Lelio Spadolini",
+        "phone": "+39 338 476 3019"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8489443303",
+      "name": "Max Risparmio",
+      "lat": 42.452344,
+      "lon": 14.2263687,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Max Risparmio",
+        "website": "https://www.maxrisparmio.com"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8764670474",
+      "name": "Piazza di Spagna",
+      "lat": 42.4552169,
+      "lon": 14.2263427,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Piazza di Spagna",
+        "phone": "+39 085 454 9206"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10044075252",
+      "name": "Agenzia Immobiliare Espansione",
+      "lat": 42.4463019,
+      "lon": 14.2499684,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Agenzia Immobiliare Espansione"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12423118954",
+      "name": "Spazio Real Estate",
+      "lat": 42.4621222,
+      "lon": 14.2139513,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spazio Real Estate",
+        "website": "https://www.spaziorealestate.com/spaziore/index.aspx"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7467755278",
+      "name": "Spazio010",
+      "lat": 42.4593049,
+      "lon": 14.2173943,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spazio010",
+        "opening_hours": "09:00-19:00",
+        "website": "https://www.spazio010.com/coworking/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7513837478",
+      "name": "Erboristeria Voglia di Benessere",
+      "lat": 42.4586622,
+      "lon": 14.2195919,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Erboristeria Voglia di Benessere",
+        "opening_hours": "Mo-Fr 09:30-13:00,16:30-19:30; Sa 16:30-18:30",
+        "phone": "+39 085 691 004",
+        "website": "https://erboristeria-voglia-di-benessere-pescara.business.site/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7554126682",
+      "name": "Piaggio & C. Spa Del Rossi Claudio & C. Sas",
+      "lat": 42.4633609,
+      "lon": 14.2211799,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Piaggio & C. Spa Del Rossi Claudio & C. Sas",
+        "opening_hours": "Mo-Fr 08:30-13:00,15:30-19:30; Sa 09:00-12:30",
+        "phone": "+39 085 451 8784",
+        "website": "https://www.delrossi.it/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8676286685",
+      "name": "Vivere Iulia Intermediazioni Immobiliari",
+      "lat": 42.4611855,
+      "lon": 14.2192757,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Vivere Iulia Intermediazioni Immobiliari",
+        "opening_hours": "Mo-Fr 09:00-20:00; Sa 09:00-13:00",
+        "phone": "+39 085 915 5962",
+        "website": "http://www.vivereiulia.com/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8748930215",
+      "name": "Dm3 Urban Spa - Concept for hair and body",
+      "lat": 42.4614203,
+      "lon": 14.217863,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Dm3 Urban Spa - Concept for hair and body",
+        "opening_hours": "Tu-Sa 09:00-19:00",
+        "phone": "+39 085 690953",
+        "website": "https://biojellydm3.wordpress.com/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7467830377",
+      "name": "Moda e Benessere",
+      "lat": 42.4682545,
+      "lon": 14.2086226,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Moda e Benessere",
+        "phone": "+39 085 421 1564"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7572146936",
+      "name": "Centro Estetico Oasi Benessere e Bellezza",
+      "lat": 42.4666908,
+      "lon": 14.212308,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Centro Estetico Oasi Benessere e Bellezza",
+        "opening_hours": "Tu-Sa 09:00-19:00",
+        "phone": "+39 085 299156"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7613041404",
+      "name": "Luisa Spagnoli",
+      "lat": 42.4650708,
+      "lon": 14.2122934,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Luisa Spagnoli",
+        "name": "Luisa Spagnoli",
+        "opening_hours": "Mo-Sa 10:30-13:00,16:30-20:00",
+        "phone": "+39 085 422 7084",
+        "website": "https://www.luisaspagnoli.it/it_en/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7625369393",
+      "name": "Libreria Emporio del Benessere I Luoghi dell'Anima",
+      "lat": 42.4641678,
+      "lon": 14.2121614,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Libreria Emporio del Benessere I Luoghi dell'Anima",
+        "opening_hours": "Mo 16:30-08:00; Tu-Sa 09:30-13:00,16:30-08:00",
+        "phone": "+39 085 421 3137",
+        "website": "http://www.librerialuoghidellanima.com/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7626011264",
+      "name": "Respawn Zone Gaming Bar",
+      "lat": 42.4645061,
+      "lon": 14.2123112,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "amusement_arcade",
+        "name": "Respawn Zone Gaming Bar",
+        "opening_hours": "Mo-Su 16:00-02:00",
+        "website": "https://www.respawnzone.it/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7648829509",
+      "name": "SO.G.E.T. Spa - Società Gestione Entrate e Tributi",
+      "lat": 42.4671839,
+      "lon": 14.2145022,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "contact:phone": "+39 085 385 0800",
+        "name": "SO.G.E.T. Spa - Società Gestione Entrate e Tributi",
+        "opening_hours": "Mo-Fr 08:30-13:00",
+        "website": "https://www.sogetspa.it/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_13015175146",
+      "name": "Spazio Enel",
+      "lat": 42.4691969,
+      "lon": 14.2130822,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spazio Enel",
+        "opening_hours": "Mo-Fr 09:00-13:00,16:00-19:30",
+        "operator": "Enel",
+        "phone": "+39 085 498 8849",
+        "website": "https://www.enel.it/it-it/spazio-enel/city/store-detail?storeId=8814"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7671820624",
+      "name": "Toga Massaggi & Benessere",
+      "lat": 42.4685967,
+      "lon": 14.2193096,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Toga Massaggi & Benessere",
+        "opening_hours": "Mo-Sa 09:00-20:00"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7576149792",
+      "name": "Fonte di Benessere",
+      "lat": 42.4618426,
+      "lon": 14.2227085,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Fonte di Benessere",
+        "phone": "+39 085 451 4489"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7577112399",
+      "name": "Mondo Baffo Toelettatura & SPA Petshop",
+      "lat": 42.4596143,
+      "lon": 14.2265459,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "contact:phone": "+39 085 212 2388",
+        "name": "Mondo Baffo Toelettatura & SPA Petshop",
+        "opening_hours": "Mo-Sa 09:00-13:00,16:00-20:00"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7578011858",
+      "name": "Saicosatispalmi",
+      "lat": 42.4619478,
+      "lon": 14.2213849,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Saicosatispalmi",
+        "opening_hours": "Tu-Th 16:00-19:30; Fr,Sa 10:00-13:00",
+        "phone": "+39 085 453 1255",
+        "website": "https://www.saicosatispalmi.com/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8239776192",
+      "name": "BeautyShine Estetica e Benessere",
+      "lat": 42.4597365,
+      "lon": 14.2267268,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "BeautyShine Estetica e Benessere",
+        "opening_hours": "Mo 15:00-19:00; Tu-Fr 09:00-19:00; Sa 09:00-17:00"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11086610901",
+      "name": "Dibè - Centro Estetico e Spa",
+      "lat": 42.4614598,
+      "lon": 14.2272916,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Dibè - Centro Estetico e Spa"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7107896206",
+      "name": "Luisa Spagnoli",
+      "lat": 42.4716306,
+      "lon": 14.208229,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Luisa Spagnoli",
+        "name": "Luisa Spagnoli",
+        "opening_hours": "Mo-Sa 09:30-13:00,16:00-20:00",
+        "phone": "+39 085 422 7148",
+        "website": "https://www.luisaspagnoli.it/it_en/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11478616189",
+      "name": "Istituto Superiore \"Bertrando Spaventa\"",
+      "lat": 42.5193031,
+      "lon": 14.0613014,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "school",
+        "name": "Istituto Superiore \"Bertrando Spaventa\"",
+        "website": "https://www.omnicomprensivocsangelo.edu.it/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8569727151",
+      "name": "Spazio Agip",
+      "lat": 42.5315432,
+      "lon": 14.1249919,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spazio Agip"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10313017900",
+      "name": "Palestra Spazio Libero",
+      "lat": 42.5139093,
+      "lon": 14.1508328,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "fitness_centre",
+        "name": "Palestra Spazio Libero",
+        "sport": "weightlifting"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_75251540",
+      "name": "The Space Cinema",
+      "lat": 42.5218808,
+      "lon": 14.1503445,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "cinema",
+        "brand": "The Space Cinema",
+        "name": "The Space Cinema",
+        "opening_hours": "Mo-Fr 15:00-01:00, Sa,Su 14:00-01:00",
+        "website": "https://www.thespacecinema.it/al-cinema/montesilvano"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7884216689",
+      "name": "Interspar",
+      "lat": 42.5737211,
+      "lon": 14.0959957,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Spar",
+        "name": "Interspar",
+        "opening_hours": "Mo-Su 08:30-21:00",
+        "operator": "Maiora Srl - Fil. 133 Silvi Marina",
+        "phone": "+39 085 936 7401"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9705446444",
+      "name": "U3 Universo Sport Center",
+      "lat": 42.5737583,
+      "lon": 14.0964028,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "leisure": "sports_centre",
+        "name": "U3 Universo Sport Center",
+        "sport": "swimming"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8171342522",
+      "name": "Despar",
+      "lat": 42.5453559,
+      "lon": 14.1206778,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Spar",
+        "name": "Despar",
+        "opening_hours": "Mo-Sa 08:00-13:00,15:30-20:00",
+        "operator": "SEF Food Srl",
+        "phone": "+39 085 935 0358",
+        "website": "https://www.mydespar.it/pdv/sef-food-srl-via-roma-412-silvi-marina-3838"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_2311459503",
+      "name": "Spazio Enel",
+      "lat": 42.56166,
+      "lon": 14.10698,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Enel",
+        "name": "Spazio Enel",
+        "opening_hours": "Mo-Fr 16:00-19:30; Mo-Sa 08:30-12:30",
+        "operator": "Enel",
+        "website": "https://www.enel.it/punto-enel/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_4484344190",
+      "name": "Risparmio Casa",
+      "lat": 42.5041502,
+      "lon": 14.1629465,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Risparmio Casa",
+        "name": "Risparmio Casa",
+        "website": "https://www.risparmiocasa.com/store/montesilvano/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_8652921942",
+      "name": "Life 120 Lo Spaccio",
+      "lat": 42.4860032,
+      "lon": 14.1873568,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Life 120 Lo Spaccio",
+        "opening_hours": "Mo-Su 09:00-13:00,16:00-20:00",
+        "phone": "+39 06 6228 6099",
+        "website": "https://life120.it/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_2311459286",
+      "name": "Spazio Enel",
+      "lat": 42.65908,
+      "lon": 13.89403,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Enel",
+        "name": "Spazio Enel",
+        "opening_hours": "Fr 09:00-13:00",
+        "operator": "Enel",
+        "website": "https://www.enel.it/punto-enel/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7875998317",
+      "name": "Espander Communication",
+      "lat": 42.6563677,
+      "lon": 14.0170768,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Espander Communication",
+        "opening_hours": "Mo-Fr 09:00-13:00,16:00-20:00",
+        "phone": "+39 085 894 2635",
+        "website": "https://www.espander.it"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_5373568423",
+      "name": "Spazio Vivo di Giovanni Potenza",
+      "lat": 42.711022,
+      "lon": 13.909516,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Spazio Vivo di Giovanni Potenza",
+        "website": "https://spaziovivo.webnode.it/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10110984703",
+      "name": "Metallurgica Abruzzese Spa",
+      "lat": 42.7815853,
+      "lon": 13.9266539,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Metallurgica Abruzzese Spa"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12564896581",
+      "name": "Despar",
+      "lat": 42.7415797,
+      "lon": 13.9705784,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Spar",
+        "name": "Despar"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12458566864",
+      "name": "Spazio Casa",
+      "lat": 42.7524805,
+      "lon": 13.9569268,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "contact:phone": "+39 085 800 5736",
+        "name": "Spazio Casa",
+        "website": "https://www.spaziocasa.net/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_5677166666",
+      "name": "Hotel Seapark Spa Resort",
+      "lat": 42.770581,
+      "lon": 13.9573862,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Hotel Seapark Spa Resort",
+        "phone": "+39 085 802 5323",
+        "tourism": "hotel"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_2304263431",
+      "name": "Spazio Enel",
+      "lat": 42.8537642,
+      "lon": 13.5615112,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Enel",
+        "name": "Spazio Enel",
+        "opening_hours": "Mo-Th 08:30-13:00,14:00-15:30; Fr 08:30-12:30; Sa,Su,PH off",
+        "operator": "Enel",
+        "website": "https://www.enel.it/it-it/spazio-enel/city/store-detail?storeId=13710"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_938924475",
+      "name": "Luisa Spagnoli",
+      "lat": 42.8536144,
+      "lon": 13.576089,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Luisa Spagnoli",
+        "name": "Luisa Spagnoli"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_4446696790",
+      "name": "A spasso per il mondo",
+      "lat": 42.8535733,
+      "lon": 13.5729758,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "A spasso per il mondo"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12702193416",
+      "name": "Narciso Hair Spa",
+      "lat": 42.8531057,
+      "lon": 13.5751615,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Narciso Hair Spa",
+        "opening_hours": "Mo-Sa 10:30-21:00",
+        "phone": "+39 0736 520403"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_672555230",
+      "name": "Il Ruspante",
+      "lat": 42.8540364,
+      "lon": 13.582855,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "restaurant",
+        "name": "Il Ruspante"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_7167696479",
+      "name": "Ascoli Calcio 1898 FC SpA",
+      "lat": 42.8537246,
+      "lon": 13.580707,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Ascoli Calcio 1898 FC SpA",
+        "phone": "+39 0736 258521",
+        "sport": "soccer",
+        "website": "https://www.ascolicalcio1898.it/",
+        "wikidata": "Q6630",
+        "wikipedia": "it:Ascoli Calcio 1898 FC"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_9193563228",
+      "name": "Aipa spa",
+      "lat": 42.8516425,
+      "lon": 13.5863084,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Aipa spa"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_13075458893",
+      "name": "Spazio Enel Partner",
+      "lat": 42.8532623,
+      "lon": 13.5882924,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Enel",
+        "name": "Spazio Enel Partner",
+        "opening_hours": "Mo-Fr 09:00-12:30,15:30-18:30; Sa 09:00-12:30; Su,PH off",
+        "phone": "+39 0736 342688",
+        "website": "https://www.enel.it/it-it/spazio-enel/city/store-detail?storeId=4480"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12232174661",
+      "name": "Casa Gaspare",
+      "lat": 42.8592926,
+      "lon": 13.7077856,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Casa Gaspare",
+        "tourism": "guest_house"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_11563933468",
+      "name": "Spazio Enel",
+      "lat": 42.8203795,
+      "lon": 13.8178738,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "brand": "Enel",
+        "name": "Spazio Enel",
+        "opening_hours": "Tu-Th 09:00-13:00",
+        "operator": "Enel",
+        "phone": "+39 800 900800",
+        "website": "https://www.enel.it/punto-enel/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_5851194495",
+      "name": "Lo Spaccio di Rigo",
+      "lat": 42.8691719,
+      "lon": 13.7460912,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Lo Spaccio di Rigo"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12990486388",
+      "name": "Tabaccheria Lo Spaccio del Doganiere",
+      "lat": 42.8667827,
+      "lon": 13.7706518,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Tabaccheria Lo Spaccio del Doganiere",
+        "operator": "Michela Lucianetti"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12784178730",
+      "name": "Aspark Owl",
+      "lat": 42.8781431,
+      "lon": 13.8243209,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Aspark Owl",
+        "operator": "A.R.S. Tech"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_12495926037",
+      "name": "Farmacia Gasparroni",
+      "lat": 42.80581,
+      "lon": 13.9413059,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "amenity": "pharmacy",
+        "contact:phone": "+39 0861 787039",
+        "name": "Farmacia Gasparroni",
+        "opening_hours": "Mo-Sa 08:30-13:00,16:00-20:00; Su,PH off",
+        "operator": "GASPARRONI DEI DR.I ANTONELLA E PIERO GASPARRONI SNC",
+        "website": "https://farmaciagasparroni.it/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_10839239115",
+      "name": "Fisiobenessere",
+      "lat": 42.4311063,
+      "lon": 14.2727079,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Fisiobenessere"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_944203956",
+      "name": "Espansione",
+      "lat": 42.42827,
+      "lon": 14.27675,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Espansione",
+        "phone": "+390854910777",
+        "website": "https://espansioneimmobiliare.com/"
+      },
+      "beauty_score": 0.72
+    },
+    {
+      "id": "node_989246221",
+      "name": "Espansione",
+      "lat": 42.4227228,
+      "lon": 14.2871756,
+      "category": "relax",
+      "visibility": "classica",
+      "tags": {
+        "name": "Espansione"
+      },
+      "beauty_score": 0.72
+    }
+  ]
+}
