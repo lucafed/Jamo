@@ -1,6 +1,7 @@
-// /api/jamo.js — CAR ONLY — v4.2
-// ✅ FIX: per categorie “kids/attività” usa POI EU+UK, non MACRO
-// ✅ Family stagionale: estate -> acquapark & acqua; inverno -> neve/ghiaccio + indoor kids
+// /api/jamo.js — CAR ONLY — v4.3
+// ✅ FIX: kids categories -> use POIs if present, otherwise fallback LIVE (/api/destinations)
+// ✅ EU+UK macro selection stays
+// ✅ category support + radiusKm support
 //
 // POST body:
 // {
@@ -8,9 +9,9 @@
 //   originText?: string,
 //   maxMinutes: number,
 //   flavor?: "classici"|"chicche"|"famiglia",
-//   category?: string,              // "family"|"theme_park"|"kids_museum"|...|"borghi"|...
-//   radiusKm?: number,              // raggio reale in km
-//   forceEuUkAll?: boolean,         // se true usa sempre euuk_macro_all.json (macro)
+//   category?: string,
+//   radiusKm?: number,
+//   forceEuUkAll?: boolean,
 //   visitedIds?: string[],
 //   weekIds?: string[]
 // }
@@ -67,7 +68,6 @@ function gmapsLink(origin, dest) {
 }
 
 function estimateCarMinutes(km) {
-  // realistico sulle brevi distanze
   const k = Math.max(0, Number(km) || 0);
   const urban = Math.min(k, 12);
   const extra = Math.max(0, k - 12);
@@ -79,30 +79,23 @@ function estimateCarMinutes(km) {
   return Math.round(clamp(min + overhead, 3, 24 * 60));
 }
 
-// -------------------- SEASON --------------------
 function getSeason() {
   const m = new Date().getMonth() + 1;
-  // inverno: nov–mar
   if (m === 11 || m === 12 || m === 1 || m === 2 || m === 3) return "winter";
-  // estate: giu–set
   if (m === 6 || m === 7 || m === 8 || m === 9) return "summer";
   return "mid";
 }
 
-// -------------------- TAGS / FIELDS NORMALIZATION --------------------
+// -------------------- TAGS / DETECTORS --------------------
 function getTags(p) {
-  // prova a raccogliere tags da vari campi possibili (macro + pois)
   const tags = [];
   if (Array.isArray(p?.tags)) tags.push(...p.tags);
   if (Array.isArray(p?.categories)) tags.push(...p.categories);
   if (Array.isArray(p?.themes)) tags.push(...p.themes);
-
-  // alcuni POI hanno campi tipo "type" o "class"
   if (p?.type) tags.push(p.type);
   if (p?.category) tags.push(p.category);
   if (p?.kind) tags.push(p.kind);
 
-  // OSM-style tags: "tourism=theme_park" ecc. (se esiste un oggetto tags/osm_tags)
   const obj = p?.osm_tags || p?.osmtags || p?.properties?.tags || p?.properties?.osm_tags || p?.tags_obj;
   if (obj && typeof obj === "object") {
     for (const [k, v] of Object.entries(obj)) {
@@ -122,40 +115,35 @@ function normType(t) {
   return s;
 }
 
-// -------------------- CATEGORY MATCH (STRICT) --------------------
 function hasAny(hay, needles) {
   const n = needles.map(norm).filter(Boolean);
   return n.some(w => hay.some(h => h === w || h.includes(w) || w.includes(h)));
 }
 
-// Family / kids detectors (OSM + name-ish)
 function isWaterPark(tags, name) {
-  return hasAny(tags, ["water_park", "leisure=water_park", "aquapark", "aqua park", "parco acquatico"]) ||
-         name.includes("aquapark") || name.includes("water park") || name.includes("parco acquatico");
+  return hasAny(tags, ["water_park","leisure=water_park","aquapark","aqua park","parco acquatico"]) ||
+    name.includes("aquapark") || name.includes("water park") || name.includes("parco acquatico");
 }
 function isThemePark(tags, name) {
-  return hasAny(tags, ["tourism=theme_park", "theme_park", "parco divertimenti", "lunapark", "luna park", "giostre"]) ||
-         name.includes("parco divertimenti") || name.includes("lunapark") || name.includes("luna park");
+  return hasAny(tags, ["tourism=theme_park","theme_park","parco divertimenti","lunapark","luna park","giostre"]) ||
+    name.includes("parco divertimenti") || name.includes("lunapark") || name.includes("luna park");
 }
 function isZooOrAquarium(tags, name) {
-  return hasAny(tags, ["tourism=zoo", "tourism=aquarium", "zoo", "acquario", "aquarium"]) ||
-         name.includes("zoo") || name.includes("acquario") || name.includes("aquarium");
+  return hasAny(tags, ["tourism=zoo","tourism=aquarium","zoo","acquario","aquarium"]) ||
+    name.includes("zoo") || name.includes("acquario") || name.includes("aquarium");
 }
 function isKidsMuseum(tags, name) {
-  return hasAny(tags, ["kids_museum", "children museum", "science center", "planetarium", "museo dei bambini"]) ||
-         name.includes("museo dei bambini") || name.includes("children museum") || name.includes("science center") ||
-         name.includes("planetario") || name.includes("planetarium");
+  return hasAny(tags, ["kids_museum","children museum","science center","planetarium","museo dei bambini"]) ||
+    name.includes("museo dei bambini") || name.includes("children museum") ||
+    name.includes("science center") || name.includes("planetario") || name.includes("planetarium");
 }
 function isPlayground(tags, name) {
-  return hasAny(tags, ["playground", "leisure=playground", "parco giochi", "area giochi", "trampoline"]) ||
-         name.includes("parco giochi") || name.includes("area giochi");
-}
-function isIndoor(tags, name) {
-  return hasAny(tags, ["indoor", "coperto"]) || name.includes("indoor") || name.includes("coperto");
+  return hasAny(tags, ["playground","leisure=playground","parco giochi","area giochi","trampoline"]) ||
+    name.includes("parco giochi") || name.includes("area giochi");
 }
 function isSnowPark(tags, name) {
-  return hasAny(tags, ["snow", "snow park", "snow_park", "pista slittini", "sled", "sledding", "ski", "piste", "ice_rink", "pattinaggio"]) ||
-         name.includes("snow") || name.includes("sci") || name.includes("pista") || name.includes("slitt") || name.includes("pattin");
+  return hasAny(tags, ["snow","snow park","sledding","ice_rink","ski","piste","pattinaggio","slittini"]) ||
+    name.includes("snow") || name.includes("sci") || name.includes("pista") || name.includes("slitt") || name.includes("pattin");
 }
 
 function categoryMatchStrict(p, category) {
@@ -166,13 +154,12 @@ function categoryMatchStrict(p, category) {
   const type = normType(p?.type);
   const name = norm(p?.name);
 
-  // categorie “kids”
+  // kids categories
   if (c === "theme_park") return isThemePark(tags, name) || isWaterPark(tags, name);
   if (c === "kids_museum") return isKidsMuseum(tags, name);
-  if (c === "viewpoints") return hasAny(tags, ["tourism=viewpoint", "viewpoint", "belvedere", "panoram", "scenic"]) || name.includes("belvedere") || name.includes("panoram");
-  if (c === "hiking") return hasAny(tags, ["hiking", "trail", "trekking", "via ferrata", "rifugio", "information=guidepost"]) || name.includes("sentiero") || name.includes("trail") || name.includes("trek");
+  if (c === "viewpoints") return hasAny(tags, ["tourism=viewpoint","viewpoint","belvedere","panoram","scenic"]) || name.includes("belvedere") || name.includes("panoram");
+  if (c === "hiking") return hasAny(tags, ["hiking","trail","trekking","via ferrata","rifugio","information=guidepost"]) || name.includes("sentiero") || name.includes("trail") || name.includes("trek");
   if (c === "family") {
-    // ✅ family = solo posti “kids activities”
     return (
       isThemePark(tags, name) ||
       isWaterPark(tags, name) ||
@@ -183,38 +170,29 @@ function categoryMatchStrict(p, category) {
     );
   }
 
-  // categorie “destinazioni”
-  if (c === "borghi") return type === "borghi" || hasAny(tags, ["place=village", "place=hamlet", "village", "hamlet", "borgo"]) || name.includes("borgo");
-  if (c === "citta") return type === "citta" || hasAny(tags, ["place=city", "place=town", "city", "town"]);
-  if (c === "mare") return type === "mare" || hasAny(tags, ["natural=beach", "beach", "spiaggia", "coast", "sea"]) || name.includes("spiaggia") || name.includes("beach");
-  if (c === "natura") return type === "natura" || hasAny(tags, ["nature_reserve", "national_park", "boundary=national_park", "park", "forest", "lago", "lake", "cascata", "waterfall"]);
-  if (c === "storia") return type === "storia" || hasAny(tags, ["tourism=museum", "museum", "historic", "castle", "ruins", "monument"]) || name.includes("castello") || name.includes("museo");
-  if (c === "relax") return type === "relax" || hasAny(tags, ["spa", "terme", "thermal", "hot_spring", "public_bath"]) || name.includes("terme") || name.includes("spa");
-  if (c === "montagna") return type === "montagna" || hasAny(tags, ["natural=peak", "peak", "mountain", "rifugio", "passo"]) || name.includes("monte") || name.includes("cima");
+  // destinations
+  if (c === "borghi") return type === "borghi" || hasAny(tags, ["place=village","place=hamlet","village","hamlet","borgo"]) || name.includes("borgo");
+  if (c === "citta") return type === "citta" || hasAny(tags, ["place=city","place=town","city","town"]);
+  if (c === "mare") return type === "mare" || hasAny(tags, ["natural=beach","beach","spiaggia","coast","sea"]) || name.includes("spiaggia") || name.includes("beach");
+  if (c === "natura") return type === "natura" || hasAny(tags, ["nature_reserve","national_park","boundary=national_park","park","forest","lago","lake","cascata","waterfall"]);
+  if (c === "storia") return type === "storia" || hasAny(tags, ["tourism=museum","museum","historic","castle","ruins","monument"]) || name.includes("castello") || name.includes("museo");
+  if (c === "relax") return type === "relax" || hasAny(tags, ["spa","terme","thermal","hot_spring","public_bath"]) || name.includes("terme") || name.includes("spa");
+  if (c === "montagna") return type === "montagna" || hasAny(tags, ["natural=peak","peak","mountain","rifugio","passo"]) || name.includes("monte") || name.includes("cima");
 
-  // fallback
   return true;
 }
 
-// -------------------- FLAVOR (make it NON-blocking for category kids) --------------------
+// -------------------- FLAVOR (loose when category chosen) --------------------
 function flavorMatchLoose(p, flavor, category) {
-  // Se l’utente ha scelto una categoria specifica, NON bloccare il pool con flavor troppo stretto.
-  // Flavor lo useremo solo come "boost" nello score.
   const c = norm(category);
-  if (c && c !== "ovunque") return true;
+  if (c && c !== "ovunque") return true; // category is the hard filter
 
   const tags = getTags(p);
   const vis = norm(p?.visibility);
   const type = normType(p?.type);
 
   if (flavor === "famiglia") {
-    return (
-      tags.includes("famiglie") ||
-      tags.includes("famiglia") ||
-      tags.includes("bambini") ||
-      type === "bambini" ||
-      tags.includes("family")
-    );
+    return tags.includes("famiglia") || tags.includes("famiglie") || tags.includes("bambini") || tags.includes("family") || type === "bambini";
   }
   if (flavor === "chicche") {
     return (vis === "chicca" || tags.includes("chicca") || type === "chicca");
@@ -222,7 +200,6 @@ function flavorMatchLoose(p, flavor, category) {
   return true;
 }
 
-// -------------------- SCORE --------------------
 function beautyScore(p) {
   const b = Number(p?.beauty_score);
   if (Number.isFinite(b)) return clamp(b, 0.2, 1.0);
@@ -247,31 +224,24 @@ function seasonalFamilyBoost(p, category) {
   const zoo = isZooOrAquarium(tags, name);
   const kmuseum = isKidsMuseum(tags, name);
   const play = isPlayground(tags, name);
-  const indoor = isIndoor(tags, name);
 
   let boost = 0;
-
-  // sempre buoni per family
   if (theme) boost += 0.20;
   if (zoo) boost += 0.16;
   if (kmuseum) boost += 0.18;
   if (play) boost += 0.10;
 
-  // stagionale
   if (season === "summer") {
-    if (water) boost += 0.35;
+    if (water) boost += 0.38;
     if (snow) boost -= 0.18;
-    if (indoor && !kmuseum) boost -= 0.06; // in estate preferisci outdoor, ma non penalizzare museo kids
   } else if (season === "winter") {
-    if (snow) boost += 0.30;
-    if (water) boost -= 0.35; // acquapark fuori stagione
-    if (indoor) boost += 0.10; // indoor d’inverno aiuta
+    if (snow) boost += 0.32;
+    if (water) boost -= 0.35;
     if (kmuseum) boost += 0.10;
   } else {
     if (water) boost += 0.12;
     if (snow) boost += 0.10;
   }
-
   return boost;
 }
 
@@ -339,7 +309,7 @@ async function geocodeOnSameHost(req, text) {
 }
 
 // -------------------- DATA SOURCE SELECT --------------------
-const POI_CATEGORIES = new Set(["family", "theme_park", "kids_museum", "viewpoints", "hiking"]);
+const POI_CATEGORIES = new Set(["family","theme_park","kids_museum","viewpoints","hiking"]);
 function shouldUsePois(category) {
   return POI_CATEGORIES.has(norm(category));
 }
@@ -370,11 +340,77 @@ function loadPoisEuUk() {
   const p = path.join(process.cwd(), "public", "data", "pois", "pois_eu_uk.json");
   const j = readJsonSafe(p, null);
   if (!j) return [];
+
+  // support various shapes
   if (Array.isArray(j)) return j;
-  if (Array.isArray(j.items)) return j.items;
   if (Array.isArray(j.pois)) return j.pois;
+  if (Array.isArray(j.items)) return j.items;
+
+  // your current seed shape:
+  if (Array.isArray(j.pois) && j.pois.length) return j.pois;
+  if (Array.isArray(j.pois) && !j.pois.length) return [];
+
+  // sometimes "elements"
   if (Array.isArray(j.elements)) return j.elements;
+
   return [];
+}
+
+// LIVE fallback (same host): /api/destinations
+async function fetchDestinationsOnSameHost(req, { lat, lon, radiusKm, cat }) {
+  const proto = (req.headers["x-forwarded-proto"] || "https").toString();
+  const host = (req.headers["x-forwarded-host"] || req.headers.host).toString();
+  const url = `${proto}://${host}/api/destinations?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}&radiusKm=${encodeURIComponent(radiusKm)}&cat=${encodeURIComponent(cat)}`;
+
+  const r = await fetch(url, { method: "GET", headers: { "Accept": "application/json" } });
+  const txt = await r.text().catch(() => "");
+  if (!r.ok) throw new Error(`DESTINATIONS ${r.status}: ${txt.slice(0, 200)}`);
+
+  let j = null;
+  try { j = JSON.parse(txt); } catch {}
+  const els = j?.data?.elements;
+  if (!Array.isArray(els)) return [];
+  return els;
+}
+
+// Map Overpass element -> generic place for scoring
+function overpassElToPlace(el) {
+  const tags = el?.tags || {};
+  const name = String(tags.name || tags["name:it"] || tags["name:en"] || "").trim();
+  if (!name) return null;
+
+  // center for ways/relations, lat/lon for nodes
+  const lat = Number(el?.lat ?? el?.center?.lat);
+  const lon = Number(el?.lon ?? el?.center?.lon);
+  if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
+
+  // build a type-ish string
+  let type = "";
+  if (tags.tourism) type = String(tags.tourism);
+  else if (tags.leisure) type = String(tags.leisure);
+  else if (tags.amenity) type = String(tags.amenity);
+  else if (tags.natural) type = String(tags.natural);
+  else if (tags.historic) type = String(tags.historic);
+  else if (tags.place) type = String(tags.place);
+
+  const outTags = [];
+  for (const [k, v] of Object.entries(tags)) {
+    if (!k) continue;
+    if (v == null || v === "") outTags.push(String(k));
+    else outTags.push(`${k}=${v}`);
+  }
+
+  return {
+    id: `${el.type}:${el.id}`,
+    name,
+    lat,
+    lon,
+    type,
+    tags: outTags,
+    visibility: "", // unknown from OSM
+    area: "",
+    country: ""
+  };
 }
 
 // output mapper
@@ -388,21 +424,18 @@ function outPlace(p, originObj, eta, km) {
         `Posto valido per la categoria scelta.`
       ];
 
-  const lat = Number(p.lat ?? p.latitude ?? p?.geo?.lat);
-  const lon = Number(p.lon ?? p.lng ?? p.longitude ?? p?.geo?.lon);
-
   return {
-    id: String(p.id ?? p.osm_id ?? p._id ?? `${p.name}-${lat}-${lon}`),
-    name: String(p.name ?? p.title ?? "Meta"),
+    id: String(p.id),
+    name: String(p.name),
     area: p.area || p.country || "",
-    type: p.type || p.category || "place",
+    type: p.type || "place",
     visibility: p.visibility || "",
     beauty_score: Number.isFinite(Number(p.beauty_score)) ? Number(p.beauty_score) : undefined,
     eta_min: Math.round(eta),
     distance_km: Math.round(km),
-    tags: getTags(p).slice(0, 18),
+    tags: Array.isArray(p.tags) ? p.tags.slice(0, 18) : [],
     why: baseWhy.slice(0, 4),
-    gmaps: gmapsLink(originObj, { lat, lon })
+    gmaps: gmapsLink(originObj, { lat: Number(p.lat), lon: Number(p.lon) })
   };
 }
 
@@ -452,10 +485,22 @@ export default async function handler(req, res) {
     let places = [];
     let primaryRegion = "";
     let chosenFile = "";
+    let source = "";
 
     if (usePois) {
       places = loadPoisEuUk();
+      source = "pois";
       chosenFile = "pois/pois_eu_uk.json";
+
+      // ✅ se POI vuoti -> fallback LIVE
+      if (!places.length) {
+        const rk = Number.isFinite(radiusKm) && radiusKm > 0 ? radiusKm : clamp(Math.round((maxMinutes / 60) * 70), 5, 250);
+        const elements = await fetchDestinationsOnSameHost(req, { lat: originObj.lat, lon: originObj.lon, radiusKm: rk, cat: norm(category) || "family" });
+        const mapped = elements.map(overpassElToPlace).filter(Boolean);
+        places = mapped;
+        source = "live";
+        chosenFile = `api/destinations (${norm(category) || "family"})`;
+      }
     } else {
       const chosenMacroPath = macroPathForCountry(originObj.country_code, forceEuUkAll);
       const macro = readJsonSafe(chosenMacroPath, null);
@@ -464,6 +509,7 @@ export default async function handler(req, res) {
       }
       places = Array.isArray(macro.places) ? macro.places : [];
       primaryRegion = macro?.coverage?.primary_region || "";
+      source = "macro";
       chosenFile = `macros/${path.basename(chosenMacroPath)}`;
     }
 
@@ -474,7 +520,7 @@ export default async function handler(req, res) {
         top: null,
         alternatives: [],
         message: "Dataset vuoto per la fonte selezionata.",
-        debug: { source: usePois ? "pois" : "macro", file: chosenFile }
+        debug: { source, file: chosenFile }
       });
     }
 
@@ -503,6 +549,11 @@ export default async function handler(req, res) {
       .filter(p => flavorMatchLoose(p, flavor, category))
       .filter(p => categoryMatchStrict(p, category));
 
+    // if strict leaves nothing (rare), relax category only for "ovunque"
+    if (!pool.length && (!category || norm(category) === "ovunque")) {
+      pool = normalized.filter(p => flavorMatchLoose(p, flavor, category));
+    }
+
     // -------------------- ENRICH distance/time + hard filters --------------------
     let enriched = pool
       .map((p) => {
@@ -520,12 +571,11 @@ export default async function handler(req, res) {
       })
       .filter(p => p._km >= 0.2);
 
-    // hard radius if set
     if (Number.isFinite(radiusKm) && radiusKm > 0) {
       enriched = enriched.filter(p => p._km <= radiusKm);
     }
 
-    // hard time cap (maxMinutes) — manteniamo la “sane distance”
+    // keep it sane: within ~1.85x
     enriched = enriched.filter(p => p._eta <= maxMinutes * 1.85);
 
     if (!enriched.length) {
@@ -535,7 +585,7 @@ export default async function handler(req, res) {
         top: null,
         alternatives: [],
         message: "Nessuna meta trovata nel raggio/tempo per la categoria scelta.",
-        debug: { source: usePois ? "pois" : "macro", file: chosenFile, after_category: pool.length }
+        debug: { source, file: chosenFile, season: getSeason(), normalized: normalized.length }
       });
     }
 
@@ -559,15 +609,14 @@ export default async function handler(req, res) {
         flavor,
         category,
         radiusKm: Number.isFinite(radiusKm) ? radiusKm : undefined,
-        primary_region: primaryRegion || "",
-        source: usePois ? "pois" : "macro",
+        source,
         file: chosenFile
       },
       top,
       alternatives,
       debug: {
         season: getSeason(),
-        source: usePois ? "pois" : "macro",
+        source,
         file: chosenFile,
         total_places: places.length,
         normalized: normalized.length,
@@ -579,7 +628,7 @@ export default async function handler(req, res) {
   } catch (e) {
     return res.status(500).json({
       error: String(e?.message || e),
-      hint: "Check pois_eu_uk.json presence and JSON validity."
+      hint: "If POIs are empty, make sure /api/destinations works and returns elements with center/lat/lon."
     });
   }
-    }
+      }
