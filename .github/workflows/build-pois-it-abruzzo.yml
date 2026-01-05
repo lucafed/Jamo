@@ -1,0 +1,66 @@
+name: Build POIs (IT Abruzzo)
+
+on:
+  workflow_dispatch: {}
+  push:
+    paths:
+      - "scripts/build_pois_it_region.mjs"
+      - "public/data/regions/it-abruzzo.json"
+      - ".github/workflows/build-pois-it-abruzzo.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-pois-it-abruzzo
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Build POIs (Abruzzo)
+        run: node scripts/build_pois_it_region.mjs --region it-abruzzo
+
+      - name: Commit data (if changed)
+        run: |
+          set -e
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add public/data/pois/it/it-abruzzo/*.json public/data/pois/it/it-abruzzo/index.json || true
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          git commit -m "chore(data): build POIs it-abruzzo"
+
+          # Robust push: rebase on latest main and retry
+          for i in 1 2 3 4 5; do
+            echo "Push attempt $i..."
+            git pull --rebase origin main || true
+            if git push origin HEAD:main; then
+              echo "Push OK"
+              exit 0
+            fi
+            echo "Push failed, retrying..."
+            sleep $((i*3))
+          done
+
+          echo "Push failed after retries"
+          exit 1
