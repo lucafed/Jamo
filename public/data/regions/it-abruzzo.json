@@ -1,37 +1,6 @@
 {
-  "region": {
-    "id": "it-abruzzo",
-    "name": "Abruzzo",
-    "country": "IT",
-    "bbox": { "minLat": 41.65, "maxLat": 42.95, "minLon": 13.00, "maxLon": 14.85 }
-  },
-
-  "hubs": {
-    "airports": [
-      { "code": "PSR", "name": "Pescara (PSR)", "country": "IT", "lat": 42.4317, "lon": 14.1811 }
-    ],
-    "stations": [
-      { "code": "IT-LAQUILA", "name": "L'Aquila", "country": "IT", "lat": 42.3498, "lon": 13.3995 },
-      { "code": "IT-PESCARA-CENTRALE", "name": "Pescara Centrale", "country": "IT", "lat": 42.4643, "lon": 14.2140 }
-    ],
-    "bus_hubs": [
-      { "code": "IT-LAQUILA-BUS", "name": "L'Aquila (bus hub)", "country": "IT", "lat": 42.3498, "lon": 13.3995 }
-    ]
-  },
-
-  "places": [
-    {
-      "id": "abruzzo_rocca_calascio",
-      "name": "Rocca Calascio",
-      "country": "IT",
-      "lat": 42.3279,
-      "lon": 13.6960,
-      "types": ["borgo", "montagna", "natura"],
-      "visibility": "chicca",
-      "beauty_score": 0.98,
-      "why": ["Vista pazzesca sul Gran Sasso", "Perfetta al tramonto", "Iconica ma non troppo mainstream"],
-      "what_to_do": ["Passeggiata alla rocca", "Foto viewpoint", "Castel del Monte vicino"],
-      "what_to_eat": ["Arrosticini", "Pecorino di Farindola"]
-    }
-  ]
+  "id": "it-abruzzo",
+  "name": "Abruzzo",
+  "country": "IT",
+  "bbox": [13.0, 41.9, 14.9, 42.9]
 }
