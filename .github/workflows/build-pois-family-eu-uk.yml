@@ -1,0 +1,46 @@
+name: Build POIs FAMILY (EU+UK) and commit
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "scripts/build_pois_family_eu_uk.mjs"
+      - ".github/workflows/build-pois-family-eu-uk.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  build_and_commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Build family pois
+        run: node scripts/build_pois_family_eu_uk.mjs
+
+      - name: Commit generated file (if changed)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Aggiungi SOLO l'output atteso
+          git add public/data/pois/family.json
+
+          # Se non ci sono cambi, esci senza errore
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          git commit -m "Update offline FAMILY POIs"
+          git push
