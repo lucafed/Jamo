@@ -31,29 +31,31 @@ jobs:
 
       - name: Build matrix from areas.json
         id: make_matrix
+        shell: bash
         run: |
           node - <<'NODE'
           const fs = require("fs");
+
           const p = "public/data/areas.json";
           const j = JSON.parse(fs.readFileSync(p, "utf8"));
+
           const areas = Array.isArray(j.areas) ? j.areas : [];
           const ids = areas.map(a => a && a.id).filter(Boolean);
+
           if (!ids.length) {
-            console.log("No areas found in areas.json");
+            console.error("❌ No areas found in public/data/areas.json");
             process.exit(1);
           }
-          const matrix = { include: ids.map(id => ({ area: id })) };
-          console.log("Matrix:", JSON.stringify(matrix, null, 2));
-          // Output for GitHub Actions
-          console.log(`matrix=${JSON.stringify(matrix)}`);
-          NODE
-        shell: bash
 
-      - name: Export matrix output
-        id: export
-        run: echo "matrix=${{ steps.make_matrix.outputs.matrix }}" >> $GITHUB_OUTPUT
-        shell: bash
-        # NOTE: workaround, because "node -" step writes to stdout; we set output properly below
+          // GitHub matrix format: { include: [{area:"it_abruzzo"}, ...] }
+          const matrix = { include: ids.map(id => ({ area: id })) };
+          const out = JSON.stringify(matrix);
+
+          console.log("✅ Matrix:", out);
+
+          // write to GITHUB_OUTPUT
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `matrix=${out}\n`);
+          NODE
 
   build_each:
     needs: list_areas
@@ -75,9 +77,13 @@ jobs:
           node-version: "20"
 
       - name: Build POIs (${{ matrix.area }})
-        run: node scripts/build_pois_area.mjs --area=${{ matrix.area }}
+        shell: bash
+        run: |
+          set -e
+          node scripts/build_pois_area.mjs --area=${{ matrix.area }}
 
       - name: Commit data for ${{ matrix.area }} (if changed)
+        shell: bash
         run: |
           set -e
           AREA="${{ matrix.area }}"
@@ -85,7 +91,8 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git add "public/data/pois/areas/${AREA}/*.json" "public/data/pois/areas/${AREA}/index.json" || true
+          # Adatta questi path al tuo output reale dello script:
+          git add "public/data/pois/areas/${AREA}/" || true
 
           if git diff --cached --quiet; then
             echo "No changes to commit for ${AREA}."
@@ -93,9 +100,9 @@ jobs:
           fi
 
           git commit -m "chore(data): build POIs ${AREA}"
-        shell: bash
 
       - name: Push (rebased) — robust
+        shell: bash
         run: |
           set -e
           for i in 1 2 3 4 5; do
@@ -108,6 +115,6 @@ jobs:
             echo "Push failed, retrying..."
             sleep $((i*3))
           done
+
           echo "Push failed after retries"
           exit 1
-        shell: bash
