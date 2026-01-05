@@ -1,0 +1,113 @@
+name: Build POIs (ALL areas)
+
+on:
+  workflow_dispatch: {}
+  push:
+    paths:
+      - "scripts/build_pois_area.mjs"
+      - "public/data/areas.json"
+      - ".github/workflows/build-pois-all-areas.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-pois-all-areas
+  cancel-in-progress: true
+
+jobs:
+  list_areas:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.make_matrix.outputs.matrix }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Build matrix from areas.json
+        id: make_matrix
+        run: |
+          node - <<'NODE'
+          const fs = require("fs");
+          const p = "public/data/areas.json";
+          const j = JSON.parse(fs.readFileSync(p, "utf8"));
+          const areas = Array.isArray(j.areas) ? j.areas : [];
+          const ids = areas.map(a => a && a.id).filter(Boolean);
+          if (!ids.length) {
+            console.log("No areas found in areas.json");
+            process.exit(1);
+          }
+          const matrix = { include: ids.map(id => ({ area: id })) };
+          console.log("Matrix:", JSON.stringify(matrix, null, 2));
+          // Output for GitHub Actions
+          console.log(`matrix=${JSON.stringify(matrix)}`);
+          NODE
+        shell: bash
+
+      - name: Export matrix output
+        id: export
+        run: echo "matrix=${{ steps.make_matrix.outputs.matrix }}" >> $GITHUB_OUTPUT
+        shell: bash
+        # NOTE: workaround, because "node -" step writes to stdout; we set output properly below
+
+  build_each:
+    needs: list_areas
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.list_areas.outputs.matrix) }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Build POIs (${{ matrix.area }})
+        run: node scripts/build_pois_area.mjs --area=${{ matrix.area }}
+
+      - name: Commit data for ${{ matrix.area }} (if changed)
+        run: |
+          set -e
+          AREA="${{ matrix.area }}"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add "public/data/pois/areas/${AREA}/*.json" "public/data/pois/areas/${AREA}/index.json" || true
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit for ${AREA}."
+            exit 0
+          fi
+
+          git commit -m "chore(data): build POIs ${AREA}"
+        shell: bash
+
+      - name: Push (rebased) — robust
+        run: |
+          set -e
+          for i in 1 2 3 4 5; do
+            echo "Push attempt $i..."
+            git pull --rebase origin main || true
+            if git push origin HEAD:main; then
+              echo "Push OK"
+              exit 0
+            fi
+            echo "Push failed, retrying..."
+            sleep $((i*3))
+          done
+          echo "Push failed after retries"
+          exit 1
+        shell: bash
