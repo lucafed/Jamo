@@ -1,7 +1,6 @@
+// scripts/build_pois_family_it.mjs
 // Build FAMILY POIs - ITALY (offline)
 // Output: public/data/pois/it/family.json
-// Family = theme parks, water parks, zoo, aquarium, adventure parks, kids museums,
-// playground WITH name, ice rinks, ski/snow kids areas (best-effort)
 
 import fs from "fs";
 import path from "path";
@@ -48,17 +47,14 @@ async function fetchOverpass(query) {
 
       } catch (e) {
         lastErr = e;
-        await sleep(800 * attempt);
+        await sleep(900 * attempt);
       }
     }
   }
   throw new Error(`Overpass failed: ${String(lastErr?.message || lastErr)}`);
 }
 
-// IT area
 function buildQueryIT() {
-  // NOTA: area ISO per IT
-  // Poi query SOLO family veri, niente spa/terme/città
   return `
 [out:json][timeout:180];
 area["ISO3166-1"="IT"]->.aIT;
@@ -111,12 +107,10 @@ function mapElementToPlace(el) {
     /terme|spa|thermal|benessere/i.test(name)
   ) return null;
 
-  // tag list compatta
   const tagList = [];
   const pushKV = (k) => { if (tags[k] != null) tagList.push(`${k}=${tags[k]}`); };
-  ["tourism","leisure","amenity","sport","aerialway","natural"].forEach(pushKV);
+  ["tourism","leisure","amenity","sport","natural"].forEach(pushKV);
 
-  // sotto-tipo utile per UI/logica stagione
   let subtype = "family";
   if (tags.tourism === "theme_park") subtype = "theme_park";
   else if (tags.leisure === "water_park") subtype = "water_park";
