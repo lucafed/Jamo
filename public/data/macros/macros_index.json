@@ -1,1 +1,284 @@
-{"version":"1.0.0","updated_at":"2026-01-05","notes":"Index delle macro disponibili. Le macro non presenti fisicamente daranno 404 finché non vengono generate.","items":[{"id":"it_abruzzo","label":"Abruzzo","path":"/data/macros/it_macro_01_abruzzo.json","scope":"region","country":"IT","region":"Abruzzo","mode":"car_only","offline":true},{"id":"it_basilicata","label":"Basilicata","path":"/data/macros/it_macro_01_basilicata.json","scope":"region","country":"IT","region":"Basilicata","mode":"car_only","offline":true},{"id":"it_calabria","label":"Calabria","path":"/data/macros/it_macro_01_calabria.json","scope":"region","country":"IT","region":"Calabria","mode":"car_only","offline":true},{"id":"it_campania","label":"Campania","path":"/data/macros/it_macro_01_campania.json","scope":"region","country":"IT","region":"Campania","mode":"car_only","offline":true},{"id":"it_emilia-romagna","label":"Emilia-Romagna","path":"/data/macros/it_macro_01_emilia-romagna.json","scope":"region","country":"IT","region":"Emilia-Romagna","mode":"car_only","offline":true},{"id":"it_friuli-venezia-giulia","label":"Friuli-Venezia Giulia","path":"/data/macros/it_macro_01_friuli-venezia-giulia.json","scope":"region","country":"IT","region":"Friuli-Venezia Giulia","mode":"car_only","offline":true},{"id":"it_lazio","label":"Lazio","path":"/data/macros/it_macro_01_lazio.json","scope":"region","country":"IT","region":"Lazio","mode":"car_only","offline":true},{"id":"it_liguria","label":"Liguria","path":"/data/macros/it_macro_01_liguria.json","scope":"region","country":"IT","region":"Liguria","mode":"car_only","offline":true},{"id":"it_lombardia","label":"Lombardia","path":"/data/macros/it_macro_01_lombardia.json","scope":"region","country":"IT","region":"Lombardia","mode":"car_only","offline":true},{"id":"it_marche","label":"Marche","path":"/data/macros/it_macro_01_marche.json","scope":"region","country":"IT","region":"Marche","mode":"car_only","offline":true},{"id":"it_molise","label":"Molise","path":"/data/macros/it_macro_01_molise.json","scope":"region","country":"IT","region":"Molise","mode":"car_only","offline":true},{"id":"it_piemonte","label":"Piemonte","path":"/data/macros/it_macro_01_piemonte.json","scope":"region","country":"IT","region":"Piemonte","mode":"car_only","offline":true},{"id":"it_puglia","label":"Puglia","path":"/data/macros/it_macro_01_puglia.json","scope":"region","country":"IT","region":"Puglia","mode":"car_only","offline":true},{"id":"it_sardegna","label":"Sardegna","path":"/data/macros/it_macro_01_sardegna.json","scope":"region","country":"IT","region":"Sardegna","mode":"car_only","offline":true},{"id":"it_sicilia","label":"Sicilia","path":"/data/macros/it_macro_01_sicilia.json","scope":"region","country":"IT","region":"Sicilia","mode":"car_only","offline":true},{"id":"it_toscana","label":"Toscana","path":"/data/macros/it_macro_01_toscana.json","scope":"region","country":"IT","region":"Toscana","mode":"car_only","offline":true},{"id":"it_trentino-alto-adige","label":"Trentino-Alto Adige","path":"/data/macros/it_macro_01_trentino-alto-adige.json","scope":"region","country":"IT","region":"Trentino-Alto Adige","mode":"car_only","offline":true},{"id":"it_umbria","label":"Umbria","path":"/data/macros/it_macro_01_umbria.json","scope":"region","country":"IT","region":"Umbria","mode":"car_only","offline":true},{"id":"it_valle-d-aosta","label":"Valle d’Aosta","path":"/data/macros/it_macro_01_valle-d-aosta.json","scope":"region","country":"IT","region":"Valle d’Aosta","mode":"car_only","offline":true},{"id":"it_veneto","label":"Veneto","path":"/data/macros/it_macro_01_veneto.json","scope":"region","country":"IT","region":"Veneto","mode":"car_only","offline":true},{"id":"eu_at","label":"Austria (AT)","path":"/data/macros/eu_macro_at.json","scope":"country","country":"AT","mode":"car_only","offline":true},{"id":"eu_be","label":"Belgio (BE)","path":"/data/macros/eu_macro_be.json","scope":"country","country":"BE","mode":"car_only","offline":true},{"id":"eu_bg","label":"Bulgaria (BG)","path":"/data/macros/eu_macro_bg.json","scope":"country","country":"BG","mode":"car_only","offline":true},{"id":"eu_hr","label":"Croazia (HR)","path":"/data/macros/eu_macro_hr.json","scope":"country","country":"HR","mode":"car_only","offline":true},{"id":"eu_cy","label":"Cipro (CY)","path":"/data/macros/eu_macro_cy.json","scope":"country","country":"CY","mode":"car_only","offline":true},{"id":"eu_cz","label":"Repubblica Ceca (CZ)","path":"/data/macros/eu_macro_cz.json","scope":"country","country":"CZ","mode":"car_only","offline":true},{"id":"eu_dk","label":"Danimarca (DK)","path":"/data/macros/eu_macro_dk.json","scope":"country","country":"DK","mode":"car_only","offline":true},{"id":"eu_ee","label":"Estonia (EE)","path":"/data/macros/eu_macro_ee.json","scope":"country","country":"EE","mode":"car_only","offline":true},{"id":"eu_fi","label":"Finlandia (FI)","path":"/data/macros/eu_macro_fi.json","scope":"country","country":"FI","mode":"car_only","offline":true},{"id":"eu_fr","label":"Francia (FR)","path":"/data/macros/eu_macro_fr.json","scope":"country","country":"FR","mode":"car_only","offline":true},{"id":"eu_de","label":"Germania (DE)","path":"/data/macros/eu_macro_de.json","scope":"country","country":"DE","mode":"car_only","offline":true},{"id":"eu_gr","label":"Grecia (GR)","path":"/data/macros/eu_macro_gr.json","scope":"country","country":"GR","mode":"car_only","offline":true},{"id":"eu_hu","label":"Ungheria (HU)","path":"/data/macros/eu_macro_hu.json","scope":"country","country":"HU","mode":"car_only","offline":true},{"id":"eu_ie","label":"Irlanda (IE)","path":"/data/macros/eu_macro_ie.json","scope":"country","country":"IE","mode":"car_only","offline":true},{"id":"eu_lv","label":"Lettonia (LV)","path":"/data/macros/eu_macro_lv.json","scope":"country","country":"LV","mode":"car_only","offline":true},{"id":"eu_lt","label":"Lituania (LT)","path":"/data/macros/eu_macro_lt.json","scope":"country","country":"LT","mode":"car_only","offline":true},{"id":"eu_lu","label":"Lussemburgo (LU)","path":"/data/macros/eu_macro_lu.json","scope":"country","country":"LU","mode":"car_only","offline":true},{"id":"eu_mt","label":"Malta (MT)","path":"/data/macros/eu_macro_mt.json","scope":"country","country":"MT","mode":"car_only","offline":true},{"id":"eu_nl","label":"Paesi Bassi (NL)","path":"/data/macros/eu_macro_nl.json","scope":"country","country":"NL","mode":"car_only","offline":true},{"id":"eu_pl","label":"Polonia (PL)","path":"/data/macros/eu_macro_pl.json","scope":"country","country":"PL","mode":"car_only","offline":true},{"id":"eu_pt","label":"Portogallo (PT)","path":"/data/macros/eu_macro_pt.json","scope":"country","country":"PT","mode":"car_only","offline":true},{"id":"eu_ro","label":"Romania (RO)","path":"/data/macros/eu_macro_ro.json","scope":"country","country":"RO","mode":"car_only","offline":true},{"id":"eu_sk","label":"Slovacchia (SK)","path":"/data/macros/eu_macro_sk.json","scope":"country","country":"SK","mode":"car_only","offline":true},{"id":"eu_si","label":"Slovenia (SI)","path":"/data/macros/eu_macro_si.json","scope":"country","country":"SI","mode":"car_only","offline":true},{"id":"eu_es","label":"Spagna (ES)","path":"/data/macros/eu_macro_es.json","scope":"country","country":"ES","mode":"car_only","offline":true},{"id":"eu_se","label":"Svezia (SE)","path":"/data/macros/eu_macro_se.json","scope":"country","country":"SE","mode":"car_only","offline":true},{"id":"eu_uk","label":"Regno Unito (UK)","path":"/data/macros/eu_macro_uk.json","scope":"country","country":"UK","mode":"car_only","offline":true},{"id":"euuk_macro_all","label":"EU+UK (offline)","scope":"euuk","country":"EUUK","path":"/data/macros/euuk_macro_all.json"},{"id":"euuk_country_at","label":"AT (offline)","scope":"country","country":"AT","path":"/data/macros/euuk_country_at.json"},{"id":"euuk_country_be","label":"BE (offline)","scope":"country","country":"BE","path":"/data/macros/euuk_country_be.json"},{"id":"euuk_country_bg","label":"BG (offline)","scope":"country","country":"BG","path":"/data/macros/euuk_country_bg.json"},{"id":"euuk_country_cy","label":"CY (offline)","scope":"country","country":"CY","path":"/data/macros/euuk_country_cy.json"},{"id":"euuk_country_cz","label":"CZ (offline)","scope":"country","country":"CZ","path":"/data/macros/euuk_country_cz.json"},{"id":"euuk_country_de","label":"DE (offline)","scope":"country","country":"DE","path":"/data/macros/euuk_country_de.json"},{"id":"euuk_country_dk","label":"DK (offline)","scope":"country","country":"DK","path":"/data/macros/euuk_country_dk.json"},{"id":"euuk_country_ee","label":"EE (offline)","scope":"country","country":"EE","path":"/data/macros/euuk_country_ee.json"},{"id":"euuk_country_es","label":"ES (offline)","scope":"country","country":"ES","path":"/data/macros/euuk_country_es.json"},{"id":"euuk_country_fi","label":"FI (offline)","scope":"country","country":"FI","path":"/data/macros/euuk_country_fi.json"},{"id":"euuk_country_fr","label":"FR (offline)","scope":"country","country":"FR","path":"/data/macros/euuk_country_fr.json"},{"id":"euuk_country_gr","label":"GR (offline)","scope":"country","country":"GR","path":"/data/macros/euuk_country_gr.json"},{"id":"euuk_country_hr","label":"HR (offline)","scope":"country","country":"HR","path":"/data/macros/euuk_country_hr.json"},{"id":"euuk_country_hu","label":"HU (offline)","scope":"country","country":"HU","path":"/data/macros/euuk_country_hu.json"},{"id":"euuk_country_ie","label":"IE (offline)","scope":"country","country":"IE","path":"/data/macros/euuk_country_ie.json"},{"id":"euuk_country_it","label":"IT (offline)","scope":"country","country":"IT","path":"/data/macros/euuk_country_it.json"},{"id":"euuk_country_lt","label":"LT (offline)","scope":"country","country":"LT","path":"/data/macros/euuk_country_lt.json"},{"id":"euuk_country_lu","label":"LU (offline)","scope":"country","country":"LU","path":"/data/macros/euuk_country_lu.json"},{"id":"euuk_country_lv","label":"LV (offline)","scope":"country","country":"LV","path":"/data/macros/euuk_country_lv.json"},{"id":"euuk_country_mt","label":"MT (offline)","scope":"country","country":"MT","path":"/data/macros/euuk_country_mt.json"},{"id":"euuk_country_nl","label":"NL (offline)","scope":"country","country":"NL","path":"/data/macros/euuk_country_nl.json"},{"id":"euuk_country_pl","label":"PL (offline)","scope":"country","country":"PL","path":"/data/macros/euuk_country_pl.json"},{"id":"euuk_country_pt","label":"PT (offline)","scope":"country","country":"PT","path":"/data/macros/euuk_country_pt.json"},{"id":"euuk_country_ro","label":"RO (offline)","scope":"country","country":"RO","path":"/data/macros/euuk_country_ro.json"},{"id":"euuk_country_se","label":"SE (offline)","scope":"country","country":"SE","path":"/data/macros/euuk_country_se.json"},{"id":"euuk_country_si","label":"SI (offline)","scope":"country","country":"SI","path":"/data/macros/euuk_country_si.json"},{"id":"euuk_country_sk","label":"SK (offline)","scope":"country","country":"SK","path":"/data/macros/euuk_country_sk.json"},{"id":"euuk_country_uk","label":"UK (offline)","scope":"country","country":"UK","path":"/data/macros/euuk_country_uk.json"}]}
+{
+  "version": "2.0.0",
+  "updated_at": "2026-01-05",
+  "notes": [
+    "Index pulito e deterministico per Jamo.",
+    "Priorità consigliata lato app: region (se match) -> country -> euuk_all -> live fallback.",
+    "I dataset che non esistono ancora daranno 404 finché non vengono generati."
+  ],
+
+  "defaults": {
+    "mode": "car_only",
+    "offline": true
+  },
+
+  "priority_rules": [
+    "Se lat/lon in bbox di una regione IT con macro disponibile: usa macro regionale",
+    "Altrimenti, se country disponibile: usa macro country",
+    "Altrimenti usa euuk_macro_all",
+    "Se ancora vuoto per la categoria richiesta: live fallback (Overpass) senza cambiare categoria"
+  ],
+
+  "items": [
+    {
+      "id": "euuk_macro_all",
+      "label": "EU+UK (offline, fallback globale)",
+      "scope": "euuk",
+      "path": "/data/macros/euuk_macro_all.json",
+      "mode": "car_only",
+      "offline": true
+    },
+
+    {
+      "id": "euuk_country_it",
+      "label": "Italia (offline)",
+      "scope": "country",
+      "country": "IT",
+      "path": "/data/macros/euuk_country_it.json",
+      "mode": "car_only",
+      "offline": true
+    },
+    {
+      "id": "euuk_country_uk",
+      "label": "Regno Unito (offline)",
+      "scope": "country",
+      "country": "UK",
+      "path": "/data/macros/euuk_country_uk.json",
+      "mode": "car_only",
+      "offline": true
+    },
+
+    { "id": "euuk_country_at", "label": "Austria (offline)", "scope": "country", "country": "AT", "path": "/data/macros/euuk_country_at.json", "mode": "car_only", "offline": true },
+    { "id": "euuk_country_be", "label": "Belgio (offline)", "scope": "country", "country": "BE", "path": "/data/macros/euuk_country_be.json", "mode": "car_only", "offline": true },
+    { "id": "euuk_country_bg", "label": "Bulgaria (offline)", "scope": "country", "country": "BG", "path": "/data/macros/euuk_country_bg.json", "mode": "car_only", "offline": true },
+    { "id": "euuk_country_cy", "label": "Cipro (offline)", "scope": "country", "country": "CY", "path": "/data/macros/euuk_country_cy.json", "mode": "car_only", "offline": true },
+    { "id": "euuk_country_cz", "label": "Repubblica Ceca (offline)", "scope": "country", "country": "CZ", "path": "/data/macros/euuk_country_cz.json", "mode": "car_only", "offline": true },
+    { "id": "euuk_country_de", "label": "Germania (offline)", "scope": "country", "country": "DE", "path": "/data/macros/euuk_country_de.json", "mode": "car_only", "offline": true },
+    { "id": "euuk_country_dk", "label": "Danimarca (offline)", "scope": "country", "country": "DK", "path": "/data/macros/euuk_country_dk.json", "mode": "car_only", "offline": true },
+    { "id": "euuk_country_ee", "label": "Estonia (offline)", "scope": "country", "country": "EE", "path": "/data/macros/euuk_country_ee.json", "mode": "car_only", "offline": true },
+    { "id": "euuk_country_es", "label": "Spagna (offline)", "scope": "country", "country": "ES", "path": "/data/macros/euuk_country_es.json", "mode": "car_only", "offline": true },
+    { "id": "euuk_country_fi", "label": "Finlandia (offline)", "scope": "country", "country": "FI", "path": "/data/macros/euuk_country_fi.json", "mode": "car_only", "offline": true },
+    { "id": "euuk_country_fr", "label": "Francia (offline)", "scope": "country", "country": "FR", "path": "/data/macros/euuk_country_fr.json", "mode": "car_only", "offline": true },
+    { "id": "euuk_country_gr", "label": "Grecia (offline)", "scope": "country", "country": "GR", "path": "/data/macros/euuk_country_gr.json", "mode": "car_only", "offline": true },
+    { "id": "euuk_country_hr", "label": "Croazia (offline)", "scope": "country", "country": "HR", "path": "/data/macros/euuk_country_hr.json", "mode": "car_only", "offline": true },
+    { "id": "euuk_country_hu", "label": "Ungheria (offline)", "scope": "country", "country": "HU", "path": "/data/macros/euuk_country_hu.json", "mode": "car_only", "offline": true },
+    { "id": "euuk_country_ie", "label": "Irlanda (offline)", "scope": "country", "country": "IE", "path": "/data/macros/euuk_country_ie.json", "mode": "car_only", "offline": true },
+    { "id": "euuk_country_lt", "label": "Lituania (offline)", "scope": "country", "country": "LT", "path": "/data/macros/euuk_country_lt.json", "mode": "car_only", "offline": true },
+    { "id": "euuk_country_lu", "label": "Lussemburgo (offline)", "scope": "country", "country": "LU", "path": "/data/macros/euuk_country_lu.json", "mode": "car_only", "offline": true },
+    { "id": "euuk_country_lv", "label": "Lettonia (offline)", "scope": "country", "country": "LV", "path": "/data/macros/euuk_country_lv.json", "mode": "car_only", "offline": true },
+    { "id": "euuk_country_mt", "label": "Malta (offline)", "scope": "country", "country": "MT", "path": "/data/macros/euuk_country_mt.json", "mode": "car_only", "offline": true },
+    { "id": "euuk_country_nl", "label": "Paesi Bassi (offline)", "scope": "country", "country": "NL", "path": "/data/macros/euuk_country_nl.json", "mode": "car_only", "offline": true },
+    { "id": "euuk_country_pl", "label": "Polonia (offline)", "scope": "country", "country": "PL", "path": "/data/macros/euuk_country_pl.json", "mode": "car_only", "offline": true },
+    { "id": "euuk_country_pt", "label": "Portogallo (offline)", "scope": "country", "country": "PT", "path": "/data/macros/euuk_country_pt.json", "mode": "car_only", "offline": true },
+    { "id": "euuk_country_ro", "label": "Romania (offline)", "scope": "country", "country": "RO", "path": "/data/macros/euuk_country_ro.json", "mode": "car_only", "offline": true },
+    { "id": "euuk_country_se", "label": "Svezia (offline)", "scope": "country", "country": "SE", "path": "/data/macros/euuk_country_se.json", "mode": "car_only", "offline": true },
+    { "id": "euuk_country_si", "label": "Slovenia (offline)", "scope": "country", "country": "SI", "path": "/data/macros/euuk_country_si.json", "mode": "car_only", "offline": true },
+    { "id": "euuk_country_sk", "label": "Slovacchia (offline)", "scope": "country", "country": "SK", "path": "/data/macros/euuk_country_sk.json", "mode": "car_only", "offline": true },
+
+    {
+      "id": "it_abruzzo",
+      "label": "Abruzzo (macro regionale)",
+      "scope": "region",
+      "country": "IT",
+      "region": "Abruzzo",
+      "path": "/data/macros/it_macro_01_abruzzo.json",
+      "mode": "car_only",
+      "offline": true
+    },
+    {
+      "id": "it_lazio",
+      "label": "Lazio (macro regionale)",
+      "scope": "region",
+      "country": "IT",
+      "region": "Lazio",
+      "path": "/data/macros/it_macro_01_lazio.json",
+      "mode": "car_only",
+      "offline": true
+    },
+    {
+      "id": "it_marche",
+      "label": "Marche (macro regionale)",
+      "scope": "region",
+      "country": "IT",
+      "region": "Marche",
+      "path": "/data/macros/it_macro_01_marche.json",
+      "mode": "car_only",
+      "offline": true
+    },
+
+    {
+      "id": "it_basilicata",
+      "label": "Basilicata (macro regionale)",
+      "scope": "region",
+      "country": "IT",
+      "region": "Basilicata",
+      "path": "/data/macros/it_macro_01_basilicata.json",
+      "mode": "car_only",
+      "offline": true
+    },
+    {
+      "id": "it_calabria",
+      "label": "Calabria (macro regionale)",
+      "scope": "region",
+      "country": "IT",
+      "region": "Calabria",
+      "path": "/data/macros/it_macro_01_calabria.json",
+      "mode": "car_only",
+      "offline": true
+    },
+    {
+      "id": "it_campania",
+      "label": "Campania (macro regionale)",
+      "scope": "region",
+      "country": "IT",
+      "region": "Campania",
+      "path": "/data/macros/it_macro_01_campania.json",
+      "mode": "car_only",
+      "offline": true
+    },
+    {
+      "id": "it_emilia-romagna",
+      "label": "Emilia-Romagna (macro regionale)",
+      "scope": "region",
+      "country": "IT",
+      "region": "Emilia-Romagna",
+      "path": "/data/macros/it_macro_01_emilia-romagna.json",
+      "mode": "car_only",
+      "offline": true
+    },
+    {
+      "id": "it_friuli-venezia-giulia",
+      "label": "Friuli-Venezia Giulia (macro regionale)",
+      "scope": "region",
+      "country": "IT",
+      "region": "Friuli-Venezia Giulia",
+      "path": "/data/macros/it_macro_01_friuli-venezia-giulia.json",
+      "mode": "car_only",
+      "offline": true
+    },
+    {
+      "id": "it_liguria",
+      "label": "Liguria (macro regionale)",
+      "scope": "region",
+      "country": "IT",
+      "region": "Liguria",
+      "path": "/data/macros/it_macro_01_liguria.json",
+      "mode": "car_only",
+      "offline": true
+    },
+    {
+      "id": "it_lombardia",
+      "label": "Lombardia (macro regionale)",
+      "scope": "region",
+      "country": "IT",
+      "region": "Lombardia",
+      "path": "/data/macros/it_macro_01_lombardia.json",
+      "mode": "car_only",
+      "offline": true
+    },
+    {
+      "id": "it_molise",
+      "label": "Molise (macro regionale)",
+      "scope": "region",
+      "country": "IT",
+      "region": "Molise",
+      "path": "/data/macros/it_macro_01_molise.json",
+      "mode": "car_only",
+      "offline": true
+    },
+    {
+      "id": "it_piemonte",
+      "label": "Piemonte (macro regionale)",
+      "scope": "region",
+      "country": "IT",
+      "region": "Piemonte",
+      "path": "/data/macros/it_macro_01_piemonte.json",
+      "mode": "car_only",
+      "offline": true
+    },
+    {
+      "id": "it_puglia",
+      "label": "Puglia (macro regionale)",
+      "scope": "region",
+      "country": "IT",
+      "region": "Puglia",
+      "path": "/data/macros/it_macro_01_puglia.json",
+      "mode": "car_only",
+      "offline": true
+    },
+    {
+      "id": "it_sardegna",
+      "label": "Sardegna (macro regionale)",
+      "scope": "region",
+      "country": "IT",
+      "region": "Sardegna",
+      "path": "/data/macros/it_macro_01_sardegna.json",
+      "mode": "car_only",
+      "offline": true
+    },
+    {
+      "id": "it_sicilia",
+      "label": "Sicilia (macro regionale)",
+      "scope": "region",
+      "country": "IT",
+      "region": "Sicilia",
+      "path": "/data/macros/it_macro_01_sicilia.json",
+      "mode": "car_only",
+      "offline": true
+    },
+    {
+      "id": "it_toscana",
+      "label": "Toscana (macro regionale)",
+      "scope": "region",
+      "country": "IT",
+      "region": "Toscana",
+      "path": "/data/macros/it_macro_01_toscana.json",
+      "mode": "car_only",
+      "offline": true
+    },
+    {
+      "id": "it_trentino-alto-adige",
+      "label": "Trentino-Alto Adige (macro regionale)",
+      "scope": "region",
+      "country": "IT",
+      "region": "Trentino-Alto Adige",
+      "path": "/data/macros/it_macro_01_trentino-alto-adige.json",
+      "mode": "car_only",
+      "offline": true
+    },
+    {
+      "id": "it_umbria",
+      "label": "Umbria (macro regionale)",
+      "scope": "region",
+      "country": "IT",
+      "region": "Umbria",
+      "path": "/data/macros/it_macro_01_umbria.json",
+      "mode": "car_only",
+      "offline": true
+    },
+    {
+      "id": "it_valle-d-aosta",
+      "label": "Valle d’Aosta (macro regionale)",
+      "scope": "region",
+      "country": "IT",
+      "region": "Valle d’Aosta",
+      "path": "/data/macros/it_macro_01_valle-d-aosta.json",
+      "mode": "car_only",
+      "offline": true
+    },
+    {
+      "id": "it_veneto",
+      "label": "Veneto (macro regionale)",
+      "scope": "region",
+      "country": "IT",
+      "region": "Veneto",
+      "path": "/data/macros/it_macro_01_veneto.json",
+      "mode": "car_only",
+      "offline": true
+    }
+  ],
+
+  "legacy_items_disabled": [
+    "eu_macro_*.json: disabilitati per evitare duplicati con euuk_country_*.json"
+  ]
+}
