@@ -1,82 +1,66 @@
-/* Jamo — sw.js v2 (SAFE CACHE)
- * Goals:
- * - NEVER cache /api (LIVE must be fresh)
- * - Cache static assets (app.js, style.css, index.html) with SWR
- * - Cache /data with SWR (fast + updates)
- * - Easy bust: bump SW_VERSION
- */
+/* sw.js — Jamo (safe cache) — v7
+   - Never cache /api, app.js, style.css
+   - Network-first for freshness
+   - Cache only static assets + /data/*.json for offline
+   - API fallback: never crash fetch (return ok:false JSON)
+*/
 
-const SW_VERSION = "jamo-sw-v2.0.0";
-const STATIC_CACHE = `static-${SW_VERSION}`;
-const DATA_CACHE   = `data-${SW_VERSION}`;
+const CACHE_NAME = "jamo-cache-v7"; // <-- cambia ad ogni deploy
 
 const STATIC_ASSETS = [
-  "/",            // optional (depends on hosting)
+  "/",
   "/index.html",
-  "/style.css",
-  "/app.js",
   "/manifest.webmanifest",
+  "/style.css",
+  // aggiungi icone se esistono davvero:
+  // "/icons/icon-192.png",
+  // "/icons/icon-512.png",
 ];
 
+// Install
 self.addEventListener("install", (event) => {
-  event.waitUntil((async () => {
-    const cache = await caches.open(STATIC_CACHE);
-    // Best effort: some hosts don't allow caching "/" directly
-    await Promise.allSettled(STATIC_ASSETS.map((u) => cache.add(u)));
-    self.skipWaiting();
-  })());
+  self.skipWaiting();
+  event.waitUntil(
+    (async () => {
+      try {
+        const cache = await caches.open(CACHE_NAME);
+        await Promise.allSettled(STATIC_ASSETS.map((u) => cache.add(u)));
+      } catch {}
+    })()
+  );
 });
 
+// Activate
 self.addEventListener("activate", (event) => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
-    await Promise.all(
-      keys.map((k) => {
-        if (k !== STATIC_CACHE && k !== DATA_CACHE) return caches.delete(k);
-      })
-    );
+    await Promise.all(keys.map((k) => (k !== CACHE_NAME ? caches.delete(k) : Promise.resolve())));
     await self.clients.claim();
   })());
 });
 
-function isApi(reqUrl) {
-  return reqUrl.pathname.startsWith("/api/");
-}
-function isData(reqUrl) {
-  return reqUrl.pathname.startsWith("/data/");
-}
-function isStatic(reqUrl) {
-  // treat these as static-ish assets (including cache-busted)
-  return (
-    reqUrl.pathname === "/" ||
-    reqUrl.pathname === "/index.html" ||
-    reqUrl.pathname === "/app.js" ||
-    reqUrl.pathname === "/style.css" ||
-    reqUrl.pathname === "/manifest.webmanifest" ||
-    reqUrl.pathname.endsWith(".png") ||
-    reqUrl.pathname.endsWith(".jpg") ||
-    reqUrl.pathname.endsWith(".jpeg") ||
-    reqUrl.pathname.endsWith(".webp") ||
-    reqUrl.pathname.endsWith(".svg") ||
-    reqUrl.pathname.endsWith(".ico")
-  );
+// Helpers
+function isBypass(url) {
+  // mai cache: API + app + css (anche con querystring)
+  if (url.pathname.startsWith("/api/")) return true;
+  if (url.pathname === "/app.js" || url.pathname.startsWith("/app.js")) return true;
+  if (url.pathname === "/style.css" || url.pathname.startsWith("/style.css")) return true;
+  return false;
 }
 
-// Stale-while-revalidate
-async function swr(request, cacheName) {
-  const cache = await caches.open(cacheName);
-  const cached = await cache.match(request);
+function isDataFile(url) {
+  return url.pathname.startsWith("/data/") && url.pathname.endsWith(".json");
+}
 
-  const fetchPromise = fetch(request)
-    .then((resp) => {
-      // only cache ok responses
-      if (resp && resp.ok) cache.put(request, resp.clone());
-      return resp;
-    })
-    .catch(() => null);
+function isStaticAsset(url) {
+  return STATIC_ASSETS.includes(url.pathname);
+}
 
-  // Return cached immediately if present, else wait network
-  return cached || (await fetchPromise) || new Response("", { status: 504 });
+function jsonResponse(obj, status = 200) {
+  return new Response(JSON.stringify(obj), {
+    status,
+    headers: { "Content-Type": "application/json; charset=utf-8" },
+  });
 }
 
 self.addEventListener("fetch", (event) => {
@@ -85,30 +69,55 @@ self.addEventListener("fetch", (event) => {
 
   const url = new URL(req.url);
 
-  // Only handle same-origin
+  // stesso origin only
   if (url.origin !== self.location.origin) return;
 
-  // ✅ 1) NEVER cache API (LIVE)
-  if (isApi(url)) {
-    event.respondWith(fetch(req).catch(() => new Response(JSON.stringify({
-      ok: false,
-      error: "Network error (api)",
-    }), { status: 200, headers: { "Content-Type": "application/json" } })));
+  // ✅ Bypass totale per API e file “sempre fresh”
+  if (isBypass(url)) {
+    // API: non deve MAI far crashare la fetch → fallback JSON
+    if (url.pathname.startsWith("/api/")) {
+      event.respondWith(
+        fetch(req).catch(() =>
+          jsonResponse({ ok: false, error: "Network error (api)" }, 200)
+        )
+      );
+      return;
+    }
+
+    // app.js / style.css: network-only, ma se offline prova cache (best effort)
+    event.respondWith(
+      fetch(req).catch(async () => {
+        const cached = await caches.match(req);
+        return cached || new Response("", { status: 504 });
+      })
+    );
     return;
   }
 
-  // ✅ 2) Cache /data with SWR
-  if (isData(url)) {
-    event.respondWith(swr(req, DATA_CACHE));
-    return;
-  }
+  // ✅ Network-first per tutto il resto, con caching selettivo
+  event.respondWith((async () => {
+    try {
+      const net = await fetch(req);
 
-  // ✅ 3) Cache static with SWR
-  if (isStatic(url)) {
-    event.respondWith(swr(req, STATIC_CACHE));
-    return;
-  }
+      // cache solo se ok e se è static o data json
+      if (net && net.ok && (isDataFile(url) || isStaticAsset(url))) {
+        const cache = await caches.open(CACHE_NAME);
+        cache.put(req, net.clone()).catch(() => {});
+      }
+      return net;
+    } catch (e) {
+      // Offline fallback: prova cache
+      const cached = await caches.match(req);
+      if (cached) return cached;
 
-  // Default: network-first (no cache)
-  event.respondWith(fetch(req).catch(() => caches.match(req)));
+      // se html, prova index
+      const accept = req.headers.get("accept") || "";
+      if (accept.includes("text/html")) {
+        const cachedIndex = await caches.match("/index.html");
+        if (cachedIndex) return cachedIndex;
+      }
+
+      return new Response("", { status: 504 });
+    }
+  })());
 });
