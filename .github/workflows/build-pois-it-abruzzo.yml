@@ -25,6 +25,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          persist-credentials: true
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -32,7 +33,7 @@ jobs:
           node-version: "20"
 
       - name: Build POIs (Abruzzo)
-        run: node scripts/build_pois_it_region.mjs --region it-abruzzo
+        run: node scripts/build_pois_it_region.mjs --region=it-abruzzo
 
       - name: Commit data (if changed)
         run: |
