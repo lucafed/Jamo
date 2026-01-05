@@ -1,10 +1,14 @@
-// /api/jamo.js — CAR ONLY — v4.0 (EU+UK macro auto-select + sane near-distance)
+// /api/jamo.js — CAR ONLY — v4.1
+// ✅ Adds: category + radiusKm (hard filters), optional forceEuUkAll
 // POST body:
 // {
 //   origin?: { lat:number, lon?:number, lng?:number, label?:string, country_code?:string },
-//   originText?: string,            // optional: server will call /api/geocode?q=
+//   originText?: string,
 //   maxMinutes: number,
 //   flavor?: "classici"|"chicche"|"famiglia",
+//   category?: string,             // ✅ new: UI category/theme
+//   radiusKm?: number,             // ✅ new: hard radius in km (real distance)
+//   forceEuUkAll?: boolean,        // ✅ new: always use euuk_macro_all.json
 //   visitedIds?: string[],
 //   weekIds?: string[]
 // }
@@ -113,6 +117,43 @@ function flavorMatch(p, flavor) {
   return true;
 }
 
+// ✅ Category mapping: UI category/theme -> keywords expected in tags/type/category
+const CATEGORY_MAP = {
+  natura: ["natura", "nature", "park", "parco", "forest", "bosco", "lake", "lago", "viewpoint", "panorama", "parco_nazionale", "national_park", "reserve", "riserva"],
+  mare: ["mare", "sea", "beach", "spiaggia", "coast", "costa", "bay", "baia"],
+  storia: ["storia", "history", "historic", "museum", "museo", "castle", "castello", "ruins", "archeology", "archeologia", "monument", "monumento", "heritage"],
+  borghi: ["borgo", "borghi", "village", "hamlet", "old_town", "centro_storico", "medieval", "medioevale"],
+  citta: ["citta", "città", "city", "town"],
+  relax: ["relax", "spa", "wellness", "thermal", "terme"],
+  montagna: ["montagna", "mountain", "hiking", "trail", "trekking", "summit", "peak", "alps", "dolomiti"],
+  family: ["family", "famiglia", "famiglie", "bambini", "kids", "zoo", "aquarium", "theme_park", "parco_divertimenti", "playground"],
+};
+
+// ✅ hard category matcher (contains-friendly)
+function categoryMatch(p, category) {
+  const c = norm(category);
+  if (!c) return true;
+
+  const wanted = CATEGORY_MAP[c] || [c];
+
+  const hay = [
+    p.category,
+    p.type,
+    ...(Array.isArray(p.categories) ? p.categories : []),
+    ...(Array.isArray(p.tags) ? p.tags : []),
+    ...(Array.isArray(p.themes) ? p.themes : []),
+  ]
+    .filter(Boolean)
+    .map(norm)
+    .filter(Boolean);
+
+  const wantedNorm = wanted.map(norm).filter(Boolean);
+
+  // Match strategy:
+  // - exact match OR substring match, to handle tags like "kids_museum" or "parco_nazionale"
+  return wantedNorm.some(w => hay.some(h => h === w || h.includes(w) || w.includes(h)));
+}
+
 function estimateCarMinutes(km) {
   // più realistico sulle brevi distanze (no +8 fisso)
   const k = Math.max(0, Number(km) || 0);
@@ -167,7 +208,7 @@ function scoreCandidate(p, eta, km, targetMin, flavor, isPrimaryRegion) {
 
 /**
  * server-side call to /api/geocode?q=... on SAME host
- * expects geocode API:
+ * expects:
  * { ok:true, result:{ label, lat, lon, country_code? }, ... }
  */
 async function geocodeOnSameHost(req, text) {
@@ -207,8 +248,14 @@ async function geocodeOnSameHost(req, text) {
 }
 
 // --------- MACRO SELECT (country first, fallback all) ----------
-function macroPathForCountry(countryCode) {
+function macroPathForCountry(countryCode, forceAll = false) {
   const cc = String(countryCode || "").trim().toLowerCase();
+
+  // ✅ Force: all EU+UK
+  if (forceAll) {
+    const all = path.join(process.cwd(), "public", "data", "macros", "euuk_macro_all.json");
+    if (fs.existsSync(all)) return all;
+  }
 
   // Prefer country macro if exists
   if (cc) {
@@ -262,6 +309,11 @@ export default async function handler(req, res) {
       (flavorRaw === "famiglia" || flavorRaw === "family") ? "famiglia" :
       "classici";
 
+    // ✅ NEW inputs
+    const category = String(body.category || body.theme || "").trim();
+    const radiusKm = body.radiusKm != null ? Number(body.radiusKm) : null;
+    const forceEuUkAll = !!body.forceEuUkAll;
+
     const visitedIds = new Set(Array.isArray(body.visitedIds) ? body.visitedIds.map(String) : []);
     const weekIds = new Set(Array.isArray(body.weekIds) ? body.weekIds.map(String) : []);
 
@@ -281,13 +333,18 @@ export default async function handler(req, res) {
       originObj = { lat: oLat, lon: oLon, label: o?.label || "", country_code: oCC };
     } else if (body.originText && String(body.originText).trim().length >= 2) {
       const g = await geocodeOnSameHost(req, String(body.originText));
-      originObj = { lat: g.lat, lon: g.lon, label: g.label || String(body.originText), country_code: String(g.country_code || "").toUpperCase() };
+      originObj = {
+        lat: g.lat,
+        lon: g.lon,
+        label: g.label || String(body.originText),
+        country_code: String(g.country_code || "").toUpperCase()
+      };
     } else {
       return res.status(400).json({ error: "origin must be {lat, lon} or originText" });
     }
 
-    // Load macro dynamically
-    const chosenMacroPath = macroPathForCountry(originObj.country_code);
+    // Load macro dynamically (EU+UK)
+    const chosenMacroPath = macroPathForCountry(originObj.country_code, forceEuUkAll);
     const macro = readJsonSafe(chosenMacroPath, null);
     if (!macro) {
       return res.status(500).json({
@@ -320,23 +377,32 @@ export default async function handler(req, res) {
     // Flavor filter (hard)
     let pool = normalized.filter(p => flavorMatch(p, flavor));
 
-    // Se famiglia e pool troppo piccolo, allarga un po'
+    // ✅ Category filter (HARD)
+    if (category) {
+      pool = pool.filter(p => categoryMatch(p, category));
+    }
+
+    // Se famiglia e pool troppo piccolo, allarga un po' (ma resta dentro categoria se category è settata)
     if (flavor === "famiglia" && pool.length < 12) {
       const extra = normalized.filter(p => {
         const tags = getTags(p);
         const type = norm(p.type);
-        return (
+        const familyish =
           tags.includes("famiglie") || tags.includes("bambini") || tags.includes("family") ||
           type === "mare" || type === "natura" || type === "relax" ||
-          tags.includes("spiagge") || tags.includes("lago") || tags.includes("parco_nazionale")
-        );
+          tags.includes("spiagge") || tags.includes("lago") || tags.includes("parco_nazionale");
+
+        if (!familyish) return false;
+        if (category && !categoryMatch(p, category)) return false; // ✅ keep category constraint
+        return true;
       });
+
       const ids = new Set(pool.map(x => String(x.id)));
       for (const e of extra) if (!ids.has(String(e.id))) pool.push(e);
     }
 
     // Compute distance/time + primary flag
-    const enriched = pool
+    let enriched = pool
       .map((p) => {
         const km = haversineKm(originObj.lat, originObj.lon, p.lat, p.lon);
         const eta = estimateCarMinutes(km);
@@ -353,6 +419,11 @@ export default async function handler(req, res) {
       // ✅ FIX: non scartare "vicino", basta 200m
       .filter(p => p._km >= 0.2);
 
+    // ✅ Hard radius filter if provided
+    if (Number.isFinite(radiusKm) && radiusKm > 0) {
+      enriched = enriched.filter(p => p._km <= radiusKm);
+    }
+
     const primary = enriched.filter(p => p._isPrimary);
     const others = enriched.filter(p => !p._isPrimary);
 
@@ -360,6 +431,11 @@ export default async function handler(req, res) {
     const caps = [1.0, 1.25, 1.55, 1.85].map(m => maxMinutes * m);
 
     function pickWithin(list) {
+      // Se radiusKm è attivo, il vincolo “tempo” diventa secondario: scegliamo comunque i migliori
+      if (Number.isFinite(radiusKm) && radiusKm > 0) {
+        return list.slice().sort((a, b) => a._eta - b._eta).slice(0, 180);
+      }
+
       for (const cap of caps) {
         const within = list.filter(p => p._eta <= cap);
         if (within.length >= 8) return within;
@@ -372,6 +448,7 @@ export default async function handler(req, res) {
     if (candidateList.length < 8) {
       const add = pickWithin(others);
       candidateList = candidateList.concat(add);
+
       const seen = new Set();
       candidateList = candidateList.filter(p => {
         const id = String(p.id);
@@ -384,13 +461,23 @@ export default async function handler(req, res) {
     if (!candidateList.length) {
       return res.status(200).json({
         ok: true,
-        input: { origin: originObj, maxMinutes, flavor },
+        input: {
+          origin: originObj,
+          maxMinutes,
+          flavor,
+          category,
+          radiusKm: Number.isFinite(radiusKm) ? radiusKm : undefined
+        },
         top: null,
         alternatives: [],
         message: "Nessuna meta trovata nel dataset per i filtri scelti.",
         debug: {
           macro_file: path.basename(chosenMacroPath),
-          country_code: originObj.country_code || ""
+          country_code: originObj.country_code || "",
+          pool_after_flavor: pool.length,
+          pool_after_category: category ? pool.length : undefined,
+          radiusKm: Number.isFinite(radiusKm) ? radiusKm : undefined,
+          forceEuUkAll
         }
       });
     }
@@ -413,8 +500,11 @@ export default async function handler(req, res) {
         origin: originObj,
         maxMinutes,
         flavor,
+        category,
+        radiusKm: Number.isFinite(radiusKm) ? radiusKm : undefined,
         primary_region: primaryRegion || "",
-        macro_file: path.basename(chosenMacroPath)
+        macro_file: path.basename(chosenMacroPath),
+        forceEuUkAll
       },
       top,
       alternatives,
@@ -422,9 +512,12 @@ export default async function handler(req, res) {
         macro: macro.id || "macro",
         macro_file: path.basename(chosenMacroPath),
         total_places: places.length,
-        pool_after_flavor: pool.length,
+        pool_after_flavor: normalized.filter(p => flavorMatch(p, flavor)).length,
+        pool_after_category: category ? pool.length : undefined,
         origin_country_code: originObj.country_code || "",
-        used_primary_first: true
+        used_primary_first: true,
+        radiusKm: Number.isFinite(radiusKm) ? radiusKm : undefined,
+        forceEuUkAll
       }
     });
 
