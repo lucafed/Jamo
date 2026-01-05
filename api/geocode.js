@@ -1,10 +1,10 @@
-// /api/geocode.js — Robust geocoding (OFFLINE index first, Nominatim fallback) — v2.1 FIXED
+// /api/geocode.js — Robust geocoding (OFFLINE index first, Nominatim fallback) — v2.2
 // Supports:
 //   GET  /api/geocode?q=...
 //   POST /api/geocode { q: "..." }
 //
 // Returns:
-//   { ok:true, result:{ label, lat, lon, country_code }, candidates:[...] }
+//   { ok:true, result:{ label, lat, lon, country_code }, candidates:[...], source:"offline_index|nominatim" }
 //   { ok:false, error:"..." }
 
 import fs from "fs";
@@ -20,7 +20,7 @@ const INDEX_PATH = path.join(process.cwd(), "public", "data", "places_index_eu_u
 const NOMINATIM_EMAIL = process.env.NOMINATIM_EMAIL || "";
 const NOMINATIM_UA =
   process.env.NOMINATIM_UA ||
-  `Jamo/2.1 (Vercel; ${NOMINATIM_EMAIL || "no-email"})`;
+  `Jamo/2.2 (Vercel; ${NOMINATIM_EMAIL || "no-email"})`;
 
 // ---- helpers ----
 function now() { return Date.now(); }
@@ -46,12 +46,22 @@ function shortLabel(displayName) {
   return parts.slice(0, 3).join(", ") || displayName || "";
 }
 
+// Normalizza country code per coerenza con dataset
+// - Nominatim usa spesso GB, non UK
+// - alcuni indici custom possono avere UK
+function normalizeCountryCode(cc) {
+  const up = String(cc || "").toUpperCase().trim();
+  if (!up) return "";
+  if (up === "UK") return "GB";
+  return up;
+}
+
 function okResult(label, lat, lon, country_code = "") {
   return {
     label: String(label || "").trim(),
     lat: Number(lat),
     lon: Number(lon),
-    country_code: String(country_code || "").toUpperCase()
+    country_code: normalizeCountryCode(country_code)
   };
 }
 
@@ -157,7 +167,7 @@ function pickBestOffline(hits, qRaw) {
 }
 
 function buildOfflineResponse(best, hits) {
-  const cc = String(best.country || "").toUpperCase();
+  const cc = normalizeCountryCode(best.country || "");
   const result = okResult(
     `${best.name}${cc ? ", " + cc : ""}`,
     best.lat,
@@ -170,11 +180,12 @@ function buildOfflineResponse(best, hits) {
       const lat = Number(p.lat);
       const lon = Number(p.lng ?? p.lon);
       if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
+      const pcc = normalizeCountryCode(p.country || "");
       return {
-        label: `${p.name}${p.country ? ", " + String(p.country).toUpperCase() : ""}`,
+        label: `${p.name}${pcc ? ", " + pcc : ""}`,
         lat,
         lon,
-        country_code: String(p.country || "").toUpperCase()
+        country_code: pcc
       };
     })
     .filter(Boolean)
@@ -191,11 +202,14 @@ async function nominatimSearch(q, req) {
     `&q=${encodeURIComponent(q)}` +
     (NOMINATIM_EMAIL ? `&email=${encodeURIComponent(NOMINATIM_EMAIL)}` : "");
 
+  const proto = req.headers["x-forwarded-proto"] || "https";
+  const host = req.headers["x-forwarded-host"] || req.headers.host || "localhost";
+
   const r = await fetch(base, {
     headers: {
       "User-Agent": NOMINATIM_UA,
       "Accept": "application/json",
-      "Referer": `${(req.headers["x-forwarded-proto"] || "https")}://${(req.headers["x-forwarded-host"] || req.headers.host)}/`
+      "Referer": `${proto}://${host}/`
     }
   });
 
@@ -208,7 +222,6 @@ async function nominatimSearch(q, req) {
     return { ok: false, error: "Nessun risultato trovato", source: "nominatim" };
   }
 
-  // ✅ FIX: niente bias IT — prendiamo il primo risultato di Nominatim (di solito è il best)
   const best = arr[0];
 
   const lat = Number(best.lat);
@@ -217,7 +230,7 @@ async function nominatimSearch(q, req) {
     return { ok: false, error: "Risultato senza coordinate valide", source: "nominatim" };
   }
 
-  const cc = String(best.address?.country_code || "").toUpperCase();
+  const cc = normalizeCountryCode(best.address?.country_code || "");
   const result = okResult(shortLabel(best.display_name), lat, lon, cc);
 
   const candidates = arr
@@ -226,7 +239,7 @@ async function nominatimSearch(q, req) {
       label: shortLabel(x.display_name),
       lat: Number(x.lat),
       lon: Number(x.lon),
-      country_code: String(x.address?.country_code || "").toUpperCase()
+      country_code: normalizeCountryCode(x.address?.country_code || "")
     }))
     .filter(x => Number.isFinite(x.lat) && Number.isFinite(x.lon));
 
@@ -248,7 +261,7 @@ export default async function handler(req, res) {
     const q = cleanQ(qRaw);
     if (!q) return res.status(400).json({ ok: false, error: "Missing q" });
 
-    const cacheKey = `${req.method}:${q.toLowerCase()}`;
+    const cacheKey = `v2.2:${q.toLowerCase()}`;
     const hit = cache.get(cacheKey);
     if (hit && now() - hit.ts < TTL_MS) {
       return res.status(200).json(hit.data);
@@ -257,7 +270,12 @@ export default async function handler(req, res) {
     // 1) Offline index
     const offline = offlineSearch(q);
     if (offline?.ok) {
-      const data = { ok: true, result: offline.result, candidates: offline.candidates || [] };
+      const data = {
+        ok: true,
+        result: offline.result,
+        candidates: offline.candidates || [],
+        source: offline.source || "offline_index"
+      };
       cache.set(cacheKey, { ts: now(), data });
       return res.status(200).json(data);
     }
@@ -265,8 +283,8 @@ export default async function handler(req, res) {
     // 2) Nominatim fallback
     const nom = await nominatimSearch(q, req);
     const data = nom.ok
-      ? { ok: true, result: nom.result, candidates: nom.candidates || [] }
-      : { ok: false, error: nom.error || "Geocoding fallito" };
+      ? { ok: true, result: nom.result, candidates: nom.candidates || [], source: nom.source || "nominatim" }
+      : { ok: false, error: nom.error || "Geocoding fallito", source: nom.source || "nominatim" };
 
     cache.set(cacheKey, { ts: now(), data });
     return res.status(200).json(data);
