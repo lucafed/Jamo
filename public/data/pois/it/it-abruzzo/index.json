@@ -2,21 +2,21 @@
   "region": "it-abruzzo",
   "name": "Abruzzo",
   "country": "IT",
-  "generatedAt": "2026-01-05T11:08:56.909Z",
+  "generatedAt": "2026-01-05T12:40:52.941Z",
   "basePath": "/data/pois/it/it-abruzzo",
   "files": {
-    "borghi": "borghi.json",
-    "citta": "citta.json",
     "family": "family.json",
-    "hiking": "hiking.json",
-    "kids_museum": "kids_museum.json",
-    "mare": "mare.json",
-    "montagna": "montagna.json",
-    "natura": "natura.json",
-    "relax": "relax.json",
-    "storia": "storia.json",
     "theme_park": "theme_park.json",
-    "viewpoints": "viewpoints.json"
+    "kids_museum": "kids_museum.json",
+    "storia": "storia.json",
+    "natura": "natura.json",
+    "mare": "mare.json",
+    "relax": "relax.json",
+    "viewpoints": "viewpoints.json",
+    "hiking": "hiking.json",
+    "montagna": "montagna.json",
+    "borghi": "borghi.json",
+    "citta": "citta.json"
   },
   "categories": [
     "family",
@@ -33,17 +33,17 @@
     "citta"
   ],
   "counts": {
-    "family": null,
-    "theme_park": null,
-    "kids_museum": null,
-    "storia": null,
-    "natura": null,
-    "mare": null,
-    "relax": null,
-    "viewpoints": null,
-    "hiking": null,
-    "montagna": null,
-    "borghi": null,
-    "citta": null
+    "family": 0,
+    "theme_park": 0,
+    "kids_museum": 0,
+    "storia": 0,
+    "natura": 0,
+    "mare": 0,
+    "relax": 0,
+    "viewpoints": 0,
+    "hiking": 0,
+    "montagna": 0,
+    "borghi": 0,
+    "citta": 0
   }
 }
