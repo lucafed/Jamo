@@ -1,24 +1,16 @@
-// scripts/build_pois_eu_uk_all.mjs
-// Build POIs EU+UK (offline dataset) for GitHub Pages (NO /api needed)
-// Output (✅ fixed paths):
-// - public/data/pois/pois_eu_uk.json          (ALL)
-// - public/data/pois/index.json               (index)
-// - public/data/pois/<category>.json          (split)
-//
-// ✅ Fix principali:
-// - UK -> GB (ISO3166-1 corretto per Overpass)
-// - Niente mega-area EUUK: fetch per-country (molto più affidabile)
-// - Quasi tutto richiede ["name"] per evitare milioni di risultati
-// - Dedup robusto
-//
-// Run:
-//   node scripts/build_pois_eu_uk_all.mjs
+// scripts/build_pois_eu_uk_all.mjs — v2.0
+// ✅ Writes BOTH:
+// - public/data/pois/pois_eu_uk.json        (canonical)
+// - public/data/pois_eu_uk.json             (legacy/compat)
+// - public/data/pois/index.json             (index)
+// - public/data/pois/<category>.json        (split)
 
 import fs from "fs";
 import path from "path";
 
 const ROOT = process.cwd();
-const OUT_DIR = path.join(ROOT, "public", "data", "pois");
+const DATA_DIR = path.join(ROOT, "public", "data");
+const OUT_DIR = path.join(DATA_DIR, "pois"); // ✅ canonical folder
 
 const OVERPASS_ENDPOINTS = [
   "https://overpass-api.de/api/interpreter",
@@ -33,7 +25,11 @@ function ensureDir(p){
   if (!fs.existsSync(p)) fs.mkdirSync(p, { recursive: true });
 }
 
-async function fetchWithTimeout(url, body, timeoutMs = 60000) {
+function writeJson(filePath, obj) {
+  fs.writeFileSync(filePath, JSON.stringify(obj), "utf8");
+}
+
+async function fetchWithTimeout(url, body, timeoutMs = 65000) {
   const ctrl = new AbortController();
   const t = setTimeout(() => ctrl.abort(), timeoutMs);
   try {
@@ -54,14 +50,12 @@ async function fetchWithTimeout(url, body, timeoutMs = 60000) {
 
 function opBody(q){ return `data=${encodeURIComponent(q)}`; }
 
-// ✅ EU27 + GB (UK -> GB)
+// ✅ EU27 + GB
 const COUNTRIES = [
   "AT","BE","BG","CY","CZ","DE","DK","EE","ES","FI","FR","GR","HR","HU","IE","IT","LT","LU","LV","MT","NL","PL","PT","RO","SE","SI","SK","GB"
 ];
 
-// --------- CATEGORIE POI (mirate) ---------
-// NOTE: per evitare dataset enorme/ingestibile, molti blocchi richiedono ["name"].
-// Le categorie "borghi/citta" NON conviene farle POI: sono macro (come già fai).
+// categorie POI “utili”
 const CATEGORIES = {
   family: `
 (
@@ -70,18 +64,13 @@ const CATEGORIES = {
   nwr["tourism"="zoo"]["name"](area.A);
   nwr["tourism"="aquarium"]["name"](area.A);
 
-  // kids museum / science center: solo se name match
   nwr["tourism"="museum"]["name"~"children|kids|bambin|children\\s?museum|museo dei bambini|science\\s?center|planetari|planetarium",i](area.A);
   nwr["tourism"="attraction"]["name"~"children|kids|bambin|children\\s?museum|museo dei bambini|science\\s?center|planetari|planetarium",i](area.A);
 
-  // playground SOLO se named (riduce tantissimo)
   nwr["leisure"="playground"]["name"](area.A);
-
-  // “family keywords” su attraction (named)
   nwr["tourism"="attraction"]["name"~"parco\\s?divertimenti|lunapark|luna\\s?park|giostre|parco\\s?avventura|safari",i](area.A);
 );
 `,
-
   theme_park: `
 (
   nwr["tourism"="theme_park"]["name"](area.A);
@@ -90,7 +79,6 @@ const CATEGORIES = {
   nwr["tourism"="attraction"]["name"~"parco\\s?divertimenti|lunapark|luna\\s?park|giostre|water\\s?park|acquapark|aqua\\s?park|parco\\s?acquatico",i](area.A);
 );
 `,
-
   kids_museum: `
 (
   nwr["tourism"="museum"]["name"~"children|kids|bambin|children\\s?museum|museo dei bambini|science\\s?center|planetari|planetarium",i](area.A);
@@ -98,7 +86,6 @@ const CATEGORIES = {
   nwr["tourism"="attraction"]["name"~"children|kids|bambin|children\\s?museum|museo dei bambini|science\\s?center|planetari|planetarium",i](area.A);
 );
 `,
-
   storia: `
 (
   nwr["historic"="castle"]["name"](area.A);
@@ -109,7 +96,6 @@ const CATEGORIES = {
   nwr["tourism"="museum"]["name"](area.A);
 );
 `,
-
   natura: `
 (
   nwr["natural"="waterfall"]["name"](area.A);
@@ -120,7 +106,6 @@ const CATEGORIES = {
   nwr["natural"="cave_entrance"]["name"](area.A);
 );
 `,
-
   mare: `
 (
   nwr["natural"="beach"]["name"](area.A);
@@ -128,7 +113,6 @@ const CATEGORIES = {
   nwr["tourism"="viewpoint"]["name"~"sea|mare|coast|costa|spiaggia|beach",i](area.A);
 );
 `,
-
   relax: `
 (
   nwr["amenity"="spa"]["name"](area.A);
@@ -138,29 +122,22 @@ const CATEGORIES = {
   nwr["thermal"="yes"]["name"](area.A);
 );
 `,
-
   viewpoints: `
 (
   nwr["tourism"="viewpoint"]["name"](area.A);
   nwr["name"~"belvedere|panoram|viewpoint|scenic|terrazza|vista",i](area.A);
 );
 `,
-
   hiking: `
 (
   nwr["information"="guidepost"]["name"](area.A);
   nwr["amenity"="shelter"]["name"](area.A);
-
-  // route=hiking può essere enorme: limitiamoci a named
   nwr["route"="hiking"]["name"](area.A);
-
-  // keyword named
   nwr["name"~"sentiero|trail|trek|trekking|hike|hiking|via\\s?ferrata|rifugio|anello",i](area.A);
 );
 `,
 };
 
-// Query wrapper per singolo paese
 function buildQueryForCountry(catKey, iso2) {
   return `
 [out:json][timeout:120];
@@ -170,7 +147,6 @@ out tags center;
 `.trim();
 }
 
-// Normalizza in “place” compatibile con la tua app
 function mapElementToPlace(el, catKey, iso2) {
   const tags = el.tags || {};
   const name = tags.name || tags["name:it"] || tags["name:en"] || tags.brand || tags.operator || "";
@@ -178,7 +154,6 @@ function mapElementToPlace(el, catKey, iso2) {
   const lon = Number(el.lon ?? el.center?.lon);
   if (!name || !Number.isFinite(lat) || !Number.isFinite(lon)) return null;
 
-  // tag list compatta k=v (utile per matching)
   const tagList = [];
   const pushKV = (k) => { if (tags[k] != null) tagList.push(`${k}=${tags[k]}`); };
   ["tourism","leisure","historic","natural","amenity","information","place","boundary","route","sport","piste:type"].forEach(pushKV);
@@ -188,9 +163,9 @@ function mapElementToPlace(el, catKey, iso2) {
     name: String(name).trim(),
     lat,
     lon,
-    type: catKey,               // catKey come type per filtro
+    type: catKey,
     primary_category: catKey,
-    country: iso2,              // ✅ utile per debug/filtri
+    country: iso2,
     visibility: "classica",
     beauty_score: 0.72,
     tags: Array.from(new Set(tagList)).slice(0, 24),
@@ -200,7 +175,6 @@ function mapElementToPlace(el, catKey, iso2) {
 }
 
 function dedupPlaces(places) {
-  // dedup su name + approx coords + category
   const seen = new Set();
   const out = [];
   for (const p of places) {
@@ -214,27 +188,24 @@ function dedupPlaces(places) {
 
 async function runOverpass(query) {
   const body = opBody(query);
-
   let lastErr = null;
+
   for (const endpoint of OVERPASS_ENDPOINTS) {
     for (let attempt = 1; attempt <= 3; attempt++) {
       try {
-        const j = await fetchWithTimeout(endpoint, body, 70000);
+        const j = await fetchWithTimeout(endpoint, body, 75000);
         return { ok: true, endpoint, json: j };
       } catch (e) {
         lastErr = e;
-        await sleep(700 * attempt);
+        await sleep(800 * attempt);
       }
     }
   }
   return { ok: false, endpoint: "", json: null, error: String(lastErr?.message || lastErr) };
 }
 
-function writeJson(filePath, obj) {
-  fs.writeFileSync(filePath, JSON.stringify(obj), "utf8");
-}
-
 async function main() {
+  ensureDir(DATA_DIR);
   ensureDir(OUT_DIR);
 
   const metaBase = {
@@ -247,7 +218,6 @@ async function main() {
   const allByCat = {};
   for (const catKey of Object.keys(CATEGORIES)) allByCat[catKey] = [];
 
-  // --- fetch per category per country ---
   for (const catKey of Object.keys(CATEGORIES)) {
     console.log(`\n🧩 Category: ${catKey}`);
 
@@ -267,32 +237,24 @@ async function main() {
       const mapped = els.map(el => mapElementToPlace(el, catKey, iso2)).filter(Boolean);
       const dedup = dedupPlaces(mapped);
 
-      console.log(`  ✅ ${iso2}: ${dedup.length} items (endpoint: ${r.endpoint})`);
+      console.log(`  ✅ ${iso2}: ${dedup.length}`);
       allByCat[catKey].push(...dedup);
 
-      // piccola pausa per non martellare
       await sleep(250);
     }
 
-    // dedup categoria globale
     allByCat[catKey] = dedupPlaces(allByCat[catKey]);
 
-    // write split
     writeJson(
       path.join(OUT_DIR, `${catKey}.json`),
-      {
-        meta: { ...metaBase, category: catKey },
-        places: allByCat[catKey],
-      }
+      { meta: { ...metaBase, category: catKey }, places: allByCat[catKey] }
     );
 
     console.log(`  📦 ${catKey} TOTAL unique: ${allByCat[catKey].length}`);
   }
 
-  // --- all merged ---
   const all = dedupPlaces(Object.values(allByCat).flat());
 
-  // index
   const index = {
     meta: metaBase,
     counts: Object.fromEntries(Object.entries(allByCat).map(([k, v]) => [k, v.length])),
@@ -300,13 +262,16 @@ async function main() {
     files: Object.keys(allByCat).map(k => ({ category: k, path: `/data/pois/${k}.json`, count: allByCat[k].length })),
   };
 
-  // ✅ write index + all in the right folder
+  // ✅ canonical
   writeJson(path.join(OUT_DIR, "index.json"), index);
   writeJson(path.join(OUT_DIR, "pois_eu_uk.json"), { meta: metaBase, places: all });
 
+  // ✅ legacy/compat: same content at /public/data/pois_eu_uk.json
+  writeJson(path.join(DATA_DIR, "pois_eu_uk.json"), { meta: metaBase, places: all });
+
   console.log(`\n🎉 DONE: total unique POIs = ${all.length}`);
-  console.log(`➡️ Wrote: public/data/pois/pois_eu_uk.json`);
-  console.log(`➡️ Wrote: public/data/pois/index.json + per-category files`);
+  console.log(`➡️ Canonical: public/data/pois/pois_eu_uk.json`);
+  console.log(`➡️ Legacy:    public/data/pois_eu_uk.json`);
 }
 
 main().catch((e) => {
