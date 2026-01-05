@@ -1,12 +1,12 @@
-// /api/destinations.js — Jamo LIVE destinations (Overpass) — v3.1
+// /api/destinations.js — Jamo LIVE destinations (Overpass) — v3.1.1 FIXED
 // - Tiered queries per category (CORE -> SECONDARY -> FALLBACK)
 // - Avoid "parks everywhere" (parks only as fallback and filtered)
 // - Partial-results mode: if one query fails, still return what we got
 // - Endpoint fallback + per-query timeout
-// - NEW: support extended categories: theme_park, kids_museum, viewpoints, hiking
-// - NEW: server-side fallback to "ovunque" if category returns empty
+// - Extended categories: theme_park, kids_museum, viewpoints, hiking
+// - Server-side fallback to "ovunque" if category returns empty
 //
-// Returns: { ok:true, data:{elements:[...]}, meta:{cat,radiusKm,count,fromCache,endpoint,elapsedMs,notes:[] } }
+// Returns: { ok:true, data:{elements:[...]}, meta:{requestedCat,usedCat,radiusKm,count,fromCache,endpoint,elapsedMs,notes:[] } }
 
 const TTL_MS = 1000 * 60 * 15; // 15 min cache
 const cache = new Map(); // key -> { ts, data, endpoint }
@@ -83,20 +83,9 @@ function mergeElements(results) {
   return out;
 }
 
-/**
- * Build tiered queries:
- * - CORE: what the category promises (attractions true)
- * - SECONDARY: still relevant but wider
- * - FALLBACK: only if needed, filtered (avoid generic parks)
- *
- * NOTE:
- * - Mostly nodes (fast) + some ways for large POIs (theme parks, beaches, big parks)
- * - Keep each query reasonably small
- */
 function buildTieredQueries(cat, radiusM, lat, lon) {
   const A = around(radiusM, lat, lon);
 
-  // Filtered parks (avoid tiny city parks)
   const FALLBACK_PARKS = `
 [out:json][timeout:12];
 (
@@ -462,12 +451,6 @@ out tags center 900;
   return [CORE, FALLBACK_PARKS];
 }
 
-/**
- * Run tiered queries with endpoint fallback.
- * Partial-results approach:
- * - If one query fails, keep the others.
- * - If endpoint yields nothing (and had failures), try next endpoint.
- */
 async function runTiered(queries, { softEnough = 80 } = {}) {
   const notes = [];
   const started = now();
@@ -512,7 +495,6 @@ async function runTiered(queries, { softEnough = 80 } = {}) {
 
       notes.push(`endpoint_empty_failed:${failed}`);
       continue;
-
     } catch (e) {
       notes.push(`endpoint_crash:${String(e?.message || e)}`);
       continue;
@@ -523,11 +505,14 @@ async function runTiered(queries, { softEnough = 80 } = {}) {
 }
 
 export default async function handler(req, res) {
+  // Helpful headers (avoid edge/proxy caching)
+  res.setHeader("Cache-Control", "no-store, max-age=0");
+
   try {
     const lat = asNum(req.query?.lat);
     const lon = asNum(req.query?.lon);
     const radiusKm = clamp(asNum(req.query?.radiusKm) ?? 60, 5, 300);
-    const cat = normCat(req.query?.cat);
+    const requestedCat = normCat(req.query?.cat);
 
     if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
       return res.status(400).json({ ok: false, error: "Missing lat/lon" });
@@ -535,15 +520,16 @@ export default async function handler(req, res) {
 
     const radiusM = Math.round(radiusKm * 1000);
 
-    // cache
-    const key = cacheKey({ lat, lon, radiusKm, cat });
+    // cache (keyed by requestedCat, not usedCat — ok)
+    const key = cacheKey({ lat, lon, radiusKm, cat: requestedCat });
     const hit = cache.get(key);
     if (hit && now() - hit.ts < TTL_MS) {
       return res.status(200).json({
         ok: true,
         data: hit.data,
         meta: {
-          cat,
+          requestedCat,
+          usedCat: requestedCat,
           radiusKm,
           count: hit.data?.elements?.length || 0,
           fromCache: true,
@@ -555,31 +541,31 @@ export default async function handler(req, res) {
     }
 
     const softEnough =
-      cat === "family" ? 120 :
-      cat === "theme_park" ? 90 :
-      cat === "ovunque" ? 120 :
-      cat === "relax" ? 90 :
-      cat === "mare" ? 60 :
-      cat === "storia" ? 80 :
-      cat === "kids_museum" ? 70 :
-      cat === "viewpoints" ? 90 :
-      cat === "hiking" ? 90 :
+      requestedCat === "family" ? 120 :
+      requestedCat === "theme_park" ? 90 :
+      requestedCat === "ovunque" ? 120 :
+      requestedCat === "relax" ? 90 :
+      requestedCat === "mare" ? 60 :
+      requestedCat === "storia" ? 80 :
+      requestedCat === "kids_museum" ? 70 :
+      requestedCat === "viewpoints" ? 90 :
+      requestedCat === "hiking" ? 90 :
       80;
 
     // run requested category
-    const queries = buildTieredQueries(cat, radiusM, lat, lon);
+    const queries = buildTieredQueries(requestedCat, radiusM, lat, lon);
     let r = await runTiered(queries, { softEnough });
 
-    // ✅ server-side fallback: if empty, retry "ovunque"
     let notes = Array.isArray(r.notes) ? r.notes.slice() : [];
-    let finalCat = cat;
+    let usedCat = requestedCat;
 
-    if ((r.elements?.length || 0) === 0 && cat !== "ovunque") {
+    // server-side fallback: if empty, retry "ovunque"
+    if ((r.elements?.length || 0) === 0 && requestedCat !== "ovunque") {
       const q2 = buildTieredQueries("ovunque", radiusM, lat, lon);
       const r2 = await runTiered(q2, { softEnough: 120 });
       if ((r2.elements?.length || 0) > 0) {
         r = r2;
-        finalCat = "ovunque";
+        usedCat = "ovunque";
         notes = notes.concat(["fallback_to_ovunque"]);
       } else {
         notes = notes.concat(["fallback_to_ovunque_empty"]);
@@ -594,18 +580,22 @@ export default async function handler(req, res) {
       ok: true,
       data,
       meta: {
-        cat: finalCat,          // category actually used for query
-        requestedCat: cat,      // what client asked for
+        requestedCat,
+        usedCat,
         radiusKm,
         count: data.elements.length,
         fromCache: false,
         endpoint: r.endpoint || "",
         elapsedMs: r.elapsedMs || 0,
-        notes: notes || [],
+        notes,
       }
     });
 
   } catch (e) {
-    return res.status(200).json({ ok: false, error: String(e?.message || e) });
+    return res.status(200).json({
+      ok: false,
+      error: String(e?.message || e),
+      meta: { count: 0, notes: ["handler_crash"] }
+    });
   }
-        }
+                }
