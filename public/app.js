@@ -1,12 +1,10 @@
-/* Jamo — app.js v7.4 (FULL - FIXED)
+/* Jamo — app.js v7.4 (FULL)
  * FIXES:
  * - LIVE progress: never show "nessuna meta" while LIVE is still running
- * - LIVE reliability: treat partial live as available; show error only at end
- * - Category logic: prefer offline dataset categories/category_scores when available
- * - LIVE tag matching: support "k=v" tags (tourism=theme_park etc.)
+ * - LIVE reliability: retry LIVE with "ovunque" if category returns 0
+ * - Categories: supports theme_park / kids_museum / viewpoints / hiking
  * - Family logic: strict-first (real attractions), fallback only if needed (no random cities/borghi)
  * - Anti-race: abort previous search + request token
- * - Clean: single pickDestinationFromPool
  */
 
 const $ = (id) => document.getElementById(id);
@@ -413,167 +411,222 @@ async function geocodeLabel(label) {
   return j.result;
 }
 
-// -------------------- TAGS / CATEGORY (FIXED) --------------------
+// -------------------- TAGS / CATEGORY --------------------
 function placeTags(place) {
   return (place.tags || []).map(t => String(t).toLowerCase());
 }
 
-// blob unico per match robusto (offline tags + live "k=v" + categories)
-function placeTagBlob(place) {
-  const tags = placeTags(place).join(" ");
-  const type = String(place?.type || "").toLowerCase();
-  const name = normName(place?.name || "");
-  const cats = Array.isArray(place?.categories) ? place.categories.join(" ").toLowerCase() : "";
-  return `${type} ${cats} ${tags} ${name}`.trim();
-}
-function blobHas(place, ...needles) {
-  const b = placeTagBlob(place);
-  return needles.some(x => b.includes(normName(x)));
-}
-
 function looksIndoor(place) {
-  return blobHas(place, "indoor", "coperto", "al coperto");
-}
-
-function isWaterPark(place) {
-  return blobHas(place, "leisure=water_park", "water park", "acquapark", "aqua park", "parco acquatico");
-}
-
-function isSpaPlace(place) {
-  return blobHas(
-    place,
-    "amenity=spa",
-    "leisure=spa",
-    "natural=hot_spring",
-    "amenity=public_bath",
-    "thermal=yes",
-    "sauna=yes",
-    "terme",
-    "spa",
-    "thermal",
-    "benessere"
+  const tags = placeTags(place).join(" ");
+  const n = normName(place?.name);
+  return (
+    tags.includes("indoor") ||
+    tags.includes("coperto") ||
+    tags.includes("al coperto") ||
+    n.includes("indoor") ||
+    n.includes("coperto")
   );
 }
 
-// Strong family attractions (theme parks, water parks, zoos, aquariums, kids museums, adventure parks)
+function isWaterPark(place) {
+  const t = String(place?.type || "").toLowerCase();
+  const tags = placeTags(place).join(" ");
+  const n = normName(place?.name);
+  return (
+    t.includes("water") || t.includes("acqua") ||
+    tags.includes("water_park") || tags.includes("leisure=water_park") || tags.includes("parco acquatico") ||
+    n.includes("acquapark") || n.includes("aqua park") || n.includes("water park")
+  );
+}
+
+function isSpaPlace(place) {
+  const n = normName(place?.name);
+  const tags = placeTags(place).join(" ");
+  const t = String(place?.type || "").toLowerCase();
+  return (
+    t === "relax" ||
+    tags.includes("terme") || tags.includes("spa") ||
+    tags.includes("natural=hot_spring") || tags.includes("amenity=public_bath") ||
+    tags.includes("amenity=spa") || tags.includes("leisure=spa") ||
+    n.includes("terme") || n.includes("spa") || n.includes("thermal") || n.includes("benessere")
+  );
+}
+
+function isThemePark(place) {
+  const tags = placeTags(place).join(" ");
+  const t = String(place?.type || "").toLowerCase();
+  const n = normName(place?.name);
+  return (
+    t === "theme_park" ||
+    tags.includes("tourism=theme_park") ||
+    tags.includes("leisure=water_park") ||
+    n.includes("parco divertimenti") ||
+    n.includes("lunapark") ||
+    n.includes("luna park") ||
+    n.includes("acquapark") ||
+    n.includes("aqua park") ||
+    n.includes("water park") ||
+    n.includes("parco acquatico") ||
+    n.includes("giostre")
+  );
+}
+
+function isKidsMuseum(place) {
+  const tags = placeTags(place).join(" ");
+  const t = String(place?.type || "").toLowerCase();
+  const n = normName(place?.name);
+  return (
+    t === "kids_museum" ||
+    tags.includes("tourism=museum") &&
+      (n.includes("bambin") || n.includes("kids") || n.includes("children") || n.includes("interattiv") || n.includes("science") || n.includes("planetari")) ||
+    n.includes("museo dei bambini") ||
+    n.includes("children museum") ||
+    n.includes("science center") ||
+    n.includes("planetarium") ||
+    n.includes("planetario")
+  );
+}
+
+function isViewpoint(place) {
+  const tags = placeTags(place).join(" ");
+  const t = String(place?.type || "").toLowerCase();
+  const n = normName(place?.name);
+  return (
+    t === "viewpoints" ||
+    tags.includes("tourism=viewpoint") ||
+    n.includes("belvedere") ||
+    n.includes("panoram") ||
+    n.includes("viewpoint") ||
+    n.includes("vista")
+  );
+}
+
+function isHiking(place) {
+  const tags = placeTags(place).join(" ");
+  const t = String(place?.type || "").toLowerCase();
+  const n = normName(place?.name);
+  return (
+    t === "hiking" ||
+    tags.includes("information=guidepost") ||
+    tags.includes("amenity=shelter") ||
+    n.includes("sentiero") || n.includes("trail") ||
+    n.includes("trek") || n.includes("trekking") ||
+    n.includes("hike") || n.includes("hiking") ||
+    n.includes("via ferrata") ||
+    n.includes("rifugio")
+  );
+}
+
 function isFamilyAttraction(place) {
-  // dataset offline
-  if (Array.isArray(place?.categories)) {
-    if (place.categories.includes("theme_park")) return true;
-    if (place.categories.includes("kids_museum")) return true;
-    if (place.categories.includes("family") && String(place.family_level || "") === "high") return true;
-  }
+  const tags = placeTags(place).join(" ");
+  const type = String(place.type || "").toLowerCase();
+  const n = normName(place.name);
 
-  // live/offline tags + name
-  if (blobHas(
-    place,
-    "tourism=theme_park",
-    "amusement park",
-    "theme park",
-    "parco divertimenti",
-    "leisure=water_park",
-    "water park",
-    "acquapark",
-    "aqua park",
-    "parco acquatico",
-    "tourism=zoo",
-    "zoo",
-    "tourism=aquarium",
-    "amenity=aquarium",
-    "acquario",
-    "aquarium",
-    "parco avventura",
-    "adventure park",
-    "zipline",
-    "zip line",
-    "lunapark",
-    "luna park",
-    "giostre",
-    "safari",
-    "faunistico",
-    "children museum",
-    "museo dei bambini",
-    "science center",
-    "planetario",
-    "planetarium"
-  )) return true;
+  // Strong OSM / tags
+  if (
+    tags.includes("tourism=theme_park") ||
+    tags.includes("leisure=water_park") ||
+    tags.includes("tourism=zoo") ||
+    tags.includes("tourism=aquarium") ||
+    tags.includes("amenity=aquarium") ||
+    tags.includes("tourism=attraction") ||
+    tags.includes("attraction")
+  ) return true;
 
-  // a stricter "attraction": accept only if clearly family words
-  if (blobHas(place, "tourism=attraction") && blobHas(place, "family", "famigl", "bambin", "kids", "children")) return true;
+  // Type heuristics
+  if (
+    type.includes("theme") ||
+    type.includes("amusement") ||
+    type.includes("water") ||
+    type.includes("zoo") ||
+    type.includes("aquarium") ||
+    type === "theme_park"
+  ) return true;
+
+  // Name heuristics
+  if (
+    n.includes("gardaland") ||
+    n.includes("mirabilandia") ||
+    n.includes("acquapark") ||
+    n.includes("aqua park") ||
+    n.includes("water park") ||
+    n.includes("parco divertimenti") ||
+    n.includes("parco acquatico") ||
+    n.includes("luna park") ||
+    n.includes("lunapark") ||
+    n.includes("zoo") ||
+    n.includes("acquario") ||
+    n.includes("parco avventura") ||
+    n.includes("safari") ||
+    n.includes("faunistico")
+  ) return true;
 
   return false;
 }
 
 // Secondary family places (still ok, but not "a city")
 function isFamilySecondary(place) {
-  // kids / activities
-  if (blobHas(
-    place,
-    "leisure=playground",
-    "playground",
-    "parco giochi",
-    "area giochi",
-    "kids",
-    "bambin",
-    "children",
-    "family",
-    "leisure=trampoline_park",
-    "trampoline",
-    "gonfiabil"
-  )) return true;
+  const tags = placeTags(place).join(" ");
+  const t = String(place.type || "").toLowerCase();
+  const n = normName(place.name);
+
+  // Kids / activities
+  if (
+    tags.includes("leisure=playground") ||
+    tags.includes("leisure=trampoline_park") ||
+    n.includes("parco giochi") ||
+    n.includes("area giochi") ||
+    n.includes("kids") ||
+    n.includes("bambin") ||
+    n.includes("trampolin")
+  ) return true;
 
   // Pools can be family
-  if (blobHas(place, "leisure=swimming_pool", "amenity=swimming_pool", "piscina", "swimming_pool")) return true;
+  if (tags.includes("leisure=swimming_pool") || tags.includes("amenity=swimming_pool") || t.includes("piscina") || n.includes("piscina")) return true;
 
   // Farms / adventure parks
-  if (blobHas(place, "fattoria", "didattica", "petting zoo", "avventura")) return true;
+  if (n.includes("fattoria") || n.includes("didattica") || n.includes("avventura")) return true;
 
-  // offline signal
-  if (String(place?.family_level || "") === "medium") return true;
+  // kids museums count as family-secondary if not caught elsewhere
+  if (isKidsMuseum(place)) return true;
 
   return false;
 }
 
-// Generic city/town/borough (avoid proposing this in FAMILY unless it's an attraction)
+// Generic city/town/borough (avoid in FAMILY unless it's an attraction)
 function isGenericTownLike(place) {
-  if (blobHas(place, "place=town", "place=city", "place=village", "place=hamlet")) return true;
-  const t = String(place?.type || "").toLowerCase();
-  return t === "citta" || t === "borgo";
+  const t = String(place.type || "").toLowerCase();
+  const tags = placeTags(place).join(" ");
+  if (t === "citta" || t === "borgo") return true;
+  if (tags.includes("place=town") || tags.includes("place=city") || tags.includes("place=village") || tags.includes("place=hamlet")) return true;
+  return false;
 }
 
 function matchesCategory(place, cat, { familyStrict = false } = {}) {
   if (!cat || cat === "ovunque") return true;
 
-  // ✅ prefer dataset categories if present
-  if (Array.isArray(place?.categories) && place.categories.length) {
-    if (place.categories.includes(cat)) return true;
-    // compat
-    if (cat === "storia" && place.categories.includes("history")) return true;
-    if (cat === "natura" && place.categories.includes("nature")) return true;
-  }
+  const type = String(place.type || "").toLowerCase();
+  const tags = placeTags(place).join(" ");
+  const n = normName(place.name);
 
-  // fallback heuristics (for legacy/offline or live typeGuess)
-  if (cat === "citta") return blobHas(place, "place=city", "place=town") || String(place.type || "").toLowerCase() === "citta";
-  if (cat === "borghi") return blobHas(place, "place=village", "place=hamlet", "borgo", "borghi") || String(place.type || "").toLowerCase() === "borgo";
-  if (cat === "mare") return blobHas(place, "natural=beach", "beach", "spiaggia", "mare", "lido") || String(place.type || "").toLowerCase() === "mare";
-  if (cat === "montagna") return blobHas(place, "natural=peak", "montagna", "monte", "cima", "vetta") || String(place.type || "").toLowerCase() === "montagna";
-  if (cat === "natura") return blobHas(place, "nature_reserve", "boundary=national_park", "parco naturale", "riserva", "cascata", "lago", "gola", "sentiero") || String(place.type || "").toLowerCase() === "natura";
-  if (cat === "storia") return blobHas(place, "tourism=museum", "historic=", "castello", "rocca", "museo", "abbazia", "anfiteatro", "scavi") || String(place.type || "").toLowerCase() === "storia";
-  if (cat === "relax") return isSpaPlace(place) || String(place.type || "").toLowerCase() === "relax";
+  if (cat === "citta") return type === "citta" || tags.includes("place=city") || tags.includes("place=town") || tags.includes("citta") || tags.includes("city");
+  if (cat === "borghi") return type === "borgo" || tags.includes("place=village") || tags.includes("place=hamlet") || tags.includes("borgo") || n.includes("borgo");
+  if (cat === "mare") return type === "mare" || tags.includes("natural=beach") || tags.includes("beach") || n.includes("spiaggia") || n.includes("beach");
+  if (cat === "montagna") return type === "montagna" || tags.includes("natural=peak") || n.includes("monte") || n.includes("cima") || n.includes("passo");
+  if (cat === "natura") return type === "natura" || tags.includes("leisure=nature_reserve") || tags.includes("boundary=national_park") || n.includes("cascata") || n.includes("lago") || n.includes("riserva");
+  if (cat === "storia") return type === "storia" || tags.includes("tourism=museum") || tags.includes("historic=") || n.includes("castello") || n.includes("museo") || n.includes("rocca");
+  if (cat === "relax") return isSpaPlace(place);
 
-  // extra categories (if used in chips)
-  if (cat === "theme_park") return isFamilyAttraction(place);
-  if (cat === "kids_museum") {
-    const isMuseum = blobHas(place, "tourism=museum", "museum", "museo");
-    const kidsSignal = blobHas(place, "bambin", "kids", "children", "science", "planetari", "interattiv", "interactive", "museo dei bambini", "children museum");
-    return isMuseum && kidsSignal;
-  }
-  if (cat === "viewpoints") return blobHas(place, "tourism=viewpoint", "belvedere", "panoram", "viewpoint", "scenic");
-  if (cat === "hiking") return blobHas(place, "trek", "trekking", "hike", "hiking", "trail", "sentiero", "via ferrata", "rifugio", "summit", "canyon", "gola");
+  // new cats
+  if (cat === "theme_park") return isThemePark(place) || isFamilyAttraction(place);
+  if (cat === "kids_museum") return isKidsMuseum(place);
+  if (cat === "viewpoints") return isViewpoint(place);
+  if (cat === "hiking") return isHiking(place);
 
   if (cat === "family") {
     if (familyStrict) {
-      return isFamilyAttraction(place) || isFamilySecondary(place) || isSpaPlace(place);
+      if (isFamilyAttraction(place) || isFamilySecondary(place) || isSpaPlace(place)) return true;
+      return false;
     }
     if (isFamilyAttraction(place) || isFamilySecondary(place) || isSpaPlace(place)) return true;
     if (isGenericTownLike(place)) return false;
@@ -613,16 +666,6 @@ function familySpaPenalty(place, category) {
   return 0.10;
 }
 
-// Prefer dataset category score if present (offline)
-function categoryBoostFromDataset(place, category) {
-  const scores = place?.category_scores;
-  if (!scores || typeof scores !== "object") return 0;
-  const v = Number(scores?.[category]);
-  if (!Number.isFinite(v) || v <= 0) return 0;
-  // soft boost (cap)
-  return clamp(v / 30, 0, 0.18);
-}
-
 // -------------------- TIME WIDEN --------------------
 function effectiveMaxMinutes(maxMinutes, category) {
   const m = Number(maxMinutes);
@@ -632,6 +675,7 @@ function effectiveMaxMinutes(maxMinutes, category) {
   if (category === "family" && m < 60) return clamp(Math.round(m * 1.40), m, 160);
   if (category === "mare" && m < 75) return clamp(Math.round(m * 1.35), m, 180);
   if (category === "storia" && m < 50) return clamp(Math.round(m * 1.30), m, 150);
+  if ((category === "theme_park" || category === "kids_museum") && m < 70) return clamp(Math.round(m * 1.40), m, 200);
 
   return clamp(m, 10, 600);
 }
@@ -647,7 +691,7 @@ function mapLiveToPlace(el) {
   const lon = Number(el.lon ?? el.center?.lon);
   if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
 
-  // store compact tag strings (keep "k=v" form to help matching)
+  // store compact tag strings (also store normalized "k=v" form to help matching)
   const tagList = [];
   const pushKV = (k, v) => { if (v != null && String(v).length) tagList.push(`${k}=${v}`); };
 
@@ -657,20 +701,24 @@ function mapLiveToPlace(el) {
   pushKV("natural", tags.natural);
   pushKV("amenity", tags.amenity);
   pushKV("place", tags.place);
-  pushKV("boundary", tags.boundary);
   pushKV("information", tags.information);
-
   if (tags.attraction) tagList.push("attraction");
 
   const typeGuess = (() => {
-    if (tags.tourism === "theme_park" || tags.leisure === "water_park" || tags.tourism === "zoo" || tags.tourism === "aquarium") return "family";
-    if (tags.tourism === "museum" || tags.historic) return "storia";
+    if (tags.tourism === "theme_park" || tags.leisure === "water_park") return "theme_park";
+    if (tags.tourism === "zoo" || tags.tourism === "aquarium" || tags.amenity === "aquarium") return "family";
+    if (tags.tourism === "museum") {
+      const nn = normName(cleanedName);
+      if (nn.includes("bambin") || nn.includes("kids") || nn.includes("children") || nn.includes("science") || nn.includes("planetari")) return "kids_museum";
+      return "storia";
+    }
+    if (tags.tourism === "viewpoint") return "viewpoints";
+    if (tags.information === "guidepost" || tags.amenity === "shelter") return "hiking";
     if (tags.natural === "beach") return "mare";
     if (tags.boundary === "national_park" || tags.leisure === "nature_reserve") return "natura";
     if (tags.place === "village" || tags.place === "hamlet") return "borgo";
     if (tags.place === "town" || tags.place === "city") return "citta";
     if (tags.amenity === "spa" || tags.leisure === "spa" || tags.natural === "hot_spring") return "relax";
-    if (tags.tourism === "viewpoint") return "viewpoints";
     return "meta";
   })();
 
@@ -685,7 +733,7 @@ function mapLiveToPlace(el) {
     area: "",
     type: typeGuess,
     visibility: "classica",
-    tags: Array.from(new Set(tagList)).slice(0, 18),
+    tags: Array.from(new Set(tagList)).slice(0, 12),
     beauty_score: 0.72,
     live: true,
   };
@@ -726,6 +774,7 @@ async function fetchLivePlaces(origin, radiusKm, category, outerSignal) {
     }
 
     return { ok: true, count: uniq.length, places: uniq.slice(0, 450), meta: j.meta || null };
+
   } catch {
     return { ok: false, count: 0, places: [], meta: null };
   } finally {
@@ -787,16 +836,33 @@ function buildCandidatesFromPool(
       isChicca
     });
 
-    // dataset category score boost (offline)
-    s += categoryBoostFromDataset(p, category);
-
     // family boosts (strict-first)
     if (category === "family") {
       if (isFamilyAttraction(p)) s += 0.20;
       else if (isFamilySecondary(p)) s += 0.10;
       else if (isSpaPlace(p)) s += 0.05;
-
       s -= familySpaPenalty(p, category);
+    }
+
+    // theme parks: boost real theme/water parks
+    if (category === "theme_park") {
+      if (isThemePark(p)) s += 0.18;
+      if (isWaterPark(p)) s += 0.07;
+    }
+
+    // kids museum: boost actual museum + keyword match
+    if (category === "kids_museum") {
+      if (isKidsMuseum(p)) s += 0.20;
+    }
+
+    // viewpoints: small boost for viewpoint tags
+    if (category === "viewpoints") {
+      if (isViewpoint(p)) s += 0.14;
+    }
+
+    // hiking: boost hiking clues
+    if (category === "hiking") {
+      if (isHiking(p)) s += 0.14;
     }
 
     if (!ignoreRotation) s -= rotationPenalty(pid, recentSet);
@@ -809,6 +875,7 @@ function buildCandidatesFromPool(
 }
 
 function pickDestinationFromPool(pool, origin, maxMinutes, category, styles) {
+  // FAMILY: strict-first, then widen
   if (category === "family") {
     let strict = buildCandidatesFromPool(pool, origin, maxMinutes, category, styles, {
       ignoreVisited: false,
@@ -817,6 +884,7 @@ function pickDestinationFromPool(pool, origin, maxMinutes, category, styles) {
     });
     if (strict.length) return { chosen: strict[0], alternatives: strict.slice(1, 3), totalCandidates: strict.length };
 
+    // allow rotation ignore
     strict = buildCandidatesFromPool(pool, origin, maxMinutes, category, styles, {
       ignoreVisited: false,
       ignoreRotation: true,
@@ -824,7 +892,8 @@ function pickDestinationFromPool(pool, origin, maxMinutes, category, styles) {
     });
     if (strict.length) return { chosen: strict[0], alternatives: strict.slice(1, 3), totalCandidates: strict.length };
 
-    const wide = buildCandidatesFromPool(pool, origin, maxMinutes, category, styles, {
+    // finally widen (but still avoid generic cities/borghi)
+    let wide = buildCandidatesFromPool(pool, origin, maxMinutes, category, styles, {
       ignoreVisited: true,
       ignoreRotation: true,
       familyStrict: false,
@@ -832,6 +901,7 @@ function pickDestinationFromPool(pool, origin, maxMinutes, category, styles) {
     return { chosen: wide[0] || null, alternatives: wide.slice(1, 3), totalCandidates: wide.length };
   }
 
+  // OTHER categories
   let c = buildCandidatesFromPool(pool, origin, maxMinutes, category, styles, { ignoreVisited: false, ignoreRotation: false });
   if (c.length === 0) c = buildCandidatesFromPool(pool, origin, maxMinutes, category, styles, { ignoreVisited: false, ignoreRotation: true });
   if (c.length === 0) c = buildCandidatesFromPool(pool, origin, maxMinutes, category, styles, { ignoreVisited: true, ignoreRotation: true });
@@ -842,11 +912,11 @@ function pickDestinationFromPool(pool, origin, maxMinutes, category, styles) {
 // -------------------- CARD HELPERS --------------------
 function typeBadge(category) {
   const map = {
-    family: { emoji: "👨‍👩‍👧‍👦", label: "Family" },
-    theme_park: { emoji: "🎢", label: "Parchi" },
+    family:      { emoji: "👨‍👩‍👧‍👦", label: "Family" },
+    theme_park:  { emoji: "🎢", label: "Parchi" },
     kids_museum: { emoji: "🧒🏛️", label: "Musei bimbi" },
-    viewpoints: { emoji: "🌅", label: "Panorami" },
-    hiking: { emoji: "🥾", label: "Trekking" },
+    viewpoints:  { emoji: "🌅", label: "Panorami" },
+    hiking:      { emoji: "🥾", label: "Trekking" },
 
     storia: { emoji: "🏛️", label: "Storia" },
     borghi: { emoji: "🏘️", label: "Borgo" },
@@ -862,14 +932,32 @@ function typeBadge(category) {
 
 function microWhatToDo(place, category) {
   const n = normName(place.name);
-  const blob = placeTagBlob(place);
+  const tags = placeTags(place).join(" ");
 
-  if (category === "family" || category === "theme_park") {
+  if (category === "theme_park") {
+    if (isWaterPark(place)) return "Scivoli e piscine: controlla apertura (spesso stagionale).";
+    return "Parco divertimenti: attrazioni, show, aree kids e giornata piena.";
+  }
+
+  if (category === "kids_museum") {
+    if (tags.includes("tourism=museum") || n.includes("museo")) return "Museo per bambini: spesso interattivo, ottimo anche con pioggia.";
+    return "Attività kids: verifica orari e prenotazioni.";
+  }
+
+  if (category === "viewpoints") {
+    return "Belvedere/panorama: foto, tramonto e breve passeggiata nei dintorni.";
+  }
+
+  if (category === "hiking") {
+    return "Trekking: controlla livello, meteo e scarpe adatte. Valuta sentieri facili se sei in famiglia.";
+  }
+
+  if (category === "family") {
     if (isFamilyAttraction(place)) {
-      if (n.includes("gardaland") || blob.includes("tourism=theme_park")) return "Parco divertimenti top: attrazioni, show, aree kids, giornata piena.";
+      if (n.includes("gardaland") || tags.includes("tourism=theme_park")) return "Parco divertimenti top: attrazioni, show, aree kids, giornata piena.";
       if (isWaterPark(place)) return "Scivoli e piscine: controlla apertura (spesso stagionale).";
-      if (blob.includes("tourism=zoo") || n.includes("zoo")) return "Zoo/animali: percorsi, aree picnic, perfetto con bambini.";
-      if (blob.includes("tourism=aquarium") || n.includes("acquario")) return "Acquario spesso indoor: ottimo anche d’inverno.";
+      if (tags.includes("tourism=zoo") || n.includes("zoo")) return "Zoo/animali: percorsi, aree picnic, perfetto con bambini.";
+      if (tags.includes("tourism=aquarium") || n.includes("acquario")) return "Acquario spesso indoor: ottimo anche d’inverno.";
       return "Attrazione family: tante cose da fare sul posto.";
     }
     if (isFamilySecondary(place)) return "Attività per bambini: gioco, movimento e divertimento.";
@@ -877,21 +965,16 @@ function microWhatToDo(place, category) {
     return "Gita family: esplora e abbina qualcosa di vicino.";
   }
 
-  if (category === "kids_museum") return "Museo kids-friendly: esperienze interattive e curiosità (verifica orari).";
-
   if (category === "relax") {
     if (isSpaPlace(place)) return "Terme/benessere: piscine, spa o acqua calda (verifica orari).";
     return "Relax: posto tranquillo + pausa.";
   }
 
   if (category === "storia") {
-    if (blob.includes("tourism=museum") || n.includes("museo")) return "Museo/mostre + centro storico: visita e pausa caffè.";
-    if (n.includes("castello") || blob.includes("historic=castle") || n.includes("rocca")) return "Castello/rocca: vista, storia e foto.";
+    if (tags.includes("tourism=museum") || n.includes("museo")) return "Museo/mostre + centro storico: visita e pausa caffè.";
+    if (n.includes("castello") || tags.includes("historic=castle") || n.includes("rocca")) return "Castello/rocca: vista, storia e foto.";
     return "Storia e cultura: visita e passeggiata.";
   }
-
-  if (category === "viewpoints") return "Panorama e foto: belvedere + passeggiata breve nei dintorni.";
-  if (category === "hiking") return "Trekking: sentiero, vista e pausa (controlla difficoltà e meteo).";
 
   if (category === "mare") return "Spiagge, passeggiata sul mare e tramonto.";
   if (category === "natura") return "Natura vera: sentieri, panorami, cascata/lago/riserva nei dintorni.";
@@ -901,11 +984,34 @@ function microWhatToDo(place, category) {
 }
 
 function chipsFromPlace(place, category) {
-  const blob = placeTagBlob(place);
+  const tags = placeTags(place).join(" ");
   const n = normName(place.name);
   const chips = [];
 
-  if (category === "family" || category === "theme_park") {
+  if (category === "theme_park") {
+    chips.push("🎢 parco");
+    if (isWaterPark(place)) chips.push("💦 acqua");
+    if (looksIndoor(place)) chips.push("🏠 indoor");
+    if (isWinterNow() && isWaterPark(place) && !looksIndoor(place)) chips.push("❄️ stagionale");
+  }
+
+  if (category === "kids_museum") {
+    chips.push("🧒 kids");
+    if (tags.includes("tourism=museum") || n.includes("museo")) chips.push("🏛️ museo");
+    if (looksIndoor(place)) chips.push("🏠 indoor");
+  }
+
+  if (category === "viewpoints") {
+    chips.push("🌅 panorama");
+    if (tags.includes("tourism=viewpoint")) chips.push("📍 viewpoint");
+  }
+
+  if (category === "hiking") {
+    chips.push("🥾 trekking");
+    if (n.includes("rifugio")) chips.push("🏕️ rifugio");
+  }
+
+  if (category === "family") {
     if (isFamilyAttraction(place)) chips.push("🎟️ attrazione");
     if (isFamilySecondary(place)) chips.push("🧒 kids");
     if (isSpaPlace(place)) chips.push("🧖 terme");
@@ -913,14 +1019,12 @@ function chipsFromPlace(place, category) {
     if (looksIndoor(place)) chips.push("🏠 indoor");
     if (isWinterNow() && isWaterPark(place) && !looksIndoor(place)) chips.push("❄️ stagionale");
   }
-  if (category === "kids_museum") chips.push("🧒 interattivo");
+
   if (category === "relax") chips.push("🧖 relax");
   if (category === "storia") {
-    if (n.includes("museo") || blob.includes("tourism=museum")) chips.push("🖼️ museo");
-    if (n.includes("castello") || n.includes("rocca") || blob.includes("historic=castle")) chips.push("🏰 castello");
+    if (n.includes("museo")) chips.push("🖼️ museo");
+    if (n.includes("castello") || n.includes("rocca")) chips.push("🏰 castello");
   }
-  if (category === "viewpoints") chips.push("🌅 panorama");
-  if (category === "hiking") chips.push("🥾 sentiero");
 
   return chips.slice(0, 5);
 }
@@ -973,6 +1077,7 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives = [], meta =
   const category = meta.category || "ovunque";
 
   if (!chosen) {
+    // IMPORTANT: if LIVE is still running, do NOT show "nessuna meta"
     if (meta.liveInProgress) {
       showResultProgressLive();
       return;
@@ -1029,7 +1134,8 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives = [], meta =
           <div class="pill">${tb.emoji} ${tb.label}</div>
           <div class="pill">🚗 ~${chosen.driveMin} min • ${fmtKm(chosen.km)}</div>
           <div class="pill">${badge}</div>
-          ${(category === "family" || category === "theme_park") && isWaterPark(p) && isWinterNow() && !looksIndoor(p) ? `<div class="pill">❄️ stagionale</div>` : ""}
+          ${category === "family" && isWaterPark(p) && isWinterNow() && !looksIndoor(p) ? `<div class="pill">❄️ stagionale</div>` : ""}
+          ${category === "theme_park" && isWaterPark(p) && isWinterNow() && !looksIndoor(p) ? `<div class="pill">❄️ stagionale</div>` : ""}
         </div>
       </div>
 
@@ -1211,10 +1317,18 @@ async function runSearch({ silent = false, forbidPid = null, forcePid = null } =
     const radiusKm =
       category === "family" ? clamp(Math.round(baseRadius * 1.6), 35, 260) :
       category === "ovunque" ? clamp(Math.round(baseRadius * 1.2), 25, 220) :
-      clamp(baseRadius, 20, 180);
+      (category === "theme_park" || category === "kids_museum") ? clamp(Math.round(baseRadius * 1.55), 35, 260) :
+      clamp(baseRadius, 20, 220);
 
-    const live = await fetchLivePlaces(origin, radiusKm, category, signal);
+    // 1) try live with selected category
+    let live = await fetchLivePlaces(origin, radiusKm, category, signal);
     if (token !== SEARCH_TOKEN) return;
+
+    // ✅ 2) if empty, retry with "ovunque" (super robust)
+    if ((!live.ok || !live.places.length) && category !== "ovunque") {
+      live = await fetchLivePlaces(origin, radiusKm, "ovunque", signal);
+      if (token !== SEARCH_TOKEN) return;
+    }
 
     let liveUsed = false;
     let liveCount = 0;
