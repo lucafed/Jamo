@@ -1,39 +1,41 @@
-/* Jamo — app.js v10 (OFFLINE-FIRST + LIVE FALLBACK, COERENTE)
- * Fix principali:
- * - widen minuti: MAI oltre +70% (niente salto a 240)
- * - family: STRICT sempre (no spa/terme se non hai scelto relax)
- * - borghi: accetta "borgo" e "borghi" + tag "borgo"
- * - montagna: richiede segnali veri (peak/viewpoint/rifugio/sci/aerialway), niente nomi ingannevoli
- * - LIVE: rispetta meta.usedCat del server
+/* Jamo — app.js v10.2 (EU+UK OFFLINE + LIVE, PRECISO)
+ * FIX principali:
+ * - renderResult definita (sparisce l'errore)
+ * - Widen minuti limitato: 30 min NON diventa mai 240km
+ * - Chicche vs Classici separati davvero
+ * - Family: priorità parchi/zoo/acqua/neve, niente terme se non Relax
+ * - Borghi: filtra davvero borghi/villaggi
+ * - Montagna: filtra per peak/viewpoint/rifugio/ski/aerialway
+ * - Categorie extra: kids_museum, viewpoints, hiking (coerenti con /api/destinations v3.1.3)
  */
 
 const $ = (id) => document.getElementById(id);
 
-// -------------------- DATA SOURCES --------------------
-const REGIONS = [
-  { id: "it-abruzzo", name: "Abruzzo", country: "IT", indexUrl: "/data/pois/it/it-abruzzo/index.json" },
-];
-
+// -------------------- CONFIG --------------------
 const MACROS_INDEX_URL = "/data/macros/macros_index.json";
 const FALLBACK_MACRO_URLS = [
   "/data/macros/euuk_macro_all.json",
-  "/data/macros/euuk_country_it.json",
 ];
 
-// -------------------- ROUTING / ESTIMATOR --------------------
+// Routing estimator (semplice ma stabile)
 const ROAD_FACTOR = 1.25;
 const AVG_KMH = 72;
 const FIXED_OVERHEAD_MIN = 8;
 
-// -------------------- ROTATION --------------------
+// Rotation
 const RECENT_TTL_MS = 1000 * 60 * 60 * 20;
 const RECENT_MAX = 160;
 let SESSION_SEEN = new Set();
 let LAST_SHOWN_PID = null;
 
-// -------------------- GLOBAL SEARCH CONTROL (anti-race) --------------------
+// anti-race
 let SEARCH_TOKEN = 0;
 let SEARCH_ABORT = null;
+
+// dataset holder
+let DATASET = { kind: null, source: null, places: [], meta: {} };
+let MACROS_INDEX = null;
+let MACRO_SOURCE_URL = null;
 
 // -------------------- UTIL --------------------
 function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
@@ -75,6 +77,7 @@ function estCarMinutesFromKm(km) {
 }
 
 function fmtKm(km) { return `${Math.round(km)} km`; }
+
 function isWinterNow() {
   const m = new Date().getMonth() + 1;
   return (m === 11 || m === 12 || m === 1 || m === 2 || m === 3);
@@ -122,14 +125,17 @@ function eventsUrl(q) {
 }
 
 // -------------------- STORAGE --------------------
-function setOrigin({ label, lat, lon }) {
+function setOrigin({ label, lat, lon, country_code }) {
   if ($("originLabel")) $("originLabel").value = label ?? "";
   if ($("originLat")) $("originLat").value = String(lat);
   if ($("originLon")) $("originLon").value = String(lon);
-  localStorage.setItem("jamo_origin", JSON.stringify({ label, lat, lon }));
+  if ($("originCC")) $("originCC").value = String(country_code || "");
+  localStorage.setItem("jamo_origin", JSON.stringify({ label, lat, lon, country_code }));
+
   if ($("originStatus")) {
+    const cc = country_code ? ` • ${String(country_code).toUpperCase()}` : "";
     $("originStatus").textContent =
-      `✅ Partenza: ${label || "posizione"} (${Number(lat).toFixed(4)}, ${Number(lon).toFixed(4)})`;
+      `✅ Partenza: ${label || "posizione"} (${Number(lat).toFixed(4)}, ${Number(lon).toFixed(4)})${cc}`;
   }
 }
 
@@ -137,7 +143,8 @@ function getOrigin() {
   const lat = Number($("originLat")?.value);
   const lon = Number($("originLon")?.value);
   const label = ($("originLabel")?.value || "").trim();
-  if (Number.isFinite(lat) && Number.isFinite(lon)) return { label, lat, lon };
+  const country_code = ($("originCC")?.value || "").trim();
+  if (Number.isFinite(lat) && Number.isFinite(lon)) return { label, lat, lon, country_code };
 
   const raw = localStorage.getItem("jamo_origin");
   if (raw) { try { return JSON.parse(raw); } catch {} }
@@ -227,15 +234,17 @@ function getActiveCategory() {
   return active?.dataset.cat || "ovunque";
 }
 
+// Chicche/Classici: se selezioni solo chicche => SOLO chicche.
+// se selezioni solo classici => SOLO classici.
+// se selezioni entrambi => entrambi.
+// se nessuno selezionato => entrambi (default sensato).
 function getActiveStyles() {
   const el = $("styleChips");
   const actives = [...(el?.querySelectorAll(".chip.active") || [])].map(c => c.dataset.style);
   const wantChicche = actives.includes("chicche");
   const wantClassici = actives.includes("classici");
-  // Se entrambi attivi o nessuno attivo -> consideriamo "tutte"
-  if ((!wantChicche && !wantClassici) || (wantChicche && wantClassici)) {
-    return { wantChicche: true, wantClassici: true };
-  }
+
+  if (!wantChicche && !wantClassici) return { wantChicche: true, wantClassici: true };
   return { wantChicche, wantClassici };
 }
 
@@ -267,7 +276,9 @@ function showResultProgress(msg = "Cerco nel dataset offline, rispettando catego
   area.innerHTML = `
     <div class="card warnbox">
       <div style="font-weight:900; font-size:18px;">🔎 Sto cercando…</div>
-      <div class="small muted" style="margin-top:8px; line-height:1.4;">${msg}</div>
+      <div class="small muted" style="margin-top:8px; line-height:1.4;">
+        ${msg}
+      </div>
     </div>
   `;
 }
@@ -279,59 +290,21 @@ async function fetchJson(url, { signal } = {}) {
   return await r.json();
 }
 
-// -------------------- DATASET LOADING --------------------
-let DATASET = { kind: null, source: null, places: [], meta: {} };
-
-function originInRegionBBox(origin, regionJson) {
-  const lat = Number(origin?.lat);
-  const lon = Number(origin?.lon);
-  const b = regionJson?.bbox;
-  if (!Number.isFinite(lat) || !Number.isFinite(lon)) return false;
-  if (!Array.isArray(b) || b.length !== 4) return false;
-  const [minLon, minLat, maxLon, maxLat] = b;
-  return lon >= minLon && lon <= maxLon && lat >= minLat && lat <= maxLat;
-}
-
-async function tryLoadPoisRegion(regionId, { signal } = {}) {
-  const region = REGIONS.find(r => r.id === regionId);
-  if (!region) return null;
-
-  const idx = await fetchJson(region.indexUrl, { signal });
-  const basePath = String(idx?.basePath || "").trim() || `/data/pois/it/${regionId}`;
-  const files = idx?.files && typeof idx.files === "object" ? idx.files : null;
-  const cats = Array.isArray(idx?.categories) ? idx.categories : (files ? Object.keys(files) : []);
-
-  if (!cats.length || !files) return null;
-
-  const all = [];
-  for (const cat of cats) {
-    const file = files[cat];
-    if (!file) continue;
-    const url = file.startsWith("http") || file.startsWith("/") ? file : `${basePath}/${file}`;
-    const j = await fetchJson(url, { signal });
-    const places = Array.isArray(j?.places) ? j.places : Array.isArray(j) ? j : [];
-    for (const p of places) {
-      if (!p) continue;
-      if (!p.type && cat) p.type = cat;
-      all.push(p);
-    }
+// -------------------- GEOCODING --------------------
+async function geocodeLabel(label) {
+  const q = String(label || "").trim();
+  if (!q) throw new Error("Scrivi un luogo (es: Bussolengo, L'Aquila, Roma...)");
+  const r = await fetch(`/api/geocode?q=${encodeURIComponent(q)}`, { method: "GET", cache: "no-store" });
+  const j = await r.json().catch(() => null);
+  if (!j) throw new Error("Geocoding fallito (risposta vuota)");
+  if (!j.ok) throw new Error(j.error || "Geocoding fallito");
+  if (!j.result || !Number.isFinite(Number(j.result.lat)) || !Number.isFinite(Number(j.result.lon))) {
+    throw new Error("Geocoding fallito (coordinate non valide)");
   }
-
-  if (!all.length) return null;
-
-  return {
-    kind: "pois",
-    source: region.indexUrl,
-    places: all,
-    meta: { regionId, index: idx, count: all.length },
-  };
+  return j.result;
 }
 
-// ---- MACRO fallback ----
-let MACROS_INDEX = null;
-let MACRO = null;
-let MACRO_SOURCE_URL = null;
-
+// -------------------- DATASET LOADING (MACRO) --------------------
 async function loadMacrosIndexSafe(signal) {
   try {
     MACROS_INDEX = await fetchJson(MACROS_INDEX_URL, { signal });
@@ -341,6 +314,7 @@ async function loadMacrosIndexSafe(signal) {
     return null;
   }
 }
+
 async function tryLoadMacro(url, signal) {
   const r = await fetch(url, { cache: "no-store", signal });
   if (!r.ok) return null;
@@ -348,43 +322,34 @@ async function tryLoadMacro(url, signal) {
   if (!j?.places || !Array.isArray(j.places) || j.places.length === 0) return null;
   return j;
 }
-function inferScopeFromCountryCode(cc) {
-  const s = String(cc || "").toUpperCase();
-  if (s === "IT") return "IT";
-  if (!s) return "EUUK";
-  return "EUUK";
-}
 
+// Sceglie macro migliore: prima country offline (euuk_country_xx), poi euuk_macro_all
 async function loadBestMacroForOrigin(origin, signal) {
   const saved = localStorage.getItem("jamo_macro_url");
   if (saved) {
     const m = await tryLoadMacro(saved, signal);
-    if (m) { MACRO = m; MACRO_SOURCE_URL = saved; return m; }
+    if (m) { MACRO_SOURCE_URL = saved; return m; }
   }
 
   await loadMacrosIndexSafe(signal);
 
-  const cc = String(origin?.country_code || "").toUpperCase();
-  const pref = inferScopeFromCountryCode(cc);
-
+  const cc = String(origin?.country_code || "").toUpperCase().trim();
   const candidates = [];
+
+  // 1) se ho country_code, prova euuk_country_{cc}.json dal macros_index
+  if (cc && MACROS_INDEX?.items?.length) {
+    const item = MACROS_INDEX.items.find(x =>
+      x.scope === "country" &&
+      String(x.country || "").toUpperCase() === cc &&
+      String(x.path || "").includes("euuk_country_")
+    );
+    if (item?.path) candidates.push(item.path);
+  }
+
+  // 2) fallback EU+UK
   if (MACROS_INDEX?.items?.length) {
-    // 1) country dataset if exists
-    if (cc) {
-      const byCc = MACROS_INDEX.items.find(x => String(x.country || "").toUpperCase() === cc && String(x.scope) === "country");
-      if (byCc?.path) candidates.push(byCc.path);
-    }
-    // 2) EUUK all
     const euukAll = MACROS_INDEX.items.find(x => x.id === "euuk_macro_all" || String(x.path || "").includes("euuk_macro_all.json"));
     if (euukAll?.path) candidates.push(euukAll.path);
-
-    // 3) IT country fallback
-    if (pref === "IT") {
-      const itCountry = MACROS_INDEX.items.find(x =>
-        x.id === "euuk_country_it" || (String(x.scope) === "country" && String(x.country).toUpperCase() === "IT")
-      );
-      if (itCountry?.path) candidates.unshift(itCountry.path);
-    }
   }
 
   for (const u of FALLBACK_MACRO_URLS) candidates.push(u);
@@ -392,7 +357,6 @@ async function loadBestMacroForOrigin(origin, signal) {
   for (const url of candidates) {
     const m = await tryLoadMacro(url, signal);
     if (m) {
-      MACRO = m;
       MACRO_SOURCE_URL = url;
       localStorage.setItem("jamo_macro_url", url);
       return m;
@@ -404,147 +368,177 @@ async function loadBestMacroForOrigin(origin, signal) {
 async function ensureDatasetLoaded(origin, { signal } = {}) {
   if (DATASET?.places?.length) return DATASET;
 
-  // 1) POIs regionali se GPS dentro bbox
-  try {
-    for (const r of REGIONS) {
-      let regionJson = null;
-      try { regionJson = await fetchJson(`/data/regions/${r.id}.json`, { signal }); } catch {}
-      const labelHit = normName(origin?.label || "").includes(normName(r.name));
-      if ((regionJson && originInRegionBBox(origin, regionJson)) || labelHit) {
-        const d = await tryLoadPoisRegion(r.id, { signal });
-        if (d) { DATASET = d; return d; }
-      }
-    }
-  } catch {}
-
-  // 2) macro
   const m = await loadBestMacroForOrigin(origin, signal);
   DATASET = {
     kind: "macro",
     source: MACRO_SOURCE_URL || "macro",
     places: Array.isArray(m?.places) ? m.places : [],
-    meta: {},
+    meta: { scope: m?.scope || "" },
   };
   return DATASET;
-}
-
-// -------------------- GEOCODING --------------------
-async function geocodeLabel(label) {
-  const q = String(label || "").trim();
-  if (!q) throw new Error("Scrivi un luogo (es: L'Aquila, Roma, Londra...)");
-  const r = await fetch(`/api/geocode?q=${encodeURIComponent(q)}`, { method: "GET", cache: "no-store" });
-  const j = await r.json().catch(() => null);
-  if (!j) throw new Error("Geocoding fallito (risposta vuota)");
-  if (!j.ok) throw new Error(j.error || "Geocoding fallito");
-  if (!j.result || !Number.isFinite(Number(j.result.lat)) || !Number.isFinite(Number(j.result.lon))) {
-    throw new Error("Geocoding fallito (coordinate non valide)");
-  }
-  return j.result;
 }
 
 // -------------------- TAGS / CATEGORY --------------------
 function placeTags(place) {
   return (place.tags || []).map(t => String(t).toLowerCase());
 }
-function hasTag(place, x) {
-  const tags = placeTags(place);
-  return tags.includes(String(x).toLowerCase());
-}
 
 function looksIndoor(place) {
   const tags = placeTags(place).join(" ");
   const n = normName(place?.name);
-  return tags.includes("indoor") || tags.includes("coperto") || n.includes("indoor") || n.includes("coperto");
+  return (
+    tags.includes("indoor") ||
+    tags.includes("coperto") ||
+    tags.includes("al coperto") ||
+    n.includes("indoor") ||
+    n.includes("coperto")
+  );
 }
+
 function isWaterPark(place) {
+  const t = String(place?.type || "").toLowerCase();
   const tags = placeTags(place).join(" ");
   const n = normName(place?.name);
-  return tags.includes("water_park") || n.includes("acquapark") || n.includes("water park") || n.includes("aqua park");
+  return (
+    t.includes("water") || t.includes("acqua") ||
+    tags.includes("water_park") || tags.includes("parco acquatico") ||
+    n.includes("acquapark") || n.includes("aqua park") || n.includes("water park")
+  );
 }
+
+function isZoo(place) {
+  const tags = placeTags(place).join(" ");
+  const n = normName(place?.name);
+  const t = String(place?.type || "").toLowerCase();
+  return tags.includes("zoo") || tags.includes("tourism=zoo") || t.includes("zoo") || n.includes("zoo") || n.includes("safari");
+}
+
+function isAquarium(place) {
+  const tags = placeTags(place).join(" ");
+  const n = normName(place?.name);
+  const t = String(place?.type || "").toLowerCase();
+  return tags.includes("aquarium") || tags.includes("tourism=aquarium") || t.includes("aquarium") || n.includes("acquario");
+}
+
+function isThemePark(place) {
+  const tags = placeTags(place).join(" ");
+  const n = normName(place?.name);
+  return tags.includes("theme_park") || tags.includes("tourism=theme_park") || n.includes("parco divertimenti") || n.includes("lunapark") || n.includes("luna park") || n.includes("giostre");
+}
+
+function isSnowOrSki(place) {
+  const tags = placeTags(place).join(" ");
+  const n = normName(place?.name);
+  return tags.includes("ski") || tags.includes("pista") || tags.includes("aerialway") || n.includes("sci") || n.includes("seggiovia") || n.includes("funivia");
+}
+
 function isSpaPlace(place) {
   const n = normName(place?.name);
   const tags = placeTags(place).join(" ");
   const t = String(place?.type || "").toLowerCase();
-  return t === "relax" || tags.includes("spa") || tags.includes("terme") || tags.includes("hot_spring") || n.includes("terme") || n.includes("spa");
-}
-
-function isFamilyAttraction(place) {
-  const tags = placeTags(place).join(" ");
-  const n = normName(place?.name);
-  const t = String(place?.type || "").toLowerCase();
-
-  if (tags.includes("theme_park") || tags.includes("zoo") || tags.includes("aquarium") || tags.includes("water_park")) return true;
-  if (t === "family" || t.includes("theme") || t.includes("amusement") || t.includes("zoo") || t.includes("aquarium") || t.includes("water")) return true;
-
   return (
-    n.includes("parco divertimenti") ||
-    n.includes("luna park") ||
-    n.includes("lunapark") ||
-    n.includes("zoo") ||
-    n.includes("acquario") ||
-    n.includes("parco avventura") ||
-    n.includes("safari") ||
-    n.includes("funivia")
+    t === "relax" ||
+    tags.includes("terme") || tags.includes("spa") ||
+    tags.includes("hot_spring") || tags.includes("public_bath") ||
+    n.includes("terme") || n.includes("spa") || n.includes("thermal") || n.includes("benessere")
   );
 }
 
-function isFamilySecondary(place) {
-  const tags = placeTags(place).join(" ");
+function isKidsMuseum(place) {
   const n = normName(place?.name);
-  return tags.includes("playground") || tags.includes("kids") || n.includes("parco giochi") || n.includes("area giochi");
+  const tags = placeTags(place).join(" ");
+  // LIVE category kids_museum mapperà type=kids_museum, offline può avere tag/nomi
+  return String(place?.type || "").toLowerCase() === "kids_museum"
+    || n.includes("museo dei bambini") || n.includes("children museum") || n.includes("science center") || n.includes("planetario")
+    || tags.includes("kids_museum") || tags.includes("children") || tags.includes("science") || tags.includes("planetarium");
 }
 
-// ✅ montagna: segnali veri, NON nome
-function isMountainPlace(place) {
+function isViewpoint(place) {
+  const n = normName(place?.name);
+  const tags = placeTags(place).join(" ");
+  return String(place?.type || "").toLowerCase() === "viewpoints"
+    || tags.includes("viewpoint") || tags.includes("tourism=viewpoint")
+    || n.includes("belvedere") || n.includes("panoram") || n.includes("viewpoint") || n.includes("scenic");
+}
+
+function isHiking(place) {
+  const n = normName(place?.name);
+  const tags = placeTags(place).join(" ");
+  return String(place?.type || "").toLowerCase() === "hiking"
+    || tags.includes("hiking") || tags.includes("trail") || tags.includes("guidepost") || tags.includes("shelter")
+    || n.includes("sentiero") || n.includes("trek") || n.includes("trail") || n.includes("via ferrata") || n.includes("rifugio");
+}
+
+function isBorgo(place) {
+  const t = String(place?.type || "").toLowerCase();
+  const tags = placeTags(place).join(" ");
+  const n = normName(place?.name);
+  // offline può avere "borgo" o "borghi" (come nel tuo LT)
+  const typeOk = (t === "borghi" || t === "borgo");
+  const osmOk = tags.includes("place=village") || tags.includes("place=hamlet");
+  const nameHint = n.includes("borgo") || n.startsWith("castel") || n.includes("rocca") || n.startsWith("civit") || n.includes("poggio") || n.includes("villa ");
+  // Escludi città
+  const cityLike = (t === "citta") || tags.includes("place=city") || tags.includes("place=town");
+  if (cityLike) return false;
+  return typeOk || osmOk || nameHint;
+}
+
+function isMountain(place) {
+  const t = String(place?.type || "").toLowerCase();
   const tags = placeTags(place).join(" ");
   const n = normName(place?.name);
   return (
+    t === "montagna" ||
     tags.includes("natural=peak") ||
     tags.includes("tourism=viewpoint") ||
     tags.includes("aerialway") ||
-    tags.includes("ski") ||
-    n.includes("rifugio") ||
-    n.includes("cima") ||
-    n.includes("passo ") || // attenzione: passo montano vero (non “passetto” città)
-    n.includes("funivia")
+    tags.includes("shelter") ||
+    n.includes("monte") || n.includes("cima") || n.includes("vetta") || n.includes("rifugio") ||
+    isSnowOrSki(place)
   );
 }
 
 function matchesCategory(place, cat) {
   if (!cat || cat === "ovunque") return true;
 
-  const type = String(place?.type || "").toLowerCase();
-  const n = normName(place?.name);
-  const tags = placeTags(place);
+  const type = String(place.type || "").toLowerCase();
+  const tags = placeTags(place).join(" ");
+  const n = normName(place.name);
 
-  // macro tags spesso sono "citta" / "borgo" (non place=town)
-  const isCityLike = type === "citta" || tags.includes("citta") || tags.includes("city") || tags.includes("conosciuta") && tags.includes("citta") || tags.includes("place=city") || tags.includes("place=town");
-  const isBorgoLike = type === "borgo" || type === "borghi" || tags.includes("borgo") || n.includes("borgo") || tags.includes("place=village") || tags.includes("place=hamlet");
-
-  if (cat === "citta") return isCityLike;
-  if (cat === "borghi") return isBorgoLike && !isCityLike;
-
-  if (cat === "mare") return type === "mare" || tags.includes("mare") || tags.includes("natural=beach") || n.includes("spiaggia") || n.includes("lido");
-  if (cat === "natura") return type === "natura" || tags.includes("natura") || tags.includes("nature_reserve") || tags.includes("boundary=national_park") || n.includes("cascata") || n.includes("lago") || n.includes("riserva");
-  if (cat === "storia") return type === "storia" || tags.some(x => x.startsWith("historic=")) || tags.includes("tourism=museum") || n.includes("castello") || n.includes("museo") || n.includes("rocca");
+  if (cat === "citta") return type === "citta" || tags.includes("place=city") || tags.includes("place=town");
+  if (cat === "borghi") return isBorgo(place);
+  if (cat === "mare") return type === "mare" || tags.includes("natural=beach") || n.includes("spiaggia") || n.includes("beach");
+  if (cat === "montagna") return isMountain(place);
+  if (cat === "natura") return type === "natura" || tags.includes("nature_reserve") || tags.includes("boundary=national_park") || n.includes("cascata") || n.includes("lago") || n.includes("riserva");
+  if (cat === "storia") return type === "storia" || tags.includes("historic=") || tags.includes("tourism=museum") || n.includes("castello") || n.includes("museo") || n.includes("rocca");
   if (cat === "relax") return isSpaPlace(place);
 
-  if (cat === "montagna") return type === "montagna" || isMountainPlace(place);
+  // extra UI
+  if (cat === "kids_museum") return isKidsMuseum(place);
+  if (cat === "viewpoints") return isViewpoint(place);
+  if (cat === "hiking") return isHiking(place);
 
   if (cat === "family") {
-    // ✅ family STRICT: NO spa se non stai in relax
-    if (isFamilyAttraction(place) || isFamilySecondary(place)) return true;
+    // ✅ family STRICT: solo roba davvero family (niente spa)
+    if (isThemePark(place) || isWaterPark(place) || isZoo(place) || isAquarium(place)) return true;
+    if (isKidsMuseum(place)) return true;
+    // playground/arcade ecc.
+    if (tags.includes("playground") || tags.includes("leisure=playground") || tags.includes("trampoline") || n.includes("parco giochi")) return true;
+    // neve/sci va bene
+    if (isSnowOrSki(place)) return true;
+    // NO spa/terme in family
     return false;
   }
 
   return true;
 }
 
+// Chicche/classici: usiamo visibility (offline) e per LIVE assumiamo "conosciuta" => classico
 function matchesStyle(place, { wantChicche, wantClassici }) {
-  const vis = String(place?.visibility || "").toLowerCase();
-  if (wantChicche && vis === "chicca") return true;
-  if (wantClassici && vis !== "chicca") return true; // conosciuta/classica
-  return false;
+  const vis = String(place.visibility || "conosciuta").toLowerCase();
+  const isChicca = (vis === "chicca");
+  const isClassica = !isChicca;
+  return (wantChicche && isChicca) || (wantClassici && isClassica);
 }
 
 // -------------------- SCORING --------------------
@@ -552,7 +546,7 @@ function baseScorePlace({ driveMin, targetMin, beautyScore, isChicca }) {
   const t = clamp(1 - Math.abs(driveMin - targetMin) / Math.max(25, targetMin * 0.9), 0, 1);
   const b = clamp(Number(beautyScore) || 0.70, 0.35, 1);
   const c = isChicca ? 0.07 : 0;
-  return 0.62 * t + 0.33 * b + c;
+  return 0.60 * t + 0.33 * b + c;
 }
 
 function rotationPenalty(pid, recentSet) {
@@ -563,29 +557,28 @@ function rotationPenalty(pid, recentSet) {
   return pen;
 }
 
-// -------------------- ✅ TIME WIDEN (FIXED) --------------------
-function widenMinutesSteps(m, category) {
+// -------------------- WIDEN (LIMITATO) --------------------
+function widenMinutesSteps(m) {
+  // ✅ Regola: non "esplodere" mai.
+  // - fino a 60 min: max 1.5x (es 30 => 45 max) e cap assoluto 90
+  // - sopra 60: max 1.35x e cap assoluto 180
   const base = clamp(Number(m) || 120, 10, 600);
 
-  // IMPORTANT: per 30/60 non vogliamo mai finire a 240.
-  // massimo: +70% (30 -> 51), +60% (60 -> 96), ecc.
-  const max = clamp(Math.round(base * (category === "family" ? 1.7 : 1.6)), base, 180);
+  if (base <= 60) {
+    const a = base;
+    const b = clamp(Math.round(base * 1.25), base, 90);
+    const c = clamp(Math.round(base * 1.50), base, 90);
+    return Array.from(new Set([a, b, c])).sort((x,y)=>x-y);
+  }
 
-  const steps = [base];
-  const muls =
-    category === "family" ? [1.25, 1.45, 1.70] :
-    category === "mare" ?   [1.20, 1.40, 1.60] :
-    category === "storia" ? [1.20, 1.40, 1.60] :
-                            [1.20, 1.40, 1.60];
-
-  for (const k of muls) steps.push(clamp(Math.round(base * k), base, max));
-  steps.push(max);
-
-  return Array.from(new Set(steps)).sort((a,b)=>a-b);
+  const a = base;
+  const b = clamp(Math.round(base * 1.18), base, 180);
+  const c = clamp(Math.round(base * 1.35), base, 180);
+  return Array.from(new Set([a, b, c])).sort((x,y)=>x-y);
 }
 
 // -------------------- CANDIDATES / PICK --------------------
-function buildCandidatesFromPool(pool, origin, maxMinutes, category, styles, { ignoreVisited=false, ignoreRotation=false } = {}) {
+function buildCandidatesFromPool(pool, origin, maxMinutes, category, styles, { ignoreVisited = false, ignoreRotation = false } = {}) {
   const visited = getVisitedSet();
   const recentSet = getRecentSet();
   const target = Number(maxMinutes);
@@ -599,7 +592,7 @@ function buildCandidatesFromPool(pool, origin, maxMinutes, category, styles, { i
     if (!p) continue;
 
     const nm = String(p.name || "").trim();
-    if (!nm || nm.length < 2 || normName(nm) === "meta") continue;
+    if (!nm || nm.length < 2) continue;
 
     const lat = Number(p.lat);
     const lon = Number(p.lon ?? p.lng);
@@ -614,8 +607,10 @@ function buildCandidatesFromPool(pool, origin, maxMinutes, category, styles, { i
     const km = haversineKm(oLat, oLon, lat, lon);
     const driveMin = estCarMinutesFromKm(km);
 
+    // ✅ rispetto tempo
     if (driveMin > target) continue;
-    if (km < (category === "family" ? 0.8 : 1.2)) continue;
+    // evita roba troppo attaccata (rumore)
+    if (km < 1.0) continue;
 
     const isChicca = String(p.visibility || "").toLowerCase() === "chicca";
 
@@ -626,10 +621,22 @@ function buildCandidatesFromPool(pool, origin, maxMinutes, category, styles, { i
       isChicca
     });
 
-    // family: bonus vero
+    // bonus per family: parchi e zoo vincono sempre
     if (category === "family") {
-      if (isFamilyAttraction(p)) s += 0.22;
-      else if (isFamilySecondary(p)) s += 0.10;
+      if (isThemePark(p) || isWaterPark(p)) s += 0.26;
+      else if (isZoo(p) || isAquarium(p)) s += 0.22;
+      else if (isKidsMuseum(p)) s += 0.12;
+      else if (isSnowOrSki(p)) s += 0.10;
+    }
+
+    // bonus per montagna: peak/viewpoint/rifugio/ski
+    if (category === "montagna") {
+      const tags = placeTags(p).join(" ");
+      const n = normName(p.name);
+      if (tags.includes("natural=peak") || n.includes("cima") || n.includes("vetta")) s += 0.15;
+      if (tags.includes("tourism=viewpoint") || n.includes("belvedere") || n.includes("panoram")) s += 0.10;
+      if (n.includes("rifugio")) s += 0.10;
+      if (isSnowOrSki(p)) s += 0.08;
     }
 
     if (!ignoreRotation) s -= rotationPenalty(pid, recentSet);
@@ -642,21 +649,34 @@ function buildCandidatesFromPool(pool, origin, maxMinutes, category, styles, { i
 }
 
 function pickBest(pool, origin, minutes, category, styles) {
-  let c = buildCandidatesFromPool(pool, origin, minutes, category, styles, { ignoreVisited:false, ignoreRotation:false });
-  if (!c.length) c = buildCandidatesFromPool(pool, origin, minutes, category, styles, { ignoreVisited:false, ignoreRotation:true });
-  if (!c.length) c = buildCandidatesFromPool(pool, origin, minutes, category, styles, { ignoreVisited:true, ignoreRotation:true });
-  return { chosen: c[0] || null, alternatives: c.slice(1, 3) };
+  let c = buildCandidatesFromPool(pool, origin, minutes, category, styles, { ignoreVisited: false, ignoreRotation: false });
+  if (c.length === 0) c = buildCandidatesFromPool(pool, origin, minutes, category, styles, { ignoreVisited: false, ignoreRotation: true });
+  if (c.length === 0) c = buildCandidatesFromPool(pool, origin, minutes, category, styles, { ignoreVisited: true, ignoreRotation: true });
+
+  return { chosen: c[0] || null, alternatives: c.slice(1, 3), totalCandidates: c.length };
 }
 
 // -------------------- LIVE fallback (/api/destinations) --------------------
 function minutesToRadiusKm(minutes) {
-  const m = clamp(Number(minutes) || 120, 10, 180);
+  const m = clamp(Number(minutes) || 120, 10, 600);
   const drive = Math.max(6, m - FIXED_OVERHEAD_MIN);
   const km = (drive / 60) * AVG_KMH / ROAD_FACTOR;
-  return clamp(Math.round(km), 5, 220);
+  return clamp(Math.round(km), 5, 260);
 }
 
-function overpassElToPlace(el, usedCat) {
+// Supporta:
+// A) Overpass elements grezzi: {type,id,tags,center/lat/lon}
+// B) già mappato: {name,lat,lon,type,...}
+function overpassElToPlace(el, requestedCat) {
+  // già mappato
+  if (el?.name && Number.isFinite(Number(el.lat)) && Number.isFinite(Number(el.lon))) {
+    const p = { ...el };
+    if (!p.type) p.type = requestedCat || "ovunque";
+    if (!p.visibility) p.visibility = "conosciuta";
+    if (!Array.isArray(p.tags)) p.tags = [];
+    return p;
+  }
+
   const tagsObj = el?.tags || {};
   const name = tagsObj?.name || tagsObj?.["name:it"] || "";
   const lat = Number(el.lat ?? el.center?.lat);
@@ -664,29 +684,25 @@ function overpassElToPlace(el, usedCat) {
   if (!name || !Number.isFinite(lat) || !Number.isFinite(lon)) return null;
 
   const tagsArr = [];
-  const allow = ["tourism","leisure","historic","natural","amenity","place","sport","boundary","information","aerialway"];
+  const allow = ["tourism","leisure","historic","natural","amenity","place","sport","boundary","information","aerialway","ski"];
   for (const k of allow) if (tagsObj[k] != null) tagsArr.push(`${k}=${tagsObj[k]}`);
 
-  // ✅ aggiungiamo tag semantici utili anche ai macro
-  if (usedCat) tagsArr.push(String(usedCat));
-  if (tagsObj.leisure === "water_park") tagsArr.push("water_park");
-  if (tagsObj.tourism === "zoo") tagsArr.push("zoo");
-  if (tagsObj.tourism === "aquarium") tagsArr.push("aquarium");
-  if (tagsObj.historic) tagsArr.push("storia");
-  if (tagsObj.natural) tagsArr.push("natura");
-  if (tagsObj.place === "village" || tagsObj.place === "hamlet") tagsArr.push("borgo");
-  if (tagsObj.place === "town" || tagsObj.place === "city") tagsArr.push("citta");
+  // type mapping coerente
+  let type = requestedCat || "ovunque";
+  if (tagsObj.natural === "beach") type = "mare";
+  if (tagsObj.place === "village" || tagsObj.place === "hamlet") type = "borghi";
+  if (tagsObj.place === "town" || tagsObj.place === "city") type = "citta";
 
   return {
-    id: `live_${usedCat}_${el.type}_${el.id}`,
+    id: `live_${requestedCat}_${el.type}_${el.id}`,
     name: String(name).trim(),
     lat,
     lon,
-    type: usedCat || "ovunque",
+    type,
     visibility: "conosciuta",
-    tags: Array.from(new Set(tagsArr)).slice(0, 18),
-    beauty_score: 0.72,
-    country: tagsObj["addr:country"] || "",
+    tags: Array.from(new Set(tagsArr)).slice(0, 16),
+    beauty_score: 0.70,
+    country: (tagsObj["addr:country"] || "").toUpperCase(),
     area: ""
   };
 }
@@ -695,20 +711,12 @@ async function fetchLiveFallback(origin, minutes, category, signal) {
   const radiusKm = minutesToRadiusKm(minutes);
   const url = `/api/destinations?lat=${encodeURIComponent(origin.lat)}&lon=${encodeURIComponent(origin.lon)}&radiusKm=${encodeURIComponent(radiusKm)}&cat=${encodeURIComponent(category)}`;
   const j = await fetchJson(url, { signal });
-
-  if (!j?.ok) return { places: [], usedCat: category };
-  const usedCat = j?.meta?.usedCat || category;
-
-  const els = Array.isArray(j?.data?.elements) ? j.data.elements : [];
-  const out = els.map(el => overpassElToPlace(el, usedCat)).filter(Boolean);
-  return { places: out, usedCat };
+  if (!j?.ok) return [];
+  const els = Array.isArray(j?.data?.elements) ? j.data.elements : Array.isArray(j?.elements) ? j.elements : [];
+  return els.map(el => overpassElToPlace(el, category)).filter(Boolean);
 }
 
-// -------------------- RENDER (uguale al tuo: ridotta qui per brevità) --------------------
-// NOTA: qui sotto mantieni renderResult/renderNoResultFinal ecc come nel v9.
-// Per non allungare troppo, riusa i tuoi render identici.
-// L'unica cosa: aggiungo datasetInfo che mostra anche usedMinutes.
-
+// -------------------- CARD HELPERS --------------------
 function typeBadge(category) {
   const map = {
     family: { emoji: "👨‍👩‍👧‍👦", label: "Family" },
@@ -719,15 +727,246 @@ function typeBadge(category) {
     natura: { emoji: "🌿", label: "Natura" },
     montagna:{emoji:"🏔️",label:"Montagna"},
     relax:  { emoji: "🧖", label: "Relax" },
+    kids_museum: { emoji:"🧒🏛️", label:"Musei bimbi" },
+    viewpoints: { emoji:"🌅", label:"Panorami" },
+    hiking: { emoji:"🥾", label:"Trekking" },
     ovunque:{ emoji: "🎲", label: "Meta" },
   };
   return map[category] || { emoji: "📍", label: "Meta" };
 }
 
-// --- qui incolla i tuoi renderResult/renderNoResultFinal ESATTAMENTE come v9 ---
+function microWhatToDo(place, category) {
+  if (category === "family") {
+    if (isWaterPark(place)) return "Parco acquatico: scivoli/piscine (controlla stagione e orari).";
+    if (isThemePark(place)) return "Parco divertimenti: giostre e attrazioni per bambini.";
+    if (isZoo(place)) return "Zoo/Safari: perfetto per una giornata con bimbi.";
+    if (isAquarium(place)) return "Acquario (spesso indoor): ottimo anche d’inverno.";
+    if (isKidsMuseum(place)) return "Museo bimbi/science: attività interattive.";
+    if (isSnowOrSki(place)) return "Neve/Sci: impianti e piste (verifica aperture).";
+    return "Family: posto adatto a bambini.";
+  }
+  if (category === "relax") return "Relax: terme/spa/piscine o un posto tranquillo.";
+  if (category === "storia") return "Storia: visita, museo/castello e passeggiata.";
+  if (category === "mare") return "Mare: spiaggia, passeggiata e tramonto.";
+  if (category === "natura") return "Natura: sentieri, lago/cascata/riserva.";
+  if (category === "montagna") return "Montagna: vista, rifugio, cima o impianti.";
+  if (category === "kids_museum") return "Museo per bambini: attività interattive e family-friendly.";
+  if (category === "viewpoints") return "Panorama: belvedere e foto top.";
+  if (category === "hiking") return "Trekking: sentiero, anello o rifugio.";
+  if (category === "borghi") return "Borgo: vicoli, belvedere, cibo tipico e foto.";
+  if (category === "citta") return "Città: centro, piazze, monumenti e locali.";
+  return "Esplora, foto e cose da fare nei dintorni.";
+}
 
-// -------------------- MAIN SEARCH --------------------
-async function runSearch({ silent = false } = {}) {
+function chipsFromPlace(place, category) {
+  const tags = placeTags(place).join(" ");
+  const chips = [];
+
+  if (category === "family") {
+    if (isThemePark(place)) chips.push("🎢 parco");
+    if (isWaterPark(place)) chips.push("💦 acqua");
+    if (isZoo(place)) chips.push("🦁 zoo");
+    if (isAquarium(place)) chips.push("🐟 acquario");
+    if (isKidsMuseum(place)) chips.push("🧒 museo bimbi");
+    if (isSnowOrSki(place)) chips.push("❄️ neve/sci");
+    if (looksIndoor(place)) chips.push("🏠 indoor");
+    if (isWinterNow() && isWaterPark(place) && !looksIndoor(place)) chips.push("❄️ stagionale");
+  }
+  if (category === "montagna") {
+    if (isSnowOrSki(place)) chips.push("🎿 ski");
+    if (isViewpoint(place)) chips.push("🌅 vista");
+  }
+  if (category === "viewpoints" && isViewpoint(place)) chips.push("🌅 belvedere");
+  if (category === "hiking" && isHiking(place)) chips.push("🥾 trail");
+  if (category === "kids_museum" && isKidsMuseum(place)) chips.push("🧒 kids");
+
+  return chips.slice(0, 5);
+}
+
+// -------------------- RENDER --------------------
+function renderNoResultFinal(maxMinutesShown, category, datasetInfo) {
+  const area = $("resultArea");
+  if (!area) return;
+
+  area.innerHTML = `
+    <div class="card errbox">
+      <div class="small">❌ Nessuna meta trovata entro <b>${maxMinutesShown} min</b> per la categoria <b>${category}</b>.</div>
+      <div class="small muted" style="margin-top:6px;">
+        Suggerimento: aumenta minuti oppure cambia categoria/stile.
+      </div>
+      <div class="small muted" style="margin-top:10px;">
+        Dataset: ${datasetInfo}
+      </div>
+      <div class="row wrap gap" style="margin-top:12px;">
+        <button class="btn btn-ghost" id="btnResetRotation">🧽 Reset “proposte di oggi”</button>
+      </div>
+    </div>
+  `;
+
+  $("btnResetRotation")?.addEventListener("click", () => {
+    resetRotation();
+    showStatus("ok", "Reset fatto ✅ Ora posso ripescare anche mete già proposte oggi/sessione.");
+    runSearch({ silent: true });
+  });
+}
+
+function renderResult(origin, maxMinutesShown, chosen, alternatives = [], meta = {}) {
+  const area = $("resultArea");
+  if (!area) return;
+
+  const category = meta.category || "ovunque";
+
+  if (!chosen) {
+    renderNoResultFinal(maxMinutesShown, category, meta.datasetInfo || "—");
+    return;
+  }
+
+  const p = chosen.place;
+  const pid = chosen.pid;
+
+  const country = p.country || p.area || "—";
+  const vis = String(p.visibility || "conosciuta").toLowerCase();
+  const badge = vis === "chicca" ? "✨ chicca" : "✅ classica";
+  const tb = typeBadge(category);
+  const what = microWhatToDo(p, category);
+  const chips = chipsFromPlace(p, category);
+
+  const lat = Number(p.lat);
+  const lon = Number(p.lon ?? p.lng);
+
+  const zoom = chosen.km < 20 ? 12 : chosen.km < 60 ? 10 : 8;
+  const img1 = osmStaticImgPrimary(lat, lon, zoom);
+  const img2 = osmStaticImgFallback(lat, lon, zoom);
+
+  const q = (p.country || p.area) ? `${p.name}, ${p.country || p.area}` : p.name;
+
+  area.innerHTML = `
+    <div class="card okbox" style="overflow:hidden; padding:0;">
+      <div style="position:relative; width:100%; aspect-ratio: 2 / 1; border-bottom:1px solid var(--border);">
+        <img src="${img1}" alt="" loading="lazy" decoding="async"
+             style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; opacity:.95;"
+             onerror="(function(img){
+               if(!img.dataset.fallbackTried){
+                 img.dataset.fallbackTried='1';
+                 img.src='${img2}';
+                 return;
+               }
+               img.style.display='none';
+               var ph = img.parentElement.querySelector('.heroPlaceholder');
+               if(ph) ph.style.display='flex';
+             })(this)"
+        />
+        <div class="heroPlaceholder"
+             style="position:absolute; inset:0; display:none; align-items:center; justify-content:center; gap:10px;
+                    background: linear-gradient(135deg, rgba(0,224,255,.18), rgba(26,255,213,.08));
+                    color: rgba(255,255,255,.92); font-weight:900; letter-spacing:.2px;">
+          📍 ${p.name}
+        </div>
+
+        <div style="position:absolute; left:12px; top:12px; display:flex; gap:8px; flex-wrap:wrap; max-width: calc(100% - 24px);">
+          <div class="pill">${tb.emoji} ${tb.label}</div>
+          <div class="pill">🚗 ~${chosen.driveMin} min • ${fmtKm(chosen.km)}</div>
+          <div class="pill">${badge}</div>
+          ${category === "family" && isWinterNow() && isWaterPark(p) && !looksIndoor(p) ? `<div class="pill">❄️ stagionale</div>` : ""}
+        </div>
+      </div>
+
+      <div style="padding:14px;">
+        <div style="font-weight:950; font-size:28px; line-height:1.12; margin:0;">
+          ${p.name} <span class="small muted" style="font-weight:700;">(${country})</span>
+        </div>
+
+        <div class="small muted" style="margin-top:8px; line-height:1.35;">
+          Dataset: ${meta.datasetInfo || "—"} • score: ${chosen.score}
+          ${meta.usedMinutes && meta.usedMinutes !== maxMinutesShown ? ` • widen: ${meta.usedMinutes} min` : ""}
+          ${meta.liveUsed ? ` • LIVE ✅` : ""}
+        </div>
+
+        <div style="margin-top:12px; font-weight:900;">Cosa si fa</div>
+        <div class="small muted" style="margin-top:6px; line-height:1.45;">${what}</div>
+
+        ${chips.length ? `
+          <div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap;">
+            ${chips.map(c => `<div class="pill">${c}</div>`).join("")}
+          </div>
+        ` : ""}
+
+        <div class="row wrap gap" style="margin-top:14px;">
+          <a class="btn" target="_blank" rel="noopener" href="${mapsPlaceUrl(lat, lon)}">🗺️ Maps</a>
+          <a class="btn" target="_blank" rel="noopener" href="${mapsDirUrl(origin.lat, origin.lon, lat, lon)}">🚗 Percorso</a>
+          <a class="btn btn-ghost" target="_blank" rel="noopener" href="${googleImagesUrl(q)}">📸 Foto</a>
+          <a class="btn btn-ghost" target="_blank" rel="noopener" href="${googleThingsToDoUrl(q)}">👀 Cosa vedere</a>
+          <a class="btn btn-ghost" target="_blank" rel="noopener" href="${googleDoUrl(q)}">🎯 Cosa fare</a>
+          <a class="btn btn-ghost" target="_blank" rel="noopener" href="${restaurantsUrl(q)}">🍝 Ristoranti</a>
+          <a class="btn btn-ghost" target="_blank" rel="noopener" href="${wikiUrl(q)}">📚 Wiki</a>
+          <a class="btn btn-ghost" target="_blank" rel="noopener" href="${eventsUrl(q)}">📅 Eventi</a>
+        </div>
+
+        <div class="row wrap gap" style="margin-top:14px;">
+          <button class="btn btn-ghost" id="btnVisited">✅ Già visitato</button>
+          <button class="btn" id="btnChange">🔁 Cambia meta</button>
+          <button class="btn btn-ghost" id="btnResetRotation">🧽 Reset “oggi”</button>
+        </div>
+      </div>
+    </div>
+
+    ${alternatives?.length ? `
+      <div style="margin-top:14px;">
+        <div class="small muted" style="margin-bottom:8px;">Alternative (2)</div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+          ${alternatives.slice(0, 2).map(a => {
+            const ap = a.place;
+            const alat = Number(ap.lat);
+            const alon = Number(ap.lon ?? ap.lng);
+            const acountry = ap.country || ap.area || "";
+            return `
+              <div class="card" style="padding:10px;">
+                <div style="font-weight:900; line-height:1.2;">${ap.name}</div>
+                <div class="small muted" style="margin-top:4px;">
+                  🚗 ~${a.driveMin} min • ${fmtKm(a.km)} ${acountry ? `• (${acountry})` : ""}
+                </div>
+                <div class="row wrap gap" style="margin-top:10px;">
+                  <a class="btn btn-ghost" target="_blank" rel="noopener" href="${mapsDirUrl(origin.lat, origin.lon, alat, alon)}">Percorso</a>
+                  <button class="btn btn-ghost" data-pid="${a.pid}">Scegli</button>
+                </div>
+              </div>
+            `;
+          }).join("")}
+        </div>
+      </div>
+    ` : ""}
+  `;
+
+  LAST_SHOWN_PID = pid;
+  SESSION_SEEN.add(pid);
+  addRecent(pid);
+
+  $("btnVisited")?.addEventListener("click", () => {
+    markVisited(pid);
+    showStatus("ok", "Segnato come visitato ✅ (non te lo ripropongo più).");
+  });
+
+  $("btnChange")?.addEventListener("click", () => {
+    runSearch({ silent: true, forbidPid: pid });
+  });
+
+  $("btnResetRotation")?.addEventListener("click", () => {
+    resetRotation();
+    showStatus("ok", "Reset fatto ✅ Ora posso ripescare anche mete già proposte oggi/sessione.");
+    runSearch({ silent: true });
+  });
+
+  area.querySelectorAll("button[data-pid]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const targetPid = btn.getAttribute("data-pid");
+      if (!targetPid) return;
+      runSearch({ silent: true, forcePid: targetPid });
+    });
+  });
+}
+
+// -------------------- MAIN SEARCH (OFFLINE + LIVE) --------------------
+async function runSearch({ silent = false, forbidPid = null, forcePid = null } = {}) {
   try { SEARCH_ABORT?.abort?.(); } catch {}
   SEARCH_ABORT = new AbortController();
   const signal = SEARCH_ABORT.signal;
@@ -747,41 +986,61 @@ async function runSearch({ silent = false } = {}) {
 
     const basePool = Array.isArray(DATASET?.places) ? DATASET.places : [];
     const datasetInfo =
-      DATASET.kind === "pois" ? `POIs:${DATASET.meta?.regionId || "region"} (${basePool.length})` :
-      DATASET.kind === "macro" ? `MACRO:${(DATASET.source || "").split("/").pop()} (${basePool.length})` :
-      `—`;
+      DATASET.kind === "macro" ? `MACRO:${(DATASET.source || "").split("/").pop()} (${basePool.length})` : `—`;
 
     const maxMinutesInput = clamp(Number($("maxMinutes")?.value) || 120, 10, 600);
     const category = getActiveCategory();
     const styles = getActiveStyles();
-    const steps = widenMinutesSteps(maxMinutesInput, category);
+
+    const steps = widenMinutesSteps(maxMinutesInput);
 
     let chosen = null;
     let alternatives = [];
     let usedMinutes = steps[0];
     let liveUsed = false;
 
-    // OFFLINE
+    // 1) OFFLINE widening (limitato)
     for (const mins of steps) {
       usedMinutes = mins;
-      const picked = pickBest(basePool, origin, mins, category, styles);
+
+      let picked = pickBest(basePool, origin, mins, category, styles);
       chosen = picked.chosen;
       alternatives = picked.alternatives;
+
+      if (forcePid) {
+        const forced = buildCandidatesFromPool(basePool, origin, mins, category, styles, { ignoreVisited: true, ignoreRotation: true })
+          .find(x => x.pid === forcePid);
+        if (forced) {
+          const rest = buildCandidatesFromPool(basePool, origin, mins, category, styles, { ignoreVisited: true, ignoreRotation: true })
+            .filter(x => x.pid !== forcePid)
+            .slice(0, 2);
+          chosen = forced;
+          alternatives = rest;
+        }
+      } else if (forbidPid && chosen?.pid === forbidPid) {
+        const cands = buildCandidatesFromPool(basePool, origin, mins, category, styles, { ignoreVisited: true, ignoreRotation: true })
+          .filter(x => x.pid !== forbidPid);
+        chosen = cands[0] || null;
+        alternatives = cands.slice(1, 3);
+      }
+
       if (chosen) break;
       if (token !== SEARCH_TOKEN) return;
     }
 
-    // LIVE (solo se offline vuoto)
+    if (token !== SEARCH_TOKEN) return;
+
+    // 2) LIVE fallback (solo se offline vuoto)
     if (!chosen) {
       showResultProgress("Offline vuoto. Provo LIVE (Overpass) senza cambiare categoria…");
       for (const mins of steps) {
         usedMinutes = mins;
 
-        const live = await fetchLiveFallback(origin, mins, category, signal).catch(() => ({ places: [], usedCat: category }));
+        const livePlaces = await fetchLiveFallback(origin, mins, category, signal).catch(() => []);
         if (token !== SEARCH_TOKEN) return;
 
-        if (live.places.length) {
-          const merged = basePool.concat(live.places);
+        if (livePlaces.length) {
+          const merged = basePool.concat(livePlaces);
           const picked = pickBest(merged, origin, mins, category, styles);
           chosen = picked.chosen;
           alternatives = picked.alternatives;
@@ -793,8 +1052,6 @@ async function runSearch({ silent = false } = {}) {
 
     if (token !== SEARCH_TOKEN) return;
 
-    // ✅ se ancora null, no result
-    // qui richiami il tuo renderResult completo
     renderResult(origin, maxMinutesInput, chosen, alternatives, {
       category,
       datasetInfo,
@@ -803,7 +1060,7 @@ async function runSearch({ silent = false } = {}) {
     });
 
     if (!chosen) {
-      showStatus("warn", `Nessuna meta entro ${maxMinutesInput} min per "${category}".`);
+      showStatus("warn", `Nessuna meta entro ${maxMinutesInput} min per "${category}". Prova ad aumentare i minuti o cambia categoria/stile.`);
     } else if (!silent) {
       const extra = usedMinutes !== maxMinutesInput ? ` (ho allargato a ${usedMinutes} min)` : "";
       const live = liveUsed ? " • LIVE ok" : "";
@@ -847,13 +1104,14 @@ function bindOriginButtons() {
       async (pos) => {
         const lat = pos.coords.latitude;
         const lon = pos.coords.longitude;
-        setOrigin({ label: "La mia posizione", lat, lon });
+        setOrigin({ label: "La mia posizione", lat, lon, country_code: "" });
         showStatus("ok", "Partenza GPS impostata ✅");
         DATASET = { kind:null, source:null, places:[], meta:{} };
         await ensureDatasetLoaded(getOrigin(), { signal: undefined }).catch(() => {});
       },
-      () => {
-        if ($("originStatus")) $("originStatus").textContent = "❌ GPS non disponibile";
+      (err) => {
+        console.error(err);
+        if ($("originStatus")) $("originStatus").textContent = "❌ GPS non disponibile (permessi?)";
         showStatus("err", "GPS non disponibile. Scrivi un luogo e usa “Usa questo luogo”.");
       },
       { enableHighAccuracy: true, timeout: 12000 }
@@ -865,12 +1123,12 @@ function bindOriginButtons() {
       const label = $("originLabel")?.value || "";
       if ($("originStatus")) $("originStatus").textContent = "🔎 Cerco il luogo…";
       const result = await geocodeLabel(label);
-      // ✅ passiamo anche country_code all’origine
-      setOrigin({ label: result.label || label, lat: result.lat, lon: result.lon, country_code: result.country_code });
+      setOrigin({ label: result.label || label, lat: result.lat, lon: result.lon, country_code: result.country_code || "" });
       showStatus("ok", "Partenza impostata ✅");
       DATASET = { kind:null, source:null, places:[], meta:{} };
       await ensureDatasetLoaded(getOrigin(), { signal: undefined }).catch(() => {});
     } catch (e) {
+      console.error(e);
       if ($("originStatus")) $("originStatus").textContent = `❌ ${String(e.message || e)}`;
       showStatus("err", `Geocoding fallito: ${String(e.message || e)}`);
     }
@@ -885,6 +1143,7 @@ function bindMainButtons() {
   });
 }
 
+// init chips
 initChips("timeChips", { multi: false });
 initChips("categoryChips", { multi: false });
 initChips("styleChips", { multi: true });
@@ -895,6 +1154,8 @@ bindOriginButtons();
 bindMainButtons();
 
 hideStatus();
+
+// preload dataset (best effort)
 (async () => {
   try {
     const origin = getOrigin();
