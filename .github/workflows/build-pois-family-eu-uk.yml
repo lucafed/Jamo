@@ -15,7 +15,7 @@ permissions:
   contents: write
 
 jobs:
-  build:
+  build_and_commit:
     runs-on: ubuntu-latest
     timeout-minutes: 45
 
@@ -30,20 +30,15 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install (best-effort)
-        run: |
-          if [ -f package-lock.json ]; then npm ci; else npm install; fi
-
       - name: Build FAMILY POIs (EU+UK)
-        run: |
-          node scripts/build_pois_family_eu_uk.mjs
+        run: node scripts/build_pois_family_eu_uk.mjs
 
       - name: Verify output exists
         run: |
           ls -lah public/data/pois || true
           test -f public/data/pois/family.json
 
-      - name: Commit & push generated file
+      - name: Commit & push generated files (if changed)
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
