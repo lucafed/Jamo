@@ -4,8 +4,8 @@ on:
   workflow_dispatch: {}
   push:
     paths:
-      - "scripts/build_pois_it_region.mjs"
-      - "public/data/regions/it-abruzzo.json"
+      - "scripts/build_pois_area.mjs"
+      - "public/data/areas.json"
       - ".github/workflows/build-pois-it-abruzzo.yml"
 
 permissions:
@@ -32,7 +32,7 @@ jobs:
           node-version: "20"
 
       - name: Build POIs (Abruzzo)
-        run: node scripts/build_pois_it_region.mjs --region=it-abruzzo
+        run: node scripts/build_pois_area.mjs --area=it_abruzzo
 
       - name: Commit data (if changed)
         run: |
@@ -41,16 +41,15 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git add public/data/pois/it/it-abruzzo/*.json public/data/pois/it/it-abruzzo/index.json || true
+          git add public/data/pois/areas/it_abruzzo/*.json public/data/pois/areas/it_abruzzo/index.json || true
 
           if git diff --cached --quiet; then
             echo "No changes to commit."
             exit 0
           fi
 
-          git commit -m "chore(data): build POIs it-abruzzo"
+          git commit -m "chore(data): build POIs it_abruzzo"
 
-          # Robust push: rebase on latest main and retry
           for i in 1 2 3 4 5; do
             echo "Push attempt $i..."
             git pull --rebase origin main || true
