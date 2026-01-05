@@ -13,7 +13,7 @@
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
 
-  <link rel="stylesheet" href="/style.css?v=5.2" />
+  <link rel="stylesheet" href="/style.css?v=5.3" />
 
   <style>
     :root{
@@ -65,7 +65,7 @@
         <div class="logo" aria-hidden="true"></div>
         <div class="title">
           <h1>Jamo</h1>
-          <p>Auto-only • Mete offline + live • Chicche + Classici</p>
+          <p>Auto-only • EU + UK • Categoria precisa • Chicche + Classici</p>
         </div>
       </div>
       <button id="btnInstall" class="btn btn-ghost" style="display:none;">➕ Installa</button>
@@ -76,6 +76,12 @@
       <p class="sub">
         Solo auto. Borghi, città, mare, natura e soprattutto attività per famiglie:
         <b>parchi</b>, <b>zoo</b>, <b>acquapark</b>, <b>musei kids</b>, panorami e sentieri.
+      </p>
+      <p class="sub" style="margin-top:8px;">
+        <span class="pill">🇪🇺 EU</span>
+        <span class="pill">🇬🇧 UK</span>
+        <span class="pill">📏 distanza reale</span>
+        <span class="pill">🏷️ categoria hard</span>
       </p>
     </div>
 
@@ -103,6 +109,9 @@
             <input id="originLon" type="text" inputmode="decimal" placeholder="13.3995" />
           </div>
         </div>
+
+        <!-- ✅ IMPORTANT: country_code field used by app.js + server macro selection -->
+        <input id="originCC" type="hidden" value="">
 
         <div class="hr"></div>
 
@@ -168,14 +177,14 @@
         <div id="resultArea" style="margin-top:12px;"></div>
 
         <div class="footer" id="dataFooter" style="margin-top:16px;">
-          Jamo • PWA • Auto-only • Dati: macro + live
+          Jamo • PWA • Auto-only • EU+UK
         </div>
       </div>
     </div>
   </div>
 
   <!-- ✅ Cache-bust: forces fresh app.js after deploy -->
-  <script src="/app.js?v=5.2"></script>
+  <script src="/app.js?v=11.0"></script>
 
   <script>
     // PWA install prompt
