@@ -1,11 +1,8 @@
-/* Jamo — app.js v10.4 (EU+UK + categorie precise + FAMILY clean: no towns)
+/* Jamo — app.js v10.4 (FAMILY = LIVE FIRST + NO TERME in family)
  * Fix principali:
- * - ✅ Family: blocca city/town/village/hamlet (niente “comuni” spacciati per family)
- * - ✅ Family winter: accetta ice_rink / ski / impianti / piste se tag chiari
- * - ✅ renderResult ESISTE
- * - ✅ EU+UK macro auto-select by country_code + fallback
- * - ✅ Filtri categoria “duri” + fallback sensato
- * - ✅ Stop risultati assurdi: driveMin NaN → scarto; driveMin > target → scarto
+ * - ✅ FAMILY: cerca prima LIVE (Overpass), poi offline fallback
+ * - ✅ FAMILY: hard-block terme/spa SEMPRE (mai proporle come family)
+ * - ✅ Mantiene scoring, UI, rotation, widening, alternative, ecc.
  */
 
 const $ = (id) => document.getElementById(id);
@@ -326,11 +323,9 @@ function normalizePlace(p) {
 
   out.name = String(out.name || "").trim();
   out.type = normalizeType(out.type);
-
   out.visibility = normalizeVisibility(out.visibility);
 
   out.tags = Array.isArray(out.tags) ? out.tags.map(x => String(x).toLowerCase()) : [];
-
   out.country = String(out.country || "").toUpperCase();
   out.area = String(out.area || "");
 
@@ -428,7 +423,7 @@ async function ensureDatasetLoaded(origin, { signal } = {}) {
 // -------------------- GEOCODING --------------------
 async function geocodeLabel(label) {
   const q = String(label || "").trim();
-  if (!q) throw new Error("Scrivi un luogo (es: Roma, Milano...)");
+  if (!q) throw new Error("Scrivi un luogo (es: L'Aquila, Roma, Milano...)");
   const r = await fetch(`/api/geocode?q=${encodeURIComponent(q)}`, { method: "GET", cache: "no-store" });
   const j = await r.json().catch(() => null);
   if (!j) throw new Error("Geocoding fallito (risposta vuota)");
@@ -613,30 +608,13 @@ function matchesCategoryStrict(place, cat) {
   if (cat === "hiking") return isHiking(place);
 
   if (cat === "family") {
-    // ✅ BLOCCO ANTI-COMUNI: se è un place=* allora NON è family
-    if (
-      t.includes("place=city") ||
-      t.includes("place=town") ||
-      t.includes("place=village") ||
-      t.includes("place=hamlet")
-    ) return false;
-
-    // ✅ winter-ish (solo se tag chiari)
-    const winterOk =
-      t.includes("leisure=ice_rink") ||
-      t.includes("sport=skiing") ||
-      t.includes("sport=ice_skating") ||
-      t.includes("landuse=winter_sports") ||
-      t.includes("aerialway=") ||
-      t.includes("piste:type=");
-
+    // family = SOLO roba family vera; terme/spa escluse SEMPRE
     return (
       isThemePark(place) ||
       isWaterPark(place) ||
       isZooOrAquarium(place) ||
       isKidsMuseum(place) ||
-      isPlaygroundLike(place) ||
-      winterOk
+      isPlaygroundLike(place)
     );
   }
 
@@ -674,11 +652,6 @@ function familyBoost(place, category) {
   if (isZooOrAquarium(place)) return 0.22;
   if (isKidsMuseum(place)) return 0.18;
   if (isPlaygroundLike(place)) return 0.12;
-
-  const t = tagsStr(place);
-  if (t.includes("leisure=ice_rink")) return 0.18;
-  if (t.includes("aerialway=") || t.includes("piste:type=")) return 0.14;
-
   return 0;
 }
 
@@ -710,7 +683,6 @@ function buildCandidatesFromPool(
   {
     ignoreVisited = false,
     ignoreRotation = false,
-    allowSpaInFamily = false,
   } = {}
 ) {
   const visited = getVisitedSet();
@@ -729,11 +701,13 @@ function buildCandidatesFromPool(
     const nm = String(p.name || "").trim();
     if (!nm || nm.length < 2 || normName(nm) === "meta") continue;
 
-    const okCat = matchesCategoryStrict(p, category) || (
-      category === "family" && allowSpaInFamily && isSpaPlace(p)
-    );
-    if (!okCat) continue;
+    // categoria hard
+    if (!matchesCategoryStrict(p, category)) continue;
 
+    // 🛑 HARD BLOCK: mai terme/spa in FAMILY (dati sporchi / offline)
+    if (category === "family" && isSpaPlace(p)) continue;
+
+    // stile
     if (!matchesStyle(p, styles)) continue;
 
     const pid = safeIdFromPlace(p);
@@ -758,7 +732,6 @@ function buildCandidatesFromPool(
 
     s += familyBoost(p, category);
 
-    if (category === "family" && isSpaPlace(p) && !allowSpaInFamily) s -= 0.35;
     if (!ignoreRotation) s -= rotationPenalty(pid, recentSet);
 
     candidates.push({ place: p, pid, km, driveMin, score: Number(s.toFixed(4)) });
@@ -769,36 +742,27 @@ function buildCandidatesFromPool(
 }
 
 function pickBest(pool, origin, minutes, category, styles) {
+  // 1) normale
   let c = buildCandidatesFromPool(pool, origin, minutes, category, styles, {
     ignoreVisited: false,
     ignoreRotation: false,
-    allowSpaInFamily: false,
   });
-  if (c.length) return { chosen: c[0], alternatives: c.slice(1, 3), total: c.length, spaFallback: false };
+  if (c.length) return { chosen: c[0], alternatives: c.slice(1, 3), total: c.length };
 
-  if (category === "family") {
-    c = buildCandidatesFromPool(pool, origin, minutes, category, styles, {
-      ignoreVisited: false,
-      ignoreRotation: true,
-      allowSpaInFamily: true,
-    });
-    if (c.length) return { chosen: c[0], alternatives: c.slice(1, 3), total: c.length, spaFallback: true };
-  }
-
+  // 2) senza rotazione
   c = buildCandidatesFromPool(pool, origin, minutes, category, styles, {
     ignoreVisited: false,
     ignoreRotation: true,
-    allowSpaInFamily: false,
   });
-  if (c.length) return { chosen: c[0], alternatives: c.slice(1, 3), total: c.length, spaFallback: false };
+  if (c.length) return { chosen: c[0], alternatives: c.slice(1, 3), total: c.length };
 
+  // 3) ignora visited + rotazione
   c = buildCandidatesFromPool(pool, origin, minutes, category, styles, {
     ignoreVisited: true,
     ignoreRotation: true,
-    allowSpaInFamily: category === "family",
   });
 
-  return { chosen: c[0] || null, alternatives: c.slice(1, 3), total: c.length, spaFallback: category === "family" };
+  return { chosen: c[0] || null, alternatives: c.slice(1, 3), total: c.length };
 }
 
 // -------------------- LIVE fallback (/api/destinations) --------------------
@@ -814,8 +778,11 @@ async function fetchLiveFallback(origin, minutes, category, signal) {
   const url = `/api/destinations?lat=${encodeURIComponent(origin.lat)}&lon=${encodeURIComponent(origin.lon)}&radiusKm=${encodeURIComponent(radiusKm)}&cat=${encodeURIComponent(category)}`;
   const j = await fetchJson(url, { signal });
   const els = j?.data?.elements;
+
   if (!Array.isArray(els) || !els.length) return [];
-  return els.map(normalizePlace).filter(Boolean);
+
+  const out = els.map(normalizePlace).filter(Boolean);
+  return out;
 }
 
 // -------------------- CARD HELPERS --------------------
@@ -840,18 +807,13 @@ function typeBadge(category) {
 }
 
 function microWhatToDo(place, category) {
-  const t = tagsStr(place);
-
   if (category === "family" || category === "theme_park") {
-    if (isThemePark(place)) return "Parco divertimenti: verifica orari/biglietti, perfetto coi bimbi.";
+    if (isThemePark(place)) return "Parchi/giostre: controlla orari e biglietti, perfetto con bimbi.";
     if (isWaterPark(place)) return "Acquapark: spesso stagionale — verifica apertura.";
-    if (isZooOrAquarium(place)) return "Zoo/acquario: percorsi e tante cose da vedere.";
+    if (isZooOrAquarium(place)) return "Zoo/acquario: percorsi, aree picnic e tante cose da vedere.";
     if (isKidsMuseum(place)) return "Museo kids/science center: ottimo anche con brutto tempo.";
     if (isPlaygroundLike(place)) return "Parco giochi/attività kids: semplice e super efficace.";
-    if (t.includes("leisure=ice_rink")) return "Pattinaggio: verifica orari e noleggio.";
-    if (t.includes("aerialway=") || t.includes("piste:type=") || t.includes("sport=skiing")) return "Neve/sci: verifica condizioni e accessi.";
-    if (isSpaPlace(place)) return "Terme/piscine: relax (verifica accesso bimbi).";
-    return "Attività family: guarda foto e cosa fare nei dintorni.";
+    return "Attività family: controlla foto e cosa fare nei dintorni.";
   }
 
   if (category === "kids_museum") return "Esperienza interattiva: perfetta per bambini e pioggia.";
@@ -870,16 +832,12 @@ function microWhatToDo(place, category) {
 
 function chipsFromPlace(place, category) {
   const chips = [];
-  const t = tagsStr(place);
-
   if (category === "family" || category === "theme_park") {
     if (isThemePark(place)) chips.push("🎢 parco");
     if (isWaterPark(place)) chips.push("💦 acqua");
     if (isZooOrAquarium(place)) chips.push("🦁 zoo");
     if (isKidsMuseum(place)) chips.push("🧒 kids");
     if (isPlaygroundLike(place)) chips.push("🛝 giochi");
-    if (t.includes("leisure=ice_rink")) chips.push("⛸️ ice");
-    if (t.includes("aerialway=") || t.includes("piste:type=") || t.includes("sport=skiing")) chips.push("❄️ neve");
     if (looksIndoor(place)) chips.push("🏠 indoor");
     if (isWinterNow() && isWaterPark(place) && !looksIndoor(place)) chips.push("❄️ stagionale");
   }
@@ -975,7 +933,6 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives = [], meta =
           <div class="pill">🚗 ~${chosen.driveMin} min • ${fmtKm(chosen.km)}</div>
           <div class="pill">${badge}</div>
           ${meta.liveUsed ? `<div class="pill">🛰️ LIVE</div>` : ""}
-          ${meta.spaFallback ? `<div class="pill">⚠️ fallback (spa)</div>` : ""}
         </div>
       </div>
 
@@ -987,6 +944,7 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives = [], meta =
         <div class="small muted" style="margin-top:8px; line-height:1.35;">
           Dataset: ${meta.datasetInfo || "—"} • score: ${chosen.score}
           ${meta.usedMinutes && meta.usedMinutes !== maxMinutesShown ? ` • widen: ${meta.usedMinutes} min` : ""}
+          ${meta.liveUsed ? ` • LIVE` : ""}
         </div>
 
         <div style="margin-top:12px; font-weight:900;">Cosa si fa</div>
@@ -1069,7 +1027,7 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives = [], meta =
   });
 }
 
-// -------------------- MAIN SEARCH --------------------
+// -------------------- MAIN SEARCH (FAMILY: LIVE FIRST) --------------------
 async function runSearch({ silent = false, forbidPid = null, forcePid = null } = {}) {
   try { SEARCH_ABORT?.abort?.(); } catch {}
   SEARCH_ABORT = new AbortController();
@@ -1104,43 +1062,11 @@ async function runSearch({ silent = false, forbidPid = null, forcePid = null } =
     let alternatives = [];
     let usedMinutes = steps[0];
     let liveUsed = false;
-    let spaFallback = false;
 
-    // 1) OFFLINE widening
-    for (const mins of steps) {
-      usedMinutes = mins;
+    // ✅ 1) FAMILY = LIVE FIRST
+    if (category === "family") {
+      showResultProgress("Family: cerco prima LIVE (Overpass) vicino a te…");
 
-      const picked = pickBest(basePool, origin, mins, category, styles);
-      chosen = picked.chosen;
-      alternatives = picked.alternatives;
-      spaFallback = !!picked.spaFallback;
-
-      if (forcePid) {
-        const all = buildCandidatesFromPool(basePool, origin, mins, category, styles, {
-          ignoreVisited: true, ignoreRotation: true, allowSpaInFamily: true
-        });
-        const forced = all.find(x => x.pid === forcePid);
-        if (forced) {
-          chosen = forced;
-          alternatives = all.filter(x => x.pid !== forcePid).slice(0, 2);
-        }
-      } else if (forbidPid && chosen?.pid === forbidPid) {
-        const all = buildCandidatesFromPool(basePool, origin, mins, category, styles, {
-          ignoreVisited: true, ignoreRotation: true, allowSpaInFamily: true
-        }).filter(x => x.pid !== forbidPid);
-        chosen = all[0] || null;
-        alternatives = all.slice(1, 3);
-      }
-
-      if (chosen) break;
-      if (token !== SEARCH_TOKEN) return;
-    }
-
-    if (token !== SEARCH_TOKEN) return;
-
-    // 2) LIVE fallback (solo se offline vuoto)
-    if (!chosen) {
-      showResultProgress("Offline vuoto. Provo LIVE (Overpass) senza cambiare categoria…");
       for (const mins of steps) {
         usedMinutes = mins;
 
@@ -1148,14 +1074,64 @@ async function runSearch({ silent = false, forbidPid = null, forcePid = null } =
         if (token !== SEARCH_TOKEN) return;
 
         if (livePlaces.length) {
-          const merged = basePool.concat(livePlaces);
+          const merged = livePlaces.concat(basePool); // live prima
           const picked = pickBest(merged, origin, mins, category, styles);
+
           chosen = picked.chosen;
           alternatives = picked.alternatives;
-          spaFallback = !!picked.spaFallback;
           liveUsed = !!chosen;
         }
+
+        // gestione force/forbid anche in family
+        if (forcePid) {
+          const all = buildCandidatesFromPool(livePlaces.concat(basePool), origin, mins, category, styles, { ignoreVisited: true, ignoreRotation: true });
+          const forced = all.find(x => x.pid === forcePid);
+          if (forced) {
+            chosen = forced;
+            alternatives = all.filter(x => x.pid !== forcePid).slice(0, 2);
+            liveUsed = true;
+          }
+        } else if (forbidPid && chosen?.pid === forbidPid) {
+          const all = buildCandidatesFromPool(livePlaces.concat(basePool), origin, mins, category, styles, { ignoreVisited: true, ignoreRotation: true })
+            .filter(x => x.pid !== forbidPid);
+          chosen = all[0] || null;
+          alternatives = all.slice(1, 3);
+          liveUsed = true;
+        }
+
         if (chosen) break;
+      }
+    }
+
+    if (token !== SEARCH_TOKEN) return;
+
+    // ✅ 2) OFFLINE fallback (per tutto; e per family solo se live non ha dato niente)
+    if (!chosen) {
+      showResultProgress(category === "family" ? "LIVE vuoto/non disponibile. Provo offline…" : "Cerco nel dataset offline, rispettando categoria e tempo.");
+
+      for (const mins of steps) {
+        usedMinutes = mins;
+
+        const picked = pickBest(basePool, origin, mins, category, styles);
+        chosen = picked.chosen;
+        alternatives = picked.alternatives;
+
+        if (forcePid) {
+          const all = buildCandidatesFromPool(basePool, origin, mins, category, styles, { ignoreVisited: true, ignoreRotation: true });
+          const forced = all.find(x => x.pid === forcePid);
+          if (forced) {
+            chosen = forced;
+            alternatives = all.filter(x => x.pid !== forcePid).slice(0, 2);
+          }
+        } else if (forbidPid && chosen?.pid === forbidPid) {
+          const all = buildCandidatesFromPool(basePool, origin, mins, category, styles, { ignoreVisited: true, ignoreRotation: true })
+            .filter(x => x.pid !== forbidPid);
+          chosen = all[0] || null;
+          alternatives = all.slice(1, 3);
+        }
+
+        if (chosen) break;
+        if (token !== SEARCH_TOKEN) return;
       }
     }
 
@@ -1166,7 +1142,6 @@ async function runSearch({ silent = false, forbidPid = null, forcePid = null } =
       datasetInfo,
       usedMinutes,
       liveUsed,
-      spaFallback,
     });
 
     if (!chosen) {
@@ -1174,8 +1149,7 @@ async function runSearch({ silent = false, forbidPid = null, forcePid = null } =
     } else if (!silent) {
       const extra = usedMinutes !== maxMinutesInput ? ` (ho allargato a ${usedMinutes} min)` : "";
       const live = liveUsed ? " • LIVE ok" : "";
-      const fam = spaFallback ? " • (fallback spa)" : "";
-      showStatus("ok", `Meta trovata ✅ (~${chosen.driveMin} min) • categoria: ${category}${extra}${live}${fam}`);
+      showStatus("ok", `Meta trovata ✅ (~${chosen.driveMin} min) • categoria: ${category}${extra}${live}`);
     }
 
   } catch (e) {
