@@ -1,0 +1,74 @@
+{
+  "areaId": "it_abruzzo",
+  "name": "Abruzzo",
+  "country": "IT",
+  "neighbors": [
+    "it_lazio",
+    "it_marche",
+    "it_molise",
+    "it_umbria"
+  ],
+  "bbox": {
+    "minLat": 41.65,
+    "minLon": 13.05,
+    "maxLat": 42.9,
+    "maxLon": 14.9
+  },
+  "generatedAt": "2026-01-05T13:15:07.574Z",
+  "endpoint": "",
+  "counts": {
+    "family": 0,
+    "natura": 0,
+    "storia": 0,
+    "mare": 0,
+    "relax": 0,
+    "borghi": 0,
+    "citta": 0
+  },
+  "items": [
+    {
+      "cat": "family",
+      "path": "/data/pois/areas/it_abruzzo/family.json",
+      "count": 0
+    },
+    {
+      "cat": "natura",
+      "path": "/data/pois/areas/it_abruzzo/natura.json",
+      "count": 0
+    },
+    {
+      "cat": "storia",
+      "path": "/data/pois/areas/it_abruzzo/storia.json",
+      "count": 0
+    },
+    {
+      "cat": "mare",
+      "path": "/data/pois/areas/it_abruzzo/mare.json",
+      "count": 0
+    },
+    {
+      "cat": "relax",
+      "path": "/data/pois/areas/it_abruzzo/relax.json",
+      "count": 0
+    },
+    {
+      "cat": "borghi",
+      "path": "/data/pois/areas/it_abruzzo/borghi.json",
+      "count": 0
+    },
+    {
+      "cat": "citta",
+      "path": "/data/pois/areas/it_abruzzo/citta.json",
+      "count": 0
+    }
+  ],
+  "notes": [
+    "cat_family_fail:fetch failed",
+    "cat_natura_fail:fetch failed",
+    "cat_storia_fail:fetch failed",
+    "cat_mare_fail:fetch failed",
+    "cat_relax_fail:fetch failed",
+    "cat_borghi_fail:fetch failed",
+    "cat_citta_fail:fetch failed"
+  ]
+}
