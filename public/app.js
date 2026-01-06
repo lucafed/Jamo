@@ -1,8 +1,8 @@
-/* Jamo — app.js v10.5 (OFFLINE FIRST + Family POIs offline + LIVE bonus + NO TERME in family)
- * - ✅ OFFLINE FIRST: niente attese infinite
- * - ✅ FAMILY: usa anche /data/pois/family.json (offline POIs) + macro
- * - ✅ FAMILY: hard-block terme/spa sempre
- * - ✅ LIVE: solo bonus fallback, con timeout duro (non blocca UI)
+/* Jamo — app.js v10.4 (Region offline support + macro fallback)
+ * ✅ NEW:
+ * - Dataset REGIONS: /data/regions/<region_id>.json (es: it-veneto)
+ * - Region-first (offline & fast). If fails -> macro as before
+ * - Map region schema {places:[{lat,lng,types,beauty_score,season...}]} -> Jamo place schema
  */
 
 const $ = (id) => document.getElementById(id);
@@ -22,19 +22,17 @@ let LAST_SHOWN_PID = null;
 let SEARCH_TOKEN = 0;
 let SEARCH_ABORT = null;
 
-// -------------------- MACROS --------------------
+// -------------------- DATA SOURCES --------------------
+const REGIONS_BASE_URL = "/data/regions";
+// ✅ TEMP: default region for IT (we'll make it selectable next)
+const DEFAULT_IT_REGION_ID = "it-veneto";
+
+// MACROS (your existing)
 const MACROS_INDEX_URL = "/data/macros/macros_index.json";
 const FALLBACK_MACRO_URLS = [
   "/data/macros/euuk_macro_all.json",
   "/data/macros/euuk_country_it.json",
 ];
-
-// -------------------- OFFLINE POIs (NUOVO) --------------------
-const OFFLINE_POIS = {
-  family: "/data/pois/family.json",
-  // più avanti aggiungiamo: theme_park, kids_museum, viewpoints, hiking, ecc.
-};
-let POIS_CACHE = {}; // { family: { places:[], meta:{} } }
 
 // -------------------- UTIL --------------------
 function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
@@ -282,7 +280,7 @@ function hideStatus() {
   t.textContent = "";
 }
 
-function showResultProgress(msg = "Cerco offline (veloce), rispettando categoria e tempo…") {
+function showResultProgress(msg = "Cerco nel dataset offline, rispettando categoria e tempo.") {
   const area = $("resultArea");
   if (!area) return;
   area.innerHTML = `
@@ -302,7 +300,7 @@ async function fetchJson(url, { signal } = {}) {
   return await r.json();
 }
 
-// -------------------- DATASET (MACRO OFFLINE) --------------------
+// -------------------- DATASET --------------------
 let MACROS_INDEX = null;
 let DATASET = { kind: null, source: null, places: [], meta: {} };
 
@@ -339,6 +337,73 @@ function normalizePlace(p) {
   return out;
 }
 
+// ---------- REGIONS: map schema -> places ----------
+function mapRegionPlaceToJamoPlace(rp, regionMeta) {
+  // region file uses lat/lng, types[], highlights[], season[]
+  const lat = Number(rp?.lat);
+  const lon = Number(rp?.lng);
+  if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
+
+  const name = String(rp?.name || "").trim();
+  if (!name) return null;
+
+  const typesArr = Array.isArray(rp?.types) ? rp.types.map(x => normalizeType(x)) : [];
+  const primaryType = typesArr[0] || "ovunque";
+
+  const seasonArr = Array.isArray(rp?.season) ? rp.season.map(s => String(s).toLowerCase()) : [];
+  const highlightsArr = Array.isArray(rp?.highlights) ? rp.highlights.map(h => String(h).toLowerCase()) : [];
+
+  // tags: types + season + some highlights keywords
+  const tags = [
+    ...typesArr.map(t => `type:${t}`),
+    ...seasonArr.map(s => `season:${s}`),
+  ];
+
+  // quick enrichment for family
+  const n = normName(name);
+  if (n.includes("gardaland") || n.includes("parco") || n.includes("zoo") || n.includes("acquario")) {
+    tags.push("family");
+  }
+
+  const beauty = Number(rp?.beauty_score);
+  const visibility = Number.isFinite(beauty) && beauty >= 0.93 ? "chicca" : "classica";
+
+  return normalizePlace({
+    id: String(rp?.id || safeIdFromPlace({ name, lat, lon })),
+    name,
+    lat,
+    lon,
+    type: primaryType,
+    visibility,
+    beauty_score: Number.isFinite(beauty) ? beauty : 0.78,
+    tags: Array.from(new Set(tags.concat(highlightsArr.map(x => `hl:${x}`)))).slice(0, 22),
+    country: regionMeta?.country || "IT",
+    area: regionMeta?.label_it || regionMeta?.region_id || "",
+  });
+}
+
+async function tryLoadRegion(regionId, signal) {
+  const rid = String(regionId || "").trim();
+  if (!rid) return null;
+
+  const url = `${REGIONS_BASE_URL}/${encodeURIComponent(rid)}.json`;
+  const j = await fetchJson(url, { signal }).catch(() => null);
+  if (!j || !Array.isArray(j.places) || !j.places.length) return null;
+
+  const meta = {
+    region_id: String(j.region_id || rid),
+    country: String(j.country || "IT").toUpperCase(),
+    label_it: String(j.label_it || ""),
+    bbox_hint: j.bbox_hint || null,
+  };
+
+  const places = j.places.map(p => mapRegionPlaceToJamoPlace(p, meta)).filter(Boolean);
+  if (!places.length) return null;
+
+  return { url, meta, places };
+}
+
+// ---------- MACROS (existing) ----------
 async function loadMacrosIndexSafe(signal) {
   try {
     MACROS_INDEX = await fetchJson(MACROS_INDEX_URL, { signal });
@@ -348,7 +413,6 @@ async function loadMacrosIndexSafe(signal) {
     return null;
   }
 }
-
 async function tryLoadMacro(url, signal) {
   const r = await fetch(url, { cache: "no-store", signal });
   if (!r.ok) return null;
@@ -361,7 +425,6 @@ async function tryLoadMacro(url, signal) {
 
   return { ...j, places };
 }
-
 function findCountryMacroPath(cc) {
   if (!MACROS_INDEX?.items?.length) return null;
   const c = String(cc || "").toUpperCase();
@@ -373,10 +436,11 @@ function findCountryMacroPath(cc) {
   );
   if (hit1?.path) return hit1.path;
 
-  const euAll = MACROS_INDEX.items.find(x =>
-    x.id === "euuk_macro_all" || String(x.path || "").includes("euuk_macro_all.json")
+  const hit2 = MACROS_INDEX.items.find(x =>
+    String(x.id || "").toLowerCase() === `eu_${c.toLowerCase()}` ||
+    String(x.path || "").includes(`eu_macro_${c.toLowerCase()}.json`)
   );
-  if (euAll?.path) return euAll.path;
+  if (hit2?.path) return hit2.path;
 
   return null;
 }
@@ -384,13 +448,34 @@ function findCountryMacroPath(cc) {
 async function ensureDatasetLoaded(origin, { signal } = {}) {
   if (DATASET?.places?.length) return DATASET;
 
+  const cc = String(origin?.country_code || $("originCC")?.value || "").toUpperCase();
+
+  // ✅ 0) REGION-FIRST for Italy (fast offline)
+  if (cc === "IT") {
+    const regionId = DEFAULT_IT_REGION_ID; // TEMP; next step: make selectable
+    const region = await tryLoadRegion(regionId, signal);
+    if (region) {
+      DATASET = {
+        kind: "region",
+        source: region.url,
+        places: region.places,
+        meta: { region: region.meta, cc },
+      };
+      return DATASET;
+    }
+  }
+
+  // 1) macros as before
   await loadMacrosIndexSafe(signal);
 
-  const cc = String(origin?.country_code || $("originCC")?.value || "").toUpperCase();
   const cPath = findCountryMacroPath(cc);
   const candidates = [];
 
   if (cPath) candidates.push(cPath);
+
+  const euAll = MACROS_INDEX?.items?.find(x => x.id === "euuk_macro_all" || String(x.path || "").includes("euuk_macro_all.json"));
+  if (euAll?.path) candidates.push(euAll.path);
+
   for (const u of FALLBACK_MACRO_URLS) candidates.push(u);
 
   const saved = localStorage.getItem("jamo_macro_url");
@@ -419,25 +504,7 @@ async function ensureDatasetLoaded(origin, { signal } = {}) {
     }
   }
 
-  throw new Error("Nessun dataset offline valido (macro) disponibile.");
-}
-
-// -------------------- OFFLINE POIs LOADER (NUOVO) --------------------
-async function ensurePoisLoaded(cat, { signal } = {}) {
-  const key = String(cat || "");
-  if (!key || !OFFLINE_POIS[key]) return { places: [], meta: {} };
-  if (POIS_CACHE[key]?.places?.length) return POIS_CACHE[key];
-
-  try {
-    const j = await fetchJson(OFFLINE_POIS[key], { signal });
-    const placesRaw = Array.isArray(j?.places) ? j.places : Array.isArray(j?.data?.elements) ? j.data.elements : [];
-    const places = placesRaw.map(normalizePlace).filter(Boolean);
-    POIS_CACHE[key] = { places, meta: j?.meta || {} };
-    return POIS_CACHE[key];
-  } catch {
-    POIS_CACHE[key] = { places: [], meta: {} };
-    return POIS_CACHE[key];
-  }
+  throw new Error("Nessun dataset offline valido disponibile.");
 }
 
 // -------------------- GEOCODING --------------------
@@ -454,7 +521,7 @@ async function geocodeLabel(label) {
   return j.result;
 }
 
-// -------------------- TAGS / CATEGORY --------------------
+// -------------------- TAGS / CATEGORY (PRECISI) --------------------
 function placeTags(place) {
   return (place.tags || []).map(t => String(t).toLowerCase());
 }
@@ -510,7 +577,8 @@ function isThemePark(place) {
   const t = tagsStr(place);
   return (
     t.includes("tourism=theme_park") ||
-    n.includes("parco divertimenti") || n.includes("lunapark") || n.includes("luna park") || n.includes("giostre")
+    n.includes("parco divertimenti") || n.includes("lunapark") || n.includes("luna park") || n.includes("giostre") ||
+    n.includes("gardaland")
   );
 }
 
@@ -565,7 +633,8 @@ function isMountain(place) {
     t.includes("natural=peak") ||
     t.includes("mountain") ||
     n.includes("monte") || n.includes("cima") || n.includes("massiccio") ||
-    n.includes("rifugio") || n.includes("passo") || n.includes("valico")
+    n.includes("rifugio") || n.includes("passo") || n.includes("valico") ||
+    t.includes("type:montagna")
   );
 }
 
@@ -580,7 +649,8 @@ function isBorgo(place) {
   return (
     type === "borghi" ||
     n.includes("borgo") ||
-    t.includes("place=village") || t.includes("place=hamlet")
+    t.includes("place=village") || t.includes("place=hamlet") ||
+    t.includes("type:borghi")
   );
 }
 
@@ -589,7 +659,8 @@ function isCity(place) {
   const t = tagsStr(place);
   return (
     type === "citta" ||
-    t.includes("place=city") || t.includes("place=town")
+    t.includes("place=city") || t.includes("place=town") ||
+    t.includes("type:citta")
   );
 }
 
@@ -600,16 +671,10 @@ function matchesCategoryStrict(place, cat) {
   const n = normName(place?.name);
   const t = tagsStr(place);
 
-  if (cat === "mare") {
-    return type === "mare" || t.includes("natural=beach") || n.includes("spiaggia") || n.includes("beach");
-  }
-  if (cat === "storia") {
-    return type === "storia" || t.includes("historic=") || t.includes("tourism=museum") || n.includes("castello") || n.includes("museo") || n.includes("rocca");
-  }
-  if (cat === "natura") {
-    return type === "natura" || t.includes("nature_reserve") || t.includes("boundary=national_park") || n.includes("cascata") || n.includes("lago") || n.includes("riserva");
-  }
-  if (cat === "relax") return isSpaPlace(place);
+  if (cat === "mare") return type === "mare" || t.includes("natural=beach") || n.includes("spiaggia") || n.includes("beach") || t.includes("type:mare");
+  if (cat === "storia") return type === "storia" || t.includes("historic=") || t.includes("tourism=museum") || n.includes("castello") || n.includes("museo") || n.includes("rocca") || t.includes("type:storia");
+  if (cat === "natura") return type === "natura" || t.includes("nature_reserve") || t.includes("boundary=national_park") || n.includes("cascata") || n.includes("lago") || n.includes("riserva") || t.includes("type:natura");
+  if (cat === "relax") return isSpaPlace(place) || type === "relax" || t.includes("type:relax");
   if (cat === "borghi") return isBorgo(place);
   if (cat === "citta") return isCity(place);
   if (cat === "montagna") return isMountain(place);
@@ -620,12 +685,14 @@ function matchesCategoryStrict(place, cat) {
   if (cat === "hiking") return isHiking(place);
 
   if (cat === "family") {
+    // family = SOLO roba family vera; spa esclusa
     return (
       isThemePark(place) ||
       isWaterPark(place) ||
       isZooOrAquarium(place) ||
       isKidsMuseum(place) ||
-      isPlaygroundLike(place)
+      isPlaygroundLike(place) ||
+      t.includes("family")
     );
   }
 
@@ -646,6 +713,7 @@ function baseScorePlace({ driveMin, targetMin, beautyScore, isChicca }) {
   const c = isChicca ? 0.06 : 0;
   return 0.62 * t + 0.32 * b + c;
 }
+
 function rotationPenalty(pid, recentSet) {
   let pen = 0;
   if (pid && pid === LAST_SHOWN_PID) pen += 0.22;
@@ -653,6 +721,7 @@ function rotationPenalty(pid, recentSet) {
   if (recentSet.has(pid)) pen += 0.10;
   return pen;
 }
+
 function familyBoost(place, category) {
   if (category !== "family") return 0;
   if (isThemePark(place)) return 0.26;
@@ -667,9 +736,17 @@ function familyBoost(place, category) {
 function widenMinutesSteps(m, category) {
   const base = clamp(Number(m) || 120, 10, 600);
   const steps = [base];
-  const muls = category === "family" ? [1.15, 1.30, 1.50] : [1.20, 1.40, 1.60];
+
+  const muls =
+    category === "family" ?     [1.15, 1.30, 1.50] :
+    category === "theme_park" ? [1.15, 1.30, 1.55] :
+    category === "mare" ?       [1.20, 1.40, 1.65] :
+    category === "storia" ?     [1.20, 1.40, 1.60] :
+                                [1.20, 1.40, 1.60];
+
   for (const k of muls) steps.push(clamp(Math.round(base * k), base, 600));
   steps.push(clamp(Math.max(240, base), base, 600));
+
   return Array.from(new Set(steps)).sort((a, b) => a - b);
 }
 
@@ -680,7 +757,11 @@ function buildCandidatesFromPool(
   maxMinutes,
   category,
   styles,
-  { ignoreVisited = false, ignoreRotation = false } = {}
+  {
+    ignoreVisited = false,
+    ignoreRotation = false,
+    allowSpaInFamily = false,
+  } = {}
 ) {
   const visited = getVisitedSet();
   const recentSet = getRecentSet();
@@ -698,10 +779,10 @@ function buildCandidatesFromPool(
     const nm = String(p.name || "").trim();
     if (!nm || nm.length < 2 || normName(nm) === "meta") continue;
 
-    if (!matchesCategoryStrict(p, category)) continue;
-
-    // 🛑 HARD BLOCK: mai terme/spa in FAMILY (anche se dataset sporco)
-    if (category === "family" && isSpaPlace(p)) continue;
+    const okCat = matchesCategoryStrict(p, category) || (
+      category === "family" && allowSpaInFamily && isSpaPlace(p)
+    );
+    if (!okCat) continue;
 
     if (!matchesStyle(p, styles)) continue;
 
@@ -710,15 +791,23 @@ function buildCandidatesFromPool(
 
     const km = haversineKm(oLat, oLon, p.lat, p.lon);
     const driveMin = estCarMinutesFromKm(km);
+
     if (!Number.isFinite(driveMin)) continue;
     if (driveMin > target) continue;
-
     if (km < (category === "family" ? 0.8 : 1.2)) continue;
 
     const isChicca = normalizeVisibility(p.visibility) === "chicca";
 
-    let s = baseScorePlace({ driveMin, targetMin: target, beautyScore: p.beauty_score, isChicca });
+    let s = baseScorePlace({
+      driveMin,
+      targetMin: target,
+      beautyScore: p.beauty_score,
+      isChicca
+    });
+
     s += familyBoost(p, category);
+
+    if (category === "family" && isSpaPlace(p) && !allowSpaInFamily) s -= 0.35;
     if (!ignoreRotation) s -= rotationPenalty(pid, recentSet);
 
     candidates.push({ place: p, pid, km, driveMin, score: Number(s.toFixed(4)) });
@@ -729,17 +818,39 @@ function buildCandidatesFromPool(
 }
 
 function pickBest(pool, origin, minutes, category, styles) {
-  let c = buildCandidatesFromPool(pool, origin, minutes, category, styles, { ignoreVisited: false, ignoreRotation: false });
-  if (c.length) return { chosen: c[0], alternatives: c.slice(1, 3), total: c.length };
+  let c = buildCandidatesFromPool(pool, origin, minutes, category, styles, {
+    ignoreVisited: false,
+    ignoreRotation: false,
+    allowSpaInFamily: false,
+  });
+  if (c.length) return { chosen: c[0], alternatives: c.slice(1, 3), total: c.length, spaFallback: false };
 
-  c = buildCandidatesFromPool(pool, origin, minutes, category, styles, { ignoreVisited: false, ignoreRotation: true });
-  if (c.length) return { chosen: c[0], alternatives: c.slice(1, 3), total: c.length };
+  if (category === "family") {
+    c = buildCandidatesFromPool(pool, origin, minutes, category, styles, {
+      ignoreVisited: false,
+      ignoreRotation: true,
+      allowSpaInFamily: true,
+    });
+    if (c.length) return { chosen: c[0], alternatives: c.slice(1, 3), total: c.length, spaFallback: true };
+  }
 
-  c = buildCandidatesFromPool(pool, origin, minutes, category, styles, { ignoreVisited: true, ignoreRotation: true });
-  return { chosen: c[0] || null, alternatives: c.slice(1, 3), total: c.length };
+  c = buildCandidatesFromPool(pool, origin, minutes, category, styles, {
+    ignoreVisited: false,
+    ignoreRotation: true,
+    allowSpaInFamily: false,
+  });
+  if (c.length) return { chosen: c[0], alternatives: c.slice(1, 3), total: c.length, spaFallback: false };
+
+  c = buildCandidatesFromPool(pool, origin, minutes, category, styles, {
+    ignoreVisited: true,
+    ignoreRotation: true,
+    allowSpaInFamily: category === "family",
+  });
+
+  return { chosen: c[0] || null, alternatives: c.slice(1, 3), total: c.length, spaFallback: category === "family" };
 }
 
-// -------------------- LIVE BONUS (/api/destinations) con TIMEOUT DURO --------------------
+// -------------------- LIVE fallback (/api/destinations) --------------------
 function minutesToRadiusKm(minutes) {
   const m = clamp(Number(minutes) || 120, 10, 600);
   const drive = Math.max(6, m - FIXED_OVERHEAD_MIN);
@@ -750,26 +861,10 @@ function minutesToRadiusKm(minutes) {
 async function fetchLiveFallback(origin, minutes, category, signal) {
   const radiusKm = minutesToRadiusKm(minutes);
   const url = `/api/destinations?lat=${encodeURIComponent(origin.lat)}&lon=${encodeURIComponent(origin.lon)}&radiusKm=${encodeURIComponent(radiusKm)}&cat=${encodeURIComponent(category)}`;
-
-  const ctrl = new AbortController();
-  const timeoutMs = 9000; // 9s
-  const t = setTimeout(() => ctrl.abort(), timeoutMs);
-
-  const abortHandler = () => { try { ctrl.abort(); } catch {} };
-  try { signal?.addEventListener?.("abort", abortHandler, { once: true }); } catch {}
-
-  try {
-    const r = await fetch(url, { cache: "no-store", signal: ctrl.signal });
-    if (!r.ok) return [];
-    const j = await r.json().catch(() => null);
-    const els = j?.data?.elements;
-    if (!Array.isArray(els) || !els.length) return [];
-    return els.map(normalizePlace).filter(Boolean);
-  } catch {
-    return [];
-  } finally {
-    clearTimeout(t);
-  }
+  const j = await fetchJson(url, { signal });
+  const els = j?.data?.elements;
+  if (!Array.isArray(els) || !els.length) return [];
+  return els.map(normalizePlace).filter(Boolean);
 }
 
 // -------------------- CARD HELPERS --------------------
@@ -802,9 +897,6 @@ function microWhatToDo(place, category) {
     if (isPlaygroundLike(place)) return "Parco giochi/attività kids: semplice e super efficace.";
     return "Attività family: controlla foto e cosa fare nei dintorni.";
   }
-  if (category === "kids_museum") return "Esperienza interattiva: perfetta per bambini e pioggia.";
-  if (category === "viewpoints") return "Panorama: tramonto, foto e passeggiata breve.";
-  if (category === "hiking") return "Sentiero/trekking: scarpe buone e controlla meteo.";
   if (category === "relax") return "Relax: terme/spa o posto tranquillo + pausa.";
   if (category === "storia") return "Storia e cultura: visita + centro storico.";
   if (category === "mare") return "Mare: spiaggia, passeggiata e tramonto.";
@@ -826,8 +918,6 @@ function chipsFromPlace(place, category) {
     if (looksIndoor(place)) chips.push("🏠 indoor");
     if (isWinterNow() && isWaterPark(place) && !looksIndoor(place)) chips.push("❄️ stagionale");
   }
-  if (category === "viewpoints") chips.push("🌅 panorama");
-  if (category === "hiking") chips.push("🥾 sentiero");
   if (category === "montagna") chips.push("🏔️ montagna");
   if (category === "borghi") chips.push("🏘️ borgo");
   if (category === "storia") chips.push("🏛️ storia");
@@ -917,7 +1007,8 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives = [], meta =
           <div class="pill">${tb.emoji} ${tb.label}</div>
           <div class="pill">🚗 ~${chosen.driveMin} min • ${fmtKm(chosen.km)}</div>
           <div class="pill">${badge}</div>
-          ${meta.liveUsed ? `<div class="pill">🛰️ LIVE bonus</div>` : `<div class="pill">📦 OFFLINE</div>`}
+          ${meta.liveUsed ? `<div class="pill">🛰️ LIVE</div>` : ""}
+          ${meta.spaFallback ? `<div class="pill">⚠️ fallback (spa)</div>` : ""}
         </div>
       </div>
 
@@ -945,7 +1036,6 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives = [], meta =
           <a class="btn" target="_blank" rel="noopener" href="${mapsDirUrl(origin.lat, origin.lon, lat, lon)}">🚗 Percorso</a>
           <a class="btn btn-ghost" target="_blank" rel="noopener" href="${googleImagesUrl(q)}">📸 Foto</a>
           <a class="btn btn-ghost" target="_blank" rel="noopener" href="${googleThingsToDoUrl(q)}">👀 Cosa vedere</a>
-          <a class="btn btn-ghost" target="_blank" rel="noopener" href="${googleDoUrl(q)}">🎯 Cosa fare</a>
           <a class="btn btn-ghost" target="_blank" rel="noopener" href="${restaurantsUrl(q)}">🍝 Ristoranti</a>
           <a class="btn btn-ghost" target="_blank" rel="noopener" href="${wikiUrl(q)}">📚 Wiki</a>
           <a class="btn btn-ghost" target="_blank" rel="noopener" href="${eventsUrl(q)}">📅 Eventi</a>
@@ -1011,7 +1101,7 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives = [], meta =
   });
 }
 
-// -------------------- MAIN SEARCH (OFFLINE FIRST + LIVE BONUS) --------------------
+// -------------------- MAIN SEARCH (OFFLINE + LIVE fallback) --------------------
 async function runSearch({ silent = false, forbidPid = null, forcePid = null } = {}) {
   try { SEARCH_ABORT?.abort?.(); } catch {}
   SEARCH_ABORT = new AbortController();
@@ -1028,54 +1118,47 @@ async function runSearch({ silent = false, forbidPid = null, forcePid = null } =
       return;
     }
 
+    DATASET = { kind: null, source: null, places: [], meta: {} };
     await ensureDatasetLoaded(origin, { signal });
 
-    // offline macro
-    const macroPool = Array.isArray(DATASET?.places) ? DATASET.places : [];
+    const basePool = Array.isArray(DATASET?.places) ? DATASET.places : [];
+    const datasetInfo =
+      DATASET.kind === "region"
+        ? `REGION:${(DATASET.source || "").split("/").pop()} (${basePool.length})`
+        : DATASET.kind === "macro"
+          ? `MACRO:${(DATASET.source || "").split("/").pop()} (${basePool.length})`
+          : `—`;
 
-    // offline POIs (solo family per ora)
+    const maxMinutesInput = clamp(Number($("maxMinutes")?.value) || 120, 10, 600);
     const category = getActiveCategory();
     const styles = getActiveStyles();
-    const maxMinutesInput = clamp(Number($("maxMinutes")?.value) || 120, 10, 600);
+
     const steps = widenMinutesSteps(maxMinutesInput, category);
-
-    let poisPool = [];
-    let poisInfo = "";
-    if (category === "family") {
-      const p = await ensurePoisLoaded("family", { signal });
-      poisPool = Array.isArray(p?.places) ? p.places : [];
-      poisInfo = ` + POIS:family(${poisPool.length})`;
-    }
-
-    const basePool = macroPool.concat(poisPool);
-
-    const datasetInfo =
-      DATASET.kind === "macro"
-        ? `MACRO:${(DATASET.source || "").split("/").pop()} (${macroPool.length})${poisInfo}`
-        : `—${poisInfo}`;
 
     let chosen = null;
     let alternatives = [];
     let usedMinutes = steps[0];
     let liveUsed = false;
+    let spaFallback = false;
 
-    // 1) OFFLINE FIRST widening
+    // 1) OFFLINE widening
     for (const mins of steps) {
       usedMinutes = mins;
 
       const picked = pickBest(basePool, origin, mins, category, styles);
       chosen = picked.chosen;
       alternatives = picked.alternatives;
+      spaFallback = !!picked.spaFallback;
 
       if (forcePid) {
-        const all = buildCandidatesFromPool(basePool, origin, mins, category, styles, { ignoreVisited: true, ignoreRotation: true });
+        const all = buildCandidatesFromPool(basePool, origin, mins, category, styles, { ignoreVisited: true, ignoreRotation: true, allowSpaInFamily: true });
         const forced = all.find(x => x.pid === forcePid);
         if (forced) {
           chosen = forced;
           alternatives = all.filter(x => x.pid !== forcePid).slice(0, 2);
         }
       } else if (forbidPid && chosen?.pid === forbidPid) {
-        const all = buildCandidatesFromPool(basePool, origin, mins, category, styles, { ignoreVisited: true, ignoreRotation: true })
+        const all = buildCandidatesFromPool(basePool, origin, mins, category, styles, { ignoreVisited: true, ignoreRotation: true, allowSpaInFamily: true })
           .filter(x => x.pid !== forbidPid);
         chosen = all[0] || null;
         alternatives = all.slice(1, 3);
@@ -1087,11 +1170,12 @@ async function runSearch({ silent = false, forbidPid = null, forcePid = null } =
 
     if (token !== SEARCH_TOKEN) return;
 
-    // 2) LIVE BONUS (solo se offline non trova nulla)
+    // 2) LIVE fallback only if offline empty OR not enough choices
     if (!chosen) {
-      showResultProgress("Offline vuoto. Provo LIVE bonus (massimo 9 secondi)…");
+      showResultProgress("Offline vuoto. Provo LIVE (Overpass) senza cambiare categoria…");
       for (const mins of steps) {
         usedMinutes = mins;
+
         const livePlaces = await fetchLiveFallback(origin, mins, category, signal).catch(() => []);
         if (token !== SEARCH_TOKEN) return;
 
@@ -1100,9 +1184,9 @@ async function runSearch({ silent = false, forbidPid = null, forcePid = null } =
           const picked = pickBest(merged, origin, mins, category, styles);
           chosen = picked.chosen;
           alternatives = picked.alternatives;
+          spaFallback = !!picked.spaFallback;
           liveUsed = !!chosen;
         }
-
         if (chosen) break;
       }
     }
@@ -1114,14 +1198,16 @@ async function runSearch({ silent = false, forbidPid = null, forcePid = null } =
       datasetInfo,
       usedMinutes,
       liveUsed,
+      spaFallback,
     });
 
     if (!chosen) {
       showStatus("warn", `Nessuna meta entro ${maxMinutesInput} min per "${category}". Prova ad aumentare i minuti o cambia categoria.`);
     } else if (!silent) {
       const extra = usedMinutes !== maxMinutesInput ? ` (ho allargato a ${usedMinutes} min)` : "";
-      const live = liveUsed ? " • LIVE bonus" : " • OFFLINE";
-      showStatus("ok", `Meta trovata ✅ (~${chosen.driveMin} min) • categoria: ${category}${extra}${live}`);
+      const live = liveUsed ? " • LIVE ok" : "";
+      const fam = spaFallback ? " • (fallback spa)" : "";
+      showStatus("ok", `Meta trovata ✅ (~${chosen.driveMin} min) • categoria: ${category}${extra}${live}${fam}`);
     }
 
   } catch (e) {
@@ -1171,10 +1257,6 @@ function bindOriginButtons() {
 
         setOrigin({ label: "La mia posizione", lat, lon, country_code: "" });
         showStatus("ok", "Partenza GPS impostata ✅");
-
-        DATASET = { kind: null, source: null, places: [], meta: {} };
-        POIS_CACHE = {};
-        await ensureDatasetLoaded(getOrigin(), { signal: undefined }).catch(() => {});
       },
       (err) => {
         console.error(err);
@@ -1200,10 +1282,6 @@ function bindOriginButtons() {
       });
 
       showStatus("ok", "Partenza impostata ✅");
-
-      DATASET = { kind: null, source: null, places: [], meta: {} };
-      POIS_CACHE = {};
-      await ensureDatasetLoaded(getOrigin(), { signal: undefined }).catch(() => {});
     } catch (e) {
       console.error(e);
       if ($("originStatus")) $("originStatus").textContent = `❌ ${String(e.message || e)}`;
