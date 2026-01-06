@@ -74,14 +74,18 @@
     <div class="hero">
       <h2>Scegli la partenza, il tempo… e ti troviamo la meta.</h2>
       <p class="sub">
-        Solo auto. Borghi, città, mare, natura e soprattutto attività per famiglie:
-        <b>parchi</b>, <b>zoo</b>, <b>acquapark</b>, <b>musei kids</b>, panorami e sentieri.
+        Solo auto. Suggerimenti coerenti per categoria:
+        <b>Family</b> (parchi giochi, zoo, acquari, acquapark),
+        <b>Panorami</b> (veri viewpoint),
+        <b>Trekking</b> (rifugi/sentieri),
+        più <b>Borghi</b>, <b>Città</b>, <b>Mare</b>, <b>Montagna</b>, <b>Storia</b> e <b>Relax</b>.
       </p>
       <p class="sub" style="margin-top:8px;">
         <span class="pill">🇪🇺 EU</span>
         <span class="pill">🇬🇧 UK</span>
         <span class="pill">📏 distanza reale</span>
         <span class="pill">🏷️ categoria hard</span>
+        <span class="pill">🔒 no GPS</span>
       </p>
     </div>
 
@@ -93,6 +97,7 @@
         <input id="originLabel" type="text" placeholder="Es: L'Aquila / Roma Termini / Via Roma 10" />
 
         <div class="row gap" style="margin-top:10px;">
+          <!-- il bottone resta per compatibilità, ma app.js lo nasconde -->
           <button id="btnUseGPS" class="btn" type="button">📍 Usa la mia posizione</button>
           <button id="btnFindPlace" class="btn btn-ghost" type="button">🔎 Usa questo luogo</button>
         </div>
@@ -138,18 +143,15 @@
           <div class="chip active" data-cat="ovunque">Ovunque 🎲</div>
 
           <div class="chip" data-cat="family">Family 👨‍👩‍👧‍👦</div>
-          <div class="chip" data-cat="theme_park">Parchi 🎢</div>
-          <div class="chip" data-cat="kids_museum">Musei bimbi 🧒🏛️</div>
           <div class="chip" data-cat="viewpoints">Panorami 🌅</div>
           <div class="chip" data-cat="hiking">Trekking 🥾</div>
 
           <div class="chip" data-cat="borghi">Borghi 🏘️</div>
+          <div class="chip" data-cat="citta">Città 🏙️</div>
           <div class="chip" data-cat="mare">Mare 🌊</div>
           <div class="chip" data-cat="montagna">Montagna 🏔️</div>
-          <div class="chip" data-cat="natura">Natura 🌿</div>
           <div class="chip" data-cat="storia">Storia 🏛️</div>
           <div class="chip" data-cat="relax">Relax 🧖</div>
-          <div class="chip" data-cat="citta">Città 🏙️</div>
         </div>
 
         <div class="hr"></div>
@@ -184,7 +186,7 @@
   </div>
 
   <!-- ✅ Cache-bust: forces fresh app.js after deploy -->
-  <script src="/app.js?v=11.0"></script>
+  <script src="/app.js?v=11.1"></script>
 
   <script>
     // PWA install prompt
