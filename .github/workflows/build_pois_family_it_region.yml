@@ -1,0 +1,46 @@
+name: Build POIs FAMILY (IT region) and commit
+
+on:
+  workflow_dispatch:
+    inputs:
+      region_slug:
+        description: "Region slug (es: veneto)"
+        required: true
+        default: "veneto"
+      region_iso:
+        description: "ISO3166-2 (es: IT-34)"
+        required: true
+        default: "IT-34"
+
+jobs:
+  build_and_commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # ✅ IMPORTANTISSIMO: niente npm install (nel tuo repo manca package.json)
+      - name: Build FAMILY POIs (region)
+        env:
+          REGION_SLUG: ${{ inputs.region_slug }}
+          REGION_ISO: ${{ inputs.region_iso }}
+        run: |
+          node scripts/build_pois_family_it_region.mjs
+
+      - name: Verify output exists
+        run: |
+          test -f "public/data/pois/it/${{ inputs.region_slug }}/family.json"
+          echo "OK: output exists"
+
+      - name: Commit & push generated file
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add "public/data/pois/it/${{ inputs.region_slug }}/family.json"
+          git commit -m "build: family POIs IT region ${{ inputs.region_slug }} (${{ inputs.region_iso }})" || echo "No changes to commit"
+          git push
