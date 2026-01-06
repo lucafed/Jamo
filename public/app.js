@@ -1,38 +1,52 @@
-/* app.js — Jamo (REGION-OFFLINE FIRST) — v5.2 FULL
-   - REGION offline first: /data/pois/regions/<region_id>.json
-   - LIVE (Overpass) second: /api/destinations?lat&lon&radiusKm&cat
-   - MACRO fallback: /data/macros/euk_country_<cc>.json
-   - Robust: never crash if DOM IDs differ
-   - Weekly rotation + avoid visited
-*/
+/* Jamo — app.js v10.5.3 (FULL)
+ * ✅ FIX CRITICO: nessun crash JS => bottoni sempre cliccabili
+ * ✅ Offline-first “regione” SOLO se l’utente è dentro la bbox della regione (Veneto)
+ * ✅ Fallback robusto: Region POIs -> macro country -> euuk_all -> fallback
+ * ✅ Categorie precise + rotazione + LIVE fallback (/api/destinations)
+ * ✅ Compat: normalizePlace accetta anche primary_category / lng
+ */
 
 (() => {
   "use strict";
 
-  // -----------------------------
-  // Helpers
-  // -----------------------------
-  const $ = (sel, root = document) => root.querySelector(sel);
-  const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+  const $ = (id) => document.getElementById(id);
 
+  // -------------------- ROUTING / ESTIMATOR --------------------
+  const ROAD_FACTOR = 1.25;
+  const AVG_KMH = 72;
+  const FIXED_OVERHEAD_MIN = 8;
+
+  // -------------------- ROTATION --------------------
+  const RECENT_TTL_MS = 1000 * 60 * 60 * 20;
+  const RECENT_MAX = 160;
+  let SESSION_SEEN = new Set();
+  let LAST_SHOWN_PID = null;
+
+  // -------------------- GLOBAL SEARCH CONTROL (anti-race) --------------------
+  let SEARCH_TOKEN = 0;
+  let SEARCH_ABORT = null;
+
+  // -------------------- OFFLINE DATA --------------------
+  const MACROS_INDEX_URL = "/data/macros/macros_index.json";
+  const FALLBACK_MACRO_URLS = [
+    "/data/macros/euuk_country_it.json",
+    "/data/macros/euuk_macro_all.json",
+  ];
+
+  // ✅ POI regionali (test Veneto)
+  const REGIONAL_POIS_BY_ID = {
+    "it-veneto": "/data/pois/regions/it-veneto.json",
+  };
+
+  // Veneto bbox (approssimata, sufficiente per gating)
+  const REGION_BBOX = {
+    "it-veneto": { minLat: 44.70, maxLat: 46.70, minLon: 10.20, maxLon: 13.20 },
+  };
+
+  // -------------------- UTIL --------------------
   function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
-  function asNum(x) { const n = Number(x); return Number.isFinite(n) ? n : null; }
-  function normStr(s) { return String(s || "").trim(); }
-  function lower(s) { return normStr(s).toLowerCase(); }
-
-  function escapeHtml(s) {
-    return String(s ?? "")
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#039;");
-  }
-
-  function safeSetText(el, txt) { if (el) el.textContent = String(txt ?? ""); }
-  function safeSetHTML(el, html) { if (el) el.innerHTML = String(html ?? ""); }
-
   function toRad(x) { return (x * Math.PI) / 180; }
+
   function haversineKm(aLat, aLon, bLat, bLon) {
     const R = 6371;
     const dLat = toRad(bLat - aLat);
@@ -45,704 +59,1217 @@
     return 2 * R * Math.asin(Math.sqrt(s));
   }
 
-  // -----------------------------
-  // Weekly rotation RNG
-  // -----------------------------
-  function weekKeyUTC() {
-    const d = new Date();
-    const t = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
-    const day = new Date(t).getUTCDay() || 7; // 1..7
-    const thursday = new Date(t + (4 - day) * 86400000);
-    const yearStart = Date.UTC(thursday.getUTCFullYear(), 0, 1);
-    const week = Math.ceil(((thursday - yearStart) / 86400000 + 1) / 7);
-    return `${thursday.getUTCFullYear()}-W${String(week).padStart(2, "0")}`;
+  function normName(s) {
+    return String(s ?? "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]+/g, " ")
+      .trim();
   }
 
-  function hashStringToSeed(str) {
-    let h = 2166136261;
-    for (let i = 0; i < str.length; i++) {
-      h ^= str.charCodeAt(i);
-      h = Math.imul(h, 16777619);
+  function safeIdFromPlace(p) {
+    if (p?.id) return String(p.id);
+    const nm = normName(p?.name);
+    const lat = String(p?.lat ?? "").slice(0, 8);
+    const lon = String(p?.lon ?? p?.lng ?? "").slice(0, 8);
+    return `p_${nm || "x"}_${lat}_${lon}`;
+  }
+
+  function estCarMinutesFromKm(km) {
+    if (!Number.isFinite(km)) return NaN;
+    const roadKm = km * ROAD_FACTOR;
+    const driveMin = (roadKm / AVG_KMH) * 60;
+    return Math.round(clamp(driveMin + FIXED_OVERHEAD_MIN, 6, 900));
+  }
+
+  function fmtKm(km) { return `${Math.round(km)} km`; }
+
+  function isWinterNow() {
+    const m = new Date().getMonth() + 1;
+    return (m === 11 || m === 12 || m === 1 || m === 2 || m === 3);
+  }
+
+  function withinBBox(lat, lon, bbox) {
+    if (!bbox) return false;
+    return lat >= bbox.minLat && lat <= bbox.maxLat && lon >= bbox.minLon && lon <= bbox.maxLon;
+  }
+
+  // -------------------- MAP STATIC IMAGES --------------------
+  function osmStaticImgPrimary(lat, lon, z = 12) {
+    const size = "720x360";
+    const marker = `${lat},${lon},lightblue1`;
+    return `https://staticmap.openstreetmap.de/staticmap.php?center=${encodeURIComponent(lat + "," + lon)}&zoom=${encodeURIComponent(z)}&size=${encodeURIComponent(size)}&maptype=mapnik&markers=${encodeURIComponent(marker)}`;
+  }
+  function osmStaticImgFallback(lat, lon, z = 12) {
+    const size = "720x360";
+    const marker = `color:blue|${lat},${lon}`;
+    return `https://staticmap.openstreetmap.fr/osmfr/staticmap.php?center=${encodeURIComponent(lat + "," + lon)}&zoom=${encodeURIComponent(z)}&size=${encodeURIComponent(size)}&markers=${encodeURIComponent(marker)}`;
+  }
+
+  // -------------------- LINKS --------------------
+  function mapsPlaceUrl(lat, lon) {
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(lat + "," + lon)}`;
+  }
+  function mapsDirUrl(oLat, oLon, dLat, dLon) {
+    return `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(oLat + "," + oLon)}&destination=${encodeURIComponent(dLat + "," + dLon)}&travelmode=driving`;
+  }
+  function gmapsQueryUrl(q) {
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
+  }
+  function googleImagesUrl(q) {
+    return `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(q)}`;
+  }
+  function googleThingsToDoUrl(q) {
+    return `https://www.google.com/search?q=${encodeURIComponent("cosa vedere " + q)}`;
+  }
+  function googleDoUrl(q) {
+    return `https://www.google.com/search?q=${encodeURIComponent("cosa fare " + q)}`;
+  }
+  function wikiUrl(title) {
+    return `https://it.wikipedia.org/w/index.php?search=${encodeURIComponent(title)}`;
+  }
+  function restaurantsUrl(q) {
+    return gmapsQueryUrl(`${q} ristoranti`);
+  }
+  function eventsUrl(q) {
+    return `https://www.google.com/search?q=${encodeURIComponent("eventi " + q)}`;
+  }
+
+  // -------------------- STORAGE: ORIGIN --------------------
+  function setOrigin({ label, lat, lon, country_code }) {
+    if ($("originLabel")) $("originLabel").value = label ?? "";
+    if ($("originLat")) $("originLat").value = String(lat);
+    if ($("originLon")) $("originLon").value = String(lon);
+
+    const cc = String(country_code || "").toUpperCase();
+    if ($("originCC")) $("originCC").value = cc;
+
+    localStorage.setItem("jamo_origin", JSON.stringify({ label, lat, lon, country_code: cc }));
+
+    if ($("originStatus")) {
+      $("originStatus").textContent =
+        `✅ Partenza: ${label || "posizione"} (${Number(lat).toFixed(4)}, ${Number(lon).toFixed(4)})${cc ? " • " + cc : ""}`;
     }
-    return h >>> 0;
   }
 
-  function mulberry32(seed) {
-    let a = seed >>> 0;
-    return function () {
-      a |= 0; a = (a + 0x6D2B79F5) | 0;
-      let t = Math.imul(a ^ (a >>> 15), 1 | a);
-      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-    };
-  }
+  function getOrigin() {
+    const lat = Number($("originLat")?.value);
+    const lon = Number($("originLon")?.value);
+    const label = ($("originLabel")?.value || "").trim();
+    const ccDom = String($("originCC")?.value || "").toUpperCase();
 
-  // -----------------------------
-  // Fetch JSON (timeout)
-  // -----------------------------
-  async function fetchJson(url, { timeoutMs = 12000 } = {}) {
-    const ctrl = new AbortController();
-    const t = setTimeout(() => ctrl.abort(), timeoutMs);
-    try {
-      const r = await fetch(url, { signal: ctrl.signal, cache: "no-store" });
-      if (!r.ok) throw new Error(`HTTP ${r.status}`);
-      return await r.json();
-    } finally {
-      clearTimeout(t);
+    if (Number.isFinite(lat) && Number.isFinite(lon)) {
+      return { label, lat, lon, country_code: ccDom };
     }
+
+    const raw = localStorage.getItem("jamo_origin");
+    if (raw) {
+      try {
+        const o = JSON.parse(raw);
+        if (Number.isFinite(Number(o?.lat)) && Number.isFinite(Number(o?.lon))) {
+          return {
+            label: String(o.label || ""),
+            lat: Number(o.lat),
+            lon: Number(o.lon),
+            country_code: String(o.country_code || "").toUpperCase(),
+          };
+        }
+      } catch {}
+    }
+    return null;
   }
 
-  // -----------------------------
-  // Storage: visited
-  // -----------------------------
-  const VISITED_KEY = "jamo_visited_ids_v1";
-
+  // -------------------- STORAGE: VISITED + RECENT --------------------
   function getVisitedSet() {
+    const raw = localStorage.getItem("jamo_visited");
+    if (!raw) return new Set();
     try {
-      const raw = localStorage.getItem(VISITED_KEY);
-      const arr = raw ? JSON.parse(raw) : [];
+      const arr = JSON.parse(raw);
       return new Set(Array.isArray(arr) ? arr : []);
-    } catch {
-      return new Set();
-    }
+    } catch { return new Set(); }
   }
   function saveVisitedSet(set) {
-    try {
-      localStorage.setItem(VISITED_KEY, JSON.stringify(Array.from(set).slice(0, 5000)));
-    } catch {}
+    localStorage.setItem("jamo_visited", JSON.stringify([...set]));
   }
-  function markVisited(id) {
+  function markVisited(placeId) {
     const s = getVisitedSet();
-    s.add(String(id));
+    s.add(placeId);
     saveVisitedSet(s);
   }
   function resetVisited() {
-    try { localStorage.removeItem(VISITED_KEY); } catch {}
+    localStorage.removeItem("jamo_visited");
   }
 
-  // -----------------------------
-  // Categories
-  // -----------------------------
-  const UI_CATS = new Set([
-    "ovunque", "family", "parchi",
-    "relax", "natura", "storia",
-    "mare", "borghi", "citta", "montagna"
-  ]);
-
-  const FAMILY_TYPES = new Set([
-    "family", "theme_park", "kids_museum", "playground", "water_park",
-    "zoo", "aquarium", "ice_rink", "adventure_park", "snow_family",
-    "cinema", "bowling"
-  ]);
-
-  function normCat(c) {
-    const s = lower(c || "ovunque");
-    return UI_CATS.has(s) ? s : "ovunque";
+  function loadRecent() {
+    const raw = localStorage.getItem("jamo_recent");
+    if (!raw) return [];
+    try {
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch { return []; }
+  }
+  function saveRecent(list) {
+    localStorage.setItem("jamo_recent", JSON.stringify(list.slice(0, RECENT_MAX)));
+  }
+  function cleanupRecent(list) {
+    const t = Date.now();
+    return list.filter(x => x && x.pid && (t - (x.ts || 0) <= RECENT_TTL_MS));
+  }
+  function addRecent(pid) {
+    const t = Date.now();
+    let list = cleanupRecent(loadRecent());
+    list.unshift({ pid, ts: t });
+    const seen = new Set();
+    list = list.filter(x => (seen.has(x.pid) ? false : (seen.add(x.pid), true)));
+    saveRecent(list);
+  }
+  function getRecentSet() {
+    const list = cleanupRecent(loadRecent());
+    saveRecent(list);
+    return new Set(list.map(x => x.pid));
+  }
+  function resetRotation() {
+    localStorage.removeItem("jamo_recent");
+    SESSION_SEEN = new Set();
+    LAST_SHOWN_PID = null;
   }
 
-  function placeTypeCandidates(p) {
-    const out = [];
-    if (!p || typeof p !== "object") return out;
-    if (p.type) out.push(String(p.type));
-    if (p.primary_category) out.push(String(p.primary_category));
-    if (p.subtype) out.push(String(p.subtype));
-    if (Array.isArray(p.types)) out.push(...p.types.map(String));
-    return out.map(lower).filter(Boolean);
+  // -------------------- UI --------------------
+  function initChips(containerId, { multi = false } = {}) {
+    const el = $(containerId);
+    if (!el) return;
+
+    el.addEventListener("click", (e) => {
+      const chip = e.target.closest(".chip");
+      if (!chip) return;
+
+      if (!multi) {
+        [...el.querySelectorAll(".chip")].forEach(c => c.classList.remove("active"));
+        chip.classList.add("active");
+      } else {
+        chip.classList.toggle("active");
+      }
+
+      if (containerId === "timeChips") {
+        const v = Number(chip.dataset.min);
+        if (Number.isFinite(v) && $("maxMinutes")) $("maxMinutes").value = String(v);
+      }
+    });
   }
 
-  function categoryMatches(place, cat) {
-    const c = normCat(cat);
-    if (c === "ovunque") return true;
-
-    const types = new Set(placeTypeCandidates(place));
-    const tags = Array.isArray(place?.tags) ? place.tags.join(" ").toLowerCase() : "";
-    const name = lower(place?.name);
-
-    if (c === "family" || c === "parchi") {
-      for (const t of types) if (FAMILY_TYPES.has(t)) return true;
-
-      // tag-based inference
-      if (tags.includes("tourism=theme_park")) return true;
-      if (tags.includes("leisure=water_park")) return true;
-      if (tags.includes("leisure=playground")) return true;
-      if (tags.includes("tourism=zoo") || tags.includes("tourism=aquarium")) return true;
-
-      // exclude spa/terme
-      if (tags.includes("amenity=spa") || tags.includes("leisure=spa") || tags.includes("natural=hot_spring") || tags.includes("thermal=yes")) return false;
-      if (name.includes("terme") || name.includes("spa") || name.includes("thermal") || name.includes("benessere")) return false;
-
-      return false;
-    }
-
-    if (c === "montagna") {
-      if (types.has("montagna")) return true;
-      if (tags.includes("natural=peak") || tags.includes("aerialway=")) return true;
-      if (name.includes("rifugio") || name.includes("cima") || name.includes("vetta") || name.includes("passo") || name.includes("funivia") || name.includes("seggiovia")) return true;
-      return false;
-    }
-
-    if (types.has(c)) return true;
-
-    if (c === "borghi" && (types.has("borgo") || tags.includes("place=village") || tags.includes("place=hamlet"))) return true;
-
-    return false;
+  function getActiveCategory() {
+    const el = $("categoryChips");
+    const active = el?.querySelector(".chip.active");
+    return active?.dataset.cat || "ovunque";
   }
 
-  // -----------------------------
-  // Normalize place (multi-dataset)
-  // -----------------------------
-  function normalizePlace(raw) {
-    if (!raw || typeof raw !== "object") return null;
-
-    const name = normStr(raw.name || raw.title || raw.label);
-    const lat = asNum(raw.lat ?? raw.latitude);
-    const lon = asNum(raw.lon ?? raw.lng ?? raw.longitude);
-    if (!name || !Number.isFinite(lat) || !Number.isFinite(lon)) return null;
-
-    const id = normStr(raw.id || raw._id || `${name}_${lat.toFixed(5)}_${lon.toFixed(5)}`);
-
-    const type = normStr(
-      raw.type ||
-      raw.primary_category ||
-      (Array.isArray(raw.types) ? raw.types[0] : "ovunque")
-    ) || "ovunque";
-
-    const visibility = normStr(raw.visibility || raw.level || "classica");
-    const beauty_score = asNum(raw.beauty_score) ?? 0.7;
-
-    const tags =
-      Array.isArray(raw.tags) ? raw.tags.map(String) :
-      Array.isArray(raw.tagList) ? raw.tagList.map(String) :
-      [];
-
+  function getActiveStyles() {
+    const el = $("styleChips");
+    const actives = [...(el?.querySelectorAll(".chip.active") || [])].map(c => c.dataset.style);
     return {
-      id,
-      name,
-      lat,
-      lon,
-      type: lower(type),
-      primary_category: lower(raw.primary_category || type),
-      subtype: lower(raw.subtype || ""),
-      visibility: lower(visibility),
-      beauty_score: clamp(beauty_score, 0, 1),
-      tags,
-      live: Boolean(raw.live),
-      source: normStr(raw.source || raw.dataset || ""),
-      _km: asNum(raw._km),
-      _score: asNum(raw._score),
-      _raw: raw
+      wantChicche: actives.includes("chicche"),
+      wantClassici: actives.includes("classici"),
     };
   }
 
-  // -----------------------------
-  // Region detect via areas.json bbox
-  // -----------------------------
-  function pointInBbox(lat, lon, bbox) {
-    if (!bbox || typeof bbox !== "object") return false;
-    const minLat = asNum(bbox.min_lat ?? bbox.minLat ?? bbox.south ?? bbox.minlat);
-    const maxLat = asNum(bbox.max_lat ?? bbox.maxLat ?? bbox.north ?? bbox.maxlat);
-    const minLon = asNum(bbox.min_lon ?? bbox.minLon ?? bbox.west ?? bbox.minlng ?? bbox.min_lng);
-    const maxLon = asNum(bbox.max_lon ?? bbox.maxLon ?? bbox.east ?? bbox.maxlng ?? bbox.max_lng);
-    if (![minLat, maxLat, minLon, maxLon].every(Number.isFinite)) return false;
-    return lat >= minLat && lat <= maxLat && lon >= minLon && lon <= maxLon;
+  function showStatus(type, text) {
+    const box = $("statusBox");
+    const t = $("statusText");
+    if (!box || !t) return;
+
+    box.classList.remove("okbox", "warnbox", "errbox");
+    if (type === "ok") box.classList.add("okbox");
+    else if (type === "err") box.classList.add("errbox");
+    else box.classList.add("warnbox");
+
+    t.textContent = text;
+    box.style.display = "block";
+  }
+  function hideStatus() {
+    const box = $("statusBox");
+    const t = $("statusText");
+    if (!box || !t) return;
+    box.style.display = "none";
+    t.textContent = "";
   }
 
-  async function detectRegionId(lat, lon) {
+  function showResultProgress(msg = "Cerco nel dataset offline, rispettando categoria e tempo.") {
+    const area = $("resultArea");
+    if (!area) return;
+    area.innerHTML = `
+      <div class="card warnbox">
+        <div style="font-weight:900; font-size:18px;">🔎 Sto cercando…</div>
+        <div class="small muted" style="margin-top:8px; line-height:1.4;">
+          ${msg}
+        </div>
+      </div>
+    `;
+  }
+
+  // -------------------- FETCH JSON --------------------
+  async function fetchJson(url, { signal } = {}) {
+    const r = await fetch(url, { cache: "no-store", signal });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return await r.json();
+  }
+
+  // -------------------- DATASET (OFFLINE) --------------------
+  let MACROS_INDEX = null;
+  let DATASET = { kind: null, source: null, places: [], meta: {} };
+
+  function normalizeVisibility(v) {
+    const s = String(v || "").toLowerCase().trim();
+    if (s === "chicca") return "chicca";
+    return "classica";
+  }
+
+  function normalizeType(t) {
+    const s = String(t || "").toLowerCase().trim();
+    if (!s) return "";
+    if (s === "borgo") return "borghi";
+    if (s === "città") return "citta";
+    if (s === "citta") return "citta";
+    return s;
+  }
+
+  function normalizePlace(p) {
+    if (!p) return null;
+    const lat = Number(p.lat);
+    const lon = Number(p.lon ?? p.lng);
+    if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
+
+    const out = { ...p };
+    out.lat = lat;
+    out.lon = lon;
+    out.name = String(out.name || "").trim();
+
+    // ✅ support: se nei POI c’è primary_category, usiamola come type se manca
+    const rawType = out.type || out.primary_category || out.category || "";
+    out.type = normalizeType(rawType);
+
+    out.visibility = normalizeVisibility(out.visibility);
+
+    // tags: array stringhe lower
+    out.tags = Array.isArray(out.tags)
+      ? out.tags.map(x => String(x).toLowerCase())
+      : [];
+
+    out.country = String(out.country || "").toUpperCase();
+    out.area = String(out.area || "");
+    return out;
+  }
+
+  async function loadMacrosIndexSafe(signal) {
     try {
-      const j = await fetchJson("/data/areas.json", { timeoutMs: 8000 });
-      const regions = Array.isArray(j?.regions) ? j.regions : Array.isArray(j) ? j : [];
-      const hits = regions.filter(r => pointInBbox(lat, lon, r.bbox || r.bbox_hint || r.bboxHint));
-      if (!hits.length) return null;
+      MACROS_INDEX = await fetchJson(MACROS_INDEX_URL, { signal });
+    } catch {
+      MACROS_INDEX = null;
+    }
+    return MACROS_INDEX;
+  }
 
-      // Choose most specific by bbox area
-      const scored = hits.map(r => {
-        const b = r.bbox || r.bbox_hint || r.bboxHint || {};
-        const minLat = asNum(b.min_lat ?? b.minLat ?? b.south);
-        const maxLat = asNum(b.max_lat ?? b.maxLat ?? b.north);
-        const minLon = asNum(b.min_lon ?? b.minLon ?? b.west);
-        const maxLon = asNum(b.max_lon ?? b.maxLon ?? b.east);
-        const area = (Number.isFinite(minLat) && Number.isFinite(maxLat) && Number.isFinite(minLon) && Number.isFinite(maxLon))
-          ? Math.abs((maxLat - minLat) * (maxLon - minLon))
-          : 999999;
-        return { r, area };
-      }).sort((a, b) => a.area - b.area);
+  async function tryLoadPlacesFile(url, signal) {
+    try {
+      const r = await fetch(url, { cache: "no-store", signal });
+      if (!r.ok) return null;
+      const j = await r.json().catch(() => null);
+      if (!j) return null;
 
-      const preferIT = scored.find(x => String(x.r.id || x.r.region_id || "").startsWith("it-")) || scored[0];
-      const rid = String(preferIT.r.id || preferIT.r.region_id || preferIT.r.regionId || "").trim();
-      return rid || null;
+      const placesRaw = Array.isArray(j?.places) ? j.places : null;
+      if (!placesRaw || !placesRaw.length) return null;
+
+      const places = placesRaw.map(normalizePlace).filter(Boolean);
+      if (!places.length) return null;
+
+      return { json: j, places };
     } catch {
       return null;
     }
   }
 
-  function countryCodeFromRegionId(regionId) {
-    const s = lower(regionId);
-    const cc = s.split("-")[0];
-    return (cc && cc.length === 2) ? cc : "it";
+  function findCountryMacroPath(cc) {
+    if (!MACROS_INDEX?.items?.length) return null;
+    const c = String(cc || "").toUpperCase();
+    if (!c) return null;
+
+    const hit1 = MACROS_INDEX.items.find(x =>
+      String(x.id || "") === `euuk_country_${c.toLowerCase()}` ||
+      String(x.path || "").includes(`euuk_country_${c.toLowerCase()}.json`)
+    );
+    if (hit1?.path) return hit1.path;
+
+    return null;
   }
 
-  // -----------------------------
-  // Load sources: REGION -> LIVE -> MACRO
-  // -----------------------------
-  async function loadRegionPlaces(regionId) {
-    if (!regionId) return { ok: false, places: [], meta: { dataset: "" } };
-    const url = `/data/pois/regions/${regionId}.json`;
-    try {
-      const j = await fetchJson(url, { timeoutMs: 12000 });
-      const rawPlaces =
-        Array.isArray(j?.places) ? j.places :
-        Array.isArray(j?.data?.places) ? j.data.places :
-        [];
-      const places = rawPlaces.map(normalizePlace).filter(Boolean);
-      return { ok: true, places, meta: { dataset: `REGION:${regionId}.json`, url, regionId, rawMeta: j?.meta || null } };
-    } catch (e) {
-      return { ok: false, places: [], meta: { dataset: "", error: String(e?.message || e), url, regionId } };
+  function pickRegionIdFromOrigin(origin) {
+    const lat = Number(origin?.lat);
+    const lon = Number(origin?.lon);
+    const cc = String(origin?.country_code || "").toUpperCase();
+
+    // se già selezionata e valida (e sei dentro bbox), ok
+    const saved = localStorage.getItem("jamo_region_id");
+    if (saved && REGIONAL_POIS_BY_ID[saved] && withinBBox(lat, lon, REGION_BBOX[saved])) return saved;
+
+    // ✅ Veneto: SOLO se sei in IT e dentro bbox Veneto
+    if (cc === "IT" && withinBBox(lat, lon, REGION_BBOX["it-veneto"])) return "it-veneto";
+
+    return "";
+  }
+
+  async function ensureDatasetLoaded(origin, { signal } = {}) {
+    if (DATASET?.places?.length) return DATASET;
+
+    await loadMacrosIndexSafe(signal);
+
+    const candidates = [];
+
+    // 0) ✅ POI regionali prima (ma solo se origin dentro bbox)
+    const regionId = pickRegionIdFromOrigin(origin);
+    if (regionId && REGIONAL_POIS_BY_ID[regionId]) {
+      candidates.push(REGIONAL_POIS_BY_ID[regionId]);
     }
-  }
 
-  async function loadLivePlaces({ lat, lon, radiusKm, cat }) {
-    const c = normCat(cat);
-    const rk = clamp(asNum(radiusKm) ?? 60, 5, 140);
-    const url = `/api/destinations?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}&radiusKm=${encodeURIComponent(rk)}&cat=${encodeURIComponent(c)}`;
-    try {
-      const j = await fetchJson(url, { timeoutMs: 22000 });
-      const els = Array.isArray(j?.data?.elements) ? j.data.elements : [];
-      const places = els.map(normalizePlace).filter(Boolean);
-      return { ok: true, places, meta: { dataset: "LIVE:Overpass", url, rawMeta: j?.meta || null } };
-    } catch (e) {
-      return { ok: false, places: [], meta: { dataset: "", url, error: String(e?.message || e) } };
+    // 1) macro country (se index disponibile)
+    const cc = String(origin?.country_code || "").toUpperCase();
+    const countryMacro = findCountryMacroPath(cc);
+    if (countryMacro) candidates.push(countryMacro);
+
+    // 2) fallback macro hardcoded
+    for (const u of FALLBACK_MACRO_URLS) candidates.push(u);
+
+    // 3) eventuale macro salvato
+    const savedMacro = localStorage.getItem("jamo_macro_url");
+    if (savedMacro) candidates.push(savedMacro);
+
+    // dedup
+    const uniq = [];
+    const seen = new Set();
+    for (const u of candidates) {
+      const s = String(u || "").trim();
+      if (!s || seen.has(s)) continue;
+      seen.add(s);
+      uniq.push(s);
     }
-  }
 
-  async function loadMacroPlaces(countryCode = "it") {
-    const cc = lower(countryCode);
-    const url = `/data/macros/euk_country_${cc}.json`;
-    try {
-      const j = await fetchJson(url, { timeoutMs: 12000 });
-      const rawPlaces =
-        Array.isArray(j?.places) ? j.places :
-        Array.isArray(j?.data?.places) ? j.data.places :
-        [];
-      const places = rawPlaces.map(normalizePlace).filter(Boolean);
-      return { ok: true, places, meta: { dataset: `MACRO:euk_country_${cc}.json`, url } };
-    } catch (e) {
-      return { ok: false, places: [], meta: { dataset: "", url, error: String(e?.message || e) } };
+    for (const url of uniq) {
+      const loaded = await tryLoadPlacesFile(url, signal);
+      if (!loaded) continue;
+
+      const isRegional = url.includes("/data/pois/regions/");
+      DATASET = {
+        kind: isRegional ? "pois_region" : "macro",
+        source: url,
+        places: loaded.places,
+        meta: { raw: loaded.json, cc, regionId },
+      };
+
+      if (isRegional && regionId) localStorage.setItem("jamo_region_id", regionId);
+      if (!isRegional) localStorage.setItem("jamo_macro_url", url);
+
+      return DATASET;
     }
+
+    throw new Error("Nessun dataset offline valido disponibile (POI regionali o macro).");
   }
 
-  // -----------------------------
-  // State
-  // -----------------------------
-  const state = {
-    userLat: null,
-    userLon: null,
-    cat: "ovunque",
-    radiusKm: 60,
-    lastPick: null,
-    lastDataset: "",
-    lastMeta: null,
-    regionId: null,
-  };
-
-  // -----------------------------
-  // UI: read category & radius (robust)
-  // -----------------------------
-  function getCatFromUI() {
-    const sel =
-      $("#category") ||
-      $("#cat") ||
-      $("select[name='category']") ||
-      $("select[data-role='category']");
-
-    if (sel && sel.value) return normCat(sel.value);
-
-    const activeBtn = $("[data-cat].active") || $("[data-category].active");
-    if (activeBtn) return normCat(activeBtn.dataset.cat || activeBtn.dataset.category);
-
-    return state.cat || "ovunque";
-  }
-
-  function getRadiusFromUI() {
-    const inp =
-      $("#radiusKm") ||
-      $("#radius") ||
-      $("input[name='radiusKm']") ||
-      $("input[data-role='radius']");
-
-    if (inp && inp.value != null) {
-      const v = asNum(inp.value);
-      if (Number.isFinite(v)) return clamp(v, 5, 140);
+  // -------------------- GEOCODING --------------------
+  async function geocodeLabel(label) {
+    const q = String(label || "").trim();
+    if (!q) throw new Error("Scrivi un luogo (es: Venezia, Verona, Padova...)");
+    const r = await fetch(`/api/geocode?q=${encodeURIComponent(q)}`, { method: "GET", cache: "no-store" });
+    const j = await r.json().catch(() => null);
+    if (!j) throw new Error("Geocoding fallito (risposta vuota)");
+    if (!j.ok) throw new Error(j.error || "Geocoding fallito");
+    if (!j.result || !Number.isFinite(Number(j.result.lat)) || !Number.isFinite(Number(j.result.lon))) {
+      throw new Error("Geocoding fallito (coordinate non valide)");
     }
-    return state.radiusKm || 60;
+    return j.result;
   }
 
-  function setStatusLine({ found = null, minutes = null, cat = null, dataset = null } = {}) {
-    const el =
-      $("#statusLine") ||
-      $("#status") ||
-      $("[data-role='status']") ||
-      $("[data-ui='status']");
+  // -------------------- TAGS / CATEGORY (PRECISI) --------------------
+  function placeTags(place) { return (place.tags || []).map(t => String(t).toLowerCase()); }
+  function tagsStr(place) { return placeTags(place).join(" "); }
 
-    if (!el) return;
-
-    const parts = [];
-    if (found === true) parts.push("Meta trovata ✅");
-    if (found === false) parts.push("Nessuna meta ❌");
-    if (minutes != null) parts.push(`(~${minutes} min)`);
-    if (cat) parts.push(`categoria: ${cat}`);
-    if (dataset) parts.push(`${dataset}`);
-    safeSetText(el, parts.join(" • "));
+  function looksIndoor(place) {
+    const t = tagsStr(place);
+    const n = normName(place?.name);
+    return t.includes("indoor") || t.includes("coperto") || n.includes("indoor") || n.includes("coperto");
   }
 
-  // -----------------------------
-  // Actions (buttons)
-  // -----------------------------
-  function openMaps(p) {
-    const q = encodeURIComponent(`${p.name}`);
-    const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.lat + "," + p.lon)}(${q})`;
-    window.open(url, "_blank");
-  }
-  function openRoute(p) {
-    const url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(p.lat + "," + p.lon)}&travelmode=driving`;
-    window.open(url, "_blank");
-  }
-  function openPhoto(p) {
-    const q = encodeURIComponent(p.name);
-    window.open(`https://www.google.com/search?tbm=isch&q=${q}`, "_blank");
-  }
-  function openThingsToSee(p) {
-    const q = encodeURIComponent(`${p.name} cosa vedere`);
-    window.open(`https://www.google.com/search?q=${q}`, "_blank");
-  }
-  function openThingsToDo(p) {
-    const q = encodeURIComponent(`${p.name} cosa fare`);
-    window.open(`https://www.google.com/search?q=${q}`, "_blank");
+  function isSpaPlace(place) {
+    const n = normName(place?.name);
+    const t = tagsStr(place);
+    const type = normalizeType(place?.type);
+    return (
+      type === "relax" ||
+      t.includes("terme") || t.includes("spa") ||
+      t.includes("hot_spring") || t.includes("public_bath") ||
+      t.includes("amenity=spa") || t.includes("leisure=spa") ||
+      n.includes("terme") || n.includes("spa") || n.includes("thermal") || n.includes("benessere")
+    );
   }
 
-  // -----------------------------
-  // Render result card (self-contained)
-  // -----------------------------
-  function renderResultCard(place, datasetLabel) {
-    const container =
-      $("#result") ||
-      $("#resultCard") ||
-      $("[data-role='result']") ||
-      $("[data-ui='result']");
+  function isWaterPark(place) {
+    const n = normName(place?.name);
+    const t = tagsStr(place);
+    return t.includes("leisure=water_park") || n.includes("acquapark") || n.includes("water park") || n.includes("parco acquatico");
+  }
 
-    if (!container) return;
+  function isZooOrAquarium(place) {
+    const n = normName(place?.name);
+    const t = tagsStr(place);
+    return t.includes("tourism=zoo") || t.includes("tourism=aquarium") || n.includes("zoo") || n.includes("acquario") || n.includes("aquarium");
+  }
 
-    if (!place) {
-      safeSetHTML(container, `<div style="padding:12px">Nessuna meta trovata.</div>`);
+  function isThemePark(place) {
+    const n = normName(place?.name);
+    const t = tagsStr(place);
+    return t.includes("tourism=theme_park") || n.includes("parco divertimenti") || n.includes("lunapark") || n.includes("luna park") || n.includes("giostre");
+  }
+
+  function isKidsMuseum(place) {
+    const n = normName(place?.name);
+    const t = tagsStr(place);
+    return t.includes("kids_museum") || n.includes("museo dei bambini") || n.includes("children museum") || n.includes("science center") || n.includes("planetario");
+  }
+
+  function isPlaygroundLike(place) {
+    const n = normName(place?.name);
+    const t = tagsStr(place);
+    return t.includes("leisure=playground") || n.includes("parco giochi") || n.includes("area giochi") || n.includes("kids");
+  }
+
+  function isViewpoint(place) {
+    const n = normName(place?.name);
+    const t = tagsStr(place);
+    return t.includes("tourism=viewpoint") || n.includes("belvedere") || n.includes("panoram") || n.includes("viewpoint") || n.includes("terrazza");
+  }
+
+  function isHiking(place) {
+    const n = normName(place?.name);
+    const t = tagsStr(place);
+    return t.includes("hiking") || t.includes("information=guidepost") || t.includes("amenity=shelter") ||
+      n.includes("sentiero") || n.includes("trail") || n.includes("trek") || n.includes("trekking") || n.includes("via ferrata") || n.includes("rifugio");
+  }
+
+  function isMountain(place) {
+    const n = normName(place?.name);
+    const t = tagsStr(place);
+    if (t.includes("place=city") || t.includes("place=town") || t.includes("place=village") || t.includes("place=hamlet")) return false;
+    return t.includes("natural=peak") || n.includes("monte") || n.includes("cima") || n.includes("rifugio") || n.includes("passo") || n.includes("valico");
+  }
+
+  function isBorgo(place) {
+    const type = normalizeType(place?.type);
+    const n = normName(place?.name);
+    const t = tagsStr(place);
+    if (n.includes("passo ") || n.startsWith("passo")) return false;
+    if (n.includes("stazione") || n.includes("casello") || n.includes("area di servizio")) return false;
+    return type === "borghi" || n.includes("borgo") || t.includes("place=village") || t.includes("place=hamlet");
+  }
+
+  function isCity(place) {
+    const type = normalizeType(place?.type);
+    const t = tagsStr(place);
+    return type === "citta" || t.includes("place=city") || t.includes("place=town");
+  }
+
+  function matchesCategoryStrict(place, cat) {
+    if (!cat || cat === "ovunque") return true;
+
+    const type = normalizeType(place?.type);
+    const n = normName(place?.name);
+    const t = tagsStr(place);
+
+    if (cat === "mare") {
+      return (
+        type === "mare" ||
+        t.includes("natural=beach") ||
+        t.includes("leisure=marina") ||
+        n.includes("spiaggia") || n.includes("lido") || n.includes("lungomare") || n.includes("baia") || n.includes("laguna")
+      );
+    }
+    if (cat === "storia") return type === "storia" || t.includes("historic=") || t.includes("tourism=museum") || n.includes("castello") || n.includes("museo") || n.includes("rocca");
+    if (cat === "natura") return type === "natura" || t.includes("nature_reserve") || t.includes("boundary=national_park") || n.includes("cascata") || n.includes("lago") || n.includes("riserva");
+    if (cat === "relax") return isSpaPlace(place);
+    if (cat === "borghi") return isBorgo(place);
+    if (cat === "citta") return isCity(place);
+    if (cat === "montagna") return isMountain(place) || type === "montagna";
+
+    if (cat === "theme_park") return isThemePark(place) || isWaterPark(place) || type === "theme_park";
+    if (cat === "kids_museum") return isKidsMuseum(place) || type === "kids_museum";
+    if (cat === "viewpoints") return isViewpoint(place) || type === "viewpoints";
+    if (cat === "hiking") return isHiking(place) || type === "hiking";
+
+    if (cat === "family") {
+      return (
+        type === "family" ||
+        isThemePark(place) ||
+        isWaterPark(place) ||
+        isZooOrAquarium(place) ||
+        isKidsMuseum(place) ||
+        isPlaygroundLike(place)
+      );
+    }
+
+    return true;
+  }
+
+  function matchesStyle(place, { wantChicche, wantClassici }) {
+    const vis = normalizeVisibility(place?.visibility);
+    if (!wantChicche && !wantClassici) return true;
+    if (vis === "chicca") return !!wantChicche;
+    return !!wantClassici;
+  }
+
+  // -------------------- SCORING --------------------
+  function baseScorePlace({ driveMin, targetMin, beautyScore, isChicca }) {
+    const t = clamp(1 - Math.abs(driveMin - targetMin) / Math.max(18, targetMin * 0.9), 0, 1);
+    const b = clamp(Number(beautyScore) || 0.72, 0.35, 1);
+    const c = isChicca ? 0.06 : 0;
+    return 0.62 * t + 0.32 * b + c;
+  }
+
+  function rotationPenalty(pid, recentSet) {
+    let pen = 0;
+    if (pid && pid === LAST_SHOWN_PID) pen += 0.22;
+    if (SESSION_SEEN.has(pid)) pen += 0.18;
+    if (recentSet.has(pid)) pen += 0.10;
+    return pen;
+  }
+
+  function familyBoost(place, category) {
+    if (category !== "family") return 0;
+    if (isThemePark(place)) return 0.26;
+    if (isWaterPark(place)) return 0.24;
+    if (isZooOrAquarium(place)) return 0.22;
+    if (isKidsMuseum(place)) return 0.18;
+    if (isPlaygroundLike(place)) return 0.12;
+    return 0;
+  }
+
+  // -------------------- TIME WIDEN --------------------
+  function widenMinutesSteps(m, category) {
+    const base = clamp(Number(m) || 120, 10, 600);
+    const steps = [base];
+
+    const muls =
+      category === "family" ?     [1.15, 1.30, 1.50] :
+      category === "theme_park" ? [1.15, 1.30, 1.55] :
+      category === "mare" ?       [1.20, 1.40, 1.65] :
+      category === "storia" ?     [1.20, 1.40, 1.60] :
+                                  [1.20, 1.40, 1.60];
+
+    for (const k of muls) steps.push(clamp(Math.round(base * k), base, 600));
+    steps.push(clamp(Math.max(240, base), base, 600));
+
+    return Array.from(new Set(steps)).sort((a, b) => a - b);
+  }
+
+  // -------------------- CANDIDATES / PICK --------------------
+  function buildCandidatesFromPool(
+    pool,
+    origin,
+    maxMinutes,
+    category,
+    styles,
+    {
+      ignoreVisited = false,
+      ignoreRotation = false,
+      allowSpaInFamily = false,
+    } = {}
+  ) {
+    const visited = getVisitedSet();
+    const recentSet = getRecentSet();
+    const target = Number(maxMinutes);
+
+    const oLat = Number(origin.lat);
+    const oLon = Number(origin.lon);
+
+    const candidates = [];
+
+    for (const raw of pool) {
+      const p = normalizePlace(raw);
+      if (!p) continue;
+
+      const nm = String(p.name || "").trim();
+      if (!nm || nm.length < 2 || normName(nm) === "meta") continue;
+
+      const okCat = matchesCategoryStrict(p, category) || (
+        category === "family" && allowSpaInFamily && isSpaPlace(p)
+      );
+      if (!okCat) continue;
+
+      if (!matchesStyle(p, styles)) continue;
+
+      const pid = safeIdFromPlace(p);
+      if (!ignoreVisited && visited.has(pid)) continue;
+
+      const km = haversineKm(oLat, oLon, p.lat, p.lon);
+      const driveMin = estCarMinutesFromKm(km);
+
+      if (!Number.isFinite(driveMin)) continue;
+      if (driveMin > target) continue;
+
+      if (km < (category === "family" ? 0.8 : 1.2)) continue;
+
+      const isChicca = normalizeVisibility(p.visibility) === "chicca";
+
+      let s = baseScorePlace({
+        driveMin,
+        targetMin: target,
+        beautyScore: p.beauty_score,
+        isChicca
+      });
+
+      s += familyBoost(p, category);
+
+      if (category === "family" && isSpaPlace(p) && !allowSpaInFamily) s -= 0.35;
+      if (!ignoreRotation) s -= rotationPenalty(pid, recentSet);
+
+      candidates.push({ place: p, pid, km, driveMin, score: Number(s.toFixed(4)) });
+    }
+
+    candidates.sort((a, b) => (b.score - a.score) || (a.driveMin - b.driveMin));
+    return candidates;
+  }
+
+  function pickBest(pool, origin, minutes, category, styles) {
+    let c = buildCandidatesFromPool(pool, origin, minutes, category, styles, {
+      ignoreVisited: false,
+      ignoreRotation: false,
+      allowSpaInFamily: false,
+    });
+    if (c.length) return { chosen: c[0], alternatives: c.slice(1, 3), total: c.length, spaFallback: false };
+
+    if (category === "family") {
+      c = buildCandidatesFromPool(pool, origin, minutes, category, styles, {
+        ignoreVisited: false,
+        ignoreRotation: true,
+        allowSpaInFamily: true,
+      });
+      if (c.length) return { chosen: c[0], alternatives: c.slice(1, 3), total: c.length, spaFallback: true };
+    }
+
+    c = buildCandidatesFromPool(pool, origin, minutes, category, styles, {
+      ignoreVisited: false,
+      ignoreRotation: true,
+      allowSpaInFamily: false,
+    });
+    if (c.length) return { chosen: c[0], alternatives: c.slice(1, 3), total: c.length, spaFallback: false };
+
+    c = buildCandidatesFromPool(pool, origin, minutes, category, styles, {
+      ignoreVisited: true,
+      ignoreRotation: true,
+      allowSpaInFamily: category === "family",
+    });
+
+    return { chosen: c[0] || null, alternatives: c.slice(1, 3), total: c.length, spaFallback: category === "family" };
+  }
+
+  // -------------------- LIVE fallback (/api/destinations) --------------------
+  function minutesToRadiusKm(minutes) {
+    const m = clamp(Number(minutes) || 120, 10, 600);
+    const drive = Math.max(6, m - FIXED_OVERHEAD_MIN);
+    const straightKm = (drive / 60) * AVG_KMH / ROAD_FACTOR;
+    return clamp(Math.round(straightKm * 0.85), 4, 220);
+  }
+
+  async function fetchLiveFallback(origin, minutes, category, signal) {
+    const radiusKm = minutesToRadiusKm(minutes);
+    const url = `/api/destinations?lat=${encodeURIComponent(origin.lat)}&lon=${encodeURIComponent(origin.lon)}&radiusKm=${encodeURIComponent(radiusKm)}&cat=${encodeURIComponent(category)}`;
+    const j = await fetchJson(url, { signal });
+    const els = j?.data?.elements;
+
+    if (!Array.isArray(els) || !els.length) return [];
+    return els.map(normalizePlace).filter(Boolean);
+  }
+
+  // -------------------- CARD HELPERS --------------------
+  function typeBadge(category) {
+    const map = {
+      family: { emoji: "👨‍👩‍👧‍👦", label: "Family" },
+      theme_park:{ emoji:"🎢", label:"Parchi" },
+      kids_museum:{ emoji:"🧒🏛️", label:"Musei kids" },
+      viewpoints:{ emoji:"🌅", label:"Panorami" },
+      hiking:{ emoji:"🥾", label:"Trekking" },
+
+      storia: { emoji: "🏛️", label: "Storia" },
+      borghi: { emoji: "🏘️", label: "Borghi" },
+      citta:  { emoji: "🏙️", label: "Città" },
+      mare:   { emoji: "🌊", label: "Mare" },
+      natura: { emoji: "🌿", label: "Natura" },
+      montagna:{emoji:"🏔️",label:"Montagna"},
+      relax:  { emoji: "🧖", label: "Relax" },
+      ovunque:{ emoji: "🎲", label: "Meta" },
+    };
+    return map[category] || { emoji: "📍", label: "Meta" };
+  }
+
+  function microWhatToDo(place, category) {
+    if (category === "family" || category === "theme_park") {
+      if (isThemePark(place)) return "Parchi/giostre: controlla orari e biglietti, perfetto con bimbi.";
+      if (isWaterPark(place)) return "Acquapark: spesso stagionale — verifica apertura.";
+      if (isZooOrAquarium(place)) return "Zoo/acquario: percorsi, aree picnic e tante cose da vedere.";
+      if (isKidsMuseum(place)) return "Museo kids/science center: ottimo anche con brutto tempo.";
+      if (isPlaygroundLike(place)) return "Parco giochi/attività kids: semplice e super efficace.";
+      if (isSpaPlace(place)) return "Terme/piscine: relax (verifica accesso bimbi).";
+      return "Attività family: controlla foto e cosa fare nei dintorni.";
+    }
+
+    if (category === "kids_museum") return "Esperienza interattiva: perfetta per bambini e pioggia.";
+    if (category === "viewpoints") return "Panorama: tramonto, foto e passeggiata breve.";
+    if (category === "hiking") return "Sentiero/trekking: scarpe buone e controlla meteo.";
+
+    if (category === "relax") return "Relax: terme/spa o posto tranquillo + pausa.";
+    if (category === "storia") return "Storia e cultura: visita + centro storico.";
+    if (category === "mare") return "Mare: spiaggia, passeggiata e tramonto.";
+    if (category === "natura") return "Natura: sentieri, panorami, cascata/lago/riserva.";
+    if (category === "borghi") return "Borgo: vicoli, belvedere, cibo tipico e foto.";
+    if (category === "citta") return "Città: centro, piazze, monumenti e locali.";
+    if (category === "montagna") return "Montagna: vista, rifugio o punto panoramico.";
+    return "Esplora, foto, cibo e cose da fare nei dintorni.";
+  }
+
+  function chipsFromPlace(place, category) {
+    const chips = [];
+    if (category === "family" || category === "theme_park") {
+      if (isThemePark(place)) chips.push("🎢 parco");
+      if (isWaterPark(place)) chips.push("💦 acqua");
+      if (isZooOrAquarium(place)) chips.push("🦁 zoo");
+      if (isKidsMuseum(place)) chips.push("🧒 kids");
+      if (isPlaygroundLike(place)) chips.push("🛝 giochi");
+      if (looksIndoor(place)) chips.push("🏠 indoor");
+      if (isWinterNow() && isWaterPark(place) && !looksIndoor(place)) chips.push("❄️ stagionale");
+    }
+    if (category === "viewpoints") chips.push("🌅 panorama");
+    if (category === "hiking") chips.push("🥾 sentiero");
+    if (category === "montagna") chips.push("🏔️ montagna");
+    if (category === "borghi") chips.push("🏘️ borgo");
+    if (category === "storia") chips.push("🏛️ storia");
+    return chips.slice(0, 5);
+  }
+
+  // -------------------- RENDER --------------------
+  function renderNoResultFinal(maxMinutesShown, category, datasetInfo) {
+    const area = $("resultArea");
+    if (!area) return;
+
+    area.innerHTML = `
+      <div class="card errbox">
+        <div class="small">❌ Nessuna meta trovata entro ${maxMinutesShown} min per la categoria <b>${category}</b>.</div>
+        <div class="small muted" style="margin-top:6px;">
+          Suggerimento: aumenta minuti oppure cambia categoria/stile.
+        </div>
+        <div class="small muted" style="margin-top:10px;">
+          Dataset: ${datasetInfo}
+        </div>
+        <div class="row wrap gap" style="margin-top:12px;">
+          <button class="btn btn-ghost" id="btnResetRotation">🧽 Reset “proposte di oggi”</button>
+        </div>
+      </div>
+    `;
+
+    $("btnResetRotation")?.addEventListener("click", () => {
+      resetRotation();
+      showStatus("ok", "Reset fatto ✅ Ora posso ripescare anche mete già proposte oggi/sessione.");
+      runSearch({ silent: true });
+    });
+  }
+
+  function renderResult(origin, maxMinutesShown, chosen, alternatives = [], meta = {}) {
+    const area = $("resultArea");
+    if (!area) return;
+
+    const category = meta.category || "ovunque";
+
+    if (!chosen) {
+      renderNoResultFinal(maxMinutesShown, category, meta.datasetInfo || "—");
       return;
     }
 
-    const km =
-      Number.isFinite(place._km) ? place._km :
-      (Number.isFinite(state.userLat) ? haversineKm(state.userLat, state.userLon, place.lat, place.lon) : null);
+    const p = chosen.place;
+    const pid = chosen.pid;
 
-    const minutes = km != null ? Math.round(km * 1.15) : null;
+    const badge = normalizeVisibility(p.visibility) === "chicca" ? "✨ chicca" : "✅ classica";
+    const tb = typeBadge(category);
+    const what = microWhatToDo(p, category);
+    const chips = chipsFromPlace(p, category);
 
-    const visLabel =
-      place.visibility === "conosciuta" ? "conosciuta" :
-      place.visibility === "chicca" ? "chicca" : "classica";
+    const lat = Number(p.lat);
+    const lon = Number(p.lon);
 
-    const catLabel = state.cat || "ovunque";
-    const datasetLine = datasetLabel ? `Dataset: ${datasetLabel}` : "";
-    const scoreLine = (place._score != null) ? ` • score: ${place._score}` : "";
+    const zoom = chosen.km < 20 ? 12 : chosen.km < 60 ? 10 : 8;
+    const img1 = osmStaticImgPrimary(lat, lon, zoom);
+    const img2 = osmStaticImgFallback(lat, lon, zoom);
 
-    safeSetHTML(container, `
-      <div class="jamo-card">
-        <div class="jamo-card-top">
-          <div class="jamo-pill">${escapeHtml(catLabel)}</div>
-          ${minutes != null ? `<div class="jamo-pill">🚗 ~${minutes} min • ${Number(km).toFixed(0)} km</div>` : ""}
-          <div class="jamo-pill">✨ ${escapeHtml(visLabel)}</div>
+    const q = (p.country || p.area) ? `${p.name}, ${p.country || p.area}` : p.name;
+
+    area.innerHTML = `
+      <div class="card okbox" style="overflow:hidden; padding:0;">
+        <div style="position:relative; width:100%; aspect-ratio: 2 / 1; border-bottom:1px solid var(--border);">
+          <img src="${img1}" alt="" loading="lazy" decoding="async"
+               style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; opacity:.95;"
+               onerror="(function(img){
+                 if(!img.dataset.fallbackTried){
+                   img.dataset.fallbackTried='1';
+                   img.src='${img2}';
+                   return;
+                 }
+                 img.style.display='none';
+                 var ph = img.parentElement.querySelector('.heroPlaceholder');
+                 if(ph) ph.style.display='flex';
+               })(this)"
+          />
+          <div class="heroPlaceholder"
+               style="position:absolute; inset:0; display:none; align-items:center; justify-content:center; gap:10px;
+                      background: linear-gradient(135deg, rgba(0,224,255,.18), rgba(26,255,213,.08));
+                      color: rgba(255,255,255,.92); font-weight:900; letter-spacing:.2px;">
+            📍 ${p.name}
+          </div>
+
+          <div style="position:absolute; left:12px; top:12px; display:flex; gap:8px; flex-wrap:wrap; max-width: calc(100% - 24px);">
+            <div class="pill">${tb.emoji} ${tb.label}</div>
+            <div class="pill">🚗 ~${chosen.driveMin} min • ${fmtKm(chosen.km)}</div>
+            <div class="pill">${badge}</div>
+            ${meta.liveUsed ? `<div class="pill">🛰️ LIVE</div>` : ""}
+            ${meta.spaFallback ? `<div class="pill">⚠️ fallback (spa)</div>` : ""}
+          </div>
         </div>
 
-        <h2 class="jamo-title">${escapeHtml(place.name)}</h2>
-        <div class="jamo-sub">${escapeHtml(datasetLine)}${escapeHtml(scoreLine)}</div>
+        <div style="padding:14px;">
+          <div style="font-weight:950; font-size:28px; line-height:1.12; margin:0;">
+            ${p.name} <span class="small muted" style="font-weight:700;">(${p.country || p.area || "—"})</span>
+          </div>
 
-        <div class="jamo-actions" style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
-          <button type="button" class="jamo-btn" data-action="maps">🗺️ Maps</button>
-          <button type="button" class="jamo-btn" data-action="route">🚗 Percorso</button>
-          <button type="button" class="jamo-btn" data-action="photo">📸 Foto</button>
-          <button type="button" class="jamo-btn" data-action="see">👀 Cosa vedere</button>
-          <button type="button" class="jamo-btn" data-action="do">🎯 Cosa fare</button>
+          <div class="small muted" style="margin-top:8px; line-height:1.35;">
+            Dataset: ${meta.datasetInfo || "—"} • score: ${chosen.score}
+            ${meta.usedMinutes && meta.usedMinutes !== maxMinutesShown ? ` • widen: ${meta.usedMinutes} min` : ""}
+          </div>
+
+          <div style="margin-top:12px; font-weight:900;">Cosa si fa</div>
+          <div class="small muted" style="margin-top:6px; line-height:1.45;">${what}</div>
+
+          ${chips.length ? `
+            <div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap;">
+              ${chips.map(c => `<div class="pill">${c}</div>`).join("")}
+            </div>
+          ` : ""}
+
+          <div class="row wrap gap" style="margin-top:14px;">
+            <a class="btn" target="_blank" rel="noopener" href="${mapsPlaceUrl(lat, lon)}">🗺️ Maps</a>
+            <a class="btn" target="_blank" rel="noopener" href="${mapsDirUrl(origin.lat, origin.lon, lat, lon)}">🚗 Percorso</a>
+            <a class="btn btn-ghost" target="_blank" rel="noopener" href="${googleImagesUrl(q)}">📸 Foto</a>
+            <a class="btn btn-ghost" target="_blank" rel="noopener" href="${googleThingsToDoUrl(q)}">👀 Cosa vedere</a>
+            <a class="btn btn-ghost" target="_blank" rel="noopener" href="${googleDoUrl(q)}">🎯 Cosa fare</a>
+            <a class="btn btn-ghost" target="_blank" rel="noopener" href="${restaurantsUrl(q)}">🍝 Ristoranti</a>
+            <a class="btn btn-ghost" target="_blank" rel="noopener" href="${wikiUrl(q)}">📚 Wiki</a>
+            <a class="btn btn-ghost" target="_blank" rel="noopener" href="${eventsUrl(q)}">📅 Eventi</a>
+          </div>
+
+          <div class="row wrap gap" style="margin-top:14px;">
+            <button class="btn btn-ghost" id="btnVisited">✅ Già visitato</button>
+            <button class="btn" id="btnChange">🔁 Cambia meta</button>
+            <button class="btn btn-ghost" id="btnResetRotation">🧽 Reset “oggi”</button>
+          </div>
         </div>
       </div>
-    `);
 
-    // Bind buttons inside card
-    $$(".jamo-btn", container).forEach(btn => {
+      ${alternatives?.length ? `
+        <div style="margin-top:14px;">
+          <div class="small muted" style="margin-bottom:8px;">Alternative (2)</div>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+            ${alternatives.slice(0, 2).map(a => {
+              const ap = a.place;
+              return `
+                <div class="card" style="padding:10px;">
+                  <div style="font-weight:900; line-height:1.2;">${ap.name}</div>
+                  <div class="small muted" style="margin-top:4px;">
+                    🚗 ~${a.driveMin} min • ${fmtKm(a.km)} ${ap.country ? `• (${ap.country})` : ""}
+                  </div>
+                  <div class="row wrap gap" style="margin-top:10px;">
+                    <a class="btn btn-ghost" target="_blank" rel="noopener" href="${mapsDirUrl(origin.lat, origin.lon, ap.lat, ap.lon)}">Percorso</a>
+                    <button class="btn btn-ghost" data-pid="${a.pid}">Scegli</button>
+                  </div>
+                </div>
+              `;
+            }).join("")}
+          </div>
+        </div>
+      ` : ""}
+    `;
+
+    LAST_SHOWN_PID = pid;
+    SESSION_SEEN.add(pid);
+    addRecent(pid);
+
+    $("btnVisited")?.addEventListener("click", () => {
+      markVisited(pid);
+      showStatus("ok", "Segnato come visitato ✅ (non te lo ripropongo più).");
+    });
+
+    $("btnChange")?.addEventListener("click", () => {
+      runSearch({ silent: true, forbidPid: pid });
+    });
+
+    $("btnResetRotation")?.addEventListener("click", () => {
+      resetRotation();
+      showStatus("ok", "Reset fatto ✅ Ora posso ripescare anche mete già proposte oggi/sessione.");
+      runSearch({ silent: true });
+    });
+
+    area.querySelectorAll("button[data-pid]").forEach(btn => {
       btn.addEventListener("click", () => {
-        const a = btn.dataset.action;
-        if (a === "maps") openMaps(place);
-        if (a === "route") openRoute(place);
-        if (a === "photo") openPhoto(place);
-        if (a === "see") openThingsToSee(place);
-        if (a === "do") openThingsToDo(place);
-      }, { passive: true });
+        const targetPid = btn.getAttribute("data-pid");
+        if (!targetPid) return;
+        runSearch({ silent: true, forcePid: targetPid });
+      });
     });
-
-    setStatusLine({ found: true, minutes, cat: catLabel, dataset: datasetLabel });
   }
 
-  // -----------------------------
-  // Pick logic (weekly rotation + avoid visited)
-  // -----------------------------
-  function pickPlace(places, { cat, lat, lon, datasetLabel } = {}) {
-    const visited = getVisitedSet();
-    const c = normCat(cat);
+  // -------------------- MAIN SEARCH (OFFLINE + LIVE fallback) --------------------
+  async function runSearch({ silent = false, forbidPid = null, forcePid = null } = {}) {
+    try { SEARCH_ABORT?.abort?.(); } catch {}
+    SEARCH_ABORT = new AbortController();
+    const signal = SEARCH_ABORT.signal;
+    const token = ++SEARCH_TOKEN;
 
-    // Filter by category
-    const filtered = places.filter(p => categoryMatches(p, c));
+    try {
+      if (!silent) hideStatus();
+      showResultProgress();
 
-    // Enrich with distance + score
-    const enriched = filtered.map(p => {
-      const km = (Number.isFinite(lat) && Number.isFinite(lon))
-        ? haversineKm(lat, lon, p.lat, p.lon)
-        : null;
+      const origin = getOrigin();
+      if (!origin || !Number.isFinite(Number(origin.lat)) || !Number.isFinite(Number(origin.lon))) {
+        showStatus("err", "Imposta una partenza: GPS oppure scrivi un luogo e premi “Usa questo luogo”.");
+        return;
+      }
 
-      let s = (p.beauty_score ?? 0.7) * 1.8;
-      if (km != null) s += clamp(1.6 - (km / 60), -0.6, 1.6);
+      await ensureDatasetLoaded(origin, { signal });
 
-      if (p.visibility === "conosciuta") s += 0.25;
-      if (p.visibility === "chicca") s += 0.35;
+      const basePool = Array.isArray(DATASET?.places) ? DATASET.places : [];
+      const datasetInfo =
+        DATASET.kind === "pois_region"
+          ? `POI:${(DATASET.source || "").split("/").pop()} (${basePool.length})`
+          : DATASET.kind === "macro"
+            ? `MACRO:${(DATASET.source || "").split("/").pop()} (${basePool.length})`
+            : `—`;
 
-      const tags = Array.isArray(p.tags) ? p.tags.join(" ").toLowerCase() : "";
-      if (tags.includes("place=")) s -= 0.6; // avoid generic cities
+      const maxMinutesInput = clamp(Number($("maxMinutes")?.value) || 120, 10, 600);
+      const category = getActiveCategory();
+      const styles = getActiveStyles();
 
-      return { ...p, _km: km != null ? Number(km.toFixed(3)) : p._km, _pickScore: Number(s.toFixed(4)) };
-    });
+      const steps = widenMinutesSteps(maxMinutesInput, category);
 
-    enriched.sort((a, b) => (b._pickScore - a._pickScore) || ((a._km ?? 9999) - (b._km ?? 9999)));
+      let chosen = null;
+      let alternatives = [];
+      let usedMinutes = steps[0];
+      let liveUsed = false;
+      let spaFallback = false;
 
-    const pool = enriched.slice(0, 220);
-    const unvisited = pool.filter(p => !visited.has(String(p.id)));
-    const finalPool = unvisited.length >= 20 ? unvisited : pool;
+      // 1) OFFLINE widening
+      for (const mins of steps) {
+        usedMinutes = mins;
 
-    if (!finalPool.length) return null;
+        const picked = pickBest(basePool, origin, mins, category, styles);
+        chosen = picked.chosen;
+        alternatives = picked.alternatives;
+        spaFallback = !!picked.spaFallback;
 
-    const wk = weekKeyUTC();
-    const seedStr = `${wk}|${datasetLabel}|${c}|${Math.round((lat ?? 0) * 100)}|${Math.round((lon ?? 0) * 100)}`;
-    const rng = mulberry32(hashStringToSeed(seedStr));
+        if (forcePid) {
+          const all = buildCandidatesFromPool(basePool, origin, mins, category, styles, {
+            ignoreVisited: true, ignoreRotation: true, allowSpaInFamily: true
+          });
+          const forced = all.find(x => x.pid === forcePid);
+          if (forced) {
+            chosen = forced;
+            alternatives = all.filter(x => x.pid !== forcePid).slice(0, 2);
+          }
+        } else if (forbidPid && chosen?.pid === forbidPid) {
+          const all = buildCandidatesFromPool(basePool, origin, mins, category, styles, {
+            ignoreVisited: true, ignoreRotation: true, allowSpaInFamily: true
+          }).filter(x => x.pid !== forbidPid);
+          chosen = all[0] || null;
+          alternatives = all.slice(1, 3);
+        }
 
-    const top = finalPool.slice(0, Math.min(35, finalPool.length));
-    const idx = Math.floor(rng() * top.length);
-    return top[idx] || top[0] || null;
+        if (chosen) break;
+        if (token !== SEARCH_TOKEN) return;
+      }
+
+      if (token !== SEARCH_TOKEN) return;
+
+      // 2) LIVE fallback (solo se offline vuoto)
+      if (!chosen) {
+        showResultProgress("Offline vuoto. Provo LIVE (Overpass) senza cambiare categoria…");
+        for (const mins of steps) {
+          usedMinutes = mins;
+
+          const livePlaces = await fetchLiveFallback(origin, mins, category, signal).catch(() => []);
+          if (token !== SEARCH_TOKEN) return;
+
+          if (livePlaces.length) {
+            const merged = basePool.concat(livePlaces);
+            const picked = pickBest(merged, origin, mins, category, styles);
+            chosen = picked.chosen;
+            alternatives = picked.alternatives;
+            spaFallback = !!picked.spaFallback;
+            liveUsed = !!chosen;
+          }
+          if (chosen) break;
+        }
+      }
+
+      if (token !== SEARCH_TOKEN) return;
+
+      renderResult(origin, maxMinutesInput, chosen, alternatives, {
+        category,
+        datasetInfo,
+        usedMinutes,
+        liveUsed,
+        spaFallback,
+      });
+
+      if (!chosen) {
+        showStatus("warn", `Nessuna meta entro ${maxMinutesInput} min per "${category}". Prova ad aumentare i minuti o cambia categoria.`);
+      } else if (!silent) {
+        const extra = usedMinutes !== maxMinutesInput ? ` (ho allargato a ${usedMinutes} min)` : "";
+        const live = liveUsed ? " • LIVE ok" : "";
+        const fam = spaFallback ? " • (fallback spa)" : "";
+        showStatus("ok", `Meta trovata ✅ (~${chosen.driveMin} min) • categoria: ${category}${extra}${live}${fam}`);
+      }
+
+    } catch (e) {
+      if (String(e?.name || "").includes("Abort")) return;
+      console.error(e);
+      showStatus("err", `Errore: ${String(e.message || e)}`);
+    }
   }
 
-  // -----------------------------
-  // Location
-  // -----------------------------
-  async function getUserLocation() {
-    if (Number.isFinite(state.userLat) && Number.isFinite(state.userLon)) {
-      return { lat: state.userLat, lon: state.userLon };
-    }
+  // -------------------- INIT helpers --------------------
+  function initTimeChipsSync() {
+    $("maxMinutes")?.addEventListener("input", () => {
+      const v = Number($("maxMinutes").value);
+      const chipsEl = $("timeChips");
+      if (!chipsEl) return;
+      const chips = [...chipsEl.querySelectorAll(".chip")];
+      chips.forEach(c => c.classList.remove("active"));
+      const match = chips.find(c => Number(c.dataset.min) === v);
+      if (match) match.classList.add("active");
+    });
+  }
 
-    // Try preset values
-    const latEl = $("#userLat") || $("[data-user-lat]");
-    const lonEl = $("#userLon") || $("[data-user-lon]");
-    const preLat = asNum(latEl?.value ?? latEl?.dataset?.userLat);
-    const preLon = asNum(lonEl?.value ?? lonEl?.dataset?.userLon);
-    if (Number.isFinite(preLat) && Number.isFinite(preLon)) {
-      state.userLat = preLat;
-      state.userLon = preLon;
-      return { lat: preLat, lon: preLon };
+  function restoreOrigin() {
+    const raw = localStorage.getItem("jamo_origin");
+    if (raw) {
+      try {
+        const o = JSON.parse(raw);
+        if (Number.isFinite(Number(o?.lat)) && Number.isFinite(Number(o?.lon))) {
+          setOrigin({
+            label: o.label,
+            lat: o.lat,
+            lon: o.lon,
+            country_code: o.country_code || ""
+          });
+        }
+      } catch {}
     }
+  }
 
-    // Geolocation
-    return await new Promise((resolve, reject) => {
-      if (!navigator.geolocation) return reject(new Error("Geolocation not supported"));
+  function bindOriginButtons() {
+    $("btnUseGPS")?.addEventListener("click", () => {
+      if ($("originStatus")) $("originStatus").textContent = "📍 Sto leggendo il GPS…";
       navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          const lat = pos?.coords?.latitude;
-          const lon = pos?.coords?.longitude;
-          if (!Number.isFinite(lat) || !Number.isFinite(lon)) return reject(new Error("Bad coords"));
-          state.userLat = lat;
-          state.userLon = lon;
-          resolve({ lat, lon });
+        async (pos) => {
+          const lat = pos.coords.latitude;
+          const lon = pos.coords.longitude;
+
+          setOrigin({ label: "La mia posizione", lat, lon, country_code: $("originCC")?.value || "" });
+          showStatus("ok", "Partenza GPS impostata ✅");
+
+          DATASET = { kind: null, source: null, places: [], meta: {} };
+          await ensureDatasetLoaded(getOrigin(), { signal: undefined }).catch(() => {});
         },
-        (err) => reject(err || new Error("Geolocation denied")),
-        { enableHighAccuracy: true, timeout: 12000, maximumAge: 60000 }
+        (err) => {
+          console.error(err);
+          if ($("originStatus")) $("originStatus").textContent = "❌ GPS non disponibile (permessi?)";
+          showStatus("err", "GPS non disponibile. Scrivi un luogo e usa “Usa questo luogo”.");
+        },
+        { enableHighAccuracy: true, timeout: 12000 }
       );
     });
-  }
 
-  // -----------------------------
-  // Main: find destination
-  // -----------------------------
-  async function findDestination() {
-    try {
-      const cat = getCatFromUI();
-      const radiusKm = getRadiusFromUI();
-      state.cat = cat;
-      state.radiusKm = radiusKm;
+    $("btnFindPlace")?.addEventListener("click", async () => {
+      try {
+        const label = $("originLabel")?.value || "";
+        if ($("originStatus")) $("originStatus").textContent = "🔎 Cerco il luogo…";
 
-      setStatusLine({ found: null, minutes: null, cat, dataset: "carico dati…" });
+        const result = await geocodeLabel(label);
 
-      const { lat, lon } = await getUserLocation();
+        setOrigin({
+          label: result.label || label,
+          lat: result.lat,
+          lon: result.lon,
+          country_code: result.country_code || ""
+        });
 
-      // detect region once
-      if (!state.regionId) {
-        state.regionId = await detectRegionId(lat, lon);
+        showStatus("ok", "Partenza impostata ✅");
+
+        DATASET = { kind: null, source: null, places: [], meta: {} };
+        await ensureDatasetLoaded(getOrigin(), { signal: undefined }).catch(() => {});
+      } catch (e) {
+        console.error(e);
+        if ($("originStatus")) $("originStatus").textContent = `❌ ${String(e.message || e)}`;
+        showStatus("err", `Geocoding fallito: ${String(e.message || e)}`);
       }
-
-      // 1) REGION FIRST
-      if (state.regionId) {
-        const regionRes = await loadRegionPlaces(state.regionId);
-        if (regionRes.ok && regionRes.places.length) {
-          const pick = pickPlace(regionRes.places, { cat, lat, lon, datasetLabel: regionRes.meta.dataset });
-          if (pick) {
-            state.lastPick = pick;
-            state.lastDataset = regionRes.meta.dataset;
-            state.lastMeta = regionRes.meta;
-            markVisited(pick.id);
-            renderResultCard(pick, regionRes.meta.dataset);
-            return;
-          }
-        }
-      }
-
-      // 2) LIVE SECOND (online)
-      const liveRes = await loadLivePlaces({ lat, lon, radiusKm, cat });
-      if (liveRes.ok && liveRes.places.length) {
-        const pick = pickPlace(liveRes.places, { cat, lat, lon, datasetLabel: liveRes.meta.dataset });
-        if (pick) {
-          state.lastPick = pick;
-          state.lastDataset = liveRes.meta.dataset;
-          state.lastMeta = liveRes.meta;
-          markVisited(pick.id);
-          renderResultCard(pick, liveRes.meta.dataset);
-          return;
-        }
-      }
-
-      // 3) MACRO fallback
-      const cc = state.regionId ? countryCodeFromRegionId(state.regionId) : "it";
-      const macroRes = await loadMacroPlaces(cc);
-      if (macroRes.ok && macroRes.places.length) {
-        const pick = pickPlace(macroRes.places, { cat, lat, lon, datasetLabel: macroRes.meta.dataset });
-        if (pick) {
-          state.lastPick = pick;
-          state.lastDataset = macroRes.meta.dataset;
-          state.lastMeta = macroRes.meta;
-          markVisited(pick.id);
-          renderResultCard(pick, macroRes.meta.dataset);
-          return;
-        }
-      }
-
-      // nothing
-      setStatusLine({ found: false, minutes: null, cat, dataset: "nessun dataset utile" });
-      renderResultCard(null, "");
-    } catch (e) {
-      console.error("[Jamo] findDestination error:", e);
-      setStatusLine({ found: false, minutes: null, cat: state.cat || "ovunque", dataset: "errore" });
-
-      const container =
-        $("#result") ||
-        $("#resultCard") ||
-        $("[data-role='result']") ||
-        $("[data-ui='result']");
-
-      if (container) safeSetHTML(container, `<div style="padding:12px">Errore: ${escapeHtml(String(e?.message || e))}</div>`);
-    }
-  }
-
-  // -----------------------------
-  // Bind UI (robust)
-  // -----------------------------
-  function bindUI() {
-    // Find button
-    const btnFind =
-      $("#btnFind") ||
-      $("#findBtn") ||
-      $("#trovaMeta") ||
-      $("[data-action='find']") ||
-      $("[data-ui='find']");
-
-    // Reset visited
-    const btnReset =
-      $("#btnResetVisited") ||
-      $("#resetVisited") ||
-      $("[data-action='resetVisited']") ||
-      $("[data-ui='resetVisited']");
-
-    if (btnFind) {
-      btnFind.addEventListener("click", (ev) => {
-        ev.preventDefault();
-        findDestination();
-      }, { passive: false });
-    }
-
-    if (btnReset) {
-      btnReset.addEventListener("click", (ev) => {
-        ev.preventDefault();
-        resetVisited();
-        setStatusLine({ found: null, minutes: null, cat: state.cat || "ovunque", dataset: "visitati resettati" });
-      }, { passive: false });
-    }
-
-    // Category buttons
-    $$("[data-cat], [data-category]").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const c = normCat(btn.dataset.cat || btn.dataset.category);
-        state.cat = c;
-        $$("[data-cat].active,[data-category].active").forEach(x => x.classList.remove("active"));
-        btn.classList.add("active");
-      }, { passive: true });
     });
-
-    // Category select
-    const sel =
-      $("#category") ||
-      $("#cat") ||
-      $("select[name='category']") ||
-      $("select[data-role='category']");
-    if (sel) {
-      sel.addEventListener("change", () => {
-        state.cat = normCat(sel.value);
-      }, { passive: true });
-    }
-
-    // Radius input
-    const rad =
-      $("#radiusKm") ||
-      $("#radius") ||
-      $("input[name='radiusKm']") ||
-      $("input[data-role='radius']");
-    if (rad) {
-      rad.addEventListener("change", () => {
-        const v = asNum(rad.value);
-        if (Number.isFinite(v)) state.radiusKm = clamp(v, 5, 140);
-      }, { passive: true });
-    }
-
-    // Expose functions for inline HTML onclick (if present)
-    window.Jamo = window.Jamo || {};
-    window.Jamo.findDestination = findDestination;
-    window.Jamo.resetVisited = () => { resetVisited(); setStatusLine({ dataset: "visitati resettati" }); };
-    window.Jamo.openMaps = () => state.lastPick && openMaps(state.lastPick);
-    window.Jamo.openRoute = () => state.lastPick && openRoute(state.lastPick);
-    window.Jamo.openPhoto = () => state.lastPick && openPhoto(state.lastPick);
-    window.Jamo.openThingsToSee = () => state.lastPick && openThingsToSee(state.lastPick);
-    window.Jamo.openThingsToDo = () => state.lastPick && openThingsToDo(state.lastPick);
-
-    // Legacy aliases
-    window.findDestination = findDestination;
-    window.resetVisited = () => { resetVisited(); setStatusLine({ dataset: "visitati resettati" }); };
   }
 
-  // -----------------------------
-  // Boot
-  // -----------------------------
-  document.addEventListener("DOMContentLoaded", () => {
-    try {
-      bindUI();
-      setStatusLine({ found: null, minutes: null, cat: state.cat, dataset: "pronto" });
-    } catch (e) {
-      console.error("[Jamo] boot error:", e);
-    }
-  });
+  function bindMainButtons() {
+    $("btnFind")?.addEventListener("click", () => runSearch());
+    $("btnResetVisited")?.addEventListener("click", () => {
+      resetVisited();
+      showStatus("ok", "Visitati resettati ✅");
+    });
+  }
 
+  // -------------------- BOOT (IMPORTANT) --------------------
+  function boot() {
+    // init chips
+    initChips("timeChips", { multi: false });
+    initChips("categoryChips", { multi: false });
+    initChips("styleChips", { multi: true });
+
+    initTimeChipsSync();
+    restoreOrigin();
+    bindOriginButtons();
+    bindMainButtons();
+
+    hideStatus();
+
+    // preload dataset (best effort)
+    (async () => {
+      try {
+        const origin = getOrigin();
+        if (origin) await ensureDatasetLoaded(origin, { signal: undefined });
+      } catch {}
+    })();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot, { once: true });
+  } else {
+    boot();
+  }
+
+  // opzionale: debug rapido in console
+  window.__jamo = {
+    runSearch,
+    resetRotation,
+    resetVisited,
+    getOrigin,
+    getDataset: () => DATASET,
+    forceRegion: (id) => { localStorage.setItem("jamo_region_id", id); DATASET = { kind:null, source:null, places:[], meta:{} }; },
+    clearRegion: () => { localStorage.removeItem("jamo_region_id"); DATASET = { kind:null, source:null, places:[], meta:{} }; },
+  };
 })();
