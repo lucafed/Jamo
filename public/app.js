@@ -1,8 +1,9 @@
-/* Jamo — app.js v10.4 (Region offline support + macro fallback)
- * ✅ NEW:
- * - Dataset REGIONS: /data/regions/<region_id>.json (es: it-veneto)
- * - Region-first (offline & fast). If fails -> macro as before
- * - Map region schema {places:[{lat,lng,types,beauty_score,season...}]} -> Jamo place schema
+/* Jamo — app.js v10.4 (VENETO POIS offline-first + categorie OK + fix “offline vuoto”)
+ * ✅ Novità principali:
+ * - ✅ Offline-first: se origin.country_code === "IT" prova PRIMA /data/pois/regions/it-veneto.json
+ * - ✅ Se trova POI regionali: usa quelli (pool enorme) → niente più “offline vuoto” su Mare ecc.
+ * - ✅ Mantiene macro come fallback (EU+UK) se POI regionali non disponibili
+ * - ✅ Render + log datasetInfo chiari
  */
 
 const $ = (id) => document.getElementById(id);
@@ -22,17 +23,17 @@ let LAST_SHOWN_PID = null;
 let SEARCH_TOKEN = 0;
 let SEARCH_ABORT = null;
 
-// -------------------- DATA SOURCES --------------------
-const REGIONS_BASE_URL = "/data/regions";
-// ✅ TEMP: default region for IT (we'll make it selectable next)
-const DEFAULT_IT_REGION_ID = "it-veneto";
-
-// MACROS (your existing)
+// -------------------- MACROS --------------------
 const MACROS_INDEX_URL = "/data/macros/macros_index.json";
 const FALLBACK_MACRO_URLS = [
   "/data/macros/euuk_macro_all.json",
   "/data/macros/euuk_country_it.json",
 ];
+
+// ✅ NEW: POI regionali (offline dataset completo, per categorie)
+const REGIONAL_POIS_BY_REGION = {
+  "it-veneto": "/data/pois/regions/it-veneto.json",
+};
 
 // -------------------- UTIL --------------------
 function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
@@ -300,14 +301,14 @@ async function fetchJson(url, { signal } = {}) {
   return await r.json();
 }
 
-// -------------------- DATASET --------------------
+// -------------------- DATASET (OFFLINE) --------------------
 let MACROS_INDEX = null;
 let DATASET = { kind: null, source: null, places: [], meta: {} };
 
 function normalizeVisibility(v) {
   const s = String(v || "").toLowerCase().trim();
   if (s === "chicca") return "chicca";
-  return "classica";
+  return "classica"; // default
 }
 function normalizeType(t) {
   const s = String(t || "").toLowerCase().trim();
@@ -337,73 +338,6 @@ function normalizePlace(p) {
   return out;
 }
 
-// ---------- REGIONS: map schema -> places ----------
-function mapRegionPlaceToJamoPlace(rp, regionMeta) {
-  // region file uses lat/lng, types[], highlights[], season[]
-  const lat = Number(rp?.lat);
-  const lon = Number(rp?.lng);
-  if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
-
-  const name = String(rp?.name || "").trim();
-  if (!name) return null;
-
-  const typesArr = Array.isArray(rp?.types) ? rp.types.map(x => normalizeType(x)) : [];
-  const primaryType = typesArr[0] || "ovunque";
-
-  const seasonArr = Array.isArray(rp?.season) ? rp.season.map(s => String(s).toLowerCase()) : [];
-  const highlightsArr = Array.isArray(rp?.highlights) ? rp.highlights.map(h => String(h).toLowerCase()) : [];
-
-  // tags: types + season + some highlights keywords
-  const tags = [
-    ...typesArr.map(t => `type:${t}`),
-    ...seasonArr.map(s => `season:${s}`),
-  ];
-
-  // quick enrichment for family
-  const n = normName(name);
-  if (n.includes("gardaland") || n.includes("parco") || n.includes("zoo") || n.includes("acquario")) {
-    tags.push("family");
-  }
-
-  const beauty = Number(rp?.beauty_score);
-  const visibility = Number.isFinite(beauty) && beauty >= 0.93 ? "chicca" : "classica";
-
-  return normalizePlace({
-    id: String(rp?.id || safeIdFromPlace({ name, lat, lon })),
-    name,
-    lat,
-    lon,
-    type: primaryType,
-    visibility,
-    beauty_score: Number.isFinite(beauty) ? beauty : 0.78,
-    tags: Array.from(new Set(tags.concat(highlightsArr.map(x => `hl:${x}`)))).slice(0, 22),
-    country: regionMeta?.country || "IT",
-    area: regionMeta?.label_it || regionMeta?.region_id || "",
-  });
-}
-
-async function tryLoadRegion(regionId, signal) {
-  const rid = String(regionId || "").trim();
-  if (!rid) return null;
-
-  const url = `${REGIONS_BASE_URL}/${encodeURIComponent(rid)}.json`;
-  const j = await fetchJson(url, { signal }).catch(() => null);
-  if (!j || !Array.isArray(j.places) || !j.places.length) return null;
-
-  const meta = {
-    region_id: String(j.region_id || rid),
-    country: String(j.country || "IT").toUpperCase(),
-    label_it: String(j.label_it || ""),
-    bbox_hint: j.bbox_hint || null,
-  };
-
-  const places = j.places.map(p => mapRegionPlaceToJamoPlace(p, meta)).filter(Boolean);
-  if (!places.length) return null;
-
-  return { url, meta, places };
-}
-
-// ---------- MACROS (existing) ----------
 async function loadMacrosIndexSafe(signal) {
   try {
     MACROS_INDEX = await fetchJson(MACROS_INDEX_URL, { signal });
@@ -413,7 +347,9 @@ async function loadMacrosIndexSafe(signal) {
     return null;
   }
 }
-async function tryLoadMacro(url, signal) {
+
+// ✅ generic loader: works for macro files and for POI regional files
+async function tryLoadPlacesFile(url, signal) {
   const r = await fetch(url, { cache: "no-store", signal });
   if (!r.ok) return null;
   const j = await r.json().catch(() => null);
@@ -423,8 +359,9 @@ async function tryLoadMacro(url, signal) {
   const places = placesRaw.map(normalizePlace).filter(Boolean);
   if (!places.length) return null;
 
-  return { ...j, places };
+  return { json: j, places };
 }
+
 function findCountryMacroPath(cc) {
   if (!MACROS_INDEX?.items?.length) return null;
   const c = String(cc || "").toUpperCase();
@@ -445,42 +382,47 @@ function findCountryMacroPath(cc) {
   return null;
 }
 
+// ✅ simple region picker (per ora: Veneto se IT)
+// puoi espandere dopo con geofence/tiles/region detect.
+function pickRegionIdFromOrigin(origin) {
+  const saved = localStorage.getItem("jamo_region_id");
+  if (saved) return saved;
+
+  const cc = String(origin?.country_code || "").toUpperCase();
+  if (cc === "IT") return "it-veneto";
+  return "";
+}
+
 async function ensureDatasetLoaded(origin, { signal } = {}) {
   if (DATASET?.places?.length) return DATASET;
 
-  const cc = String(origin?.country_code || $("originCC")?.value || "").toUpperCase();
-
-  // ✅ 0) REGION-FIRST for Italy (fast offline)
-  if (cc === "IT") {
-    const regionId = DEFAULT_IT_REGION_ID; // TEMP; next step: make selectable
-    const region = await tryLoadRegion(regionId, signal);
-    if (region) {
-      DATASET = {
-        kind: "region",
-        source: region.url,
-        places: region.places,
-        meta: { region: region.meta, cc },
-      };
-      return DATASET;
-    }
-  }
-
-  // 1) macros as before
   await loadMacrosIndexSafe(signal);
 
-  const cPath = findCountryMacroPath(cc);
   const candidates = [];
 
+  // 0) ✅ PROVA POI REGIONALI PRIMA DI TUTTO (fix “offline vuoto”)
+  const regionId = pickRegionIdFromOrigin(origin);
+  if (regionId && REGIONAL_POIS_BY_REGION[regionId]) {
+    candidates.push(REGIONAL_POIS_BY_REGION[regionId]);
+  }
+
+  // 1) macro country in base a origin.country_code
+  const cc = String(origin?.country_code || $("originCC")?.value || "").toUpperCase();
+  const cPath = findCountryMacroPath(cc);
   if (cPath) candidates.push(cPath);
 
+  // 2) fallback: EUUK all
   const euAll = MACROS_INDEX?.items?.find(x => x.id === "euuk_macro_all" || String(x.path || "").includes("euuk_macro_all.json"));
   if (euAll?.path) candidates.push(euAll.path);
 
+  // 3) extra fallback static
   for (const u of FALLBACK_MACRO_URLS) candidates.push(u);
 
-  const saved = localStorage.getItem("jamo_macro_url");
-  if (saved) candidates.unshift(saved);
+  // 4) se c'era una scelta salvata, provala prima (ma non sopra al regionale)
+  const savedMacro = localStorage.getItem("jamo_macro_url");
+  if (savedMacro) candidates.push(savedMacro);
 
+  // de-dup
   const uniq = [];
   const seen = new Set();
   for (const u of candidates) {
@@ -491,20 +433,23 @@ async function ensureDatasetLoaded(origin, { signal } = {}) {
   }
 
   for (const url of uniq) {
-    const m = await tryLoadMacro(url, signal);
-    if (m) {
+    const loaded = await tryLoadPlacesFile(url, signal);
+    if (loaded) {
+      const isRegional = url.includes("/data/pois/regions/");
       DATASET = {
-        kind: "macro",
+        kind: isRegional ? "pois_region" : "macro",
         source: url,
-        places: m.places,
-        meta: { macro: m, cc },
+        places: loaded.places,
+        meta: { raw: loaded.json, cc, regionId },
       };
-      localStorage.setItem("jamo_macro_url", url);
+      // salva solo macro (non sovrascrivere “macro_url” con regionale)
+      if (!isRegional) localStorage.setItem("jamo_macro_url", url);
+      if (isRegional && regionId) localStorage.setItem("jamo_region_id", regionId);
       return DATASET;
     }
   }
 
-  throw new Error("Nessun dataset offline valido disponibile.");
+  throw new Error("Nessun dataset offline valido disponibile (POI regionali o macro).");
 }
 
 // -------------------- GEOCODING --------------------
@@ -577,8 +522,7 @@ function isThemePark(place) {
   const t = tagsStr(place);
   return (
     t.includes("tourism=theme_park") ||
-    n.includes("parco divertimenti") || n.includes("lunapark") || n.includes("luna park") || n.includes("giostre") ||
-    n.includes("gardaland")
+    n.includes("parco divertimenti") || n.includes("lunapark") || n.includes("luna park") || n.includes("giostre")
   );
 }
 
@@ -633,8 +577,7 @@ function isMountain(place) {
     t.includes("natural=peak") ||
     t.includes("mountain") ||
     n.includes("monte") || n.includes("cima") || n.includes("massiccio") ||
-    n.includes("rifugio") || n.includes("passo") || n.includes("valico") ||
-    t.includes("type:montagna")
+    n.includes("rifugio") || n.includes("passo") || n.includes("valico")
   );
 }
 
@@ -649,8 +592,7 @@ function isBorgo(place) {
   return (
     type === "borghi" ||
     n.includes("borgo") ||
-    t.includes("place=village") || t.includes("place=hamlet") ||
-    t.includes("type:borghi")
+    t.includes("place=village") || t.includes("place=hamlet")
   );
 }
 
@@ -659,8 +601,7 @@ function isCity(place) {
   const t = tagsStr(place);
   return (
     type === "citta" ||
-    t.includes("place=city") || t.includes("place=town") ||
-    t.includes("type:citta")
+    t.includes("place=city") || t.includes("place=town")
   );
 }
 
@@ -671,28 +612,47 @@ function matchesCategoryStrict(place, cat) {
   const n = normName(place?.name);
   const t = tagsStr(place);
 
-  if (cat === "mare") return type === "mare" || t.includes("natural=beach") || n.includes("spiaggia") || n.includes("beach") || t.includes("type:mare");
-  if (cat === "storia") return type === "storia" || t.includes("historic=") || t.includes("tourism=museum") || n.includes("castello") || n.includes("museo") || n.includes("rocca") || t.includes("type:storia");
-  if (cat === "natura") return type === "natura" || t.includes("nature_reserve") || t.includes("boundary=national_park") || n.includes("cascata") || n.includes("lago") || n.includes("riserva") || t.includes("type:natura");
-  if (cat === "relax") return isSpaPlace(place) || type === "relax" || t.includes("type:relax");
-  if (cat === "borghi") return isBorgo(place);
-  if (cat === "citta") return isCity(place);
-  if (cat === "montagna") return isMountain(place);
+  if (cat === "mare") {
+    // ✅ accetta anche POI “mare” del dataset (type=mare)
+    return type === "mare" ||
+      t.includes("natural=beach") ||
+      t.includes("leisure=marina") ||
+      t.includes("beach_resort") ||
+      n.includes("spiaggia") || n.includes("lido") || n.includes("lungomare") || n.includes("baia") || n.includes("mare") || n.includes("laguna");
+  }
+  if (cat === "storia") {
+    return type === "storia" || t.includes("historic=") || t.includes("tourism=museum") || n.includes("castello") || n.includes("museo") || n.includes("rocca");
+  }
+  if (cat === "natura") {
+    return type === "natura" || t.includes("nature_reserve") || t.includes("boundary=national_park") || n.includes("cascata") || n.includes("lago") || n.includes("riserva");
+  }
+  if (cat === "relax") {
+    return isSpaPlace(place);
+  }
+  if (cat === "borghi") {
+    return isBorgo(place);
+  }
+  if (cat === "citta") {
+    return isCity(place);
+  }
+  if (cat === "montagna") {
+    return isMountain(place) || type === "montagna";
+  }
 
-  if (cat === "theme_park") return isThemePark(place) || isWaterPark(place);
-  if (cat === "kids_museum") return isKidsMuseum(place);
-  if (cat === "viewpoints") return isViewpoint(place);
-  if (cat === "hiking") return isHiking(place);
+  if (cat === "theme_park") return isThemePark(place) || isWaterPark(place) || type === "theme_park";
+  if (cat === "kids_museum") return isKidsMuseum(place) || type === "kids_museum";
+  if (cat === "viewpoints") return isViewpoint(place) || type === "viewpoints";
+  if (cat === "hiking") return isHiking(place) || type === "hiking";
 
   if (cat === "family") {
-    // family = SOLO roba family vera; spa esclusa
+    // family = roba family vera; spa esclusa (fallback separato)
     return (
+      type === "family" ||
       isThemePark(place) ||
       isWaterPark(place) ||
       isZooOrAquarium(place) ||
       isKidsMuseum(place) ||
-      isPlaygroundLike(place) ||
-      t.includes("family")
+      isPlaygroundLike(place)
     );
   }
 
@@ -702,6 +662,7 @@ function matchesCategoryStrict(place, cat) {
 function matchesStyle(place, { wantChicche, wantClassici }) {
   const vis = normalizeVisibility(place?.visibility);
   if (!wantChicche && !wantClassici) return true;
+
   if (vis === "chicca") return !!wantChicche;
   return !!wantClassici;
 }
@@ -794,6 +755,7 @@ function buildCandidatesFromPool(
 
     if (!Number.isFinite(driveMin)) continue;
     if (driveMin > target) continue;
+
     if (km < (category === "family" ? 0.8 : 1.2)) continue;
 
     const isChicca = normalizeVisibility(p.visibility) === "chicca";
@@ -808,6 +770,7 @@ function buildCandidatesFromPool(
     s += familyBoost(p, category);
 
     if (category === "family" && isSpaPlace(p) && !allowSpaInFamily) s -= 0.35;
+
     if (!ignoreRotation) s -= rotationPenalty(pid, recentSet);
 
     candidates.push({ place: p, pid, km, driveMin, score: Number(s.toFixed(4)) });
@@ -863,8 +826,11 @@ async function fetchLiveFallback(origin, minutes, category, signal) {
   const url = `/api/destinations?lat=${encodeURIComponent(origin.lat)}&lon=${encodeURIComponent(origin.lon)}&radiusKm=${encodeURIComponent(radiusKm)}&cat=${encodeURIComponent(category)}`;
   const j = await fetchJson(url, { signal });
   const els = j?.data?.elements;
+
   if (!Array.isArray(els) || !els.length) return [];
-  return els.map(normalizePlace).filter(Boolean);
+
+  const out = els.map(normalizePlace).filter(Boolean);
+  return out;
 }
 
 // -------------------- CARD HELPERS --------------------
@@ -895,8 +861,14 @@ function microWhatToDo(place, category) {
     if (isZooOrAquarium(place)) return "Zoo/acquario: percorsi, aree picnic e tante cose da vedere.";
     if (isKidsMuseum(place)) return "Museo kids/science center: ottimo anche con brutto tempo.";
     if (isPlaygroundLike(place)) return "Parco giochi/attività kids: semplice e super efficace.";
+    if (isSpaPlace(place)) return "Terme/piscine: relax (verifica accesso bimbi).";
     return "Attività family: controlla foto e cosa fare nei dintorni.";
   }
+
+  if (category === "kids_museum") return "Esperienza interattiva: perfetta per bambini e pioggia.";
+  if (category === "viewpoints") return "Panorama: tramonto, foto e passeggiata breve.";
+  if (category === "hiking") return "Sentiero/trekking: scarpe buone e controlla meteo.";
+
   if (category === "relax") return "Relax: terme/spa o posto tranquillo + pausa.";
   if (category === "storia") return "Storia e cultura: visita + centro storico.";
   if (category === "mare") return "Mare: spiaggia, passeggiata e tramonto.";
@@ -918,6 +890,8 @@ function chipsFromPlace(place, category) {
     if (looksIndoor(place)) chips.push("🏠 indoor");
     if (isWinterNow() && isWaterPark(place) && !looksIndoor(place)) chips.push("❄️ stagionale");
   }
+  if (category === "viewpoints") chips.push("🌅 panorama");
+  if (category === "hiking") chips.push("🥾 sentiero");
   if (category === "montagna") chips.push("🏔️ montagna");
   if (category === "borghi") chips.push("🏘️ borgo");
   if (category === "storia") chips.push("🏛️ storia");
@@ -1036,6 +1010,7 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives = [], meta =
           <a class="btn" target="_blank" rel="noopener" href="${mapsDirUrl(origin.lat, origin.lon, lat, lon)}">🚗 Percorso</a>
           <a class="btn btn-ghost" target="_blank" rel="noopener" href="${googleImagesUrl(q)}">📸 Foto</a>
           <a class="btn btn-ghost" target="_blank" rel="noopener" href="${googleThingsToDoUrl(q)}">👀 Cosa vedere</a>
+          <a class="btn btn-ghost" target="_blank" rel="noopener" href="${googleDoUrl(q)}">🎯 Cosa fare</a>
           <a class="btn btn-ghost" target="_blank" rel="noopener" href="${restaurantsUrl(q)}">🍝 Ristoranti</a>
           <a class="btn btn-ghost" target="_blank" rel="noopener" href="${wikiUrl(q)}">📚 Wiki</a>
           <a class="btn btn-ghost" target="_blank" rel="noopener" href="${eventsUrl(q)}">📅 Eventi</a>
@@ -1118,13 +1093,12 @@ async function runSearch({ silent = false, forbidPid = null, forcePid = null } =
       return;
     }
 
-    DATASET = { kind: null, source: null, places: [], meta: {} };
     await ensureDatasetLoaded(origin, { signal });
 
     const basePool = Array.isArray(DATASET?.places) ? DATASET.places : [];
     const datasetInfo =
-      DATASET.kind === "region"
-        ? `REGION:${(DATASET.source || "").split("/").pop()} (${basePool.length})`
+      DATASET.kind === "pois_region"
+        ? `POI:${(DATASET.source || "").split("/").pop()} (${basePool.length})`
         : DATASET.kind === "macro"
           ? `MACRO:${(DATASET.source || "").split("/").pop()} (${basePool.length})`
           : `—`;
@@ -1170,7 +1144,7 @@ async function runSearch({ silent = false, forbidPid = null, forcePid = null } =
 
     if (token !== SEARCH_TOKEN) return;
 
-    // 2) LIVE fallback only if offline empty OR not enough choices
+    // 2) LIVE fallback (solo se offline vuoto)
     if (!chosen) {
       showResultProgress("Offline vuoto. Provo LIVE (Overpass) senza cambiare categoria…");
       for (const mins of steps) {
@@ -1257,6 +1231,9 @@ function bindOriginButtons() {
 
         setOrigin({ label: "La mia posizione", lat, lon, country_code: "" });
         showStatus("ok", "Partenza GPS impostata ✅");
+
+        DATASET = { kind: null, source: null, places: [], meta: {} };
+        await ensureDatasetLoaded(getOrigin(), { signal: undefined }).catch(() => {});
       },
       (err) => {
         console.error(err);
@@ -1282,6 +1259,9 @@ function bindOriginButtons() {
       });
 
       showStatus("ok", "Partenza impostata ✅");
+
+      DATASET = { kind: null, source: null, places: [], meta: {} };
+      await ensureDatasetLoaded(getOrigin(), { signal: undefined }).catch(() => {});
     } catch (e) {
       console.error(e);
       if ($("originStatus")) $("originStatus").textContent = `❌ ${String(e.message || e)}`;
@@ -1317,3 +1297,4 @@ hideStatus();
     if (origin) await ensureDatasetLoaded(origin, { signal: undefined });
   } catch {}
 })();
+```0
