@@ -1,9 +1,8 @@
-/* app.js — Jamo (REGION-OFFLINE FIRST) — v5.2
-   Goals:
-   - REGION (offline) first: /data/pois/regions/<region_id>.json
+/* app.js — Jamo (REGION-OFFLINE FIRST) — v5.2 FULL
+   - REGION offline first: /data/pois/regions/<region_id>.json
    - LIVE (Overpass) second: /api/destinations?lat&lon&radiusKm&cat
    - MACRO fallback: /data/macros/euk_country_<cc>.json
-   - Robust: no JS crashes -> buttons always clickable
+   - Robust: never crash if DOM IDs differ
    - Weekly rotation + avoid visited
 */
 
@@ -11,7 +10,7 @@
   "use strict";
 
   // -----------------------------
-  // Small helpers (safe)
+  // Helpers
   // -----------------------------
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
@@ -20,6 +19,18 @@
   function asNum(x) { const n = Number(x); return Number.isFinite(n) ? n : null; }
   function normStr(s) { return String(s || "").trim(); }
   function lower(s) { return normStr(s).toLowerCase(); }
+
+  function escapeHtml(s) {
+    return String(s ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  function safeSetText(el, txt) { if (el) el.textContent = String(txt ?? ""); }
+  function safeSetHTML(el, html) { if (el) el.innerHTML = String(html ?? ""); }
 
   function toRad(x) { return (x * Math.PI) / 180; }
   function haversineKm(aLat, aLon, bLat, bLon) {
@@ -34,15 +45,26 @@
     return 2 * R * Math.asin(Math.sqrt(s));
   }
 
+  // -----------------------------
+  // Weekly rotation RNG
+  // -----------------------------
   function weekKeyUTC() {
     const d = new Date();
-    // ISO week approximation (good enough for rotation)
     const t = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
-    const day = new Date(t).getUTCDay() || 7;
+    const day = new Date(t).getUTCDay() || 7; // 1..7
     const thursday = new Date(t + (4 - day) * 86400000);
     const yearStart = Date.UTC(thursday.getUTCFullYear(), 0, 1);
     const week = Math.ceil(((thursday - yearStart) / 86400000 + 1) / 7);
     return `${thursday.getUTCFullYear()}-W${String(week).padStart(2, "0")}`;
+  }
+
+  function hashStringToSeed(str) {
+    let h = 2166136261;
+    for (let i = 0; i < str.length; i++) {
+      h ^= str.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
+    return h >>> 0;
   }
 
   function mulberry32(seed) {
@@ -55,15 +77,9 @@
     };
   }
 
-  function hashStringToSeed(str) {
-    let h = 2166136261;
-    for (let i = 0; i < str.length; i++) {
-      h ^= str.charCodeAt(i);
-      h = Math.imul(h, 16777619);
-    }
-    return h >>> 0;
-  }
-
+  // -----------------------------
+  // Fetch JSON (timeout)
+  // -----------------------------
   async function fetchJson(url, { timeoutMs = 12000 } = {}) {
     const ctrl = new AbortController();
     const t = setTimeout(() => ctrl.abort(), timeoutMs);
@@ -75,9 +91,6 @@
       clearTimeout(t);
     }
   }
-
-  function safeSetText(el, txt) { if (el) el.textContent = String(txt ?? ""); }
-  function safeSetHTML(el, html) { if (el) el.innerHTML = String(html ?? ""); }
 
   // -----------------------------
   // Storage: visited
@@ -108,36 +121,28 @@
   }
 
   // -----------------------------
-  // Category matching
+  // Categories
   // -----------------------------
-  const UI_CATS = new Set(["ovunque", "family", "relax", "natura", "storia", "mare", "borghi", "citta", "montagna", "parchi"]);
+  const UI_CATS = new Set([
+    "ovunque", "family", "parchi",
+    "relax", "natura", "storia",
+    "mare", "borghi", "citta", "montagna"
+  ]);
 
-  // "parchi" in UI -> treat like family/theme_park + playground + adventure + water_park etc.
   const FAMILY_TYPES = new Set([
-    "family",
-    "theme_park",
-    "kids_museum",
-    "playground",
-    "water_park",
-    "zoo",
-    "aquarium",
-    "ice_rink",
-    "adventure_park",
-    "snow_family",
-    "cinema",
-    "bowling"
+    "family", "theme_park", "kids_museum", "playground", "water_park",
+    "zoo", "aquarium", "ice_rink", "adventure_park", "snow_family",
+    "cinema", "bowling"
   ]);
 
   function normCat(c) {
     const s = lower(c || "ovunque");
-    if (UI_CATS.has(s)) return s;
-    return "ovunque";
+    return UI_CATS.has(s) ? s : "ovunque";
   }
 
   function placeTypeCandidates(p) {
     const out = [];
     if (!p || typeof p !== "object") return out;
-    // common fields across datasets
     if (p.type) out.push(String(p.type));
     if (p.primary_category) out.push(String(p.primary_category));
     if (p.subtype) out.push(String(p.subtype));
@@ -150,47 +155,41 @@
     if (c === "ovunque") return true;
 
     const types = new Set(placeTypeCandidates(place));
-    // also infer from tags a bit (best-effort)
     const tags = Array.isArray(place?.tags) ? place.tags.join(" ").toLowerCase() : "";
+    const name = lower(place?.name);
 
-    if (c === "parchi" || c === "family") {
-      // allow:
-      // - explicit family/theme park
-      // - playground
-      // - water park
-      // - kids museums
-      // - adventure parks
+    if (c === "family" || c === "parchi") {
       for (const t of types) if (FAMILY_TYPES.has(t)) return true;
+
+      // tag-based inference
       if (tags.includes("tourism=theme_park")) return true;
       if (tags.includes("leisure=water_park")) return true;
       if (tags.includes("leisure=playground")) return true;
       if (tags.includes("tourism=zoo") || tags.includes("tourism=aquarium")) return true;
-      // exclude spa/terme in family/parchi
+
+      // exclude spa/terme
       if (tags.includes("amenity=spa") || tags.includes("leisure=spa") || tags.includes("natural=hot_spring") || tags.includes("thermal=yes")) return false;
-      const name = lower(place?.name);
       if (name.includes("terme") || name.includes("spa") || name.includes("thermal") || name.includes("benessere")) return false;
+
       return false;
     }
 
     if (c === "montagna") {
       if (types.has("montagna")) return true;
-      if (tags.includes("natural=peak") || tags.includes("aerialway=") || tags.includes("amenity=shelter")) return true;
-      const name = lower(place?.name);
+      if (tags.includes("natural=peak") || tags.includes("aerialway=")) return true;
       if (name.includes("rifugio") || name.includes("cima") || name.includes("vetta") || name.includes("passo") || name.includes("funivia") || name.includes("seggiovia")) return true;
       return false;
     }
 
-    // direct match for the rest
     if (types.has(c)) return true;
 
-    // a bit of compatibility: some datasets call "borghi" as "borgo"
     if (c === "borghi" && (types.has("borgo") || tags.includes("place=village") || tags.includes("place=hamlet"))) return true;
 
     return false;
   }
 
   // -----------------------------
-  // Normalize place (different datasets)
+  // Normalize place (multi-dataset)
   // -----------------------------
   function normalizePlace(raw) {
     if (!raw || typeof raw !== "object") return null;
@@ -202,7 +201,11 @@
 
     const id = normStr(raw.id || raw._id || `${name}_${lat.toFixed(5)}_${lon.toFixed(5)}`);
 
-    const type = normStr(raw.type || raw.primary_category || (Array.isArray(raw.types) ? raw.types[0] : "ovunque")) || "ovunque";
+    const type = normStr(
+      raw.type ||
+      raw.primary_category ||
+      (Array.isArray(raw.types) ? raw.types[0] : "ovunque")
+    ) || "ovunque";
 
     const visibility = normStr(raw.visibility || raw.level || "classica");
     const beauty_score = asNum(raw.beauty_score) ?? 0.7;
@@ -225,7 +228,6 @@
       tags,
       live: Boolean(raw.live),
       source: normStr(raw.source || raw.dataset || ""),
-      // keep extras
       _km: asNum(raw._km),
       _score: asNum(raw._score),
       _raw: raw
@@ -233,7 +235,7 @@
   }
 
   // -----------------------------
-  // Region detection (areas.json)
+  // Region detect via areas.json bbox
   // -----------------------------
   function pointInBbox(lat, lon, bbox) {
     if (!bbox || typeof bbox !== "object") return false;
@@ -246,16 +248,13 @@
   }
 
   async function detectRegionId(lat, lon) {
-    // areas.json expected in /data/areas.json
-    // It may contain regions with bbox.
     try {
       const j = await fetchJson("/data/areas.json", { timeoutMs: 8000 });
       const regions = Array.isArray(j?.regions) ? j.regions : Array.isArray(j) ? j : [];
-      // Prefer IT regions (id starts with it-)
       const hits = regions.filter(r => pointInBbox(lat, lon, r.bbox || r.bbox_hint || r.bboxHint));
       if (!hits.length) return null;
 
-      // Choose smallest bbox (more specific) among hits
+      // Choose most specific by bbox area
       const scored = hits.map(r => {
         const b = r.bbox || r.bbox_hint || r.bboxHint || {};
         const minLat = asNum(b.min_lat ?? b.minLat ?? b.south);
@@ -269,29 +268,31 @@
       }).sort((a, b) => a.area - b.area);
 
       const preferIT = scored.find(x => String(x.r.id || x.r.region_id || "").startsWith("it-")) || scored[0];
-      return String(preferIT.r.id || preferIT.r.region_id || preferIT.r.regionId || "").trim() || null;
+      const rid = String(preferIT.r.id || preferIT.r.region_id || preferIT.r.regionId || "").trim();
+      return rid || null;
     } catch {
       return null;
     }
   }
 
   function countryCodeFromRegionId(regionId) {
-    // "it-veneto" -> "it"
     const s = lower(regionId);
     const cc = s.split("-")[0];
-    if (cc && cc.length === 2) return cc;
-    return "it";
+    return (cc && cc.length === 2) ? cc : "it";
   }
 
   // -----------------------------
-  // Data sources (REGION -> LIVE -> MACRO)
+  // Load sources: REGION -> LIVE -> MACRO
   // -----------------------------
   async function loadRegionPlaces(regionId) {
     if (!regionId) return { ok: false, places: [], meta: { dataset: "" } };
     const url = `/data/pois/regions/${regionId}.json`;
     try {
       const j = await fetchJson(url, { timeoutMs: 12000 });
-      const rawPlaces = Array.isArray(j?.places) ? j.places : Array.isArray(j?.data?.places) ? j.data.places : [];
+      const rawPlaces =
+        Array.isArray(j?.places) ? j.places :
+        Array.isArray(j?.data?.places) ? j.data.places :
+        [];
       const places = rawPlaces.map(normalizePlace).filter(Boolean);
       return { ok: true, places, meta: { dataset: `REGION:${regionId}.json`, url, regionId, rawMeta: j?.meta || null } };
     } catch (e) {
@@ -330,7 +331,7 @@
   }
 
   // -----------------------------
-  // UI state + rendering
+  // State
   // -----------------------------
   const state = {
     userLat: null,
@@ -343,8 +344,10 @@
     regionId: null,
   };
 
+  // -----------------------------
+  // UI: read category & radius (robust)
+  // -----------------------------
   function getCatFromUI() {
-    // try common controls
     const sel =
       $("#category") ||
       $("#cat") ||
@@ -353,7 +356,6 @@
 
     if (sel && sel.value) return normCat(sel.value);
 
-    // try active button group
     const activeBtn = $("[data-cat].active") || $("[data-category].active");
     if (activeBtn) return normCat(activeBtn.dataset.cat || activeBtn.dataset.category);
 
@@ -361,7 +363,12 @@
   }
 
   function getRadiusFromUI() {
-    const inp = $("#radiusKm") || $("#radius") || $("input[name='radiusKm']") || $("input[data-role='radius']");
+    const inp =
+      $("#radiusKm") ||
+      $("#radius") ||
+      $("input[name='radiusKm']") ||
+      $("input[data-role='radius']");
+
     if (inp && inp.value != null) {
       const v = asNum(inp.value);
       if (Number.isFinite(v)) return clamp(v, 5, 140);
@@ -375,6 +382,7 @@
       $("#status") ||
       $("[data-role='status']") ||
       $("[data-ui='status']");
+
     if (!el) return;
 
     const parts = [];
@@ -386,78 +394,9 @@
     safeSetText(el, parts.join(" • "));
   }
 
-  function renderResultCard(place, datasetLabel, metaExtra = {}) {
-    // Try to map to your existing card elements, but also supports a single container.
-    const container =
-      $("#result") ||
-      $("#resultCard") ||
-      $("[data-role='result']") ||
-      $("[data-ui='result']");
-
-    if (!container) return;
-
-    const p = place || null;
-    if (!p) {
-      safeSetHTML(container, `<div style="padding:12px">Nessuna meta trovata.</div>`);
-      return;
-    }
-
-    const km = (Number.isFinite(p._km) ? p._km : (Number.isFinite(state.userLat) ? haversineKm(state.userLat, state.userLon, p.lat, p.lon) : null));
-    const minutes = km != null ? Math.round(km * 1.15) : null;
-
-    const visLabel = p.visibility === "conosciuta" ? "conosciuta" : p.visibility === "chicca" ? "chicca" : "classica";
-    const catLabel = state.cat || "ovunque";
-
-    const datasetLine = datasetLabel ? `Dataset: ${datasetLabel}` : "";
-    const scoreLine =
-      (metaExtra?.score != null) ? ` • score: ${metaExtra.score}` :
-      (p._score != null) ? ` • score: ${p._score}` : "";
-
-    safeSetHTML(container, `
-      <div class="jamo-card">
-        <div class="jamo-card-top">
-          <div class="jamo-pill">${catLabel}</div>
-          ${minutes != null ? `<div class="jamo-pill">🚗 ~${minutes} min • ${(km).toFixed(0)} km</div>` : ""}
-          <div class="jamo-pill">✨ ${visLabel}</div>
-        </div>
-
-        <h2 class="jamo-title">${escapeHtml(p.name)}</h2>
-        <div class="jamo-sub">${escapeHtml(datasetLine)}${escapeHtml(scoreLine)}</div>
-
-        <div class="jamo-actions" style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
-          <button type="button" class="jamo-btn" data-action="maps">🗺️ Maps</button>
-          <button type="button" class="jamo-btn" data-action="route">🚗 Percorso</button>
-          <button type="button" class="jamo-btn" data-action="photo">📸 Foto</button>
-          <button type="button" class="jamo-btn" data-action="see">👀 Cosa vedere</button>
-          <button type="button" class="jamo-btn" data-action="do">🎯 Cosa fare</button>
-        </div>
-      </div>
-    `);
-
-    // bind buttons inside card
-    $$(".jamo-btn", container).forEach(btn => {
-      btn.addEventListener("click", () => {
-        const a = btn.dataset.action;
-        if (a === "maps") openMaps(p);
-        if (a === "route") openRoute(p);
-        if (a === "photo") openPhoto(p);
-        if (a === "see") openThingsToSee(p);
-        if (a === "do") openThingsToDo(p);
-      }, { passive: true });
-    });
-
-    setStatusLine({ found: true, minutes, cat: catLabel, dataset: datasetLabel });
-  }
-
-  function escapeHtml(s) {
-    return String(s ?? "")
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#039;");
-  }
-
+  // -----------------------------
+  // Actions (buttons)
+  // -----------------------------
   function openMaps(p) {
     const q = encodeURIComponent(`${p.name}`);
     const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.lat + "," + p.lon)}(${q})`;
@@ -481,76 +420,137 @@
   }
 
   // -----------------------------
-  // Picking logic (nearby + rotation)
+  // Render result card (self-contained)
+  // -----------------------------
+  function renderResultCard(place, datasetLabel) {
+    const container =
+      $("#result") ||
+      $("#resultCard") ||
+      $("[data-role='result']") ||
+      $("[data-ui='result']");
+
+    if (!container) return;
+
+    if (!place) {
+      safeSetHTML(container, `<div style="padding:12px">Nessuna meta trovata.</div>`);
+      return;
+    }
+
+    const km =
+      Number.isFinite(place._km) ? place._km :
+      (Number.isFinite(state.userLat) ? haversineKm(state.userLat, state.userLon, place.lat, place.lon) : null);
+
+    const minutes = km != null ? Math.round(km * 1.15) : null;
+
+    const visLabel =
+      place.visibility === "conosciuta" ? "conosciuta" :
+      place.visibility === "chicca" ? "chicca" : "classica";
+
+    const catLabel = state.cat || "ovunque";
+    const datasetLine = datasetLabel ? `Dataset: ${datasetLabel}` : "";
+    const scoreLine = (place._score != null) ? ` • score: ${place._score}` : "";
+
+    safeSetHTML(container, `
+      <div class="jamo-card">
+        <div class="jamo-card-top">
+          <div class="jamo-pill">${escapeHtml(catLabel)}</div>
+          ${minutes != null ? `<div class="jamo-pill">🚗 ~${minutes} min • ${Number(km).toFixed(0)} km</div>` : ""}
+          <div class="jamo-pill">✨ ${escapeHtml(visLabel)}</div>
+        </div>
+
+        <h2 class="jamo-title">${escapeHtml(place.name)}</h2>
+        <div class="jamo-sub">${escapeHtml(datasetLine)}${escapeHtml(scoreLine)}</div>
+
+        <div class="jamo-actions" style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
+          <button type="button" class="jamo-btn" data-action="maps">🗺️ Maps</button>
+          <button type="button" class="jamo-btn" data-action="route">🚗 Percorso</button>
+          <button type="button" class="jamo-btn" data-action="photo">📸 Foto</button>
+          <button type="button" class="jamo-btn" data-action="see">👀 Cosa vedere</button>
+          <button type="button" class="jamo-btn" data-action="do">🎯 Cosa fare</button>
+        </div>
+      </div>
+    `);
+
+    // Bind buttons inside card
+    $$(".jamo-btn", container).forEach(btn => {
+      btn.addEventListener("click", () => {
+        const a = btn.dataset.action;
+        if (a === "maps") openMaps(place);
+        if (a === "route") openRoute(place);
+        if (a === "photo") openPhoto(place);
+        if (a === "see") openThingsToSee(place);
+        if (a === "do") openThingsToDo(place);
+      }, { passive: true });
+    });
+
+    setStatusLine({ found: true, minutes, cat: catLabel, dataset: datasetLabel });
+  }
+
+  // -----------------------------
+  // Pick logic (weekly rotation + avoid visited)
   // -----------------------------
   function pickPlace(places, { cat, lat, lon, datasetLabel } = {}) {
     const visited = getVisitedSet();
     const c = normCat(cat);
 
-    // filter by category
+    // Filter by category
     const filtered = places.filter(p => categoryMatches(p, c));
 
-    // compute km & base score
+    // Enrich with distance + score
     const enriched = filtered.map(p => {
       const km = (Number.isFinite(lat) && Number.isFinite(lon))
         ? haversineKm(lat, lon, p.lat, p.lon)
         : null;
 
-      // base score: beauty + closeness + visibility bonus
       let s = (p.beauty_score ?? 0.7) * 1.8;
       if (km != null) s += clamp(1.6 - (km / 60), -0.6, 1.6);
+
       if (p.visibility === "conosciuta") s += 0.25;
       if (p.visibility === "chicca") s += 0.35;
 
-      // prefer real POI over "place=*"
       const tags = Array.isArray(p.tags) ? p.tags.join(" ").toLowerCase() : "";
-      if (tags.includes("place=")) s -= 0.6;
+      if (tags.includes("place=")) s -= 0.6; // avoid generic cities
 
       return { ...p, _km: km != null ? Number(km.toFixed(3)) : p._km, _pickScore: Number(s.toFixed(4)) };
     });
 
-    // sort by score desc then km asc
     enriched.sort((a, b) => (b._pickScore - a._pickScore) || ((a._km ?? 9999) - (b._km ?? 9999)));
 
-    // take top pool, but avoid visited if possible
     const pool = enriched.slice(0, 220);
     const unvisited = pool.filter(p => !visited.has(String(p.id)));
-
     const finalPool = unvisited.length >= 20 ? unvisited : pool;
 
     if (!finalPool.length) return null;
 
-    // weekly rotation seed
     const wk = weekKeyUTC();
     const seedStr = `${wk}|${datasetLabel}|${c}|${Math.round((lat ?? 0) * 100)}|${Math.round((lon ?? 0) * 100)}`;
     const rng = mulberry32(hashStringToSeed(seedStr));
 
-    // choose among top 35 with randomness
     const top = finalPool.slice(0, Math.min(35, finalPool.length));
     const idx = Math.floor(rng() * top.length);
     return top[idx] || top[0] || null;
   }
 
   // -----------------------------
-  // Main flow: find destination
+  // Location
   // -----------------------------
   async function getUserLocation() {
-    // if already set
     if (Number.isFinite(state.userLat) && Number.isFinite(state.userLon)) {
       return { lat: state.userLat, lon: state.userLon };
     }
 
-    // try a hidden input / dataset
+    // Try preset values
     const latEl = $("#userLat") || $("[data-user-lat]");
     const lonEl = $("#userLon") || $("[data-user-lon]");
     const preLat = asNum(latEl?.value ?? latEl?.dataset?.userLat);
     const preLon = asNum(lonEl?.value ?? lonEl?.dataset?.userLon);
     if (Number.isFinite(preLat) && Number.isFinite(preLon)) {
-      state.userLat = preLat; state.userLon = preLon;
+      state.userLat = preLat;
+      state.userLon = preLon;
       return { lat: preLat, lon: preLon };
     }
 
-    // navigator geolocation
+    // Geolocation
     return await new Promise((resolve, reject) => {
       if (!navigator.geolocation) return reject(new Error("Geolocation not supported"));
       navigator.geolocation.getCurrentPosition(
@@ -558,7 +558,8 @@
           const lat = pos?.coords?.latitude;
           const lon = pos?.coords?.longitude;
           if (!Number.isFinite(lat) || !Number.isFinite(lon)) return reject(new Error("Bad coords"));
-          state.userLat = lat; state.userLon = lon;
+          state.userLat = lat;
+          state.userLon = lon;
           resolve({ lat, lon });
         },
         (err) => reject(err || new Error("Geolocation denied")),
@@ -567,6 +568,9 @@
     });
   }
 
+  // -----------------------------
+  // Main: find destination
+  // -----------------------------
   async function findDestination() {
     try {
       const cat = getCatFromUI();
@@ -578,12 +582,12 @@
 
       const { lat, lon } = await getUserLocation();
 
-      // 1) Detect region (best-effort)
+      // detect region once
       if (!state.regionId) {
         state.regionId = await detectRegionId(lat, lon);
       }
 
-      // 2) REGION FIRST (offline)
+      // 1) REGION FIRST
       if (state.regionId) {
         const regionRes = await loadRegionPlaces(state.regionId);
         if (regionRes.ok && regionRes.places.length) {
@@ -599,7 +603,7 @@
         }
       }
 
-      // 3) LIVE second (online)
+      // 2) LIVE SECOND (online)
       const liveRes = await loadLivePlaces({ lat, lon, radiusKm, cat });
       if (liveRes.ok && liveRes.places.length) {
         const pick = pickPlace(liveRes.places, { cat, lat, lon, datasetLabel: liveRes.meta.dataset });
@@ -613,7 +617,7 @@
         }
       }
 
-      // 4) MACRO fallback
+      // 3) MACRO fallback
       const cc = state.regionId ? countryCodeFromRegionId(state.regionId) : "it";
       const macroRes = await loadMacroPlaces(cc);
       if (macroRes.ok && macroRes.places.length) {
@@ -628,22 +632,28 @@
         }
       }
 
-      // Nothing
+      // nothing
       setStatusLine({ found: false, minutes: null, cat, dataset: "nessun dataset utile" });
       renderResultCard(null, "");
     } catch (e) {
       console.error("[Jamo] findDestination error:", e);
       setStatusLine({ found: false, minutes: null, cat: state.cat || "ovunque", dataset: "errore" });
-      const container = $("#result") || $("#resultCard") || $("[data-role='result']") || $("[data-ui='result']");
+
+      const container =
+        $("#result") ||
+        $("#resultCard") ||
+        $("[data-role='result']") ||
+        $("[data-ui='result']");
+
       if (container) safeSetHTML(container, `<div style="padding:12px">Errore: ${escapeHtml(String(e?.message || e))}</div>`);
     }
   }
 
   // -----------------------------
-  // Bind UI events (no crash)
+  // Bind UI (robust)
   // -----------------------------
   function bindUI() {
-    // Main buttons
+    // Find button
     const btnFind =
       $("#btnFind") ||
       $("#findBtn") ||
@@ -651,6 +661,7 @@
       $("[data-action='find']") ||
       $("[data-ui='find']");
 
+    // Reset visited
     const btnReset =
       $("#btnResetVisited") ||
       $("#resetVisited") ||
@@ -668,31 +679,38 @@
       btnReset.addEventListener("click", (ev) => {
         ev.preventDefault();
         resetVisited();
-        // optional feedback
         setStatusLine({ found: null, minutes: null, cat: state.cat || "ovunque", dataset: "visitati resettati" });
       }, { passive: false });
     }
 
-    // Category buttons (if any)
+    // Category buttons
     $$("[data-cat], [data-category]").forEach(btn => {
       btn.addEventListener("click", () => {
         const c = normCat(btn.dataset.cat || btn.dataset.category);
         state.cat = c;
-        // mark active
         $$("[data-cat].active,[data-category].active").forEach(x => x.classList.remove("active"));
         btn.classList.add("active");
       }, { passive: true });
     });
 
-    // If select changes, update state
-    const sel = $("#category") || $("#cat") || $("select[name='category']") || $("select[data-role='category']");
+    // Category select
+    const sel =
+      $("#category") ||
+      $("#cat") ||
+      $("select[name='category']") ||
+      $("select[data-role='category']");
     if (sel) {
       sel.addEventListener("change", () => {
         state.cat = normCat(sel.value);
       }, { passive: true });
     }
 
-    const rad = $("#radiusKm") || $("#radius") || $("input[name='radiusKm']") || $("input[data-role='radius']");
+    // Radius input
+    const rad =
+      $("#radiusKm") ||
+      $("#radius") ||
+      $("input[name='radiusKm']") ||
+      $("input[data-role='radius']");
     if (rad) {
       rad.addEventListener("change", () => {
         const v = asNum(rad.value);
@@ -700,7 +718,7 @@
       }, { passive: true });
     }
 
-    // Expose for inline onclick in HTML (if present)
+    // Expose functions for inline HTML onclick (if present)
     window.Jamo = window.Jamo || {};
     window.Jamo.findDestination = findDestination;
     window.Jamo.resetVisited = () => { resetVisited(); setStatusLine({ dataset: "visitati resettati" }); };
@@ -710,7 +728,7 @@
     window.Jamo.openThingsToSee = () => state.lastPick && openThingsToSee(state.lastPick);
     window.Jamo.openThingsToDo = () => state.lastPick && openThingsToDo(state.lastPick);
 
-    // Also legacy names (in case your HTML uses these)
+    // Legacy aliases
     window.findDestination = findDestination;
     window.resetVisited = () => { resetVisited(); setStatusLine({ dataset: "visitati resettati" }); };
   }
@@ -721,7 +739,6 @@
   document.addEventListener("DOMContentLoaded", () => {
     try {
       bindUI();
-      // Optional: show initial status
       setStatusLine({ found: null, minutes: null, cat: state.cat, dataset: "pronto" });
     } catch (e) {
       console.error("[Jamo] boot error:", e);
