@@ -1,0 +1,52 @@
+name: Build POIs IT Veneto (offline)
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "scripts/build_pois_it_veneto_all.mjs"
+      - ".github/workflows/build-pois-it-veneto.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-pois-it-veneto
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Run build (Veneto)
+        run: node scripts/build_pois_it_veneto_all.mjs
+
+      - name: Show output
+        run: |
+          ls -lah public/data/pois/regions || true
+          echo "-----"
+          head -c 500 public/data/pois/regions/it-veneto.json || true
+          echo ""
+
+      - name: Commit generated file
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/data/pois/regions/it-veneto.json
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git commit -m "Build Veneto offline POIs"
+          git push
