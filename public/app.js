@@ -1,9 +1,8 @@
-/* Jamo — app.js v10.4 (VENETO POIS offline-first + categorie OK + fix “offline vuoto”)
- * ✅ Novità principali:
- * - ✅ Offline-first: se origin.country_code === "IT" prova PRIMA /data/pois/regions/it-veneto.json
- * - ✅ Se trova POI regionali: usa quelli (pool enorme) → niente più “offline vuoto” su Mare ecc.
- * - ✅ Mantiene macro come fallback (EU+UK) se POI regionali non disponibili
- * - ✅ Render + log datasetInfo chiari
+/* Jamo — app.js v10.5
+ * ✅ FIX CRITICO: evita crash JS (bottoni “morti”) anche se manca macros_index.json o file non disponibili
+ * ✅ Offline-first: prova POI regionali (Veneto) prima dei macro
+ * ✅ Fallback robusto: se POI regionali non esistono -> macro country -> euuk_all -> fallback static
+ * ✅ Categorie precise + rotazione + live fallback (come prima)
  */
 
 const $ = (id) => document.getElementById(id);
@@ -23,15 +22,15 @@ let LAST_SHOWN_PID = null;
 let SEARCH_TOKEN = 0;
 let SEARCH_ABORT = null;
 
-// -------------------- MACROS --------------------
+// -------------------- OFFLINE DATA --------------------
 const MACROS_INDEX_URL = "/data/macros/macros_index.json";
 const FALLBACK_MACRO_URLS = [
-  "/data/macros/euuk_macro_all.json",
   "/data/macros/euuk_country_it.json",
+  "/data/macros/euuk_macro_all.json",
 ];
 
-// ✅ NEW: POI regionali (offline dataset completo, per categorie)
-const REGIONAL_POIS_BY_REGION = {
+// ✅ POI regionali (metti qui quelli che vuoi testare)
+const REGIONAL_POIS_BY_ID = {
   "it-veneto": "/data/pois/regions/it-veneto.json",
 };
 
@@ -129,6 +128,7 @@ function setOrigin({ label, lat, lon, country_code }) {
   if ($("originLat")) $("originLat").value = String(lat);
   if ($("originLon")) $("originLon").value = String(lon);
 
+  // originCC è opzionale (nel tuo HTML non c’è un input originCC)
   const cc = String(country_code || "").toUpperCase();
   if ($("originCC")) $("originCC").value = cc;
 
@@ -308,7 +308,7 @@ let DATASET = { kind: null, source: null, places: [], meta: {} };
 function normalizeVisibility(v) {
   const s = String(v || "").toLowerCase().trim();
   if (s === "chicca") return "chicca";
-  return "classica"; // default
+  return "classica";
 }
 function normalizeType(t) {
   const s = String(t || "").toLowerCase().trim();
@@ -326,40 +326,38 @@ function normalizePlace(p) {
   const out = { ...p };
   out.lat = lat;
   out.lon = lon;
-
   out.name = String(out.name || "").trim();
   out.type = normalizeType(out.type);
   out.visibility = normalizeVisibility(out.visibility);
-
   out.tags = Array.isArray(out.tags) ? out.tags.map(x => String(x).toLowerCase()) : [];
   out.country = String(out.country || "").toUpperCase();
   out.area = String(out.area || "");
-
   return out;
 }
 
 async function loadMacrosIndexSafe(signal) {
   try {
     MACROS_INDEX = await fetchJson(MACROS_INDEX_URL, { signal });
-    return MACROS_INDEX;
   } catch {
     MACROS_INDEX = null;
-    return null;
   }
+  return MACROS_INDEX;
 }
 
-// ✅ generic loader: works for macro files and for POI regional files
 async function tryLoadPlacesFile(url, signal) {
-  const r = await fetch(url, { cache: "no-store", signal });
-  if (!r.ok) return null;
-  const j = await r.json().catch(() => null);
-  const placesRaw = Array.isArray(j?.places) ? j.places : null;
-  if (!placesRaw || !placesRaw.length) return null;
+  try {
+    const r = await fetch(url, { cache: "no-store", signal });
+    if (!r.ok) return null;
+    const j = await r.json().catch(() => null);
+    const placesRaw = Array.isArray(j?.places) ? j.places : null;
+    if (!placesRaw || !placesRaw.length) return null;
 
-  const places = placesRaw.map(normalizePlace).filter(Boolean);
-  if (!places.length) return null;
-
-  return { json: j, places };
+    const places = placesRaw.map(normalizePlace).filter(Boolean);
+    if (!places.length) return null;
+    return { json: j, places };
+  } catch {
+    return null;
+  }
 }
 
 function findCountryMacroPath(cc) {
@@ -369,24 +367,17 @@ function findCountryMacroPath(cc) {
 
   const hit1 = MACROS_INDEX.items.find(x =>
     String(x.id || "") === `euuk_country_${c.toLowerCase()}` ||
-    (String(x.path || "").includes(`euuk_country_${c.toLowerCase()}.json`))
+    String(x.path || "").includes(`euuk_country_${c.toLowerCase()}.json`)
   );
   if (hit1?.path) return hit1.path;
-
-  const hit2 = MACROS_INDEX.items.find(x =>
-    String(x.id || "").toLowerCase() === `eu_${c.toLowerCase()}` ||
-    String(x.path || "").includes(`eu_macro_${c.toLowerCase()}.json`)
-  );
-  if (hit2?.path) return hit2.path;
 
   return null;
 }
 
-// ✅ simple region picker (per ora: Veneto se IT)
-// puoi espandere dopo con geofence/tiles/region detect.
+// ✅ per ora: se sei in IT, testiamo Veneto (puoi cambiare dopo)
 function pickRegionIdFromOrigin(origin) {
   const saved = localStorage.getItem("jamo_region_id");
-  if (saved) return saved;
+  if (saved && REGIONAL_POIS_BY_ID[saved]) return saved;
 
   const cc = String(origin?.country_code || "").toUpperCase();
   if (cc === "IT") return "it-veneto";
@@ -396,33 +387,30 @@ function pickRegionIdFromOrigin(origin) {
 async function ensureDatasetLoaded(origin, { signal } = {}) {
   if (DATASET?.places?.length) return DATASET;
 
+  // carichiamo index macro in best-effort (NON deve mai far crashare nulla)
   await loadMacrosIndexSafe(signal);
 
   const candidates = [];
 
-  // 0) ✅ PROVA POI REGIONALI PRIMA DI TUTTO (fix “offline vuoto”)
+  // 0) ✅ POI regionali prima
   const regionId = pickRegionIdFromOrigin(origin);
-  if (regionId && REGIONAL_POIS_BY_REGION[regionId]) {
-    candidates.push(REGIONAL_POIS_BY_REGION[regionId]);
+  if (regionId && REGIONAL_POIS_BY_ID[regionId]) {
+    candidates.push(REGIONAL_POIS_BY_ID[regionId]);
   }
 
-  // 1) macro country in base a origin.country_code
-  const cc = String(origin?.country_code || $("originCC")?.value || "").toUpperCase();
-  const cPath = findCountryMacroPath(cc);
-  if (cPath) candidates.push(cPath);
+  // 1) macro country (se index disponibile)
+  const cc = String(origin?.country_code || "").toUpperCase();
+  const countryMacro = findCountryMacroPath(cc);
+  if (countryMacro) candidates.push(countryMacro);
 
-  // 2) fallback: EUUK all
-  const euAll = MACROS_INDEX?.items?.find(x => x.id === "euuk_macro_all" || String(x.path || "").includes("euuk_macro_all.json"));
-  if (euAll?.path) candidates.push(euAll.path);
-
-  // 3) extra fallback static
+  // 2) fallback macro hardcoded
   for (const u of FALLBACK_MACRO_URLS) candidates.push(u);
 
-  // 4) se c'era una scelta salvata, provala prima (ma non sopra al regionale)
+  // 3) eventuale macro salvato
   const savedMacro = localStorage.getItem("jamo_macro_url");
   if (savedMacro) candidates.push(savedMacro);
 
-  // de-dup
+  // dedup
   const uniq = [];
   const seen = new Set();
   for (const u of candidates) {
@@ -434,19 +422,20 @@ async function ensureDatasetLoaded(origin, { signal } = {}) {
 
   for (const url of uniq) {
     const loaded = await tryLoadPlacesFile(url, signal);
-    if (loaded) {
-      const isRegional = url.includes("/data/pois/regions/");
-      DATASET = {
-        kind: isRegional ? "pois_region" : "macro",
-        source: url,
-        places: loaded.places,
-        meta: { raw: loaded.json, cc, regionId },
-      };
-      // salva solo macro (non sovrascrivere “macro_url” con regionale)
-      if (!isRegional) localStorage.setItem("jamo_macro_url", url);
-      if (isRegional && regionId) localStorage.setItem("jamo_region_id", regionId);
-      return DATASET;
-    }
+    if (!loaded) continue;
+
+    const isRegional = url.includes("/data/pois/regions/");
+    DATASET = {
+      kind: isRegional ? "pois_region" : "macro",
+      source: url,
+      places: loaded.places,
+      meta: { raw: loaded.json, cc, regionId },
+    };
+
+    if (isRegional && regionId) localStorage.setItem("jamo_region_id", regionId);
+    if (!isRegional) localStorage.setItem("jamo_macro_url", url);
+
+    return DATASET;
   }
 
   throw new Error("Nessun dataset offline valido disponibile (POI regionali o macro).");
@@ -455,7 +444,7 @@ async function ensureDatasetLoaded(origin, { signal } = {}) {
 // -------------------- GEOCODING --------------------
 async function geocodeLabel(label) {
   const q = String(label || "").trim();
-  if (!q) throw new Error("Scrivi un luogo (es: L'Aquila, Roma, Milano...)");
+  if (!q) throw new Error("Scrivi un luogo (es: Venezia, Verona, Padova...)");
   const r = await fetch(`/api/geocode?q=${encodeURIComponent(q)}`, { method: "GET", cache: "no-store" });
   const j = await r.json().catch(() => null);
   if (!j) throw new Error("Geocoding fallito (risposta vuota)");
@@ -467,22 +456,13 @@ async function geocodeLabel(label) {
 }
 
 // -------------------- TAGS / CATEGORY (PRECISI) --------------------
-function placeTags(place) {
-  return (place.tags || []).map(t => String(t).toLowerCase());
-}
-function tagsStr(place) {
-  return placeTags(place).join(" ");
-}
+function placeTags(place) { return (place.tags || []).map(t => String(t).toLowerCase()); }
+function tagsStr(place) { return placeTags(place).join(" "); }
 
 function looksIndoor(place) {
   const t = tagsStr(place);
   const n = normName(place?.name);
-  return (
-    t.includes("indoor") ||
-    t.includes("coperto") ||
-    n.includes("indoor") ||
-    n.includes("coperto")
-  );
+  return t.includes("indoor") || t.includes("coperto") || n.includes("indoor") || n.includes("coperto");
 }
 
 function isSpaPlace(place) {
@@ -501,108 +481,66 @@ function isSpaPlace(place) {
 function isWaterPark(place) {
   const n = normName(place?.name);
   const t = tagsStr(place);
-  return (
-    t.includes("water_park") ||
-    t.includes("leisure=water_park") ||
-    n.includes("acquapark") || n.includes("aqua park") || n.includes("water park") || n.includes("parco acquatico")
-  );
+  return t.includes("leisure=water_park") || n.includes("acquapark") || n.includes("water park") || n.includes("parco acquatico");
 }
 
 function isZooOrAquarium(place) {
   const n = normName(place?.name);
   const t = tagsStr(place);
-  return (
-    t.includes("tourism=zoo") || t.includes("tourism=aquarium") ||
-    n.includes("zoo") || n.includes("acquario") || n.includes("aquarium")
-  );
+  return t.includes("tourism=zoo") || t.includes("tourism=aquarium") || n.includes("zoo") || n.includes("acquario") || n.includes("aquarium");
 }
 
 function isThemePark(place) {
   const n = normName(place?.name);
   const t = tagsStr(place);
-  return (
-    t.includes("tourism=theme_park") ||
-    n.includes("parco divertimenti") || n.includes("lunapark") || n.includes("luna park") || n.includes("giostre")
-  );
+  return t.includes("tourism=theme_park") || n.includes("parco divertimenti") || n.includes("lunapark") || n.includes("luna park") || n.includes("giostre");
 }
 
 function isKidsMuseum(place) {
   const n = normName(place?.name);
   const t = tagsStr(place);
-  return (
-    t.includes("kids_museum") ||
-    t.includes("children") ||
-    n.includes("museo dei bambini") || n.includes("children museum") ||
-    n.includes("science center") || n.includes("planetario") || n.includes("planetarium")
-  );
+  return t.includes("kids_museum") || n.includes("museo dei bambini") || n.includes("children museum") || n.includes("science center") || n.includes("planetario");
 }
 
 function isPlaygroundLike(place) {
   const n = normName(place?.name);
   const t = tagsStr(place);
-  return (
-    t.includes("playground") || t.includes("leisure=playground") ||
-    t.includes("trampoline") ||
-    n.includes("parco giochi") || n.includes("area giochi") || n.includes("trampolin") || n.includes("kids")
-  );
+  return t.includes("leisure=playground") || n.includes("parco giochi") || n.includes("area giochi") || n.includes("kids");
 }
 
 function isViewpoint(place) {
   const n = normName(place?.name);
   const t = tagsStr(place);
-  return (
-    t.includes("tourism=viewpoint") ||
-    n.includes("belvedere") || n.includes("panoram") || n.includes("viewpoint") || n.includes("scenic") || n.includes("terrazza")
-  );
+  return t.includes("tourism=viewpoint") || n.includes("belvedere") || n.includes("panoram") || n.includes("viewpoint") || n.includes("terrazza");
 }
 
 function isHiking(place) {
   const n = normName(place?.name);
   const t = tagsStr(place);
-  return (
-    t.includes("hiking") ||
-    t.includes("information=guidepost") ||
-    t.includes("amenity=shelter") ||
-    n.includes("sentiero") || n.includes("trail") || n.includes("trek") || n.includes("trekking") || n.includes("via ferrata") || n.includes("rifugio")
-  );
+  return t.includes("hiking") || t.includes("information=guidepost") || t.includes("amenity=shelter") ||
+    n.includes("sentiero") || n.includes("trail") || n.includes("trek") || n.includes("trekking") || n.includes("via ferrata") || n.includes("rifugio");
 }
 
 function isMountain(place) {
   const n = normName(place?.name);
   const t = tagsStr(place);
-
   if (t.includes("place=city") || t.includes("place=town") || t.includes("place=village") || t.includes("place=hamlet")) return false;
-
-  return (
-    t.includes("natural=peak") ||
-    t.includes("mountain") ||
-    n.includes("monte") || n.includes("cima") || n.includes("massiccio") ||
-    n.includes("rifugio") || n.includes("passo") || n.includes("valico")
-  );
+  return t.includes("natural=peak") || n.includes("monte") || n.includes("cima") || n.includes("rifugio") || n.includes("passo") || n.includes("valico");
 }
 
 function isBorgo(place) {
   const type = normalizeType(place?.type);
   const n = normName(place?.name);
   const t = tagsStr(place);
-
   if (n.includes("passo ") || n.startsWith("passo")) return false;
   if (n.includes("stazione") || n.includes("casello") || n.includes("area di servizio")) return false;
-
-  return (
-    type === "borghi" ||
-    n.includes("borgo") ||
-    t.includes("place=village") || t.includes("place=hamlet")
-  );
+  return type === "borghi" || n.includes("borgo") || t.includes("place=village") || t.includes("place=hamlet");
 }
 
 function isCity(place) {
   const type = normalizeType(place?.type);
   const t = tagsStr(place);
-  return (
-    type === "citta" ||
-    t.includes("place=city") || t.includes("place=town")
-  );
+  return type === "citta" || t.includes("place=city") || t.includes("place=town");
 }
 
 function matchesCategoryStrict(place, cat) {
@@ -613,31 +551,19 @@ function matchesCategoryStrict(place, cat) {
   const t = tagsStr(place);
 
   if (cat === "mare") {
-    // ✅ accetta anche POI “mare” del dataset (type=mare)
-    return type === "mare" ||
+    return (
+      type === "mare" ||
       t.includes("natural=beach") ||
       t.includes("leisure=marina") ||
-      t.includes("beach_resort") ||
-      n.includes("spiaggia") || n.includes("lido") || n.includes("lungomare") || n.includes("baia") || n.includes("mare") || n.includes("laguna");
+      n.includes("spiaggia") || n.includes("lido") || n.includes("lungomare") || n.includes("baia") || n.includes("laguna")
+    );
   }
-  if (cat === "storia") {
-    return type === "storia" || t.includes("historic=") || t.includes("tourism=museum") || n.includes("castello") || n.includes("museo") || n.includes("rocca");
-  }
-  if (cat === "natura") {
-    return type === "natura" || t.includes("nature_reserve") || t.includes("boundary=national_park") || n.includes("cascata") || n.includes("lago") || n.includes("riserva");
-  }
-  if (cat === "relax") {
-    return isSpaPlace(place);
-  }
-  if (cat === "borghi") {
-    return isBorgo(place);
-  }
-  if (cat === "citta") {
-    return isCity(place);
-  }
-  if (cat === "montagna") {
-    return isMountain(place) || type === "montagna";
-  }
+  if (cat === "storia") return type === "storia" || t.includes("historic=") || t.includes("tourism=museum") || n.includes("castello") || n.includes("museo") || n.includes("rocca");
+  if (cat === "natura") return type === "natura" || t.includes("nature_reserve") || t.includes("boundary=national_park") || n.includes("cascata") || n.includes("lago") || n.includes("riserva");
+  if (cat === "relax") return isSpaPlace(place);
+  if (cat === "borghi") return isBorgo(place);
+  if (cat === "citta") return isCity(place);
+  if (cat === "montagna") return isMountain(place) || type === "montagna";
 
   if (cat === "theme_park") return isThemePark(place) || isWaterPark(place) || type === "theme_park";
   if (cat === "kids_museum") return isKidsMuseum(place) || type === "kids_museum";
@@ -645,7 +571,6 @@ function matchesCategoryStrict(place, cat) {
   if (cat === "hiking") return isHiking(place) || type === "hiking";
 
   if (cat === "family") {
-    // family = roba family vera; spa esclusa (fallback separato)
     return (
       type === "family" ||
       isThemePark(place) ||
@@ -662,7 +587,6 @@ function matchesCategoryStrict(place, cat) {
 function matchesStyle(place, { wantChicche, wantClassici }) {
   const vis = normalizeVisibility(place?.visibility);
   if (!wantChicche && !wantClassici) return true;
-
   if (vis === "chicca") return !!wantChicche;
   return !!wantClassici;
 }
@@ -770,7 +694,6 @@ function buildCandidatesFromPool(
     s += familyBoost(p, category);
 
     if (category === "family" && isSpaPlace(p) && !allowSpaInFamily) s -= 0.35;
-
     if (!ignoreRotation) s -= rotationPenalty(pid, recentSet);
 
     candidates.push({ place: p, pid, km, driveMin, score: Number(s.toFixed(4)) });
@@ -828,9 +751,7 @@ async function fetchLiveFallback(origin, minutes, category, signal) {
   const els = j?.data?.elements;
 
   if (!Array.isArray(els) || !els.length) return [];
-
-  const out = els.map(normalizePlace).filter(Boolean);
-  return out;
+  return els.map(normalizePlace).filter(Boolean);
 }
 
 // -------------------- CARD HELPERS --------------------
@@ -941,7 +862,6 @@ function renderResult(origin, maxMinutesShown, chosen, alternatives = [], meta =
 
   const badge = normalizeVisibility(p.visibility) === "chicca" ? "✨ chicca" : "✅ classica";
   const tb = typeBadge(category);
-
   const what = microWhatToDo(p, category);
   const chips = chipsFromPlace(p, category);
 
@@ -1297,4 +1217,3 @@ hideStatus();
     if (origin) await ensureDatasetLoaded(origin, { signal: undefined });
   } catch {}
 })();
-```0
