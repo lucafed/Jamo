@@ -1,9 +1,10 @@
-/* Jamo — app.js v10.5.3 (FULL)
- * ✅ FIX CRITICO: nessun crash JS => bottoni sempre cliccabili
- * ✅ Offline-first “regione” SOLO se l’utente è dentro la bbox della regione (Veneto)
+/* Jamo — app.js v10.6 (NO-GPS + Veneto-first bbox)
+ * ✅ NO GPS: rimosso uso geolocation + nasconde btnUseGPS (privacy + stabilità)
+ * ✅ Offline-first “regione” SOLO se origin è dentro bbox Veneto (anche senza country_code)
  * ✅ Fallback robusto: Region POIs -> macro country -> euuk_all -> fallback
- * ✅ Categorie precise + rotazione + LIVE fallback (/api/destinations)
- * ✅ Compat: normalizePlace accetta anche primary_category / lng
+ * ✅ Categorie più coerenti sui POI (primary_category + tag helper)
+ * ✅ FIX CRITICO: nessun crash JS => bottoni sempre cliccabili
+ * ✅ Compat: normalizePlace accetta anche primary_category / lng / primary_category nelle tags
  */
 
 (() => {
@@ -149,7 +150,7 @@
 
     if ($("originStatus")) {
       $("originStatus").textContent =
-        `✅ Partenza: ${label || "posizione"} (${Number(lat).toFixed(4)}, ${Number(lon).toFixed(4)})${cc ? " • " + cc : ""}`;
+        `✅ Partenza: ${label || "luogo"} (${Number(lat).toFixed(4)}, ${Number(lon).toFixed(4)})${cc ? " • " + cc : ""}`;
     }
   }
 
@@ -344,16 +345,18 @@
     out.lon = lon;
     out.name = String(out.name || "").trim();
 
-    // ✅ support: se nei POI c’è primary_category, usiamola come type se manca
-    const rawType = out.type || out.primary_category || out.category || "";
+    // ✅ support: primary_category / category / primary_category
+    const rawType = out.type || out.primary_category || out.category || out.primaryCategory || "";
     out.type = normalizeType(rawType);
 
     out.visibility = normalizeVisibility(out.visibility);
 
-    // tags: array stringhe lower
-    out.tags = Array.isArray(out.tags)
-      ? out.tags.map(x => String(x).toLowerCase())
-      : [];
+    // tags: array stringhe lower + includi primary_category come tag utile
+    const baseTags = Array.isArray(out.tags) ? out.tags : [];
+    const extraTags = [];
+    if (out.primary_category) extraTags.push(`primary_category=${String(out.primary_category).toLowerCase()}`);
+    if (out.type) extraTags.push(`type=${String(out.type).toLowerCase()}`);
+    out.tags = baseTags.concat(extraTags).map(x => String(x).toLowerCase());
 
     out.country = String(out.country || "").toUpperCase();
     out.area = String(out.area || "");
@@ -405,14 +408,13 @@
   function pickRegionIdFromOrigin(origin) {
     const lat = Number(origin?.lat);
     const lon = Number(origin?.lon);
-    const cc = String(origin?.country_code || "").toUpperCase();
 
     // se già selezionata e valida (e sei dentro bbox), ok
     const saved = localStorage.getItem("jamo_region_id");
     if (saved && REGIONAL_POIS_BY_ID[saved] && withinBBox(lat, lon, REGION_BBOX[saved])) return saved;
 
-    // ✅ Veneto: SOLO se sei in IT e dentro bbox Veneto
-    if (cc === "IT" && withinBBox(lat, lon, REGION_BBOX["it-veneto"])) return "it-veneto";
+    // ✅ Veneto: usa SOLO bbox (non dipende da country_code)
+    if (withinBBox(lat, lon, REGION_BBOX["it-veneto"])) return "it-veneto";
 
     return "";
   }
@@ -424,7 +426,7 @@
 
     const candidates = [];
 
-    // 0) ✅ POI regionali prima (ma solo se origin dentro bbox)
+    // 0) ✅ POI regionali prima (solo se origin dentro bbox)
     const regionId = pickRegionIdFromOrigin(origin);
     if (regionId && REGIONAL_POIS_BY_ID[regionId]) {
       candidates.push(REGIONAL_POIS_BY_ID[regionId]);
@@ -525,13 +527,13 @@
   function isThemePark(place) {
     const n = normName(place?.name);
     const t = tagsStr(place);
-    return t.includes("tourism=theme_park") || n.includes("parco divertimenti") || n.includes("lunapark") || n.includes("luna park") || n.includes("giostre");
+    return t.includes("tourism=theme_park") || t.includes("primary_category=theme_park") || n.includes("parco divertimenti") || n.includes("lunapark") || n.includes("luna park") || n.includes("giostre");
   }
 
   function isKidsMuseum(place) {
     const n = normName(place?.name);
     const t = tagsStr(place);
-    return t.includes("kids_museum") || n.includes("museo dei bambini") || n.includes("children museum") || n.includes("science center") || n.includes("planetario");
+    return t.includes("kids_museum") || t.includes("primary_category=kids_museum") || n.includes("museo dei bambini") || n.includes("children museum") || n.includes("science center") || n.includes("planetario");
   }
 
   function isPlaygroundLike(place) {
@@ -543,13 +545,13 @@
   function isViewpoint(place) {
     const n = normName(place?.name);
     const t = tagsStr(place);
-    return t.includes("tourism=viewpoint") || n.includes("belvedere") || n.includes("panoram") || n.includes("viewpoint") || n.includes("terrazza");
+    return t.includes("tourism=viewpoint") || t.includes("primary_category=viewpoints") || n.includes("belvedere") || n.includes("panoram") || n.includes("viewpoint") || n.includes("terrazza");
   }
 
   function isHiking(place) {
     const n = normName(place?.name);
     const t = tagsStr(place);
-    return t.includes("hiking") || t.includes("information=guidepost") || t.includes("amenity=shelter") ||
+    return t.includes("hiking") || t.includes("primary_category=hiking") || t.includes("information=guidepost") || t.includes("amenity=shelter") ||
       n.includes("sentiero") || n.includes("trail") || n.includes("trek") || n.includes("trekking") || n.includes("via ferrata") || n.includes("rifugio");
   }
 
@@ -566,13 +568,13 @@
     const t = tagsStr(place);
     if (n.includes("passo ") || n.startsWith("passo")) return false;
     if (n.includes("stazione") || n.includes("casello") || n.includes("area di servizio")) return false;
-    return type === "borghi" || n.includes("borgo") || t.includes("place=village") || t.includes("place=hamlet");
+    return type === "borghi" || t.includes("primary_category=borghi") || n.includes("borgo") || t.includes("place=village") || t.includes("place=hamlet");
   }
 
   function isCity(place) {
     const type = normalizeType(place?.type);
     const t = tagsStr(place);
-    return type === "citta" || t.includes("place=city") || t.includes("place=town");
+    return type === "citta" || t.includes("primary_category=citta") || t.includes("place=city") || t.includes("place=town");
   }
 
   function matchesCategoryStrict(place, cat) {
@@ -585,17 +587,37 @@
     if (cat === "mare") {
       return (
         type === "mare" ||
+        t.includes("primary_category=mare") ||
         t.includes("natural=beach") ||
         t.includes("leisure=marina") ||
         n.includes("spiaggia") || n.includes("lido") || n.includes("lungomare") || n.includes("baia") || n.includes("laguna")
       );
     }
-    if (cat === "storia") return type === "storia" || t.includes("historic=") || t.includes("tourism=museum") || n.includes("castello") || n.includes("museo") || n.includes("rocca");
-    if (cat === "natura") return type === "natura" || t.includes("nature_reserve") || t.includes("boundary=national_park") || n.includes("cascata") || n.includes("lago") || n.includes("riserva");
+
+    if (cat === "storia") {
+      return (
+        type === "storia" ||
+        t.includes("primary_category=storia") ||
+        t.includes("historic=") ||
+        t.includes("tourism=museum") ||
+        n.includes("castello") || n.includes("museo") || n.includes("rocca") || n.includes("forte")
+      );
+    }
+
+    if (cat === "natura") {
+      return (
+        type === "natura" ||
+        t.includes("primary_category=natura") ||
+        t.includes("nature_reserve") ||
+        t.includes("boundary=national_park") ||
+        n.includes("cascata") || n.includes("lago") || n.includes("riserva") || n.includes("parco naturale")
+      );
+    }
+
     if (cat === "relax") return isSpaPlace(place);
     if (cat === "borghi") return isBorgo(place);
     if (cat === "citta") return isCity(place);
-    if (cat === "montagna") return isMountain(place) || type === "montagna";
+    if (cat === "montagna") return isMountain(place) || type === "montagna" || t.includes("primary_category=montagna");
 
     if (cat === "theme_park") return isThemePark(place) || isWaterPark(place) || type === "theme_park";
     if (cat === "kids_museum") return isKidsMuseum(place) || type === "kids_museum";
@@ -809,13 +831,13 @@
 
   function microWhatToDo(place, category) {
     if (category === "family" || category === "theme_park") {
-      if (isThemePark(place)) return "Parchi/giostre: controlla orari e biglietti, perfetto con bimbi.";
+      if (isThemePark(place)) return "Parchi/giostre: controlla orari e biglietti, top con bimbi.";
       if (isWaterPark(place)) return "Acquapark: spesso stagionale — verifica apertura.";
       if (isZooOrAquarium(place)) return "Zoo/acquario: percorsi, aree picnic e tante cose da vedere.";
-      if (isKidsMuseum(place)) return "Museo kids/science center: ottimo anche con brutto tempo.";
+      if (isKidsMuseum(place)) return "Museo kids/science center: perfetto anche con brutto tempo.";
       if (isPlaygroundLike(place)) return "Parco giochi/attività kids: semplice e super efficace.";
       if (isSpaPlace(place)) return "Terme/piscine: relax (verifica accesso bimbi).";
-      return "Attività family: controlla foto e cosa fare nei dintorni.";
+      return "Attività family: guarda foto e cosa fare nei dintorni.";
     }
 
     if (category === "kids_museum") return "Esperienza interattiva: perfetta per bambini e pioggia.";
@@ -825,7 +847,7 @@
     if (category === "relax") return "Relax: terme/spa o posto tranquillo + pausa.";
     if (category === "storia") return "Storia e cultura: visita + centro storico.";
     if (category === "mare") return "Mare: spiaggia, passeggiata e tramonto.";
-    if (category === "natura") return "Natura: sentieri, panorami, cascata/lago/riserva.";
+    if (category === "natura") return "Natura: sentieri, panorami, lago/riserva.";
     if (category === "borghi") return "Borgo: vicoli, belvedere, cibo tipico e foto.";
     if (category === "citta") return "Città: centro, piazze, monumenti e locali.";
     if (category === "montagna") return "Montagna: vista, rifugio o punto panoramico.";
@@ -1041,7 +1063,7 @@
 
       const origin = getOrigin();
       if (!origin || !Number.isFinite(Number(origin.lat)) || !Number.isFinite(Number(origin.lon))) {
-        showStatus("err", "Imposta una partenza: GPS oppure scrivi un luogo e premi “Usa questo luogo”.");
+        showStatus("err", "Imposta una partenza: scrivi un luogo e premi “Usa questo luogo”. (GPS disattivato)");
         return;
       }
 
@@ -1176,28 +1198,19 @@
     }
   }
 
+  // ✅ NO GPS: nasconde bottone e non fa nulla
+  function disableGpsUI() {
+    const btn = $("btnUseGPS");
+    if (btn) {
+      btn.style.display = "none";
+      btn.setAttribute("aria-hidden", "true");
+      btn.setAttribute("disabled", "true");
+    }
+  }
+
   function bindOriginButtons() {
-    $("btnUseGPS")?.addEventListener("click", () => {
-      if ($("originStatus")) $("originStatus").textContent = "📍 Sto leggendo il GPS…";
-      navigator.geolocation.getCurrentPosition(
-        async (pos) => {
-          const lat = pos.coords.latitude;
-          const lon = pos.coords.longitude;
-
-          setOrigin({ label: "La mia posizione", lat, lon, country_code: $("originCC")?.value || "" });
-          showStatus("ok", "Partenza GPS impostata ✅");
-
-          DATASET = { kind: null, source: null, places: [], meta: {} };
-          await ensureDatasetLoaded(getOrigin(), { signal: undefined }).catch(() => {});
-        },
-        (err) => {
-          console.error(err);
-          if ($("originStatus")) $("originStatus").textContent = "❌ GPS non disponibile (permessi?)";
-          showStatus("err", "GPS non disponibile. Scrivi un luogo e usa “Usa questo luogo”.");
-        },
-        { enableHighAccuracy: true, timeout: 12000 }
-      );
-    });
+    // GPS disattivato: niente listener su geolocation
+    disableGpsUI();
 
     $("btnFindPlace")?.addEventListener("click", async () => {
       try {
@@ -1235,7 +1248,6 @@
 
   // -------------------- BOOT (IMPORTANT) --------------------
   function boot() {
-    // init chips
     initChips("timeChips", { multi: false });
     initChips("categoryChips", { multi: false });
     initChips("styleChips", { multi: true });
@@ -1262,7 +1274,7 @@
     boot();
   }
 
-  // opzionale: debug rapido in console
+  // debug
   window.__jamo = {
     runSearch,
     resetRotation,
