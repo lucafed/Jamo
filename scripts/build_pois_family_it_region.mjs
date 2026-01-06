@@ -1,0 +1,188 @@
+// scripts/build_pois_family_it_region.mjs
+// Build FAMILY POIs for ONE IT region using Overpass (safe size)
+// Usage (GitHub Actions):
+//   REGION_SLUG=lombardia REGION_ISO=IT-25 node scripts/build_pois_family_it_region.mjs
+//
+// Output:
+//   public/data/pois/it/<region_slug>/family.json
+
+import fs from "fs";
+import path from "path";
+
+const ROOT = process.cwd();
+const OUT_BASE = path.join(ROOT, "public", "data", "pois", "it");
+
+const OVERPASS_ENDPOINTS = [
+  "https://overpass-api.de/api/interpreter",
+  "https://overpass.kumi.systems/api/interpreter",
+  "https://overpass.openstreetmap.ru/api/interpreter",
+];
+
+function ensureDir(p) {
+  if (!fs.existsSync(p)) fs.mkdirSync(p, { recursive: true });
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+function nowIso() { return new Date().toISOString(); }
+
+async function fetchWithTimeout(url, body, timeoutMs = 45000) {
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), timeoutMs);
+  try {
+    const r = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" },
+      body,
+      signal: ctrl.signal,
+    });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    const j = await r.json().catch(() => null);
+    if (!j) throw new Error("Bad JSON");
+    return j;
+  } finally {
+    clearTimeout(t);
+  }
+}
+
+function opBody(q) {
+  return `data=${encodeURIComponent(q)}`;
+}
+
+function buildQuery(regionIso) {
+  // Region area via ISO3166-2 (IT-xx)
+  // FAMILY = cose utili per gita con bambini, evitando spa/terme.
+  return `
+[out:json][timeout:120];
+area["ISO3166-2"="${regionIso}"]->.R;
+
+(
+  // Parchi divertimento / theme park
+  nwr["tourism"="theme_park"](area.R);
+
+  // Acquapark
+  nwr["leisure"="water_park"](area.R);
+
+  // Zoo / Acquario
+  nwr["tourism"="zoo"](area.R);
+  nwr["tourism"="aquarium"](area.R);
+
+  // Parchi avventura / attrazioni family (name matching)
+  nwr["tourism"="attraction"]["name"~"parco\\s?avventura|avventura|zip\\s?line|safari|fattoria\\s?didattica|parco\\s?faunistico|giostre|lunapark|luna\\s?park|parco\\s?divertimenti",i](area.R);
+
+  // Musei kids / science center (name matching)
+  nwr["tourism"="museum"]["name"~"bambin|bambini|kids|children|museo\\s?dei\\s?bambini|science\\s?center|planetari|planetarium",i](area.R);
+  nwr["tourism"="attraction"]["name"~"bambin|bambini|kids|children|science\\s?center|planetari|planetarium",i](area.R);
+
+  // Playground: SOLO con nome (riduce spam)
+  nwr["leisure"="playground"]["name"](area.R);
+);
+
+out tags center;
+`.trim();
+}
+
+function mapElToPlace(el, regionSlug, regionIso) {
+  const tags = el.tags || {};
+  const name = tags.name || tags["name:it"] || tags.brand || tags.operator || "";
+  const lat = Number(el.lat ?? el.center?.lat);
+  const lon = Number(el.lon ?? el.center?.lon);
+  if (!name || !Number.isFinite(lat) || !Number.isFinite(lon)) return null;
+
+  const tagList = [];
+  const pushKV = (k) => { if (tags[k] != null) tagList.push(`${k}=${tags[k]}`); };
+  ["tourism","leisure","amenity","historic","natural","sport","place"].forEach(pushKV);
+
+  return {
+    id: `poi_family_${regionSlug}_${el.type}_${el.id}`,
+    name: String(name).trim(),
+    lat,
+    lon,
+    type: "family",
+    primary_category: "family",
+    visibility: "classica",
+    beauty_score: 0.72,
+    tags: Array.from(new Set(tagList)).slice(0, 18),
+    country: "IT",
+    area: regionSlug,
+    region_iso: regionIso,
+    source: "overpass_region_build",
+    live: false,
+  };
+}
+
+function dedup(places) {
+  const seen = new Set();
+  const out = [];
+  for (const p of places) {
+    const k = `${p.name.toLowerCase()}_${String(p.lat).slice(0,6)}_${String(p.lon).slice(0,6)}`;
+    if (seen.has(k)) continue;
+    seen.add(k);
+    out.push(p);
+  }
+  return out;
+}
+
+async function runOverpass(query) {
+  const body = opBody(query);
+  let lastErr = null;
+
+  for (const endpoint of OVERPASS_ENDPOINTS) {
+    for (let attempt = 1; attempt <= 4; attempt++) {
+      try {
+        const j = await fetchWithTimeout(endpoint, body, 45000);
+        return { ok: true, endpoint, json: j };
+      } catch (e) {
+        lastErr = e;
+        await sleep(800 * attempt);
+      }
+    }
+  }
+  return { ok: false, endpoint: "", json: null, error: String(lastErr?.message || lastErr) };
+}
+
+async function main() {
+  const regionSlug = String(process.env.REGION_SLUG || "").trim().toLowerCase();
+  const regionIso  = String(process.env.REGION_ISO  || "").trim().toUpperCase();
+
+  if (!regionSlug || !regionIso) {
+    console.error("Missing REGION_SLUG or REGION_ISO. Example: REGION_SLUG=lombardia REGION_ISO=IT-25");
+    process.exit(1);
+  }
+
+  const outDir = path.join(OUT_BASE, regionSlug);
+  ensureDir(outDir);
+
+  console.log(`🛰️ Build FAMILY for region: ${regionSlug} (${regionIso})`);
+
+  const q = buildQuery(regionIso);
+  const r = await runOverpass(q);
+
+  if (!r.ok || !r.json) {
+    console.error(`❌ Overpass failed: ${r.error || "unknown"}`);
+    process.exit(1);
+  }
+
+  const els = Array.isArray(r.json.elements) ? r.json.elements : [];
+  const mapped = dedup(els.map(el => mapElToPlace(el, regionSlug, regionIso)).filter(Boolean));
+
+  const meta = {
+    built_at: nowIso(),
+    category: "family",
+    region_slug: regionSlug,
+    region_iso: regionIso,
+    endpoint: r.endpoint,
+    count: mapped.length,
+  };
+
+  const out = { meta, places: mapped };
+
+  const outPath = path.join(outDir, "family.json");
+  fs.writeFileSync(outPath, JSON.stringify(out), "utf8");
+
+  console.log(`✅ DONE: ${mapped.length} items -> ${outPath}`);
+}
+
+main().catch((e) => {
+  console.error("❌ build failed:", e);
+  process.exit(1);
+});
