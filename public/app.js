@@ -1,9 +1,9 @@
-/* Jamo — app.js v12.0 (MOBILE-FIRST + RESULT TOP + BOTTOM DOCK)
- * ✅ NO GPS
- * ✅ OFFLINE ONLY
- * ✅ Natura inclusa
- * ✅ Alternative dedup + tap -> aggiorna scheda
- * ✅ Dock basso: Naviga / Prenota / Mangia
+/* Jamo — app.js v12.1 (WOW FLOW)
+ * ✅ Dock sempre visibile con "🎯 Cerca"
+ * ✅ Impostazioni auto-collassano dopo prima ricerca
+ * ✅ Partenza: chip compatto (tap per modificare)
+ * ✅ Link dock aggiornati sulla meta
+ * ✅ Alternative dedup + tap -> aggiorna scheda + scroll top
  */
 
 (() => {
@@ -28,20 +28,14 @@
     "/data/macros/euuk_macro_all.json",
   ];
 
-  const REGIONAL_POIS_BY_ID = {
-    "it-veneto": "/data/pois/regions/it-veneto.json",
-  };
-
-  const REGION_BBOX = {
-    "it-veneto": { minLat: 44.70, maxLat: 46.70, minLon: 10.20, maxLon: 13.20 },
-  };
+  const REGIONAL_POIS_BY_ID = { "it-veneto": "/data/pois/regions/it-veneto.json" };
+  const REGION_BBOX = { "it-veneto": { minLat: 44.70, maxLat: 46.70, minLon: 10.20, maxLon: 13.20 } };
 
   const LIVE_ENABLED = false;
 
   // -------------------- UTIL --------------------
   function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
   function toRad(x) { return (x * Math.PI) / 180; }
-
   function haversineKm(aLat, aLon, bLat, bLon) {
     const R = 6371;
     const dLat = toRad(bLat - aLat);
@@ -53,7 +47,6 @@
       Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2;
     return 2 * R * Math.asin(Math.sqrt(s));
   }
-
   function normName(s) {
     return String(s ?? "")
       .toLowerCase()
@@ -62,7 +55,6 @@
       .replace(/[^a-z0-9]+/g, " ")
       .trim();
   }
-
   function safeIdFromPlace(p) {
     if (p?.id) return String(p.id);
     const nm = normName(p?.name);
@@ -70,14 +62,12 @@
     const lon = String(p?.lon ?? p?.lng ?? "").slice(0, 8);
     return `p_${nm || "x"}_${lat}_${lon}`;
   }
-
   function estCarMinutesFromKm(km) {
     if (!Number.isFinite(km)) return NaN;
     const roadKm = km * ROAD_FACTOR;
     const driveMin = (roadKm / AVG_KMH) * 60;
     return Math.round(clamp(driveMin + FIXED_OVERHEAD_MIN, 6, 900));
   }
-
   function withinBBox(lat, lon, bbox) {
     if (!bbox) return false;
     return lat >= bbox.minLat && lat <= bbox.maxLat && lon >= bbox.minLon && lon <= bbox.maxLon;
@@ -88,7 +78,6 @@
     const box = $("statusBox");
     const t = $("statusText");
     if (!box || !t) return;
-
     box.classList.remove("ok","warn","err");
     box.classList.add(type === "ok" ? "ok" : type === "err" ? "err" : "warn");
     t.textContent = text;
@@ -101,7 +90,6 @@
     box.style.display = "none";
     t.textContent = "";
   }
-
   function showResultProgress(msg = "Sto cercando nel dataset offline…") {
     const area = $("resultArea");
     if (!area) return;
@@ -114,17 +102,17 @@
   }
 
   // -------------------- LINKS --------------------
+  function stableQuery(name, area) {
+    const n = String(name || "").trim();
+    const a = String(area || "").trim();
+    return a ? `"${n}" ${a}` : `"${n}"`;
+  }
   function mapsPlaceUrl(lat, lon, name) {
     const q = name ? `${name} ${lat},${lon}` : `${lat},${lon}`;
     return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
   }
   function mapsDirUrl(oLat, oLon, dLat, dLon) {
     return `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(oLat + "," + oLon)}&destination=${encodeURIComponent(dLat + "," + dLon)}&travelmode=driving`;
-  }
-  function stableQuery(name, area) {
-    const n = String(name || "").trim();
-    const a = String(area || "").trim();
-    return a ? `"${n}" ${a}` : `"${n}"`;
   }
   function googleImagesUrl(name, area) {
     return `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(stableQuery(name, area))}`;
@@ -156,6 +144,35 @@
     if (eat) eat.onclick = () => window.open(eatUrl, "_blank", "noopener");
   }
 
+  // -------------------- ORIGIN UI (chip + collapse) --------------------
+  function updateOriginUI() {
+    const origin = getOrigin();
+    const chip = $("originChip");
+    const editor = $("originEditor");
+    const panel = $("settingsPanel");
+    if (!chip || !editor || !panel) return;
+
+    if (origin && Number.isFinite(origin.lat) && Number.isFinite(origin.lon)) {
+      const label = (origin.label || "").trim() || "Partenza impostata";
+      $("originChipTitle").textContent = `📍 ${label}`;
+      $("originChipSub").textContent = "Tocca per modificare";
+      chip.style.display = "flex";
+      editor.style.display = "none";
+    } else {
+      chip.style.display = "none";
+      editor.style.display = "block";
+      panel.open = true;
+    }
+  }
+  function closeSettingsPanel() {
+    const panel = $("settingsPanel");
+    if (panel) panel.open = false;
+  }
+  function openSettingsPanel() {
+    const panel = $("settingsPanel");
+    if (panel) panel.open = true;
+  }
+
   // -------------------- STORAGE: ORIGIN --------------------
   function setOrigin({ label, lat, lon, country_code }) {
     $("originLabel") && ($("originLabel").value = label ?? "");
@@ -164,10 +181,8 @@
     const cc = String(country_code || "").toUpperCase();
     $("originCC") && ($("originCC").value = cc);
     localStorage.setItem("jamo_origin", JSON.stringify({ label, lat, lon, country_code: cc }));
-    if ($("originStatus")) {
-      $("originStatus").textContent =
-        `✅ Partenza: ${label || "posizione"} (${Number(lat).toFixed(4)}, ${Number(lon).toFixed(4)})${cc ? " • " + cc : ""}`;
-    }
+    if ($("originStatus")) $("originStatus").textContent = `✅ Partenza impostata`;
+    updateOriginUI();
   }
 
   function getOrigin() {
@@ -252,12 +267,10 @@
       }
     });
   }
-
   function getActiveCategory() {
     const active = $("categoryChips")?.querySelector(".chip.active");
     return active?.dataset.cat || "ovunque";
   }
-
   function getActiveStyles() {
     const actives = [...($("styleChips")?.querySelectorAll(".chip.active") || [])].map(c => c.dataset.style);
     return { wantChicche: actives.includes("chicche"), wantClassici: actives.includes("classici") };
@@ -300,12 +313,10 @@
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     return await r.json();
   }
-
   async function loadMacrosIndexSafe(signal) {
     try { MACROS_INDEX = await fetchJson(MACROS_INDEX_URL, { signal }); }
     catch { MACROS_INDEX = null; }
   }
-
   async function tryLoadPlacesFile(url, signal) {
     try {
       const r = await fetch(url, { cache: "no-store", signal });
@@ -317,11 +328,8 @@
       const places = placesRaw.map(normalizePlace).filter(Boolean);
       if (!places.length) return null;
       return { json: j, places };
-    } catch {
-      return null;
-    }
+    } catch { return null; }
   }
-
   function findCountryMacroPath(cc) {
     if (!MACROS_INDEX?.items?.length) return null;
     const c = String(cc || "").toUpperCase();
@@ -332,7 +340,6 @@
     );
     return hit?.path || null;
   }
-
   function pickRegionIdFromOrigin(origin) {
     const lat = Number(origin?.lat);
     const lon = Number(origin?.lon);
@@ -406,7 +413,7 @@
     return j.result;
   }
 
-  // -------------------- TAGS / FILTERS --------------------
+  // -------------------- FILTERS --------------------
   function placeTags(place) { return (place.tags || []).map(t => String(t).toLowerCase()); }
   function tagsStr(place) { return placeTags(place).join(" "); }
 
@@ -415,7 +422,6 @@
     if (t.includes("tourism=hotel") || t.includes("tourism=hostel") || t.includes("tourism=guest_house") ||
         t.includes("tourism=apartment") || t.includes("tourism=camp_site") || t.includes("tourism=caravan_site") ||
         t.includes("tourism=chalet") || t.includes("tourism=motel")) return true;
-
     if (t.includes("amenity=restaurant") || t.includes("amenity=fast_food") || t.includes("amenity=cafe") ||
         t.includes("amenity=bar") || t.includes("amenity=pub") || t.includes("amenity=ice_cream")) return true;
     return false;
@@ -427,12 +433,10 @@
     const t = tagsStr(place);
     return t.includes("tourism=zoo") || t.includes("tourism=aquarium") || t.includes("amenity=aquarium");
   }
-
   function isRealViewpoint(place) {
     const t = tagsStr(place);
     return t.includes("tourism=viewpoint") || t.includes("man_made=observation_tower") || t.includes("tower:type=observation");
   }
-
   function isHiking(place) {
     const t = tagsStr(place);
     const type = normalizeType(place?.type);
@@ -446,7 +450,6 @@
     }
     return false;
   }
-
   function isMountain(place) {
     const t = tagsStr(place);
     const type = normalizeType(place?.type);
@@ -458,7 +461,6 @@
       t.includes("aerialway=") || t.includes("piste:type=")
     );
   }
-
   function isNature(place) {
     const t = tagsStr(place);
     const type = normalizeType(place?.type);
@@ -473,13 +475,11 @@
       t.includes("leisure=nature_reserve") || t.includes("boundary=national_park")
     );
   }
-
   function isBorgo(place) {
     const t = tagsStr(place);
     const type = normalizeType(place?.type);
     return type === "borghi" || t.includes("place=village") || t.includes("place=hamlet");
   }
-
   function isCity(place) {
     const t = tagsStr(place);
     const type = normalizeType(place?.type);
@@ -513,7 +513,6 @@
     if (cat === "family") {
       return (type === "family" || isThemePark(place) || isWaterPark(place) || isZooOrAquarium(place));
     }
-
     return true;
   }
 
@@ -531,7 +530,6 @@
     const c = isChicca ? 0.06 : 0;
     return 0.62 * t + 0.32 * b + c;
   }
-
   function rotationPenalty(pid, recentSet) {
     let pen = 0;
     if (pid && pid === LAST_SHOWN_PID) pen += 0.22;
@@ -539,7 +537,6 @@
     if (recentSet.has(pid)) pen += 0.10;
     return pen;
   }
-
   function widenMinutesSteps(m) {
     const base = clamp(Number(m) || 120, 10, 600);
     const steps = [base, clamp(Math.round(base * 1.25), base, 600), clamp(Math.round(base * 1.5), base, 600)];
@@ -590,7 +587,6 @@
     const out = [];
     const seenName = new Set();
     const seenCoord = new Set();
-
     for (const x of cands) {
       const p = x.place;
       const nKey = normName(p.name);
@@ -645,9 +641,7 @@
                   <div style="font-weight:950; font-size:15px;">${p.name}</div>
                   <div style="font-weight:900; opacity:.9;">~${x.driveMin} min</div>
                 </div>
-                <div style="margin-top:6px; opacity:.82; font-size:12px;">
-                  ${area} • ${coords}
-                </div>
+                <div style="margin-top:6px; opacity:.82; font-size:12px;">${area} • ${coords}</div>
               </button>
             `;
           }).join("")}
@@ -674,7 +668,6 @@
 
   function renderResult(origin, list, category, selectedPid = null) {
     if (!list?.length) return;
-
     const chosen = selectedPid ? list.find(x => x.pid === selectedPid) : list[0];
     const c = chosen || list[0];
     const p = c.place;
@@ -691,7 +684,6 @@
       eatUrl: restaurantsUrl(name, area, lat, lon),
     });
 
-    // Persist rotation
     LAST_SHOWN_PID = c.pid;
     SESSION_SEEN.add(c.pid);
     addRecent(c.pid);
@@ -700,8 +692,8 @@
 
     $("resultArea").innerHTML = `
       <div style="padding:12px; border-radius:16px; border:1px solid rgba(26,255,213,.35); background:rgba(26,255,213,.06);">
-        <div style="font-weight:980; font-size:22px; line-height:1.15;">${name}</div>
-        <div style="margin-top:6px; opacity:.9; font-size:12px;">
+        <div style="font-weight:980; font-size:24px; line-height:1.10;">${name}</div>
+        <div style="margin-top:8px; opacity:.92; font-size:12px;">
           📍 ${area} • 🚗 ~${c.driveMin} min • (${coords})
         </div>
 
@@ -716,7 +708,7 @@
         </div>
 
         <div style="display:flex; gap:10px; margin-top:10px;">
-          <button class="btn" id="btnChange" type="button">🔁 Cambia meta</button>
+          <button class="btn btn-ghost" id="btnChange" type="button">🔁 Cambia meta</button>
           <button class="btn btn-ghost" id="btnResetRotation" type="button">🧽 Reset “oggi”</button>
         </div>
 
@@ -733,9 +725,11 @@
       if (!b) return;
       const pid = b.getAttribute("data-pid");
       renderResult(origin, list, category, pid);
-      // qui non serve scroll: siamo già nel risultato
       window.scrollTo({ top: 0, behavior: "smooth" });
     });
+
+    // dopo una scelta, chiudi impostazioni (flow wow)
+    closeSettingsPanel();
   }
 
   // -------------------- SEARCH --------------------
@@ -752,7 +746,8 @@
 
       const origin = getOrigin();
       if (!origin || !Number.isFinite(Number(origin.lat)) || !Number.isFinite(Number(origin.lon))) {
-        showStatus("err", "Imposta la partenza (GPS disattivato). Premi “Usa questo luogo”.");
+        showStatus("err", "Imposta la partenza nelle Impostazioni (GPS disattivato).");
+        openSettingsPanel();
         return;
       }
 
@@ -767,16 +762,14 @@
       let list = [];
 
       for (const mins of steps) {
-        list = pickTop(pool, origin, mins, category, styles, 5);
+        list = pickTop(pool, origin, mins, category, styles, 6);
         if (forbidPid) list = list.filter(x => x.pid !== forbidPid);
         if (list.length) break;
         if (token !== SEARCH_TOKEN) return;
       }
       if (token !== SEARCH_TOKEN) return;
 
-      if (!list.length && LIVE_ENABLED) {
-        // offline only
-      }
+      if (!list.length && LIVE_ENABLED) { /* offline only */ }
 
       if (!list.length) {
         renderNoResult(maxMinutes, category);
@@ -786,7 +779,8 @@
 
       renderResult(origin, list, category);
       if (!silent) showStatus("ok", `Trovate ${list.length} opzioni ✅ • categoria: ${category}`);
-      // risultato top
+
+      // sempre top (no confusione)
       window.scrollTo({ top: 0, behavior: "smooth" });
 
     } catch (e) {
@@ -815,10 +809,14 @@
       try {
         const o = JSON.parse(raw);
         if (Number.isFinite(Number(o?.lat)) && Number.isFinite(Number(o?.lon))) {
-          setOrigin({ label: o.label, lat: o.lat, lon: o.lon, country_code: o.country_code || "" });
+          $("originLabel") && ($("originLabel").value = o.label || "");
+          $("originLat") && ($("originLat").value = String(o.lat));
+          $("originLon") && ($("originLon").value = String(o.lon));
+          $("originCC") && ($("originCC").value = String(o.country_code || ""));
         }
       } catch {}
     }
+    updateOriginUI();
   }
 
   function bindOriginButtons() {
@@ -831,16 +829,36 @@
         showStatus("ok", "Partenza impostata ✅");
         DATASET = { kind: null, source: null, places: [], meta: {} };
         await ensureDatasetLoaded(getOrigin(), { signal: undefined }).catch(() => {});
+        // richiudi impostazioni dopo set origin (flow)
+        closeSettingsPanel();
       } catch (e) {
         console.error(e);
         $("originStatus") && ($("originStatus").textContent = `❌ ${String(e.message || e)}`);
         showStatus("err", `Geocoding fallito: ${String(e.message || e)}`);
+        openSettingsPanel();
       }
+    });
+
+    $("originChip")?.addEventListener("click", () => {
+      // tap chip -> apri editor
+      const chip = $("originChip");
+      const editor = $("originEditor");
+      if (chip) chip.style.display = "none";
+      if (editor) editor.style.display = "block";
+      openSettingsPanel();
     });
   }
 
-  function bindMainButtons() {
-    $("btnFind")?.addEventListener("click", () => runSearch());
+  function bindDockButtons() {
+    $("dockSearch")?.addEventListener("click", () => runSearch());
+  }
+
+  function bindSettingsHelpers() {
+    // se cambia categoria/tempo/stile, la prossima ricerca è immediata dal dock
+    // nessun bottone extra, zero clutter
+  }
+
+  function bindOtherButtons() {
     $("btnResetVisited")?.addEventListener("click", () => { resetVisited(); showStatus("ok", "Visitati resettati ✅"); });
   }
 
@@ -849,11 +867,16 @@
     initChips("categoryChips", { multi: false });
     initChips("styleChips", { multi: true });
     initTimeChipsSync();
+
     restoreOrigin();
     bindOriginButtons();
-    bindMainButtons();
+    bindDockButtons();
+    bindSettingsHelpers();
+    bindOtherButtons();
+
     hideStatus();
     setDockEnabled(false);
+    updateOriginUI();
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot, { once: true });
