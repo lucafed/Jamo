@@ -1,13 +1,14 @@
 // scripts/build_pois_it_veneto_all.mjs
-// Build OFFLINE POIs for Veneto (IT) — ALL categories in ONE file (TOURISTIC + CLEAN + RICH)
+// Build OFFLINE POIs for Veneto (IT) — ALL categories in ONE file (TOURISTIC + CLEAN)
 // Output: public/data/pois/regions/it-veneto.json
 //
-// ✅ Natura REINTRODOTTA: laghi/cascate/fiumi/gole/sorgenti/riserve
-// ✅ Family pulita: NO playground piccoli/spam
-// ✅ Storia turistica: preferisce wikipedia/wikidata/heritage/attraction, taglia minori
-// ✅ Chicche vs Classici: euristiche robuste (non “a caso”)
-// ✅ Anti-sporco: hotel/ristoranti/negozi/uffici esclusi
-// ✅ Dedup non schiaccia categorie (include type)
+// ✅ Categorie turistiche (tag OSM reali) + filtri anti-sporco
+// ✅ Natura presente: laghi/cascate/fiumi/parchi/riserv e ecc.
+// ✅ Family: NO playground a valanga (solo “forti”: theme park, zoo, aquarium, water park, rope course, farm attraction, ecc.)
+// ✅ Storia: taglia le cose troppo minori, punta su castelli/forti/mura/siti/musei/abbazie/chiese importanti
+// ✅ Distinzione chicche/classiche (euristica su tag + importanza)
+// ✅ Dedup NON schiaccia le categorie (chiave include type)
+// ✅ Offline, niente cose “strane” o non inerenti
 
 import fs from "fs";
 import path from "path";
@@ -34,7 +35,7 @@ async function fetchWithTimeout(url, body, timeoutMs = 65000) {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-        "User-Agent": "Jamo/1.0 (Veneto POIs build)",
+        "User-Agent": "Jamo/1.0 (GitHub Actions; Veneto POIs build)",
       },
       body,
       signal: ctrl.signal,
@@ -76,10 +77,11 @@ function venetoAreaBlock() {
 }
 
 // ------------------------------------------------------------
-// CATEGORIE (TOURISTIC + RICCHE, ma coerenti)
+// CATEGORIE TURISTICHE (tag OSM “forti”)
 // ------------------------------------------------------------
 const CATEGORIES = {
-  // FAMILY (turistico): grandi attrazioni, NO playground piccoli
+  // FAMILY “forte”: parchi, zoo, acquari, rope course, mini-golf, fattorie attrazione, cinema (ok), ecc.
+  // ⚠️ NO playground qui (troppo spam)
   family: `
   (
     nwr["tourism"="theme_park"](area.VENETO);
@@ -89,29 +91,33 @@ const CATEGORIES = {
     nwr["tourism"="aquarium"](area.VENETO);
     nwr["amenity"="aquarium"](area.VENETO);
 
-    // adventure / rope
     nwr["leisure"="high_ropes_course"](area.VENETO);
     nwr["leisure"="rope_course"](area.VENETO);
-
-    // indoor family monetizzabile spesso
-    nwr["leisure"="trampoline_park"](area.VENETO);
-    nwr["leisure"="bowling_alley"](area.VENETO);
-    nwr["leisure"="ice_rink"](area.VENETO);
     nwr["leisure"="miniature_golf"](area.VENETO);
-    nwr["amenity"="cinema"](area.VENETO);
+    nwr["leisure"="trampoline_park"](area.VENETO);
+    nwr["leisure"="ice_rink"](area.VENETO);
+    nwr["leisure"="bowling_alley"](area.VENETO);
 
-    // attrazioni "animal/farm" (se taggate)
+    // attrazioni “family” tipiche
     nwr["tourism"="attraction"]["attraction"="animal"](area.VENETO);
     nwr["tourism"="attraction"]["attraction"="farm"](area.VENETO);
 
-    // kids museum SOLO se veramente taggati (pochi ma ok)
+    // musei/esperienze family (tag, non nome)
     nwr["tourism"="museum"]["museum"="children"](area.VENETO);
     nwr["tourism"="museum"]["museum"="science"](area.VENETO);
     nwr["tourism"="museum"]["museum"="interactive"](area.VENETO);
   );
   `,
 
-  // PANORAMI: solo viewpoint veri + observation tower
+  // Parchi (subset “forte”)
+  theme_park: `
+  (
+    nwr["tourism"="theme_park"](area.VENETO);
+    nwr["leisure"="water_park"](area.VENETO);
+  );
+  `,
+
+  // Panorami: SOLO viewpoint veri + observation tower
   viewpoints: `
   (
     nwr["tourism"="viewpoint"](area.VENETO);
@@ -120,46 +126,54 @@ const CATEGORIES = {
   );
   `,
 
-  // TREKKING: guidepost/shelter/alpine_hut
+  // Trekking: rifugi/bivacchi + guidepost “importanti” (con name)
   hiking: `
   (
-    nwr["information"="guidepost"](area.VENETO);
-    nwr["amenity"="shelter"](area.VENETO);
     nwr["tourism"="alpine_hut"](area.VENETO);
+    nwr["amenity"="shelter"](area.VENETO);
+    nwr["information"="guidepost"]["name"](area.VENETO);
   );
   `,
 
-  // NATURA: laghi/cascate/fiumi/gole/sorgenti/riserve
+  // NATURA: laghi/cascate/fiumi/sorgenti/grotte/parchi/riserv e
   natura: `
   (
-    nwr["natural"="water"](area.VENETO);           // laghi / bacini
-    nwr["water"="lake"](area.VENETO);
-    nwr["water"="reservoir"](area.VENETO);
-
+    // acqua “wow”
     nwr["natural"="waterfall"](area.VENETO);
     nwr["natural"="spring"](area.VENETO);
-    nwr["natural"="gorge"](area.VENETO);
-    nwr["natural"="cave_entrance"](area.VENETO);
 
-    nwr["waterway"="riverbank"](area.VENETO);
-    nwr["waterway"="river"](area.VENETO);
+    // laghi / bacini
+    nwr["natural"="water"]["name"](area.VENETO);
 
+    // fiumi / gole / sponde (turistici spesso)
+    nwr["waterway"="river"]["name"](area.VENETO);
+    nwr["waterway"="stream"]["name"](area.VENETO);
+    nwr["waterway"="riverbank"]["name"](area.VENETO);
+
+    // parchi/riserv e
     nwr["leisure"="nature_reserve"](area.VENETO);
     nwr["boundary"="national_park"](area.VENETO);
+
+    // grotte
+    nwr["natural"="cave_entrance"](area.VENETO);
+
+    // foreste “note” (solo con nome)
+    nwr["natural"="wood"]["name"](area.VENETO);
   );
   `,
 
-  // MONTAGNA (cime, passi, rifugi, impianti)
+  // MONTAGNA: cime, passi, rifugi, impianti, ecc.
   montagna: `
   (
     nwr["natural"="peak"](area.VENETO);
     nwr["natural"="saddle"](area.VENETO);
-    nwr["natural"="ridge"](area.VENETO);
-
     nwr["tourism"="alpine_hut"](area.VENETO);
     nwr["amenity"="shelter"](area.VENETO);
 
+    // impianti (invernale/estate)
     nwr["aerialway"](area.VENETO);
+
+    // aree sci / piste
     nwr["piste:type"](area.VENETO);
   );
   `,
@@ -173,26 +187,30 @@ const CATEGORIES = {
   );
   `,
 
-  // STORIA (turistica)
+  // STORIA: turistica (taglia micro-robe)
   storia: `
   (
     nwr["historic"="castle"](area.VENETO);
     nwr["historic"="fort"](area.VENETO);
     nwr["historic"="citywalls"](area.VENETO);
-    nwr["historic"="tower"](area.VENETO);
-    nwr["historic"="ruins"](area.VENETO);
     nwr["historic"="archaeological_site"](area.VENETO);
-    nwr["historic"="monument"](area.VENETO);
-    nwr["historic"="memorial"](area.VENETO);
+    nwr["historic"="ruins"](area.VENETO);
 
+    // musei / siti culturali
     nwr["tourism"="museum"](area.VENETO);
+    nwr["tourism"="attraction"]["historic"~"."](area.VENETO);
 
-    // attrazione storica taggata
-    nwr["tourism"="attraction"]["historic"](area.VENETO);
+    // luoghi religiosi “forti” (spesso turismo): solo se historic=* o heritage=*
+    nwr["amenity"="place_of_worship"]["historic"~"."](area.VENETO);
+    nwr["amenity"="place_of_worship"]["heritage"~"."](area.VENETO);
+
+    // monumenti/memorial SOLO se importanti (heritage o tourism=attraction)
+    nwr["historic"="monument"]["heritage"~"."](area.VENETO);
+    nwr["historic"="memorial"]["heritage"~"."](area.VENETO);
   );
   `,
 
-  // RELAX (ricchissima)
+  // RELAX: spa/terme/sauna/piscine (ricco ma coerente)
   relax: `
   (
     nwr["amenity"="spa"](area.VENETO);
@@ -200,27 +218,26 @@ const CATEGORIES = {
     nwr["tourism"="spa"](area.VENETO);
     nwr["natural"="hot_spring"](area.VENETO);
     nwr["amenity"="public_bath"](area.VENETO);
-
     nwr["amenity"="sauna"](area.VENETO);
     nwr["leisure"="sauna"](area.VENETO);
-
     nwr["leisure"="swimming_pool"](area.VENETO);
   );
   `,
 
-  // BORGHI
+  // BORGHI: riduciamo spam -> solo place=village e place=town con population piccola? (non sempre presente)
+  // qui restiamo semplici: village + hamlet con name (è già così)
   borghi: `
   (
-    nwr["place"="village"](area.VENETO);
-    nwr["place"="hamlet"](area.VENETO);
+    nwr["place"="village"]["name"](area.VENETO);
+    nwr["place"="hamlet"]["name"](area.VENETO);
   );
   `,
 
   // CITTA
   citta: `
   (
-    nwr["place"="city"](area.VENETO);
-    nwr["place"="town"](area.VENETO);
+    nwr["place"="city"]["name"](area.VENETO);
+    nwr["place"="town"]["name"](area.VENETO);
   );
   `,
 };
@@ -237,12 +254,12 @@ out tags center;
 }
 
 // ------------------------------------------------------------
-// FILTRI ANTI-SPAZZATURA + “TURISTICO”
+// FILTRI ANTI-SPAZZATURA
 // ------------------------------------------------------------
 function normStr(x){ return String(x || "").toLowerCase().trim(); }
 
-function isBadGeneric(tags = {}) {
-  // hospitality / accomodation
+function isFoodOrLodging(tags = {}) {
+  // lodging
   if (tags.tourism && [
     "hotel","motel","hostel","guest_house","apartment","chalet",
     "camp_site","caravan_site"
@@ -260,86 +277,150 @@ function isBadGeneric(tags = {}) {
   return false;
 }
 
-function isTouristicSignal(tags = {}) {
-  // segnali forti di “posto turistico”
-  if (tags.wikipedia || tags.wikidata) return true;
-  if (tags.heritage) return true;
-  if (tags.tourism && ["museum","theme_park","zoo","aquarium","viewpoint","spa","attraction"].includes(tags.tourism)) return true;
-  if (tags.historic && ["castle","fort","citywalls","tower","ruins","archaeological_site","monument"].includes(tags.historic)) return true;
-  if (tags.natural && ["waterfall","peak","gorge","cave_entrance","spring","water"].includes(tags.natural)) return true;
-  if (tags.leisure && ["water_park","spa","nature_reserve"].includes(tags.leisure)) return true;
-  if (tags.place && ["city","town","village","hamlet"].includes(tags.place)) return true;
-  return false;
+function allowIfMountainHut(tags, catKey) {
+  return tags.tourism === "alpine_hut" && (catKey === "hiking" || catKey === "montagna");
 }
 
-function allowSmallNature(tags = {}) {
-  // per natura possiamo accettare anche senza wiki se è “oggetto naturale” vero
-  if (tags.natural && ["waterfall","gorge","spring","cave_entrance"].includes(tags.natural)) return true;
-  if (tags.water && ["lake","reservoir"].includes(tags.water)) return true;
-  if (tags.natural === "water") return true;
-  return false;
+function allowIfAerialway(tags, catKey) {
+  return tags.aerialway && catKey === "montagna";
 }
 
 function shouldDrop(el, catKey) {
   const tags = el.tags || {};
   const name = tags.name || tags["name:it"] || tags.brand || tags.operator || "";
 
+  // nome obbligatorio
   if (!name || String(name).trim().length < 2) return true;
-  if (isBadGeneric(tags)) return true;
 
-  // place=* solo in borghi/citta
+  // stop “commerciale” (eccetto rifugi/impianti per montagna)
+  if (isFoodOrLodging(tags)) {
+    if (allowIfMountainHut(tags, catKey)) return false;
+    return true;
+  }
+
+  // se è place=* deve stare solo in borghi/citta
   if (tags.place && !(catKey === "borghi" || catKey === "citta")) return true;
 
-  // family: NO spa/terme
+  // family: escludi spa/terme
   if (catKey === "family") {
     const n = normStr(name);
     if (
-      tags.amenity === "spa" || tags.leisure === "spa" || tags.tourism === "spa" ||
-      tags.amenity === "public_bath" || tags.natural === "hot_spring" ||
+      tags.amenity === "spa" ||
+      tags.leisure === "spa" ||
+      tags.amenity === "public_bath" ||
+      tags.natural === "hot_spring" ||
+      tags.amenity === "sauna" ||
+      tags.leisure === "sauna" ||
       n.includes("terme") || n.includes("spa") || n.includes("thermal") || n.includes("benessere")
     ) return true;
   }
 
-  // viewpoints: escludi tower generiche non observation
+  // hiking: taglia guidepost “spam” (anche se ha name troppo corto)
+  if (catKey === "hiking" && tags.information === "guidepost") {
+    const n = String(name).trim();
+    if (n.length < 6) return true;
+    const nn = normStr(n);
+    const ok = nn.includes("sentier") || nn.includes("cai") || nn.includes("anello") || nn.includes("trail") || nn.includes("via");
+    if (!ok) return true;
+  }
+
+  // mare: evita robe che non sono mare
+  if (catKey === "mare") {
+    if (!(tags.natural === "beach" || tags.leisure === "marina" || tags.natural === "coastline")) return true;
+  }
+
+  // montagna: evita place=*
+  if (catKey === "montagna") {
+    if (tags.place) return true;
+    // deve avere almeno un segnale montagna
+    const ok = !!(
+      tags.natural === "peak" ||
+      tags.natural === "saddle" ||
+      tags.tourism === "alpine_hut" ||
+      tags.amenity === "shelter" ||
+      tags.aerialway ||
+      tags["piste:type"]
+    );
+    if (!ok) return true;
+  }
+
+  // natura: deve essere davvero natura
+  if (catKey === "natura") {
+    const ok = !!(
+      tags.natural === "waterfall" ||
+      tags.natural === "spring" ||
+      tags.natural === "water" ||
+      tags.waterway === "river" ||
+      tags.waterway === "stream" ||
+      tags.waterway === "riverbank" ||
+      tags.leisure === "nature_reserve" ||
+      tags.boundary === "national_park" ||
+      tags.natural === "cave_entrance" ||
+      tags.natural === "wood"
+    );
+    if (!ok) return true;
+  }
+
+  // viewpoints: solo veri
   if (catKey === "viewpoints") {
-    if (tags.man_made === "tower" && tags["tower:type"] && tags["tower:type"] !== "observation") return true;
+    const ok = (tags.tourism === "viewpoint") || (tags.man_made === "observation_tower") || (tags.man_made === "tower" && tags["tower:type"] === "observation");
+    if (!ok) return true;
   }
 
-  // hiking: riduci spam -> guidepost deve avere name sensato o ref CAI
-  if (catKey === "hiking") {
-    if (tags.information === "guidepost") {
-      const n = String(name).trim();
-      if (n.length < 6 && !tags.ref) return true;
-    }
-  }
-
-  // “turistico” per storia: se è monumentino senza segnali forti, scarta
+  // storia: taglia micro-monumenti non “forti”
   if (catKey === "storia") {
-    const strong = !!(tags.wikipedia || tags.wikidata || tags.heritage || tags.tourism === "museum" || tags.tourism === "attraction");
-    const okHistoric = !!tags.historic;
-    if (!strong && okHistoric && !["castle","fort","citywalls","tower","archaeological_site"].includes(tags.historic)) {
-      return true; // taglia minori
-    }
+    const strong =
+      tags.historic === "castle" ||
+      tags.historic === "fort" ||
+      tags.historic === "citywalls" ||
+      tags.historic === "archaeological_site" ||
+      tags.historic === "ruins" ||
+      tags.tourism === "museum" ||
+      (tags.tourism === "attraction" && tags.historic) ||
+      (tags.amenity === "place_of_worship" && (tags.historic || tags.heritage)) ||
+      ((tags.historic === "monument" || tags.historic === "memorial") && tags.heritage);
+
+    if (!strong) return true;
   }
 
-  // “turistico” generale: per tutte tranne natura, richiedi almeno un segnale
-  if (catKey !== "natura") {
-    if (!isTouristicSignal(tags)) return true;
-  } else {
-    // natura: accetta anche oggetti naturali veri senza wiki
-    if (!isTouristicSignal(tags) && !allowSmallNature(tags)) return true;
+  // relax: deve essere relax vero
+  if (catKey === "relax") {
+    const ok =
+      tags.amenity === "spa" ||
+      tags.leisure === "spa" ||
+      tags.tourism === "spa" ||
+      tags.natural === "hot_spring" ||
+      tags.amenity === "public_bath" ||
+      tags.amenity === "sauna" ||
+      tags.leisure === "sauna" ||
+      tags.leisure === "swimming_pool";
+    if (!ok) return true;
   }
 
-  // family: NO playground (spam)
+  // family: deve essere family vero
   if (catKey === "family") {
-    if (tags.leisure === "playground") return true;
+    const ok =
+      tags.tourism === "theme_park" ||
+      tags.leisure === "water_park" ||
+      tags.tourism === "zoo" ||
+      tags.tourism === "aquarium" ||
+      tags.amenity === "aquarium" ||
+      tags.leisure === "high_ropes_course" ||
+      tags.leisure === "rope_course" ||
+      tags.leisure === "miniature_golf" ||
+      tags.leisure === "trampoline_park" ||
+      tags.leisure === "ice_rink" ||
+      tags.leisure === "bowling_alley" ||
+      (tags.tourism === "attraction" && (tags.attraction === "animal" || tags.attraction === "farm")) ||
+      (tags.tourism === "museum" && (tags.museum === "children" || tags.museum === "science" || tags.museum === "interactive"));
+    if (!ok) return true;
   }
 
   return false;
 }
 
 // ------------------------------------------------------------
-// Map OSM -> place (compat app.js)
+// Map OSM element -> "place" (compat app.js)
 // ------------------------------------------------------------
 function tagListCompact(tags) {
   const out = [];
@@ -347,23 +428,40 @@ function tagListCompact(tags) {
 
   [
     "tourism","leisure","historic","natural","amenity","information","place",
-    "boundary","waterway","man_made","attraction","museum","tower:type",
-    "wikipedia","wikidata","heritage","water","aerialway","piste:type"
+    "boundary","waterway","man_made","attraction","museum","aerialway","piste:type","tower:type","heritage"
   ].forEach(pushKV);
 
-  return Array.from(new Set(out)).slice(0, 30);
+  return Array.from(new Set(out)).slice(0, 28);
 }
 
 function visibilityHeuristic(catKey, tags = {}) {
-  // Classico se ha segnali forti (wiki/wikidata/heritage)
-  const strong = !!(tags.wikipedia || tags.wikidata || tags.heritage);
-  if (strong) return "classica";
+  // chicche: viewpoint, natura “wow”, montagna “wow”, borghi hamlet
+  if (catKey === "borghi") return (tags.place === "hamlet") ? "chicca" : "classica";
+  if (catKey === "viewpoints") return "chicca";
 
-  // Natura/montagna/viewpoints spesso chicche
-  if (catKey === "natura" || catKey === "montagna" || catKey === "viewpoints") return "chicca";
+  if (catKey === "natura") {
+    if (tags.natural === "waterfall" || tags.natural === "cave_entrance" || tags.natural === "spring") return "chicca";
+    if (tags.leisure === "nature_reserve" || tags.boundary === "national_park") return "classica";
+    return "chicca";
+  }
 
-  // Borghi hamlet spesso chicche
-  if (catKey === "borghi" && tags.place === "hamlet") return "chicca";
+  if (catKey === "montagna") {
+    if (tags.natural === "peak" || tags["piste:type"] || tags.aerialway) return "classica";
+    if (tags.tourism === "alpine_hut") return "chicca";
+    return "chicca";
+  }
+
+  if (catKey === "storia") {
+    // “classica” per castelli/forti/musei grandi, chicca per ruins/archaeological piccoli
+    if (tags.historic === "castle" || tags.historic === "fort" || tags.tourism === "museum" || tags.historic === "citywalls") return "classica";
+    return "chicca";
+  }
+
+  if (catKey === "family") {
+    // theme park / zoo classici, rope/farm più chicche
+    if (tags.tourism === "theme_park" || tags.leisure === "water_park" || tags.tourism === "zoo" || tags.tourism === "aquarium" || tags.amenity === "aquarium") return "classica";
+    return "chicca";
+  }
 
   return "classica";
 }
@@ -371,24 +469,26 @@ function visibilityHeuristic(catKey, tags = {}) {
 function beautyScoreHeuristic(catKey, tags = {}) {
   let s = 0.72;
 
-  if (tags.tourism === "theme_park") s += 0.10;
-  if (tags.leisure === "water_park") s += 0.10;
-  if (tags.tourism === "zoo" || tags.tourism === "aquarium" || tags.amenity === "aquarium") s += 0.08;
+  // boost wow
+  if (tags.tourism === "theme_park") s += 0.12;
+  if (tags.leisure === "water_park") s += 0.12;
+  if (tags.tourism === "zoo" || tags.tourism === "aquarium" || tags.amenity === "aquarium") s += 0.10;
 
-  if (tags.tourism === "viewpoint" || tags.man_made === "observation_tower") s += 0.08;
+  if (tags.tourism === "viewpoint" || tags.man_made === "observation_tower") s += 0.10;
 
-  if (tags.natural === "waterfall") s += 0.10;
-  if (tags.natural === "gorge") s += 0.08;
-  if (tags.water === "lake" || tags.natural === "water") s += 0.06;
-  if (tags.natural === "peak" || tags.natural === "saddle") s += 0.06;
+  if (tags.natural === "waterfall") s += 0.12;
+  if (tags.natural === "water") s += 0.08;
+  if (tags.waterway === "river" || tags.waterway === "riverbank") s += 0.06;
+  if (tags.natural === "cave_entrance") s += 0.10;
 
-  if (tags.historic === "castle" || tags.historic === "fort") s += 0.10;
-  if (tags.tourism === "museum") s += 0.05;
+  if (tags.natural === "peak" || tags.natural === "saddle") s += 0.10;
+  if (tags.aerialway || tags["piste:type"]) s += 0.08;
 
-  if (catKey === "relax" && (tags.amenity === "spa" || tags.leisure === "spa" || tags.natural === "hot_spring")) s += 0.08;
+  if (tags.historic === "castle" || tags.historic === "fort") s += 0.12;
+  if (tags.tourism === "museum") s += 0.07;
+  if (tags.historic === "archaeological_site") s += 0.08;
 
-  // segnali forti -> più alto
-  if (tags.wikipedia || tags.wikidata) s += 0.04;
+  if (catKey === "relax" && (tags.amenity === "spa" || tags.leisure === "spa" || tags.natural === "hot_spring")) s += 0.10;
 
   s = Math.max(0.58, Math.min(0.92, s));
   return Number(s.toFixed(3));
@@ -417,6 +517,7 @@ function mapElementToPlace(el, catKey) {
   };
 }
 
+// ✅ Dedup “safe”: include type, così non perdi categorie
 function dedupPlaces(places) {
   const seen = new Set();
   const out = [];
@@ -437,7 +538,12 @@ async function main() {
     region_id: "it-veneto",
     label: "Veneto",
     categories: CATEGORY_KEYS,
-    notes: [],
+    notes: [
+      "touristic_clean_build",
+      "family_no_playground_spam",
+      "storia_strong_only",
+      "natura_lakes_waterfalls_rivers",
+    ],
   };
 
   const allByCat = {};
