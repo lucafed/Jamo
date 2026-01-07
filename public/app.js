@@ -1,12 +1,22 @@
-/* Jamo — app.js v10.6.2 (NO-GPS + OFFLINE-ONLY + TOURISTIC FILTERS + SEASON + COHERENT LINKS)
+/* Jamo — app.js v10.7.0 (NO-GPS + OFFLINE-ONLY + TOURISTIC FILTERS + SEASON + COHERENT LINKS + AFFILIATE-READY)
  * ✅ NO GPS
  * ✅ OFFLINE-ONLY: niente LIVE
- * ✅ Anti-sporco: NO hotel/ristoranti/bar/cafe
+ * ✅ Anti-sporco: NO hotel/ristoranti/bar/cafe nel dataset
  * ✅ Categorie REALI: SOLO tag OSM (no match per nome)
- * ✅ Natura RIPRISTINATA: laghi/cascate/fiumi ecc.
- * ✅ Storia/Family già ripulite dal builder; qui aggiungiamo guardrail
+ * ✅ Natura: laghi/cascate/fiumi ecc.
+ * ✅ Storia/Family ripulite + guardrail
  * ✅ Stagionalità: inverno/estate (penalità/boost)
- * ✅ Link coerenti: query stabile (nome+area) + fallback Maps
+ * ✅ Link coerenti: query stabile (nome+area)
+ * ✅ Monetizzazione PRONTA (ma SAFE): bottone "🎟️ Prenota" SOLO se esiste link affiliato nel mapping
+ *
+ * Mapping file (facoltativo): /public/data/affiliates/affiliate_map.json
+ * Formato consigliato:
+ * {
+ *   "keys": {
+ *     "poi_it-veneto_family_way_123": { "type":"tickets", "label":"🎟️ Prenota", "url":"https://TUO-LINK" },
+ *     "gardaland": { "type":"tickets", "label":"🎟️ Biglietti", "url":"https://TUO-LINK" }
+ *   }
+ * }
  */
 
 (() => {
@@ -41,6 +51,11 @@
 
   // OFFLINE ONLY
   const LIVE_ENABLED = false;
+
+  // -------------------- AFFILIATE (SAFE) --------------------
+  // Se non esiste/ fallisce: nessuna monetizzazione, tutto resta come ora.
+  const AFFILIATE_MAP_URL = "/data/affiliates/affiliate_map.json";
+  let AFFILIATE_MAP = null;
 
   // -------------------- UTIL --------------------
   function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
@@ -118,11 +133,9 @@
     return `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(oLat + "," + oLon)}&destination=${encodeURIComponent(dLat + "," + dLon)}&travelmode=driving`;
   }
 
-  // ✅ qui la chiave: query STABILE (nome + area), niente cose strane
   function stableQuery(name, area) {
     const n = String(name || "").trim();
     const a = String(area || "").trim();
-    // niente coordinate nella query: spesso peggiorano i risultati
     return a ? `"${n}" ${a}` : `"${n}"`;
   }
 
@@ -130,7 +143,6 @@
     return `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(stableQuery(name, area))}`;
   }
   function googleThingsToDoUrl(name, area) {
-    // “cosa vedere” ma ancorato
     const q = `${stableQuery(name, area)} cosa vedere`;
     return `https://www.google.com/search?q=${encodeURIComponent(q)}`;
   }
@@ -147,10 +159,54 @@
     return `https://www.google.com/search?q=${encodeURIComponent(q)}`;
   }
   function restaurantsUrl(name, area, lat, lon) {
-    // solo link, non influenza categoria
     const q = area ? `ristoranti vicino ${name} ${area}` : `ristoranti vicino ${name}`;
-    // qui Maps è molto più coerente di Google Search
     return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}&center=${encodeURIComponent(lat + "," + lon)}`;
+  }
+
+  // -------------------- FETCH JSON --------------------
+  async function fetchJson(url, { signal } = {}) {
+    const r = await fetch(url, { cache: "no-store", signal });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return await r.json();
+  }
+
+  // -------------------- AFFILIATE MAP LOAD --------------------
+  async function loadAffiliateMapSafe(signal) {
+    if (AFFILIATE_MAP) return AFFILIATE_MAP;
+    try {
+      const j = await fetchJson(AFFILIATE_MAP_URL, { signal });
+      // expected { keys: { ... } }
+      if (j && typeof j === "object") AFFILIATE_MAP = j;
+      else AFFILIATE_MAP = { keys: {} };
+    } catch {
+      AFFILIATE_MAP = { keys: {} };
+    }
+    return AFFILIATE_MAP;
+  }
+
+  function getAffiliateLinkForPlace(place, category) {
+    // SAFE RULE: monetizzazione SOLO se c’è un URL nel mapping.
+    const keys = AFFILIATE_MAP?.keys || {};
+    if (!keys || typeof keys !== "object") return null;
+
+    const pid = safeIdFromPlace(place);
+    const nameKey = normName(place?.name || "");
+    const catKey = String(category || "").toLowerCase().trim();
+
+    // priorità: id preciso > nome normalizzato > nome+categoria
+    const hit =
+      keys[pid] ||
+      keys[nameKey] ||
+      keys[`${nameKey}__${catKey}`];
+
+    if (!hit || !hit.url) return null;
+
+    return {
+      url: String(hit.url),
+      label: String(hit.label || "🎟️ Prenota"),
+      type: String(hit.type || "booking"),
+      provider: String(hit.provider || ""),
+    };
   }
 
   // -------------------- STORAGE: ORIGIN --------------------
@@ -298,13 +354,6 @@
         <div class="small muted" style="margin-top:8px; line-height:1.4;">${msg}</div>
       </div>
     `;
-  }
-
-  // -------------------- FETCH JSON --------------------
-  async function fetchJson(url, { signal } = {}) {
-    const r = await fetch(url, { cache: "no-store", signal });
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
-    return await r.json();
   }
 
   // -------------------- DATASET --------------------
@@ -457,17 +506,14 @@
 
   function isLodgingOrFood(place) {
     const t = tagsStr(place);
-    // lodging
     if (t.includes("tourism=hotel") || t.includes("tourism=hostel") || t.includes("tourism=guest_house") ||
         t.includes("tourism=apartment") || t.includes("tourism=camp_site") || t.includes("tourism=caravan_site") ||
         t.includes("tourism=chalet") || t.includes("tourism=motel")) return true;
-    // food
     if (t.includes("amenity=restaurant") || t.includes("amenity=fast_food") || t.includes("amenity=cafe") ||
         t.includes("amenity=bar") || t.includes("amenity=pub") || t.includes("amenity=ice_cream")) return true;
     return false;
   }
 
-  // season signals
   function isSummerThing(place) {
     const t = tagsStr(place);
     return t.includes("leisure=water_park") || t.includes("natural=beach") || t.includes("leisure=marina");
@@ -609,11 +655,9 @@
   }
 
   function seasonAdjust(place) {
-    // penalità leggere (non azzera) per roba fuori stagione
     if (isWinterNow() && isSummerThing(place)) return -0.18;
     if (isSummerNow() && isWinterThing(place)) return -0.18;
 
-    // boost leggero per roba “giusta”
     if (isWinterNow() && isSpaPlace(place)) return +0.08;
     if (isSummerNow() && (isSummerThing(place) || normalizeType(place?.type) === "mare")) return +0.06;
 
@@ -778,6 +822,12 @@
     const areaLabel = (p.area || p.country || "").trim() || "Italia";
     const name = p.name || "";
 
+    // affiliate: SOLO se esiste mapping
+    const aff = getAffiliateLinkForPlace(p, category);
+    const affiliateBtn = aff?.url
+      ? `<a class="btn" target="_blank" rel="noopener" href="${aff.url}">${aff.label}</a>`
+      : "";
+
     area.innerHTML = `
       <div class="card okbox" style="overflow:hidden; padding:0;">
         <div style="position:relative; width:100%; aspect-ratio: 2 / 1; border-bottom:1px solid var(--border);">
@@ -818,6 +868,7 @@
           <div class="small muted" style="margin-top:6px; line-height:1.45;">${what}</div>
 
           <div class="row wrap gap" style="margin-top:14px;">
+            ${affiliateBtn}
             <a class="btn" target="_blank" rel="noopener" href="${mapsPlaceUrl(lat, lon)}">🗺️ Maps</a>
             <a class="btn" target="_blank" rel="noopener" href="${mapsDirUrl(origin.lat, origin.lon, lat, lon)}">🚗 Percorso</a>
             <a class="btn btn-ghost" target="_blank" rel="noopener" href="${googleImagesUrl(name, areaLabel)}">📸 Foto</a>
@@ -863,7 +914,9 @@
         return;
       }
 
+      // dataset + affiliate mapping (safe: se non esiste, ok)
       await ensureDatasetLoaded(origin, { signal });
+      await loadAffiliateMapSafe(signal);
 
       const basePool = Array.isArray(DATASET?.places) ? DATASET.places : [];
       const datasetInfo =
@@ -969,6 +1022,7 @@
         showStatus("ok", "Partenza impostata ✅");
         DATASET = { kind: null, source: null, places: [], meta: {} };
         await ensureDatasetLoaded(getOrigin(), { signal: undefined }).catch(() => {});
+        await loadAffiliateMapSafe(undefined).catch(() => {});
       } catch (e) {
         console.error(e);
         if ($("originStatus")) $("originStatus").textContent = `❌ ${String(e.message || e)}`;
@@ -995,8 +1049,13 @@
     hideStatus();
 
     (async () => {
-      try { const origin = getOrigin(); if (origin) await ensureDatasetLoaded(origin, { signal: undefined }); }
-      catch {}
+      try {
+        const origin = getOrigin();
+        if (origin) {
+          await ensureDatasetLoaded(origin, { signal: undefined });
+          await loadAffiliateMapSafe(undefined);
+        }
+      } catch {}
     })();
   }
 
@@ -1011,5 +1070,7 @@
     getDataset: () => DATASET,
     forceRegion: (id) => { localStorage.setItem("jamo_region_id", id); DATASET = { kind:null, source:null, places:[], meta:{} }; },
     clearRegion: () => { localStorage.removeItem("jamo_region_id"); DATASET = { kind:null, source:null, places:[], meta:{} }; },
+    // debug affiliate
+    getAffiliateMap: () => AFFILIATE_MAP,
   };
 })();
