@@ -3,12 +3,12 @@
 // Output: public/data/pois/regions/it-veneto.json
 //
 // ✅ Categorie turistiche (tag OSM reali) + filtri anti-sporco
-// ✅ Natura presente: laghi/cascate/fiumi/parchi/riserv e ecc.
-// ✅ Family: NO playground a valanga (solo “forti”: theme park, zoo, aquarium, water park, rope course, farm attraction, ecc.)
-// ✅ Storia: taglia le cose troppo minori, punta su castelli/forti/mura/siti/musei/abbazie/chiese importanti
-// ✅ Distinzione chicche/classiche (euristica su tag + importanza)
+// ✅ Natura presente: laghi/cascate/fiumi/parchi/riserve/grotte/boschi “noti”
+// ✅ Family: NO playground spam (solo forti)
+// ✅ Storia: taglia micro-robe, punta su turismo
+// ✅ Distinzione chicche/classiche (euristica)
 // ✅ Dedup NON schiaccia le categorie (chiave include type)
-// ✅ Offline, niente cose “strane” o non inerenti
+// ✅ Robustezza: categorie “spezzate” (soprattutto natura) + retry/backoff; se una subquery fallisce, si salva il resto
 
 import fs from "fs";
 import path from "path";
@@ -23,11 +23,17 @@ const OVERPASS_ENDPOINTS = [
   "https://overpass.openstreetmap.ru/api/interpreter",
 ];
 
+// ---- tuning ----
+const FETCH_TIMEOUT_MS = 90000;     // più respiro
+const OVERPASS_TIMEOUT_S = 220;     // timeout query
+const MAX_TRIES_PER_EP = 3;
+const BACKOFF_BASE_MS = 1100;
+
 function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
 function nowIso(){ return new Date().toISOString(); }
 function ensureDir(p){ if (!fs.existsSync(p)) fs.mkdirSync(p, { recursive: true }); }
 
-async function fetchWithTimeout(url, body, timeoutMs = 65000) {
+async function fetchWithTimeout(url, body, timeoutMs = FETCH_TIMEOUT_MS) {
   const ctrl = new AbortController();
   const t = setTimeout(() => ctrl.abort(), timeoutMs);
   try {
@@ -56,13 +62,14 @@ async function runOverpass(query) {
   let lastErr = null;
 
   for (const endpoint of OVERPASS_ENDPOINTS) {
-    for (let attempt = 1; attempt <= 3; attempt++) {
+    for (let attempt = 1; attempt <= MAX_TRIES_PER_EP; attempt++) {
       try {
-        const j = await fetchWithTimeout(endpoint, body, 65000);
+        const j = await fetchWithTimeout(endpoint, body, FETCH_TIMEOUT_MS);
         return { ok: true, endpoint, json: j };
       } catch (e) {
         lastErr = e;
-        await sleep(900 * attempt);
+        const wait = BACKOFF_BASE_MS * attempt;
+        await sleep(wait);
       }
     }
   }
@@ -78,177 +85,193 @@ function venetoAreaBlock() {
 
 // ------------------------------------------------------------
 // CATEGORIE TURISTICHE (tag OSM “forti”)
+// Nota: "natura" è spezzata in più subquery => più robusta
 // ------------------------------------------------------------
 const CATEGORIES = {
-  // FAMILY “forte”: parchi, zoo, acquari, rope course, mini-golf, fattorie attrazione, cinema (ok), ecc.
-  // ⚠️ NO playground qui (troppo spam)
-  family: `
-  (
-    nwr["tourism"="theme_park"](area.VENETO);
-    nwr["leisure"="water_park"](area.VENETO);
+  family: [
+    `
+    (
+      nwr["tourism"="theme_park"](area.VENETO);
+      nwr["leisure"="water_park"](area.VENETO);
 
-    nwr["tourism"="zoo"](area.VENETO);
-    nwr["tourism"="aquarium"](area.VENETO);
-    nwr["amenity"="aquarium"](area.VENETO);
+      nwr["tourism"="zoo"](area.VENETO);
+      nwr["tourism"="aquarium"](area.VENETO);
+      nwr["amenity"="aquarium"](area.VENETO);
 
-    nwr["leisure"="high_ropes_course"](area.VENETO);
-    nwr["leisure"="rope_course"](area.VENETO);
-    nwr["leisure"="miniature_golf"](area.VENETO);
-    nwr["leisure"="trampoline_park"](area.VENETO);
-    nwr["leisure"="ice_rink"](area.VENETO);
-    nwr["leisure"="bowling_alley"](area.VENETO);
+      nwr["leisure"="high_ropes_course"](area.VENETO);
+      nwr["leisure"="rope_course"](area.VENETO);
+      nwr["leisure"="miniature_golf"](area.VENETO);
+      nwr["leisure"="trampoline_park"](area.VENETO);
+      nwr["leisure"="ice_rink"](area.VENETO);
+      nwr["leisure"="bowling_alley"](area.VENETO);
 
-    // attrazioni “family” tipiche
-    nwr["tourism"="attraction"]["attraction"="animal"](area.VENETO);
-    nwr["tourism"="attraction"]["attraction"="farm"](area.VENETO);
+      nwr["tourism"="attraction"]["attraction"="animal"](area.VENETO);
+      nwr["tourism"="attraction"]["attraction"="farm"](area.VENETO);
 
-    // musei/esperienze family (tag, non nome)
-    nwr["tourism"="museum"]["museum"="children"](area.VENETO);
-    nwr["tourism"="museum"]["museum"="science"](area.VENETO);
-    nwr["tourism"="museum"]["museum"="interactive"](area.VENETO);
-  );
-  `,
+      nwr["tourism"="museum"]["museum"="children"](area.VENETO);
+      nwr["tourism"="museum"]["museum"="science"](area.VENETO);
+      nwr["tourism"="museum"]["museum"="interactive"](area.VENETO);
+    );
+    `.trim()
+  ],
 
-  // Parchi (subset “forte”)
-  theme_park: `
-  (
-    nwr["tourism"="theme_park"](area.VENETO);
-    nwr["leisure"="water_park"](area.VENETO);
-  );
-  `,
+  theme_park: [
+    `
+    (
+      nwr["tourism"="theme_park"](area.VENETO);
+      nwr["leisure"="water_park"](area.VENETO);
+    );
+    `.trim()
+  ],
 
-  // Panorami: SOLO viewpoint veri + observation tower
-  viewpoints: `
-  (
-    nwr["tourism"="viewpoint"](area.VENETO);
-    nwr["man_made"="observation_tower"](area.VENETO);
-    nwr["man_made"="tower"]["tower:type"="observation"](area.VENETO);
-  );
-  `,
+  viewpoints: [
+    `
+    (
+      nwr["tourism"="viewpoint"](area.VENETO);
+      nwr["man_made"="observation_tower"](area.VENETO);
+      nwr["man_made"="tower"]["tower:type"="observation"](area.VENETO);
+    );
+    `.trim()
+  ],
 
-  // Trekking: rifugi/bivacchi + guidepost “importanti” (con name)
-  hiking: `
-  (
-    nwr["tourism"="alpine_hut"](area.VENETO);
-    nwr["amenity"="shelter"](area.VENETO);
-    nwr["information"="guidepost"]["name"](area.VENETO);
-  );
-  `,
+  hiking: [
+    `
+    (
+      nwr["tourism"="alpine_hut"](area.VENETO);
+      nwr["amenity"="shelter"](area.VENETO);
+      nwr["information"="guidepost"]["name"](area.VENETO);
+    );
+    `.trim()
+  ],
 
-  // NATURA: laghi/cascate/fiumi/sorgenti/grotte/parchi/riserv e
-  natura: `
-  (
-    // acqua “wow”
-    nwr["natural"="waterfall"](area.VENETO);
-    nwr["natural"="spring"](area.VENETO);
+  // ✅ NATURA spezzata: se una parte fallisce, le altre salvano comunque POI
+  natura: [
+    // cascate + sorgenti + grotte (wow)
+    `
+    (
+      nwr["natural"="waterfall"](area.VENETO);
+      nwr["natural"="spring"](area.VENETO);
+      nwr["natural"="cave_entrance"](area.VENETO);
+    );
+    `.trim(),
 
-    // laghi / bacini
-    nwr["natural"="water"]["name"](area.VENETO);
+    // laghi/bacini: solo “water” con name (evita spam)
+    `
+    (
+      nwr["natural"="water"]["name"](area.VENETO);
+    );
+    `.trim(),
 
-    // fiumi / gole / sponde (turistici spesso)
-    nwr["waterway"="river"]["name"](area.VENETO);
-    nwr["waterway"="stream"]["name"](area.VENETO);
-    nwr["waterway"="riverbank"]["name"](area.VENETO);
+    // fiumi/sponde: SOLO river + riverbank con name (stream spesso esplode)
+    `
+    (
+      nwr["waterway"="river"]["name"](area.VENETO);
+      nwr["waterway"="riverbank"]["name"](area.VENETO);
+    );
+    `.trim(),
 
     // parchi/riserv e
-    nwr["leisure"="nature_reserve"](area.VENETO);
-    nwr["boundary"="national_park"](area.VENETO);
+    `
+    (
+      nwr["leisure"="nature_reserve"](area.VENETO);
+      nwr["boundary"="national_park"](area.VENETO);
+    );
+    `.trim(),
 
-    // grotte
-    nwr["natural"="cave_entrance"](area.VENETO);
+    // boschi “noti” (solo se named)
+    `
+    (
+      nwr["natural"="wood"]["name"](area.VENETO);
+    );
+    `.trim(),
+  ],
 
-    // foreste “note” (solo con nome)
-    nwr["natural"="wood"]["name"](area.VENETO);
-  );
-  `,
+  montagna: [
+    `
+    (
+      nwr["natural"="peak"](area.VENETO);
+      nwr["natural"="saddle"](area.VENETO);
+      nwr["tourism"="alpine_hut"](area.VENETO);
+      nwr["amenity"="shelter"](area.VENETO);
 
-  // MONTAGNA: cime, passi, rifugi, impianti, ecc.
-  montagna: `
-  (
-    nwr["natural"="peak"](area.VENETO);
-    nwr["natural"="saddle"](area.VENETO);
-    nwr["tourism"="alpine_hut"](area.VENETO);
-    nwr["amenity"="shelter"](area.VENETO);
+      nwr["aerialway"](area.VENETO);
+      nwr["piste:type"](area.VENETO);
+    );
+    `.trim()
+  ],
 
-    // impianti (invernale/estate)
-    nwr["aerialway"](area.VENETO);
+  mare: [
+    `
+    (
+      nwr["natural"="beach"](area.VENETO);
+      nwr["leisure"="marina"](area.VENETO);
+      nwr["natural"="coastline"](area.VENETO);
+    );
+    `.trim()
+  ],
 
-    // aree sci / piste
-    nwr["piste:type"](area.VENETO);
-  );
-  `,
+  storia: [
+    `
+    (
+      nwr["historic"="castle"](area.VENETO);
+      nwr["historic"="fort"](area.VENETO);
+      nwr["historic"="citywalls"](area.VENETO);
+      nwr["historic"="archaeological_site"](area.VENETO);
+      nwr["historic"="ruins"](area.VENETO);
 
-  // MARE
-  mare: `
-  (
-    nwr["natural"="beach"](area.VENETO);
-    nwr["leisure"="marina"](area.VENETO);
-    nwr["natural"="coastline"](area.VENETO);
-  );
-  `,
+      nwr["tourism"="museum"](area.VENETO);
+      nwr["tourism"="attraction"]["historic"~"."](area.VENETO);
 
-  // STORIA: turistica (taglia micro-robe)
-  storia: `
-  (
-    nwr["historic"="castle"](area.VENETO);
-    nwr["historic"="fort"](area.VENETO);
-    nwr["historic"="citywalls"](area.VENETO);
-    nwr["historic"="archaeological_site"](area.VENETO);
-    nwr["historic"="ruins"](area.VENETO);
+      nwr["amenity"="place_of_worship"]["historic"~"."](area.VENETO);
+      nwr["amenity"="place_of_worship"]["heritage"~"."](area.VENETO);
 
-    // musei / siti culturali
-    nwr["tourism"="museum"](area.VENETO);
-    nwr["tourism"="attraction"]["historic"~"."](area.VENETO);
+      nwr["historic"="monument"]["heritage"~"."](area.VENETO);
+      nwr["historic"="memorial"]["heritage"~"."](area.VENETO);
+    );
+    `.trim()
+  ],
 
-    // luoghi religiosi “forti” (spesso turismo): solo se historic=* o heritage=*
-    nwr["amenity"="place_of_worship"]["historic"~"."](area.VENETO);
-    nwr["amenity"="place_of_worship"]["heritage"~"."](area.VENETO);
+  relax: [
+    `
+    (
+      nwr["amenity"="spa"](area.VENETO);
+      nwr["leisure"="spa"](area.VENETO);
+      nwr["tourism"="spa"](area.VENETO);
+      nwr["natural"="hot_spring"](area.VENETO);
+      nwr["amenity"="public_bath"](area.VENETO);
+      nwr["amenity"="sauna"](area.VENETO);
+      nwr["leisure"="sauna"](area.VENETO);
+      nwr["leisure"="swimming_pool"](area.VENETO);
+    );
+    `.trim()
+  ],
 
-    // monumenti/memorial SOLO se importanti (heritage o tourism=attraction)
-    nwr["historic"="monument"]["heritage"~"."](area.VENETO);
-    nwr["historic"="memorial"]["heritage"~"."](area.VENETO);
-  );
-  `,
+  borghi: [
+    `
+    (
+      nwr["place"="village"]["name"](area.VENETO);
+      nwr["place"="hamlet"]["name"](area.VENETO);
+    );
+    `.trim()
+  ],
 
-  // RELAX: spa/terme/sauna/piscine (ricco ma coerente)
-  relax: `
-  (
-    nwr["amenity"="spa"](area.VENETO);
-    nwr["leisure"="spa"](area.VENETO);
-    nwr["tourism"="spa"](area.VENETO);
-    nwr["natural"="hot_spring"](area.VENETO);
-    nwr["amenity"="public_bath"](area.VENETO);
-    nwr["amenity"="sauna"](area.VENETO);
-    nwr["leisure"="sauna"](area.VENETO);
-    nwr["leisure"="swimming_pool"](area.VENETO);
-  );
-  `,
-
-  // BORGHI: riduciamo spam -> solo place=village e place=town con population piccola? (non sempre presente)
-  // qui restiamo semplici: village + hamlet con name (è già così)
-  borghi: `
-  (
-    nwr["place"="village"]["name"](area.VENETO);
-    nwr["place"="hamlet"]["name"](area.VENETO);
-  );
-  `,
-
-  // CITTA
-  citta: `
-  (
-    nwr["place"="city"]["name"](area.VENETO);
-    nwr["place"="town"]["name"](area.VENETO);
-  );
-  `,
+  citta: [
+    `
+    (
+      nwr["place"="city"]["name"](area.VENETO);
+      nwr["place"="town"]["name"](area.VENETO);
+    );
+    `.trim()
+  ],
 };
 
 const CATEGORY_KEYS = Object.keys(CATEGORIES);
 
-function buildQuery(catKey) {
+function buildQuery(block) {
   return `
-[out:json][timeout:180];
+[out:json][timeout:${OVERPASS_TIMEOUT_S}];
 ${venetoAreaBlock()}
-${CATEGORIES[catKey]}
+${block}
 out tags center;
 `.trim();
 }
@@ -259,18 +282,15 @@ out tags center;
 function normStr(x){ return String(x || "").toLowerCase().trim(); }
 
 function isFoodOrLodging(tags = {}) {
-  // lodging
   if (tags.tourism && [
     "hotel","motel","hostel","guest_house","apartment","chalet",
     "camp_site","caravan_site"
   ].includes(tags.tourism)) return true;
 
-  // food & drink
   if (tags.amenity && [
     "restaurant","cafe","bar","fast_food","pub","ice_cream","food_court"
   ].includes(tags.amenity)) return true;
 
-  // shopping / office
   if (tags.shop) return true;
   if (tags.office) return true;
 
@@ -281,27 +301,19 @@ function allowIfMountainHut(tags, catKey) {
   return tags.tourism === "alpine_hut" && (catKey === "hiking" || catKey === "montagna");
 }
 
-function allowIfAerialway(tags, catKey) {
-  return tags.aerialway && catKey === "montagna";
-}
-
 function shouldDrop(el, catKey) {
   const tags = el.tags || {};
   const name = tags.name || tags["name:it"] || tags.brand || tags.operator || "";
 
-  // nome obbligatorio
   if (!name || String(name).trim().length < 2) return true;
 
-  // stop “commerciale” (eccetto rifugi/impianti per montagna)
   if (isFoodOrLodging(tags)) {
     if (allowIfMountainHut(tags, catKey)) return false;
     return true;
   }
 
-  // se è place=* deve stare solo in borghi/citta
   if (tags.place && !(catKey === "borghi" || catKey === "citta")) return true;
 
-  // family: escludi spa/terme
   if (catKey === "family") {
     const n = normStr(name);
     if (
@@ -315,7 +327,6 @@ function shouldDrop(el, catKey) {
     ) return true;
   }
 
-  // hiking: taglia guidepost “spam” (anche se ha name troppo corto)
   if (catKey === "hiking" && tags.information === "guidepost") {
     const n = String(name).trim();
     if (n.length < 6) return true;
@@ -324,15 +335,12 @@ function shouldDrop(el, catKey) {
     if (!ok) return true;
   }
 
-  // mare: evita robe che non sono mare
   if (catKey === "mare") {
     if (!(tags.natural === "beach" || tags.leisure === "marina" || tags.natural === "coastline")) return true;
   }
 
-  // montagna: evita place=*
   if (catKey === "montagna") {
     if (tags.place) return true;
-    // deve avere almeno un segnale montagna
     const ok = !!(
       tags.natural === "peak" ||
       tags.natural === "saddle" ||
@@ -344,14 +352,12 @@ function shouldDrop(el, catKey) {
     if (!ok) return true;
   }
 
-  // natura: deve essere davvero natura
   if (catKey === "natura") {
     const ok = !!(
       tags.natural === "waterfall" ||
       tags.natural === "spring" ||
       tags.natural === "water" ||
       tags.waterway === "river" ||
-      tags.waterway === "stream" ||
       tags.waterway === "riverbank" ||
       tags.leisure === "nature_reserve" ||
       tags.boundary === "national_park" ||
@@ -361,13 +367,14 @@ function shouldDrop(el, catKey) {
     if (!ok) return true;
   }
 
-  // viewpoints: solo veri
   if (catKey === "viewpoints") {
-    const ok = (tags.tourism === "viewpoint") || (tags.man_made === "observation_tower") || (tags.man_made === "tower" && tags["tower:type"] === "observation");
+    const ok =
+      (tags.tourism === "viewpoint") ||
+      (tags.man_made === "observation_tower") ||
+      (tags.man_made === "tower" && tags["tower:type"] === "observation");
     if (!ok) return true;
   }
 
-  // storia: taglia micro-monumenti non “forti”
   if (catKey === "storia") {
     const strong =
       tags.historic === "castle" ||
@@ -383,7 +390,6 @@ function shouldDrop(el, catKey) {
     if (!strong) return true;
   }
 
-  // relax: deve essere relax vero
   if (catKey === "relax") {
     const ok =
       tags.amenity === "spa" ||
@@ -397,7 +403,6 @@ function shouldDrop(el, catKey) {
     if (!ok) return true;
   }
 
-  // family: deve essere family vero
   if (catKey === "family") {
     const ok =
       tags.tourism === "theme_park" ||
@@ -420,7 +425,7 @@ function shouldDrop(el, catKey) {
 }
 
 // ------------------------------------------------------------
-// Map OSM element -> "place" (compat app.js)
+// Map OSM element -> "place"
 // ------------------------------------------------------------
 function tagListCompact(tags) {
   const out = [];
@@ -428,14 +433,14 @@ function tagListCompact(tags) {
 
   [
     "tourism","leisure","historic","natural","amenity","information","place",
-    "boundary","waterway","man_made","attraction","museum","aerialway","piste:type","tower:type","heritage"
+    "boundary","waterway","man_made","attraction","museum",
+    "aerialway","piste:type","tower:type","heritage"
   ].forEach(pushKV);
 
   return Array.from(new Set(out)).slice(0, 28);
 }
 
 function visibilityHeuristic(catKey, tags = {}) {
-  // chicche: viewpoint, natura “wow”, montagna “wow”, borghi hamlet
   if (catKey === "borghi") return (tags.place === "hamlet") ? "chicca" : "classica";
   if (catKey === "viewpoints") return "chicca";
 
@@ -452,13 +457,11 @@ function visibilityHeuristic(catKey, tags = {}) {
   }
 
   if (catKey === "storia") {
-    // “classica” per castelli/forti/musei grandi, chicca per ruins/archaeological piccoli
     if (tags.historic === "castle" || tags.historic === "fort" || tags.tourism === "museum" || tags.historic === "citywalls") return "classica";
     return "chicca";
   }
 
   if (catKey === "family") {
-    // theme park / zoo classici, rope/farm più chicche
     if (tags.tourism === "theme_park" || tags.leisure === "water_park" || tags.tourism === "zoo" || tags.tourism === "aquarium" || tags.amenity === "aquarium") return "classica";
     return "chicca";
   }
@@ -469,7 +472,6 @@ function visibilityHeuristic(catKey, tags = {}) {
 function beautyScoreHeuristic(catKey, tags = {}) {
   let s = 0.72;
 
-  // boost wow
   if (tags.tourism === "theme_park") s += 0.12;
   if (tags.leisure === "water_park") s += 0.12;
   if (tags.tourism === "zoo" || tags.tourism === "aquarium" || tags.amenity === "aquarium") s += 0.10;
@@ -517,7 +519,7 @@ function mapElementToPlace(el, catKey) {
   };
 }
 
-// ✅ Dedup “safe”: include type, così non perdi categorie
+// ✅ Dedup “safe”: include type
 function dedupPlaces(places) {
   const seen = new Set();
   const out = [];
@@ -526,6 +528,21 @@ function dedupPlaces(places) {
     if (seen.has(k)) continue;
     seen.add(k);
     out.push(p);
+  }
+  return out;
+}
+
+// Merge helper: dedup raw OSM elements by type+id (fondamentale per subquery)
+function mergeUniqueElements(listOfElements) {
+  const out = [];
+  const seen = new Set();
+  for (const els of listOfElements) {
+    for (const el of els) {
+      const k = `${el.type}_${el.id}`;
+      if (seen.has(k)) continue;
+      seen.add(k);
+      out.push(el);
+    }
   }
   return out;
 }
@@ -542,7 +559,8 @@ async function main() {
       "touristic_clean_build",
       "family_no_playground_spam",
       "storia_strong_only",
-      "natura_lakes_waterfalls_rivers",
+      "natura_split_queries_robust",
+      "overpass_retry_backoff",
     ],
   };
 
@@ -551,20 +569,31 @@ async function main() {
 
   for (const catKey of CATEGORY_KEYS) {
     console.log(`🛰️ Veneto category: ${catKey}`);
-    const q = buildQuery(catKey);
-    const r = await runOverpass(q);
 
-    if (!r.ok || !r.json) {
-      console.log(`❌ ${catKey} failed: ${r.error || "unknown"}`);
-      meta.notes.push(`fail_${catKey}`);
-      allByCat[catKey] = [];
-      continue;
+    const blocks = Array.isArray(CATEGORIES[catKey]) ? CATEGORIES[catKey] : [String(CATEGORIES[catKey] || "")];
+    const elementsByBlock = [];
+
+    for (let i = 0; i < blocks.length; i++) {
+      const block = blocks[i];
+      const q = buildQuery(block);
+      const r = await runOverpass(q);
+
+      if (!r.ok || !r.json) {
+        console.log(`⚠️  ${catKey} subquery #${i+1}/${blocks.length} failed: ${r.error || "unknown"}`);
+        meta.notes.push(`fail_${catKey}_${i+1}`);
+        elementsByBlock.push([]);
+        continue;
+      }
+
+      const els = Array.isArray(r.json.elements) ? r.json.elements : [];
+      console.log(`   ✅ ${catKey} subquery #${i+1}/${blocks.length}: ${els.length} raw (endpoint: ${r.endpoint})`);
+      elementsByBlock.push(els);
     }
 
-    const els = Array.isArray(r.json.elements) ? r.json.elements : [];
-    const mapped = dedupPlaces(els.map(el => mapElementToPlace(el, catKey)).filter(Boolean));
+    const mergedEls = mergeUniqueElements(elementsByBlock);
+    const mapped = dedupPlaces(mergedEls.map(el => mapElementToPlace(el, catKey)).filter(Boolean));
 
-    console.log(`✅ ${catKey}: ${mapped.length} items (endpoint: ${r.endpoint})`);
+    console.log(`✅ ${catKey}: ${mapped.length} items (merged from ${blocks.length} subqueries)`);
     allByCat[catKey] = mapped;
     all.push(...mapped);
   }
