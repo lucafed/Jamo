@@ -1,22 +1,14 @@
-/* Jamo — app.js v10.7.0 (NO-GPS + OFFLINE-ONLY + TOURISTIC FILTERS + SEASON + COHERENT LINKS + AFFILIATE-READY)
+/* Jamo — app.js v10.7.0 (NO-GPS + OFFLINE-ONLY + TOURISTIC FILTERS + SEASON + COHERENT LINKS + MULTI OPTIONS + NATURA + LAGHI)
  * ✅ NO GPS
  * ✅ OFFLINE-ONLY: niente LIVE
- * ✅ Anti-sporco: NO hotel/ristoranti/bar/cafe nel dataset
+ * ✅ Anti-sporco: NO hotel/ristoranti/bar/cafe
  * ✅ Categorie REALI: SOLO tag OSM (no match per nome)
- * ✅ Natura: laghi/cascate/fiumi ecc.
- * ✅ Storia/Family ripulite + guardrail
+ * ✅ NATURA: ripristinata
+ * ✅ LAGHI: categoria separata (senza rompere Natura)
+ * ✅ Storia/Family ripulite dal builder; qui guardrail
  * ✅ Stagionalità: inverno/estate (penalità/boost)
- * ✅ Link coerenti: query stabile (nome+area)
- * ✅ Monetizzazione PRONTA (ma SAFE): bottone "🎟️ Prenota" SOLO se esiste link affiliato nel mapping
- *
- * Mapping file (facoltativo): /public/data/affiliates/affiliate_map.json
- * Formato consigliato:
- * {
- *   "keys": {
- *     "poi_it-veneto_family_way_123": { "type":"tickets", "label":"🎟️ Prenota", "url":"https://TUO-LINK" },
- *     "gardaland": { "type":"tickets", "label":"🎟️ Biglietti", "url":"https://TUO-LINK" }
- *   }
- * }
+ * ✅ Link coerenti: query stabile (nome+area) + fallback Maps
+ * ✅ Mostra più opzioni: 1 principale + 4 alternative selezionabili
  */
 
 (() => {
@@ -51,11 +43,6 @@
 
   // OFFLINE ONLY
   const LIVE_ENABLED = false;
-
-  // -------------------- AFFILIATE (SAFE) --------------------
-  // Se non esiste/ fallisce: nessuna monetizzazione, tutto resta come ora.
-  const AFFILIATE_MAP_URL = "/data/affiliates/affiliate_map.json";
-  let AFFILIATE_MAP = null;
 
   // -------------------- UTIL --------------------
   function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
@@ -161,52 +148,6 @@
   function restaurantsUrl(name, area, lat, lon) {
     const q = area ? `ristoranti vicino ${name} ${area}` : `ristoranti vicino ${name}`;
     return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}&center=${encodeURIComponent(lat + "," + lon)}`;
-  }
-
-  // -------------------- FETCH JSON --------------------
-  async function fetchJson(url, { signal } = {}) {
-    const r = await fetch(url, { cache: "no-store", signal });
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
-    return await r.json();
-  }
-
-  // -------------------- AFFILIATE MAP LOAD --------------------
-  async function loadAffiliateMapSafe(signal) {
-    if (AFFILIATE_MAP) return AFFILIATE_MAP;
-    try {
-      const j = await fetchJson(AFFILIATE_MAP_URL, { signal });
-      // expected { keys: { ... } }
-      if (j && typeof j === "object") AFFILIATE_MAP = j;
-      else AFFILIATE_MAP = { keys: {} };
-    } catch {
-      AFFILIATE_MAP = { keys: {} };
-    }
-    return AFFILIATE_MAP;
-  }
-
-  function getAffiliateLinkForPlace(place, category) {
-    // SAFE RULE: monetizzazione SOLO se c’è un URL nel mapping.
-    const keys = AFFILIATE_MAP?.keys || {};
-    if (!keys || typeof keys !== "object") return null;
-
-    const pid = safeIdFromPlace(place);
-    const nameKey = normName(place?.name || "");
-    const catKey = String(category || "").toLowerCase().trim();
-
-    // priorità: id preciso > nome normalizzato > nome+categoria
-    const hit =
-      keys[pid] ||
-      keys[nameKey] ||
-      keys[`${nameKey}__${catKey}`];
-
-    if (!hit || !hit.url) return null;
-
-    return {
-      url: String(hit.url),
-      label: String(hit.label || "🎟️ Prenota"),
-      type: String(hit.type || "booking"),
-      provider: String(hit.provider || ""),
-    };
   }
 
   // -------------------- STORAGE: ORIGIN --------------------
@@ -354,6 +295,13 @@
         <div class="small muted" style="margin-top:8px; line-height:1.4;">${msg}</div>
       </div>
     `;
+  }
+
+  // -------------------- FETCH JSON --------------------
+  async function fetchJson(url, { signal } = {}) {
+    const r = await fetch(url, { cache: "no-store", signal });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return await r.json();
   }
 
   // -------------------- DATASET --------------------
@@ -509,6 +457,7 @@
     if (t.includes("tourism=hotel") || t.includes("tourism=hostel") || t.includes("tourism=guest_house") ||
         t.includes("tourism=apartment") || t.includes("tourism=camp_site") || t.includes("tourism=caravan_site") ||
         t.includes("tourism=chalet") || t.includes("tourism=motel")) return true;
+
     if (t.includes("amenity=restaurant") || t.includes("amenity=fast_food") || t.includes("amenity=cafe") ||
         t.includes("amenity=bar") || t.includes("amenity=pub") || t.includes("amenity=ice_cream")) return true;
     return false;
@@ -581,11 +530,26 @@
     const type = normalizeType(place?.type);
     return (
       type === "natura" ||
-      t.includes("natural=waterfall") || t.includes("natural=gorge") || t.includes("natural=spring") ||
+      t.includes("natural=waterfall") ||
+      t.includes("natural=spring") ||
       t.includes("natural=cave_entrance") ||
-      t.includes("natural=water") || t.includes("water=lake") || t.includes("water=reservoir") ||
-      t.includes("waterway=river") || t.includes("waterway=riverbank") ||
-      t.includes("leisure=nature_reserve") || t.includes("boundary=national_park")
+      t.includes("natural=wood") ||
+      t.includes("natural=water") ||
+      t.includes("waterway=river") ||
+      t.includes("waterway=stream") ||
+      t.includes("waterway=riverbank") ||
+      t.includes("leisure=nature_reserve") ||
+      t.includes("boundary=national_park")
+    );
+  }
+
+  // ✅ Laghi: categoria precisa (subset della natura)
+  function isLake(place) {
+    const t = tagsStr(place);
+    return (
+      t.includes("natural=water") ||
+      t.includes("water=lake") ||
+      t.includes("water=reservoir")
     );
   }
 
@@ -621,6 +585,7 @@
     if (cat === "citta") return isCity(place);
     if (cat === "montagna") return isMountain(place);
     if (cat === "natura") return isNature(place);
+    if (cat === "laghi") return isNature(place) && isLake(place);
     if (cat === "viewpoints") return isRealViewpoint(place);
     if (cat === "hiking") return isHiking(place);
 
@@ -681,6 +646,8 @@
       category === "family" ? [1.15, 1.30, 1.50] :
       category === "mare"   ? [1.20, 1.40, 1.65] :
       category === "storia" ? [1.20, 1.40, 1.60] :
+      category === "laghi"  ? [1.20, 1.40, 1.60] :
+      category === "natura" ? [1.20, 1.40, 1.60] :
                               [1.20, 1.40, 1.60];
 
     for (const k of muls) steps.push(clamp(Math.round(base * k), base, 600));
@@ -736,13 +703,13 @@
 
   function pickBest(pool, origin, minutes, category, styles) {
     let c = buildCandidatesFromPool(pool, origin, minutes, category, styles, { ignoreVisited:false, ignoreRotation:false });
-    if (c.length) return { chosen: c[0], alternatives: c.slice(1, 3) };
+    if (c.length) return { chosen: c[0], alternatives: c.slice(1, 5) };
 
     c = buildCandidatesFromPool(pool, origin, minutes, category, styles, { ignoreVisited:false, ignoreRotation:true });
-    if (c.length) return { chosen: c[0], alternatives: c.slice(1, 3) };
+    if (c.length) return { chosen: c[0], alternatives: c.slice(1, 5) };
 
     c = buildCandidatesFromPool(pool, origin, minutes, category, styles, { ignoreVisited:true, ignoreRotation:true });
-    return { chosen: c[0] || null, alternatives: c.slice(1, 3) };
+    return { chosen: c[0] || null, alternatives: c.slice(1, 5) };
   }
 
   // -------------------- RENDER --------------------
@@ -751,6 +718,7 @@
       family: { emoji:"👨‍👩‍👧‍👦", label:"Family" },
       storia: { emoji:"🏛️", label:"Storia" },
       natura: { emoji:"🌿", label:"Natura" },
+      laghi:  { emoji:"🏞️", label:"Laghi" },
       montagna:{ emoji:"🏔️", label:"Montagna" },
       mare:   { emoji:"🌊", label:"Mare" },
       relax:  { emoji:"🧖", label:"Relax" },
@@ -766,7 +734,8 @@
   function microWhatToDo(place, category) {
     if (category === "family") return "Attività family turistica: spesso prenotabile/biglietti — guarda foto e info.";
     if (category === "storia") return "Luogo storico turistico: visita + info su orari/mostre/percorsi.";
-    if (category === "natura") return "Natura: lago/cascata/fiume/gola o riserva — scarpe comode e foto.";
+    if (category === "natura") return "Natura: laghi, cascate, fiumi, gole, riserve e parchi — scarpe comode e foto.";
+    if (category === "laghi") return "Laghi: panorama, passeggiata, relax e foto — controlla accessi/parcheggi.";
     if (category === "montagna") return "Montagna: cime/rifugi/impianti — controlla meteo e tempi.";
     if (category === "mare") return "Mare: spiaggia/marina — perfetto in stagione.";
     if (category === "relax") return "Relax: terme/spa/sauna/piscina — spesso prenotabile.";
@@ -799,6 +768,48 @@
     });
   }
 
+  // ✅ Alternative renderer (1 + 4 scelte)
+  function renderAlternatives(origin, alternatives = [], category, areaLabelFallback = "Italia", maxMinutesShown = 120, meta = {}) {
+    if (!alternatives || !alternatives.length) return "";
+
+    const cards = alternatives.map((a, idx) => {
+      const p = a.place;
+      const name = p?.name || "Meta";
+      const lat = Number(p.lat);
+      const lon = Number(p.lon);
+      const areaLabel = (p.area || p.country || "").trim() || areaLabelFallback;
+
+      return `
+        <div class="card" style="border:1px solid var(--border); background:rgba(255,255,255,.03); padding:12px;">
+          <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
+            <div style="min-width:0;">
+              <div style="font-weight:900; font-size:16px; line-height:1.2; word-break:break-word;">
+                ${idx + 2}. ${name}
+                <span class="small muted" style="font-weight:700;">(${areaLabel})</span>
+              </div>
+              <div class="small muted" style="margin-top:6px;">
+                🚗 ~${a.driveMin} min • ${fmtKm(a.km)} • score: ${a.score}
+              </div>
+            </div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;">
+              <a class="btn btn-ghost" target="_blank" rel="noopener" href="${mapsPlaceUrl(lat, lon)}">🗺️ Maps</a>
+              <button class="btn" data-pick-alt="${encodeURIComponent(a.pid)}">✅ Scegli</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+    return `
+      <div style="margin-top:14px;">
+        <div style="font-weight:950; font-size:16px; margin-bottom:10px;">Altre opzioni</div>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          ${cards}
+        </div>
+      </div>
+    `;
+  }
+
   function renderResult(origin, maxMinutesShown, chosen, alternatives = [], meta = {}) {
     const area = $("resultArea");
     if (!area) return;
@@ -822,11 +833,7 @@
     const areaLabel = (p.area || p.country || "").trim() || "Italia";
     const name = p.name || "";
 
-    // affiliate: SOLO se esiste mapping
-    const aff = getAffiliateLinkForPlace(p, category);
-    const affiliateBtn = aff?.url
-      ? `<a class="btn" target="_blank" rel="noopener" href="${aff.url}">${aff.label}</a>`
-      : "";
+    const altHtml = renderAlternatives(origin, alternatives, category, areaLabel, maxMinutesShown, meta);
 
     area.innerHTML = `
       <div class="card okbox" style="overflow:hidden; padding:0;">
@@ -868,7 +875,6 @@
           <div class="small muted" style="margin-top:6px; line-height:1.45;">${what}</div>
 
           <div class="row wrap gap" style="margin-top:14px;">
-            ${affiliateBtn}
             <a class="btn" target="_blank" rel="noopener" href="${mapsPlaceUrl(lat, lon)}">🗺️ Maps</a>
             <a class="btn" target="_blank" rel="noopener" href="${mapsDirUrl(origin.lat, origin.lon, lat, lon)}">🚗 Percorso</a>
             <a class="btn btn-ghost" target="_blank" rel="noopener" href="${googleImagesUrl(name, areaLabel)}">📸 Foto</a>
@@ -884,6 +890,8 @@
             <button class="btn" id="btnChange">🔁 Cambia meta</button>
             <button class="btn btn-ghost" id="btnResetRotation">🧽 Reset “oggi”</button>
           </div>
+
+          ${altHtml}
         </div>
       </div>
     `;
@@ -895,6 +903,19 @@
     $("btnVisited")?.addEventListener("click", () => { markVisited(pid); showStatus("ok", "Segnato come visitato ✅"); });
     $("btnChange")?.addEventListener("click", () => { runSearch({ silent: true, forbidPid: pid }); });
     $("btnResetRotation")?.addEventListener("click", () => { resetRotation(); showStatus("ok", "Reset fatto ✅"); runSearch({ silent: true }); });
+
+    // ✅ Selezione alternativa: promuovi alternativa a principale senza rifare ricerca
+    area.querySelectorAll('[data-pick-alt]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const pidAlt = decodeURIComponent(btn.getAttribute('data-pick-alt') || "");
+        const hit = alternatives.find(x => x.pid === pidAlt);
+        if (!hit) return;
+
+        const newAlts = [chosen, ...alternatives.filter(x => x.pid !== pidAlt)].slice(0, 4);
+        renderResult(origin, maxMinutesShown, hit, newAlts, meta);
+        showStatus("ok", `Selezionata alternativa ✅ (~${hit.driveMin} min)`);
+      });
+    });
   }
 
   // -------------------- MAIN SEARCH --------------------
@@ -914,9 +935,7 @@
         return;
       }
 
-      // dataset + affiliate mapping (safe: se non esiste, ok)
       await ensureDatasetLoaded(origin, { signal });
-      await loadAffiliateMapSafe(signal);
 
       const basePool = Array.isArray(DATASET?.places) ? DATASET.places : [];
       const datasetInfo =
@@ -946,7 +965,7 @@
           const all = buildCandidatesFromPool(basePool, origin, mins, category, styles, { ignoreVisited:true, ignoreRotation:true })
             .filter(x => x.pid !== forbidPid);
           chosen = all[0] || null;
-          alternatives = all.slice(1, 3);
+          alternatives = all.slice(1, 5);
         }
 
         if (chosen) break;
@@ -1022,7 +1041,6 @@
         showStatus("ok", "Partenza impostata ✅");
         DATASET = { kind: null, source: null, places: [], meta: {} };
         await ensureDatasetLoaded(getOrigin(), { signal: undefined }).catch(() => {});
-        await loadAffiliateMapSafe(undefined).catch(() => {});
       } catch (e) {
         console.error(e);
         if ($("originStatus")) $("originStatus").textContent = `❌ ${String(e.message || e)}`;
@@ -1049,13 +1067,8 @@
     hideStatus();
 
     (async () => {
-      try {
-        const origin = getOrigin();
-        if (origin) {
-          await ensureDatasetLoaded(origin, { signal: undefined });
-          await loadAffiliateMapSafe(undefined);
-        }
-      } catch {}
+      try { const origin = getOrigin(); if (origin) await ensureDatasetLoaded(origin, { signal: undefined }); }
+      catch {}
     })();
   }
 
@@ -1070,7 +1083,5 @@
     getDataset: () => DATASET,
     forceRegion: (id) => { localStorage.setItem("jamo_region_id", id); DATASET = { kind:null, source:null, places:[], meta:{} }; },
     clearRegion: () => { localStorage.removeItem("jamo_region_id"); DATASET = { kind:null, source:null, places:[], meta:{} }; },
-    // debug affiliate
-    getAffiliateMap: () => AFFILIATE_MAP,
   };
 })();
