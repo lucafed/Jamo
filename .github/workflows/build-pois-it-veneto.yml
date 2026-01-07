@@ -40,17 +40,9 @@ jobs:
           echo ""
 
       - name: Commit generated file
-        shell: bash
         run: |
-          set -e
-
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-
-          # Allinea il branch locale a main remoto (evita: push rejected / fetch first)
-          git fetch origin main
-          git checkout main
-          git pull --rebase origin main
 
           git add public/data/pois/regions/it-veneto.json
 
@@ -60,18 +52,4 @@ jobs:
           fi
 
           git commit -m "Build Veneto offline POIs"
-
-          # Push con mini-retry (utile se parte un'altra run nello stesso momento)
-          for i in 1 2 3; do
-            echo "Push attempt $i..."
-            if git push origin main; then
-              echo "Push OK"
-              exit 0
-            fi
-            echo "Push failed, rebasing and retry..."
-            git pull --rebase origin main
-            sleep $((i * 2))
-          done
-
-          echo "Push failed after retries"
-          exit 1
+          git push origin main
