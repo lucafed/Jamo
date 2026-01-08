@@ -1,17 +1,18 @@
-/* Jamo — app.js v15.3
+/* Jamo — app.js v15.4
  * Mobile-first • Offline-only • Flusso pulito • Risultato centrale • Niente dock
  *
  * ✅ NO GPS
  * ✅ OFFLINE-ONLY
  * ✅ Natura presente
- * ✅ Relax migliorato (meno “solo piscine”, ma fallback se zona povera)
- * ✅ Family potenziato (parchi avventura, musei kids, zoo, attrazioni, playground, ecc.)
- * ✅ 5 opzioni diverse (dedupe per PID + nome + vicinanza)
+ * ✅ Relax molto più ricco (include SPA anche dentro hotel/strutture)
+ * ✅ Family ripulito: musei solo se kids-friendly (tag/keyword)
+ * ✅ Alternative “load more”: 4 alla volta con bottone
+ * ✅ Dedupe forte (PID + nome+vicinanza)
  * ✅ Partenza collassabile dopo set
  * ✅ CERCA subito dopo stile (btnFind)
  * ✅ Azioni dentro la scheda risultato (Vai / Prenota / Mangia / Foto / Wiki)
  * ✅ Scroll automatico sul risultato
- * ✅ Fallback automatico: se non trova niente, allarga criteri (senza bloccare l’utente)
+ * ✅ Fallback automatico: se non trova niente, allarga criteri
  */
 
 (() => {
@@ -26,7 +27,14 @@
     RECENT_TTL_MS: 1000 * 60 * 60 * 20,
     RECENT_MAX: 160,
 
-    OPTIONS_TOTAL: 5,
+    // Quante opzioni totali teniamo in memoria (per “Altre 4”)
+    OPTIONS_POOL_MAX: 40,
+
+    // Quante alternative mostro subito sotto la meta
+    ALTS_INITIAL: 4,
+
+    // Quante alternative aggiungo per ogni click
+    ALTS_PAGE: 4,
 
     MACROS_INDEX_URL: "/data/macros/macros_index.json",
     FALLBACK_MACRO_URLS: [
@@ -51,7 +59,7 @@
       THEFORK_AFFID: "",
     },
 
-    // DEDUPE: quanto “vicini” consideriamo cloni con lo stesso nome
+    // DEDUPE: distanza sotto cui stesso nome = clone
     CLONE_KM: 2.2
   };
 
@@ -64,7 +72,9 @@
   let MACROS_INDEX = null;
   let DATASET = { kind: null, source: null, places: [], meta: {} };
 
-  let LAST_OPTIONS = [];
+  // Opzioni complete (pool) + pagina visibile
+  let ALL_OPTIONS = [];     // tutte le opzioni deduped (max CFG.OPTIONS_POOL_MAX)
+  let VISIBLE_ALTS = 0;     // quante alternative stiamo mostrando (esclude la scelta)
   let CURRENT_CHOSEN = null;
 
   // -------------------- UTIL --------------------
@@ -138,7 +148,7 @@
       .replaceAll("'", "&#039;");
   }
 
-  // Inject mini CSS (così non dipendi al 100% da style.css)
+  // Inject mini CSS per opt list + action grid
   function injectMiniCssOnce() {
     if (document.getElementById("jamo-mini-css")) return;
     const st = document.createElement("style");
@@ -150,6 +160,7 @@
       .optBtn.active{border-color:rgba(0,224,255,.55); background:rgba(0,224,255,.10);}
       .actionGrid{display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:14px;}
       .btnPrimary{border-color: rgba(0,224,255,.55)!important; background: linear-gradient(90deg, rgba(0,224,255,.22), rgba(26,255,213,.12))!important;}
+      .moreBtn{width:100%; border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.04); color:#fff; border-radius:16px; padding:12px; font-weight:950; cursor:pointer;}
     `;
     document.head.appendChild(st);
   }
@@ -167,9 +178,6 @@
   }
 
   // -------------------- LINKS --------------------
-  function mapsPlaceUrl(lat, lon) {
-    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(lat + "," + lon)}`;
-  }
   function mapsDirUrl(oLat, oLon, dLat, dLon) {
     return `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(oLat + "," + oLon)}&destination=${encodeURIComponent(dLat + "," + dLon)}&travelmode=driving`;
   }
@@ -552,14 +560,46 @@
   function placeTags(place) { return (place.tags || []).map(t => String(t).toLowerCase()); }
   function tagsStr(place) { return placeTags(place).join(" "); }
 
-  function isLodgingOrFood(place) {
-    const t = tagsStr(place);
-    if (t.includes("tourism=hotel") || t.includes("tourism=hostel") || t.includes("tourism=guest_house") ||
-        t.includes("tourism=apartment") || t.includes("tourism=camp_site") || t.includes("tourism=caravan_site") ||
-        t.includes("tourism=chalet") || t.includes("tourism=motel")) return true;
-    if (t.includes("amenity=restaurant") || t.includes("amenity=fast_food") || t.includes("amenity=cafe") ||
-        t.includes("amenity=bar") || t.includes("amenity=pub") || t.includes("amenity=ice_cream")) return true;
+  // keyword helpers
+  function hasAny(n, arr) {
+    for (const k of arr) if (n.includes(k)) return true;
     return false;
+  }
+
+  // Relax keywords (nome)
+  function looksWellnessByName(place) {
+    const n = normName(place?.name || "");
+    return hasAny(n, [
+      "terme","spa","wellness","benessere","thermal","hammam","hamam","bagno turco","sauna","piscine termali","acqua termale"
+    ]);
+  }
+
+  // Kids keywords (nome)
+  function looksKidsByName(place) {
+    const n = normName(place?.name || "");
+    return hasAny(n, [
+      "bambin","bambini","kids","family","ragazzi","giochi","gioco","ludoteca","infanzia","junior",
+      "museo dei bambini","children","science center","planetario","acquario","zoo"
+    ]);
+  }
+
+  function isLodgingOrFood(place, category) {
+    const t = tagsStr(place);
+
+    // 🔥 FIX: per RELAX NON escludiamo hotel/strutture se sembrano wellness
+    const lodging =
+      t.includes("tourism=hotel") || t.includes("tourism=hostel") || t.includes("tourism=guest_house") ||
+      t.includes("tourism=apartment") || t.includes("tourism=camp_site") || t.includes("tourism=caravan_site") ||
+      t.includes("tourism=chalet") || t.includes("tourism=motel");
+
+    if (lodging && category === "relax" && looksWellnessByName(place)) return false;
+
+    // food sempre fuori (non sono mete)
+    const food =
+      t.includes("amenity=restaurant") || t.includes("amenity=fast_food") || t.includes("amenity=cafe") ||
+      t.includes("amenity=bar") || t.includes("amenity=pub") || t.includes("amenity=ice_cream");
+
+    return lodging || food;
   }
 
   function isSummerThing(place) {
@@ -571,16 +611,26 @@
     return t.includes("piste:type=") || t.includes("sport=skiing") || t.includes("aerialway=");
   }
 
-  // Relax: spa/terme/sauna/hot_spring; swimming_pool SOLO se fallback
+  // Relax ricco: più tag + keyword
   function isSpaPlace(place) {
     const t = tagsStr(place);
     const nm = normName(place?.name || "");
-    return (
+
+    const spaTags =
       t.includes("amenity=spa") || t.includes("leisure=spa") || t.includes("tourism=spa") ||
       t.includes("natural=hot_spring") || t.includes("amenity=public_bath") ||
       t.includes("amenity=sauna") || t.includes("leisure=sauna") ||
-      (t.includes("leisure=swimming_pool") && (nm.includes("terme") || nm.includes("spa") || nm.includes("thermal") || nm.includes("benessere")))
-    );
+      t.includes("healthcare=sauna") || t.includes("healthcare=spa") ||
+      t.includes("leisure=fitness_centre") && (nm.includes("spa") || nm.includes("wellness") || nm.includes("benessere"));
+
+    const spaName =
+      looksWellnessByName(place);
+
+    // piscina solo se spa-like
+    const poolSpaLike =
+      t.includes("leisure=swimming_pool") && (nm.includes("terme") || nm.includes("spa") || nm.includes("thermal") || nm.includes("benessere") || nm.includes("wellness"));
+
+    return spaTags || spaName || poolSpaLike;
   }
 
   function isThemePark(place) { return tagsStr(place).includes("tourism=theme_park"); }
@@ -590,30 +640,50 @@
     return t.includes("tourism=zoo") || t.includes("tourism=aquarium") || t.includes("amenity=aquarium");
   }
 
-  // NEW: parchi avventura / zipline / adventure
   function isAdventurePark(place) {
     const t = tagsStr(place);
     const n = normName(place?.name || "");
     return (
       t.includes("leisure=adventure_park") ||
       n.includes("parco avventura") || n.includes("adventure park") ||
-      n.includes("zipline") || n.includes("zip line") || n.includes("ziplin")
+      n.includes("zipline") || n.includes("zip line") ||
+      n.includes("parco avventure") || n.includes("percorsi sospesi")
     );
   }
 
-  // NEW: musei che spesso sono family-friendly
   function isMuseum(place) {
     const t = tagsStr(place);
     return t.includes("tourism=museum");
   }
 
-  // NEW: attrazioni generiche
+  // ✅ museo kids-friendly (tag o keyword)
+  function isKidsMuseum(place) {
+    const t = tagsStr(place);
+    const n = normName(place?.name || "");
+
+    // tag "children" variabili (dipende dataset)
+    const tagKidsish =
+      t.includes("museum=children") ||
+      t.includes("children") && t.includes("museum") ||
+      t.includes("tourism=museum") && (t.includes("science") || t.includes("planetarium") || t.includes("natural_history"));
+
+    const nameKidsish =
+      looksKidsByName(place) ||
+      n.includes("museo dei bambini") ||
+      n.includes("museo del bambino") ||
+      n.includes("science center") ||
+      n.includes("planetario") ||
+      n.includes("museo della scienza") ||
+      n.includes("museo interattivo");
+
+    return (isMuseum(place) && (tagKidsish || nameKidsish));
+  }
+
   function isAttraction(place) {
     const t = tagsStr(place);
     return t.includes("tourism=attraction");
   }
 
-  // NEW: playground / parchi
   function isPlaygroundOrPark(place) {
     const t = tagsStr(place);
     const n = normName(place?.name || "");
@@ -682,7 +752,6 @@
     return type === "citta" || t.includes("place=city") || t.includes("place=town");
   }
 
-  // MATCH STRICT (prima passata)
   function matchesCategoryStrict(place, cat) {
     if (!cat || cat === "ovunque") return true;
 
@@ -706,7 +775,7 @@
     if (cat === "viewpoints") return isRealViewpoint(place);
     if (cat === "hiking") return isHiking(place);
 
-    // ✅ FAMILY: non più super stretta
+    // ✅ FAMILY ripulito: no musei generici, solo kids museum + attrazioni family
     if (cat === "family") {
       return (
         type === "family" ||
@@ -714,39 +783,38 @@
         isWaterPark(place) ||
         isZooOrAquarium(place) ||
         isAdventurePark(place) ||
-        isMuseum(place) ||
-        isAttraction(place) ||
-        isPlaygroundOrPark(place)
+        isKidsMuseum(place) ||
+        isPlaygroundOrPark(place) ||
+        // attrazioni sì, ma con segnale kids dal nome/tag (evita robe a caso)
+        (isAttraction(place) && looksKidsByName(place))
       );
     }
 
     return true;
   }
 
-  // MATCH RELAXED (fallback: se non troviamo nulla)
+  // Fallback: se zona povera, allarga un pelo (senza rovinare)
   function matchesCategoryRelaxed(place, cat) {
     if (!cat || cat === "ovunque") return true;
 
-    const type = normalizeType(place?.type);
     const t = tagsStr(place);
 
     if (cat === "relax") {
-      // fallback: accetta anche swimming_pool (ma con penalità dopo)
-      return isSpaPlace(place) || t.includes("leisure=swimming_pool");
+      // fallback: accetta anche piscine generiche SOLO se davvero non troviamo nulla
+      return isSpaPlace(place) || t.includes("leisure=swimming_pool") || t.includes("leisure=swimming_area");
     }
 
     if (cat === "family") {
-      // fallback: se il dataset è povero, prendi anche “attraction” più largo
+      // fallback family: zoo/aquarium/park/playground/attraction, musei solo kids
       return (
         matchesCategoryStrict(place, "family") ||
-        t.includes("tourism=attraction") ||
-        t.includes("leisure=park") ||
-        t.includes("leisure=playground") ||
-        t.includes("tourism=museum")
+        isZooOrAquarium(place) ||
+        isAdventurePark(place) ||
+        isPlaygroundOrPark(place) ||
+        (isAttraction(place) && looksKidsByName(place))
       );
     }
 
-    // altre categorie restano uguali
     return matchesCategoryStrict(place, cat);
   }
 
@@ -777,21 +845,20 @@
     if (isWinterNow() && isSummerThing(place)) return -0.18;
     if (isSummerNow() && isWinterThing(place)) return -0.18;
 
-    if (isWinterNow() && isSpaPlace(place)) return +0.08;
+    if (isWinterNow() && isSpaPlace(place)) return +0.10;
     if (isSummerNow() && (isSummerThing(place) || normalizeType(place?.type) === "mare")) return +0.06;
 
     return 0;
   }
 
-  // boost FAMILY (più ricco)
+  // Family boost: spinge i “veri family”
   function familyBoost(place, category) {
     if (category !== "family") return 0;
-    if (isThemePark(place)) return 0.26;
-    if (isWaterPark(place)) return 0.22;
-    if (isZooOrAquarium(place)) return 0.20;
+    if (isThemePark(place)) return 0.28;
+    if (isWaterPark(place)) return 0.24;
+    if (isZooOrAquarium(place)) return 0.22;
     if (isAdventurePark(place)) return 0.18;
-    if (isMuseum(place)) return 0.14;
-    if (isAttraction(place)) return 0.10;
+    if (isKidsMuseum(place)) return 0.14;
     if (isPlaygroundOrPark(place)) return 0.10;
     return 0;
   }
@@ -833,7 +900,8 @@
       const nm = String(p.name || "").trim();
       if (!nm || nm.length < 2 || normName(nm) === "meta") continue;
 
-      if (isLodgingOrFood(p)) continue;
+      // ✅ FIX: pass category inside
+      if (isLodgingOrFood(p, category)) continue;
 
       const okCat = relaxedCategory
         ? matchesCategoryRelaxed(p, category)
@@ -849,6 +917,7 @@
       const driveMin = estCarMinutesFromKm(km);
       if (!Number.isFinite(driveMin) || driveMin > target) continue;
 
+      // evita rumore troppo vicino
       if (km < (category === "family" ? 1.2 : 1.6)) continue;
 
       const isChicca = normalizeVisibility(p.visibility) === "chicca";
@@ -859,15 +928,15 @@
 
       if (!ignoreRotation) s -= rotationPenalty(pid, recentSet);
 
-      // Relax: premia terme/spa vere, penalizza piscine “pure”
+      // Relax scoring: spinge terme/spa vere, penalizza piscine “pure” (solo fallback)
       if (category === "relax") {
         const t = tagsStr(p);
-        if (t.includes("natural=hot_spring")) s += 0.12;
-        if (t.includes("amenity=spa") || t.includes("leisure=spa") || t.includes("tourism=spa")) s += 0.10;
-        if (t.includes("amenity=sauna") || t.includes("leisure=sauna")) s += 0.08;
+        if (t.includes("natural=hot_spring")) s += 0.14;
+        if (t.includes("amenity=spa") || t.includes("leisure=spa") || t.includes("tourism=spa")) s += 0.12;
+        if (t.includes("amenity=sauna") || t.includes("leisure=sauna") || t.includes("healthcare=sauna")) s += 0.10;
+        if (looksWellnessByName(p)) s += 0.06;
 
-        // se siamo in fallback e prendiamo swimming_pool generiche: penalità, così appaiono ma in basso
-        if (t.includes("leisure=swimming_pool") && !isSpaPlace(p)) s -= 0.18;
+        if (t.includes("leisure=swimming_pool") && !isSpaPlace(p)) s -= 0.22;
       }
 
       candidates.push({ place: p, pid, km, driveMin, score: Number(s.toFixed(4)) });
@@ -882,24 +951,23 @@
     let c = buildCandidatesFromPool(pool, origin, minutes, category, styles, { ignoreVisited:false, ignoreRotation:false, relaxedCategory:false });
     if (c.length) return { list: c, usedFallback: false };
 
-    // 2) strict, ignora rotazione
+    // 2) strict + ignora rotazione
     c = buildCandidatesFromPool(pool, origin, minutes, category, styles, { ignoreVisited:false, ignoreRotation:true, relaxedCategory:false });
     if (c.length) return { list: c, usedFallback: false };
 
-    // 3) RELAXED category (fallback)
+    // 3) relaxed
     c = buildCandidatesFromPool(pool, origin, minutes, category, styles, { ignoreVisited:false, ignoreRotation:true, relaxedCategory:true });
     if (c.length) return { list: c, usedFallback: true };
 
-    // 4) RELAXED + ignora visitati
+    // 4) relaxed + ignora visitati
     c = buildCandidatesFromPool(pool, origin, minutes, category, styles, { ignoreVisited:true, ignoreRotation:true, relaxedCategory:true });
     return { list: c, usedFallback: true };
   }
 
-  // Dedup: PID + nome uguale troppo vicino
   function dedupeDiverse(list) {
     const out = [];
     const seenPid = new Set();
-    const seenNameBuckets = new Map(); // name -> [{lat,lon}]
+    const seenNameBuckets = new Map();
 
     for (const x of list) {
       if (!x?.pid) continue;
@@ -958,16 +1026,16 @@
     const t = tagsStr(place);
 
     if (category === "family") {
-      if (isThemePark(place)) return "Parco divertimenti • perfetto per bambini (controlla biglietti).";
-      if (isWaterPark(place)) return "Acquapark • top in stagione (controlla orari).";
+      if (isThemePark(place)) return "Parco divertimenti • perfetto per bambini (biglietti/orari).";
+      if (isWaterPark(place)) return "Acquapark • top in stagione (orari).";
       if (isZooOrAquarium(place)) return "Zoo/Acquario • esperienza kids-friendly.";
-      if (isAdventurePark(place)) return "Parco avventura • percorsi e adrenalina (kids/teen).";
-      if (isMuseum(place)) return "Museo • spesso adatto a bambini (verifica attività).";
-      if (isAttraction(place)) return "Attrazione turistica • adatta a famiglia.";
-      if (isPlaygroundOrPark(place)) return "Parco/giardini con area bimbi • easy e rilassante.";
-      return "Family • meta adatta a bimbi (verifica biglietti/orari).";
+      if (isAdventurePark(place)) return "Parco avventura • percorsi per kids/teen (sicurezza).";
+      if (isKidsMuseum(place)) return "Museo kids-friendly • spesso interattivo (verifica attività).";
+      if (isPlaygroundOrPark(place)) return "Parco con area bimbi • easy e rilassante.";
+      return "Family • attrazione adatta a bambini (verifica biglietti).";
     }
 
+    if (category === "relax") return "Relax • spa/terme/sauna (spesso su prenotazione).";
     if (category === "natura") {
       if (t.includes("natural=waterfall")) return "Cascata • ideale per foto e passeggiata.";
       if (t.includes("natural=spring")) return "Risorgiva / sorgente • acqua e natura.";
@@ -978,7 +1046,6 @@
       return "Spot naturalistico • perfetto per uscita veloce.";
     }
 
-    if (category === "relax") return "Relax • spa/terme/sauna (spesso su prenotazione).";
     if (category === "viewpoints") return "Panorama vero • ottimo al tramonto.";
     if (category === "hiking") return "Trekking • controlla meteo e sentiero.";
     if (category === "storia") return "Luogo storico • verifica orari/mostre.";
@@ -1028,17 +1095,24 @@
     scrollToId("resultCard");
   }
 
-  function renderOptionsList(options) {
-    if (!options?.length) return "";
+  function renderOptionsList() {
+    const chosen = CURRENT_CHOSEN;
+    if (!chosen) return "";
 
-    const items = options.map((x) => {
+    // alternative = tutte tranne chosen
+    const alts = ALL_OPTIONS.filter(x => x.pid !== chosen.pid);
+
+    if (!alts.length) return "";
+
+    const visible = alts.slice(0, VISIBLE_ALTS);
+
+    const items = visible.map((x) => {
       const p = x.place;
       const name = escapeHtml(p.name || "");
       const time = `~${x.driveMin} min`;
       const sub = `${escapeHtml((p.area || p.country || "Italia").trim())} • ${p.lat.toFixed(3)}, ${p.lon.toFixed(3)}`;
       const vis = visibilityLabel(p);
       const active = (CURRENT_CHOSEN?.pid === x.pid) ? "active" : "";
-
       return `
         <button class="optBtn ${active}" data-pid="${escapeHtml(x.pid)}" type="button">
           <div style="display:flex; justify-content:space-between; gap:10px;">
@@ -1050,13 +1124,44 @@
       `;
     }).join("");
 
+    const canMore = VISIBLE_ALTS < alts.length;
+
     return `
       <div style="margin-top:14px;">
         <div style="font-weight:950; font-size:18px; margin: 6px 0 10px;">Altre opzioni</div>
         <div class="optList">${items}</div>
+        ${canMore ? `<button class="moreBtn" id="btnMoreAlts" type="button">⬇️ Altre ${CFG.ALTS_PAGE}</button>` : ""}
         <div class="small muted" style="margin-top:10px;">Tocca un’opzione per aprire la scheda (senza rifare ricerca).</div>
       </div>
     `;
+  }
+
+  function bindOptionsClicks() {
+    const area = $("resultArea");
+    if (!area) return;
+
+    area.querySelectorAll(".optBtn")?.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const pid2 = btn.getAttribute("data-pid");
+        const found = ALL_OPTIONS.find(x => x.pid === pid2);
+        if (!found) return;
+        openChosen(found, { scroll: true });
+      });
+    });
+
+    $("btnMoreAlts")?.addEventListener("click", () => {
+      VISIBLE_ALTS = Math.min(
+        (ALL_OPTIONS.length - 1), // - chosen
+        VISIBLE_ALTS + CFG.ALTS_PAGE
+      );
+      // re-render solo scheda (più semplice e robusto)
+      openChosen(CURRENT_CHOSEN, { scroll: false });
+      // scroll “leggero” verso le opzioni appena estese
+      setTimeout(() => {
+        const more = $("btnMoreAlts");
+        (more || $("resultCard"))?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 30);
+    });
   }
 
   function renderChosenCard(origin, chosen, category, datasetInfo, usedMinutes, maxMinutesInput) {
@@ -1130,7 +1235,7 @@
             <button class="btnGhost" id="btnSearchAgain" type="button">🎯 Nuova ricerca</button>
           </div>
 
-          ${renderOptionsList(LAST_OPTIONS)}
+          ${renderOptionsList()}
         </div>
       </div>
     `;
@@ -1177,14 +1282,7 @@
       scrollToId("searchCard");
     });
 
-    area.querySelectorAll(".optBtn")?.forEach(btn => {
-      btn.addEventListener("click", () => {
-        const pid2 = btn.getAttribute("data-pid");
-        const found = LAST_OPTIONS.find(x => x.pid === pid2);
-        if (!found) return;
-        openChosen(found, { keepOptions: true, scroll: true });
-      });
-    });
+    bindOptionsClicks();
 
     LAST_SHOWN_PID = pid;
     SESSION_SEEN.add(pid);
@@ -1227,8 +1325,9 @@
       const steps = widenMinutesSteps(maxMinutesInput, category);
 
       let usedMinutes = steps[0];
-      let options = [];
       let usedFallback = false;
+
+      let poolCandidates = [];
 
       for (const mins of steps) {
         usedMinutes = mins;
@@ -1236,32 +1335,39 @@
         const res = pickTopOptions(basePool, origin, mins, category, styles);
         usedFallback = !!res.usedFallback;
 
-        options = dedupeDiverse(res.list);
+        poolCandidates = dedupeDiverse(res.list);
 
-        if (forbidPid) options = options.filter(x => x.pid !== forbidPid);
+        if (forbidPid) poolCandidates = poolCandidates.filter(x => x.pid !== forbidPid);
 
-        if (options.length) break;
+        if (poolCandidates.length) break;
         if (token !== SEARCH_TOKEN) return;
       }
 
       if (token !== SEARCH_TOKEN) return;
 
-      if (!options.length) {
+      if (!poolCandidates.length) {
         renderNoResult(maxMinutesInput, category, datasetInfo);
         showStatus("warn", `Nessuna meta entro ${maxMinutesInput} min per "${category}". Aumenta minuti o cambia categoria.`);
         return;
       }
 
-      options = options.slice(0, CFG.OPTIONS_TOTAL);
+      // salva pool (per “Altre 4”)
+      ALL_OPTIONS = poolCandidates.slice(0, CFG.OPTIONS_POOL_MAX);
 
-      LAST_OPTIONS = options;
-      const chosen = options[0];
-      openChosen(chosen, { origin, category, datasetInfo, usedMinutes, maxMinutesInput });
+      // scelgo la prima
+      const chosen = ALL_OPTIONS[0];
+      CURRENT_CHOSEN = chosen;
+
+      // quante alternative mostro subito (esclude chosen)
+      const maxAlts = Math.max(0, ALL_OPTIONS.length - 1);
+      VISIBLE_ALTS = Math.min(CFG.ALTS_INITIAL, maxAlts);
+
+      renderChosenCard(origin, chosen, category, datasetInfo, usedMinutes, maxMinutesInput);
 
       if (!silent) {
         const extra = usedMinutes !== maxMinutesInput ? ` (ho allargato a ${usedMinutes} min)` : "";
         const fb = usedFallback ? " • criteri allargati per trovare più risultati" : "";
-        showStatus("ok", `Trovate ${options.length} opzioni ✅ • categoria: ${category}${extra}${fb}`);
+        showStatus("ok", `Trovate ${ALL_OPTIONS.length} opzioni ✅ • categoria: ${category}${extra}${fb}`);
       }
     } catch (e) {
       if (String(e?.name || "").includes("Abort")) return;
@@ -1278,7 +1384,11 @@
     const maxMinutesInput = meta.maxMinutesInput || Number($("maxMinutes")?.value) || 120;
 
     CURRENT_CHOSEN = chosen;
+
+    // quando cambi meta scegliendo un’alternativa, non resetto quante alts vedi (resta com’è)
     renderChosenCard(origin, chosen, category, datasetInfo, usedMinutes, maxMinutesInput);
+
+    if (meta.scroll !== false) scrollToId("resultCard");
   }
 
   // -------------------- ORIGIN BUTTONS --------------------
@@ -1329,6 +1439,7 @@
     initTimeChipsSync();
   }
 
+  // -------------------- BOOT --------------------
   function boot() {
     injectMiniCssOnce();
     initChipsAll();
