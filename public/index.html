@@ -2,12 +2,11 @@
 <html lang="it">
 <head>
   <meta charset="utf-8" />
-  <!-- ✅ safe-area + dock -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Jamo — Trova la meta perfetta</title>
 
   <link rel="manifest" href="/manifest.webmanifest">
-  <meta name="theme-color" content="#0B1220">
+  <meta name="theme-color" content="#00E0FF">
 
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
@@ -15,252 +14,233 @@
 
   <style>
     :root{
-      /* ✅ palette più leggibile (alto contrasto) */
-      --bg:#070B12;
-      --surface:#0E1624;
-      --surface2:#0B1220;
-      --text:#F5F7FF;
-      --muted:#A7B2C6;
+      /* Palette “leggibile” (più contrasto) */
+      --bg:#050C10;
+      --surface:#0C151B;
+      --surface2:#0A1217;
+      --text:#FFFFFF;
+      --muted:#A7B7C0;
 
       --acc:#00E0FF;
       --acc2:#1AFFD5;
 
-      --border:rgba(255,255,255,.10);
-      --shadow: 0 14px 28px rgba(0,0,0,.35);
+      --border: rgba(255,255,255,.12);
+      --border2: rgba(255,255,255,.08);
 
-      --radius:18px;
-      --dock-h:78px;
+      --radius: 18px;
+
+      /* Ombre “pulite” */
+      --shadow-card: 0 6px 16px rgba(0,0,0,.35);
+      --shadow-hero: 0 14px 38px rgba(0,0,0,.55);
+      --shadow-cta: 0 12px 30px rgba(0,224,255,.22);
+
+      --safe-bottom: env(safe-area-inset-bottom);
     }
 
-    *{box-sizing:border-box}
-    html,body{height:100%}
+    *{ box-sizing:border-box; }
     body{
       margin:0;
       color:var(--text);
       font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
       background:
-        radial-gradient(900px 600px at 15% -10%, rgba(0,224,255,.20), rgba(0,0,0,0)),
-        radial-gradient(800px 500px at 90% 0%, rgba(26,255,213,.12), rgba(0,0,0,0)),
+        radial-gradient(900px 520px at 20% -10%, rgba(0,224,255,.16), rgba(0,0,0,0)),
+        radial-gradient(900px 520px at 90% -10%, rgba(26,255,213,.10), rgba(0,0,0,0)),
         var(--bg);
-
-      /* ✅ spazio per dock + safe-area */
-      padding-bottom: calc(var(--dock-h) + env(safe-area-inset-bottom) + 10px);
+      padding-bottom: calc(14px + var(--safe-bottom));
     }
+    a{ color:inherit; text-decoration:none; }
 
-    a{color:inherit}
-    button{font:inherit}
     .wrap{
       max-width: 720px;
-      margin: 0 auto;
-      padding: 14px 12px 24px;
+      margin:0 auto;
+      padding: 14px 12px 18px;
     }
 
-    /* TOP */
     .topbar{
-      display:flex; align-items:center; justify-content:space-between;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
       gap:12px;
-      padding: 6px 2px 10px;
+      padding: 6px 2px 12px;
     }
-    .brand{display:flex; align-items:center; gap:10px;}
+
+    .brand{ display:flex; align-items:center; gap:10px; }
     .logo{
       width:42px; height:42px; border-radius:14px;
       background: radial-gradient(circle at 30% 30%, var(--acc2), var(--acc));
-      box-shadow: 0 16px 40px rgba(0,224,255,.18);
-      flex:0 0 auto;
+      box-shadow: 0 16px 34px rgba(0,224,255,.12);
+      flex: 0 0 auto;
     }
-    .title h1{margin:0; font-size:18px; letter-spacing:.2px;}
-    .title p{margin:2px 0 0; font-size:12px; color:var(--muted);}
+    .title h1{ margin:0; font-size:18px; letter-spacing:.2px; }
+    .title p{ margin:2px 0 0; color:var(--muted); font-size:12px; }
 
     .btnInstall{
       display:none;
       border:1px solid var(--border);
-      background: rgba(255,255,255,.05);
+      background: rgba(255,255,255,.04);
       color:var(--text);
       border-radius: 14px;
       padding: 10px 12px;
       font-weight:800;
     }
 
-    /* CARDS */
     .card{
       background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
-      border: 1px solid var(--border);
+      border: 1px solid var(--border2);
       border-radius: var(--radius);
       padding: 14px;
-      box-shadow: var(--shadow);
+      box-shadow: var(--shadow-card);
     }
-    .card + .card{margin-top:12px}
+    .card + .card{ margin-top: 12px; }
+
+    .card.resultCard{
+      border-color: rgba(0,224,255,.22);
+      box-shadow: var(--shadow-hero);
+    }
 
     .hTitle{
-      margin:0 0 8px;
-      font-size:16px;
-      font-weight:950;
-      letter-spacing:.2px;
+      margin:0 0 10px;
+      font-weight: 950;
+      font-size: 16px;
     }
-    .small{font-size:12px; color:var(--muted); line-height:1.35;}
-    .muted{color:var(--muted);}
-
-    .row{display:flex; align-items:center; gap:10px;}
-    .wraprow{flex-wrap:wrap;}
-    .hr{height:1px; background:rgba(255,255,255,.10); margin:12px 0;}
+    .small{ font-size:12px; color:var(--muted); }
+    .muted{ color:var(--muted); }
 
     input{
       width:100%;
       background: rgba(255,255,255,.06);
       color: var(--text);
-      border:1px solid rgba(255,255,255,.14);
+      border:1px solid var(--border2);
       border-radius: 14px;
       padding: 12px 12px;
       outline:none;
     }
     input:focus{
-      border-color: rgba(0,224,255,.55);
-      box-shadow: 0 0 0 3px rgba(0,224,255,.14);
+      border-color: rgba(0,224,255,.45);
+      box-shadow: 0 0 0 3px rgba(0,224,255,.10);
     }
 
-    /* CHIPS */
-    .chiprow{display:flex; flex-wrap:wrap; gap:8px;}
+    .row{ display:flex; align-items:center; gap:10px; }
+    .wraprow{ flex-wrap:wrap; }
+    .chiprow{ display:flex; flex-wrap:wrap; gap:8px; }
+
     .chip{
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-      padding: 9px 11px;
+      padding: 10px 12px;
       border-radius: 999px;
-      font-size:13px;
-      font-weight:900;
+      border: 1px solid var(--border2);
+      background: rgba(255,255,255,.04);
       cursor:pointer;
       user-select:none;
+      font-size: 13px;
+      font-weight: 850;
     }
     .chip.active{
-      border-color: rgba(0,224,255,.75);
+      border-color: rgba(0,224,255,.70);
       background: rgba(0,224,255,.10);
-      box-shadow: 0 0 0 3px rgba(0,224,255,.12);
+      box-shadow: 0 0 0 2px rgba(0,224,255,.18);
     }
 
-    /* BUTTONS */
     .btn{
-      border:1px solid rgba(0,224,255,.55);
-      background: linear-gradient(90deg, rgba(0,224,255,.28), rgba(26,255,213,.14));
-      color: var(--text);
+      border: 1px solid rgba(0,224,255,.45);
+      background: linear-gradient(90deg, rgba(0,224,255,.22), rgba(26,255,213,.12));
+      color:var(--text);
+      border-radius: 16px;
       padding: 12px 12px;
-      border-radius: 16px;
-      font-weight:950;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-      cursor:pointer;
-      user-select:none;
-      text-decoration:none;
-      min-height: 48px;
-    }
-    .btn:active{transform: translateY(1px);}
-    .btnGhost{
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-      padding: 12px 12px;
-      border-radius: 16px;
-      font-weight:900;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-      cursor:pointer;
-      user-select:none;
-      text-decoration:none;
-      min-height: 48px;
-    }
-
-    /* STATUS */
-    .status{
-      margin-top:10px;
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.06);
-      border-radius: 16px;
-      padding: 10px 12px;
-      display:none;
-    }
-
-    /* RESULT */
-    #resultArea{margin-top:10px;}
-
-    /* ✅ DOCK: sempre dentro pagina, testo NON tagliato */
-    .dock{
-      position: fixed;
-      left: 0; right: 0; bottom: 0;
-      z-index: 9999;
-      padding: 10px 10px calc(10px + env(safe-area-inset-bottom));
-      background: rgba(7, 11, 18, .78);
-      backdrop-filter: blur(14px);
-      border-top: 1px solid rgba(255,255,255,.12);
-    }
-    .dockInner{
-      max-width: 720px;
-      margin: 0 auto;
-      display:flex;
-      gap:10px;
-    }
-    .dockBtn{
-      flex: 1 1 0;
-      min-width: 0;
-      height: 58px;
-
-      border-radius: 18px;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-
       font-weight: 950;
       cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
       user-select:none;
-      box-shadow: 0 12px 22px rgba(0,0,0,.30);
     }
-    .dockBtn.primary{
-      border-color: rgba(0,224,255,.65);
-      background: linear-gradient(90deg, rgba(0,224,255,.32), rgba(26,255,213,.16));
-    }
-    .dockBtn span{
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      font-size: 14px;
-      line-height: 1;
-    }
-    @media (max-width: 360px){
-      .dockBtn span{font-size: 12px}
-      .dockBtn{gap:6px}
+    .btn:active{ transform: translateY(1px); }
+
+    .btnPrimary{
+      box-shadow: var(--shadow-cta);
     }
 
-    /* ✅ “flow”: card impostazioni collassabile */
-    details{
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.04);
+    .btnGhost{
+      border:1px solid var(--border2);
+      background: rgba(255,255,255,.05);
+      color:var(--text);
+      border-radius: 16px;
+      padding: 12px 12px;
+      font-weight: 900;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      user-select:none;
+    }
+
+    .hr{ height:1px; background: rgba(255,255,255,.10); margin: 12px 0; }
+
+    .status{
+      margin-top: 12px;
       border-radius: 16px;
       padding: 10px 12px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      display:none;
     }
-    summary{
-      cursor:pointer;
-      list-style:none;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      font-weight:950;
-    }
-    summary::-webkit-details-marker{display:none}
-    .summaryRight{color:var(--muted); font-weight:800; font-size:12px;}
 
     .footer{
       text-align:center;
       color: rgba(255,255,255,.45);
       font-size: 12px;
       margin-top: 12px;
+      padding-bottom: calc(6px + var(--safe-bottom));
+    }
+
+    /* Collasso Partenza (app.js aggiunge classe) */
+    #quickStartCard.collapsed .originBody{ display:none; }
+
+    /* Result helpers */
+    #resultArea{ margin-top: 10px; }
+
+    /* Buttons grid dentro la scheda risultato */
+    .actionGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+      margin-top: 12px;
+    }
+
+    .optList{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      margin-top: 12px;
+    }
+
+    .optBtn{
+      width:100%;
+      text-align:left;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.05);
+      border-radius: 16px;
+      padding: 12px;
+      cursor:pointer;
+      color: var(--text);
+    }
+    .optBtn.active{
+      border-color: rgba(0,224,255,.60);
+      background: rgba(0,224,255,.10);
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.28);
+      font-size: 12px;
+      font-weight: 900;
+      color: rgba(255,255,255,.92);
     }
   </style>
 </head>
@@ -275,131 +255,109 @@
           <p>Auto-only • Offline • Categoria precisa • Chicche + Classici</p>
         </div>
       </div>
-      <button id="btnInstall" class="btnInstall" type="button">➕ Installa</button>
+      <button id="btnInstall" class="btnInstall">➕ Installa</button>
     </div>
 
-    <!-- ✅ RISULTATO PRIMA (utente capisce subito dove guardare) -->
-    <div class="card" id="resultCard">
+    <!-- 1) PARTENZA (collassabile dopo set) -->
+    <div class="card" id="quickStartCard">
+      <!-- app.js inserisce qui il toggle “📍 Partenza” -->
+      <div class="originBody">
+        <div class="hTitle">1) Partenza</div>
+        <div class="small">Scrivi un luogo e premi “Usa questo luogo”. (GPS disattivato)</div>
+
+        <div style="margin-top:10px;">
+          <input id="originLabel" type="text" placeholder="Es: Verona / Padova / Via Roma 10" />
+        </div>
+
+        <div class="row wraprow" style="margin-top:10px;">
+          <button id="btnUseGPS" class="btn" type="button" style="flex:1; min-width:160px;">📍 GPS</button>
+          <button id="btnFindPlace" class="btnGhost" type="button" style="flex:1; min-width:160px;">🔎 Usa questo luogo</button>
+        </div>
+
+        <div id="originStatus" class="small muted" style="margin-top:10px;"></div>
+
+        <div class="row" style="margin-top:10px;">
+          <div style="flex:1">
+            <div class="small">Lat</div>
+            <input id="originLat" type="text" inputmode="decimal" placeholder="45.44" />
+          </div>
+          <div style="flex:1">
+            <div class="small">Lon</div>
+            <input id="originLon" type="text" inputmode="decimal" placeholder="11.00" />
+          </div>
+        </div>
+
+        <input id="originCC" type="hidden" value="">
+      </div>
+    </div>
+
+    <!-- 2) FILTRI + CERCA SUBITO DOPO STILE -->
+    <div class="card" id="searchCard">
+      <div class="hTitle">2) Tempo • Categoria • Stile</div>
+
+      <div class="small">Tempo (auto)</div>
+      <div class="chiprow" id="timeChips" style="margin-top:8px;">
+        <div class="chip" data-min="30">30 min</div>
+        <div class="chip" data-min="60">60 min</div>
+        <div class="chip" data-min="90">90 min</div>
+        <div class="chip active" data-min="120">120 min</div>
+        <div class="chip" data-min="180">180 min</div>
+        <div class="chip" data-min="240">240 min</div>
+      </div>
+
+      <div style="margin-top:10px;">
+        <div class="small">Minuti precisi</div>
+        <input id="maxMinutes" type="number" min="10" max="600" step="5" value="120" />
+        <div class="small muted" style="margin-top:6px;">Tip: 60–120 giretti, 180–240 gite grandi.</div>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="small">Categoria</div>
+      <div class="chiprow" id="categoryChips" style="margin-top:8px;">
+        <div class="chip active" data-cat="ovunque">🎲 Ovunque</div>
+        <div class="chip" data-cat="natura">🌿 Natura</div>
+        <div class="chip" data-cat="viewpoints">🌅 Panorami</div>
+        <div class="chip" data-cat="hiking">🥾 Trekking</div>
+        <div class="chip" data-cat="family">👨‍👩‍👧‍👦 Family</div>
+        <div class="chip" data-cat="storia">🏛️ Storia</div>
+        <div class="chip" data-cat="montagna">🏔️ Montagna</div>
+        <div class="chip" data-cat="mare">🌊 Mare</div>
+        <div class="chip" data-cat="relax">🧖 Relax</div>
+        <div class="chip" data-cat="borghi">🏘️ Borghi</div>
+        <div class="chip" data-cat="citta">🏙️ Città</div>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="small">Stile</div>
+      <div class="chiprow" id="styleChips" style="margin-top:8px;">
+        <div class="chip active" data-style="chicche">✨ Chicche</div>
+        <div class="chip active" data-style="classici">✅ Classici</div>
+      </div>
+
+      <!-- ✅ CERCA SUBITO DOPO STILE -->
+      <div class="row wraprow" style="margin-top:12px;">
+        <button id="btnFind" class="btn btnPrimary" type="button" style="flex:1; min-width:220px;">🎯 CERCA</button>
+        <button id="btnResetVisited" class="btnGhost" type="button">♻️ Reset visitati</button>
+      </div>
+
+      <div id="statusBox" class="status">
+        <div id="statusText" class="small"></div>
+      </div>
+    </div>
+
+    <!-- 3) RISULTATO: centrale e focus -->
+    <div class="card resultCard" id="resultCard">
       <div class="hTitle">Risultato</div>
-      <div class="small muted">Premi <b>🎯 Cerca</b> dal dock in basso: trovi 5 opzioni e puoi cambiarle al volo.</div>
+      <div class="small muted">Premi <b>CERCA</b> per ricevere 5 opzioni. Tocca un’opzione per aprire la scheda.</div>
       <div id="resultArea"></div>
     </div>
 
-    <!-- ✅ IMPOSTAZIONI COLLASSABILI (non “rubano” spazio) -->
-    <details id="settingsWrap" style="margin-top:12px;" open>
-      <summary>
-        <span>⚙️ Impostazioni ricerca</span>
-        <span class="summaryRight" id="settingsHint">Apri/chiudi</span>
-      </summary>
-
-      <div style="margin-top:12px;">
-        <div class="card" id="quickStartCard" style="box-shadow:none;">
-          <div class="hTitle">1) Partenza</div>
-          <div class="small">Scrivi un luogo e premi <b>“Usa questo luogo”</b>. (GPS disattivato)</div>
-
-          <div style="margin-top:10px;">
-            <input id="originLabel" type="text" placeholder="Es: Verona / Padova / Via Roma 10" />
-          </div>
-
-          <div class="row wraprow" style="margin-top:10px;">
-            <!-- resta per compatibilità, app.js lo nasconde -->
-            <button id="btnUseGPS" class="btn" type="button" style="flex:1; min-width:170px;">📍 GPS</button>
-            <button id="btnFindPlace" class="btnGhost" type="button" style="flex:1; min-width:170px;">🔎 Usa questo luogo</button>
-          </div>
-
-          <div id="originStatus" class="small muted" style="margin-top:10px;"></div>
-
-          <div class="row" style="margin-top:10px;">
-            <div style="flex:1">
-              <div class="small">Lat</div>
-              <input id="originLat" type="text" inputmode="decimal" placeholder="45.44" />
-            </div>
-            <div style="flex:1">
-              <div class="small">Lon</div>
-              <input id="originLon" type="text" inputmode="decimal" placeholder="11.00" />
-            </div>
-          </div>
-
-          <input id="originCC" type="hidden" value="">
-        </div>
-
-        <div class="card" id="searchCard" style="margin-top:12px; box-shadow:none;">
-          <div class="hTitle">2) Tempo • Categoria • Stile</div>
-
-          <div class="small">Tempo (auto)</div>
-          <div class="chiprow" id="timeChips" style="margin-top:8px;">
-            <div class="chip" data-min="30">30 min</div>
-            <div class="chip" data-min="60">60 min</div>
-            <div class="chip" data-min="90">90 min</div>
-            <div class="chip active" data-min="120">120 min</div>
-            <div class="chip" data-min="180">180 min</div>
-            <div class="chip" data-min="240">240 min</div>
-          </div>
-
-          <div style="margin-top:10px;">
-            <div class="small">Minuti precisi</div>
-            <input id="maxMinutes" type="number" min="10" max="600" step="5" value="120" />
-            <div class="small muted" style="margin-top:6px;">Tip: 60–120 giretti, 180–240 gite grandi.</div>
-          </div>
-
-          <div class="hr"></div>
-
-          <div class="small">Categoria</div>
-          <div class="chiprow" id="categoryChips" style="margin-top:8px;">
-            <div class="chip active" data-cat="ovunque">🎲 Ovunque</div>
-            <div class="chip" data-cat="natura">🌿 Natura</div>
-            <div class="chip" data-cat="viewpoints">🌅 Panorami</div>
-            <div class="chip" data-cat="hiking">🥾 Trekking</div>
-            <div class="chip" data-cat="family">👨‍👩‍👧‍👦 Family</div>
-            <div class="chip" data-cat="storia">🏛️ Storia</div>
-            <div class="chip" data-cat="montagna">🏔️ Montagna</div>
-            <div class="chip" data-cat="mare">🌊 Mare</div>
-            <div class="chip" data-cat="relax">🧖 Relax</div>
-            <div class="chip" data-cat="borghi">🏘️ Borghi</div>
-            <div class="chip" data-cat="citta">🏙️ Città</div>
-          </div>
-
-          <div class="hr"></div>
-
-          <div class="small">Stile</div>
-          <div class="chiprow" id="styleChips" style="margin-top:8px;">
-            <div class="chip active" data-style="chicche">✨ Chicche</div>
-            <div class="chip active" data-style="classici">✅ Classici</div>
-          </div>
-
-          <!-- status -->
-          <div id="statusBox" class="status">
-            <div id="statusText" class="small"></div>
-          </div>
-
-          <!-- fallback buttons (se vuoi tenerli) -->
-          <div class="row wraprow" style="margin-top:12px;">
-            <button id="btnFind" class="btn" type="button" style="flex:1; min-width:200px;">🎯 CERCA ORA</button>
-            <button id="btnResetVisited" class="btnGhost" type="button">♻️ Reset visitati</button>
-          </div>
-
-          <div class="small muted" style="margin-top:10px;">
-            Flusso: imposta partenza → scegli filtri → premi <b>🎯 Cerca</b> dal dock (in basso).
-          </div>
-        </div>
-
-        <div class="footer">Jamo • PWA • Auto-only • Offline</div>
-      </div>
-    </details>
+    <div class="footer">Jamo • PWA • Auto-only • Offline</div>
   </div>
 
-  <!-- ✅ DOCK: sempre visibile, mai tagliato -->
-  <nav class="dock" aria-label="Azioni rapide">
-    <div class="dockInner">
-      <button class="dockBtn primary" id="dockSearch" type="button">🎯 <span>Cerca</span></button>
-      <button class="dockBtn" id="dockNav" type="button">🧭 <span>Vai</span></button>
-      <button class="dockBtn" id="dockBook" type="button">🎟️ <span>Prenota</span></button>
-      <button class="dockBtn" id="dockEat" type="button">🍝 <span>Mangia</span></button>
-    </div>
-  </nav>
-
-  <!-- ✅ IMPORTANT: bump versione per evitare cache -->
-  <script src="/app.js?v=150"></script>
+  <script src="/app.js?v=15.0"></script>
 
   <script>
     // PWA install prompt
@@ -422,21 +380,6 @@
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("/sw.js").catch(()=>{});
     }
-
-    // Dock fallback (se app.js non ha ancora agganciato)
-    document.getElementById("dockSearch")?.addEventListener("click", () => window.__jamo?.runSearch?.());
-    document.getElementById("dockNav")?.addEventListener("click", () => window.__jamo?.dockAction?.("nav"));
-    document.getElementById("dockBook")?.addEventListener("click", () => window.__jamo?.dockAction?.("book"));
-    document.getElementById("dockEat")?.addEventListener("click", () => window.__jamo?.dockAction?.("eat"));
-
-    // UX: se tocchi “Risultato” e non c'è nulla, apri impostazioni
-    const settings = document.getElementById("settingsWrap");
-    const result = document.getElementById("resultCard");
-    result?.addEventListener("click", () => {
-      const area = document.getElementById("resultArea");
-      const empty = !area || !area.textContent.trim();
-      if (empty) settings.open = true;
-    });
   </script>
 </body>
 </html>
