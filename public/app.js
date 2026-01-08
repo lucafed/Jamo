@@ -1,10 +1,18 @@
 /* Jamo — app.js v15.5
- * Mobile-first • Offline-first (dataset) • NO GPS
+ * Mobile-first • Offline-only • Flusso pulito • Risultato centrale • Niente dock
  *
- * ✅ FIX Relax Veneto: usa dataset dedicato (it-veneto-relax.json) quando categoria=relax
- * ✅ FIX Family: filtri più “stretti” (no aziende agricole random / casse di espansione ecc.)
- * ✅ Family: aggiunti palaghiaccio/ice rink + fattorie didattiche (kids/educational)
- * ✅ Relax: matching più robusto (terme/spa/thermal/public_bath/sauna/hot_spring + keyword)
+ * ✅ NO GPS
+ * ✅ OFFLINE-ONLY
+ * ✅ Natura presente
+ * ✅ Relax molto più ricco (include SPA anche dentro hotel/strutture)
+ * ✅ Family ripulito: musei solo se kids-friendly + palaghiaccio + educational
+ * ✅ Alternative “load more”: 4 alla volta con bottone
+ * ✅ Dedupe forte (PID + nome+vicinanza)
+ * ✅ Partenza collassabile dopo set
+ * ✅ CERCA subito dopo stile (btnFind)
+ * ✅ Azioni dentro la scheda risultato (Vai / Prenota / Mangia / Foto / Wiki)
+ * ✅ Scroll automatico sul risultato
+ * ✅ Fallback automatico: se non trova niente, allarga criteri
  */
 
 (() => {
@@ -29,16 +37,14 @@
       "/data/macros/euuk_macro_all.json",
     ],
 
-    // ✅ Aggiunto dataset relax dedicato Veneto
     REGIONAL_POIS_BY_ID: {
       "it-veneto": "/data/pois/regions/it-veneto.json",
-      "it-veneto-relax": "/data/pois/regions/it-veneto-relax.json",
+      // se in futuro aggiungi relax dedicato:
+      // "it-veneto-relax": "/data/pois/regions/it-veneto-relax.json",
     },
 
-    // stesso bbox (vale anche per -relax)
     REGION_BBOX: {
       "it-veneto": { minLat: 44.70, maxLat: 46.70, minLon: 10.20, maxLon: 13.20 },
-      "it-veneto-relax": { minLat: 44.70, maxLat: 46.70, minLon: 10.20, maxLon: 13.20 },
     },
 
     LIVE_ENABLED: false,
@@ -50,7 +56,7 @@
       THEFORK_AFFID: "",
     },
 
-    CLONE_KM: 2.2,
+    CLONE_KM: 2.2
   };
 
   let SESSION_SEEN = new Set();
@@ -137,6 +143,7 @@
       .replaceAll("'", "&#039;");
   }
 
+  // Inject mini CSS
   function injectMiniCssOnce() {
     if (document.getElementById("jamo-mini-css")) return;
     const st = document.createElement("style");
@@ -447,7 +454,6 @@
       const j = await r.json().catch(() => null);
       if (!j) return null;
 
-      // supporta sia {places:[]} sia {places:[]} macro/region
       const placesRaw = Array.isArray(j?.places) ? j.places : null;
       if (!placesRaw || !placesRaw.length) return null;
 
@@ -472,30 +478,24 @@
     return hit?.path || null;
   }
 
-  // ✅ scegliamo dataset regionale in base a categoria
-  function pickRegionIdFromOrigin(origin, category) {
+  function pickRegionIdFromOrigin(origin) {
     const lat = Number(origin?.lat);
     const lon = Number(origin?.lon);
     const cc = String(origin?.country_code || "").toUpperCase();
 
     const saved = localStorage.getItem("jamo_region_id");
     if (saved && CFG.REGIONAL_POIS_BY_ID[saved] && withinBBox(lat, lon, CFG.REGION_BBOX[saved])) return saved;
-
-    if (cc === "IT" && withinBBox(lat, lon, CFG.REGION_BBOX["it-veneto"])) {
-      if (category === "relax") return "it-veneto-relax";
-      return "it-veneto";
-    }
+    if (cc === "IT" && withinBBox(lat, lon, CFG.REGION_BBOX["it-veneto"])) return "it-veneto";
     return "";
   }
 
-  async function ensureDatasetLoaded(origin, category, { signal } = {}) {
+  async function ensureDatasetLoaded(origin, { signal } = {}) {
     if (DATASET?.places?.length) return DATASET;
 
     await loadMacrosIndexSafe(signal);
 
     const candidates = [];
-
-    const regionId = pickRegionIdFromOrigin(origin, category);
+    const regionId = pickRegionIdFromOrigin(origin);
     if (regionId && CFG.REGIONAL_POIS_BY_ID[regionId]) candidates.push(CFG.REGIONAL_POIS_BY_ID[regionId]);
 
     const cc = String(origin?.country_code || "").toUpperCase();
@@ -560,127 +560,85 @@
     return false;
   }
 
-  // --- keyword helpers (famiglia / relax) ---
+  // Relax keywords (nome)
   function looksWellnessByName(place) {
     const n = normName(place?.name || "");
     return hasAny(n, [
-      "terme","termale","thermal","spa","wellness","benessere",
-      "hammam","hamam","bagno turco","sauna","hot spring","acqua termale"
+      "terme","termale","thermal","spa","wellness","benessere","hammam","hamam",
+      "bagno turco","sauna","piscine termali","acqua termale","idroterapia"
     ]);
   }
 
+  // Kids keywords (nome)
   function looksKidsByName(place) {
     const n = normName(place?.name || "");
     return hasAny(n, [
       "bambin","bambini","kids","family","ragazzi","giochi","gioco","ludoteca","infanzia","junior",
       "museo dei bambini","children","science center","planetario","acquario","zoo",
-      "fattoria didattica","didattica","parco giochi","parco divertimenti","lab bambini",
-      "palaghiaccio","pattin","ice rink"
+      "fattoria didattica","didattica","parco giochi","baby","bimbi"
     ]);
   }
 
-  // ✅ rumore/infra da NON far finire in family/relax
-  function isObviousNoise(place) {
+  // --------- NEW: palaghiaccio / ice rink ----------
+  function isIceRink(place) {
     const t = tagsStr(place);
     const n = normName(place?.name || "");
-
-    // idraulica/bonifica/spazi tecnici
-    if (
-      n.includes("cassa di espansione") || n.includes("bacino di espansione") ||
-      n.includes("roggia") || n.includes("torrente") || n.includes("canale") ||
-      n.includes("scolo") || n.includes("idrovora") || n.includes("argine")
-    ) return true;
-
-    if (
-      t.includes("waterway=") ||
-      t.includes("man_made=embankment") ||
-      t.includes("man_made=dyke") ||
-      t.includes("landuse=basin") ||
-      t.includes("basin=") ||
-      t.includes("reservoir_type=")
-    ) return true;
-
-    // industrial/utility
-    if (
-      t.includes("power=") || t.includes("man_made=works") ||
-      t.includes("amenity=waste_disposal") || t.includes("landfill=") ||
-      t.includes("amenity=sewage_treatment_plant")
-    ) return true;
-
-    return false;
+    return (
+      t.includes("leisure=ice_rink") ||
+      t.includes("sport=ice_skating") ||
+      t.includes("sport=ice_hockey") ||
+      t.includes("ice_rink") ||
+      n.includes("palaghiaccio") ||
+      n.includes("pattinaggio") ||
+      n.includes("ice rink")
+    );
   }
 
-  // lodging/food exclusion (ma relax può tenere hotel se spa-like)
-  function isLodgingOrFood(place, category) {
+  // --------- NEW: educational-ish ----------
+  function isEducationalKids(place) {
     const t = tagsStr(place);
-
-    const lodging =
-      t.includes("tourism=hotel") || t.includes("tourism=hostel") || t.includes("tourism=guest_house") ||
-      t.includes("tourism=apartment") || t.includes("tourism=camp_site") || t.includes("tourism=caravan_site") ||
-      t.includes("tourism=chalet") || t.includes("tourism=motel");
-
-    if (lodging && category === "relax" && looksWellnessByName(place)) return false;
-
-    const food =
-      t.includes("amenity=restaurant") || t.includes("amenity=fast_food") || t.includes("amenity=cafe") ||
-      t.includes("amenity=bar") || t.includes("amenity=pub") || t.includes("amenity=ice_cream");
-
-    return lodging || food;
+    const n = normName(place?.name || "");
+    return (
+      (t.includes("amenity=library") && (n.includes("bambin") || n.includes("kids"))) ||
+      (t.includes("amenity=community_centre") && looksKidsByName(place)) ||
+      n.includes("museo interattivo") ||
+      n.includes("science center") ||
+      n.includes("planetario") ||
+      n.includes("citta della scienza") ||
+      (t.includes("tourism=museum") && (t.includes("science") || t.includes("planetarium")))
+    );
   }
 
-  function isSummerThing(place) {
-    const t = tagsStr(place);
-    return t.includes("leisure=water_park") || t.includes("natural=beach") || t.includes("leisure=marina");
-  }
-  function isWinterThing(place) {
-    const t = tagsStr(place);
-    return t.includes("piste:type=") || t.includes("sport=skiing") || t.includes("aerialway=");
-  }
-
-  // ✅ RELAX più “vero”
+  // Relax ricco: più tag + keyword
   function isSpaPlace(place) {
     const t = tagsStr(place);
     const nm = normName(place?.name || "");
 
-    const tagStrong =
+    const spaTags =
       t.includes("amenity=spa") || t.includes("leisure=spa") || t.includes("tourism=spa") ||
-      t.includes("healthcare=spa") || t.includes("healthcare=sauna") ||
-      t.includes("natural=hot_spring") ||
-      t.includes("amenity=public_bath") ||
-      t.includes("bath:type=thermal") ||
+      t.includes("natural=hot_spring") || t.includes("amenity=public_bath") ||
       t.includes("amenity=sauna") || t.includes("leisure=sauna") ||
-      t.includes("spa=yes");
+      t.includes("healthcare=sauna") || t.includes("healthcare=spa") ||
+      t.includes("spa") && (t.includes("hotel") || t.includes("tourism=")) ||
+      t.includes("thermal") || t.includes("terme");
 
-    const nameStrong = looksWellnessByName(place);
+    const spaName = looksWellnessByName(place);
 
+    // piscina solo se spa-like
     const poolSpaLike =
-      t.includes("leisure=swimming_pool") &&
-      (nm.includes("terme") || nm.includes("spa") || nm.includes("thermal") || nm.includes("wellness") || nm.includes("benessere"));
+      t.includes("leisure=swimming_pool") && (
+        nm.includes("terme") || nm.includes("spa") || nm.includes("thermal") ||
+        nm.includes("benessere") || nm.includes("wellness")
+      );
 
-    return tagStrong || nameStrong || poolSpaLike;
+    return spaTags || spaName || poolSpaLike;
   }
 
-  // ✅ FAMILY “vero”: parchi / zoo / acquari / kids museum / playground / ice rink / fattoria didattica
   function isThemePark(place) { return tagsStr(place).includes("tourism=theme_park"); }
   function isWaterPark(place) { return tagsStr(place).includes("leisure=water_park"); }
-
   function isZooOrAquarium(place) {
     const t = tagsStr(place);
-    const n = normName(place?.name || "");
-
-    const tagOk =
-      t.includes("tourism=zoo") ||
-      t.includes("tourism=aquarium") ||
-      t.includes("amenity=aquarium");
-
-    const nameOk = n.includes("zoo") || n.includes("acquario") || n.includes("sea life");
-
-    // evita “azienda agricola” a caso: ok solo se ha keyword kids/educational o zoo/acquario nel nome
-    const badFarm = n.includes("azienda agricola") && !(nameOk || n.includes("fattoria didattica") || n.includes("parco faunistico"));
-
-    if (badFarm) return false;
-
-    return tagOk || nameOk;
+    return t.includes("tourism=zoo") || t.includes("tourism=aquarium") || t.includes("amenity=aquarium");
   }
 
   function isAdventurePark(place) {
@@ -694,32 +652,12 @@
     );
   }
 
-  function isIceRink(place) {
+  function isMuseum(place) {
     const t = tagsStr(place);
-    const n = normName(place?.name || "");
-    return (
-      t.includes("leisure=ice_rink") ||
-      t.includes("sport=ice_skating") ||
-      n.includes("palaghiaccio") ||
-      n.includes("ice rink") ||
-      n.includes("pattin")
-    );
+    return t.includes("tourism=museum");
   }
 
-  function isEducationalFarm(place) {
-    const t = tagsStr(place);
-    const n = normName(place?.name || "");
-    // segnali “didattici”
-    return (
-      n.includes("fattoria didattica") ||
-      n.includes("fattoria") && (n.includes("didatt") || n.includes("bimbi") || n.includes("kids") || n.includes("family")) ||
-      t.includes("farm=education") ||
-      t.includes("education=") && (t.includes("farm") || t.includes("animal"))
-    );
-  }
-
-  function isMuseum(place) { return tagsStr(place).includes("tourism=museum"); }
-
+  // ✅ museo kids-friendly (tag o keyword)
   function isKidsMuseum(place) {
     const t = tagsStr(place);
     const n = normName(place?.name || "");
@@ -741,7 +679,10 @@
     return (isMuseum(place) && (tagKidsish || nameKidsish));
   }
 
-  function isAttraction(place) { return tagsStr(place).includes("tourism=attraction"); }
+  function isAttraction(place) {
+    const t = tagsStr(place);
+    return t.includes("tourism=attraction");
+  }
 
   function isPlaygroundOrPark(place) {
     const t = tagsStr(place);
@@ -811,21 +752,61 @@
     return type === "citta" || t.includes("place=city") || t.includes("place=town");
   }
 
-  // ✅ “strongFamilySignal”: niente più family “a caso”
-  function strongFamilySignal(place) {
-    if (isObviousNoise(place)) return false;
-    return (
-      isThemePark(place) ||
-      isWaterPark(place) ||
+  function isSummerThing(place) {
+    const t = tagsStr(place);
+    return t.includes("leisure=water_park") || t.includes("natural=beach") || t.includes("leisure=marina");
+  }
+  function isWinterThing(place) {
+    const t = tagsStr(place);
+    return t.includes("piste:type=") || t.includes("sport=skiing") || t.includes("aerialway=");
+  }
+
+  // ✅ FIX IMPORTANTISSIMO:
+  // prima: per relax tenevamo hotel SOLO se il NOME sembrava wellness
+  // ora: per relax teniamo hotel/strutture anche se hanno TAG spa-like.
+  function isLodgingOrFood(place, category) {
+    const t = tagsStr(place);
+
+    const lodging =
+      t.includes("tourism=hotel") || t.includes("tourism=hostel") || t.includes("tourism=guest_house") ||
+      t.includes("tourism=apartment") || t.includes("tourism=camp_site") || t.includes("tourism=caravan_site") ||
+      t.includes("tourism=chalet") || t.includes("tourism=motel");
+
+    if (lodging && category === "relax") {
+      // se è hotel ma ha segnali spa veri -> NON ESCLUDERE
+      if (isSpaPlace(place) || looksWellnessByName(place) || t.includes("amenity=spa") || t.includes("leisure=spa") || t.includes("amenity=sauna") || t.includes("natural=hot_spring") || t.includes("amenity=public_bath")) {
+        return false;
+      }
+    }
+
+    const food =
+      t.includes("amenity=restaurant") || t.includes("amenity=fast_food") || t.includes("amenity=cafe") ||
+      t.includes("amenity=bar") || t.includes("amenity=pub") || t.includes("amenity=ice_cream");
+
+    return lodging || food;
+  }
+
+  // ✅ NEW: blocco “azienda agricola” se non ha segnali family veri
+  function isLikelyFarmBusiness(place) {
+    const t = tagsStr(place);
+    const n = normName(place?.name || "");
+    const farmy =
+      n.includes("azienda agricola") || n.includes("agritur") || n.includes("fattoria") || n.includes("azienda") ||
+      t.includes("landuse=farmland") || t.includes("landuse=farmyard") || t.includes("craft=agricultural") ||
+      t.includes("shop=farm");
+    if (!farmy) return false;
+
+    // se è farm ma ha segnali family veri -> ok
+    const hasFamilySignal =
       isZooOrAquarium(place) ||
-      isAdventurePark(place) ||
-      isKidsMuseum(place) ||
-      isPlaygroundOrPark(place) ||
-      isIceRink(place) ||
-      isEducationalFarm(place) ||
-      // attraction SOLO se ha segnale kids
-      (isAttraction(place) && looksKidsByName(place))
-    );
+      isAttraction(place) ||
+      looksKidsByName(place) ||
+      t.includes("tourism=attraction") ||
+      t.includes("tourism=zoo") ||
+      t.includes("leisure=playground") ||
+      t.includes("leisure=park");
+
+    return !hasFamilySignal;
   }
 
   function matchesCategoryStrict(place, cat) {
@@ -851,28 +832,49 @@
     if (cat === "viewpoints") return isRealViewpoint(place);
     if (cat === "hiking") return isHiking(place);
 
-    // ✅ FAMILY: SOLO segnali forti (stop “type===family” a caso)
-    if (cat === "family") return strongFamilySignal(place);
+    if (cat === "family") {
+      // blocco farm “business” senza segnali kids
+      if (isLikelyFarmBusiness(place)) return false;
+
+      return (
+        type === "family" ||
+        isThemePark(place) ||
+        isWaterPark(place) ||
+        isZooOrAquarium(place) ||
+        isAdventurePark(place) ||
+        isKidsMuseum(place) ||
+        isEducationalKids(place) ||
+        isIceRink(place) ||
+        isPlaygroundOrPark(place) ||
+        // attrazioni sì, ma con segnale kids dal nome/tag
+        (isAttraction(place) && (looksKidsByName(place) || isEducationalKids(place)))
+      );
+    }
 
     return true;
   }
 
   function matchesCategoryRelaxed(place, cat) {
     if (!cat || cat === "ovunque") return true;
-
     const t = tagsStr(place);
 
     if (cat === "relax") {
-      // fallback: accetta anche piscine SOLO se spa-like
-      return isSpaPlace(place) || (
-        (t.includes("leisure=swimming_pool") || t.includes("leisure=swimming_area")) &&
-        looksWellnessByName(place)
-      );
+      // fallback: se proprio non trova, accetta anche piscine/aree balneabili
+      // MA SOLO come ultima spiaggia
+      return isSpaPlace(place) || t.includes("leisure=swimming_pool") || t.includes("leisure=swimming_area");
     }
 
     if (cat === "family") {
-      // fallback family: resta comunque “strong”
-      return strongFamilySignal(place);
+      if (isLikelyFarmBusiness(place)) return false;
+      return (
+        matchesCategoryStrict(place, "family") ||
+        isZooOrAquarium(place) ||
+        isAdventurePark(place) ||
+        isPlaygroundOrPark(place) ||
+        isIceRink(place) ||
+        isEducationalKids(place) ||
+        (isAttraction(place) && (looksKidsByName(place) || isEducationalKids(place)))
+      );
     }
 
     return matchesCategoryStrict(place, cat);
@@ -905,7 +907,7 @@
     if (isWinterNow() && isSummerThing(place)) return -0.18;
     if (isSummerNow() && isWinterThing(place)) return -0.18;
 
-    if (isWinterNow() && isSpaPlace(place)) return +0.10;
+    if (isWinterNow() && isSpaPlace(place)) return +0.12;
     if (isSummerNow() && (isSummerThing(place) || normalizeType(place?.type) === "mare")) return +0.06;
 
     return 0;
@@ -917,10 +919,10 @@
     if (isWaterPark(place)) return 0.24;
     if (isZooOrAquarium(place)) return 0.22;
     if (isAdventurePark(place)) return 0.18;
+    if (isIceRink(place)) return 0.18;
     if (isKidsMuseum(place)) return 0.14;
-    if (isIceRink(place)) return 0.12;
-    if (isEducationalFarm(place)) return 0.10;
-    if (isPlaygroundOrPark(place)) return 0.08;
+    if (isEducationalKids(place)) return 0.12;
+    if (isPlaygroundOrPark(place)) return 0.10;
     return 0;
   }
 
@@ -961,9 +963,6 @@
       const nm = String(p.name || "").trim();
       if (!nm || nm.length < 2 || normName(nm) === "meta") continue;
 
-      // ✅ taglia rumore duro
-      if (isObviousNoise(p)) continue;
-
       if (isLodgingOrFood(p, category)) continue;
 
       const okCat = relaxedCategory
@@ -990,14 +989,17 @@
 
       if (!ignoreRotation) s -= rotationPenalty(pid, recentSet);
 
+      // ✅ RELAX: spinge spa vere e penalizza piscine “finte”
       if (category === "relax") {
         const t = tagsStr(p);
-        if (t.includes("natural=hot_spring") || t.includes("bath:type=thermal")) s += 0.16;
-        if (t.includes("amenity=spa") || t.includes("leisure=spa") || t.includes("tourism=spa") || t.includes("healthcare=spa")) s += 0.12;
-        if (t.includes("amenity=sauna") || t.includes("leisure=sauna") || t.includes("healthcare=sauna")) s += 0.10;
+        if (t.includes("natural=hot_spring")) s += 0.18;
+        if (t.includes("amenity=public_bath")) s += 0.14;
+        if (t.includes("amenity=spa") || t.includes("leisure=spa") || t.includes("tourism=spa")) s += 0.14;
+        if (t.includes("amenity=sauna") || t.includes("leisure=sauna") || t.includes("healthcare=sauna")) s += 0.12;
         if (looksWellnessByName(p)) s += 0.08;
 
-        if (t.includes("leisure=swimming_pool") && !isSpaPlace(p)) s -= 0.28;
+        // piscina NON spa-like: giù forte
+        if (t.includes("leisure=swimming_pool") && !isSpaPlace(p)) s -= 0.30;
       }
 
       candidates.push({ place: p, pid, km, driveMin, score: Number(s.toFixed(4)) });
@@ -1087,15 +1089,14 @@
       if (isWaterPark(place)) return "Acquapark • top in stagione (orari).";
       if (isZooOrAquarium(place)) return "Zoo/Acquario • esperienza kids-friendly.";
       if (isAdventurePark(place)) return "Parco avventura • percorsi per kids/teen (sicurezza).";
-      if (isKidsMuseum(place)) return "Museo kids-friendly • spesso interattivo (verifica attività).";
       if (isIceRink(place)) return "Palaghiaccio • pattinaggio e attività family.";
-      if (isEducationalFarm(place)) return "Fattoria didattica • animali + attività per bambini.";
+      if (isKidsMuseum(place)) return "Museo kids-friendly • spesso interattivo (verifica attività).";
+      if (isEducationalKids(place)) return "Luogo educativo kids • scienza/planetario/attività.";
       if (isPlaygroundOrPark(place)) return "Parco con area bimbi • easy e rilassante.";
       return "Family • attrazione adatta a bambini (verifica biglietti).";
     }
 
     if (category === "relax") return "Relax • terme/spa/sauna (spesso su prenotazione).";
-
     if (category === "natura") {
       if (t.includes("natural=waterfall")) return "Cascata • ideale per foto e passeggiata.";
       if (t.includes("natural=spring")) return "Risorgiva / sorgente • acqua e natura.";
@@ -1362,8 +1363,7 @@
         return;
       }
 
-      const category = getActiveCategory();
-      await ensureDatasetLoaded(origin, category, { signal });
+      await ensureDatasetLoaded(origin, { signal });
 
       const basePool = Array.isArray(DATASET?.places) ? DATASET.places : [];
       const datasetInfo =
@@ -1374,6 +1374,7 @@
             : `—`;
 
       const maxMinutesInput = clamp(Number($("maxMinutes")?.value) || 120, 10, 600);
+      const category = getActiveCategory();
       const styles = getActiveStyles();
       const steps = widenMinutesSteps(maxMinutesInput, category);
 
@@ -1462,9 +1463,7 @@
 
         showStatus("ok", "Partenza impostata ✅ Ora scegli categoria/stile e premi CERCA.");
         DATASET = { kind: null, source: null, places: [], meta: {} };
-
-        // pre-load migliore: usa categoria attuale
-        await ensureDatasetLoaded(getOrigin(), getActiveCategory(), { signal: undefined }).catch(() => {});
+        await ensureDatasetLoaded(getOrigin(), { signal: undefined }).catch(() => {});
 
         scrollToId("searchCard");
       } catch (e) {
@@ -1504,7 +1503,7 @@
     (async () => {
       try {
         const o = getOrigin();
-        if (o) await ensureDatasetLoaded(o, getActiveCategory(), { signal: undefined });
+        if (o) await ensureDatasetLoaded(o, { signal: undefined });
       } catch {}
     })();
   }
