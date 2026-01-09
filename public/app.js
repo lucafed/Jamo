@@ -1,14 +1,12 @@
-/* Jamo — app.js v16.1
- * Mobile-first • Offline-only • Flusso pulito • Risultato centrale • Niente dock
+/* Jamo — app.js v17.0
+ * Mobile-first • Offline-only • Flusso pulito • Risultato centrale
  *
  * ✅ NO GPS
  * ✅ OFFLINE-ONLY (dataset in /public/data/...)
- * ✅ Relax + Borghi collegati a:
- *    - dataset regionali (es: it-veneto-relax / it-veneto-borghi)
- *    - dataset radius (relax-radius / borghi-radius) anche fuori Italia
- * ✅ Fallback automatico: se un dataset non esiste o è vuoto, prova il prossimo
- * ✅ Alternative “load more” • Dedupe forte • Visited/Recent
- * ✅ Pulizia anti-rumore + nuova categoria Cantine (tour/visite monetizzabili)
+ * ✅ Relax + Borghi + Cantine
+ * ✅ Ovunque = MIX vero (solo mete "buone")
+ * ✅ Pulizia forte anti-spazzatura (infrastrutture/aree tecniche/parcheggi ecc.)
+ * ✅ Radius = fallback silenzioso (non mostrato come "radius-*.json" in UI)
  */
 
 (() => {
@@ -24,9 +22,9 @@
     RECENT_TTL_MS: 1000 * 60 * 60 * 20,
     RECENT_MAX: 160,
 
-    OPTIONS_POOL_MAX: 40,
-    ALTS_INITIAL: 4,
-    ALTS_PAGE: 4,
+    OPTIONS_POOL_MAX: 50,
+    ALTS_INITIAL: 6,
+    ALTS_PAGE: 6,
 
     MACROS_INDEX_URL: "/data/macros/macros_index.json",
     FALLBACK_MACRO_URLS: [
@@ -39,13 +37,14 @@
       "it-veneto": "/data/pois/regions/it-veneto.json",
       "it-veneto-relax": "/data/pois/regions/it-veneto-relax.json",
       "it-veneto-borghi": "/data/pois/regions/it-veneto-borghi.json",
+      "it-veneto-cantine": "/data/pois/regions/it-veneto-cantine.json", // se lo creerai in futuro
 
-      // radius (anche fuori Italia)
+      // radius (fallback, anche fuori Italia)
       "relax-radius": "/data/pois/regions/relax-radius.json",
       "borghi-radius": "/data/pois/regions/borghi-radius.json",
+      "cantine-radius": "/data/pois/regions/cantine-radius.json", // opzionale, se lo creerai in futuro
     },
 
-    // BBox usata solo per riconoscere "sei in Veneto?" (non per limitare i risultati)
     REGION_BBOX: {
       "it-veneto": { minLat: 44.70, maxLat: 46.70, minLon: 10.20, maxLon: 13.20 },
     },
@@ -60,12 +59,6 @@
     },
 
     CLONE_KM: 2.2,
-
-    // ✅ Mostra o no la riga "Dataset: ..."
-    SHOW_DATASET_INFO: true,
-
-    // ✅ Quando il dataset è radius, possiamo “mascherare” il nome file (così non ti infastidisce)
-    MASK_RADIUS_DATASET_LABEL: true,
   };
 
   // -------------------- STATE --------------------
@@ -77,7 +70,6 @@
 
   let MACROS_INDEX = null;
 
-  // cache dataset per "key" (orig + categoria + top candidate)
   let DATASET = { key: null, kind: null, source: null, places: [], meta: {} };
 
   let ALL_OPTIONS = [];
@@ -155,18 +147,12 @@
       .replaceAll("'", "&#039;");
   }
 
-  // Inject mini CSS
+  // Inject mini CSS (se serve in futuro)
   function injectMiniCssOnce() {
     if (document.getElementById("jamo-mini-css")) return;
     const st = document.createElement("style");
     st.id = "jamo-mini-css";
     st.textContent = `
-      .pill{border:1px solid rgba(255,255,255,.12); background:rgba(0,0,0,.25); padding:6px 10px; border-radius:999px; font-size:12px; color:rgba(255,255,255,.92); font-weight:900;}
-      .optList{display:flex; flex-direction:column; gap:10px;}
-      .optBtn{width:100%; text-align:left; border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.06); border-radius:16px; padding:12px; cursor:pointer;}
-      .optBtn.active{border-color:rgba(0,224,255,.55); background:rgba(0,224,255,.10);}
-      .actionGrid{display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:14px;}
-      .btnPrimary{border-color: rgba(0,224,255,.55)!important; background: linear-gradient(90deg, rgba(0,224,255,.22), rgba(26,255,213,.12))!important;}
       .moreBtn{width:100%; border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.04); color:#fff; border-radius:16px; padding:12px; font-weight:950; cursor:pointer;}
     `;
     document.head.appendChild(st);
@@ -209,11 +195,10 @@
     if (!aid) return googleSearchUrl(`${stableQuery(name, area)} hotel spa terme`);
     return `https://www.booking.com/searchresults.it.html?aid=${encodeURIComponent(aid)}&ss=${encodeURIComponent(`${name} ${area || ""}`)}`;
   }
-  function gygSearchUrl(name, area, extra = "") {
+  function gygSearchUrl(name, area) {
     const pid = CFG.AFFILIATE.GYG_PARTNER_ID?.trim();
-    const q = `${name} ${area || ""} ${extra || ""}`.trim();
-    if (!pid) return googleSearchUrl(`${stableQuery(name, area)} ${extra}`.trim());
-    return `https://www.getyourguide.com/s/?partner_id=${encodeURIComponent(pid)}&q=${encodeURIComponent(q)}`;
+    if (!pid) return googleSearchUrl(`${stableQuery(name, area)} biglietti prenota tour`);
+    return `https://www.getyourguide.com/s/?partner_id=${encodeURIComponent(pid)}&q=${encodeURIComponent(`${name} ${area || ""}`)}`;
   }
   function theforkSearchUrl(name, area, lat, lon) {
     const aff = CFG.AFFILIATE.THEFORK_AFFID?.trim();
@@ -509,38 +494,48 @@
     return "";
   }
 
-  // ✅ IMPORTANT: sceglie gli URL in base alla categoria
+  // ✅ Dataset order (IMPORTANT):
+  // - Relax: radius può aiutare tanto => radius prima
+  // - Borghi: radius spesso "sporco" => prima regionali, radius solo fallback
+  // - Cantine: se avrai un dataset regionale meglio; altrimenti macro/poi + eventuale radius
   function preferredDatasetUrls(origin, category) {
     const urls = [];
-
-    // 1) radius-first per relax/borghi (anche fuori Italia)
-    if (category === "relax" && CFG.REGIONAL_POIS_BY_ID["relax-radius"]) {
-      urls.push(CFG.REGIONAL_POIS_BY_ID["relax-radius"]);
-    }
-    if (category === "borghi" && CFG.REGIONAL_POIS_BY_ID["borghi-radius"]) {
-      urls.push(CFG.REGIONAL_POIS_BY_ID["borghi-radius"]);
-    }
-
-    // 2) se sei in Veneto, prova dataset regionali specifici
     const regionId = pickRegionIdFromOrigin(origin);
-    if (regionId === "it-veneto") {
-      if (category === "relax" && CFG.REGIONAL_POIS_BY_ID["it-veneto-relax"]) {
-        urls.push(CFG.REGIONAL_POIS_BY_ID["it-veneto-relax"]);
-      }
-      if (category === "borghi" && CFG.REGIONAL_POIS_BY_ID["it-veneto-borghi"]) {
-        urls.push(CFG.REGIONAL_POIS_BY_ID["it-veneto-borghi"]);
-      }
-      if (CFG.REGIONAL_POIS_BY_ID["it-veneto"]) urls.push(CFG.REGIONAL_POIS_BY_ID["it-veneto"]);
+
+    const pushIf = (id) => {
+      const u = CFG.REGIONAL_POIS_BY_ID[id];
+      if (u) urls.push(u);
+    };
+
+    if (category === "relax") {
+      pushIf("relax-radius");
     }
 
-    // 3) macro paese (se disponibile) + fallback macro
+    // regionali veneto
+    if (regionId === "it-veneto") {
+      if (category === "relax") pushIf("it-veneto-relax");
+      if (category === "borghi") pushIf("it-veneto-borghi");
+      if (category === "cantine") pushIf("it-veneto-cantine");
+      pushIf("it-veneto");
+    }
+
+    // borghi: radius SOLO dopo
+    if (category === "borghi") {
+      pushIf("borghi-radius");
+    }
+
+    // cantine: radius opzionale
+    if (category === "cantine") {
+      pushIf("cantine-radius");
+    }
+
+    // macro paese + fallback
     const cc = String(origin?.country_code || "").toUpperCase();
     const countryMacro = findCountryMacroPath(cc);
     if (countryMacro) urls.push(countryMacro);
-
     for (const u of CFG.FALLBACK_MACRO_URLS) urls.push(u);
 
-    // 4) ultimo macro salvato dall’utente
+    // ultimo macro salvato
     const savedMacro = localStorage.getItem("jamo_macro_url");
     if (savedMacro) urls.push(savedMacro);
 
@@ -578,27 +573,12 @@
       };
 
       if (!isRegional) localStorage.setItem("jamo_macro_url", url);
+
+      console.log("[JAMO] dataset loaded:", url, "places:", loaded.places.length);
       return DATASET;
     }
 
     throw new Error("Nessun dataset offline valido disponibile.");
-  }
-
-  function datasetInfoLabel() {
-    if (!CFG.SHOW_DATASET_INFO) return "";
-    const basePool = Array.isArray(DATASET?.places) ? DATASET.places : [];
-    const file = (DATASET.source || "").split("/").pop() || "—";
-
-    let shown = file;
-
-    // ✅ maschera “radius-...” perché dà fastidio e non cambia nulla per l’utente
-    if (CFG.MASK_RADIUS_DATASET_LABEL && /radius/i.test(file)) {
-      shown = "radius (esteso)";
-    }
-
-    if (DATASET.kind === "pois_region") return `POI:${shown} (${basePool.length})`;
-    if (DATASET.kind === "macro") return `MACRO:${shown} (${basePool.length})`;
-    return "—";
   }
 
   // -------------------- GEOCODING --------------------
@@ -619,8 +599,51 @@
   function placeTags(place) { return (place.tags || []).map(t => String(t).toLowerCase()); }
   function tagsStr(place) { return placeTags(place).join(" "); }
 
-  function hasAny(n, arr) {
-    for (const k of arr) if (n.includes(k)) return true;
+  function hasAny(str, arr) {
+    for (const k of arr) if (str.includes(k)) return true;
+    return false;
+  }
+
+  // ✅ Anti-spazzatura globale (vale per TUTTE le categorie)
+  function isClearlyIrrelevantPlace(place) {
+    const t = tagsStr(place);
+    const n = normName(place?.name || "");
+
+    // infrastrutture / trasporti / strade
+    if (hasAny(t, [
+      "highway=", "railway=", "public_transport=", "route=", "junction=",
+      "amenity=bus_station", "highway=bus_stop", "highway=platform"
+    ])) return true;
+
+    // parcheggi / accessi / aree tecniche
+    if (hasAny(t, [
+      "amenity=parking", "amenity=parking_entrance", "amenity=parking_space",
+      "highway=rest_area", "amenity=fuel", "amenity=charging_station"
+    ])) return true;
+
+    // industrie / capannoni / uffici / logistica
+    if (hasAny(t, [
+      "landuse=industrial", "landuse=commercial", "building=industrial",
+      "building=warehouse", "building=office", "man_made=works"
+    ])) return true;
+
+    // roba “tecnica” OSM che finisce nei dataset
+    if (hasAny(t, [
+      "man_made=survey_point", "power=", "telecom=", "pipeline=", "tower:type=",
+      "boundary=", "place=locality"
+    ])) return true;
+
+    // nomi tipici spazzatura
+    if (hasAny(n, [
+      "parcheggio", "stazione", "fermata", "area ", "intermedia", "intermedio",
+      "cabina", "impianto", "linea", "tratto", "svincolo", "uscita", "km "
+    ])) return true;
+
+    // “SpA azienda” (ma non spa terme)
+    const looksCompany = (n.endsWith(" spa") || n.includes(" s p a") || n.includes(" s.p.a") || n.includes(" azienda "));
+    const looksWellness = hasAny(n, ["terme","spa","wellness","termale","thermal"]);
+    if (looksCompany && !looksWellness) return true;
+
     return false;
   }
 
@@ -629,38 +652,15 @@
     const n = normName(place?.name || "");
     return hasAny(n, [
       "terme","termale","thermal","spa","wellness","benessere","hammam","hamam",
-      "bagno turco","sauna","piscine termali","acqua termale","idroterapia","sale"
+      "bagno turco","sauna","piscine termali","acqua termale","idroterapia"
     ]);
-  }
-
-  // Cantine keywords (nome)
-  function looksWineryByName(place) {
-    const n = normName(place?.name || "");
-    return hasAny(n, [
-      "cantina","cantine","winery","wineries","tenuta","azienda vitivinicola","vitivinicola",
-      "vigneto","vigneti","degustazione","wine tasting","enoteca","frantoio"
-    ]);
-  }
-
-  function isWineryPlace(place) {
-    const t = tagsStr(place);
-    const n = normName(place?.name || "");
-    return (
-      t.includes("craft=winery") ||
-      t.includes("tourism=wine_cellar") ||
-      t.includes("shop=wine") ||
-      t.includes("amenity=winery") ||
-      t.includes("winery") ||
-      looksWineryByName(place) ||
-      (n.includes("cantina") || n.includes("tenuta") || n.includes("winery"))
-    );
   }
 
   // Kids keywords (nome)
   function looksKidsByName(place) {
     const n = normName(place?.name || "");
     return hasAny(n, [
-      "bambin","bambini","kids","family","ragazzi","giochi","gioco","ludoteca","infanzia","junior",
+      "bambin","kids","family","ragazzi","giochi","ludoteca","infanzia","junior",
       "museo dei bambini","children","science center","planetario","acquario","zoo",
       "fattoria didattica","didattica","parco giochi","baby","bimbi"
     ]);
@@ -689,7 +689,6 @@
       n.includes("museo interattivo") ||
       n.includes("science center") ||
       n.includes("planetario") ||
-      n.includes("citta della scienza") ||
       (t.includes("tourism=museum") && (t.includes("science") || t.includes("planetarium")))
     );
   }
@@ -736,10 +735,7 @@
     );
   }
 
-  function isMuseum(place) {
-    const t = tagsStr(place);
-    return t.includes("tourism=museum");
-  }
+  function isMuseum(place) { return tagsStr(place).includes("tourism=museum"); }
 
   function isKidsMuseum(place) {
     const t = tagsStr(place);
@@ -790,7 +786,7 @@
       const n = String(place?.name || "").trim();
       if (!n || n.length < 6) return false;
       const nn = normName(n);
-      return (nn.includes("sentier") || nn.includes("cai") || nn.includes("anello") || nn.includes("trail") || nn.includes("via"));
+      return (nn.includes("sentier") || nn.includes("cai") || nn.includes("anello") || nn.includes("trail"));
     }
     return false;
   }
@@ -821,17 +817,18 @@
     );
   }
 
-  // ✅ Borgo “vero”: type=borghi/borgo o place=village/hamlet/town
+  // ✅ Borgo: più rigoroso per evitare musei/random/spazi espositivi ecc.
   function isBorgo(place) {
     const t = tagsStr(place);
     const type = normalizeType(place?.type);
-    return (
-      type === "borghi" ||
-      type === "borgo" ||
-      t.includes("place=village") ||
-      t.includes("place=hamlet") ||
-      t.includes("place=town")
-    );
+    const n = normName(place?.name || "");
+
+    const hasPlaceTag = t.includes("place=village") || t.includes("place=hamlet") || t.includes("place=suburb");
+    const hasBorgoName = n.includes("borgo") || n.includes("centro storico") || n.includes("paese") || n.includes("frazione");
+
+    // se ha type borghi/borgo va bene, ma filtriamo rumore con ulteriori blocchi altrove
+    if (type === "borghi" || type === "borgo") return true;
+    return hasPlaceTag || hasBorgoName;
   }
 
   function isCity(place) {
@@ -849,43 +846,7 @@
     return t.includes("piste:type=") || t.includes("sport=skiing") || t.includes("aerialway=");
   }
 
-  // ✅ Anti-rumore globale (vale per TUTTE le categorie)
-  function isClearlyIrrelevantPlace(place, category) {
-    const t = tagsStr(place);
-    const n = normName(place?.name || "");
-
-    // roba stradale/trasporto
-    if (t.includes("highway=") || t.includes("railway=") || t.includes("public_transport=")) return true;
-
-    // servizi non-mete (banche ecc.)
-    const hardAmenity = [
-      "amenity=bank","amenity=school","amenity=pharmacy","amenity=hospital","amenity=clinic",
-      "amenity=police","amenity=post_office","amenity=townhall","amenity=courthouse"
-    ];
-    if (hardAmenity.some(x => t.includes(x))) return true;
-
-    // industrial/commercial/office
-    if (t.includes("landuse=industrial") || t.includes("landuse=commercial")) return true;
-    if (t.includes("building=industrial") || t.includes("building=warehouse") || t.includes("building=office")) return true;
-
-    // pattern “rumore” nel nome
-    if (/^area\s+\d+$/i.test(n)) return true;           // "Area 39"
-    if (n === "intermedia" || n === "intermediamo") return true;
-
-    // parcheggi: di default li togliamo (sono rumore). Eccezione: se è relax e vicino alle terme non serve comunque.
-    if (t.includes("amenity=parking") || n.includes("parcheggio")) return true;
-
-    // nomi troppo generici
-    if (n === "meta" || n === "punto" || n === "info") return true;
-
-    // per borghi: se non è borgo, lo scartiamo qui (così non ti compaiono musei/forti/monti in borghi)
-    if (category === "borghi" && !isBorgo(place)) return true;
-
-    // NOTA: NON blocchiamo “terme/spa” perché ti servono (specialmente in relax)
-    return false;
-  }
-
-  // Escludi lodging/food solo se NON sono relax “vero” e NON sono cantine
+  // Escludi lodging/food solo se NON sono relax “vero”
   function isLodgingOrFood(place, category) {
     const t = tagsStr(place);
 
@@ -894,21 +855,19 @@
       t.includes("tourism=apartment") || t.includes("tourism=camp_site") || t.includes("tourism=caravan_site") ||
       t.includes("tourism=chalet") || t.includes("tourism=motel");
 
-    if (lodging && category === "relax") {
+    if (lodging && (category === "relax")) {
       if (isSpaPlace(place) || looksWellnessByName(place)) return false;
     }
 
-    // Cantine: spesso hanno shop=wine o simili → NON vanno escluse
-    if (category === "cantine") return false;
+    // Cantine: ristoranti OK solo se wine-related
+    if (category === "cantine" && (t.includes("amenity=restaurant") || t.includes("amenity=bar") || t.includes("amenity=cafe"))) {
+      const n = normName(place?.name || "");
+      if (hasAny(n, ["cantina","winery","wine","enoteca","degustaz"])) return false;
+    }
 
     const food =
       t.includes("amenity=restaurant") || t.includes("amenity=fast_food") || t.includes("amenity=cafe") ||
       t.includes("amenity=bar") || t.includes("amenity=pub") || t.includes("amenity=ice_cream");
-
-    // relax: ristorante/hotel “wellness” ok se spa-like
-    if ((lodging || food) && category === "relax") {
-      if (isSpaPlace(place) || looksWellnessByName(place)) return false;
-    }
 
     return lodging || food;
   }
@@ -933,6 +892,23 @@
     return !hasFamilySignal;
   }
 
+  // ✅ Cantine (monetizzabile con tour/degustazioni)
+  function isWinery(place) {
+    const t = tagsStr(place);
+    const n = normName(place?.name || "");
+
+    // Tag OSM tipici
+    if (t.includes("craft=winery")) return true;
+    if (t.includes("shop=wine")) return true;
+    if (t.includes("amenity=wine_bar")) return true;
+    if (t.includes("tourism=attraction") && t.includes("wine")) return true;
+
+    // Keyword nome
+    if (hasAny(n, ["cantina","winery","vini","vino","enoteca","degustaz","wine tasting","wine tour"])) return true;
+
+    return false;
+  }
+
   function matchesCategoryStrict(place, cat) {
     if (!cat || cat === "ovunque") return true;
 
@@ -955,10 +931,7 @@
     if (cat === "montagna") return isMountain(place);
     if (cat === "viewpoints") return isRealViewpoint(place);
     if (cat === "hiking") return isHiking(place);
-
-    if (cat === "cantine") {
-      return isWineryPlace(place);
-    }
+    if (cat === "cantine") return isWinery(place);
 
     if (cat === "family") {
       if (isLikelyFarmBusiness(place)) return false;
@@ -988,9 +961,9 @@
     }
 
     if (cat === "cantine") {
-      // relaxed: accetta anche “enoteca” o “wine bar” se c'è segnale vino
+      // relaxed: permette anche enoteche e wine bar senza craft=winery
       const n = normName(place?.name || "");
-      return isWineryPlace(place) || (t.includes("shop=wine") || n.includes("enoteca"));
+      return isWinery(place) || hasAny(n, ["enoteca","degustaz","wine bar","wine"]);
     }
 
     if (cat === "family") {
@@ -1014,6 +987,38 @@
     if (!wantChicche && !wantClassici) return true;
     if (vis === "chicca") return !!wantChicche;
     return !!wantClassici;
+  }
+
+  // ✅ Ovunque = MIX vero (solo mete sensate)
+  function matchesAnyGoodCategory(place) {
+    return (
+      isNature(place) ||
+      isRealViewpoint(place) ||
+      isHiking(place) ||
+      isMountain(place) ||
+      isSpaPlace(place) ||
+      isBorgo(place) ||
+      isCity(place) ||
+      matchesCategoryStrict(place, "storia") ||
+      matchesCategoryStrict(place, "family") ||
+      isWinery(place)
+    );
+  }
+
+  // ✅ Borghi: filtro extra per evitare “cima/monte/forte/museo/spazio espositivo”
+  function isNotBorgoNoise(place) {
+    const t = tagsStr(place);
+    const n = normName(place?.name || "");
+
+    // no musei/mostre/spazi espositivi
+    if (t.includes("tourism=museum")) return false;
+    if (hasAny(n, ["museo","spazio espositivo","galleria","mostra","ex ", "lanificio"])) return false;
+
+    // no montagna/colle/cima/forte ecc dentro borghi
+    if (hasAny(n, ["monte","cima","col ","passo","forcella","malga","rifugio","forte"])) return false;
+    if (hasAny(t, ["natural=peak","natural=saddle","tourism=alpine_hut","amenity=shelter"])) return false;
+
+    return true;
   }
 
   // -------------------- SCORING --------------------
@@ -1055,6 +1060,18 @@
     return 0;
   }
 
+  function cantineBoost(place, category) {
+    if (category !== "cantine") return 0;
+    const t = tagsStr(place);
+    const n = normName(place?.name || "");
+    let b = 0;
+    if (t.includes("craft=winery")) b += 0.18;
+    if (t.includes("shop=wine")) b += 0.10;
+    if (t.includes("amenity=wine_bar")) b += 0.06;
+    if (hasAny(n, ["degustaz","wine tasting","wine tour"])) b += 0.12;
+    return b;
+  }
+
   function widenMinutesSteps(m, category) {
     const base = clamp(Number(m) || 120, 10, 600);
     const steps = [base];
@@ -1063,7 +1080,6 @@
       category === "mare"   ? [1.20, 1.40, 1.65] :
       category === "storia" ? [1.20, 1.40, 1.60] :
       category === "natura" ? [1.20, 1.40, 1.60] :
-      category === "borghi" ? [1.20, 1.40, 1.65] :
                               [1.20, 1.40, 1.60];
 
     for (const k of muls) steps.push(clamp(Math.round(base * k), base, 600));
@@ -1075,8 +1091,7 @@
   function buildCandidatesFromPool(pool, origin, maxMinutes, category, styles, {
     ignoreVisited=false,
     ignoreRotation=false,
-    relaxedCategory=false,
-    relaxStyle=false
+    relaxedCategory=false
   } = {}) {
     const visited = getVisitedSet();
     const recentSet = getRecentSet();
@@ -1087,28 +1102,35 @@
 
     const candidates = [];
 
-    // se stiamo facendo relaxStyle, includiamo anche classici anche se l'utente ha selezionato solo chicche
-    const styleOverride = relaxStyle ? { wantChicche: true, wantClassici: true } : styles;
-
     for (const raw of pool) {
       const p = normalizePlace(raw);
       if (!p) continue;
 
       const nm = String(p.name || "").trim();
-      if (!nm || nm.length < 2 || normName(nm) === "meta") continue;
+      if (!nm || nm.length < 2) continue;
 
-      // ✅ anti-rumore globale
-      if (isClearlyIrrelevantPlace(p, category)) continue;
+      // ✅ pulizia globale
+      if (isClearlyIrrelevantPlace(p)) continue;
 
-      // fuori contesto
+      // ✅ esclude lodging/food dove non serve
       if (isLodgingOrFood(p, category)) continue;
 
-      const okCat = relaxedCategory
-        ? matchesCategoryRelaxed(p, category)
-        : matchesCategoryStrict(p, category);
-
+      // ✅ Categoria
+      let okCat = true;
+      if (category === "ovunque") {
+        okCat = matchesAnyGoodCategory(p);
+      } else {
+        okCat = relaxedCategory
+          ? matchesCategoryRelaxed(p, category)
+          : matchesCategoryStrict(p, category);
+      }
       if (!okCat) continue;
-      if (!matchesStyle(p, styleOverride)) continue;
+
+      // ✅ Borghi: filtro extra
+      if (category === "borghi" && !isNotBorgoNoise(p)) continue;
+
+      // ✅ stile
+      if (!matchesStyle(p, styles)) continue;
 
       const pid = safeIdFromPlace(p);
       if (!ignoreVisited && visited.has(pid)) continue;
@@ -1117,6 +1139,7 @@
       const driveMin = estCarMinutesFromKm(km);
       if (!Number.isFinite(driveMin) || driveMin > target) continue;
 
+      // evita roba troppo vicina
       if (km < (category === "family" ? 1.2 : 1.6)) continue;
 
       const isChicca = normalizeVisibility(p.visibility) === "chicca";
@@ -1124,6 +1147,7 @@
 
       s += familyBoost(p, category);
       s += seasonAdjust(p);
+      s += cantineBoost(p, category);
 
       if (!ignoreRotation) s -= rotationPenalty(pid, recentSet);
 
@@ -1140,17 +1164,6 @@
         if (t.includes("leisure=swimming_pool") && !isSpaPlace(p)) s -= 0.18;
       }
 
-      // CANTINE: boost se sembra “visita/tour” (website/degustazione)
-      if (category === "cantine") {
-        const t = tagsStr(p);
-        const n = normName(p.name || "");
-        if (t.includes("craft=winery")) s += 0.16;
-        if (t.includes("tourism=wine_cellar")) s += 0.14;
-        if (t.includes("shop=wine")) s += 0.10;
-        if (n.includes("degust")) s += 0.10;
-        if (t.includes("website=") || t.includes("contact:website=")) s += 0.06;
-      }
-
       candidates.push({ place: p, pid, km, driveMin, score: Number(s.toFixed(4)) });
     }
 
@@ -1159,26 +1172,16 @@
   }
 
   function pickTopOptions(pool, origin, minutes, category, styles) {
-    // 1) normale
-    let c = buildCandidatesFromPool(pool, origin, minutes, category, styles, { ignoreVisited:false, ignoreRotation:false, relaxedCategory:false, relaxStyle:false });
+    let c = buildCandidatesFromPool(pool, origin, minutes, category, styles, { ignoreVisited:false, ignoreRotation:false, relaxedCategory:false });
     if (c.length) return { list: c, usedFallback: false };
 
-    // 2) togli penalità rotazione
-    c = buildCandidatesFromPool(pool, origin, minutes, category, styles, { ignoreVisited:false, ignoreRotation:true, relaxedCategory:false, relaxStyle:false });
+    c = buildCandidatesFromPool(pool, origin, minutes, category, styles, { ignoreVisited:false, ignoreRotation:true, relaxedCategory:false });
     if (c.length) return { list: c, usedFallback: false };
 
-    // 3) categoria relaxed
-    c = buildCandidatesFromPool(pool, origin, minutes, category, styles, { ignoreVisited:false, ignoreRotation:true, relaxedCategory:true, relaxStyle:false });
+    c = buildCandidatesFromPool(pool, origin, minutes, category, styles, { ignoreVisited:false, ignoreRotation:true, relaxedCategory:true });
     if (c.length) return { list: c, usedFallback: true };
 
-    // 4) ✅ SE l’utente ha selezionato SOLO chicche e non c’è nulla, includi anche classici (fallback silenzioso)
-    if (styles?.wantChicche && !styles?.wantClassici) {
-      c = buildCandidatesFromPool(pool, origin, minutes, category, styles, { ignoreVisited:false, ignoreRotation:true, relaxedCategory:true, relaxStyle:true });
-      if (c.length) return { list: c, usedFallback: true };
-    }
-
-    // 5) ignora visited
-    c = buildCandidatesFromPool(pool, origin, minutes, category, styles, { ignoreVisited:true, ignoreRotation:true, relaxedCategory:true, relaxStyle:false });
+    c = buildCandidatesFromPool(pool, origin, minutes, category, styles, { ignoreVisited:true, ignoreRotation:true, relaxedCategory:true });
     return { list: c, usedFallback: true };
   }
 
@@ -1243,12 +1246,9 @@
 
   function shortWhatIs(place, category) {
     const t = tagsStr(place);
+    const n = normName(place?.name || "");
 
-    if (category === "cantine") return "Cantina • degustazione / visita guidata (spesso su prenotazione).";
-    if (category === "relax") return "Relax • terme/spa/sauna (spesso su prenotazione).";
-
-    if (category === "borghi") return "Borgo • centro storico, scorci e foto.";
-
+    if (category === "cantine") return "Cantina/Enoteca • degustazioni e visite (prenotazione consigliata).";
     if (category === "family") {
       if (isThemePark(place)) return "Parco divertimenti • perfetto per bambini (biglietti/orari).";
       if (isWaterPark(place)) return "Acquapark • top in stagione (orari).";
@@ -1259,6 +1259,20 @@
       if (isEducationalKids(place)) return "Luogo educativo kids • scienza/planetario/attività.";
       if (isPlaygroundOrPark(place)) return "Parco con area bimbi • easy e rilassante.";
       return "Family • attrazione adatta a bambini (verifica biglietti).";
+    }
+    if (category === "relax") return "Relax • terme/spa/sauna (spesso su prenotazione).";
+    if (category === "borghi") return "Borgo • centro storico, scorci e foto.";
+    if (category === "ovunque") {
+      if (isWinery(place)) return "Cantina/Enoteca • degustazioni e visite.";
+      if (isSpaPlace(place) || hasAny(n, ["terme","spa","wellness"])) return "Relax • terme/spa.";
+      if (matchesCategoryStrict(place,"storia")) return "Storia • castelli/musei/attrazioni.";
+      if (isNature(place)) return "Natura • lago/cascata/gola/riserva.";
+      if (isRealViewpoint(place)) return "Panorama vero • ottimo al tramonto.";
+      if (isBorgo(place)) return "Borgo • centro storico e scorci.";
+      if (isCity(place)) return "Città • centro, musei e monumenti.";
+      if (isMountain(place)) return "Montagna • meteo importante.";
+      if (isHiking(place)) return "Trekking • controlla meteo e sentiero.";
+      return "Meta consigliata in base a tempo e mix categorie.";
     }
 
     if (category === "natura") {
@@ -1276,7 +1290,7 @@
     if (category === "storia") return "Luogo storico • verifica orari/mostre.";
     if (category === "mare") return "Mare • spiaggia/marina, stagione consigliata.";
     if (category === "montagna") return "Montagna • meteo importante.";
-    if (category === "citta") return "Città • centro, musei e monumenti.";
+    if (category === "citta") return "Città • centro,Ú";
     return "Meta consigliata in base a tempo e categoria.";
   }
 
@@ -1296,13 +1310,11 @@
     const area = $("resultArea");
     if (!area) return;
 
-    const dsLine = CFG.SHOW_DATASET_INFO ? `<div class="small muted" style="margin-top:10px;">Dataset: ${escapeHtml(datasetInfo || "—")}</div>` : "";
-
     area.innerHTML = `
       <div class="card" style="box-shadow:none; border-color:rgba(255,90,90,.40); background:rgba(255,90,90,.10);">
         <div class="small">❌ Nessuna meta trovata entro <b>${maxMinutesShown} min</b> per <b>${escapeHtml(category)}</b>.</div>
         <div class="small muted" style="margin-top:6px;">Tip: aumenta minuti oppure cambia categoria/stile.</div>
-        ${dsLine}
+        <div class="small muted" style="margin-top:10px;">Dataset: ${escapeHtml(datasetInfo || "offline")}</div>
         <div class="row wraprow" style="gap:10px; margin-top:12px;">
           <button class="btnGhost" id="btnResetRotation">🧽 Reset “oggi”</button>
           <button class="btn btnPrimary" id="btnTryAgain">🎯 Riprova</button>
@@ -1383,6 +1395,19 @@
     });
   }
 
+  // ✅ Dataset label: radius “silenzioso”
+  function datasetInfoLabel(dataset, poolLen) {
+    const src = String(dataset?.source || "");
+    const file = src.split("/").pop() || "";
+    const isRadius = file.includes("radius");
+    // UI: niente filename radius
+    if (isRadius) return `POI offline (${poolLen})`;
+    // UI: file normale
+    if (dataset?.kind === "pois_region") return `POI:${file} (${poolLen})`;
+    if (dataset?.kind === "macro") return `MACRO:${file} (${poolLen})`;
+    return `offline (${poolLen})`;
+  }
+
   function renderChosenCard(origin, chosen, category, datasetInfo, usedMinutes, maxMinutesInput) {
     const area = $("resultArea");
     if (!area) return;
@@ -1404,10 +1429,6 @@
     const vis = visibilityLabel(p);
 
     const widenText = usedMinutes && usedMinutes !== maxMinutesInput ? ` • widen: ${usedMinutes} min` : "";
-
-    const dsLine = CFG.SHOW_DATASET_INFO
-      ? `<div class="small muted" style="margin-top:8px;">Dataset: ${escapeHtml(datasetInfo || "—")} • score: ${chosen.score}${escapeHtml(widenText)}</div>`
-      : `<div class="small muted" style="margin-top:8px;">score: ${chosen.score}${escapeHtml(widenText)}</div>`;
 
     area.innerHTML = `
       <div style="border-radius:18px; overflow:hidden; border:1px solid rgba(0,224,255,.18);">
@@ -1435,7 +1456,9 @@
             📍 ${escapeHtml(areaLabel)} • ${lat.toFixed(5)}, ${lon.toFixed(5)}
           </div>
 
-          ${dsLine}
+          <div class="small muted" style="margin-top:8px;">
+            Dataset: ${escapeHtml(datasetInfo || "offline")} • score: ${chosen.score}${escapeHtml(widenText)}
+          </div>
 
           <div style="margin-top:12px; font-weight:950;">Cos’è (subito chiaro)</div>
           <div class="small muted" style="margin-top:6px; line-height:1.45;">
@@ -1469,23 +1492,19 @@
       const cat = category;
       const t = tagsStr(p);
 
-      // ticketish / prenota:
-      // - family/storia
-      // - cantine (tour degustazione)
-      // - musei/attrazioni
-      const isTicketish =
-        cat === "family" || cat === "storia" || cat === "cantine" ||
-        t.includes("tourism=museum") || t.includes("tourism=theme_park") ||
-        t.includes("tourism=zoo") || t.includes("tourism=aquarium") ||
-        t.includes("tourism=attraction") || t.includes("leisure=water_park") ||
-        isWineryPlace(p);
-
+      // cantine: sempre tour/degustazioni
       if (cat === "cantine") {
-        window.open(gygSearchUrl(name, areaLabel, "tour degustazione cantina visita"), "_blank", "noopener");
+        window.open(gygSearchUrl(name, areaLabel), "_blank", "noopener");
         return;
       }
 
-      const url = isTicketish ? gygSearchUrl(name, areaLabel, "biglietti tour") : bookingSearchUrl(name, areaLabel);
+      const isTicketish =
+        cat === "family" || cat === "storia" ||
+        t.includes("tourism=museum") || t.includes("tourism=theme_park") ||
+        t.includes("tourism=zoo") || t.includes("tourism=aquarium") ||
+        t.includes("tourism=attraction") || t.includes("leisure=water_park");
+
+      const url = isTicketish ? gygSearchUrl(name, areaLabel) : bookingSearchUrl(name, areaLabel);
       window.open(url, "_blank", "noopener");
     });
 
@@ -1548,13 +1567,12 @@
       await ensureDatasetLoaded(origin, category, { signal });
 
       const basePool = Array.isArray(DATASET?.places) ? DATASET.places : [];
-      const datasetInfo = datasetInfoLabel();
+      const datasetInfo = datasetInfoLabel(DATASET, basePool.length);
 
       const steps = widenMinutesSteps(maxMinutesInput, category);
 
       let usedMinutes = steps[0];
       let usedFallback = false;
-
       let poolCandidates = [];
 
       for (const mins of steps) {
@@ -1604,7 +1622,7 @@
   function openChosen(chosen, meta = {}) {
     const origin = meta.origin || getOrigin();
     const category = meta.category || getActiveCategory();
-    const datasetInfo = meta.datasetInfo || datasetInfoLabel();
+    const datasetInfo = meta.datasetInfo || "";
     const usedMinutes = meta.usedMinutes;
     const maxMinutesInput = meta.maxMinutesInput || Number($("maxMinutes")?.value) || 120;
 
