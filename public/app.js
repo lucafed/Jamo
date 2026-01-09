@@ -5,9 +5,10 @@
  * ✅ OFFLINE-ONLY (dataset in /public/data/...)
  * ✅ Relax + Borghi collegati a:
  *    - dataset regionali (es: it-veneto-relax / it-veneto-borghi)
- *    - dataset radius (radius-relax / radius-borghi) come ESTENSIONE SILENZIOSA
+ *    - dataset radius (relax-radius / borghi-radius) anche fuori Italia
  * ✅ Fallback automatico: se un dataset non esiste o è vuoto, prova il prossimo
- * ✅ Alternative “load more” • Dedupe forte • Visited/Recent • Monetizzazione link (Google fallback)
+ * ✅ Alternative “load more” • Dedupe forte • Visited/Recent
+ * ✅ Pulizia anti-rumore + nuova categoria Cantine (tour/visite monetizzabili)
  */
 
 (() => {
@@ -39,13 +40,9 @@
       "it-veneto-relax": "/data/pois/regions/it-veneto-relax.json",
       "it-veneto-borghi": "/data/pois/regions/it-veneto-borghi.json",
 
-      // ✅ radius (nomi reali che hai in repo)
-      "radius-relax": "/data/pois/regions/radius-relax.json",
-      "radius-borghi": "/data/pois/regions/radius-borghi.json",
-
-      // compat (se in passato avevi usato questi id)
-      "relax-radius": "/data/pois/regions/radius-relax.json",
-      "borghi-radius": "/data/pois/regions/radius-borghi.json",
+      // radius (anche fuori Italia)
+      "relax-radius": "/data/pois/regions/relax-radius.json",
+      "borghi-radius": "/data/pois/regions/borghi-radius.json",
     },
 
     // BBox usata solo per riconoscere "sei in Veneto?" (non per limitare i risultati)
@@ -64,8 +61,11 @@
 
     CLONE_KM: 2.2,
 
-    // Limite hard per non esplodere memoria
-    MAX_MERGED_PLACES: 45000,
+    // ✅ Mostra o no la riga "Dataset: ..."
+    SHOW_DATASET_INFO: true,
+
+    // ✅ Quando il dataset è radius, possiamo “mascherare” il nome file (così non ti infastidisce)
+    MASK_RADIUS_DATASET_LABEL: true,
   };
 
   // -------------------- STATE --------------------
@@ -77,14 +77,8 @@
 
   let MACROS_INDEX = null;
 
-  // dataset merged
-  let DATASET = {
-    key: null,
-    kind: "merged",
-    sources: [],
-    places: [],
-    meta: {}
-  };
+  // cache dataset per "key" (orig + categoria + top candidate)
+  let DATASET = { key: null, kind: null, source: null, places: [], meta: {} };
 
   let ALL_OPTIONS = [];
   let VISIBLE_ALTS = 0;
@@ -215,10 +209,11 @@
     if (!aid) return googleSearchUrl(`${stableQuery(name, area)} hotel spa terme`);
     return `https://www.booking.com/searchresults.it.html?aid=${encodeURIComponent(aid)}&ss=${encodeURIComponent(`${name} ${area || ""}`)}`;
   }
-  function gygSearchUrl(name, area) {
+  function gygSearchUrl(name, area, extra = "") {
     const pid = CFG.AFFILIATE.GYG_PARTNER_ID?.trim();
-    if (!pid) return googleSearchUrl(`${stableQuery(name, area)} biglietti prenota`);
-    return `https://www.getyourguide.com/s/?partner_id=${encodeURIComponent(pid)}&q=${encodeURIComponent(`${name} ${area || ""}`)}`;
+    const q = `${name} ${area || ""} ${extra || ""}`.trim();
+    if (!pid) return googleSearchUrl(`${stableQuery(name, area)} ${extra}`.trim());
+    return `https://www.getyourguide.com/s/?partner_id=${encodeURIComponent(pid)}&q=${encodeURIComponent(q)}`;
   }
   function theforkSearchUrl(name, area, lat, lon) {
     const aff = CFG.AFFILIATE.THEFORK_AFFID?.trim();
@@ -441,7 +436,7 @@
     return s;
   }
 
-  function normalizePlace(p, sourceUrl = "") {
+  function normalizePlace(p) {
     if (!p) return null;
     const lat = Number(p.lat);
     const lon = Number(p.lon ?? p.lng);
@@ -454,10 +449,6 @@
 
     out.type = normalizeType(out.type || out.primary_category || out.category || "");
     out.visibility = normalizeVisibility(out.visibility);
-
-    out._visMissing = (p.visibility == null);
-    out._src = String(sourceUrl || "");
-    out._isRadius = out._src.includes("radius-");
 
     out.tags = Array.isArray(out.tags) ? out.tags.map(x => String(x).toLowerCase()) : [];
     out.country = String(out.country || "").toUpperCase();
@@ -483,10 +474,10 @@
       const placesRaw = Array.isArray(j?.places) ? j.places : null;
       if (!placesRaw || !placesRaw.length) return null;
 
-      const places = placesRaw.map(x => normalizePlace(x, url)).filter(Boolean);
+      const places = placesRaw.map(normalizePlace).filter(Boolean);
       if (!places.length) return null;
 
-      return { url, json: j, places };
+      return { json: j, places };
     } catch {
       return null;
     }
@@ -518,29 +509,38 @@
     return "";
   }
 
-  // ✅ Ordine nuovo: prima regionali (curati), poi radius come estensione silenziosa, poi macro
+  // ✅ IMPORTANT: sceglie gli URL in base alla categoria
   function preferredDatasetUrls(origin, category) {
     const urls = [];
-    const regionId = pickRegionIdFromOrigin(origin);
 
-    // 1) regionali specifici (curati)
-    if (regionId === "it-veneto") {
-      if (category === "relax" && CFG.REGIONAL_POIS_BY_ID["it-veneto-relax"]) urls.push(CFG.REGIONAL_POIS_BY_ID["it-veneto-relax"]);
-      if (category === "borghi" && CFG.REGIONAL_POIS_BY_ID["it-veneto-borghi"]) urls.push(CFG.REGIONAL_POIS_BY_ID["it-veneto-borghi"]);
-      if (CFG.REGIONAL_POIS_BY_ID["it-veneto"]) urls.push(CFG.REGIONAL_POIS_BY_ID["it-veneto"]); // generalista
+    // 1) radius-first per relax/borghi (anche fuori Italia)
+    if (category === "relax" && CFG.REGIONAL_POIS_BY_ID["relax-radius"]) {
+      urls.push(CFG.REGIONAL_POIS_BY_ID["relax-radius"]);
+    }
+    if (category === "borghi" && CFG.REGIONAL_POIS_BY_ID["borghi-radius"]) {
+      urls.push(CFG.REGIONAL_POIS_BY_ID["borghi-radius"]);
     }
 
-    // 2) radius come estensione (anche fuori Italia)
-    if (category === "relax" && CFG.REGIONAL_POIS_BY_ID["radius-relax"]) urls.push(CFG.REGIONAL_POIS_BY_ID["radius-relax"]);
-    if (category === "borghi" && CFG.REGIONAL_POIS_BY_ID["radius-borghi"]) urls.push(CFG.REGIONAL_POIS_BY_ID["radius-borghi"]);
+    // 2) se sei in Veneto, prova dataset regionali specifici
+    const regionId = pickRegionIdFromOrigin(origin);
+    if (regionId === "it-veneto") {
+      if (category === "relax" && CFG.REGIONAL_POIS_BY_ID["it-veneto-relax"]) {
+        urls.push(CFG.REGIONAL_POIS_BY_ID["it-veneto-relax"]);
+      }
+      if (category === "borghi" && CFG.REGIONAL_POIS_BY_ID["it-veneto-borghi"]) {
+        urls.push(CFG.REGIONAL_POIS_BY_ID["it-veneto-borghi"]);
+      }
+      if (CFG.REGIONAL_POIS_BY_ID["it-veneto"]) urls.push(CFG.REGIONAL_POIS_BY_ID["it-veneto"]);
+    }
 
-    // 3) macro paese + fallback macro
+    // 3) macro paese (se disponibile) + fallback macro
     const cc = String(origin?.country_code || "").toUpperCase();
     const countryMacro = findCountryMacroPath(cc);
     if (countryMacro) urls.push(countryMacro);
 
     for (const u of CFG.FALLBACK_MACRO_URLS) urls.push(u);
 
+    // 4) ultimo macro salvato dall’utente
     const savedMacro = localStorage.getItem("jamo_macro_url");
     if (savedMacro) urls.push(savedMacro);
 
@@ -556,63 +556,49 @@
     return out;
   }
 
-  function datasetInfoLabel(sources, totalCount, origin) {
-    const names = (sources || []).map(s => String(s || "").split("/").pop()).filter(Boolean);
-
-    const hasVeneto = names.some(n => n.startsWith("it-veneto"));
-    const hasRadius = names.some(n => n.startsWith("radius-"));
-
-    if (hasVeneto && hasRadius) return `POI: Veneto (+ estensione raggio) (${totalCount})`;
-    if (hasVeneto) return `POI: Veneto (${totalCount})`;
-    if (hasRadius) return `POI: raggio esteso (${totalCount})`;
-    if (names.length) return `DATA: ${names[0]} (${totalCount})`;
-    return `—`;
-  }
-
   async function ensureDatasetLoaded(origin, category, { signal } = {}) {
     await loadMacrosIndexSafe(signal);
 
     const preferred = preferredDatasetUrls(origin, category);
-    const key = `${origin?.lat?.toFixed?.(3) || "x"}|${origin?.lon?.toFixed?.(3) || "y"}|${String(category || "ovunque")}|${preferred.join(",")}`;
+    const key = `${origin?.lat?.toFixed?.(3) || "x"}|${origin?.lon?.toFixed?.(3) || "y"}|${String(category || "ovunque")}|${preferred[0] || "none"}`;
 
     if (DATASET?.places?.length && DATASET.key === key) return DATASET;
-
-    const merged = [];
-    const sourcesOk = [];
-    const seenPid = new Set();
 
     for (const url of preferred) {
       const loaded = await tryLoadPlacesFile(url, signal);
       if (!loaded) continue;
 
-      sourcesOk.push(url);
-
-      for (const p of loaded.places) {
-        const pid = safeIdFromPlace(p);
-        if (seenPid.has(pid)) continue;
-        seenPid.add(pid);
-        merged.push(p);
-        if (merged.length >= CFG.MAX_MERGED_PLACES) break;
-      }
-
-      // Se abbiamo già tanto materiale da regionali, va bene: ma teniamo radius/macro comunque già dentro in modo “silenzioso”
-      if (merged.length >= CFG.MAX_MERGED_PLACES) break;
-
       const isRegional = url.includes("/data/pois/regions/");
+      DATASET = {
+        key,
+        kind: isRegional ? "pois_region" : "macro",
+        source: url,
+        places: loaded.places,
+        meta: { raw: loaded.json, cc: String(origin?.country_code || "").toUpperCase() },
+      };
+
       if (!isRegional) localStorage.setItem("jamo_macro_url", url);
+      return DATASET;
     }
 
-    if (!merged.length) throw new Error("Nessun dataset offline valido disponibile.");
+    throw new Error("Nessun dataset offline valido disponibile.");
+  }
 
-    DATASET = {
-      key,
-      kind: "merged",
-      sources: sourcesOk,
-      places: merged,
-      meta: { cc: String(origin?.country_code || "").toUpperCase() },
-    };
+  function datasetInfoLabel() {
+    if (!CFG.SHOW_DATASET_INFO) return "";
+    const basePool = Array.isArray(DATASET?.places) ? DATASET.places : [];
+    const file = (DATASET.source || "").split("/").pop() || "—";
 
-    return DATASET;
+    let shown = file;
+
+    // ✅ maschera “radius-...” perché dà fastidio e non cambia nulla per l’utente
+    if (CFG.MASK_RADIUS_DATASET_LABEL && /radius/i.test(file)) {
+      shown = "radius (esteso)";
+    }
+
+    if (DATASET.kind === "pois_region") return `POI:${shown} (${basePool.length})`;
+    if (DATASET.kind === "macro") return `MACRO:${shown} (${basePool.length})`;
+    return "—";
   }
 
   // -------------------- GEOCODING --------------------
@@ -638,14 +624,39 @@
     return false;
   }
 
+  // Relax keywords (nome)
   function looksWellnessByName(place) {
     const n = normName(place?.name || "");
     return hasAny(n, [
       "terme","termale","thermal","spa","wellness","benessere","hammam","hamam",
-      "bagno turco","sauna","piscine termali","acqua termale","idroterapia"
+      "bagno turco","sauna","piscine termali","acqua termale","idroterapia","sale"
     ]);
   }
 
+  // Cantine keywords (nome)
+  function looksWineryByName(place) {
+    const n = normName(place?.name || "");
+    return hasAny(n, [
+      "cantina","cantine","winery","wineries","tenuta","azienda vitivinicola","vitivinicola",
+      "vigneto","vigneti","degustazione","wine tasting","enoteca","frantoio"
+    ]);
+  }
+
+  function isWineryPlace(place) {
+    const t = tagsStr(place);
+    const n = normName(place?.name || "");
+    return (
+      t.includes("craft=winery") ||
+      t.includes("tourism=wine_cellar") ||
+      t.includes("shop=wine") ||
+      t.includes("amenity=winery") ||
+      t.includes("winery") ||
+      looksWineryByName(place) ||
+      (n.includes("cantina") || n.includes("tenuta") || n.includes("winery"))
+    );
+  }
+
+  // Kids keywords (nome)
   function looksKidsByName(place) {
     const n = normName(place?.name || "");
     return hasAny(n, [
@@ -683,6 +694,7 @@
     );
   }
 
+  // Relax: tag + keyword (non troppo stretto)
   function isSpaPlace(place) {
     const t = tagsStr(place);
     const nm = normName(place?.name || "");
@@ -809,39 +821,17 @@
     );
   }
 
-  // ✅ BORGO più pulito: deve essere un “place=…” O un centro abitato, non un museo/monte/forte random
+  // ✅ Borgo “vero”: type=borghi/borgo o place=village/hamlet/town
   function isBorgo(place) {
     const t = tagsStr(place);
     const type = normalizeType(place?.type);
-    const n = normName(place?.name || "");
-
-    const isSettlement =
-      t.includes("place=village") || t.includes("place=hamlet") || t.includes("place=town") ||
-      t.includes("place=suburb") || t.includes("place=neighbourhood");
-
-    const isCuratedBorgoType = (type === "borghi" || type === "borgo");
-
-    // stop words tipiche “non borgo”
-    const looksMountainWord = hasAny(n, [
-      "monte ", "cima ", "passo ", "forcella ", "col ", "coston ", "malga ", "bivacco ",
-      "galleria ", "abisso ", "grotta ", "bus del ", "conca ", "val ", "vallon ", "rifugio "
-    ]);
-
-    const isClearlyPOI =
-      t.includes("tourism=museum") ||
-      t.includes("amenity=theatre") ||
-      t.includes("amenity=cinema") ||
-      t.includes("tourism=gallery") ||
-      t.includes("amenity=library") ||
-      t.includes("leisure=sports_centre") ||
-      t.includes("historic=fort") || t.includes("historic=castle") || t.includes("historic=ruins") ||
-      t.includes("natural=peak") || t.includes("natural=saddle") || t.includes("natural=cave_entrance");
-
-    // Accetto “borgo” se è un insediamento o se è curato come borgo MA non sembra montagna/POI
-    if (isSettlement) return !looksMountainWord; // settlement vince
-    if (isCuratedBorgoType) return !looksMountainWord && !isClearlyPOI;
-
-    return false;
+    return (
+      type === "borghi" ||
+      type === "borgo" ||
+      t.includes("place=village") ||
+      t.includes("place=hamlet") ||
+      t.includes("place=town")
+    );
   }
 
   function isCity(place) {
@@ -859,6 +849,43 @@
     return t.includes("piste:type=") || t.includes("sport=skiing") || t.includes("aerialway=");
   }
 
+  // ✅ Anti-rumore globale (vale per TUTTE le categorie)
+  function isClearlyIrrelevantPlace(place, category) {
+    const t = tagsStr(place);
+    const n = normName(place?.name || "");
+
+    // roba stradale/trasporto
+    if (t.includes("highway=") || t.includes("railway=") || t.includes("public_transport=")) return true;
+
+    // servizi non-mete (banche ecc.)
+    const hardAmenity = [
+      "amenity=bank","amenity=school","amenity=pharmacy","amenity=hospital","amenity=clinic",
+      "amenity=police","amenity=post_office","amenity=townhall","amenity=courthouse"
+    ];
+    if (hardAmenity.some(x => t.includes(x))) return true;
+
+    // industrial/commercial/office
+    if (t.includes("landuse=industrial") || t.includes("landuse=commercial")) return true;
+    if (t.includes("building=industrial") || t.includes("building=warehouse") || t.includes("building=office")) return true;
+
+    // pattern “rumore” nel nome
+    if (/^area\s+\d+$/i.test(n)) return true;           // "Area 39"
+    if (n === "intermedia" || n === "intermediamo") return true;
+
+    // parcheggi: di default li togliamo (sono rumore). Eccezione: se è relax e vicino alle terme non serve comunque.
+    if (t.includes("amenity=parking") || n.includes("parcheggio")) return true;
+
+    // nomi troppo generici
+    if (n === "meta" || n === "punto" || n === "info") return true;
+
+    // per borghi: se non è borgo, lo scartiamo qui (così non ti compaiono musei/forti/monti in borghi)
+    if (category === "borghi" && !isBorgo(place)) return true;
+
+    // NOTA: NON blocchiamo “terme/spa” perché ti servono (specialmente in relax)
+    return false;
+  }
+
+  // Escludi lodging/food solo se NON sono relax “vero” e NON sono cantine
   function isLodgingOrFood(place, category) {
     const t = tagsStr(place);
 
@@ -871,9 +898,17 @@
       if (isSpaPlace(place) || looksWellnessByName(place)) return false;
     }
 
+    // Cantine: spesso hanno shop=wine o simili → NON vanno escluse
+    if (category === "cantine") return false;
+
     const food =
       t.includes("amenity=restaurant") || t.includes("amenity=fast_food") || t.includes("amenity=cafe") ||
       t.includes("amenity=bar") || t.includes("amenity=pub") || t.includes("amenity=ice_cream");
+
+    // relax: ristorante/hotel “wellness” ok se spa-like
+    if ((lodging || food) && category === "relax") {
+      if (isSpaPlace(place) || looksWellnessByName(place)) return false;
+    }
 
     return lodging || food;
   }
@@ -921,6 +956,10 @@
     if (cat === "viewpoints") return isRealViewpoint(place);
     if (cat === "hiking") return isHiking(place);
 
+    if (cat === "cantine") {
+      return isWineryPlace(place);
+    }
+
     if (cat === "family") {
       if (isLikelyFarmBusiness(place)) return false;
       return (
@@ -948,6 +987,12 @@
       return isSpaPlace(place) || t.includes("leisure=swimming_pool") || t.includes("leisure=swimming_area");
     }
 
+    if (cat === "cantine") {
+      // relaxed: accetta anche “enoteca” o “wine bar” se c'è segnale vino
+      const n = normName(place?.name || "");
+      return isWineryPlace(place) || (t.includes("shop=wine") || n.includes("enoteca"));
+    }
+
     if (cat === "family") {
       if (isLikelyFarmBusiness(place)) return false;
       return (
@@ -964,16 +1009,9 @@
     return matchesCategoryStrict(place, cat);
   }
 
-  // ✅ STILE: radius non ha chicche/classici → lo facciamo passare come estensione SILENZIOSA
   function matchesStyle(place, { wantChicche, wantClassici }) {
-    if (!wantChicche && !wantClassici) return true;
-
-    // se il place arriva da radius o non aveva visibility, non bloccare mai (ma verrà mostrato come "classica")
-    if (place?._visMissing || place?._isRadius) {
-      return true;
-    }
-
     const vis = normalizeVisibility(place?.visibility);
+    if (!wantChicche && !wantClassici) return true;
     if (vis === "chicca") return !!wantChicche;
     return !!wantClassici;
   }
@@ -1025,6 +1063,7 @@
       category === "mare"   ? [1.20, 1.40, 1.65] :
       category === "storia" ? [1.20, 1.40, 1.60] :
       category === "natura" ? [1.20, 1.40, 1.60] :
+      category === "borghi" ? [1.20, 1.40, 1.65] :
                               [1.20, 1.40, 1.60];
 
     for (const k of muls) steps.push(clamp(Math.round(base * k), base, 600));
@@ -1036,7 +1075,8 @@
   function buildCandidatesFromPool(pool, origin, maxMinutes, category, styles, {
     ignoreVisited=false,
     ignoreRotation=false,
-    relaxedCategory=false
+    relaxedCategory=false,
+    relaxStyle=false
   } = {}) {
     const visited = getVisitedSet();
     const recentSet = getRecentSet();
@@ -1047,13 +1087,20 @@
 
     const candidates = [];
 
+    // se stiamo facendo relaxStyle, includiamo anche classici anche se l'utente ha selezionato solo chicche
+    const styleOverride = relaxStyle ? { wantChicche: true, wantClassici: true } : styles;
+
     for (const raw of pool) {
-      const p = raw; // già normalizzato in ensureDatasetLoaded
+      const p = normalizePlace(raw);
       if (!p) continue;
 
       const nm = String(p.name || "").trim();
       if (!nm || nm.length < 2 || normName(nm) === "meta") continue;
 
+      // ✅ anti-rumore globale
+      if (isClearlyIrrelevantPlace(p, category)) continue;
+
+      // fuori contesto
       if (isLodgingOrFood(p, category)) continue;
 
       const okCat = relaxedCategory
@@ -1061,7 +1108,7 @@
         : matchesCategoryStrict(p, category);
 
       if (!okCat) continue;
-      if (!matchesStyle(p, styles)) continue;
+      if (!matchesStyle(p, styleOverride)) continue;
 
       const pid = safeIdFromPlace(p);
       if (!ignoreVisited && visited.has(pid)) continue;
@@ -1072,7 +1119,7 @@
 
       if (km < (category === "family" ? 1.2 : 1.6)) continue;
 
-      const isChicca = normalizeVisibility(p.visibility) === "chicca" && !p._visMissing && !p._isRadius;
+      const isChicca = normalizeVisibility(p.visibility) === "chicca";
       let s = baseScorePlace({ driveMin, targetMin: target, beautyScore: p.beauty_score, isChicca });
 
       s += familyBoost(p, category);
@@ -1080,7 +1127,7 @@
 
       if (!ignoreRotation) s -= rotationPenalty(pid, recentSet);
 
-      // RELAX: boost segnali veri, ma senza “uccidere” risultati
+      // RELAX: boost segnali veri
       if (category === "relax") {
         const t = tagsStr(p);
         if (t.includes("natural=hot_spring")) s += 0.18;
@@ -1089,19 +1136,22 @@
         if (t.includes("amenity=sauna") || t.includes("leisure=sauna") || t.includes("healthcare=sauna")) s += 0.10;
         if (looksWellnessByName(p)) s += 0.08;
 
+        // piscina non spa-like: penalità leggera
         if (t.includes("leisure=swimming_pool") && !isSpaPlace(p)) s -= 0.18;
       }
 
-      // Radius = estensione → leggerissima penalità per preferire curated quando disponibili
-      if (p._isRadius) s -= 0.03;
+      // CANTINE: boost se sembra “visita/tour” (website/degustazione)
+      if (category === "cantine") {
+        const t = tagsStr(p);
+        const n = normName(p.name || "");
+        if (t.includes("craft=winery")) s += 0.16;
+        if (t.includes("tourism=wine_cellar")) s += 0.14;
+        if (t.includes("shop=wine")) s += 0.10;
+        if (n.includes("degust")) s += 0.10;
+        if (t.includes("website=") || t.includes("contact:website=")) s += 0.06;
+      }
 
-      candidates.push({
-        place: p,
-        pid,
-        km,
-        driveMin,
-        score: Number(s.toFixed(4))
-      });
+      candidates.push({ place: p, pid, km, driveMin, score: Number(s.toFixed(4)) });
     }
 
     candidates.sort((a, b) => (b.score - a.score) || (a.driveMin - b.driveMin));
@@ -1109,16 +1159,26 @@
   }
 
   function pickTopOptions(pool, origin, minutes, category, styles) {
-    let c = buildCandidatesFromPool(pool, origin, minutes, category, styles, { ignoreVisited:false, ignoreRotation:false, relaxedCategory:false });
+    // 1) normale
+    let c = buildCandidatesFromPool(pool, origin, minutes, category, styles, { ignoreVisited:false, ignoreRotation:false, relaxedCategory:false, relaxStyle:false });
     if (c.length) return { list: c, usedFallback: false };
 
-    c = buildCandidatesFromPool(pool, origin, minutes, category, styles, { ignoreVisited:false, ignoreRotation:true, relaxedCategory:false });
+    // 2) togli penalità rotazione
+    c = buildCandidatesFromPool(pool, origin, minutes, category, styles, { ignoreVisited:false, ignoreRotation:true, relaxedCategory:false, relaxStyle:false });
     if (c.length) return { list: c, usedFallback: false };
 
-    c = buildCandidatesFromPool(pool, origin, minutes, category, styles, { ignoreVisited:false, ignoreRotation:true, relaxedCategory:true });
+    // 3) categoria relaxed
+    c = buildCandidatesFromPool(pool, origin, minutes, category, styles, { ignoreVisited:false, ignoreRotation:true, relaxedCategory:true, relaxStyle:false });
     if (c.length) return { list: c, usedFallback: true };
 
-    c = buildCandidatesFromPool(pool, origin, minutes, category, styles, { ignoreVisited:true, ignoreRotation:true, relaxedCategory:true });
+    // 4) ✅ SE l’utente ha selezionato SOLO chicche e non c’è nulla, includi anche classici (fallback silenzioso)
+    if (styles?.wantChicche && !styles?.wantClassici) {
+      c = buildCandidatesFromPool(pool, origin, minutes, category, styles, { ignoreVisited:false, ignoreRotation:true, relaxedCategory:true, relaxStyle:true });
+      if (c.length) return { list: c, usedFallback: true };
+    }
+
+    // 5) ignora visited
+    c = buildCandidatesFromPool(pool, origin, minutes, category, styles, { ignoreVisited:true, ignoreRotation:true, relaxedCategory:true, relaxStyle:false });
     return { list: c, usedFallback: true };
   }
 
@@ -1169,6 +1229,7 @@
       relax:  { emoji:"🧖", label:"Relax" },
       borghi: { emoji:"🏘️", label:"Borghi" },
       citta:  { emoji:"🏙️", label:"Città" },
+      cantine:{ emoji:"🍷", label:"Cantine" },
       viewpoints:{ emoji:"🌅", label:"Panorami" },
       hiking:{ emoji:"🥾", label:"Trekking" },
       ovunque:{ emoji:"🎲", label:"Meta" },
@@ -1177,13 +1238,16 @@
   }
 
   function visibilityLabel(place) {
-    // radius/non-curato => classica
-    if (place?._visMissing || place?._isRadius) return "✅ classica";
     return normalizeVisibility(place?.visibility) === "chicca" ? "✨ chicca" : "✅ classica";
   }
 
   function shortWhatIs(place, category) {
     const t = tagsStr(place);
+
+    if (category === "cantine") return "Cantina • degustazione / visita guidata (spesso su prenotazione).";
+    if (category === "relax") return "Relax • terme/spa/sauna (spesso su prenotazione).";
+
+    if (category === "borghi") return "Borgo • centro storico, scorci e foto.";
 
     if (category === "family") {
       if (isThemePark(place)) return "Parco divertimenti • perfetto per bambini (biglietti/orari).";
@@ -1196,8 +1260,6 @@
       if (isPlaygroundOrPark(place)) return "Parco con area bimbi • easy e rilassante.";
       return "Family • attrazione adatta a bambini (verifica biglietti).";
     }
-
-    if (category === "relax") return "Relax • terme/spa/sauna (spesso su prenotazione).";
 
     if (category === "natura") {
       if (t.includes("natural=waterfall")) return "Cascata • ideale per foto e passeggiata.";
@@ -1214,7 +1276,6 @@
     if (category === "storia") return "Luogo storico • verifica orari/mostre.";
     if (category === "mare") return "Mare • spiaggia/marina, stagione consigliata.";
     if (category === "montagna") return "Montagna • meteo importante.";
-    if (category === "borghi") return "Borgo • centro storico, scorci e foto.";
     if (category === "citta") return "Città • centro, musei e monumenti.";
     return "Meta consigliata in base a tempo e categoria.";
   }
@@ -1235,11 +1296,13 @@
     const area = $("resultArea");
     if (!area) return;
 
+    const dsLine = CFG.SHOW_DATASET_INFO ? `<div class="small muted" style="margin-top:10px;">Dataset: ${escapeHtml(datasetInfo || "—")}</div>` : "";
+
     area.innerHTML = `
       <div class="card" style="box-shadow:none; border-color:rgba(255,90,90,.40); background:rgba(255,90,90,.10);">
         <div class="small">❌ Nessuna meta trovata entro <b>${maxMinutesShown} min</b> per <b>${escapeHtml(category)}</b>.</div>
         <div class="small muted" style="margin-top:6px;">Tip: aumenta minuti oppure cambia categoria/stile.</div>
-        <div class="small muted" style="margin-top:10px;">Dataset: ${escapeHtml(datasetInfo || "—")}</div>
+        ${dsLine}
         <div class="row wraprow" style="gap:10px; margin-top:12px;">
           <button class="btnGhost" id="btnResetRotation">🧽 Reset “oggi”</button>
           <button class="btn btnPrimary" id="btnTryAgain">🎯 Riprova</button>
@@ -1342,6 +1405,10 @@
 
     const widenText = usedMinutes && usedMinutes !== maxMinutesInput ? ` • widen: ${usedMinutes} min` : "";
 
+    const dsLine = CFG.SHOW_DATASET_INFO
+      ? `<div class="small muted" style="margin-top:8px;">Dataset: ${escapeHtml(datasetInfo || "—")} • score: ${chosen.score}${escapeHtml(widenText)}</div>`
+      : `<div class="small muted" style="margin-top:8px;">score: ${chosen.score}${escapeHtml(widenText)}</div>`;
+
     area.innerHTML = `
       <div style="border-radius:18px; overflow:hidden; border:1px solid rgba(0,224,255,.18);">
         <div style="position:relative; width:100%; aspect-ratio: 2 / 1; border-bottom:1px solid rgba(255,255,255,.10);">
@@ -1368,9 +1435,7 @@
             📍 ${escapeHtml(areaLabel)} • ${lat.toFixed(5)}, ${lon.toFixed(5)}
           </div>
 
-          <div class="small muted" style="margin-top:8px;">
-            Dataset: ${escapeHtml(datasetInfo || "—")} • score: ${chosen.score}${escapeHtml(widenText)}
-          </div>
+          ${dsLine}
 
           <div style="margin-top:12px; font-weight:950;">Cos’è (subito chiaro)</div>
           <div class="small muted" style="margin-top:6px; line-height:1.45;">
@@ -1403,13 +1468,24 @@
     $("btnBook")?.addEventListener("click", () => {
       const cat = category;
       const t = tagsStr(p);
+
+      // ticketish / prenota:
+      // - family/storia
+      // - cantine (tour degustazione)
+      // - musei/attrazioni
       const isTicketish =
-        cat === "family" || cat === "storia" ||
+        cat === "family" || cat === "storia" || cat === "cantine" ||
         t.includes("tourism=museum") || t.includes("tourism=theme_park") ||
         t.includes("tourism=zoo") || t.includes("tourism=aquarium") ||
-        t.includes("tourism=attraction") || t.includes("leisure=water_park");
+        t.includes("tourism=attraction") || t.includes("leisure=water_park") ||
+        isWineryPlace(p);
 
-      const url = isTicketish ? gygSearchUrl(name, areaLabel) : bookingSearchUrl(name, areaLabel);
+      if (cat === "cantine") {
+        window.open(gygSearchUrl(name, areaLabel, "tour degustazione cantina visita"), "_blank", "noopener");
+        return;
+      }
+
+      const url = isTicketish ? gygSearchUrl(name, areaLabel, "biglietti tour") : bookingSearchUrl(name, areaLabel);
       window.open(url, "_blank", "noopener");
     });
 
@@ -1472,7 +1548,7 @@
       await ensureDatasetLoaded(origin, category, { signal });
 
       const basePool = Array.isArray(DATASET?.places) ? DATASET.places : [];
-      const datasetInfo = datasetInfoLabel(DATASET.sources, basePool.length, origin);
+      const datasetInfo = datasetInfoLabel();
 
       const steps = widenMinutesSteps(maxMinutesInput, category);
 
@@ -1488,6 +1564,7 @@
         usedFallback = !!res.usedFallback;
 
         poolCandidates = dedupeDiverse(res.list);
+
         if (forbidPid) poolCandidates = poolCandidates.filter(x => x.pid !== forbidPid);
 
         if (poolCandidates.length) break;
@@ -1527,7 +1604,7 @@
   function openChosen(chosen, meta = {}) {
     const origin = meta.origin || getOrigin();
     const category = meta.category || getActiveCategory();
-    const datasetInfo = meta.datasetInfo || datasetInfoLabel(DATASET.sources, DATASET?.places?.length || 0, origin);
+    const datasetInfo = meta.datasetInfo || datasetInfoLabel();
     const usedMinutes = meta.usedMinutes;
     const maxMinutesInput = meta.maxMinutesInput || Number($("maxMinutes")?.value) || 120;
 
@@ -1559,7 +1636,7 @@
         setOrigin({ label: result.label || label, lat: result.lat, lon: result.lon, country_code: result.country_code || "" });
 
         showStatus("ok", "Partenza impostata ✅ Ora scegli categoria/stile e premi CERCA.");
-        DATASET = { key: null, kind: "merged", sources: [], places: [], meta: {} };
+        DATASET = { key: null, kind: null, source: null, places: [], meta: {} };
 
         scrollToId("searchCard");
       } catch (e) {
