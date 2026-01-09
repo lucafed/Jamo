@@ -8,33 +8,30 @@ const OVERPASS_ENDPOINTS = [
 ];
 
 function sleep(ms) {
-  return new Promise((r) => setTimeout(r, ms));
+  return new Promise(r => setTimeout(r, ms));
 }
 
 async function fetchWithTimeout(url, opts = {}, timeoutMs = 120000) {
   const controller = new AbortController();
   const t = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    const res = await fetch(url, { ...opts, signal: controller.signal });
-    return res;
+    return await fetch(url, { ...opts, signal: controller.signal });
   } finally {
     clearTimeout(t);
   }
 }
 
-/**
- * Query Overpass con retry + rotazione endpoint (anti 504).
- */
 export async function overpass(query, {
   retries = 6,
   timeoutMs = 120000,
-  backoffBaseMs = 1500,
+  backoffBaseMs = 2000,
 } = {}) {
-  let lastErr = null;
 
-  for (let attempt = 0; attempt <= retries; attempt++) {
-    const endpoint = OVERPASS_ENDPOINTS[attempt % OVERPASS_ENDPOINTS.length];
-    const wait = backoffBaseMs * Math.pow(1.6, attempt);
+  let lastError = null;
+
+  for (let i = 0; i <= retries; i++) {
+    const endpoint = OVERPASS_ENDPOINTS[i % OVERPASS_ENDPOINTS.length];
+    const wait = backoffBaseMs * Math.pow(1.5, i);
 
     try {
       const res = await fetchWithTimeout(endpoint, {
@@ -43,43 +40,41 @@ export async function overpass(query, {
         body: "data=" + encodeURIComponent(query),
       }, timeoutMs);
 
-      if (!res.ok) {
-        const txt = await res.text().catch(() => "");
-        // 429 / 504 tipici: ritenta
-        const retryable = [429, 502, 503, 504].includes(res.status);
-        const msg = `Overpass HTTP ${res.status} @ ${endpoint} :: ${txt.slice(0, 200)}`;
-        if (!retryable) throw new Error(msg);
-        throw new Error(msg);
+      const text = await res.text();
+
+      // ❗ Overpass a volte risponde HTML/XML
+      if (
+        text.trim().startsWith("<!DOCTYPE") ||
+        text.trim().startsWith("<html") ||
+        text.trim().startsWith("<?xml")
+      ) {
+        throw new Error(`Overpass HTML/XML response (${endpoint})`);
       }
 
-      const json = await res.json();
+      const json = JSON.parse(text);
+      if (!json.elements) {
+        throw new Error(`Overpass invalid JSON (${endpoint})`);
+      }
+
       return json;
-    } catch (e) {
-      lastErr = e;
-      // ritenta
-      if (attempt < retries) {
+
+    } catch (err) {
+      lastError = err;
+      if (i < retries) {
         await sleep(wait);
         continue;
       }
     }
   }
 
-  throw lastErr ?? new Error("Overpass error");
+  throw lastError;
 }
 
 export function toPlace(el) {
   const tags = el.tags || {};
-  const name =
-    tags.name ||
-    tags["name:it"] ||
-    tags.brand ||
-    tags.operator ||
-    tags.ref ||
-    null;
-
   return {
     id: `${el.type}:${el.id}`,
-    name: name || "(senza nome)",
+    name: tags.name || tags["name:it"] || tags.brand || "(senza nome)",
     lat: el.lat ?? el.center?.lat,
     lon: el.lon ?? el.center?.lon,
     tags,
