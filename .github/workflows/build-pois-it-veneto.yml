@@ -5,6 +5,7 @@ on:
   push:
     paths:
       - "scripts/build_pois_it_veneto_all.mjs"
+      - "scripts/build_relax_veneto.mjs"
       - ".github/workflows/build-pois-it-veneto.yml"
 
 permissions:
@@ -29,27 +30,34 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Run build (Veneto)
+      - name: Run build (Veneto - all categories)
         run: node scripts/build_pois_it_veneto_all.mjs
+
+      - name: Run build (Veneto - Relax dedicated)
+        run: node scripts/build_relax_veneto.mjs
 
       - name: Show output
         run: |
+          echo "=== REGIONS DIR ==="
           ls -lah public/data/pois/regions || true
-          echo "-----"
-          head -c 800 public/data/pois/regions/it-veneto.json || true
+          echo "=== it-veneto.json head ==="
+          head -c 600 public/data/pois/regions/it-veneto.json || true
+          echo ""
+          echo "=== it-veneto-relax.json head ==="
+          head -c 600 public/data/pois/regions/it-veneto-relax.json || true
           echo ""
 
-      - name: Commit generated file
+      - name: Commit generated files
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git add public/data/pois/regions/it-veneto.json
+          git add public/data/pois/regions/it-veneto.json public/data/pois/regions/it-veneto-relax.json
 
           if git diff --cached --quiet; then
             echo "No changes to commit."
             exit 0
           fi
 
-          git commit -m "Build Veneto offline POIs"
+          git commit -m "Build Veneto POIs + Relax"
           git push origin main
