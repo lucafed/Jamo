@@ -1,27 +1,28 @@
-name: Build Radius Datasets (Borghi + Relax)
+name: Build Radius Datasets
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: "30 3 * * 2" # martedì 03:30 UTC
+    - cron: "0 3 * * 2" # martedì 03:00 UTC
   push:
     paths:
       - "scripts/build_relax_radius.mjs"
       - "scripts/build_borghi_radius.mjs"
+      - "scripts/lib/overpass.mjs"
       - ".github/workflows/build-radius.yml"
 
 permissions:
   contents: write
 
 concurrency:
-  group: build-radius
+  group: build-radius-datasets
   cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout (full history)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -33,37 +34,43 @@ jobs:
 
       - name: Build Relax radius
         run: node scripts/build_relax_radius.mjs
+        env:
+          RADIUS_LAT: "45.468"
+          RADIUS_LON: "10.855"
+          RADIUS_KM: "120"
 
       - name: Build Borghi radius
         run: node scripts/build_borghi_radius.mjs
+        env:
+          RADIUS_LAT: "45.468"
+          RADIUS_LON: "10.855"
+          RADIUS_KM: "120"
 
       - name: Debug output
         run: |
           ls -lah public/data/pois/regions || true
-          echo "---- relax-radius head ----"
-          head -c 900 public/data/pois/regions/relax-radius.json || true
-          echo ""
-          echo "---- borghi-radius head ----"
-          head -c 900 public/data/pois/regions/borghi-radius.json || true
+          echo "-----"
+          wc -c public/data/pois/regions/radius-relax.json || true
+          wc -c public/data/pois/regions/radius-borghi.json || true
+          echo "-----"
+          head -c 600 public/data/pois/regions/radius-relax.json || true
           echo ""
 
-      - name: Commit generated files
+      - name: Commit generated files (if changed) + Pull rebase + Push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git add public/data/pois/regions/relax-radius.json
-          git add public/data/pois/regions/borghi-radius.json
+          git add public/data/pois/regions/radius-relax.json
+          git add public/data/pois/regions/radius-borghi.json
 
           if git diff --cached --quiet; then
             echo "No changes to commit."
             exit 0
           fi
 
-          git commit -m "Update radius datasets"
+          git commit -m "Update radius datasets (Relax + Borghi)"
 
-      - name: Pull (rebase) then push
-        run: |
-          # evita l’errore "rejected (fetch first)"
+          # evita "fetch first"
           git pull --rebase origin main
           git push origin main
