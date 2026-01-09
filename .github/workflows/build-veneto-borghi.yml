@@ -2,24 +2,23 @@ name: Build Veneto Borghi Dataset
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "0 3 * * 2" # ogni martedì 03:00 UTC
   push:
     paths:
       - "scripts/build_borghi_veneto.mjs"
-      - ".github/workflows/build-veneto-borghi.yml"
-  schedule:
-    - cron: "0 3 * * 1" # ogni lunedì 03:00 UTC
+      - ".github/workflows/build-borghi-it-veneto.yml"
 
 permissions:
   contents: write
 
 concurrency:
-  group: build-veneto-borghi
+  group: build-borghi-it-veneto
   cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -36,12 +35,9 @@ jobs:
 
       - name: Debug output
         run: |
-          echo "=== REGIONS DIR ==="
           ls -lah public/data/pois/regions || true
-          echo "=== BORGH I FILE ==="
-          ls -lah public/data/pois/regions/it-veneto-borghi.json || true
-          echo "=== HEAD ==="
-          head -c 800 public/data/pois/regions/it-veneto-borghi.json || true
+          echo "-----"
+          head -c 900 public/data/pois/regions/it-veneto-borghi.json || true
           echo ""
 
       - name: Commit & push (if changed)
