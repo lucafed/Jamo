@@ -2,26 +2,59 @@ name: Build Veneto Relax Dataset
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - "scripts/build_relax_veneto.mjs"
+      - ".github/workflows/build-veneto-relax.yml"
   schedule:
     - cron: "0 3 * * 1" # ogni lunedì alle 03:00 UTC
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-veneto-relax
+  cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
 
-      - name: Use Node
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: "20"
 
-      - name: Build dataset
+      - name: Build dataset (Relax Veneto)
         run: node scripts/build_relax_veneto.mjs
+
+      - name: Debug output
+        run: |
+          echo "=== LIST REGIONS DIR ==="
+          ls -lah public/data/pois/regions || true
+          echo "=== CHECK RELAX FILE ==="
+          ls -lah public/data/pois/regions/it-veneto-relax.json || true
+          echo "=== HEAD RELAX FILE ==="
+          head -c 800 public/data/pois/regions/it-veneto-relax.json || true
+          echo ""
 
       - name: Commit & push (if changed)
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+
           git add public/data/pois/regions/it-veneto-relax.json
-          git diff --cached --quiet || (git commit -m "Update Veneto relax dataset" && git push)
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          git commit -m "Update Veneto relax dataset"
+          git push origin main
