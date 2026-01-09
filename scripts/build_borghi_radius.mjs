@@ -8,9 +8,9 @@ import { overpass, toPlace, writeJson } from "./lib/overpass.mjs";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// ✅ Default: Bussolengo (cambiabile via ENV)
-const CENTER_LAT = Number(process.env.CENTER_LAT ?? 45.5209);
-const CENTER_LON = Number(process.env.CENTER_LON ?? 10.8686);
+// ✅ Centro e raggio (compatibile sia con workflow che con uso locale)
+const CENTER_LAT = Number(process.env.CENTER_LAT ?? process.env.RADIUS_LAT ?? 45.5209); // Bussolengo default
+const CENTER_LON = Number(process.env.CENTER_LON ?? process.env.RADIUS_LON ?? 10.8686);
 const RADIUS_KM = Number(process.env.RADIUS_KM ?? 120);
 const RADIUS_M = Math.round(RADIUS_KM * 1000);
 
@@ -26,110 +26,151 @@ const OUT = path.join(
 );
 
 // ----------------------
-// Query Overpass (BORGHl radius)
+// Overpass Query (BORHI)
+// - SOLO centri abitati + confini comunali (no musei / POI singoli)
 // ----------------------
 function buildQuery(lat, lon, radiusM) {
+  // NOTE:
+  // - place=* è la cosa più pulita per “borgo come meta”
+  // - boundary admin_level=8/9 aiuta dove mancano i nodi place
   return `
 [out:json][timeout:220];
 (
-  // “Classici” (ampio)
-  nwr(around:${radiusM},${lat},${lon})["place"~"town|village|hamlet|suburb|quarter|neighbourhood"];
+  // Centri abitati (target principale)
+  node(around:${radiusM},${lat},${lon})["place"~"^(village|town|hamlet)$"]["name"];
+  way(around:${radiusM},${lat},${lon})["place"~"^(village|town|hamlet)$"]["name"];
+  relation(around:${radiusM},${lat},${lon})["place"~"^(village|town|hamlet)$"]["name"];
 
-  // centri storici
-  nwr(around:${radiusM},${lat},${lon})["historic"="city_centre"];
-
-  // località con nome (utile per lago/colline)
-  nwr(around:${radiusM},${lat},${lon})["place"="locality"]["name"];
-
-  // segnali turistici (per chicche, ma restano borghi)
-  nwr(around:${radiusM},${lat},${lon})["historic"~"castle|fort|ruins|monument|archaeological_site"];
-  nwr(around:${radiusM},${lat},${lon})["tourism"~"attraction|viewpoint|museum"];
-  nwr(around:${radiusM},${lat},${lon})["heritage"];
+  // Confini amministrativi (fallback)
+  relation(around:${radiusM},${lat},${lon})["boundary"="administrative"]["admin_level"~"^(8|9)$"]["name"];
 );
 out center tags;
 `;
 }
 
 // ----------------------
-// Anti-spazzatura
+// Helpers
 // ----------------------
-function tagEquals(tags, k, v) {
-  return String(tags?.[k] ?? "").toLowerCase() === String(v).toLowerCase();
+function str(x) {
+  return (x ?? "").toString().trim();
 }
 
-function isJunk(p) {
-  const t = p.tags || {};
-  const name = (p.name || "").trim();
-  const n = name.toLowerCase();
+function lower(x) {
+  return str(x).toLowerCase();
+}
 
-  if (!name || name === "(senza nome)") return true;
+function hasAnyTag(tags, keys) {
+  return keys.some((k) => tags?.[k] != null && str(tags[k]) !== "");
+}
 
-  // strade/fermate
-  if (t.highway) return true;
-  if (t.railway) return true;
-  if (t.public_transport) return true;
-  if (tagEquals(t, "highway", "bus_stop")) return true;
+function numOrNull(x) {
+  const n = Number(x);
+  return Number.isFinite(n) ? n : null;
+}
 
-  // aziende/uffici/industria
-  const building = String(t.building ?? "").toLowerCase();
-  const landuse = String(t.landuse ?? "").toLowerCase();
-  const office = String(t.office ?? "").toLowerCase();
-  if (office) return true;
-  if (["office", "industrial", "warehouse"].includes(building)) return true;
-  if (["industrial", "commercial"].includes(landuse)) return true;
+// ----------------------
+// Filtri anti-spazzatura (borghi veri)
+// ----------------------
+const BIG_CITIES = new Set([
+  "verona",
+  "vicenza",
+  "padova",
+  "venezia",
+  "treviso",
+  "rovigo",
+  "belluno",
+  "brescia",
+  "mantova",
+  "trento",
+  "bolzano",
+  "milano",
+  "torino",
+  "bologna",
+]);
 
-  // nomi inutili
-  if (n.startsWith("via ") || n.includes("case sparse")) return true;
+function isNotBorgo(place) {
+  const t = place.tags || {};
+  const name = lower(place.name);
 
-  // SpA aziendale
-  if (/\bs\.p\.a\.?\b/i.test(name)) return true;
-  if (n.includes("openjobmetis")) return true;
+  // Deve essere un centro abitato o un confine amministrativo
+  const isSettlement = !!t.place && ["village", "town", "hamlet"].includes(lower(t.place));
+  const isAdmin = lower(t.boundary) === "administrative" && ["8", "9"].includes(str(t.admin_level));
+
+  if (!isSettlement && !isAdmin) return true;
+
+  // Nomi palesemente non-meta
+  if (!name) return true;
+  if (name.startsWith("via ")) return true;
+  if (name.includes("case sparse")) return true;
+  if (name.includes("zona industriale")) return true;
+  if (name.includes("area industriale")) return true;
+
+  // “città grandi” fuori concetto di borgo (le vogliamo fuori dai borghi)
+  if (BIG_CITIES.has(name)) return true;
+
+  // Se è un admin boundary ma in realtà è un quartiere/municipalità strana
+  // (teniamolo leggero: scartiamo solo se ha segnali chiaramente “non comune”)
+  const adminLevel = str(t.admin_level);
+  if (isAdmin && (adminLevel === "9" || adminLevel === "10")) {
+    if (name.includes("quartiere") || name.includes("frazione")) return true;
+  }
 
   return false;
 }
 
 // ----------------------
-// Score + visibility
+// Scoring + Classici vs Chicche
 // ----------------------
-function hasAny(tags, keys) {
-  return keys.some((k) => tags[k] != null && String(tags[k]).trim() !== "");
-}
-
 function scoreBorgo(p) {
   const t = p.tags || {};
-  const name = (p.name || "").toLowerCase();
+  const name = lower(p.name);
   let s = 0;
 
-  const place = String(t.place ?? "").toLowerCase();
-  if (place === "town") s += 35;
-  if (place === "village") s += 30;
-  if (place === "hamlet") s += 22;
-  if (["suburb", "quarter", "neighbourhood"].includes(place)) s += 10;
-  if (place === "locality") s += 12; // ✅ per lago/colline, ma non troppo alto
+  // Base: preferiamo village/hamlet come “borgo”
+  const placeType = lower(t.place);
+  if (placeType === "hamlet") s += 55;
+  if (placeType === "village") s += 75;
+  if (placeType === "town") s += 60;
 
-  const historic = String(t.historic ?? "").toLowerCase();
-  if (historic === "city_centre") s += 35;
-  if (["castle", "fort", "ruins", "monument", "archaeological_site"].includes(historic)) s += 35;
+  // Admin boundary (comune) -> buono ma meno “borgo” di village
+  if (lower(t.boundary) === "administrative") s += 40;
 
-  const tourism = String(t.tourism ?? "").toLowerCase();
-  if (["attraction", "viewpoint", "museum"].includes(tourism)) s += 25;
+  // Segnali turistico-storici “puliti”
+  if (hasAnyTag(t, ["wikipedia"])) s += 35;
+  if (hasAnyTag(t, ["wikidata"])) s += 25;
+  if (hasAnyTag(t, ["heritage"])) s += 18;
+  if (hasAnyTag(t, ["historic"])) s += 20;
 
-  if (t.heritage) s += 18;
-
-  if (hasAny(t, ["wikipedia"])) s += 25;
-  if (hasAny(t, ["wikidata"])) s += 22;
-
+  // Se ha un centro storico dichiarato (a volte)
   if (name.includes("borgo")) s += 10;
-  if (name.includes("castello")) s += 10;
+  if (name.includes("castello") || name.includes("rocca")) s += 8; // spesso borghi con castello
+  if (name.includes("antico") || name.includes("medieval")) s += 8;
 
-  if (hasAny(t, ["website", "contact:website"])) s += 5;
+  // Penalità per “troppo grande” se abbiamo popolazione
+  const pop = numOrNull(t.population);
+  if (pop != null) {
+    if (pop > 200000) s -= 120;
+    else if (pop > 100000) s -= 80;
+    else if (pop > 50000) s -= 35;
+    else if (pop < 800) s += 10; // molto piccolo -> spesso borgo vero
+  }
+
+  // Extra: se ha “tourism” ma resta un place/boundary, ok (qualche comune lo mette)
+  if (hasAnyTag(t, ["tourism"])) s += 10;
 
   return s;
 }
 
-function visibilityFromScore(score) {
-  // ✅ soglia ALTA per mantenere TANTI "classica"
-  return score >= 70 ? "chicca" : "classica";
+function computeVisibility(score, p) {
+  const t = p.tags || {};
+  // Chicca = segnali forti (wiki/wikidata/historic/heritage) + buon punteggio
+  const strong =
+    hasAnyTag(t, ["wikipedia", "wikidata", "heritage", "historic"]) ||
+    lower(p.name).includes("borgo");
+
+  if (score >= 110 && strong) return "chicca";
+  if (score >= 135) return "chicca";
+  return "classica";
 }
 
 // ----------------------
@@ -137,13 +178,13 @@ function visibilityFromScore(score) {
 // ----------------------
 async function main() {
   console.log(
-    `Build BORGHl radius: center=${CENTER_LAT},${CENTER_LON} radius=${RADIUS_KM}km`
+    `Build BORGHI radius: center=${CENTER_LAT},${CENTER_LON} radius=${RADIUS_KM}km`
   );
 
   let data;
   try {
     const q = buildQuery(CENTER_LAT, CENTER_LON, RADIUS_M);
-    data = await overpass(q, { retries: 7, timeoutMs: 160000 });
+    data = await overpass(q, { retries: 7, timeoutMs: 170000 });
   } catch (err) {
     console.error("⚠️ Overpass failed. Keeping previous dataset if it exists.");
     if (fs.existsSync(OUT)) {
@@ -153,41 +194,42 @@ async function main() {
     throw err;
   }
 
+  // Normalizziamo
   const raw = (data.elements || [])
     .map(toPlace)
     .filter((p) => p.lat != null && p.lon != null)
-    .filter((p) => !isJunk(p));
+    .filter((p) => str(p.name) !== "" && str(p.name) !== "(senza nome)")
+    .filter((p) => !isNotBorgo(p));
 
-  // Dedup: nome + coordinate
+  // Dedup: nome + coordinate (round)
   const seen = new Set();
   const deduped = [];
   for (const p of raw) {
-    const key = `${(p.name || "").toLowerCase()}|${p.lat.toFixed(
-      5
-    )}|${p.lon.toFixed(5)}`;
+    const key = `${lower(p.name)}|${p.lat.toFixed(4)}|${p.lon.toFixed(4)}`;
     if (seen.has(key)) continue;
     seen.add(key);
     deduped.push(p);
   }
 
+  // Build places
   const places = deduped
     .map((p) => {
-      const score = scoreBorgo(p);
+      const sc = scoreBorgo(p);
       return {
         id: p.id,
         name: p.name,
         lat: p.lat,
         lon: p.lon,
-        type: "borgo",
-        visibility: visibilityFromScore(score),
+        type: "borghi",
+        visibility: computeVisibility(sc, p), // ✅ classica/chicca qui
         tags: Object.entries(p.tags || {})
-          .slice(0, 80)
+          .slice(0, 60)
           .map(([k, v]) => `${k}=${v}`),
-        score,
+        score: sc,
       };
     })
     .sort((a, b) => b.score - a.score)
-    .slice(0, 12000);
+    .slice(0, 12000); // largo: l’app poi prende le 5 migliori nel tempo scelto
 
   await writeJson(OUT, {
     region_id: "radius-borghi",
@@ -197,11 +239,12 @@ async function main() {
     places,
   });
 
-  const countClassica = places.filter((p) => p.visibility === "classica").length;
-  const countChicca = places.filter((p) => p.visibility === "chicca").length;
-  console.log(
-    `✔ Written ${OUT} (${places.length} places) classica=${countClassica} chicca=${countChicca}`
-  );
+  const countClassici = places.filter((p) => p.visibility === "classica").length;
+  const countChicche = places.filter((p) => p.visibility === "chicca").length;
+
+  console.log(`✔ Written ${OUT} (${places.length} places)`);
+  console.log(`   - classica: ${countClassici}`);
+  console.log(`   - chicca:   ${countChicche}`);
 }
 
 main().catch((e) => {
