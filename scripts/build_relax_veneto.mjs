@@ -104,7 +104,7 @@ function isRelaxCore(tags = {}, name = "") {
   return tagStrong || nameStrong || poolSpaLike;
 }
 
-// Hotel/strutture: includi SOLO se hanno segnali relax (nome o tag spa-like)
+// Hotel/strutture: includi SOLO se hanno segnali relax (nome o tag) → monetizzazione Booking
 function isSpaLodging(tags = {}, name = "") {
   const t = tags;
   const n = normName(name);
@@ -119,7 +119,6 @@ function isSpaLodging(tags = {}, name = "") {
 
   if (!lodging) return false;
 
-  // segnali spa veri
   const spaSignals =
     t.spa === "yes" ||
     t.amenity === "spa" ||
@@ -135,9 +134,9 @@ function isSpaLodging(tags = {}, name = "") {
 
 function scorePlace(tags = {}, name = "") {
   const n = normName(name);
-
   let s = 0;
-  // spingi “terme/hot_spring/spa” sopra gli hotel generici
+
+  // spingi “terme/hot_spring/spa” sopra gli hotel
   if (tags.natural === "hot_spring") s += 50;
   if (tags.amenity === "public_bath") s += 40;
   if (tags.amenity === "spa" || tags.leisure === "spa" || tags.tourism === "spa") s += 40;
@@ -154,9 +153,7 @@ function scorePlace(tags = {}, name = "") {
   if (tags.opening_hours) s += 2;
   if (tags.wikidata || tags.wikipedia) s += 8;
 
-  // penalità: manca nome
   if (!name || String(name).trim().length < 2) s -= 100;
-
   return s;
 }
 
@@ -173,8 +170,6 @@ async function overpass(query) {
 function buildQuery(b) {
   const bbox = `${b.s},${b.w},${b.n},${b.e}`;
 
-  // Query mirata + keyword + hotel spa-like
-  // Nota: includiamo hotel/resort ecc. SOLO se nel nome c’è wellness/terme/spa
   return `
 [out:json][timeout:180];
 (
@@ -210,12 +205,10 @@ function buildQuery(b) {
   way["healthcare"="sauna"](${bbox});
   relation["healthcare"="sauna"](${bbox});
 
-  // Keyword nel nome (terme/spa ecc.)
   node["name"~"terme|termale|thermal|spa|wellness|benessere|hammam|hamam|bagno turco|sauna",i](${bbox});
   way["name"~"terme|termale|thermal|spa|wellness|benessere|hammam|hamam|bagno turco|sauna",i](${bbox});
   relation["name"~"terme|termale|thermal|spa|wellness|benessere|hammam|hamam|bagno turco|sauna",i](${bbox});
 
-  // Hotel/resort/guest_house con keyword spa-like nel nome
   node["tourism"~"hotel|resort|guest_house|apartment|chalet|motel"]["name"~"terme|termale|thermal|spa|wellness|benessere|hammam|hamam|bagno turco|sauna",i](${bbox});
   way["tourism"~"hotel|resort|guest_house|apartment|chalet|motel"]["name"~"terme|termale|thermal|spa|wellness|benessere|hammam|hamam|bagno turco|sauna",i](${bbox});
   relation["tourism"~"hotel|resort|guest_house|apartment|chalet|motel"]["name"~"terme|termale|thermal|spa|wellness|benessere|hammam|hamam|bagno turco|sauna",i](${bbox});
@@ -268,7 +261,6 @@ async function main() {
     const ll = getLatLon(el);
     if (!ll || !Number.isFinite(ll.lat) || !Number.isFinite(ll.lon)) continue;
 
-    // includi SOLO se relax core o lodging spa-like
     const ok = isRelaxCore(tags, name) || isSpaLodging(tags, name);
     if (!ok) continue;
 
@@ -285,12 +277,10 @@ async function main() {
       country: "IT",
       area: pickArea(tags),
       tags: tagsToList(tags),
-      // utile per debug/ordinamento (puoi toglierlo se non vuoi)
       score: s,
     });
   }
 
-  // ordina: prima le “terme vere”
   places.sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
 
   const out = {
