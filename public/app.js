@@ -1,4 +1,4 @@
-/* Jamo — app.js v15.5
+/* Jamo — app.js v15.6
  * Mobile-first • Offline-only • Flusso pulito • Risultato centrale • Niente dock
  *
  * ✅ NO GPS
@@ -13,6 +13,8 @@
  * ✅ Azioni dentro la scheda risultato (Vai / Prenota / Mangia / Foto / Wiki)
  * ✅ Scroll automatico sul risultato
  * ✅ Fallback automatico: se non trova niente, allarga criteri
+ *
+ * ✅ NEW: Dataset dedicati per categoria (Relax/Borghi) se presenti
  */
 
 (() => {
@@ -37,10 +39,11 @@
       "/data/macros/euuk_macro_all.json",
     ],
 
+    // ✅ Dataset regionali (offline)
     REGIONAL_POIS_BY_ID: {
       "it-veneto": "/data/pois/regions/it-veneto.json",
-      // se in futuro aggiungi relax dedicato:
-      // "it-veneto-relax": "/data/pois/regions/it-veneto-relax.json",
+      "it-veneto-relax": "/data/pois/regions/it-veneto-relax.json",
+      "it-veneto-borghi": "/data/pois/regions/it-veneto-borghi.json",
     },
 
     REGION_BBOX: {
@@ -484,29 +487,53 @@
     const cc = String(origin?.country_code || "").toUpperCase();
 
     const saved = localStorage.getItem("jamo_region_id");
-    if (saved && CFG.REGIONAL_POIS_BY_ID[saved] && withinBBox(lat, lon, CFG.REGION_BBOX[saved])) return saved;
+    if (saved && CFG.REGIONAL_POIS_BY_ID[saved] && withinBBox(lat, lon, CFG.REGION_BBOX["it-veneto"])) return saved;
+
     if (cc === "IT" && withinBBox(lat, lon, CFG.REGION_BBOX["it-veneto"])) return "it-veneto";
     return "";
   }
 
-  async function ensureDatasetLoaded(origin, { signal } = {}) {
+  // ✅ NEW: priorità dataset dedicati per categoria
+  function categoryPreferredRegionalId(origin, category) {
+    const lat = Number(origin?.lat);
+    const lon = Number(origin?.lon);
+    if (!withinBBox(lat, lon, CFG.REGION_BBOX["it-veneto"])) return "";
+
+    if (category === "relax" && CFG.REGIONAL_POIS_BY_ID["it-veneto-relax"]) return "it-veneto-relax";
+    if (category === "borghi" && CFG.REGIONAL_POIS_BY_ID["it-veneto-borghi"]) return "it-veneto-borghi";
+    return "it-veneto";
+  }
+
+  async function ensureDatasetLoaded(origin, { signal, category = "ovunque" } = {}) {
     if (DATASET?.places?.length) return DATASET;
 
     await loadMacrosIndexSafe(signal);
 
     const candidates = [];
+
+    // 1) ✅ dataset dedicato per categoria (se esiste)
+    const preferredRegional = categoryPreferredRegionalId(origin, category);
+    if (preferredRegional && CFG.REGIONAL_POIS_BY_ID[preferredRegional]) {
+      candidates.push(CFG.REGIONAL_POIS_BY_ID[preferredRegional]);
+    }
+
+    // 2) fallback: dataset regionale generico
     const regionId = pickRegionIdFromOrigin(origin);
     if (regionId && CFG.REGIONAL_POIS_BY_ID[regionId]) candidates.push(CFG.REGIONAL_POIS_BY_ID[regionId]);
 
+    // 3) macro country
     const cc = String(origin?.country_code || "").toUpperCase();
     const countryMacro = findCountryMacroPath(cc);
     if (countryMacro) candidates.push(countryMacro);
 
+    // 4) fallback macros
     for (const u of CFG.FALLBACK_MACRO_URLS) candidates.push(u);
 
+    // 5) saved macro
     const savedMacro = localStorage.getItem("jamo_macro_url");
     if (savedMacro) candidates.push(savedMacro);
 
+    // unique
     const uniq = [];
     const seen = new Set();
     for (const u of candidates) {
@@ -525,10 +552,10 @@
         kind: isRegional ? "pois_region" : "macro",
         source: url,
         places: loaded.places,
-        meta: { raw: loaded.json, cc, regionId },
+        meta: { raw: loaded.json, cc, regionId: preferredRegional || regionId },
       };
 
-      if (isRegional && regionId) localStorage.setItem("jamo_region_id", regionId);
+      if (isRegional && (preferredRegional || regionId)) localStorage.setItem("jamo_region_id", preferredRegional || regionId);
       if (!isRegional) localStorage.setItem("jamo_macro_url", url);
 
       return DATASET;
@@ -579,7 +606,6 @@
     ]);
   }
 
-  // --------- NEW: palaghiaccio / ice rink ----------
   function isIceRink(place) {
     const t = tagsStr(place);
     const n = normName(place?.name || "");
@@ -594,7 +620,6 @@
     );
   }
 
-  // --------- NEW: educational-ish ----------
   function isEducationalKids(place) {
     const t = tagsStr(place);
     const n = normName(place?.name || "");
@@ -609,7 +634,6 @@
     );
   }
 
-  // Relax ricco: più tag + keyword
   function isSpaPlace(place) {
     const t = tagsStr(place);
     const nm = normName(place?.name || "");
@@ -619,12 +643,11 @@
       t.includes("natural=hot_spring") || t.includes("amenity=public_bath") ||
       t.includes("amenity=sauna") || t.includes("leisure=sauna") ||
       t.includes("healthcare=sauna") || t.includes("healthcare=spa") ||
-      t.includes("spa") && (t.includes("hotel") || t.includes("tourism=")) ||
+      (t.includes("spa") && (t.includes("hotel") || t.includes("tourism="))) ||
       t.includes("thermal") || t.includes("terme");
 
     const spaName = looksWellnessByName(place);
 
-    // piscina solo se spa-like
     const poolSpaLike =
       t.includes("leisure=swimming_pool") && (
         nm.includes("terme") || nm.includes("spa") || nm.includes("thermal") ||
@@ -657,7 +680,6 @@
     return t.includes("tourism=museum");
   }
 
-  // ✅ museo kids-friendly (tag o keyword)
   function isKidsMuseum(place) {
     const t = tagsStr(place);
     const n = normName(place?.name || "");
@@ -761,9 +783,6 @@
     return t.includes("piste:type=") || t.includes("sport=skiing") || t.includes("aerialway=");
   }
 
-  // ✅ FIX IMPORTANTISSIMO:
-  // prima: per relax tenevamo hotel SOLO se il NOME sembrava wellness
-  // ora: per relax teniamo hotel/strutture anche se hanno TAG spa-like.
   function isLodgingOrFood(place, category) {
     const t = tagsStr(place);
 
@@ -773,7 +792,6 @@
       t.includes("tourism=chalet") || t.includes("tourism=motel");
 
     if (lodging && category === "relax") {
-      // se è hotel ma ha segnali spa veri -> NON ESCLUDERE
       if (isSpaPlace(place) || looksWellnessByName(place) || t.includes("amenity=spa") || t.includes("leisure=spa") || t.includes("amenity=sauna") || t.includes("natural=hot_spring") || t.includes("amenity=public_bath")) {
         return false;
       }
@@ -786,7 +804,6 @@
     return lodging || food;
   }
 
-  // ✅ NEW: blocco “azienda agricola” se non ha segnali family veri
   function isLikelyFarmBusiness(place) {
     const t = tagsStr(place);
     const n = normName(place?.name || "");
@@ -796,7 +813,6 @@
       t.includes("shop=farm");
     if (!farmy) return false;
 
-    // se è farm ma ha segnali family veri -> ok
     const hasFamilySignal =
       isZooOrAquarium(place) ||
       isAttraction(place) ||
@@ -833,7 +849,6 @@
     if (cat === "hiking") return isHiking(place);
 
     if (cat === "family") {
-      // blocco farm “business” senza segnali kids
       if (isLikelyFarmBusiness(place)) return false;
 
       return (
@@ -846,7 +861,6 @@
         isEducationalKids(place) ||
         isIceRink(place) ||
         isPlaygroundOrPark(place) ||
-        // attrazioni sì, ma con segnale kids dal nome/tag
         (isAttraction(place) && (looksKidsByName(place) || isEducationalKids(place)))
       );
     }
@@ -859,8 +873,6 @@
     const t = tagsStr(place);
 
     if (cat === "relax") {
-      // fallback: se proprio non trova, accetta anche piscine/aree balneabili
-      // MA SOLO come ultima spiaggia
       return isSpaPlace(place) || t.includes("leisure=swimming_pool") || t.includes("leisure=swimming_area");
     }
 
@@ -989,7 +1001,6 @@
 
       if (!ignoreRotation) s -= rotationPenalty(pid, recentSet);
 
-      // ✅ RELAX: spinge spa vere e penalizza piscine “finte”
       if (category === "relax") {
         const t = tagsStr(p);
         if (t.includes("natural=hot_spring")) s += 0.18;
@@ -998,7 +1009,6 @@
         if (t.includes("amenity=sauna") || t.includes("leisure=sauna") || t.includes("healthcare=sauna")) s += 0.12;
         if (looksWellnessByName(p)) s += 0.08;
 
-        // piscina NON spa-like: giù forte
         if (t.includes("leisure=swimming_pool") && !isSpaPlace(p)) s -= 0.30;
       }
 
@@ -1363,7 +1373,8 @@
         return;
       }
 
-      await ensureDatasetLoaded(origin, { signal });
+      const category = getActiveCategory();
+      await ensureDatasetLoaded(origin, { signal, category });
 
       const basePool = Array.isArray(DATASET?.places) ? DATASET.places : [];
       const datasetInfo =
@@ -1374,7 +1385,6 @@
             : `—`;
 
       const maxMinutesInput = clamp(Number($("maxMinutes")?.value) || 120, 10, 600);
-      const category = getActiveCategory();
       const styles = getActiveStyles();
       const steps = widenMinutesSteps(maxMinutesInput, category);
 
@@ -1463,8 +1473,9 @@
 
         showStatus("ok", "Partenza impostata ✅ Ora scegli categoria/stile e premi CERCA.");
         DATASET = { kind: null, source: null, places: [], meta: {} };
-        await ensureDatasetLoaded(getOrigin(), { signal: undefined }).catch(() => {});
 
+        // prefetch soft
+        await ensureDatasetLoaded(getOrigin(), { signal: undefined, category: getActiveCategory() }).catch(() => {});
         scrollToId("searchCard");
       } catch (e) {
         console.error(e);
@@ -1503,7 +1514,7 @@
     (async () => {
       try {
         const o = getOrigin();
-        if (o) await ensureDatasetLoaded(o, { signal: undefined });
+        if (o) await ensureDatasetLoaded(o, { signal: undefined, category: getActiveCategory() });
       } catch {}
     })();
   }
