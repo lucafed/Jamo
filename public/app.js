@@ -3,6 +3,7 @@
  *
  * ✅ NO GPS
  * ✅ OFFLINE-ONLY
+ * ✅ Dataset per categoria (Borghi/Relax) + fallback generico
  * ✅ Natura presente
  * ✅ Relax molto più ricco (include SPA anche dentro hotel/strutture)
  * ✅ Family ripulito: musei solo se kids-friendly + palaghiaccio + educational
@@ -13,8 +14,6 @@
  * ✅ Azioni dentro la scheda risultato (Vai / Prenota / Mangia / Foto / Wiki)
  * ✅ Scroll automatico sul risultato
  * ✅ Fallback automatico: se non trova niente, allarga criteri
- *
- * ✅ NEW: Dataset dedicati per categoria (Relax/Borghi) se presenti
  */
 
 (() => {
@@ -39,11 +38,11 @@
       "/data/macros/euuk_macro_all.json",
     ],
 
-    // ✅ Dataset regionali (offline)
+    // ✅ Dataset offline regionali + dedicati per categoria
     REGIONAL_POIS_BY_ID: {
       "it-veneto": "/data/pois/regions/it-veneto.json",
-      "it-veneto-relax": "/data/pois/regions/it-veneto-relax.json",
       "it-veneto-borghi": "/data/pois/regions/it-veneto-borghi.json",
+      "it-veneto-relax": "/data/pois/regions/it-veneto-relax.json",
     },
 
     REGION_BBOX: {
@@ -493,47 +492,51 @@
     return "";
   }
 
-  // ✅ NEW: priorità dataset dedicati per categoria
-  function categoryPreferredRegionalId(origin, category) {
-    const lat = Number(origin?.lat);
-    const lon = Number(origin?.lon);
-    if (!withinBBox(lat, lon, CFG.REGION_BBOX["it-veneto"])) return "";
+  // ✅ NUOVO: scegli dataset in base alla categoria (borghi/relax)
+  function datasetUrlForCategory(category, origin) {
+    const regionId = pickRegionIdFromOrigin(origin);
 
-    if (category === "relax" && CFG.REGIONAL_POIS_BY_ID["it-veneto-relax"]) return "it-veneto-relax";
-    if (category === "borghi" && CFG.REGIONAL_POIS_BY_ID["it-veneto-borghi"]) return "it-veneto-borghi";
-    return "it-veneto";
+    if (regionId === "it-veneto") {
+      if (category === "borghi" && CFG.REGIONAL_POIS_BY_ID["it-veneto-borghi"]) {
+        return { url: CFG.REGIONAL_POIS_BY_ID["it-veneto-borghi"], kind: "pois_region", labelId: "it-veneto-borghi" };
+      }
+      if (category === "relax" && CFG.REGIONAL_POIS_BY_ID["it-veneto-relax"]) {
+        return { url: CFG.REGIONAL_POIS_BY_ID["it-veneto-relax"], kind: "pois_region", labelId: "it-veneto-relax" };
+      }
+      if (CFG.REGIONAL_POIS_BY_ID["it-veneto"]) {
+        return { url: CFG.REGIONAL_POIS_BY_ID["it-veneto"], kind: "pois_region", labelId: "it-veneto" };
+      }
+    }
+
+    return { url: "", kind: "", labelId: "" };
   }
 
-  async function ensureDatasetLoaded(origin, { signal, category = "ovunque" } = {}) {
+  async function ensureDatasetLoaded(origin, { signal } = {}) {
+    // Se già carico, ok
     if (DATASET?.places?.length) return DATASET;
 
     await loadMacrosIndexSafe(signal);
 
+    const category = getActiveCategory();
     const candidates = [];
 
-    // 1) ✅ dataset dedicato per categoria (se esiste)
-    const preferredRegional = categoryPreferredRegionalId(origin, category);
-    if (preferredRegional && CFG.REGIONAL_POIS_BY_ID[preferredRegional]) {
-      candidates.push(CFG.REGIONAL_POIS_BY_ID[preferredRegional]);
-    }
+    // 1) ✅ prima: dataset dedicato per categoria (se presente)
+    const pick = datasetUrlForCategory(category, origin);
+    if (pick?.url) candidates.push(pick.url);
 
-    // 2) fallback: dataset regionale generico
-    const regionId = pickRegionIdFromOrigin(origin);
-    if (regionId && CFG.REGIONAL_POIS_BY_ID[regionId]) candidates.push(CFG.REGIONAL_POIS_BY_ID[regionId]);
-
-    // 3) macro country
+    // 2) macro paese (se disponibile)
     const cc = String(origin?.country_code || "").toUpperCase();
     const countryMacro = findCountryMacroPath(cc);
     if (countryMacro) candidates.push(countryMacro);
 
-    // 4) fallback macros
+    // 3) fallback macro predefiniti
     for (const u of CFG.FALLBACK_MACRO_URLS) candidates.push(u);
 
-    // 5) saved macro
+    // 4) ultimo fallback: macro salvato
     const savedMacro = localStorage.getItem("jamo_macro_url");
     if (savedMacro) candidates.push(savedMacro);
 
-    // unique
+    // uniq
     const uniq = [];
     const seen = new Set();
     for (const u of candidates) {
@@ -552,10 +555,10 @@
         kind: isRegional ? "pois_region" : "macro",
         source: url,
         places: loaded.places,
-        meta: { raw: loaded.json, cc, regionId: preferredRegional || regionId },
+        meta: { raw: loaded.json, cc, regionId: pickRegionIdFromOrigin(origin), category },
       };
 
-      if (isRegional && (preferredRegional || regionId)) localStorage.setItem("jamo_region_id", preferredRegional || regionId);
+      if (isRegional) localStorage.setItem("jamo_region_id", pickRegionIdFromOrigin(origin) || "");
       if (!isRegional) localStorage.setItem("jamo_macro_url", url);
 
       return DATASET;
@@ -792,7 +795,10 @@
       t.includes("tourism=chalet") || t.includes("tourism=motel");
 
     if (lodging && category === "relax") {
-      if (isSpaPlace(place) || looksWellnessByName(place) || t.includes("amenity=spa") || t.includes("leisure=spa") || t.includes("amenity=sauna") || t.includes("natural=hot_spring") || t.includes("amenity=public_bath")) {
+      if (isSpaPlace(place) || looksWellnessByName(place) ||
+          t.includes("amenity=spa") || t.includes("leisure=spa") ||
+          t.includes("amenity=sauna") || t.includes("natural=hot_spring") ||
+          t.includes("amenity=public_bath")) {
         return false;
       }
     }
@@ -1373,8 +1379,13 @@
         return;
       }
 
-      const category = getActiveCategory();
-      await ensureDatasetLoaded(origin, { signal, category });
+      // ✅ ricarica dataset se la categoria è cambiata (evita cache “sbagliata”)
+      const currentCat = getActiveCategory();
+      if (DATASET?.meta?.category && DATASET.meta.category !== currentCat) {
+        DATASET = { kind: null, source: null, places: [], meta: {} };
+      }
+
+      await ensureDatasetLoaded(origin, { signal });
 
       const basePool = Array.isArray(DATASET?.places) ? DATASET.places : [];
       const datasetInfo =
@@ -1385,6 +1396,7 @@
             : `—`;
 
       const maxMinutesInput = clamp(Number($("maxMinutes")?.value) || 120, 10, 600);
+      const category = currentCat;
       const styles = getActiveStyles();
       const steps = widenMinutesSteps(maxMinutesInput, category);
 
@@ -1473,9 +1485,8 @@
 
         showStatus("ok", "Partenza impostata ✅ Ora scegli categoria/stile e premi CERCA.");
         DATASET = { kind: null, source: null, places: [], meta: {} };
+        await ensureDatasetLoaded(getOrigin(), { signal: undefined }).catch(() => {});
 
-        // prefetch soft
-        await ensureDatasetLoaded(getOrigin(), { signal: undefined, category: getActiveCategory() }).catch(() => {});
         scrollToId("searchCard");
       } catch (e) {
         console.error(e);
@@ -1514,7 +1525,7 @@
     (async () => {
       try {
         const o = getOrigin();
-        if (o) await ensureDatasetLoaded(o, { signal: undefined, category: getActiveCategory() });
+        if (o) await ensureDatasetLoaded(o, { signal: undefined });
       } catch {}
     })();
   }
