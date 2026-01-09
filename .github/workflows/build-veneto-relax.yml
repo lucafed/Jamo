@@ -1,27 +1,26 @@
-name: Build Veneto Relax Dataset
+name: Build Veneto Relax Dataset (Fail-safe)
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "20 3 * * 2" # ogni martedì 03:20 UTC (sfalsato rispetto ad altri)
   push:
     paths:
       - "scripts/build_relax_veneto.mjs"
       - ".github/workflows/build-veneto-relax.yml"
-  schedule:
-    - cron: "0 3 * * 1" # ogni lunedì alle 03:00 UTC
 
 permissions:
   contents: write
 
 concurrency:
-  group: build-veneto-relax
+  group: build-relax-it-veneto
   cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout
+      - name: Checkout (full history)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -31,21 +30,53 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Build dataset (Relax Veneto)
-        run: node scripts/build_relax_veneto.mjs
+      # Fail-safe: NON fallire il job se Overpass muore
+      - name: Build dataset (Relax Veneto) — fail-safe
+        id: build_relax
+        continue-on-error: true
+        run: |
+          node scripts/build_relax_veneto.mjs
 
       - name: Debug output
         run: |
-          echo "=== LIST REGIONS DIR ==="
           ls -lah public/data/pois/regions || true
-          echo "=== CHECK RELAX FILE ==="
-          ls -lah public/data/pois/regions/it-veneto-relax.json || true
-          echo "=== HEAD RELAX FILE ==="
-          head -c 800 public/data/pois/regions/it-veneto-relax.json || true
-          echo ""
+          echo "-----"
+          if [ -f public/data/pois/regions/it-veneto-relax.json ]; then
+            echo "File exists ✅"
+            head -c 900 public/data/pois/regions/it-veneto-relax.json || true
+            echo ""
+          else
+            echo "File NOT generated ❌"
+          fi
 
+      # Se build fallisce o genera file vuoto/rotto → ripristina il dataset precedente dal repo
+      - name: Restore previous dataset if build failed/bad
+        run: |
+          FILE="public/data/pois/regions/it-veneto-relax.json"
+
+          # Se step build è fallito, oppure file non esiste, oppure troppo piccolo -> restore
+          if [ "${{ steps.build_relax.outcome }}" != "success" ]; then
+            echo "Build failed -> restoring previous dataset from git"
+            git checkout -- "$FILE" || true
+          else
+            if [ ! -f "$FILE" ]; then
+              echo "No output file -> restoring previous dataset from git"
+              git checkout -- "$FILE" || true
+            else
+              SIZE=$(wc -c < "$FILE" | tr -d ' ')
+              echo "Output size: $SIZE bytes"
+              if [ "$SIZE" -lt 5000 ]; then
+                echo "Output too small/suspicious -> restoring previous dataset from git"
+                git checkout -- "$FILE" || true
+              fi
+            fi
+          fi
+
+      # Commit solo se il file è cambiato (e valido)
       - name: Commit & push (if changed)
         run: |
+          set -e
+
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
@@ -57,4 +88,9 @@ jobs:
           fi
 
           git commit -m "Update Veneto relax dataset"
+
+          # Evita "rejected (fetch first)"
+          git fetch origin main
+          git pull --rebase origin main
+
           git push origin main
