@@ -1,0 +1,876 @@
+{
+  "region_id": "radius-relax",
+  "label_it": "Radius • Relax (120km)",
+  "bbox_hint": {
+    "lat": 45.5209,
+    "lng": 10.8686,
+    "radius_km": 120
+  },
+  "generated_at": "2026-01-09T13:50:22.313Z",
+  "places": [
+    {
+      "id": "way:48528567",
+      "name": "Terme di Rabbi",
+      "lat": 46.4077618,
+      "lon": 10.8080855,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "amenity=public_bath",
+        "bath:type=thermal",
+        "building=yes",
+        "fee=yes",
+        "name=Terme di Rabbi",
+        "tourism=spa",
+        "website=https://www.termedirabbi.it/"
+      ],
+      "score": 228
+    },
+    {
+      "id": "node:3797101958",
+      "name": "Terme San Luca - Pluricenter",
+      "lat": 44.5092074,
+      "lon": 11.2970308,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "amenity=public_bath",
+        "bath:type=thermal",
+        "healthcare=doctor",
+        "name=Terme San Luca - Pluricenter",
+        "phone=+39 051 382564",
+        "website=https://www.maretermalebolognese.it/terme_san_luca_pluricenter_bologna_introduzione.htm",
+        "wheelchair=yes",
+        "wikidata=Q135653428"
+      ],
+      "score": 168
+    },
+    {
+      "id": "way:65475870",
+      "name": "Terme di Levico",
+      "lat": 46.0145985,
+      "lon": 11.297531,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "amenity=public_bath",
+        "bath:type=thermal",
+        "building=yes",
+        "contact:website=https://www.termedilevico.it/",
+        "name=Terme di Levico",
+        "tourism=spa_resort"
+      ],
+      "score": 163
+    },
+    {
+      "id": "way:95590819",
+      "name": "Terme di Vetriolo",
+      "lat": 46.0414132,
+      "lon": 11.3102493,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "amenity=public_bath",
+        "bath:type=thermal",
+        "building=yes",
+        "contact:website=https://www.termedilevico.it/",
+        "name=Terme di Vetriolo",
+        "tourism=spa_resort",
+        "wikidata=Q18483654"
+      ],
+      "score": 163
+    },
+    {
+      "id": "way:736654264",
+      "name": "QC Terme Dolomiti",
+      "lat": 46.4248731,
+      "lon": 11.6878104,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=San Giovanni di Fassa",
+        "addr:housenumber=21",
+        "addr:postcode=38036",
+        "addr:street=Strada dei Bagnes",
+        "amenity=public_bath",
+        "bath:open_air=yes",
+        "bath:type=thermal",
+        "brand=QC Terme",
+        "brand:wikidata=Q115543071",
+        "building=commercial",
+        "building:levels=3",
+        "charge=76 EUR/day",
+        "fee=yes",
+        "internet_access=wlan",
+        "internet_access:fee=no",
+        "name=QC Terme Dolomiti",
+        "nudism=no",
+        "payment:cards=yes",
+        "payment:cash=yes",
+        "payment:credit_cards=yes",
+        "roof:levels=0",
+        "roof:shape=flat",
+        "sauna=yes",
+        "website=https://www.qcterme.com/it/val-di-fassa/qc-terme-dolomiti"
+      ],
+      "score": 163
+    },
+    {
+      "id": "node:12296947128",
+      "name": "Island spa",
+      "lat": 45.0851878,
+      "lon": 10.8571925,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Bagnolo San Vito",
+        "addr:housenumber=14",
+        "addr:postcode=46031",
+        "addr:street=Via Marco Biagi",
+        "amenity=public_bath",
+        "bath:open_air=no",
+        "bath:sand_bath=no",
+        "bath:type=thermal",
+        "charge:conditional=30€ @Mo-Fr, 35€ @ Sa-Su PH",
+        "email=info@island-spa.it",
+        "fee=yes",
+        "level=0",
+        "name=Island spa",
+        "opening_hours=Mo-Fr 09:30-20:30, PH Sa-Su 09:00-19:30",
+        "phone=+39 0376 414279",
+        "reservation=recommended",
+        "website=https://www.island-spa.it/"
+      ],
+      "score": 158
+    },
+    {
+      "id": "node:5300784442",
+      "name": "Terme della Valpolicella",
+      "lat": 45.5047914,
+      "lon": 10.8434978,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "access=customers",
+        "amenity=public_bath",
+        "bath:type=thermal",
+        "name=Terme della Valpolicella"
+      ],
+      "score": 155
+    },
+    {
+      "id": "way:179624029",
+      "name": "Terme Borrini",
+      "lat": 44.7288099,
+      "lon": 10.3946297,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "amenity=public_bath",
+        "bath:type=thermal",
+        "building=yes",
+        "name=Terme Borrini",
+        "source=Regione Emilia Romagna",
+        "wikidata=Q29584891",
+        "wikipedia=it:Terme Borrini"
+      ],
+      "score": 155
+    },
+    {
+      "id": "way:346588708",
+      "name": "Terme di Sirmione Virgilio",
+      "lat": 45.4640098,
+      "lon": 10.6105055,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "amenity=public_bath",
+        "bath:type=thermal",
+        "name=Terme di Sirmione Virgilio"
+      ],
+      "score": 155
+    },
+    {
+      "id": "way:1149304458",
+      "name": "Terme della Salvarola",
+      "lat": 44.5193273,
+      "lon": 10.768023,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "amenity=public_bath",
+        "bath:type=thermal",
+        "fee=yes",
+        "name=Terme della Salvarola",
+        "operator=Balnea",
+        "unisex=yes"
+      ],
+      "score": 155
+    },
+    {
+      "id": "way:1354390635",
+      "name": "Terme Felsinee",
+      "lat": 44.4924943,
+      "lon": 11.2953152,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "amenity=public_bath",
+        "bath:type=thermal",
+        "building=yes",
+        "name=Terme Felsinee",
+        "source=Regione Emilia Romagna;https://www.maretermalebolognese.it/terme-felsinee-bologna-casalecchio-corsi-piscina-cure-convenzione",
+        "wikidata=Q125505528"
+      ],
+      "score": 155
+    },
+    {
+      "id": "relation:13264262",
+      "name": "Terme di Vallio",
+      "lat": 45.6110831,
+      "lon": 10.403639,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "amenity=public_bath",
+        "bath:type=thermal",
+        "name=Terme di Vallio",
+        "start_date=1955",
+        "type=multipolygon"
+      ],
+      "score": 155
+    },
+    {
+      "id": "way:73485381",
+      "name": "Bagni Vecchi",
+      "lat": 46.4922163,
+      "lon": 10.3609825,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Valdidentro",
+        "addr:postcode=23038",
+        "addr:street=Via Bagni Vecchi",
+        "amenity=public_bath",
+        "bath:sand_bath=no",
+        "bath:type=thermal",
+        "check_date=2023-08-01",
+        "contact:email=infobagnivecchi@bagnidibormio.it",
+        "contact:phone=+39 0289747201",
+        "contact:website=https://www.qcterme.com/it/bormio/qc-terme-bagni-vecchi",
+        "fee=yes",
+        "name=Bagni Vecchi",
+        "opening_hours=Mo-Su 10:00-22:00; ",
+        "operator=QC Terme",
+        "operator:wikidata=Q115543071",
+        "ref:vatin=IT10541980966",
+        "wheelchair=no",
+        "wikidata=Q112140705"
+      ],
+      "score": 133
+    },
+    {
+      "id": "way:330277912",
+      "name": "Bagni Nuovi",
+      "lat": 46.4861095,
+      "lon": 10.3605096,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Valdidentro",
+        "addr:housenumber=7",
+        "addr:postcode=23038",
+        "addr:street=Via Bagni Nuovi",
+        "amenity=public_bath",
+        "bath:open_air=partial",
+        "bath:sand_bath=no",
+        "bath:type=thermal",
+        "brand=QC Terme",
+        "brand:wikidata=Q115543071",
+        "check_date=2023-12-14",
+        "contact:phone=+39 02 89747202",
+        "fee=yes",
+        "name=Bagni Nuovi",
+        "operator=QC Terme s.r.l.",
+        "ref:vatin=IT10541980966",
+        "website=https://www.qcterme.com/it/bormio/qc-terme-bagni-vecchi",
+        "wheelchair=no",
+        "wikidata=Q123884916"
+      ],
+      "score": 128
+    },
+    {
+      "id": "way:423970552",
+      "name": "Aquardens",
+      "lat": 45.5065656,
+      "lon": 10.82691,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "addr:country=IT",
+        "addr:housenumber=63",
+        "addr:street=Via Valpolicella",
+        "amenity=public_bath",
+        "bath:type=thermal",
+        "contact:facebook=https://www.facebook.com/Aquardens",
+        "name=Aquardens",
+        "phone=+39 045 67067",
+        "ref:vatin=IT03784080230",
+        "website=https://www.aquardens.it/"
+      ],
+      "score": 128
+    },
+    {
+      "id": "way:1393107384",
+      "name": "Aquaria",
+      "lat": 45.4949341,
+      "lon": 10.6045881,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=1",
+        "addr:street=Piazza Don Angelo Piatti",
+        "alt_name=Terme di Catullo;Terme di Sirmione",
+        "amenity=public_bath",
+        "bath:type=thermal",
+        "check_date=2025-05-11",
+        "fee=yes",
+        "name=Aquaria",
+        "opening_hours=Su-Th 09:00-22:00; Fr,Sa 09:00-24:00",
+        "operator=Terme e Grandi Alberghi Sirmione spa",
+        "payment:cash=yes",
+        "payment:mastercard=yes",
+        "payment:visa=yes",
+        "reservation=required",
+        "toilets:wheelchair=yes",
+        "website=https://www.termedisirmione.com/spathermalgarden/",
+        "wheelchair=yes",
+        "wheelchair:description=Wenn man höfflich fragt gibt es eine super saubere barrierefrei Toilette :)"
+      ],
+      "score": 128
+    },
+    {
+      "id": "node:1783595018",
+      "name": "Bormio Terme",
+      "lat": 46.4699722,
+      "lon": 10.3692332,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=14",
+        "addr:street=Via Stelvio",
+        "amenity=public_bath",
+        "contact:email=info@bormioterme.it",
+        "contact:phone=+390342901325",
+        "contact:website=https://www.bormioterme.it/",
+        "name=Bormio Terme"
+      ],
+      "score": 123
+    },
+    {
+      "id": "node:12209829458",
+      "name": "Terme di Trescore",
+      "lat": 45.6906752,
+      "lon": 9.8471329,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Trescore Balneario",
+        "addr:postcode=24069",
+        "addr:street=via Gramsci",
+        "amenity=public_bath",
+        "email=richieste@termeditrescore.it",
+        "healthcare:speciality=hydrotherapy",
+        "name=Terme di Trescore",
+        "operator=Terme di Trescore S.P.A.",
+        "phone=035 4255511",
+        "website=https://www.termeditrescore.it/"
+      ],
+      "score": 123
+    },
+    {
+      "id": "node:12308269875",
+      "name": "QC Terme San Pellegrino",
+      "lat": 45.8414835,
+      "lon": 9.6641981,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=53",
+        "addr:street=Viale della Vittoria",
+        "amenity=public_bath",
+        "brand=QC Terme",
+        "brand:wikidata=Q115543071",
+        "check_date=2024-11-02",
+        "contact:website=https://www.qcterme.com/it/san-pellegrino/qc-terme-san-pellegrino",
+        "name=QC Terme San Pellegrino",
+        "payment:cash=yes",
+        "payment:maestro=yes",
+        "payment:mastercard=yes",
+        "payment:visa=yes"
+      ],
+      "score": 118
+    },
+    {
+      "id": "relation:2428656",
+      "name": "Terme Berzieri",
+      "lat": 44.8161157,
+      "lon": 9.9798504,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "amenity=public_bath",
+        "building=yes",
+        "name=Terme Berzieri",
+        "source=Regione Emilia Romagna",
+        "type=multipolygon",
+        "website=https://www.termedisalsomaggiore.it/",
+        "wikidata=Q24934178",
+        "wikipedia=it:Terme Berzieri"
+      ],
+      "score": 118
+    },
+    {
+      "id": "node:12299807688",
+      "name": "Terme curative",
+      "lat": 45.8413064,
+      "lon": 9.665696,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "amenity=public_bath",
+        "check_date=2024-11-02",
+        "disused:building=yes",
+        "name=Terme curative"
+      ],
+      "score": 110
+    },
+    {
+      "id": "node:13261062569",
+      "name": "Terme di Boario",
+      "lat": 45.8915171,
+      "lon": 10.186827,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "access=customers",
+        "amenity=public_bath",
+        "bath:type=hot_spring",
+        "fee=yes",
+        "fixme=Check type. Spa with hot springs, sauna etc",
+        "name=Terme di Boario"
+      ],
+      "score": 110
+    },
+    {
+      "id": "way:182264657",
+      "name": "Terme \"Respighi\" di Tabiano",
+      "lat": 44.8027216,
+      "lon": 10.0213801,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "amenity=public_bath",
+        "building=yes",
+        "name=Terme \"Respighi\" di Tabiano",
+        "source=Regione Emilia Romagna"
+      ],
+      "score": 110
+    },
+    {
+      "id": "way:182288771",
+      "name": "Terme Luigi Zoja",
+      "lat": 44.8163124,
+      "lon": 9.9839409,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "amenity=public_bath",
+        "building=yes",
+        "name=Terme Luigi Zoja",
+        "source=Regione Emilia Romagna",
+        "wikidata=Q130535203"
+      ],
+      "score": 110
+    },
+    {
+      "id": "way:182312648",
+      "name": "Terme di Sant'Andrea",
+      "lat": 44.7263344,
+      "lon": 10.0880034,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "amenity=public_bath",
+        "building=yes",
+        "name=Terme di Sant'Andrea",
+        "source=Regione Emilia Romagna"
+      ],
+      "score": 110
+    },
+    {
+      "id": "way:182312657",
+      "name": "Terme di Sant'Andrea",
+      "lat": 44.7256773,
+      "lon": 10.0893493,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "amenity=public_bath",
+        "building=yes",
+        "name=Terme di Sant'Andrea",
+        "source=Regione Emilia Romagna"
+      ],
+      "score": 110
+    },
+    {
+      "id": "way:182312716",
+      "name": "Terme di Sant'Andrea",
+      "lat": 44.7256287,
+      "lon": 10.0895658,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "amenity=public_bath",
+        "building=yes",
+        "name=Terme di Sant'Andrea",
+        "source=Regione Emilia Romagna"
+      ],
+      "score": 110
+    },
+    {
+      "id": "way:310920162",
+      "name": "Terme di Comano",
+      "lat": 46.0423536,
+      "lon": 10.8821883,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "amenity=public_bath",
+        "bath:open_air=no",
+        "bath:sand_bath=no",
+        "bath:type=hot_spring",
+        "building=yes",
+        "description=SPA",
+        "email=informazioni@termecomano.it",
+        "name=Terme di Comano"
+      ],
+      "score": 110
+    },
+    {
+      "id": "way:1459065183",
+      "name": "Terme di Lesignano de' Bagni",
+      "lat": 44.6444045,
+      "lon": 10.2955028,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "amenity=public_bath",
+        "area=yes",
+        "mobile=+39 331 2827946",
+        "name=Terme di Lesignano de' Bagni"
+      ],
+      "score": 110
+    },
+    {
+      "id": "way:124048209",
+      "name": "Solea Boutique & Spa Hotel",
+      "lat": 46.1758859,
+      "lon": 11.0693617,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Fai della Paganella",
+        "addr:country=IT",
+        "addr:housenumber=11",
+        "addr:postcode=38010",
+        "addr:street=Via Cesare Battisti",
+        "amenity=public_bath",
+        "building=hotel",
+        "contact:facebook=https://www.facebook.com/hotelsolea",
+        "contact:instagram=hotelsolea",
+        "email=info@hotelsolea.com",
+        "internet_access=wlan",
+        "internet_access:fee=no",
+        "name=Solea Boutique & Spa Hotel",
+        "phone=+39 0461 581065",
+        "sauna=yes",
+        "spa=yes",
+        "stars=4",
+        "tourism=hotel",
+        "website=https://www.hotelsolea.com",
+        "wikidata=Q111413100"
+      ],
+      "score": 108
+    },
+    {
+      "id": "node:925495814",
+      "name": "Sorgente termale Val Calaona",
+      "lat": 45.2661968,
+      "lon": 11.642543,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "name=Sorgente termale Val Calaona",
+        "natural=hot_spring"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:11381869246",
+      "name": "Pozza Alta di Leonardo",
+      "lat": 46.4950649,
+      "lon": 10.3564216,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "name=Pozza Alta di Leonardo",
+        "natural=hot_spring"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:11381869247",
+      "name": "La pozza Bassa",
+      "lat": 46.4921488,
+      "lon": 10.3583132,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "name=La pozza Bassa",
+        "natural=hot_spring"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:368409443",
+      "name": "Pozza \"Leonardo da Vinci\"",
+      "lat": 46.492188,
+      "lon": 10.3582993,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "access=yes",
+        "bath:open_air=yes",
+        "bath:sand_bath=no",
+        "bath:type=hot_spring",
+        "drinking_water=no",
+        "fee=no",
+        "name=Pozza \"Leonardo da Vinci\"",
+        "natural=hot_spring",
+        "pump=no"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:1028341832",
+      "name": "Bagno",
+      "lat": 45.2871693,
+      "lon": 11.6472119,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "description=Antica vasca termale",
+        "name=Bagno",
+        "natural=hot_spring"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:1218457991",
+      "name": "Bagneto",
+      "lat": 45.2953708,
+      "lon": 11.644556,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "name=Bagneto",
+        "natural=hot_spring"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:311389293",
+      "name": "Albergo Ristorante Da Carla Failela",
+      "lat": 45.7554245,
+      "lon": 11.216721,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Valli del Pasubio",
+        "addr:housenumber=26",
+        "addr:postcode=36030",
+        "addr:street=Via Piazza Alta",
+        "contact:facebook=https://www.facebook.com/CarlaFailela/",
+        "contact:phone=+39 0445 630047",
+        "email=info@carlafailela.it",
+        "internet_access=wlan",
+        "leisure=spa",
+        "name=Albergo Ristorante Da Carla Failela",
+        "old_name=Locanda Bar da Bruno",
+        "opening_hours=Mo-Th 09:00-23:00; We off; Fr-Su 09:00-24:00",
+        "phone=+39 0445 590370",
+        "ref:vatin=IT00055070247",
+        "tourism=hotel",
+        "website=https://www.carlafailela.it/"
+      ],
+      "score": 78
+    },
+    {
+      "id": "node:9026874314",
+      "name": "Baia del Silenzio",
+      "lat": 45.7050938,
+      "lon": 10.0731084,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "amenity=public_bath",
+        "fee=no",
+        "name=Baia del Silenzio"
+      ],
+      "score": 70
+    },
+    {
+      "id": "node:12121674647",
+      "name": "Iman Beauty Hammam",
+      "lat": 44.7121294,
+      "lon": 10.6032223,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "amenity=public_bath",
+        "bath:open_air=no",
+        "bath:type=hammam",
+        "fee=yes",
+        "name=Iman Beauty Hammam"
+      ],
+      "score": 70
+    },
+    {
+      "id": "node:12121674648",
+      "name": "Camelot Club",
+      "lat": 44.6912279,
+      "lon": 10.6345362,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "amenity=public_bath",
+        "bath:open_air=no",
+        "bath:type=hammam",
+        "fee=yes",
+        "name=Camelot Club"
+      ],
+      "score": 70
+    },
+    {
+      "id": "node:2063000981",
+      "name": "New Suadis",
+      "lat": 45.4148928,
+      "lon": 10.974389,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "leisure=spa",
+        "name=New Suadis"
+      ],
+      "score": 60
+    },
+    {
+      "id": "node:9124493356",
+      "name": "Touring",
+      "lat": 46.1810793,
+      "lon": 10.3327892,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Edolo",
+        "addr:housenumber=7",
+        "addr:street=Piazza Martiri della Libertà",
+        "air_conditioning=yes",
+        "bar=yes",
+        "contact:email=info@touringedolo.it",
+        "contact:phone=+39 0364 1957960",
+        "contact:website=https://touringedolo.it/",
+        "name=Touring",
+        "spa=yes",
+        "tourism=hotel"
+      ],
+      "score": 13
+    },
+    {
+      "id": "way:60958888",
+      "name": "Palace Meggiorato",
+      "lat": 45.351566,
+      "lon": 11.7776653,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Abano Terme",
+        "addr:country=IT",
+        "addr:housenumber=49",
+        "addr:postcode=35031",
+        "addr:street=Via Pietro D'Abano",
+        "building=yes",
+        "contact:phone=+39 049 8669106",
+        "contact:website=http://www.hotelmeggiorato.it",
+        "name=Palace Meggiorato",
+        "spa=yes",
+        "tourism=hotel"
+      ],
+      "score": 13
+    },
+    {
+      "id": "way:60958903",
+      "name": "Savoia",
+      "lat": 45.3512643,
+      "lon": 11.7766084,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Abano Terme",
+        "addr:country=IT",
+        "addr:housenumber=49",
+        "addr:postcode=35031",
+        "addr:street=Via Pietro D'Abano",
+        "building=yes",
+        "contact:email=savoia@savoiaterme.it",
+        "contact:fax=+39 049 667777",
+        "contact:phone=+39 049 8231111",
+        "contact:website=http://www.savoiaterme.it/",
+        "internet_access=yes",
+        "name=Savoia",
+        "spa=yes",
+        "stars=4",
+        "tourism=hotel"
+      ],
+      "score": 13
+    },
+    {
+      "id": "way:130019228",
+      "name": "Due Torri",
+      "lat": 45.3524633,
+      "lon": 11.7784903,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Abano Terme",
+        "addr:country=IT",
+        "addr:housenumber=18",
+        "addr:postcode=35031",
+        "addr:street=Via Pietro D'Abano",
+        "building=yes",
+        "contact:email=duetorri@gbhotelsabano.it",
+        "contact:fax=+39 049 8669927",
+        "contact:phone=+39 049 8632100",
+        "contact:website=http://www.hotelduetorriabano.it/",
+        "internet_access=yes",
+        "name=Due Torri",
+        "spa=yes",
+        "stars=5",
+        "tourism=hotel",
+        "wikidata=Q111412793"
+      ],
+      "score": 13
+    }
+  ]
+}
