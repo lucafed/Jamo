@@ -1,17 +1,19 @@
-/* Jamo — app.js v16.1
+/* Jamo — app.js v16.1 (BORGI FIX)
  * Mobile-first • Offline-only • Flusso pulito • Risultato centrale • Niente dock
  *
  * ✅ NO GPS
  * ✅ OFFLINE-ONLY (dataset in /public/data/...)
  * ✅ Relax + Borghi collegati a:
  *    - dataset regionali (es: it-veneto-relax / it-veneto-borghi)
- *    - dataset radius (radius-relax / radius-borghi) anche fuori Italia
+ *    - dataset radius (radius-relax / radius-borghi)
  * ✅ Fallback automatico: se un dataset non esiste o è vuoto, prova il prossimo
  * ✅ Alternative “load more” • Dedupe forte • Visited/Recent • Monetizzazione link (Google fallback)
  *
- * 🔧 FIX BOR GHI:
- * - “Classici” = SOLO borghi/centri abitati (place=...) o nuclei storici (historic=old_town)
- * - Esclude roba tipo: musei, forti, cime, passi, gallerie, bacini, grotte, ecc.
+ * 🔥 FIX BORGI:
+ * - “borghi” non = museo/forte/cima/colle
+ * - include place=town oltre a village/hamlet
+ * - “classici vs chicche” per borghi NON dipende da visibility del dataset,
+ *   ma da segnali di “borgo turistico” (score + historic/attraction + name signals)
  */
 
 (() => {
@@ -38,19 +40,14 @@
     ],
 
     // ✅ Dataset disponibili (regionali + radius)
-    // NOTE: supportiamo sia nomi vecchi che nuovi per non “rompere” nulla.
     REGIONAL_POIS_BY_ID: {
       "it-veneto": "/data/pois/regions/it-veneto.json",
       "it-veneto-relax": "/data/pois/regions/it-veneto-relax.json",
       "it-veneto-borghi": "/data/pois/regions/it-veneto-borghi.json",
 
-      // radius (nuovi nomi consigliati)
-      "radius-relax": "/data/pois/regions/radius-relax.json",
-      "radius-borghi": "/data/pois/regions/radius-borghi.json",
-
-      // radius (compat vecchi nomi: se li hai)
-      "relax-radius": "/data/pois/regions/relax-radius.json",
-      "borghi-radius": "/data/pois/regions/borghi-radius.json",
+      // radius (anche fuori Italia)  ✅ NOMI FILE CORRETTI
+      "relax-radius": "/data/pois/regions/radius-relax.json",
+      "borghi-radius": "/data/pois/regions/radius-borghi.json",
     },
 
     // BBox usata solo per riconoscere "sei in Veneto?" (non per limitare i risultati)
@@ -68,6 +65,10 @@
     },
 
     CLONE_KM: 2.2,
+
+    // 🔥 BORGI scoring thresholds (per distinguere classici/chicche in modo affidabile)
+    BORGI_CLASSIC_MIN_SCORE: 0.78,   // >= questo -> “classico” (se ha segnali borgo)
+    BORGI_CHICCA_MAX_SCORE: 0.78,    // < questo -> “chicca”
   };
 
   // -------------------- STATE --------------------
@@ -454,6 +455,9 @@
     out.tags = Array.isArray(out.tags) ? out.tags.map(x => String(x).toLowerCase()) : [];
     out.country = String(out.country || "").toUpperCase();
     out.area = String(out.area || "");
+    out.score = Number.isFinite(Number(out.score)) ? Number(out.score) : undefined;
+    out.beauty_score = Number.isFinite(Number(out.beauty_score)) ? Number(out.beauty_score) : undefined;
+
     return out;
   }
 
@@ -515,14 +519,11 @@
     const urls = [];
 
     // 1) radius-first per relax/borghi (anche fuori Italia)
-    // prova prima i nomi "radius-..." e poi i compat "…-radius"
-    if (category === "relax") {
-      if (CFG.REGIONAL_POIS_BY_ID["radius-relax"]) urls.push(CFG.REGIONAL_POIS_BY_ID["radius-relax"]);
-      if (CFG.REGIONAL_POIS_BY_ID["relax-radius"]) urls.push(CFG.REGIONAL_POIS_BY_ID["relax-radius"]);
+    if (category === "relax" && CFG.REGIONAL_POIS_BY_ID["relax-radius"]) {
+      urls.push(CFG.REGIONAL_POIS_BY_ID["relax-radius"]);
     }
-    if (category === "borghi") {
-      if (CFG.REGIONAL_POIS_BY_ID["radius-borghi"]) urls.push(CFG.REGIONAL_POIS_BY_ID["radius-borghi"]);
-      if (CFG.REGIONAL_POIS_BY_ID["borghi-radius"]) urls.push(CFG.REGIONAL_POIS_BY_ID["borghi-radius"]);
+    if (category === "borghi" && CFG.REGIONAL_POIS_BY_ID["borghi-radius"]) {
+      urls.push(CFG.REGIONAL_POIS_BY_ID["borghi-radius"]);
     }
 
     // 2) se sei in Veneto, prova dataset regionali specifici
@@ -674,7 +675,6 @@
 
     const spaName = looksWellnessByName(place);
 
-    // piscina solo se spa-like
     const poolSpaLike =
       t.includes("leisure=swimming_pool") && (
         nm.includes("terme") || nm.includes("spa") || nm.includes("thermal") ||
@@ -704,7 +704,7 @@
 
   function isMuseum(place) {
     const t = tagsStr(place);
-    return t.includes("tourism=museum") || t.includes("amenity=museum");
+    return t.includes("tourism=museum");
   }
 
   function isKidsMuseum(place) {
@@ -787,90 +787,62 @@
     );
   }
 
-  // -------------------- BOR GHI: FIX “CLASSICI” --------------------
+  // -------------------- BORGI FIX (core) --------------------
+  function isBorgoSettlement(place) {
+    const t = tagsStr(place);
+    return (
+      t.includes("place=village") ||
+      t.includes("place=hamlet") ||
+      t.includes("place=town")
+    );
+  }
+
+  function isBorgoSignals(place) {
+    const t = tagsStr(place);
+    const n = normName(place?.name || "");
+
+    // segnali “da borgo”
+    const historicCore =
+      t.includes("historic=castle") ||
+      t.includes("historic=citywalls") ||
+      t.includes("historic=centre") ||
+      t.includes("historic=archaeological_site") ||
+      t.includes("historic=monument") ||
+      t.includes("historic=memorial") ||
+      t.includes("tourism=attraction");
+
+    const nameSignal = hasAny(n, [
+      "borgo", "centro storico", "castello", "rocca", "mura", "piazza", "medieval", "medioeval",
+      "citta vecchia", "cittadella", "quartiere storico"
+    ]);
+
+    // “borgo turistico” spesso è attraction + place=town/village
+    return historicCore || nameSignal;
+  }
+
   function isClearlyNotBorgo(place) {
     const t = tagsStr(place);
     const n = normName(place?.name || "");
 
-    // natura/quote/percorsi = NON borgo
-    if (
-      t.includes("natural=peak") || t.includes("natural=saddle") || t.includes("natural=gorge") ||
-      t.includes("natural=cave_entrance") || t.includes("natural=waterfall") ||
-      t.includes("water=lake") || t.includes("water=reservoir") ||
-      t.includes("mountain_pass") || n.includes("passo ") ||
-      n.includes("cima ") || n.includes("monte ") || n.includes("col ") || n.includes("croda ") ||
-      n.includes("malga ") || n.includes("rifugio ")
-    ) return true;
+    // se è un “POI” (museo/forte/cima) ma non un insediamento, NON è borgo
+    if (!isBorgoSettlement(place)) return true;
 
-    // trasporti/strade
-    if (t.includes("highway=") || t.includes("railway=") || t.includes("public_transport=")) return true;
-
-    // POI singoli che NON sono "borgo"
-    if (
-      isMuseum(place) ||
-      t.includes("historic=fort") ||
-      t.includes("historic=castle") ||
-      t.includes("historic=memorial") ||
-      t.includes("man_made=works") ||
-      n.includes("museo ") || n.includes("galleria ") || n.includes("palazzo ") || n.includes("villa ") ||
-      n.includes("forte ") || n.includes("batteria ") || n.includes("trincea ") ||
-      n.includes("bacino ") || n.includes("diga ") || n.includes("cava ")
-    ) {
-      // se è anche un vero settlement, NON lo scartiamo
-      const isSettlement =
-        t.includes("place=city") || t.includes("place=town") || t.includes("place=village") || t.includes("place=hamlet") ||
-        t.includes("place=suburb") || t.includes("place=neighbourhood") || t.includes("historic=old_town");
-      return !isSettlement;
-    }
+    // evitare “spazio espositivo / museo / galleria / parco / cima” come “borgo”
+    if (isMuseum(place)) return true;
+    if (t.includes("historic=fort") || n.includes("forte ")) return true;
+    if (t.includes("natural=peak") || t.includes("natural=saddle")) return true;
+    if (n.includes("cima ") || n.includes("monte ") || n.includes("col de ") || n.includes("col di ")) return true;
 
     return false;
   }
 
-  function isSettlementLike(place) {
-    const t = tagsStr(place);
-    return (
-      t.includes("place=city") || t.includes("place=town") || t.includes("place=village") || t.includes("place=hamlet") ||
-      t.includes("place=suburb") || t.includes("place=neighbourhood") || t.includes("place=quarter") || t.includes("place=locality") ||
-      t.includes("historic=old_town") ||
-      // fallback admin: comune (se nei tag)
-      (t.includes("boundary=administrative") && (t.includes("admin_level=8") || t.includes("admin_level=9")))
-    );
-  }
-
-  function hasHistoricOrTouristicSignal(place) {
-    const t = tagsStr(place);
-    const n = normName(place?.name || "");
-    return (
-      t.includes("historic=old_town") ||
-      t.includes("wikipedia=") || t.includes("wikidata=") ||
-      t.includes("heritage=") ||
-      t.includes("tourism=attraction") ||
-      n.includes("borgo") || n.includes("centro storico") || n.includes("castel") // castel* nel nome (Castel..., Castello...)
-    );
-  }
-
-  function isBorgoClassic(place) {
-    if (isClearlyNotBorgo(place)) return false;
-    if (!isSettlementLike(place)) return false;
-    return hasHistoricOrTouristicSignal(place);
-  }
-
-  function isBorgoChicca(place) {
-    // chicca: più permissivo, ma sempre “settlement-like” e mai roba natura/strada/museo se non settlement
-    if (isClearlyNotBorgo(place)) return false;
-    return isSettlementLike(place);
-  }
-
-  // ✅ Borgo “base” usato dalla categoria (non dallo stile)
+  // ✅ Borgo finale (STRICT): settlement + segnali borgo + anti-spazzatura
   function isBorgo(place) {
-    // se è “borghi” nel type va bene, ma NON deve essere roba random
-    const type = normalizeType(place?.type);
-    if (type === "borghi") return isBorgoChicca(place);
-
-    // oppure se nei tag appare un settlement
-    return isBorgoChicca(place);
+    if (!isBorgoSettlement(place)) return false;
+    if (!isBorgoSignals(place)) return false;
+    if (isClearlyNotBorgo(place)) return false;
+    return true;
   }
-  // -------------------- /BOR GHI FIX --------------------
 
   function isCity(place) {
     const t = tagsStr(place);
@@ -944,7 +916,10 @@
       );
     }
     if (cat === "relax") return isSpaPlace(place);
-    if (cat === "borghi") return isBorgo(place); // 🔥 fix: usa filtro borgo pulito
+
+    // 🔥 BORGI STRICT (nuova)
+    if (cat === "borghi") return isBorgo(place);
+
     if (cat === "citta") return isCity(place);
     if (cat === "montagna") return isMountain(place);
     if (cat === "viewpoints") return isRealViewpoint(place);
@@ -990,11 +965,51 @@
       );
     }
 
-    // per borghi NON allarghiamo troppo: meglio pochi ma giusti
+    // borghi relaxed: accetta settlement+almeno 1 segnale (ma comunque anti-spazzatura)
+    if (cat === "borghi") {
+      if (!isBorgoSettlement(place)) return false;
+      if (isClearlyNotBorgo(place)) return false;
+      return isBorgoSignals(place);
+    }
+
     return matchesCategoryStrict(place, cat);
   }
 
-  function matchesStyle(place, { wantChicche, wantClassici }) {
+  // -------------------- STYLE (🔥 BORGI FIX) --------------------
+  function borgoLooksClassic(place) {
+    const s = Number(place?.score);
+    const t = tagsStr(place);
+    const n = normName(place?.name || "");
+
+    const historicStrong =
+      t.includes("historic=castle") ||
+      t.includes("historic=citywalls") ||
+      t.includes("historic=centre") ||
+      t.includes("tourism=attraction");
+
+    const nameStrong = hasAny(n, ["borgo", "centro storico", "castello", "rocca", "mura", "medieval", "medioeval"]);
+    const scoreOk = Number.isFinite(s) ? s >= CFG.BORGI_CLASSIC_MIN_SCORE : false;
+
+    return (historicStrong && (scoreOk || nameStrong)) || scoreOk;
+  }
+
+  function borgoLooksChicca(place) {
+    const s = Number(place?.score);
+    if (Number.isFinite(s)) return s < CFG.BORGI_CHICCA_MAX_SCORE;
+    // se manca score: chicca = non ha segnali fortissimi
+    return !borgoLooksClassic(place);
+  }
+
+  function matchesStyle(place, { wantChicche, wantClassici }, category) {
+    // 🔥 Per BORGI: la distinzione classici/chicche NON dipende da visibility del dataset
+    if (category === "borghi") {
+      if (wantClassici && !wantChicche) return borgoLooksClassic(place);
+      if (wantChicche && !wantClassici) return borgoLooksChicca(place);
+      // se sono selezionati entrambi o nessuno, ok
+      return true;
+    }
+
+    // fallback standard per le altre categorie
     const vis = normalizeVisibility(place?.visibility);
     if (!wantChicche && !wantClassici) return true;
     if (vis === "chicca") return !!wantChicche;
@@ -1084,32 +1099,7 @@
         : matchesCategoryStrict(p, category);
 
       if (!okCat) continue;
-
-      // ✅ stile base (chicche/classici)
-      if (!matchesStyle(p, styles)) continue;
-
-      // ✅ FIX BOR GHI: quando categoria=borghi, lo stile governa “classico/chicca” in modo pulito
-      if (category === "borghi") {
-        const wantAnyStyle = (styles.wantChicche || styles.wantClassici);
-
-        if (wantAnyStyle) {
-          // solo classici
-          if (styles.wantClassici && !styles.wantChicche) {
-            if (!isBorgoClassic(p)) continue;
-          }
-          // solo chicche
-          if (styles.wantChicche && !styles.wantClassici) {
-            if (!isBorgoChicca(p)) continue;
-            // se vuoi “solo chicche” veramente, evita i classicissimi
-            // (se preferisci includerli lo togli)
-            if (isBorgoClassic(p)) continue;
-          }
-          // entrambi selezionati: accetta entrambi (già filtrati da isBorgo)
-        } else {
-          // nessuno stile selezionato: default = classici “puliti”
-          if (!isBorgoClassic(p)) continue;
-        }
-      }
+      if (!matchesStyle(p, styles, category)) continue;
 
       const pid = safeIdFromPlace(p);
       if (!ignoreVisited && visited.has(pid)) continue;
@@ -1137,8 +1127,14 @@
         if (t.includes("amenity=sauna") || t.includes("leisure=sauna") || t.includes("healthcare=sauna")) s += 0.10;
         if (looksWellnessByName(p)) s += 0.08;
 
-        // piscina non spa-like: penalità leggera (non troppo)
         if (t.includes("leisure=swimming_pool") && !isSpaPlace(p)) s -= 0.18;
+      }
+
+      // BORGI: boost “borgo turistico”
+      if (category === "borghi") {
+        if (borgoLooksClassic(p)) s += 0.14;
+        const n = normName(p.name || "");
+        if (n.includes("borgo") || n.includes("centro storico")) s += 0.06;
       }
 
       candidates.push({ place: p, pid, km, driveMin, score: Number(s.toFixed(4)) });
@@ -1216,7 +1212,11 @@
     return map[category] || { emoji:"📍", label:"Meta" };
   }
 
-  function visibilityLabel(place) {
+  function visibilityLabel(place, category) {
+    // per borghi, etichetta “classica/chicca” coerente con la nuova logica
+    if (category === "borghi") {
+      return borgoLooksClassic(place) ? "✅ classica" : "✨ chicca";
+    }
     return normalizeVisibility(place?.visibility) === "chicca" ? "✨ chicca" : "✅ classica";
   }
 
@@ -1296,7 +1296,7 @@
     scrollToId("resultCard");
   }
 
-  function renderOptionsList() {
+  function renderOptionsList(category) {
     const chosen = CURRENT_CHOSEN;
     if (!chosen) return "";
 
@@ -1310,7 +1310,7 @@
       const name = escapeHtml(p.name || "");
       const time = `~${x.driveMin} min`;
       const sub = `${escapeHtml((p.area || p.country || "—").trim())} • ${p.lat.toFixed(3)}, ${p.lon.toFixed(3)}`;
-      const vis = visibilityLabel(p);
+      const vis = visibilityLabel(p, category);
       const active = (CURRENT_CHOSEN?.pid === x.pid) ? "active" : "";
       return `
         <button class="optBtn ${active}" data-pid="${escapeHtml(x.pid)}" type="button">
@@ -1376,7 +1376,7 @@
     const img2 = osmStaticImgFallback(lat, lon, zoom);
 
     const what = shortWhatIs(p, category);
-    const vis = visibilityLabel(p);
+    const vis = visibilityLabel(p, category);
 
     const widenText = usedMinutes && usedMinutes !== maxMinutesInput ? ` • widen: ${usedMinutes} min` : "";
 
@@ -1429,7 +1429,7 @@
             <button class="btnGhost" id="btnSearchAgain" type="button">🎯 Nuova ricerca</button>
           </div>
 
-          ${renderOptionsList()}
+          ${renderOptionsList(category)}
         </div>
       </div>
     `;
@@ -1507,7 +1507,6 @@
       const category = getActiveCategory();
       const styles = getActiveStyles();
 
-      // ✅ dataset scelto in base alla categoria (radius-first per relax/borghi)
       await ensureDatasetLoaded(origin, category, { signal });
 
       const basePool = Array.isArray(DATASET?.places) ? DATASET.places : [];
