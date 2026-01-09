@@ -1,19 +1,13 @@
-/* Jamo — app.js v16.1 (BORGI FIX)
+/* Jamo — app.js v16.1
  * Mobile-first • Offline-only • Flusso pulito • Risultato centrale • Niente dock
  *
  * ✅ NO GPS
  * ✅ OFFLINE-ONLY (dataset in /public/data/...)
  * ✅ Relax + Borghi collegati a:
  *    - dataset regionali (es: it-veneto-relax / it-veneto-borghi)
- *    - dataset radius (radius-relax / radius-borghi)
+ *    - dataset radius (radius-relax / radius-borghi) come ESTENSIONE SILENZIOSA
  * ✅ Fallback automatico: se un dataset non esiste o è vuoto, prova il prossimo
  * ✅ Alternative “load more” • Dedupe forte • Visited/Recent • Monetizzazione link (Google fallback)
- *
- * 🔥 FIX BORGI:
- * - “borghi” non = museo/forte/cima/colle
- * - include place=town oltre a village/hamlet
- * - “classici vs chicche” per borghi NON dipende da visibility del dataset,
- *   ma da segnali di “borgo turistico” (score + historic/attraction + name signals)
  */
 
 (() => {
@@ -45,7 +39,11 @@
       "it-veneto-relax": "/data/pois/regions/it-veneto-relax.json",
       "it-veneto-borghi": "/data/pois/regions/it-veneto-borghi.json",
 
-      // radius (anche fuori Italia)  ✅ NOMI FILE CORRETTI
+      // ✅ radius (nomi reali che hai in repo)
+      "radius-relax": "/data/pois/regions/radius-relax.json",
+      "radius-borghi": "/data/pois/regions/radius-borghi.json",
+
+      // compat (se in passato avevi usato questi id)
       "relax-radius": "/data/pois/regions/radius-relax.json",
       "borghi-radius": "/data/pois/regions/radius-borghi.json",
     },
@@ -66,9 +64,8 @@
 
     CLONE_KM: 2.2,
 
-    // 🔥 BORGI scoring thresholds (per distinguere classici/chicche in modo affidabile)
-    BORGI_CLASSIC_MIN_SCORE: 0.78,   // >= questo -> “classico” (se ha segnali borgo)
-    BORGI_CHICCA_MAX_SCORE: 0.78,    // < questo -> “chicca”
+    // Limite hard per non esplodere memoria
+    MAX_MERGED_PLACES: 45000,
   };
 
   // -------------------- STATE --------------------
@@ -80,8 +77,14 @@
 
   let MACROS_INDEX = null;
 
-  // cache dataset per "key" (orig + categoria + top candidate)
-  let DATASET = { key: null, kind: null, source: null, places: [], meta: {} };
+  // dataset merged
+  let DATASET = {
+    key: null,
+    kind: "merged",
+    sources: [],
+    places: [],
+    meta: {}
+  };
 
   let ALL_OPTIONS = [];
   let VISIBLE_ALTS = 0;
@@ -438,7 +441,7 @@
     return s;
   }
 
-  function normalizePlace(p) {
+  function normalizePlace(p, sourceUrl = "") {
     if (!p) return null;
     const lat = Number(p.lat);
     const lon = Number(p.lon ?? p.lng);
@@ -452,12 +455,13 @@
     out.type = normalizeType(out.type || out.primary_category || out.category || "");
     out.visibility = normalizeVisibility(out.visibility);
 
+    out._visMissing = (p.visibility == null);
+    out._src = String(sourceUrl || "");
+    out._isRadius = out._src.includes("radius-");
+
     out.tags = Array.isArray(out.tags) ? out.tags.map(x => String(x).toLowerCase()) : [];
     out.country = String(out.country || "").toUpperCase();
     out.area = String(out.area || "");
-    out.score = Number.isFinite(Number(out.score)) ? Number(out.score) : undefined;
-    out.beauty_score = Number.isFinite(Number(out.beauty_score)) ? Number(out.beauty_score) : undefined;
-
     return out;
   }
 
@@ -479,10 +483,10 @@
       const placesRaw = Array.isArray(j?.places) ? j.places : null;
       if (!placesRaw || !placesRaw.length) return null;
 
-      const places = placesRaw.map(normalizePlace).filter(Boolean);
+      const places = placesRaw.map(x => normalizePlace(x, url)).filter(Boolean);
       if (!places.length) return null;
 
-      return { json: j, places };
+      return { url, json: j, places };
     } catch {
       return null;
     }
@@ -514,39 +518,29 @@
     return "";
   }
 
-  // ✅ IMPORTANT: sceglie gli URL in base alla categoria
+  // ✅ Ordine nuovo: prima regionali (curati), poi radius come estensione silenziosa, poi macro
   function preferredDatasetUrls(origin, category) {
     const urls = [];
-
-    // 1) radius-first per relax/borghi (anche fuori Italia)
-    if (category === "relax" && CFG.REGIONAL_POIS_BY_ID["relax-radius"]) {
-      urls.push(CFG.REGIONAL_POIS_BY_ID["relax-radius"]);
-    }
-    if (category === "borghi" && CFG.REGIONAL_POIS_BY_ID["borghi-radius"]) {
-      urls.push(CFG.REGIONAL_POIS_BY_ID["borghi-radius"]);
-    }
-
-    // 2) se sei in Veneto, prova dataset regionali specifici
     const regionId = pickRegionIdFromOrigin(origin);
+
+    // 1) regionali specifici (curati)
     if (regionId === "it-veneto") {
-      if (category === "relax" && CFG.REGIONAL_POIS_BY_ID["it-veneto-relax"]) {
-        urls.push(CFG.REGIONAL_POIS_BY_ID["it-veneto-relax"]);
-      }
-      if (category === "borghi" && CFG.REGIONAL_POIS_BY_ID["it-veneto-borghi"]) {
-        urls.push(CFG.REGIONAL_POIS_BY_ID["it-veneto-borghi"]);
-      }
-      // regionale generalista (contiene tutte le categorie)
-      if (CFG.REGIONAL_POIS_BY_ID["it-veneto"]) urls.push(CFG.REGIONAL_POIS_BY_ID["it-veneto"]);
+      if (category === "relax" && CFG.REGIONAL_POIS_BY_ID["it-veneto-relax"]) urls.push(CFG.REGIONAL_POIS_BY_ID["it-veneto-relax"]);
+      if (category === "borghi" && CFG.REGIONAL_POIS_BY_ID["it-veneto-borghi"]) urls.push(CFG.REGIONAL_POIS_BY_ID["it-veneto-borghi"]);
+      if (CFG.REGIONAL_POIS_BY_ID["it-veneto"]) urls.push(CFG.REGIONAL_POIS_BY_ID["it-veneto"]); // generalista
     }
 
-    // 3) macro paese (se disponibile) + fallback macro
+    // 2) radius come estensione (anche fuori Italia)
+    if (category === "relax" && CFG.REGIONAL_POIS_BY_ID["radius-relax"]) urls.push(CFG.REGIONAL_POIS_BY_ID["radius-relax"]);
+    if (category === "borghi" && CFG.REGIONAL_POIS_BY_ID["radius-borghi"]) urls.push(CFG.REGIONAL_POIS_BY_ID["radius-borghi"]);
+
+    // 3) macro paese + fallback macro
     const cc = String(origin?.country_code || "").toUpperCase();
     const countryMacro = findCountryMacroPath(cc);
     if (countryMacro) urls.push(countryMacro);
 
     for (const u of CFG.FALLBACK_MACRO_URLS) urls.push(u);
 
-    // 4) ultimo macro salvato dall’utente
     const savedMacro = localStorage.getItem("jamo_macro_url");
     if (savedMacro) urls.push(savedMacro);
 
@@ -562,32 +556,63 @@
     return out;
   }
 
+  function datasetInfoLabel(sources, totalCount, origin) {
+    const names = (sources || []).map(s => String(s || "").split("/").pop()).filter(Boolean);
+
+    const hasVeneto = names.some(n => n.startsWith("it-veneto"));
+    const hasRadius = names.some(n => n.startsWith("radius-"));
+
+    if (hasVeneto && hasRadius) return `POI: Veneto (+ estensione raggio) (${totalCount})`;
+    if (hasVeneto) return `POI: Veneto (${totalCount})`;
+    if (hasRadius) return `POI: raggio esteso (${totalCount})`;
+    if (names.length) return `DATA: ${names[0]} (${totalCount})`;
+    return `—`;
+  }
+
   async function ensureDatasetLoaded(origin, category, { signal } = {}) {
     await loadMacrosIndexSafe(signal);
 
     const preferred = preferredDatasetUrls(origin, category);
-    const key = `${origin?.lat?.toFixed?.(3) || "x"}|${origin?.lon?.toFixed?.(3) || "y"}|${String(category || "ovunque")}|${preferred[0] || "none"}`;
+    const key = `${origin?.lat?.toFixed?.(3) || "x"}|${origin?.lon?.toFixed?.(3) || "y"}|${String(category || "ovunque")}|${preferred.join(",")}`;
 
     if (DATASET?.places?.length && DATASET.key === key) return DATASET;
+
+    const merged = [];
+    const sourcesOk = [];
+    const seenPid = new Set();
 
     for (const url of preferred) {
       const loaded = await tryLoadPlacesFile(url, signal);
       if (!loaded) continue;
 
-      const isRegional = url.includes("/data/pois/regions/");
-      DATASET = {
-        key,
-        kind: isRegional ? "pois_region" : "macro",
-        source: url,
-        places: loaded.places,
-        meta: { raw: loaded.json, cc: String(origin?.country_code || "").toUpperCase() },
-      };
+      sourcesOk.push(url);
 
+      for (const p of loaded.places) {
+        const pid = safeIdFromPlace(p);
+        if (seenPid.has(pid)) continue;
+        seenPid.add(pid);
+        merged.push(p);
+        if (merged.length >= CFG.MAX_MERGED_PLACES) break;
+      }
+
+      // Se abbiamo già tanto materiale da regionali, va bene: ma teniamo radius/macro comunque già dentro in modo “silenzioso”
+      if (merged.length >= CFG.MAX_MERGED_PLACES) break;
+
+      const isRegional = url.includes("/data/pois/regions/");
       if (!isRegional) localStorage.setItem("jamo_macro_url", url);
-      return DATASET;
     }
 
-    throw new Error("Nessun dataset offline valido disponibile.");
+    if (!merged.length) throw new Error("Nessun dataset offline valido disponibile.");
+
+    DATASET = {
+      key,
+      kind: "merged",
+      sources: sourcesOk,
+      places: merged,
+      meta: { cc: String(origin?.country_code || "").toUpperCase() },
+    };
+
+    return DATASET;
   }
 
   // -------------------- GEOCODING --------------------
@@ -613,7 +638,6 @@
     return false;
   }
 
-  // Relax keywords (nome)
   function looksWellnessByName(place) {
     const n = normName(place?.name || "");
     return hasAny(n, [
@@ -622,7 +646,6 @@
     ]);
   }
 
-  // Kids keywords (nome)
   function looksKidsByName(place) {
     const n = normName(place?.name || "");
     return hasAny(n, [
@@ -660,7 +683,6 @@
     );
   }
 
-  // Relax: tag + keyword (non troppo stretto)
   function isSpaPlace(place) {
     const t = tagsStr(place);
     const nm = normName(place?.name || "");
@@ -787,61 +809,39 @@
     );
   }
 
-  // -------------------- BORGI FIX (core) --------------------
-  function isBorgoSettlement(place) {
+  // ✅ BORGO più pulito: deve essere un “place=…” O un centro abitato, non un museo/monte/forte random
+  function isBorgo(place) {
     const t = tagsStr(place);
-    return (
-      t.includes("place=village") ||
-      t.includes("place=hamlet") ||
-      t.includes("place=town")
-    );
-  }
-
-  function isBorgoSignals(place) {
-    const t = tagsStr(place);
+    const type = normalizeType(place?.type);
     const n = normName(place?.name || "");
 
-    // segnali “da borgo”
-    const historicCore =
-      t.includes("historic=castle") ||
-      t.includes("historic=citywalls") ||
-      t.includes("historic=centre") ||
-      t.includes("historic=archaeological_site") ||
-      t.includes("historic=monument") ||
-      t.includes("historic=memorial") ||
-      t.includes("tourism=attraction");
+    const isSettlement =
+      t.includes("place=village") || t.includes("place=hamlet") || t.includes("place=town") ||
+      t.includes("place=suburb") || t.includes("place=neighbourhood");
 
-    const nameSignal = hasAny(n, [
-      "borgo", "centro storico", "castello", "rocca", "mura", "piazza", "medieval", "medioeval",
-      "citta vecchia", "cittadella", "quartiere storico"
+    const isCuratedBorgoType = (type === "borghi" || type === "borgo");
+
+    // stop words tipiche “non borgo”
+    const looksMountainWord = hasAny(n, [
+      "monte ", "cima ", "passo ", "forcella ", "col ", "coston ", "malga ", "bivacco ",
+      "galleria ", "abisso ", "grotta ", "bus del ", "conca ", "val ", "vallon ", "rifugio "
     ]);
 
-    // “borgo turistico” spesso è attraction + place=town/village
-    return historicCore || nameSignal;
-  }
+    const isClearlyPOI =
+      t.includes("tourism=museum") ||
+      t.includes("amenity=theatre") ||
+      t.includes("amenity=cinema") ||
+      t.includes("tourism=gallery") ||
+      t.includes("amenity=library") ||
+      t.includes("leisure=sports_centre") ||
+      t.includes("historic=fort") || t.includes("historic=castle") || t.includes("historic=ruins") ||
+      t.includes("natural=peak") || t.includes("natural=saddle") || t.includes("natural=cave_entrance");
 
-  function isClearlyNotBorgo(place) {
-    const t = tagsStr(place);
-    const n = normName(place?.name || "");
-
-    // se è un “POI” (museo/forte/cima) ma non un insediamento, NON è borgo
-    if (!isBorgoSettlement(place)) return true;
-
-    // evitare “spazio espositivo / museo / galleria / parco / cima” come “borgo”
-    if (isMuseum(place)) return true;
-    if (t.includes("historic=fort") || n.includes("forte ")) return true;
-    if (t.includes("natural=peak") || t.includes("natural=saddle")) return true;
-    if (n.includes("cima ") || n.includes("monte ") || n.includes("col de ") || n.includes("col di ")) return true;
+    // Accetto “borgo” se è un insediamento o se è curato come borgo MA non sembra montagna/POI
+    if (isSettlement) return !looksMountainWord; // settlement vince
+    if (isCuratedBorgoType) return !looksMountainWord && !isClearlyPOI;
 
     return false;
-  }
-
-  // ✅ Borgo finale (STRICT): settlement + segnali borgo + anti-spazzatura
-  function isBorgo(place) {
-    if (!isBorgoSettlement(place)) return false;
-    if (!isBorgoSignals(place)) return false;
-    if (isClearlyNotBorgo(place)) return false;
-    return true;
   }
 
   function isCity(place) {
@@ -859,7 +859,6 @@
     return t.includes("piste:type=") || t.includes("sport=skiing") || t.includes("aerialway=");
   }
 
-  // Escludi lodging/food solo se NON sono relax “vero”
   function isLodgingOrFood(place, category) {
     const t = tagsStr(place);
 
@@ -916,10 +915,7 @@
       );
     }
     if (cat === "relax") return isSpaPlace(place);
-
-    // 🔥 BORGI STRICT (nuova)
     if (cat === "borghi") return isBorgo(place);
-
     if (cat === "citta") return isCity(place);
     if (cat === "montagna") return isMountain(place);
     if (cat === "viewpoints") return isRealViewpoint(place);
@@ -965,53 +961,19 @@
       );
     }
 
-    // borghi relaxed: accetta settlement+almeno 1 segnale (ma comunque anti-spazzatura)
-    if (cat === "borghi") {
-      if (!isBorgoSettlement(place)) return false;
-      if (isClearlyNotBorgo(place)) return false;
-      return isBorgoSignals(place);
-    }
-
     return matchesCategoryStrict(place, cat);
   }
 
-  // -------------------- STYLE (🔥 BORGI FIX) --------------------
-  function borgoLooksClassic(place) {
-    const s = Number(place?.score);
-    const t = tagsStr(place);
-    const n = normName(place?.name || "");
+  // ✅ STILE: radius non ha chicche/classici → lo facciamo passare come estensione SILENZIOSA
+  function matchesStyle(place, { wantChicche, wantClassici }) {
+    if (!wantChicche && !wantClassici) return true;
 
-    const historicStrong =
-      t.includes("historic=castle") ||
-      t.includes("historic=citywalls") ||
-      t.includes("historic=centre") ||
-      t.includes("tourism=attraction");
-
-    const nameStrong = hasAny(n, ["borgo", "centro storico", "castello", "rocca", "mura", "medieval", "medioeval"]);
-    const scoreOk = Number.isFinite(s) ? s >= CFG.BORGI_CLASSIC_MIN_SCORE : false;
-
-    return (historicStrong && (scoreOk || nameStrong)) || scoreOk;
-  }
-
-  function borgoLooksChicca(place) {
-    const s = Number(place?.score);
-    if (Number.isFinite(s)) return s < CFG.BORGI_CHICCA_MAX_SCORE;
-    // se manca score: chicca = non ha segnali fortissimi
-    return !borgoLooksClassic(place);
-  }
-
-  function matchesStyle(place, { wantChicche, wantClassici }, category) {
-    // 🔥 Per BORGI: la distinzione classici/chicche NON dipende da visibility del dataset
-    if (category === "borghi") {
-      if (wantClassici && !wantChicche) return borgoLooksClassic(place);
-      if (wantChicche && !wantClassici) return borgoLooksChicca(place);
-      // se sono selezionati entrambi o nessuno, ok
+    // se il place arriva da radius o non aveva visibility, non bloccare mai (ma verrà mostrato come "classica")
+    if (place?._visMissing || place?._isRadius) {
       return true;
     }
 
-    // fallback standard per le altre categorie
     const vis = normalizeVisibility(place?.visibility);
-    if (!wantChicche && !wantClassici) return true;
     if (vis === "chicca") return !!wantChicche;
     return !!wantClassici;
   }
@@ -1086,7 +1048,7 @@
     const candidates = [];
 
     for (const raw of pool) {
-      const p = normalizePlace(raw);
+      const p = raw; // già normalizzato in ensureDatasetLoaded
       if (!p) continue;
 
       const nm = String(p.name || "").trim();
@@ -1099,7 +1061,7 @@
         : matchesCategoryStrict(p, category);
 
       if (!okCat) continue;
-      if (!matchesStyle(p, styles, category)) continue;
+      if (!matchesStyle(p, styles)) continue;
 
       const pid = safeIdFromPlace(p);
       if (!ignoreVisited && visited.has(pid)) continue;
@@ -1110,7 +1072,7 @@
 
       if (km < (category === "family" ? 1.2 : 1.6)) continue;
 
-      const isChicca = normalizeVisibility(p.visibility) === "chicca";
+      const isChicca = normalizeVisibility(p.visibility) === "chicca" && !p._visMissing && !p._isRadius;
       let s = baseScorePlace({ driveMin, targetMin: target, beautyScore: p.beauty_score, isChicca });
 
       s += familyBoost(p, category);
@@ -1130,14 +1092,16 @@
         if (t.includes("leisure=swimming_pool") && !isSpaPlace(p)) s -= 0.18;
       }
 
-      // BORGI: boost “borgo turistico”
-      if (category === "borghi") {
-        if (borgoLooksClassic(p)) s += 0.14;
-        const n = normName(p.name || "");
-        if (n.includes("borgo") || n.includes("centro storico")) s += 0.06;
-      }
+      // Radius = estensione → leggerissima penalità per preferire curated quando disponibili
+      if (p._isRadius) s -= 0.03;
 
-      candidates.push({ place: p, pid, km, driveMin, score: Number(s.toFixed(4)) });
+      candidates.push({
+        place: p,
+        pid,
+        km,
+        driveMin,
+        score: Number(s.toFixed(4))
+      });
     }
 
     candidates.sort((a, b) => (b.score - a.score) || (a.driveMin - b.driveMin));
@@ -1212,11 +1176,9 @@
     return map[category] || { emoji:"📍", label:"Meta" };
   }
 
-  function visibilityLabel(place, category) {
-    // per borghi, etichetta “classica/chicca” coerente con la nuova logica
-    if (category === "borghi") {
-      return borgoLooksClassic(place) ? "✅ classica" : "✨ chicca";
-    }
+  function visibilityLabel(place) {
+    // radius/non-curato => classica
+    if (place?._visMissing || place?._isRadius) return "✅ classica";
     return normalizeVisibility(place?.visibility) === "chicca" ? "✨ chicca" : "✅ classica";
   }
 
@@ -1296,7 +1258,7 @@
     scrollToId("resultCard");
   }
 
-  function renderOptionsList(category) {
+  function renderOptionsList() {
     const chosen = CURRENT_CHOSEN;
     if (!chosen) return "";
 
@@ -1310,7 +1272,7 @@
       const name = escapeHtml(p.name || "");
       const time = `~${x.driveMin} min`;
       const sub = `${escapeHtml((p.area || p.country || "—").trim())} • ${p.lat.toFixed(3)}, ${p.lon.toFixed(3)}`;
-      const vis = visibilityLabel(p, category);
+      const vis = visibilityLabel(p);
       const active = (CURRENT_CHOSEN?.pid === x.pid) ? "active" : "";
       return `
         <button class="optBtn ${active}" data-pid="${escapeHtml(x.pid)}" type="button">
@@ -1376,7 +1338,7 @@
     const img2 = osmStaticImgFallback(lat, lon, zoom);
 
     const what = shortWhatIs(p, category);
-    const vis = visibilityLabel(p, category);
+    const vis = visibilityLabel(p);
 
     const widenText = usedMinutes && usedMinutes !== maxMinutesInput ? ` • widen: ${usedMinutes} min` : "";
 
@@ -1429,7 +1391,7 @@
             <button class="btnGhost" id="btnSearchAgain" type="button">🎯 Nuova ricerca</button>
           </div>
 
-          ${renderOptionsList(category)}
+          ${renderOptionsList()}
         </div>
       </div>
     `;
@@ -1510,12 +1472,7 @@
       await ensureDatasetLoaded(origin, category, { signal });
 
       const basePool = Array.isArray(DATASET?.places) ? DATASET.places : [];
-      const datasetInfo =
-        DATASET.kind === "pois_region"
-          ? `POI:${(DATASET.source || "").split("/").pop()} (${basePool.length})`
-          : DATASET.kind === "macro"
-            ? `MACRO:${(DATASET.source || "").split("/").pop()} (${basePool.length})`
-            : `—`;
+      const datasetInfo = datasetInfoLabel(DATASET.sources, basePool.length, origin);
 
       const steps = widenMinutesSteps(maxMinutesInput, category);
 
@@ -1531,7 +1488,6 @@
         usedFallback = !!res.usedFallback;
 
         poolCandidates = dedupeDiverse(res.list);
-
         if (forbidPid) poolCandidates = poolCandidates.filter(x => x.pid !== forbidPid);
 
         if (poolCandidates.length) break;
@@ -1571,7 +1527,7 @@
   function openChosen(chosen, meta = {}) {
     const origin = meta.origin || getOrigin();
     const category = meta.category || getActiveCategory();
-    const datasetInfo = meta.datasetInfo || "";
+    const datasetInfo = meta.datasetInfo || datasetInfoLabel(DATASET.sources, DATASET?.places?.length || 0, origin);
     const usedMinutes = meta.usedMinutes;
     const maxMinutesInput = meta.maxMinutesInput || Number($("maxMinutes")?.value) || 120;
 
@@ -1603,7 +1559,7 @@
         setOrigin({ label: result.label || label, lat: result.lat, lon: result.lon, country_code: result.country_code || "" });
 
         showStatus("ok", "Partenza impostata ✅ Ora scegli categoria/stile e premi CERCA.");
-        DATASET = { key: null, kind: null, source: null, places: [], meta: {} };
+        DATASET = { key: null, kind: "merged", sources: [], places: [], meta: {} };
 
         scrollToId("searchCard");
       } catch (e) {
