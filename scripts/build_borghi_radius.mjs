@@ -1,177 +1,116 @@
-// scripts/build_relax_radius.mjs
-import fs from "node:fs";
-import path from "node:path";
+// scripts/build_borghi_radius.mjs
+import { overpass, toPlace, writeJson } from "./lib/overpass.mjs";
 
-const OUT_DIR = path.join(process.cwd(), "public", "data", "pois", "regions");
-const OUT_FILE = path.join(OUT_DIR, "relax-radius.json");
+const OUT = "public/data/pois/regions/radius-borghi.json";
 
-// Centro: Bussolengo circa (puoi cambiare)
-const CENTER = { lat: 45.521, lon: 10.860 };
+const CENTER_LAT = Number(process.env.RADIUS_LAT ?? 45.468);
+const CENTER_LON = Number(process.env.RADIUS_LON ?? 10.855);
+const RADIUS_KM = Number(process.env.RADIUS_KM ?? 120);
+const RADIUS_M = Math.round(RADIUS_KM * 1000);
 
-// Raggio in km (puoi alzare)
-const RADIUS_KM = 250;
-
-// Limite risultati (evita file enormi)
-const LIMIT = 12000;
-
-// Overpass endpoints (fallback)
-const OVERPASS_ENDPOINTS = [
-  "https://overpass-api.de/api/interpreter",
-  "https://overpass.kumi.systems/api/interpreter",
-  "https://overpass.nchc.org.tw/api/interpreter",
-];
-
-function sleep(ms) {
-  return new Promise((r) => setTimeout(r, ms));
-}
-
-async function overpass(query, { tries = 6 } = {}) {
-  let lastErr;
-  for (let t = 0; t < tries; t++) {
-    const endpoint = OVERPASS_ENDPOINTS[t % OVERPASS_ENDPOINTS.length];
-    try {
-      const res = await fetch(endpoint, {
-        method: "POST",
-        headers: { "content-type": "application/x-www-form-urlencoded; charset=UTF-8" },
-        body: "data=" + encodeURIComponent(query),
-      });
-
-      if (!res.ok) {
-        const txt = await res.text().catch(() => "");
-        throw new Error(`Overpass ${res.status} ${res.statusText} :: ${txt.slice(0, 160)}`);
-      }
-      return await res.json();
-    } catch (e) {
-      lastErr = e;
-      const backoff = 1200 * Math.pow(1.7, t);
-      console.log(`Overpass fail [${t + 1}/${tries}] -> ${String(e).slice(0, 160)}`);
-      console.log(`Retry in ${Math.round(backoff)}ms...`);
-      await sleep(backoff);
-    }
-  }
-  throw lastErr;
-}
-
-function tagPairs(tags = {}) {
-  // normalizza a ["k=v", ...]
-  const out = [];
-  for (const [k, v] of Object.entries(tags)) out.push(`${k}=${v}`);
-  return out;
-}
-
-function normalizePlace(el) {
-  const tags = el.tags || {};
-  const id = `${el.type}:${el.id}`;
-  const name =
-    tags.name ||
-    tags["name:it"] ||
-    tags.brand ||
-    tags.operator ||
-    tags.amenity ||
-    tags.tourism ||
-    tags.leisure ||
-    "Senza nome";
-
-  // coordinate
-  const lat = el.lat ?? el.center?.lat;
-  const lon = el.lon ?? el.center?.lon;
-  if (lat == null || lon == null) return null;
-
-  return {
-    id,
-    name,
-    lat,
-    lon,
-    type: "relax",
-    visibility: "classica",
-    beauty_score: 0.86,
-    country: tags["addr:country"] || "??",
-    area: tags["addr:region"] || tags["addr:city"] || "Radius",
-    tags: tagPairs(tags),
-  };
-}
-
-function buildQuery({ lat, lon, radiusKm }) {
-  // “Relax” = terme/spa/sauna/pool + public_bath + hot_spring
-  // NB: volutamente NON stringo troppo: poi filtriamo lato app con score/qualità.
-  const r = Math.round(radiusKm * 1000);
-
+function buildQuery(lat, lon, radiusM) {
+  // Borghi / posti turistici: query ampia ma sensata.
+  // Prendiamo:
+  // - place=village|town|hamlet (ma NON suburb/neighbourhood)
+  // - tourism=attraction, viewpoint
+  // - historic=* (centri storici, castelli, ecc.)
+  // - boundary=administrative (solo come supporto, ma poi filtriamo)
   return `
 [out:json][timeout:180];
 (
-  node(around:${r},${lat},${lon})["amenity"="spa"];
-  way(around:${r},${lat},${lon})["amenity"="spa"];
-  relation(around:${r},${lat},${lon})["amenity"="spa"];
+  node(around:${radiusM},${lat},${lon})["place"~"^(village|town|hamlet)$"];
+  way(around:${radiusM},${lat},${lon})["place"~"^(village|town|hamlet)$"];
+  relation(around:${radiusM},${lat},${lon})["place"~"^(village|town|hamlet)$"];
 
-  node(around:${r},${lat},${lon})["amenity"="public_bath"];
-  way(around:${r},${lat},${lon})["amenity"="public_bath"];
-  relation(around:${r},${lat},${lon})["amenity"="public_bath"];
+  node(around:${radiusM},${lat},${lon})["tourism"~"^(attraction|viewpoint|museum)$"];
+  way(around:${radiusM},${lat},${lon})["tourism"~"^(attraction|viewpoint|museum)$"];
+  relation(around:${radiusM},${lat},${lon})["tourism"~"^(attraction|viewpoint|museum)$"];
 
-  node(around:${r},${lat},${lon})["natural"="hot_spring"];
-  way(around:${r},${lat},${lon})["natural"="hot_spring"];
-  relation(around:${r},${lat},${lon})["natural"="hot_spring"];
+  node(around:${radiusM},${lat},${lon})["historic"];
+  way(around:${radiusM},${lat},${lon})["historic"];
+  relation(around:${radiusM},${lat},${lon})["historic"];
 
-  node(around:${r},${lat},${lon})["leisure"="sauna"];
-  way(around:${r},${lat},${lon})["leisure"="sauna"];
-  relation(around:${r},${lat},${lon})["leisure"="sauna"];
-
-  node(around:${r},${lat},${lon})["leisure"="swimming_pool"];
-  way(around:${r},${lat},${lon})["leisure"="swimming_pool"];
-  relation(around:${r},${lat},${lon})["leisure"="swimming_pool"];
-
-  node(around:${r},${lat},${lon})["tourism"="spa"];
-  way(around:${r},${lat},${lon})["tourism"="spa"];
-  relation(around:${r},${lat},${lon})["tourism"="spa"];
+  // catch-name: molti borghi sono taggati solo nel nome
+  node(around:${radiusM},${lat},${lon})["name"~"(?i)(borgo|castello|rocca|centro storico)"];
+  way(around:${radiusM},${lat},${lon})["name"~"(?i)(borgo|castello|rocca|centro storico)"];
+  relation(around:${radiusM},${lat},${lon})["name"~"(?i)(borgo|castello|rocca|centro storico)"];
 );
 out center tags;
 `;
 }
 
-function dedupeById(items) {
-  const m = new Map();
-  for (const it of items) {
-    if (!it) continue;
-    if (!m.has(it.id)) m.set(it.id, it);
-  }
-  return [...m.values()];
+function isJunk(p) {
+  const t = p.tags || {};
+  if (t.highway) return true;
+  if (t.public_transport) return true;
+  if (t.amenity === "bus_stop") return true;
+
+  const place = (t.place || "").toLowerCase();
+  if (["suburb", "neighbourhood", "quarter", "locality"].includes(place)) return true;
+
+  return false;
 }
 
-(async function main() {
-  console.log(`Building relax-radius.json | center=${CENTER.lat},${CENTER.lon} | r=${RADIUS_KM}km`);
-  fs.mkdirSync(OUT_DIR, { recursive: true });
+function scoreBorgo(p) {
+  const t = p.tags || {};
+  const name = (p.name || "").toLowerCase();
+  let s = 0;
 
-  const q = buildQuery({ lat: CENTER.lat, lon: CENTER.lon, radiusKm: RADIUS_KM });
-  const json = await overpass(q);
+  const place = (t.place || "").toLowerCase();
+  if (place === "town") s += 5;
+  if (place === "village") s += 6;
+  if (place === "hamlet") s += 4;
 
-  let places = (json.elements || []).map(normalizePlace);
-  places = dedupeById(places);
+  if (t.historic) s += 5;
+  if (t.tourism === "attraction") s += 5;
+  if (t.tourism === "viewpoint") s += 4;
+  if (t.tourism === "museum") s += 3;
 
-  // filtro soft: togli cose chiaramente non relax (tipo "building=office" ecc)
-  // NON troppo aggressivo: solo esclusioni “sicure”
-  const BAD = [
-    "building=office",
-    "building=industrial",
-    "amenity=bus_station",
-    "highway=bus_stop",
-    "shop=",
-    "office=",
-  ];
+  if (/(borgo|centro storico)/.test(name)) s += 5;
+  if (/(castello|rocca)/.test(name)) s += 3;
 
-  places = places.filter((p) => !p.tags.some((t) => BAD.some((b) => (b.endsWith("=") ? t.startsWith(b) : t === b))));
+  return s;
+}
 
-  // limita
-  places.sort((a, b) => a.name.localeCompare(b.name));
-  if (places.length > LIMIT) places = places.slice(0, LIMIT);
+async function main() {
+  console.log(`Building BORGHI radius dataset: ${CENTER_LAT},${CENTER_LON} r=${RADIUS_KM}km`);
+
+  const q = buildQuery(CENTER_LAT, CENTER_LON, RADIUS_M);
+  const data = await overpass(q, { retries: 7, timeoutMs: 140000 });
+
+  const raw = (data.elements || [])
+    .map(toPlace)
+    .filter(p => p.lat != null && p.lon != null)
+    .filter(p => !isJunk(p));
+
+  const places = raw
+    .map(p => ({
+      id: p.id,
+      name: p.name,
+      lat: p.lat,
+      lon: p.lon,
+      type: "borgo",
+      visibility: "chicca", // qui ha senso mostrarli come chicche
+      tags: Object.entries(p.tags || {}).slice(0, 60).map(([k, v]) => `${k}=${v}`),
+      score: scoreBorgo(p),
+    }))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 8000);
 
   const out = {
-    region_id: "relax-radius",
-    country: "XX",
-    label_it: `Radius • Relax (${RADIUS_KM}km)`,
-    bbox_hint: { lat: CENTER.lat, lng: CENTER.lon, radius_km: RADIUS_KM },
+    region_id: "radius-borghi",
+    country: "ANY",
+    label_it: `Radius • Borghi (${RADIUS_KM}km)`,
+    bbox_hint: { lat: CENTER_LAT, lng: CENTER_LON, radius_km: RADIUS_KM },
     generated_at: new Date().toISOString(),
     places,
   };
 
-  fs.writeFileSync(OUT_FILE, JSON.stringify(out, null, 2), "utf8");
-  console.log(`✅ wrote ${OUT_FILE} (${places.length} places)`);
-})();
+  await writeJson(OUT, out);
+  console.log(`Wrote ${OUT} (${places.length} places)`);
+}
+
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});
