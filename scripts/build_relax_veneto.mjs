@@ -1,6 +1,7 @@
 // scripts/build_relax_veneto.mjs
 // Genera: public/data/pois/regions/it-veneto-relax.json
-// Fonte: Overpass API (OSM) -> spa/terme/wellness/sauna/hot_spring/public_bath + keyword thermal
+// Fonte: Overpass API (OSM) -> terme/spa/wellness/sauna/hot_spring/public_bath + hotel/resort SPA-like
+// Output "pulito" per categoria Relax (monetizzabile Booking se serve)
 
 import fs from "node:fs";
 import path from "node:path";
@@ -8,7 +9,6 @@ import path from "node:path";
 const OUT = path.join(process.cwd(), "public/data/pois/regions/it-veneto-relax.json");
 
 // BBOX Veneto (approx): south,west,north,east
-// Se vuoi la perfezioniamo dopo, ma già funziona bene.
 const BBOX = { s: 44.70, w: 10.20, n: 46.70, e: 13.20 };
 
 const OVERPASS = "https://overpass-api.de/api/interpreter";
@@ -27,7 +27,7 @@ function makeId(el) {
 }
 
 function tagsToList(tags = {}) {
-  return Object.entries(tags).map(([k, v]) => `${k}=${v}`);
+  return Object.entries(tags).map(([k, v]) => `${String(k).toLowerCase()}=${String(v).toLowerCase()}`);
 }
 
 function pickArea(tags = {}) {
@@ -41,8 +41,40 @@ function pickArea(tags = {}) {
   );
 }
 
-// Relax “vero”
-function isRelaxStrong(tags = {}, name = "") {
+function hasAny(str, arr) {
+  for (const x of arr) if (str.includes(x)) return true;
+  return false;
+}
+
+// blacklist dura: niente negozi / artigianato / industria
+function isBlacklisted(tags = {}) {
+  if (tags.shop) return true;
+  if (tags.craft) return true;
+  if (tags.industrial) return true;
+  if (tags.office) return true;
+
+  // servizi non turistici
+  const amen = tags.amenity;
+  if (
+    amen === "parking" ||
+    amen === "fuel" ||
+    amen === "bank" ||
+    amen === "pharmacy" ||
+    amen === "clinic" ||
+    amen === "school" ||
+    amen === "post_office" ||
+    amen === "police" ||
+    amen === "townhall"
+  ) return true;
+
+  const tour = tags.tourism;
+  if (tour === "information" || tour === "map") return true;
+
+  return false;
+}
+
+// Relax “vero”: spa/terme e simili
+function isRelaxCore(tags = {}, name = "") {
   const t = tags;
   const n = normName(name);
 
@@ -59,25 +91,73 @@ function isRelaxStrong(tags = {}, name = "") {
     t["bath:type"] === "thermal" ||
     t["spa"] === "yes";
 
-  const nameStrong =
-    n.includes("terme") ||
-    n.includes("termale") ||
-    n.includes("thermal") ||
-    n.includes("hot spring") ||
-    n.includes("spa") ||
-    n.includes("wellness") ||
-    n.includes("benessere") ||
-    n.includes("hammam") ||
-    n.includes("hamam") ||
-    n.includes("bagno turco") ||
-    n.includes("sauna");
+  const nameStrong = hasAny(n, [
+    "terme","termale","thermal","spa","wellness","benessere","hammam","hamam",
+    "bagno turco","sauna","idroterapia","acqua termale","piscine termali"
+  ]);
 
-  // piscine: le prendiamo SOLO se hanno segnali “terme/spa”
-  const poolMaybe =
+  // piscine: SOLO se spa-like
+  const poolSpaLike =
     (t["leisure"] === "swimming_pool" || t["leisure"] === "swimming_area") &&
-    (n.includes("terme") || n.includes("spa") || n.includes("thermal") || n.includes("wellness") || n.includes("benessere"));
+    hasAny(n, ["terme","spa","thermal","wellness","benessere","termali"]);
 
-  return tagStrong || nameStrong || poolMaybe;
+  return tagStrong || nameStrong || poolSpaLike;
+}
+
+// Hotel/strutture: includi SOLO se hanno segnali relax (nome o tag spa-like)
+function isSpaLodging(tags = {}, name = "") {
+  const t = tags;
+  const n = normName(name);
+
+  const lodging =
+    t.tourism === "hotel" ||
+    t.tourism === "resort" ||
+    t.tourism === "guest_house" ||
+    t.tourism === "apartment" ||
+    t.tourism === "chalet" ||
+    t.tourism === "motel";
+
+  if (!lodging) return false;
+
+  // segnali spa veri
+  const spaSignals =
+    t.spa === "yes" ||
+    t.amenity === "spa" ||
+    t.leisure === "spa" ||
+    t.amenity === "sauna" ||
+    t.leisure === "sauna" ||
+    t.natural === "hot_spring" ||
+    t["bath:type"] === "thermal" ||
+    hasAny(n, ["spa","wellness","benessere","terme","termale","thermal","hammam","bagno turco","sauna"]);
+
+  return !!spaSignals;
+}
+
+function scorePlace(tags = {}, name = "") {
+  const n = normName(name);
+
+  let s = 0;
+  // spingi “terme/hot_spring/spa” sopra gli hotel generici
+  if (tags.natural === "hot_spring") s += 50;
+  if (tags.amenity === "public_bath") s += 40;
+  if (tags.amenity === "spa" || tags.leisure === "spa" || tags.tourism === "spa") s += 40;
+  if (tags.amenity === "sauna" || tags.leisure === "sauna" || tags.healthcare === "sauna") s += 30;
+  if (tags["bath:type"] === "thermal") s += 25;
+  if (tags.spa === "yes") s += 20;
+
+  if (hasAny(n, ["terme","termale","thermal"])) s += 18;
+  if (hasAny(n, ["spa","wellness","benessere"])) s += 12;
+
+  // segnali “azienda seria”
+  if (tags.website) s += 6;
+  if (tags.phone) s += 2;
+  if (tags.opening_hours) s += 2;
+  if (tags.wikidata || tags.wikipedia) s += 8;
+
+  // penalità: manca nome
+  if (!name || String(name).trim().length < 2) s -= 100;
+
+  return s;
 }
 
 async function overpass(query) {
@@ -90,11 +170,11 @@ async function overpass(query) {
   return await res.json();
 }
 
-// Prendiamo nodi/way/relation + center (per way/relation)
 function buildQuery(b) {
   const bbox = `${b.s},${b.w},${b.n},${b.e}`;
 
-  // Tag mirati + keyword: così peschiamo davvero terme/spa, non “acqua a caso”
+  // Query mirata + keyword + hotel spa-like
+  // Nota: includiamo hotel/resort ecc. SOLO se nel nome c’è wellness/terme/spa
   return `
 [out:json][timeout:180];
 (
@@ -130,10 +210,15 @@ function buildQuery(b) {
   way["healthcare"="sauna"](${bbox});
   relation["healthcare"="sauna"](${bbox});
 
-  // Keyword nel nome (molte terme sono taggate male ma nel nome c’è “Terme”)
+  // Keyword nel nome (terme/spa ecc.)
   node["name"~"terme|termale|thermal|spa|wellness|benessere|hammam|hamam|bagno turco|sauna",i](${bbox});
   way["name"~"terme|termale|thermal|spa|wellness|benessere|hammam|hamam|bagno turco|sauna",i](${bbox});
   relation["name"~"terme|termale|thermal|spa|wellness|benessere|hammam|hamam|bagno turco|sauna",i](${bbox});
+
+  // Hotel/resort/guest_house con keyword spa-like nel nome
+  node["tourism"~"hotel|resort|guest_house|apartment|chalet|motel"]["name"~"terme|termale|thermal|spa|wellness|benessere|hammam|hamam|bagno turco|sauna",i](${bbox});
+  way["tourism"~"hotel|resort|guest_house|apartment|chalet|motel"]["name"~"terme|termale|thermal|spa|wellness|benessere|hammam|hamam|bagno turco|sauna",i](${bbox});
+  relation["tourism"~"hotel|resort|guest_house|apartment|chalet|motel"]["name"~"terme|termale|thermal|spa|wellness|benessere|hammam|hamam|bagno turco|sauna",i](${bbox});
 );
 out center tags;
 `;
@@ -148,8 +233,8 @@ function getLatLon(el) {
 function dedupe(items) {
   const byId = new Set();
   const byNameCell = new Set();
-
   const out = [];
+
   for (const p of items) {
     if (byId.has(p.id)) continue;
     byId.add(p.id);
@@ -166,7 +251,10 @@ function dedupe(items) {
 }
 
 async function main() {
+  console.log("CWD:", process.cwd());
+  console.log("OUT:", OUT);
   console.log("Fetching Overpass Veneto Relax…");
+
   const data = await overpass(buildQuery(BBOX));
   const els = Array.isArray(data.elements) ? data.elements : [];
 
@@ -174,17 +262,21 @@ async function main() {
 
   for (const el of els) {
     const tags = el.tags || {};
-    const name = tags.name || tags["name:it"] || "";
-    if (!name) continue;
+    if (isBlacklisted(tags)) continue;
 
+    const name = tags.name || tags["name:it"] || "";
     const ll = getLatLon(el);
     if (!ll || !Number.isFinite(ll.lat) || !Number.isFinite(ll.lon)) continue;
 
-    if (!isRelaxStrong(tags, name)) continue;
+    // includi SOLO se relax core o lodging spa-like
+    const ok = isRelaxCore(tags, name) || isSpaLodging(tags, name);
+    if (!ok) continue;
+
+    const s = scorePlace(tags, name);
 
     places.push({
       id: makeId(el),
-      name: String(name).trim(),
+      name: String(name || "").trim(),
       lat: Number(ll.lat),
       lon: Number(ll.lon),
       type: "relax",
@@ -193,8 +285,13 @@ async function main() {
       country: "IT",
       area: pickArea(tags),
       tags: tagsToList(tags),
+      // utile per debug/ordinamento (puoi toglierlo se non vuoi)
+      score: s,
     });
   }
+
+  // ordina: prima le “terme vere”
+  places.sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
 
   const out = {
     region_id: "it-veneto-relax",
@@ -206,8 +303,8 @@ async function main() {
   };
 
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
-  fs.writeFileSync(OUT, JSON.stringify(out));
-  console.log(`OK: ${OUT} (${out.places.length} places)`);
+  fs.writeFileSync(OUT, JSON.stringify(out, null, 2));
+  console.log(`OK: wrote ${out.places.length} places -> ${OUT}`);
 }
 
 main().catch((e) => {
