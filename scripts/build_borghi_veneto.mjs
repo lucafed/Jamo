@@ -1,11 +1,6 @@
 // scripts/build_borghi_veneto.mjs
 // Genera: public/data/pois/regions/it-veneto-borghi.json
-// Scopo: borghi "turistici veri" (NO hamlet/contrade anonime)
-// Strategia:
-// - prendiamo solo place=town|village (NO hamlet)
-// - richiediamo segnali turistici forti (wikipedia/wikidata, historic centre/castle, tourism=attraction, ecc.)
-// - scoring + visibilità (classica/chicca) con euristiche
-// - Overpass robusto con failover + retry per errori 429/504
+// Fonte: Overpass API (OSM) — borghi "turistici" (no paesini anonimi / frazioni)
 
 import fs from "node:fs";
 import path from "node:path";
@@ -15,18 +10,11 @@ const OUT = path.join(process.cwd(), "public/data/pois/regions/it-veneto-borghi.
 // BBOX Veneto (approx): south,west,north,east
 const BBOX = { s: 44.70, w: 10.20, n: 46.70, e: 13.20 };
 
-// Overpass endpoints (failover)
+// Overpass endpoints (fallback)
 const OVERPASS_ENDPOINTS = [
   "https://overpass-api.de/api/interpreter",
   "https://overpass.kumi.systems/api/interpreter",
-  "https://overpass.nchc.org.tw/api/interpreter",
-];
-
-// Hard excludes (rumore)
-const BAD_NAME_HINTS = [
-  "localita", "località", "contrada", "case", "corte", "cason", "casoni",
-  "borgata", "frazione", "zona industriale", "z i", "area produttiva",
-  "lottizzazione", "capannoni"
+  "https://overpass.openstreetmap.ru/api/interpreter",
 ];
 
 function normName(s = "") {
@@ -39,7 +27,13 @@ function normName(s = "") {
 }
 
 function makeId(el) {
-  return `osm:${el.type[0]}:${el.id}`; // n/w/r
+  return `osm:${el.type[0]}:${el.id}`;
+}
+
+function getLatLon(el) {
+  if (el.type === "node") return { lat: el.lat, lon: el.lon };
+  if (el.center) return { lat: el.center.lat, lon: el.center.lon };
+  return null;
 }
 
 function tagsToList(tags = {}) {
@@ -57,145 +51,147 @@ function pickArea(tags = {}) {
   );
 }
 
-function getLatLon(el) {
-  if (el.type === "node") return { lat: el.lat, lon: el.lon };
-  if (el.center) return { lat: el.center.lat, lon: el.center.lon };
-  return null;
+function clamp(n, a, b) {
+  return Math.max(a, Math.min(b, n));
 }
 
-function hasAnyNorm(n, arr) {
-  for (const x of arr) if (n.includes(x)) return true;
+function hasAny(n, arr) {
+  for (const k of arr) if (n.includes(k)) return true;
   return false;
 }
 
-function isBadName(name) {
-  const n = normName(name);
-  if (!n) return true;
-  if (n.length < 4) return true;
-  if (hasAnyNorm(n, BAD_NAME_HINTS)) return true;
-
-  // spesso i posti anonimi sono una parola secca tipo "Spina", "Dere" ecc.
-  // NON li escludiamo a priori, ma se non hanno segnali forti verranno filtrati dopo.
-  return false;
-}
-
-// segnali turistici "forti" dai tag OSM
-function signals(tags = {}) {
+/**
+ * Segnali "turismo vero" per borghi:
+ * - wikipedia/wikidata
+ * - heritage / historic / tourism
+ * - castelli, mura, rocche, centro storico
+ * - viewpoint / attraction nelle immediate caratteristiche del luogo
+ */
+function borgoScore(tags = {}, name = "") {
   const t = tags;
+  const n = normName(name);
 
-  const hasWiki = !!(t.wikipedia || t["wikipedia:it"] || t.wikidata);
-  const hasWebsite = !!(t.website || t["contact:website"]);
+  let s = 0.0;
 
-  const isTown = t.place === "town";
-  const isVillage = t.place === "village";
+  // fortissimo: wikipedia / wikidata
+  if (t.wikipedia || t["wikipedia:it"] || t.wikidata) s += 0.45;
 
-  const historicStrong =
-    t.historic === "castle" ||
-    t.historic === "fort" ||
-    t.historic === "citywalls" ||
-    t.historic === "archaeological_site" ||
-    t.historic === "monument" ||
-    t.historic === "ruins" ||
-    t.historic === "centre";
+  // heritage / historic
+  if (t.heritage) s += 0.18;
+  if (t.historic && t.historic !== "yes") s += 0.18;
 
-  const hasAttraction =
+  // tourism signals
+  if (t.tourism === "attraction") s += 0.18;
+  if (t.tourism === "viewpoint") s += 0.12;
+  if (t.tourism === "museum") s += 0.08;
+
+  // name keywords (centri storici, castelli ecc.)
+  if (hasAny(n, ["borgo", "centro storico", "citta murata", "città murata", "mura", "rocca", "castello", "forte", "torre"])) s += 0.12;
+
+  // place importance (non prendiamo hamlet/locality)
+  const plc = String(t.place || "").toLowerCase();
+  if (plc === "town") s += 0.10;
+  if (plc === "village") s += 0.06;
+
+  // admin boundary (spesso comuni): non basta da solo, ma aiuta un po’
+  if (t.boundary === "administrative") s += 0.04;
+
+  // penalità: roba anonima / frazioni
+  if (plc === "hamlet" || plc === "locality" || plc === "isolated_dwelling") s -= 0.70;
+
+  // penalità: se name sembra frazione/loc
+  if (hasAny(n, ["localita", "località", "frazione", "contrada", "case", "casa", "corte"])) s -= 0.18;
+
+  return clamp(s, 0, 1);
+}
+
+/**
+ * Regole di inclusione:
+ * - accettiamo SOLO place=town|village
+ * - e SOLO se score >= soglia (turistico)
+ * - e NO se è frazione/hamlet/locality
+ */
+function isTouristicBorgo(tags = {}, name = "") {
+  const plc = String(tags.place || "").toLowerCase();
+  if (plc !== "town" && plc !== "village") return false;
+
+  // esclusioni dure
+  if (plc === "hamlet" || plc === "locality" || plc === "isolated_dwelling") return false;
+
+  const s = borgoScore(tags, name);
+
+  // soglia: qui fai la magia contro “paesini anonimi”
+  // 0.18 = troppo permissivo; 0.32 = molto pulito; 0.28 = bilanciato.
+  return s >= 0.30;
+}
+
+function visibilityFrom(tags = {}, name = "") {
+  const t = tags;
+  const n = normName(name);
+  const strong =
+    !!t.wikipedia || !!t["wikipedia:it"] || !!t.wikidata ||
+    !!t.heritage ||
+    (t.historic && t.historic !== "yes") ||
     t.tourism === "attraction" ||
-    t.tourism === "museum" ||
-    t.tourism === "information" ||
-    t.tourism === "viewpoint";
-
-  const hasOldTown =
-    t["old_town"] === "yes" ||
-    t["historic:district"] === "yes" ||
-    t["heritage"] ||
-    t["heritage:operator"];
-
-  const hasNameSignals = (() => {
-    const n = normName(t.name || "");
-    return (
-      n.includes("borgo") ||
-      n.includes("castello") ||
-      n.includes("rocca") ||
-      n.includes("citta murata") ||
-      n.includes("città murata") ||
-      n.includes("centro storico") ||
-      n.includes("medieval") ||
-      n.includes("medioeval")
-    );
-  })();
-
-  // popolazione spesso assente, ma se c'è la usiamo
-  const pop = Number(t.population || NaN);
-  const hasPop = Number.isFinite(pop) && pop > 0;
-
-  return {
-    hasWiki,
-    hasWebsite,
-    isTown,
-    isVillage,
-    historicStrong,
-    hasAttraction,
-    hasOldTown,
-    hasNameSignals,
-    hasPop,
-    pop,
-  };
+    hasAny(n, ["borgo", "citta murata", "città murata", "castello", "rocca"]);
+  return strong ? "chicca" : "classica";
 }
 
-// filtro: niente hamlet e serve "valore turistico"
-function isTouristicBorgoCandidate(tags = {}, name = "") {
-  if (!name) return false;
-  if (tags.place !== "town" && tags.place !== "village") return false;
+function buildQuery(b) {
+  const bbox = `${b.s},${b.w},${b.n},${b.e}`;
 
-  const s = signals(tags);
+  // Strategia:
+  // 1) place=town|village (nodi/relazioni) MA SOLO se hanno segnali storici/turistici/wikipedia
+  // 2) out center tags così abbiamo coordinate anche per relation/way
+  return `
+[out:json][timeout:180];
+(
+  // place=town|village con segnali turistici/heritage/historic/wikipedia/wikidata
+  node["place"~"^(town|village)$"]["name"](${bbox})
+    (if:t["wikipedia"] || t["wikipedia:it"] || t["wikidata"] || t["heritage"] || t["historic"] || t["tourism"]);
+  way["place"~"^(town|village)$"]["name"](${bbox})
+    (if:t["wikipedia"] || t["wikipedia:it"] || t["wikidata"] || t["heritage"] || t["historic"] || t["tourism"]);
+  relation["place"~"^(town|village)$"]["name"](${bbox})
+    (if:t["wikipedia"] || t["wikipedia:it"] || t["wikidata"] || t["heritage"] || t["historic"] || t["tourism"]);
 
-  // richiediamo almeno 2 segnali forti
-  let strong = 0;
-  if (s.hasWiki) strong++;
-  if (s.historicStrong) strong++;
-  if (s.hasOldTown) strong++;
-  if (s.hasAttraction) strong++;
-  if (s.hasWebsite) strong++;
-  if (s.hasNameSignals) strong++;
-
-  // town: può passare con 1 segnale forte (es: città storiche note)
-  if (s.isTown) return strong >= 1;
-
-  // village: più duro
-  return strong >= 2;
+  // keyword nel nome (a volte taggati male ma name dice tutto)
+  node["place"~"^(town|village)$"]["name"~"borgo|centro storico|città murata|citta murata|castello|rocca|mura|torre",i](${bbox});
+  way["place"~"^(town|village)$"]["name"~"borgo|centro storico|città murata|citta murata|castello|rocca|mura|torre",i](${bbox});
+  relation["place"~"^(town|village)$"]["name"~"borgo|centro storico|città murata|citta murata|castello|rocca|mura|torre",i](${bbox});
+);
+out center tags;
+`;
 }
 
-// scoring + visibilità (classica/chicca) euristico
-function scoreAndVisibility(tags = {}) {
-  const s = signals(tags);
+async function postOverpass(url, query) {
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "content-type": "application/x-www-form-urlencoded;charset=UTF-8" },
+    body: "data=" + encodeURIComponent(query),
+  });
+  if (!res.ok) throw new Error(`Overpass HTTP ${res.status}`);
+  return await res.json();
+}
 
-  let beauty = 0.72;
-
-  if (s.hasWiki) beauty += 0.10;
-  if (s.historicStrong) beauty += 0.10;
-  if (s.hasOldTown) beauty += 0.07;
-  if (s.hasAttraction) beauty += 0.06;
-  if (s.hasWebsite) beauty += 0.03;
-
-  // clamp
-  beauty = Math.max(0.60, Math.min(0.98, beauty));
-
-  // visibilità:
-  // - "classica" se town oppure popolazione alta o wiki + segnali storici
-  // - "chicca" se village con segnali forti ma non "grande"
-  let visibility = "chicca";
-  if (s.isTown) visibility = "classica";
-  if (s.hasPop && s.pop >= 12000) visibility = "classica";
-  if (s.hasWiki && (s.historicStrong || s.hasOldTown)) visibility = "classica";
-
-  return { beauty_score: Number(beauty.toFixed(3)), visibility };
+async function overpass(query) {
+  let lastErr = null;
+  for (const url of OVERPASS_ENDPOINTS) {
+    try {
+      return await postOverpass(url, query);
+    } catch (e) {
+      lastErr = e;
+      // piccola pausa tra tentativi
+      await new Promise(r => setTimeout(r, 900));
+    }
+  }
+  throw lastErr || new Error("Overpass failed");
 }
 
 function dedupe(items) {
   const byId = new Set();
   const byNameCell = new Set();
-
   const out = [];
+
   for (const p of items) {
     if (byId.has(p.id)) continue;
     byId.add(p.id);
@@ -211,107 +207,11 @@ function dedupe(items) {
   return out;
 }
 
-function buildQuery(b) {
-  const bbox = `${b.s},${b.w},${b.n},${b.e}`;
-
-  // PRE-FILTER via Overpass: prendiamo place town/village con segnali turistici
-  // (così evitiamo di scaricare tonnellate di hamlet anonimi)
-  return `
-[out:json][timeout:180];
-(
-  node["place"="town"](${bbox});
-  way["place"="town"](${bbox});
-  relation["place"="town"](${bbox});
-
-  node["place"="village"]["wikipedia"](${bbox});
-  way["place"="village"]["wikipedia"](${bbox});
-  relation["place"="village"]["wikipedia"](${bbox});
-
-  node["place"="village"]["wikidata"](${bbox});
-  way["place"="village"]["wikidata"](${bbox});
-  relation["place"="village"]["wikidata"](${bbox});
-
-  node["place"="village"]["historic"](${bbox});
-  way["place"="village"]["historic"](${bbox});
-  relation["place"="village"]["historic"](${bbox});
-
-  node["place"="village"]["tourism"](${bbox});
-  way["place"="village"]["tourism"](${bbox});
-  relation["place"="village"]["tourism"](${bbox});
-
-  // alcune località storiche sono taggate male: prendiamo anche "centre"
-  node["place"="village"]["historic"="centre"](${bbox});
-  way["place"="village"]["historic"="centre"](${bbox});
-  relation["place"="village"]["historic"="centre"](${bbox});
-
-  // fallback name-signals (pochi, ma utili)
-  node["place"="village"]["name"~"borgo|castello|rocca|centro storico|città murata|citta murata|medieval|medioeval",i](${bbox});
-  way["place"="village"]["name"~"borgo|castello|rocca|centro storico|città murata|citta murata|medieval|medioeval",i](${bbox});
-  relation["place"="village"]["name"~"borgo|castello|rocca|centro storico|città murata|citta murata|medieval|medioeval",i](${bbox});
-);
-out center tags;
-`;
-}
-
-async function postOverpass(endpoint, query, signal) {
-  const res = await fetch(endpoint, {
-    method: "POST",
-    headers: { "content-type": "application/x-www-form-urlencoded;charset=UTF-8" },
-    body: "data=" + encodeURIComponent(query),
-    signal,
-  });
-  if (!res.ok) {
-    const txt = await res.text().catch(() => "");
-    const err = new Error(`Overpass HTTP ${res.status} @ ${endpoint}${txt ? " :: " + txt.slice(0, 140) : ""}`);
-    err.status = res.status;
-    throw err;
-  }
-  return await res.json();
-}
-
-function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-
-async function overpassRobust(query) {
-  const ac = new AbortController();
-  const signal = ac.signal;
-
-  const maxRounds = 6;
-  let lastErr = null;
-
-  for (let round = 0; round < maxRounds; round++) {
-    for (const ep of OVERPASS_ENDPOINTS) {
-      try {
-        // backoff leggero tra tentativi
-        if (round > 0) await sleep(500 * round);
-
-        const data = await postOverpass(ep, query, signal);
-        return data;
-      } catch (e) {
-        lastErr = e;
-
-        // 429/504/502/503: tipici di Overpass -> retry/failover
-        const st = Number(e?.status || 0);
-        if ([429, 502, 503, 504].includes(st)) {
-          continue;
-        }
-        // altri errori -> esci
-        break;
-      }
-    }
-
-    // backoff tra round
-    await sleep(1200 + round * 900);
-  }
-
-  throw lastErr || new Error("Overpass failed after retries.");
-}
-
 async function main() {
   console.log("OUT:", OUT);
-  console.log("Fetching Overpass Veneto BORghi (tourist-grade)…");
+  console.log("Fetching Overpass Veneto BORghi (touristic)…");
 
-  const query = buildQuery(BBOX);
-  const data = await overpassRobust(query);
+  const data = await overpass(buildQuery(BBOX));
   const els = Array.isArray(data.elements) ? data.elements : [];
 
   const places = [];
@@ -321,18 +221,16 @@ async function main() {
     const name = tags.name || tags["name:it"] || "";
     if (!name) continue;
 
-    // scarta subito nomi sospetti
-    if (isBadName(name)) {
-      // non escludiamo qui: alcuni borghi veri potrebbero contenere "case" nel nome
-      // ma li filtreremo con i segnali.
-    }
-
     const ll = getLatLon(el);
     if (!ll || !Number.isFinite(ll.lat) || !Number.isFinite(ll.lon)) continue;
 
-    if (!isTouristicBorgoCandidate(tags, name)) continue;
+    if (!isTouristicBorgo(tags, name)) continue;
 
-    const { beauty_score, visibility } = scoreAndVisibility(tags);
+    const score = borgoScore(tags, name);
+    const vis = visibilityFrom(tags, name);
+
+    // beauty_score: diamo una base alta (sono già filtrati), poi raffiniamo col punteggio
+    const beauty = clamp(0.72 + score * 0.26, 0.70, 0.98);
 
     places.push({
       id: makeId(el),
@@ -340,21 +238,29 @@ async function main() {
       lat: Number(ll.lat),
       lon: Number(ll.lon),
       type: "borghi",
-      visibility,              // "classica" | "chicca"
-      beauty_score,            // 0..1
+      visibility: vis,
+      beauty_score: Number(beauty.toFixed(3)),
       country: "IT",
       area: pickArea(tags),
       tags: tagsToList(tags),
     });
   }
 
+  // Ordiniamo: prima chicche più “forti”
+  const clean = dedupe(places).sort((a, b) => {
+    const av = a.visibility === "chicca" ? 1 : 0;
+    const bv = b.visibility === "chicca" ? 1 : 0;
+    if (bv !== av) return bv - av;
+    return (b.beauty_score - a.beauty_score) || a.name.localeCompare(b.name);
+  });
+
   const out = {
     region_id: "it-veneto-borghi",
     country: "IT",
-    label_it: "Veneto • Borghi (curated)",
+    label_it: "Veneto • Borghi (turistici)",
     bbox_hint: { lat: 45.5, lng: 11.9, radius_km: 240 },
     generated_at: new Date().toISOString(),
-    places: dedupe(places),
+    places: clean,
   };
 
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
