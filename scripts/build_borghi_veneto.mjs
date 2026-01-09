@@ -1,145 +1,209 @@
-// scripts/build_borghi_radius.mjs
+// scripts/build_borghi_veneto.mjs
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-const OUT_DIR = path.join(process.cwd(), "public", "data", "pois", "regions");
-const OUT_FILE = path.join(OUT_DIR, "borghi-radius.json");
+import { overpass, toPlace, writeJson } from "./lib/overpass.mjs";
 
-const CENTER = { lat: 45.521, lon: 10.860 }; // Bussolengo circa
-const RADIUS_KM = 250;
-const LIMIT = 12000;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-const OVERPASS_ENDPOINTS = [
-  "https://overpass-api.de/api/interpreter",
-  "https://overpass.kumi.systems/api/interpreter",
-  "https://overpass.nchc.org.tw/api/interpreter",
-];
-
-function sleep(ms) { return new Promise((r) => setTimeout(r, ms)); }
-
-async function overpass(query, { tries = 6 } = {}) {
-  let lastErr;
-  for (let t = 0; t < tries; t++) {
-    const endpoint = OVERPASS_ENDPOINTS[t % OVERPASS_ENDPOINTS.length];
-    try {
-      const res = await fetch(endpoint, {
-        method: "POST",
-        headers: { "content-type": "application/x-www-form-urlencoded; charset=UTF-8" },
-        body: "data=" + encodeURIComponent(query),
-      });
-      if (!res.ok) {
-        const txt = await res.text().catch(() => "");
-        throw new Error(`Overpass ${res.status} ${res.statusText} :: ${txt.slice(0, 160)}`);
-      }
-      return await res.json();
-    } catch (e) {
-      lastErr = e;
-      const backoff = 1200 * Math.pow(1.7, t);
-      console.log(`Overpass fail [${t + 1}/${tries}] -> ${String(e).slice(0, 160)}`);
-      await sleep(backoff);
-    }
-  }
-  throw lastErr;
-}
-
-function tagPairs(tags = {}) {
-  const out = [];
-  for (const [k, v] of Object.entries(tags)) out.push(`${k}=${v}`);
-  return out;
-}
-
-function normalizePlace(el) {
-  const tags = el.tags || {};
-  const id = `${el.type}:${el.id}`;
-
-  const lat = el.lat ?? el.center?.lat;
-  const lon = el.lon ?? el.center?.lon;
-  if (lat == null || lon == null) return null;
-
-  const name =
-    tags.name ||
-    tags["name:it"] ||
-    tags["name:en"] ||
-    tags.place ||
-    "Senza nome";
-
-  return {
-    id,
-    name,
-    lat,
-    lon,
-    type: "borgo",
-    visibility: "chicca",
-    beauty_score: 0.92,
-    country: tags["addr:country"] || "??",
-    area: tags["addr:region"] || tags["addr:city"] || "Radius",
-    tags: tagPairs(tags),
-  };
-}
-
-function buildQuery({ lat, lon, radiusKm }) {
-  const r = Math.round(radiusKm * 1000);
-
-  // Borghi: place=hamlet/village/town + tourism=attraction/viewpoint + historic=city_gate/castle
-  // NON stringere troppo, poi la "classica/chicca" la gestisci con scoring lato app
-  return `
-[out:json][timeout:180];
-(
-  node(around:${r},${lat},${lon})["place"~"^(hamlet|village|town)$"];
-  way(around:${r},${lat},${lon})["place"~"^(hamlet|village|town)$"];
-  relation(around:${r},${lat},${lon})["place"~"^(hamlet|village|town)$"];
-
-  node(around:${r},${lat},${lon})["tourism"="attraction"];
-  way(around:${r},${lat},${lon})["tourism"="attraction"];
-  relation(around:${r},${lat},${lon})["tourism"="attraction"];
-
-  node(around:${r},${lat},${lon})["tourism"="viewpoint"];
-  way(around:${r},${lat},${lon})["tourism"="viewpoint"];
-  relation(around:${r},${lat},${lon})["tourism"="viewpoint"];
-
-  node(around:${r},${lat},${lon})["historic"="castle"];
-  way(around:${r},${lat},${lon})["historic"="castle"];
-  relation(around:${r},${lat},${lon})["historic"="castle"];
+// Output
+const OUT = path.join(
+  __dirname,
+  "..",
+  "public",
+  "data",
+  "pois",
+  "regions",
+  "it-veneto-borghi.json"
 );
+
+// ----------------------
+// Overpass query: Veneto area + borghi/centri
+// ----------------------
+function buildQuery() {
+  // Veneto = admin_level=4. Usiamo area da relation.
+  return `
+[out:json][timeout:240];
+
+area
+  ["boundary"="administrative"]
+  ["admin_level"="4"]
+  ["name"="Veneto"]
+->.veneto;
+
+(
+  // Paesi e borgate (lista ampia = classici)
+  nwr(area.veneto)["place"~"town|village|hamlet|suburb|quarter|neighbourhood"];
+
+  // Centri storici / city centre
+  nwr(area.veneto)["historic"="city_centre"];
+  nwr(area.veneto)["place"="locality"]["name"];  // locality solo se ha name
+
+  // Indicatori “turistici” utili per chicche (ma restano borghi)
+  nwr(area.veneto)["historic"~"castle|fort|ruins|monument|archaeological_site"];
+  nwr(area.veneto)["tourism"~"attraction|viewpoint|museum"];
+  nwr(area.veneto)["heritage"];
+);
+
 out center tags;
 `;
 }
 
-function dedupeById(items) {
-  const m = new Map();
-  for (const it of items) {
-    if (!it) continue;
-    if (!m.has(it.id)) m.set(it.id, it);
-  }
-  return [...m.values()];
+// ----------------------
+// Anti-spazzatura (borghi)
+// ----------------------
+function tagEquals(tags, k, v) {
+  return String(tags?.[k] ?? "").toLowerCase() === String(v).toLowerCase();
 }
 
-(async function main() {
-  console.log(`Building borghi-radius.json | center=${CENTER.lat},${CENTER.lon} | r=${RADIUS_KM}km`);
-  fs.mkdirSync(OUT_DIR, { recursive: true });
+function isJunk(p) {
+  const t = p.tags || {};
+  const name = (p.name || "").trim();
+  const n = name.toLowerCase();
 
-  const q = buildQuery({ lat: CENTER.lat, lon: CENTER.lon, radiusKm: RADIUS_KM });
-  const json = await overpass(q);
+  if (!name || name === "(senza nome)") return true;
 
-  let places = (json.elements || []).map(normalizePlace);
-  places = dedupeById(places);
+  // strade/fermate ecc.
+  if (t.highway) return true;
+  if (t.railway) return true;
+  if (t.public_transport) return true;
+  if (tagEquals(t, "highway", "bus_stop")) return true;
 
-  // filtro soft: togli roba palesemente non “borgo”
-  const BAD_PREFIX = ["shop=", "office=", "building=industrial", "amenity=bus_stop", "highway=bus_stop"];
-  places = places.filter((p) => !p.tags.some((t) => BAD_PREFIX.some((b) => t.startsWith(b) || t === b)));
+  // aziende/uffici/industria
+  const building = String(t.building ?? "").toLowerCase();
+  const landuse = String(t.landuse ?? "").toLowerCase();
+  const office = String(t.office ?? "").toLowerCase();
+  if (office) return true;
+  if (["office", "industrial", "warehouse"].includes(building)) return true;
+  if (["industrial", "commercial"].includes(landuse)) return true;
 
-  places.sort((a, b) => a.name.localeCompare(b.name));
-  if (places.length > LIMIT) places = places.slice(0, LIMIT);
+  // nomi inutili
+  if (n.startsWith("via ") || n.includes("case sparse")) return true;
 
-  const out = {
-    region_id: "borghi-radius",
-    country: "XX",
-    label_it: `Radius • Borghi (${RADIUS_KM}km)`,
-    bbox_hint: { lat: CENTER.lat, lng: CENTER.lon, radius_km: RADIUS_KM },
+  // “SpA” aziendale (non borgo)
+  if (/\bs\.p\.a\.?\b/i.test(name)) return true;
+  if (n.includes("openjobmetis")) return true;
+
+  return false;
+}
+
+// ----------------------
+// Scoring + visibility
+// ----------------------
+function hasAny(tags, keys) {
+  return keys.some((k) => tags[k] != null && String(tags[k]).trim() !== "");
+}
+
+function scoreBorgo(p) {
+  const t = p.tags || {};
+  const name = (p.name || "").toLowerCase();
+  let s = 0;
+
+  // base se è un place “vero”
+  const place = String(t.place ?? "").toLowerCase();
+  if (["town"].includes(place)) s += 35;
+  if (["village"].includes(place)) s += 30;
+  if (["hamlet"].includes(place)) s += 22;
+  if (["suburb", "quarter", "neighbourhood"].includes(place)) s += 10;
+
+  // centro storico / storico
+  const historic = String(t.historic ?? "").toLowerCase();
+  if (historic === "city_centre") s += 35;
+  if (["castle", "fort", "ruins", "monument", "archaeological_site"].includes(historic)) s += 35;
+
+  // tourism/heritage
+  const tourism = String(t.tourism ?? "").toLowerCase();
+  if (["attraction", "viewpoint", "museum"].includes(tourism)) s += 25;
+
+  if (t.heritage) s += 18;
+
+  // wikipedia/wikidata = “importante / turistico”
+  if (hasAny(t, ["wikipedia"])) s += 25;
+  if (hasAny(t, ["wikidata"])) s += 22;
+
+  // keyword
+  if (name.includes("borgo")) s += 10;
+  if (name.includes("castello")) s += 10;
+
+  // info utili
+  if (hasAny(t, ["website", "contact:website"])) s += 5;
+
+  return s;
+}
+
+// “chicca” solo se davvero alto, altrimenti classica
+function visibilityFromScore(score) {
+  // soglia volutamente ALTA per non svuotare i classici
+  return score >= 70 ? "chicca" : "classica";
+}
+
+// ----------------------
+// MAIN
+// ----------------------
+async function main() {
+  console.log("Build BORGHl Veneto...");
+  let data;
+
+  try {
+    data = await overpass(buildQuery(), { retries: 7, timeoutMs: 170000 });
+  } catch (err) {
+    console.error("⚠️ Overpass failed. Keeping previous dataset if it exists.");
+    if (fs.existsSync(OUT)) {
+      console.log("✔ Existing it-veneto-borghi.json found, not failing the build.");
+      return;
+    }
+    throw err;
+  }
+
+  const raw = (data.elements || [])
+    .map(toPlace)
+    .filter((p) => p.lat != null && p.lon != null)
+    .filter((p) => !isJunk(p));
+
+  // Dedup: nome + coordinate
+  const seen = new Set();
+  const deduped = [];
+  for (const p of raw) {
+    const key = `${(p.name || "").toLowerCase()}|${p.lat.toFixed(5)}|${p.lon.toFixed(5)}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    deduped.push(p);
+  }
+
+  const places = deduped
+    .map((p) => {
+      const score = scoreBorgo(p);
+      return {
+        id: p.id,
+        name: p.name,
+        lat: p.lat,
+        lon: p.lon,
+        type: "borgo",
+        visibility: visibilityFromScore(score), // ✅ ecco la fix: classici pieni
+        tags: Object.entries(p.tags || {}).slice(0, 80).map(([k, v]) => `${k}=${v}`),
+        score,
+      };
+    })
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 12000); // largo: l’app sceglie poi
+
+  await writeJson(OUT, {
+    region_id: "it-veneto-borghi",
+    country: "IT",
+    label_it: "Veneto • Borghi",
+    bbox_hint: { lat: 45.5, lng: 11.9, radius_km: 240 },
     generated_at: new Date().toISOString(),
     places,
-  };
+  });
 
-  fs.writeFileSync(OUT_FILE, JSON.stringify(out, null, 2), "utf8");
-  console.log(`✅ wrote ${OUT_FILE} (${places.length} places)`);
-})();
+  const countClassica = places.filter((p) => p.visibility === "classica").length;
+  const countChicca = places.filter((p) => p.visibility === "chicca").length;
+  console.log(`✔ Written ${OUT} (${places.length} places) classica=${countClassica} chicca=${countChicca}`);
+}
+
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});
