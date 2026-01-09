@@ -1,125 +1,177 @@
-// scripts/build_borghi_radius.mjs
-// BORGHI turistici entro 300km da Bussolengo
-// Output: public/data/pois/regions/borghi-radius.json
-
+// scripts/build_relax_radius.mjs
 import fs from "node:fs";
 import path from "node:path";
 
-const OUT = "public/data/pois/regions/borghi-radius.json";
+const OUT_DIR = path.join(process.cwd(), "public", "data", "pois", "regions");
+const OUT_FILE = path.join(OUT_DIR, "relax-radius.json");
 
-const CENTER = { lat: 45.52, lon: 10.85 };
-const RADIUS_M = 300000;
+// Centro: Bussolengo circa (puoi cambiare)
+const CENTER = { lat: 45.521, lon: 10.860 };
 
-const ENDPOINTS = [
+// Raggio in km (puoi alzare)
+const RADIUS_KM = 250;
+
+// Limite risultati (evita file enormi)
+const LIMIT = 12000;
+
+// Overpass endpoints (fallback)
+const OVERPASS_ENDPOINTS = [
   "https://overpass-api.de/api/interpreter",
   "https://overpass.kumi.systems/api/interpreter",
+  "https://overpass.nchc.org.tw/api/interpreter",
 ];
 
-const sleep = (ms) => new Promise(r => setTimeout(r, ms));
-
-function hasSignal(tags = {}) {
-  return (
-    tags.wikipedia ||
-    tags.wikidata ||
-    tags.historic ||
-    tags.tourism ||
-    tags.heritage ||
-    tags.attraction
-  );
+function sleep(ms) {
+  return new Promise((r) => setTimeout(r, ms));
 }
 
-function bad(tags = {}) {
-  return (
-    tags.highway ||
-    tags.public_transport ||
-    tags.railway ||
-    tags.route ||
-    tags.shop ||
-    tags.building === "industrial"
-  );
-}
-
-function pickCenter(el) {
-  if (el.type === "node") return { lat: el.lat, lon: el.lon };
-  if (el.center) return { lat: el.center.lat, lon: el.center.lon };
-  return null;
-}
-
-function tagsToArr(tags = {}) {
-  return Object.entries(tags).map(([k, v]) => `${k}=${v}`);
-}
-
-async function overpass(q) {
-  let err;
-  for (const ep of ENDPOINTS) {
+async function overpass(query, { tries = 6 } = {}) {
+  let lastErr;
+  for (let t = 0; t < tries; t++) {
+    const endpoint = OVERPASS_ENDPOINTS[t % OVERPASS_ENDPOINTS.length];
     try {
-      const r = await fetch(ep, {
+      const res = await fetch(endpoint, {
         method: "POST",
-        headers: { "content-type": "application/x-www-form-urlencoded;charset=UTF-8" },
-        body: "data=" + encodeURIComponent(q),
+        headers: { "content-type": "application/x-www-form-urlencoded; charset=UTF-8" },
+        body: "data=" + encodeURIComponent(query),
       });
-      if (!r.ok) throw new Error(r.status);
-      return await r.json();
+
+      if (!res.ok) {
+        const txt = await res.text().catch(() => "");
+        throw new Error(`Overpass ${res.status} ${res.statusText} :: ${txt.slice(0, 160)}`);
+      }
+      return await res.json();
     } catch (e) {
-      err = e;
-      await sleep(1200);
+      lastErr = e;
+      const backoff = 1200 * Math.pow(1.7, t);
+      console.log(`Overpass fail [${t + 1}/${tries}] -> ${String(e).slice(0, 160)}`);
+      console.log(`Retry in ${Math.round(backoff)}ms...`);
+      await sleep(backoff);
     }
   }
-  throw err;
+  throw lastErr;
 }
 
-const QUERY = `
+function tagPairs(tags = {}) {
+  // normalizza a ["k=v", ...]
+  const out = [];
+  for (const [k, v] of Object.entries(tags)) out.push(`${k}=${v}`);
+  return out;
+}
+
+function normalizePlace(el) {
+  const tags = el.tags || {};
+  const id = `${el.type}:${el.id}`;
+  const name =
+    tags.name ||
+    tags["name:it"] ||
+    tags.brand ||
+    tags.operator ||
+    tags.amenity ||
+    tags.tourism ||
+    tags.leisure ||
+    "Senza nome";
+
+  // coordinate
+  const lat = el.lat ?? el.center?.lat;
+  const lon = el.lon ?? el.center?.lon;
+  if (lat == null || lon == null) return null;
+
+  return {
+    id,
+    name,
+    lat,
+    lon,
+    type: "relax",
+    visibility: "classica",
+    beauty_score: 0.86,
+    country: tags["addr:country"] || "??",
+    area: tags["addr:region"] || tags["addr:city"] || "Radius",
+    tags: tagPairs(tags),
+  };
+}
+
+function buildQuery({ lat, lon, radiusKm }) {
+  // “Relax” = terme/spa/sauna/pool + public_bath + hot_spring
+  // NB: volutamente NON stringo troppo: poi filtriamo lato app con score/qualità.
+  const r = Math.round(radiusKm * 1000);
+
+  return `
 [out:json][timeout:180];
 (
-  nwr["place"~"town|village|hamlet"](around:${RADIUS_M},${CENTER.lat},${CENTER.lon})["name"];
+  node(around:${r},${lat},${lon})["amenity"="spa"];
+  way(around:${r},${lat},${lon})["amenity"="spa"];
+  relation(around:${r},${lat},${lon})["amenity"="spa"];
+
+  node(around:${r},${lat},${lon})["amenity"="public_bath"];
+  way(around:${r},${lat},${lon})["amenity"="public_bath"];
+  relation(around:${r},${lat},${lon})["amenity"="public_bath"];
+
+  node(around:${r},${lat},${lon})["natural"="hot_spring"];
+  way(around:${r},${lat},${lon})["natural"="hot_spring"];
+  relation(around:${r},${lat},${lon})["natural"="hot_spring"];
+
+  node(around:${r},${lat},${lon})["leisure"="sauna"];
+  way(around:${r},${lat},${lon})["leisure"="sauna"];
+  relation(around:${r},${lat},${lon})["leisure"="sauna"];
+
+  node(around:${r},${lat},${lon})["leisure"="swimming_pool"];
+  way(around:${r},${lat},${lon})["leisure"="swimming_pool"];
+  relation(around:${r},${lat},${lon})["leisure"="swimming_pool"];
+
+  node(around:${r},${lat},${lon})["tourism"="spa"];
+  way(around:${r},${lat},${lon})["tourism"="spa"];
+  relation(around:${r},${lat},${lon})["tourism"="spa"];
 );
 out center tags;
 `;
-
-async function main() {
-  console.log("Fetching BORGHI (300km radius)...");
-  const json = await overpass(QUERY);
-
-  const places = [];
-  for (const el of json.elements || []) {
-    const tags = el.tags || {};
-    if (bad(tags)) continue;
-    if (!hasSignal(tags)) continue;
-
-    const c = pickCenter(el);
-    if (!c) continue;
-
-    const place = tags.place;
-    const visibility =
-      place === "hamlet" ? "chicca" : "classica";
-
-    places.push({
-      id: `osm:${el.type[0]}:${el.id}`,
-      name: tags.name,
-      lat: c.lat,
-      lon: c.lon,
-      type: "borgo",
-      visibility,
-      beauty_score: 0.86,
-      country: tags["addr:country"] || "",
-      area: tags["addr:city"] || tags["addr:town"] || "",
-      tags: tagsToArr(tags),
-    });
-  }
-
-  fs.mkdirSync(path.dirname(OUT), { recursive: true });
-  fs.writeFileSync(OUT, JSON.stringify({
-    region_id: "borghi-radius",
-    generated_at: new Date().toISOString(),
-    center: CENTER,
-    radius_km: 300,
-    places,
-  }, null, 2));
-
-  console.log(`OK BORGHI → ${places.length} borghi`);
 }
 
-main().catch(e => {
-  console.error(e);
-  process.exit(1);
-});
+function dedupeById(items) {
+  const m = new Map();
+  for (const it of items) {
+    if (!it) continue;
+    if (!m.has(it.id)) m.set(it.id, it);
+  }
+  return [...m.values()];
+}
+
+(async function main() {
+  console.log(`Building relax-radius.json | center=${CENTER.lat},${CENTER.lon} | r=${RADIUS_KM}km`);
+  fs.mkdirSync(OUT_DIR, { recursive: true });
+
+  const q = buildQuery({ lat: CENTER.lat, lon: CENTER.lon, radiusKm: RADIUS_KM });
+  const json = await overpass(q);
+
+  let places = (json.elements || []).map(normalizePlace);
+  places = dedupeById(places);
+
+  // filtro soft: togli cose chiaramente non relax (tipo "building=office" ecc)
+  // NON troppo aggressivo: solo esclusioni “sicure”
+  const BAD = [
+    "building=office",
+    "building=industrial",
+    "amenity=bus_station",
+    "highway=bus_stop",
+    "shop=",
+    "office=",
+  ];
+
+  places = places.filter((p) => !p.tags.some((t) => BAD.some((b) => (b.endsWith("=") ? t.startsWith(b) : t === b))));
+
+  // limita
+  places.sort((a, b) => a.name.localeCompare(b.name));
+  if (places.length > LIMIT) places = places.slice(0, LIMIT);
+
+  const out = {
+    region_id: "relax-radius",
+    country: "XX",
+    label_it: `Radius • Relax (${RADIUS_KM}km)`,
+    bbox_hint: { lat: CENTER.lat, lng: CENTER.lon, radius_km: RADIUS_KM },
+    generated_at: new Date().toISOString(),
+    places,
+  };
+
+  fs.writeFileSync(OUT_FILE, JSON.stringify(out, null, 2), "utf8");
+  console.log(`✅ wrote ${OUT_FILE} (${places.length} places)`);
+})();
