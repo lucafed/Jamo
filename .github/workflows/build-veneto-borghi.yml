@@ -7,7 +7,7 @@ on:
   push:
     paths:
       - "scripts/build_borghi_veneto.mjs"
-      - ".github/workflows/build-borghi-it-veneto.yml"
+      - ".github/workflows/build-veneto-borghi.yml"
 
 permissions:
   contents: write
@@ -42,6 +42,8 @@ jobs:
 
       - name: Commit & push (if changed)
         run: |
+          set -e
+
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
@@ -53,4 +55,9 @@ jobs:
           fi
 
           git commit -m "Update Veneto borghi dataset"
-          git push origin main
+
+          # ✅ FIX: evita "rejected (fetch first)"
+          git fetch origin main
+          git rebase origin/main
+
+          git push origin HEAD:main
