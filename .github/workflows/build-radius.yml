@@ -32,7 +32,9 @@ jobs:
         with:
           node-version: "20"
 
+      # Se Overpass fa 504/HTML, NON vogliamo buttare giù tutto il workflow.
       - name: Build Relax radius
+        continue-on-error: true
         run: node scripts/build_relax_radius.mjs
         env:
           RADIUS_LAT: "45.468"
@@ -40,6 +42,7 @@ jobs:
           RADIUS_KM: "120"
 
       - name: Build Borghi radius
+        continue-on-error: true
         run: node scripts/build_borghi_radius.mjs
         env:
           RADIUS_LAT: "45.468"
@@ -48,21 +51,44 @@ jobs:
 
       - name: Debug output
         run: |
+          echo "== regions dir =="
           ls -lah public/data/pois/regions || true
           echo "-----"
-          wc -c public/data/pois/regions/radius-relax.json || true
-          wc -c public/data/pois/regions/radius-borghi.json || true
+          echo "== file sizes (if exist) =="
+          [ -f public/data/pois/regions/radius-relax.json ] && wc -c public/data/pois/regions/radius-relax.json || echo "radius-relax.json MISSING"
+          [ -f public/data/pois/regions/radius-borghi.json ] && wc -c public/data/pois/regions/radius-borghi.json || echo "radius-borghi.json MISSING"
           echo "-----"
-          head -c 600 public/data/pois/regions/radius-relax.json || true
+          echo "== preview relax (if exist) =="
+          [ -f public/data/pois/regions/radius-relax.json ] && head -c 600 public/data/pois/regions/radius-relax.json || true
           echo ""
 
       - name: Commit generated files (if changed) + Pull rebase + Push
         run: |
+          set -e
+
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git add public/data/pois/regions/radius-relax.json
-          git add public/data/pois/regions/radius-borghi.json
+          # 1) prima sincronizziamo, così evitiamo "fetch first"
+          git pull --rebase origin main
+
+          # 2) aggiungi SOLO se i file esistono (niente più pathspec)
+          ADDED=0
+
+          if [ -f public/data/pois/regions/radius-relax.json ]; then
+            git add public/data/pois/regions/radius-relax.json
+            ADDED=1
+          fi
+
+          if [ -f public/data/pois/regions/radius-borghi.json ]; then
+            git add public/data/pois/regions/radius-borghi.json
+            ADDED=1
+          fi
+
+          if [ "$ADDED" -eq 0 ]; then
+            echo "No radius files produced. Skipping commit."
+            exit 0
+          fi
 
           if git diff --cached --quiet; then
             echo "No changes to commit."
@@ -70,7 +96,4 @@ jobs:
           fi
 
           git commit -m "Update radius datasets (Relax + Borghi)"
-
-          # evita "fetch first"
-          git pull --rebase origin main
           git push origin main
