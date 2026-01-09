@@ -1,0 +1,60 @@
+name: Build Veneto Borghi Dataset
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "scripts/build_borghi_veneto.mjs"
+      - ".github/workflows/build-veneto-borghi.yml"
+  schedule:
+    - cron: "0 3 * * 1" # ogni lunedì 03:00 UTC
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-veneto-borghi
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Build dataset (Borghi Veneto)
+        run: node scripts/build_borghi_veneto.mjs
+
+      - name: Debug output
+        run: |
+          echo "=== REGIONS DIR ==="
+          ls -lah public/data/pois/regions || true
+          echo "=== BORGH I FILE ==="
+          ls -lah public/data/pois/regions/it-veneto-borghi.json || true
+          echo "=== HEAD ==="
+          head -c 800 public/data/pois/regions/it-veneto-borghi.json || true
+          echo ""
+
+      - name: Commit & push (if changed)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add public/data/pois/regions/it-veneto-borghi.json
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          git commit -m "Update Veneto borghi dataset"
+          git push origin main
