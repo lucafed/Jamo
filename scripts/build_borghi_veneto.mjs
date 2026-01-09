@@ -8,146 +8,152 @@ import { overpass, toPlace, writeJson } from "./lib/overpass.mjs";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Output
-const OUT = path.join(
-  __dirname,
-  "..",
-  "public",
-  "data",
-  "pois",
-  "regions",
-  "it-veneto-borghi.json"
-);
+const OUT = path.join(__dirname, "..", "public", "data", "pois", "regions", "it-veneto-borghi.json");
 
 // ----------------------
-// Overpass query: Veneto area + borghi/centri
+// Overpass: BOR GHI (settlements + historic cores)
 // ----------------------
-function buildQuery() {
-  // Veneto = admin_level=4. Usiamo area da relation.
+function buildQueryVeneto() {
+  // Veneto bbox approx (un po' largo): minLat 44.7, minLon 10.3, maxLat 46.7, maxLon 13.1
+  // Nota: Overpass non ama bbox enormi con query troppo ampia: qui stiamo già stretti sugli oggetti.
   return `
 [out:json][timeout:240];
-
-area
-  ["boundary"="administrative"]
-  ["admin_level"="4"]
-  ["name"="Veneto"]
-->.veneto;
-
 (
-  // Paesi e borgate (lista ampia = classici)
-  nwr(area.veneto)["place"~"town|village|hamlet|suburb|quarter|neighbourhood"];
+  // Centri abitati (nuclei)
+  node(44.7,10.3,46.7,13.1)["place"~"^(hamlet|village|town|city)$"]["name"];
+  way (44.7,10.3,46.7,13.1)["place"~"^(hamlet|village|town|city)$"]["name"];
+  relation(44.7,10.3,46.7,13.1)["place"~"^(hamlet|village|town|city)$"]["name"];
 
-  // Centri storici / city centre
-  nwr(area.veneto)["historic"="city_centre"];
-  nwr(area.veneto)["place"="locality"]["name"];  // locality solo se ha name
+  // Nuclei storici / old town (a volte mappati così)
+  node(44.7,10.3,46.7,13.1)["historic"~"^(city|town|village|hamlet|old_town)$"]["name"];
+  way (44.7,10.3,46.7,13.1)["historic"~"^(city|town|village|hamlet|old_town)$"]["name"];
+  relation(44.7,10.3,46.7,13.1)["historic"~"^(city|town|village|hamlet|old_town)$"]["name"];
 
-  // Indicatori “turistici” utili per chicche (ma restano borghi)
-  nwr(area.veneto)["historic"~"castle|fort|ruins|monument|archaeological_site"];
-  nwr(area.veneto)["tourism"~"attraction|viewpoint|museum"];
-  nwr(area.veneto)["heritage"];
+  // Administrative boundary (comuni) — utile per “borghi veri” quando manca place
+  relation(44.7,10.3,46.7,13.1)["boundary"="administrative"]["admin_level"~"^(8|9)$"]["name"];
 );
-
 out center tags;
 `;
 }
 
 // ----------------------
-// Anti-spazzatura (borghi)
+// Helpers
 // ----------------------
-function tagEquals(tags, k, v) {
-  return String(tags?.[k] ?? "").toLowerCase() === String(v).toLowerCase();
+function lower(s) { return String(s ?? "").toLowerCase(); }
+
+function hasAnyTag(tags, keys) {
+  return keys.some((k) => tags[k] != null && String(tags[k]).trim() !== "");
 }
 
-function isJunk(p) {
+function isClearlyNotBorgo(p) {
   const t = p.tags || {};
-  const name = (p.name || "").trim();
-  const n = name.toLowerCase();
+  const name = lower(p.name);
 
-  if (!name || name === "(senza nome)") return true;
+  // roba natura/altimetria (NO borghi)
+  if (t.natural) return true;                  // peak, saddle, cave_entrance, etc
+  if (t.mountain_pass) return true;
+  if (t.peak) return true;
 
-  // strade/fermate ecc.
+  // infrastrutture/trasporti/strade
   if (t.highway) return true;
   if (t.railway) return true;
   if (t.public_transport) return true;
-  if (tagEquals(t, "highway", "bus_stop")) return true;
 
-  // aziende/uffici/industria
-  const building = String(t.building ?? "").toLowerCase();
-  const landuse = String(t.landuse ?? "").toLowerCase();
-  const office = String(t.office ?? "").toLowerCase();
-  if (office) return true;
-  if (["office", "industrial", "warehouse"].includes(building)) return true;
-  if (["industrial", "commercial"].includes(landuse)) return true;
+  // POI singoli tipici (non “borgo”)
+  const amenity = lower(t.amenity);
+  if (["museum","theatre","cinema","university","hospital","clinic","pharmacy","school","bank","police","post_office"].includes(amenity)) return true;
 
-  // nomi inutili
-  if (n.startsWith("via ") || n.includes("case sparse")) return true;
+  const tourism = lower(t.tourism);
+  if (["museum","gallery","attraction"].includes(tourism)) {
+    // attraction può essere borgo “mappato male”: la teniamo SOLO se è anche un settlement
+    const place = lower(t.place);
+    const hist = lower(t.historic);
+    const isSettlement = ["hamlet","village","town","city"].includes(place) || ["old_town","city","town","village","hamlet"].includes(hist);
+    if (!isSettlement) return true;
+  }
 
-  // “SpA” aziendale (non borgo)
-  if (/\bs\.p\.a\.?\b/i.test(name)) return true;
-  if (n.includes("openjobmetis")) return true;
+  // nomi “non borgo”
+  if (name.startsWith("via ") || name.includes("case sparse")) return true;
 
   return false;
 }
 
-// ----------------------
-// Scoring + visibility
-// ----------------------
-function hasAny(tags, keys) {
-  return keys.some((k) => tags[k] != null && String(tags[k]).trim() !== "");
+function isSettlementLike(tags) {
+  const place = lower(tags.place);
+  const hist = lower(tags.historic);
+
+  if (["hamlet","village","town","city"].includes(place)) return true;
+  if (["old_town","city","town","village","hamlet"].includes(hist)) return true;
+
+  // fallback: boundary admin_level (comune) — lo consideriamo “settlement-like”
+  if (tags.boundary === "administrative" && /^(8|9)$/.test(String(tags.admin_level ?? ""))) return true;
+
+  return false;
+}
+
+function borgoType(tags) {
+  // "classico" = settlement + qualche segnale di "storico/turistico"
+  const name = lower(tags.name);
+  const hist = lower(tags.historic);
+  const hasHistoricSignal =
+    hist === "old_town" ||
+    hasAnyTag(tags, ["wikipedia", "wikidata"]) ||
+    lower(tags.tourism) === "attraction" ||
+    lower(tags["heritage"]) !== "" ||
+    name.includes("borgo") ||
+    name.includes("castello") ||     // spesso “Borgo + castello” nel nome
+    name.includes("centro storico");
+
+  return hasHistoricSignal ? "classico" : "chicca";
 }
 
 function scoreBorgo(p) {
   const t = p.tags || {};
-  const name = (p.name || "").toLowerCase();
+  const name = lower(p.name);
   let s = 0;
 
-  // base se è un place “vero”
-  const place = String(t.place ?? "").toLowerCase();
-  if (["town"].includes(place)) s += 35;
-  if (["village"].includes(place)) s += 30;
-  if (["hamlet"].includes(place)) s += 22;
-  if (["suburb", "quarter", "neighbourhood"].includes(place)) s += 10;
+  // settlement forti
+  const place = lower(t.place);
+  if (place === "city") s += 35;
+  if (place === "town") s += 45;
+  if (place === "village") s += 55;
+  if (place === "hamlet") s += 40;
 
-  // centro storico / storico
-  const historic = String(t.historic ?? "").toLowerCase();
-  if (historic === "city_centre") s += 35;
-  if (["castle", "fort", "ruins", "monument", "archaeological_site"].includes(historic)) s += 35;
+  // storico/turistico
+  const hist = lower(t.historic);
+  if (hist === "old_town") s += 80;
+  if (["city","town","village","hamlet"].includes(hist)) s += 50;
 
-  // tourism/heritage
-  const tourism = String(t.tourism ?? "").toLowerCase();
-  if (["attraction", "viewpoint", "museum"].includes(tourism)) s += 25;
+  if (hasAnyTag(t, ["wikipedia", "wikidata"])) s += 25;
+  if (lower(t.tourism) === "attraction") s += 15;
 
-  if (t.heritage) s += 18;
+  // micro bonus info utili
+  if (hasAnyTag(t, ["website", "contact:website"])) s += 5;
 
-  // wikipedia/wikidata = “importante / turistico”
-  if (hasAny(t, ["wikipedia"])) s += 25;
-  if (hasAny(t, ["wikidata"])) s += 22;
+  // penalità: se è solo boundary comune senza altri segnali
+  const isOnlyBoundary =
+    t.boundary === "administrative" &&
+    !t.place &&
+    !t.historic &&
+    !hasAnyTag(t, ["wikipedia", "wikidata", "tourism", "name:it"]);
+  if (isOnlyBoundary) s -= 20;
 
-  // keyword
+  // keyword nome
   if (name.includes("borgo")) s += 10;
-  if (name.includes("castello")) s += 10;
-
-  // info utili
-  if (hasAny(t, ["website", "contact:website"])) s += 5;
+  if (name.includes("centro storico")) s += 12;
 
   return s;
-}
-
-// “chicca” solo se davvero alto, altrimenti classica
-function visibilityFromScore(score) {
-  // soglia volutamente ALTA per non svuotare i classici
-  return score >= 70 ? "chicca" : "classica";
 }
 
 // ----------------------
 // MAIN
 // ----------------------
 async function main() {
-  console.log("Build BORGHl Veneto...");
+  console.log("Build BOR GHI Veneto (pulito) ...");
   let data;
 
   try {
-    data = await overpass(buildQuery(), { retries: 7, timeoutMs: 170000 });
+    data = await overpass(buildQueryVeneto(), { retries: 7, timeoutMs: 180000 });
   } catch (err) {
     console.error("⚠️ Overpass failed. Keeping previous dataset if it exists.");
     if (fs.existsSync(OUT)) {
@@ -160,13 +166,15 @@ async function main() {
   const raw = (data.elements || [])
     .map(toPlace)
     .filter((p) => p.lat != null && p.lon != null)
-    .filter((p) => !isJunk(p));
+    .filter((p) => (p.name || "").trim() !== "" && (p.name || "").trim() !== "(senza nome)")
+    .filter((p) => !isClearlyNotBorgo(p))
+    .filter((p) => isSettlementLike(p.tags || {})); // 🔥 chiave: solo settlement
 
-  // Dedup: nome + coordinate
+  // Dedup (nome + coordinate)
   const seen = new Set();
   const deduped = [];
   for (const p of raw) {
-    const key = `${(p.name || "").toLowerCase()}|${p.lat.toFixed(5)}|${p.lon.toFixed(5)}`;
+    const key = `${lower(p.name)}|${p.lat.toFixed(5)}|${p.lon.toFixed(5)}`;
     if (seen.has(key)) continue;
     seen.add(key);
     deduped.push(p);
@@ -174,33 +182,34 @@ async function main() {
 
   const places = deduped
     .map((p) => {
-      const score = scoreBorgo(p);
+      const tagsObj = p.tags || {};
+      const bType = borgoType({ ...tagsObj, name: p.name });
+
       return {
         id: p.id,
         name: p.name,
         lat: p.lat,
         lon: p.lon,
         type: "borgo",
-        visibility: visibilityFromScore(score), // ✅ ecco la fix: classici pieni
-        tags: Object.entries(p.tags || {}).slice(0, 80).map(([k, v]) => `${k}=${v}`),
-        score,
+        borgo_type: bType,                  // ✅ "classico" | "chicca"
+        visibility: bType === "classico" ? "classica" : "chicca", // ✅ aggancio per UI
+        tags: Object.entries(tagsObj).slice(0, 60).map(([k, v]) => `${k}=${v}`),
+        score: scoreBorgo(p),
       };
     })
     .sort((a, b) => b.score - a.score)
-    .slice(0, 12000); // largo: l’app sceglie poi
+    .slice(0, 12000);
 
   await writeJson(OUT, {
     region_id: "it-veneto-borghi",
     country: "IT",
-    label_it: "Veneto • Borghi",
-    bbox_hint: { lat: 45.5, lng: 11.9, radius_km: 240 },
+    area: "Veneto",
+    label_it: "Veneto • Borghi (pulito)",
     generated_at: new Date().toISOString(),
     places,
   });
 
-  const countClassica = places.filter((p) => p.visibility === "classica").length;
-  const countChicca = places.filter((p) => p.visibility === "chicca").length;
-  console.log(`✔ Written ${OUT} (${places.length} places) classica=${countClassica} chicca=${countChicca}`);
+  console.log(`✔ Written ${OUT} (${places.length} places)`);
 }
 
 main().catch((e) => {
