@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-01-09T14:32:10.577Z",
+  "generated_at": "2026-01-13T04:08:21.685Z",
   "places": [
     {
       "id": "way:48528567",
@@ -6911,7 +6911,7 @@
     {
       "id": "relation:10979036",
       "name": "Linea B: Bergamo -> San Pellegrino Terme -> Piazza Brembana",
-      "lat": 45.8203522,
+      "lat": 45.820354,
       "lon": 9.6424353,
       "type": "relax",
       "visibility": "classica",
