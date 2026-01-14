@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-01-13T04:08:21.685Z",
+  "generated_at": "2026-01-14T16:33:23.560Z",
   "places": [
     {
       "id": "way:48528567",
@@ -1741,8 +1741,8 @@
     {
       "id": "way:221855874",
       "name": "A.S.D. Comano Terme Fiavè",
-      "lat": 46.028548,
-      "lon": 10.8642941,
+      "lat": 46.0285767,
+      "lon": 10.8642865,
       "type": "relax",
       "visibility": "classica",
       "tags": [
