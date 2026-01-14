@@ -1,0 +1,17 @@
+{
+  "name": "jamo",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Jamo datasets builder (regions, categories, offline POIs)",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build:region:core": "node scripts/build_region_core.mjs",
+    "build:region:category": "node scripts/build_region_category.mjs",
+    "build:regions:index": "node scripts/build_it_regions_index.mjs"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
