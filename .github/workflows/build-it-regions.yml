@@ -1,15 +1,21 @@
 name: Build Italy Regions Datasets
 
 on:
-  push:
-    branches: [ main ]
   workflow_dispatch:
+  push:
+    branches: [ "main" ]
+    paths:
+      - "scripts/**"
+      - "configs/it/**"
+      - ".github/workflows/build-it-regions.yml"
 
-permissions:
-  contents: write
+concurrency:
+  group: build-it-regions
+  cancel-in-progress: false
 
 jobs:
   build:
+    name: build (${{ matrix.region }}, ${{ matrix.kind }})
     runs-on: ubuntu-latest
 
     strategy:
@@ -34,53 +40,90 @@ jobs:
           - it-toscana
           - it-trentino-alto-adige
           - it-umbria
-          - it-valle-d-aosta
+          - it-valle-aosta
           - it-veneto
-        category:
-          - borghi
-          - relax
-          - cantine
+        kind: [ core, relax, borghi, cantine ]
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
+      - name: Install deps
+        run: |
+          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+
       - name: Build dataset
         env:
           REGION_ID: ${{ matrix.region }}
-          CATEGORY: ${{ matrix.category }}
+          CATEGORY: ${{ matrix.kind }}
         run: |
-          node scripts/build_region_category.mjs
+          mkdir -p public/data/pois/regions
+          if [ "${{ matrix.kind }}" = "core" ]; then
+            node scripts/build_region_core.mjs
+          else
+            node scripts/build_region_category.mjs
+          fi
 
-      - name: Upload artifacts
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: data-${{ matrix.region }}-${{ matrix.category }}
+          name: pois-${{ matrix.region }}-${{ matrix.kind }}
           path: public/data/pois/regions/*.json
+          if-no-files-found: error
 
   commit:
-    needs: build
+    name: Commit generated datasets
     runs-on: ubuntu-latest
+    needs: [ build ]
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Download artifacts
+      - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
-          path: public/data/pois/regions
+          path: /tmp/artifacts
 
-      - name: Commit & push all datasets
+      - name: Copy artifacts into repo
         run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git add public/data
-          git commit -m "build: update regions datasets" || exit 0
-          git pull --rebase
-          git push
+          mkdir -p public/data/pois/regions
+          find /tmp/artifacts -type f -name "*.json" -maxdepth 4 -print -exec cp -f {} public/data/pois/regions/ \;
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install deps
+        run: |
+          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+
+      - name: Rebuild indexes
+        run: |
+          node scripts/build_it_regions_index.mjs || true
+
+      - name: Commit & Push (single commit)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add public/data/pois/regions/*.json public/data/pois/regions/it-regions-index.json 2>/dev/null || true
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          git commit -m "build: italy regions datasets"
+          git pull --rebase origin main
+          git push origin main
