@@ -8,40 +8,85 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: build-it-regions-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   build:
+    name: build (${{ matrix.category }}, ${{ matrix.region }})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
+      # Se vuoi meno carico: metti un numero (es. 6). Se vuoi massimo: rimuovi la riga.
+      max-parallel: 10
       matrix:
-        category: [borghi]   # poi aggiungi relax, cantine, ecc.
-        region: [it-liguria, it-lazio, it-abruzzo, it-basilicata, it-molise, it-puglia] # esempio
-    steps:
-      - uses: actions/checkout@v4
+        category: [borghi, relax, cantine]
+        region:
+          - it-abruzzo
+          - it-basilicata
+          - it-calabria
+          - it-campania
+          - it-emilia-romagna
+          - it-friuli-venezia-giulia
+          - it-lazio
+          - it-liguria
+          - it-lombardia
+          - it-marche
+          - it-molise
+          - it-piemonte
+          - it-puglia
+          - it-sardegna
+          - it-sicilia
+          - it-toscana
+          - it-trentino-alto-adige
+          - it-umbria
+          - it-valle-d-aosta
+          - it-veneto
 
-      - uses: actions/setup-node@v4
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: npm
 
       - name: Install
         run: npm ci
 
+      # --------------------------------------------------------------------
+      # IMPORTANTE:
+      # Qui devi chiamare IL TUO script reale che genera il json regionale.
+      #
+      # Io metto quello che hai nominato negli screenshot:
+      #   scripts/build_region_category.mjs
+      #
+      # Se nel tuo repo si chiama diversamente (es. build_region_category.mjs / build_it_region_category.mjs),
+      # cambia SOLO questa riga "run:".
+      # --------------------------------------------------------------------
       - name: Build dataset
         run: |
-          node scripts/build_region_category.mjs --region ${{ matrix.region }} --category ${{ matrix.category }}
+          node scripts/build_region_category.mjs --region "${{ matrix.region }}" --category "${{ matrix.category }}"
 
-      - name: Upload artifact
+      # Carichiamo SOLO il file di questa combinazione (evita mischioni)
+      - name: Upload artifact (single file)
         uses: actions/upload-artifact@v4
         with:
           name: out-${{ matrix.region }}-${{ matrix.category }}
-          path: public/data/pois/regions/*.json
+          path: public/data/pois/regions/${{ matrix.region }}-${{ matrix.category }}.json
           if-no-files-found: error
 
   commit:
+    name: Commit & push (single)
     runs-on: ubuntu-latest
     needs: build
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Download all artifacts
         uses: actions/download-artifact@v4
@@ -50,15 +95,24 @@ jobs:
 
       - name: Move artifacts into repo
         run: |
+          set -e
           mkdir -p public/data/pois/regions
+
+          # Copia tutti i json generati dentro la cartella ufficiale
           find _artifacts -type f -name "*.json" -print -exec cp -f {} public/data/pois/regions/ \;
 
-      - name: Commit & push (single)
+          # (opzionale) lista file risultanti
+          echo "----- Regions JSON in repo -----"
+          ls -la public/data/pois/regions | head -200
+
+      - name: Commit & push (if changed)
         run: |
+          set -e
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           git add public/data/pois/regions/*.json
+
           if git diff --cached --quiet; then
             echo "No changes to commit."
             exit 0
