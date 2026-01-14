@@ -3,7 +3,7 @@ name: Build Veneto Cantine Dataset
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 3 * * 4" # giovedì 03:00 UTC
+    - cron: "0 3 * * 4" # ogni giovedì 03:00 UTC
   push:
     paths:
       - "scripts/build_cantine_veneto.mjs"
@@ -21,7 +21,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout (full history)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
