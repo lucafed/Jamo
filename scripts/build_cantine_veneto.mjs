@@ -1,4 +1,7 @@
 // scripts/build_cantine_veneto.mjs
+// Build "Cantine Veneto" dataset (pulito + monetizzabile)
+// Output: public/data/pois/regions/it-veneto-cantine.json
+
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -8,113 +11,179 @@ import { overpass, toPlace, writeJson } from "./lib/overpass.mjs";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Output Veneto
 const OUT = path.join(__dirname, "..", "public", "data", "pois", "regions", "it-veneto-cantine.json");
 
+// Veneto bbox (abbastanza sicuro)
+const VENETO_BBOX = {
+  minLat: 44.70,
+  maxLat: 46.70,
+  minLon: 10.20,
+  maxLon: 13.20,
+};
+
+function withinBBox(lat, lon, bb) {
+  return (
+    Number.isFinite(lat) &&
+    Number.isFinite(lon) &&
+    lat >= bb.minLat && lat <= bb.maxLat &&
+    lon >= bb.minLon && lon <= bb.maxLon
+  );
+}
+
+function norm(s) {
+  return String(s ?? "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim();
+}
+
+function tagEq(tags, k, v) {
+  return norm(tags?.[k]) === norm(v);
+}
+
+function hasAnyTag(tags, keys) {
+  for (const k of keys) {
+    const v = tags?.[k];
+    if (v != null && String(v).trim() !== "") return true;
+  }
+  return false;
+}
+
 // ----------------------
-// Overpass query (Veneto area)
+// Overpass Query (Cantine)
 // ----------------------
-function buildQueryVeneto() {
-  // Veneto in OSM: boundary=administrative + name=Veneto + admin_level=4
+// Obiettivo: cantine visitabili + winery, vinicole, produttori (NO bar/ristoranti/enoteche)
+// In OSM "craft=winery" è ottimo. "shop=wine" spesso è enoteca => la escludiamo.
+function buildQuery(b) {
   return `
 [out:json][timeout:180];
-area["boundary"="administrative"]["name"="Veneto"]["admin_level"="4"]->.a;
 (
-  node(area.a)["craft"="winery"];
-  way(area.a)["craft"="winery"];
-  relation(area.a)["craft"="winery"];
+  // craft=winery (cantina / vinicola)
+  node(${b.minLat},${b.minLon},${b.maxLat},${b.maxLon})["craft"="winery"];
+  way(${b.minLat},${b.minLon},${b.maxLat},${b.maxLon})["craft"="winery"];
+  relation(${b.minLat},${b.minLon},${b.maxLat},${b.maxLon})["craft"="winery"];
 
-  node(area.a)["industrial"="winery"];
-  way(area.a)["industrial"="winery"];
-  relation(area.a)["industrial"="winery"];
+  // tourism=winery (meno comune ma utile)
+  node(${b.minLat},${b.minLon},${b.maxLat},${b.maxLon})["tourism"="winery"];
+  way(${b.minLat},${b.minLon},${b.maxLat},${b.maxLon})["tourism"="winery"];
+  relation(${b.minLat},${b.minLon},${b.maxLat},${b.maxLon})["tourism"="winery"];
 
-  node(area.a)["shop"="wine"];
-  way(area.a)["shop"="wine"];
-  relation(area.a)["shop"="wine"];
-
-  node(area.a)["tourism"="attraction"]["wine"];
-  way(area.a)["tourism"="attraction"]["wine"];
-  relation(area.a)["tourism"="attraction"]["wine"];
+  // man_made=winery (raro)
+  node(${b.minLat},${b.minLon},${b.maxLat},${b.maxLon})["man_made"="winery"];
+  way(${b.minLat},${b.minLon},${b.maxLat},${b.maxLon})["man_made"="winery"];
+  relation(${b.minLat},${b.minLon},${b.maxLat},${b.maxLon})["man_made"="winery"];
 );
 out center tags;
 `;
 }
 
 // ----------------------
-// Utils
+// Anti-spazzatura (cantine)
 // ----------------------
-function hasAnyTag(tags, keys) {
-  return keys.some((k) => tags[k] != null && String(tags[k]).trim() !== "");
-}
-function tagEquals(tags, k, v) {
-  return String(tags[k] ?? "").toLowerCase() === String(v).toLowerCase();
-}
-function norm(s) {
-  return String(s ?? "")
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9]+/g, " ")
-    .trim();
-}
-
-function isClearlyNotPlace(p) {
+function isClearlyNotWinery(p) {
   const t = p.tags || {};
   const name = norm(p.name || "");
 
-  if (!name || name === "meta" || name.startsWith("via ") || name.includes("case sparse")) return true;
+  // senza nome -> spesso roba inutile
+  if (!name || name === "(senza nome)") return true;
+
+  // escludi roba "shop=wine" (enoteche) e "amenity=bar/restaurant" (ristoro)
+  if (tagEq(t, "shop", "wine")) return true;
+  if (t.amenity && ["bar", "cafe", "restaurant", "pub", "fast_food", "ice_cream"].includes(norm(t.amenity))) return true;
+
+  // escludi "tourism=information", "office", ecc.
+  if (t.office) return true;
   if (t.highway || t.railway || t.public_transport) return true;
 
-  if (t.amenity && ["bank","school","clinic","hospital","pharmacy","police","post_office"].includes(String(t.amenity).toLowerCase()))
-    return true;
+  // parole chiave tipiche enoteca/ristoro
+  const badWords = [
+    "enoteca", "wine bar", "osteria", "trattoria", "ristorante", "pizzeria",
+    "bar", "caffe", "café", "bistrot", "food", "panin", "gelateria"
+  ];
+  for (const w of badWords) if (name.includes(w)) return true;
 
-  const hasWine =
-    tagEquals(t, "craft", "winery") ||
-    tagEquals(t, "industrial", "winery") ||
-    tagEquals(t, "shop", "wine") ||
-    (t.product && String(t.product).toLowerCase().includes("wine")) ||
-    (t["drink:wine"] && String(t["drink:wine"]).toLowerCase() !== "no") ||
-    (t.wine && String(t.wine).toLowerCase() !== "no");
+  // se è "azienda agricola" ma NON ha segnali vino/uva/cantina -> fuori
+  if (name.includes("azienda agricola")) {
+    const wineSignals =
+      tagEq(t, "craft", "winery") ||
+      tagEq(t, "tourism", "winery") ||
+      tagEq(t, "man_made", "winery") ||
+      name.includes("cantina") ||
+      name.includes("vin") ||
+      name.includes("wine") ||
+      name.includes("vign") ||
+      name.includes("prosecco") ||
+      name.includes("amarone") ||
+      name.includes("valpolicella");
+    if (!wineSignals) return true;
+  }
 
-  if (!hasWine && t.building && ["industrial","warehouse","retail"].includes(String(t.building).toLowerCase())) return true;
+  // micro-etichette troppo generiche che inquinano
+  if (name.startsWith("via ") || name.startsWith("viale ") || name.includes("case sparse")) return true;
 
   return false;
 }
 
-function scoreCantina(p) {
+// ----------------------
+// Scoring + Chicche/Classici
+// ----------------------
+function scoreWinery(p) {
   const t = p.tags || {};
   const name = norm(p.name || "");
   let s = 0;
 
-  if (tagEquals(t, "craft", "winery")) s += 80;
-  if (tagEquals(t, "industrial", "winery")) s += 65;
-  if (tagEquals(t, "shop", "wine")) s += 35;
+  // segnali OSM forti
+  if (tagEq(t, "craft", "winery")) s += 70;
+  if (tagEq(t, "tourism", "winery")) s += 60;
+  if (tagEq(t, "man_made", "winery")) s += 55;
 
-  if (t.tourism === "attraction" && (t.wine || t.product)) s += 20;
-
-  if (hasAnyTag(t, ["website", "contact:website"])) s += 10;
-  if (hasAnyTag(t, ["opening_hours"])) s += 6;
+  // info monetizzabili / utili
+  if (hasAnyTag(t, ["website", "contact:website"])) s += 12;
   if (hasAnyTag(t, ["phone", "contact:phone"])) s += 6;
+  if (hasAnyTag(t, ["opening_hours"])) s += 6;
 
-  if (name.includes("cantina")) s += 12;
-  if (name.includes("azienda agricola")) s += 6;
+  // se dichiara tasting/tour/visit
+  const desc = norm(t.description || "");
+  const note = norm(t.note || "");
+  const tourism = norm(t.tourism || "");
+  const visitWords = ["degust", "tasting", "visita", "visit", "tour", "wine experience", "ospitalit", "accoglienza"];
+  if (visitWords.some(w => name.includes(w) || desc.includes(w) || note.includes(w) || tourism.includes(w))) s += 10;
 
-  if (tagEquals(t, "shop", "wine") && !tagEquals(t, "craft", "winery") && !tagEquals(t, "industrial", "winery")) {
-    s -= 10;
-  }
+  // keyword vini famosi veneti -> più "classico" / turistico
+  const classicWine = ["prosecco", "amarone", "valpolicella", "soave", "lugana", "bardolino", "garda", "colli euganei"];
+  if (classicWine.some(w => name.includes(w) || desc.includes(w))) s += 8;
+
+  // penalità: nomi troppo generici
+  if (name.length < 5) s -= 10;
 
   return s;
+}
+
+function visibilityForWinery(p) {
+  // logica semplice:
+  // - "classica" se ha sito/telefono/orari o keyword famose (turistico)
+  // - "chicca" se non ha info complete ma è comunque craft/tourism=winery (scoperta)
+  const t = p.tags || {};
+  const name = norm(p.name || "");
+  const desc = norm(t.description || "");
+
+  const classicSignals =
+    hasAnyTag(t, ["website", "contact:website", "phone", "contact:phone", "opening_hours"]) ||
+    ["prosecco", "amarone", "valpolicella", "soave", "lugana", "bardolino", "garda"].some(w => name.includes(w) || desc.includes(w));
+
+  return classicSignals ? "classica" : "chicca";
 }
 
 // ----------------------
 // MAIN
 // ----------------------
 async function main() {
-  console.log("Build CANTINE Veneto…");
-  let data;
+  console.log("Build CANTINE Veneto dataset…");
 
+  let data;
   try {
-    const q = buildQueryVeneto();
+    const q = buildQuery(VENETO_BBOX);
     data = await overpass(q, { retries: 7, timeoutMs: 150000 });
   } catch (err) {
     console.error("⚠️ Overpass failed. Keeping previous dataset if it exists.");
@@ -127,10 +196,11 @@ async function main() {
 
   const raw = (data.elements || [])
     .map(toPlace)
-    .filter((p) => p.lat != null && p.lon != null)
-    .filter((p) => (p.name || "").trim() !== "(senza nome)")
-    .filter((p) => !isClearlyNotPlace(p));
+    .filter((p) => p && Number.isFinite(p.lat) && Number.isFinite(p.lon))
+    .filter((p) => withinBBox(p.lat, p.lon, VENETO_BBOX))
+    .filter((p) => !isClearlyNotWinery(p));
 
+  // Dedup (nome + coordinate)
   const seen = new Set();
   const deduped = [];
   for (const p of raw) {
@@ -140,39 +210,29 @@ async function main() {
     deduped.push(p);
   }
 
-  // In Veneto possiamo distinguere un minimo:
-  // - craft/industrial=winery => classici
-  // - shop=wine => chicche (enoteche carine) MA solo se ha sito/orari/telefono
   const places = deduped
     .map((p) => {
-      const t = p.tags || {};
-      const isRealWinery = tagEquals(t, "craft", "winery") || tagEquals(t, "industrial", "winery");
-      const isWineShop = tagEquals(t, "shop", "wine") && !isRealWinery;
-
-      const hasInfo = hasAnyTag(t, ["website", "contact:website", "opening_hours", "phone", "contact:phone"]);
-
-      const visibility =
-        isRealWinery ? "classica" :
-        (isWineShop && hasInfo) ? "chicca" :
-        "classica";
-
+      const score = scoreWinery(p);
       return {
         id: p.id,
         name: p.name,
         lat: p.lat,
         lon: p.lon,
         type: "cantine",
-        visibility,
-        tags: Object.entries(t).slice(0, 90).map(([k, v]) => `${k}=${v}`),
-        score: scoreCantina(p),
+        visibility: visibilityForWinery(p),
+        tags: Object.entries(p.tags || {}).slice(0, 80).map(([k, v]) => `${k}=${v}`),
+        score,
+        // opzionale: aiuta l’app, non rompe nulla se ignorato
+        beauty_score: Math.max(0.35, Math.min(1, 0.55 + score / 140)),
       };
     })
-    .sort((a, b) => b.score - a.score)
+    .sort((a, b) => (b.score - a.score))
     .slice(0, 7000);
 
   await writeJson(OUT, {
     region_id: "it-veneto-cantine",
     label_it: "Veneto • Cantine",
+    bbox: VENETO_BBOX,
     generated_at: new Date().toISOString(),
     places,
   });
