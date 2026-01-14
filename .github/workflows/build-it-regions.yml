@@ -1,28 +1,25 @@
 name: Build Italy Regions Datasets
 
 on:
-  push:
-    branches: [ main ]
   workflow_dispatch:
-
-permissions:
-  contents: write
+  push:
+    paths:
+      - "scripts/**"
+      - "configs/it/**"
+      - ".github/workflows/build-it-regions.yml"
 
 concurrency:
   group: build-it-regions-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   build:
-    name: build (${{ matrix.category }}, ${{ matrix.region }})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      # Se vuoi meno carico: metti un numero (es. 6). Se vuoi massimo: rimuovi la riga.
-      max-parallel: 10
       matrix:
         category: [borghi, relax, cantine]
-        region:
+        region_id:
           - it-abruzzo
           - it-basilicata
           - it-calabria
@@ -41,7 +38,7 @@ jobs:
           - it-toscana
           - it-trentino-alto-adige
           - it-umbria
-          - it-valle-d-aosta
+          - it-valle-daosta
           - it-veneto
 
     steps:
@@ -52,71 +49,55 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
 
-      - name: Install
-        run: npm ci
-
-      # --------------------------------------------------------------------
-      # IMPORTANTE:
-      # Qui devi chiamare IL TUO script reale che genera il json regionale.
-      #
-      # Io metto quello che hai nominato negli screenshot:
-      #   scripts/build_region_category.mjs
-      #
-      # Se nel tuo repo si chiama diversamente (es. build_region_category.mjs / build_it_region_category.mjs),
-      # cambia SOLO questa riga "run:".
-      # --------------------------------------------------------------------
-      - name: Build dataset
+      - name: Install deps (if any)
         run: |
-          node scripts/build_region_category.mjs --region "${{ matrix.region }}" --category "${{ matrix.category }}"
+          if [ -f package-lock.json ]; then npm ci; else npm install; fi
 
-      # Carichiamo SOLO il file di questa combinazione (evita mischioni)
-      - name: Upload artifact (single file)
+      - name: Build dataset
+        env:
+          REGION_ID: ${{ matrix.region_id }}
+          CATEGORY: ${{ matrix.category }}
+        run: |
+          node scripts/build_region_category.mjs
+          ls -lah public/data/pois/regions || true
+
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: out-${{ matrix.region }}-${{ matrix.category }}
-          path: public/data/pois/regions/${{ matrix.region }}-${{ matrix.category }}.json
+          name: it-${{ matrix.region_id }}-${{ matrix.category }}
+          path: public/data/pois/regions/${{ matrix.region_id }}-${{ matrix.category }}.json
           if-no-files-found: error
 
   commit:
-    name: Commit & push (single)
-    runs-on: ubuntu-latest
     needs: build
-
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
           path: _artifacts
 
-      - name: Move artifacts into repo
+      - name: Copy artifacts into public folder
         run: |
-          set -e
           mkdir -p public/data/pois/regions
-
-          # Copia tutti i json generati dentro la cartella ufficiale
           find _artifacts -type f -name "*.json" -print -exec cp -f {} public/data/pois/regions/ \;
+          ls -lah public/data/pois/regions | head -n 200
 
-          # (opzionale) lista file risultanti
-          echo "----- Regions JSON in repo -----"
-          ls -la public/data/pois/regions | head -200
-
-      - name: Commit & push (if changed)
+      - name: Commit & push
         run: |
-          set -e
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-
           git add public/data/pois/regions/*.json
-
           if git diff --cached --quiet; then
             echo "No changes to commit."
             exit 0
           fi
-
-          git commit -m "chore(data): update italy regions datasets"
-          git push
+          git commit -m "chore(data): update IT regional datasets"
+          git pull --rebase origin main
+          git push origin main
