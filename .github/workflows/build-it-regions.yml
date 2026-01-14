@@ -9,9 +9,13 @@ on:
       - "configs/it/**"
       - ".github/workflows/build-it-regions.yml"
 
+# Evita che due run in parallelo provino a committare insieme
 concurrency:
-  group: build-it-regions
-  cancel-in-progress: false
+  group: build-it-regions-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -55,9 +59,14 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install deps
+      # ✅ IMPORTANTE: niente npm se non hai package.json
+      - name: Install deps (only if package.json exists)
         run: |
-          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+          if [ -f package.json ]; then
+            if [ -f package-lock.json ]; then npm ci; else npm install; fi
+          else
+            echo "No package.json -> skipping npm install"
+          fi
 
       - name: Build dataset
         env:
@@ -89,6 +98,13 @@ jobs:
         with:
           fetch-depth: 0
 
+      # ✅ Prima riallinea il branch: così eviti “remote rejected / fetch first”
+      - name: Sync with origin/main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git pull --rebase origin main
+
       - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
@@ -104,19 +120,20 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install deps
+      - name: Install deps (only if package.json exists)
         run: |
-          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+          if [ -f package.json ]; then
+            if [ -f package-lock.json ]; then npm ci; else npm install; fi
+          else
+            echo "No package.json -> skipping npm install"
+          fi
 
-      - name: Rebuild indexes
+      - name: Rebuild regions index
         run: |
           node scripts/build_it_regions_index.mjs || true
 
       - name: Commit & Push (single commit)
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
           git add public/data/pois/regions/*.json public/data/pois/regions/it-regions-index.json 2>/dev/null || true
 
           if git diff --cached --quiet; then
@@ -125,5 +142,4 @@ jobs:
           fi
 
           git commit -m "build: italy regions datasets"
-          git pull --rebase origin main
           git push origin main
