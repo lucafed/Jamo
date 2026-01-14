@@ -1,0 +1,25 @@
+{
+  "country": "IT",
+  "regions": [
+    { "id": "it-piemonte", "name": "Piemonte", "iso3166_2": "IT-21" },
+    { "id": "it-valle-d-aosta", "name": "Valle d'Aosta", "iso3166_2": "IT-23" },
+    { "id": "it-lombardia", "name": "Lombardia", "iso3166_2": "IT-25" },
+    { "id": "it-trentino-alto-adige", "name": "Trentino-Alto Adige/Südtirol", "iso3166_2": "IT-32" },
+    { "id": "it-veneto", "name": "Veneto", "iso3166_2": "IT-34" },
+    { "id": "it-friuli-venezia-giulia", "name": "Friuli-Venezia Giulia", "iso3166_2": "IT-36" },
+    { "id": "it-liguria", "name": "Liguria", "iso3166_2": "IT-42" },
+    { "id": "it-emilia-romagna", "name": "Emilia-Romagna", "iso3166_2": "IT-45" },
+    { "id": "it-toscana", "name": "Toscana", "iso3166_2": "IT-52" },
+    { "id": "it-umbria", "name": "Umbria", "iso3166_2": "IT-55" },
+    { "id": "it-marche", "name": "Marche", "iso3166_2": "IT-57" },
+    { "id": "it-lazio", "name": "Lazio", "iso3166_2": "IT-62" },
+    { "id": "it-abruzzo", "name": "Abruzzo", "iso3166_2": "IT-65" },
+    { "id": "it-molise", "name": "Molise", "iso3166_2": "IT-67" },
+    { "id": "it-campania", "name": "Campania", "iso3166_2": "IT-72" },
+    { "id": "it-puglia", "name": "Puglia", "iso3166_2": "IT-75" },
+    { "id": "it-basilicata", "name": "Basilicata", "iso3166_2": "IT-77" },
+    { "id": "it-calabria", "name": "Calabria", "iso3166_2": "IT-78" },
+    { "id": "it-sicilia", "name": "Sicilia", "iso3166_2": "IT-82" },
+    { "id": "it-sardegna", "name": "Sardegna", "iso3166_2": "IT-88" }
+  ]
+}
