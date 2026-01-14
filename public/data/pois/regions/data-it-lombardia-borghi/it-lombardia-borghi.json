@@ -1,8 +1,7 @@
 {
   "region_id": "it-lombardia-borghi",
-  "country": "IT",
   "label_it": "Lombardia • borghi",
-  "generated_at": "2026-01-14T20:01:19.779Z",
+  "generated_at": "2026-01-14T18:17:01.569Z",
   "places": [
     {
       "id": "node:62513426",
@@ -132297,8 +132296,8 @@
     {
       "id": "way:421122318",
       "name": "Anfiteatro Romano",
-      "lat": 45.4574397,
-      "lon": 9.17871,
+      "lat": 45.4574395,
+      "lon": 9.1787243,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
