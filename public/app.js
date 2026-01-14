@@ -1,4 +1,4 @@
-/* Jamo — app.js v17.0
+/* Jamo — app.js v17.1
  * Mobile-first • Offline-only • Flusso pulito • Risultato centrale
  *
  * ✅ NO GPS
@@ -7,6 +7,7 @@
  * ✅ Ovunque = MIX vero (solo mete "buone")
  * ✅ Pulizia forte anti-spazzatura (infrastrutture/aree tecniche/parcheggi ecc.)
  * ✅ Radius = fallback silenzioso (non mostrato come "radius-*.json" in UI)
+ * ✅ FIX: se dataset non ha visibility => non blocca chicche/classici
  */
 
 (() => {
@@ -37,12 +38,12 @@
       "it-veneto": "/data/pois/regions/it-veneto.json",
       "it-veneto-relax": "/data/pois/regions/it-veneto-relax.json",
       "it-veneto-borghi": "/data/pois/regions/it-veneto-borghi.json",
-      "it-veneto-cantine": "/data/pois/regions/it-veneto-cantine.json", // se lo creerai in futuro
+      "it-veneto-cantine": "/data/pois/regions/it-veneto-cantine.json", // se lo creerai
 
       // radius (fallback, anche fuori Italia)
       "relax-radius": "/data/pois/regions/relax-radius.json",
       "borghi-radius": "/data/pois/regions/borghi-radius.json",
-      "cantine-radius": "/data/pois/regions/cantine-radius.json", // opzionale, se lo creerai in futuro
+      "cantine-radius": "/data/pois/regions/cantine-radius.json", // opzionale
     },
 
     REGION_BBOX: {
@@ -147,7 +148,7 @@
       .replaceAll("'", "&#039;");
   }
 
-  // Inject mini CSS (se serve in futuro)
+  // Inject mini CSS
   function injectMiniCssOnce() {
     if (document.getElementById("jamo-mini-css")) return;
     const st = document.createElement("style");
@@ -408,10 +409,16 @@
   }
 
   // -------------------- DATA NORMALIZATION --------------------
+  // FIX: se manca visibility => "unknown" (non blocca chicche/classici)
   function normalizeVisibility(v) {
-    const s = String(v || "").toLowerCase().trim();
-    return s === "chicca" ? "chicca" : "classica";
+    const raw = String(v ?? "").trim();
+    if (!raw) return "unknown";
+    const s = raw.toLowerCase().trim();
+    if (s === "chicca") return "chicca";
+    if (s === "classica") return "classica";
+    return "unknown";
   }
+
   function normalizeType(t) {
     const s = String(t || "").toLowerCase().trim();
     if (!s) return "";
@@ -497,7 +504,7 @@
   // ✅ Dataset order (IMPORTANT):
   // - Relax: radius può aiutare tanto => radius prima
   // - Borghi: radius spesso "sporco" => prima regionali, radius solo fallback
-  // - Cantine: se avrai un dataset regionale meglio; altrimenti macro/poi + eventuale radius
+  // - Cantine: prima regionale (se esiste), poi macro/fallback, poi radius opzionale
   function preferredDatasetUrls(origin, category) {
     const urls = [];
     const regionId = pickRegionIdFromOrigin(origin);
@@ -524,16 +531,16 @@
       pushIf("borghi-radius");
     }
 
-    // cantine: radius opzionale
-    if (category === "cantine") {
-      pushIf("cantine-radius");
-    }
-
     // macro paese + fallback
     const cc = String(origin?.country_code || "").toUpperCase();
     const countryMacro = findCountryMacroPath(cc);
     if (countryMacro) urls.push(countryMacro);
     for (const u of CFG.FALLBACK_MACRO_URLS) urls.push(u);
+
+    // cantine: radius opzionale, ma dopo macro
+    if (category === "cantine") {
+      pushIf("cantine-radius");
+    }
 
     // ultimo macro salvato
     const savedMacro = localStorage.getItem("jamo_macro_url");
@@ -604,42 +611,36 @@
     return false;
   }
 
-  // ✅ Anti-spazzatura globale (vale per TUTTE le categorie)
+  // ✅ Anti-spazzatura globale
   function isClearlyIrrelevantPlace(place) {
     const t = tagsStr(place);
     const n = normName(place?.name || "");
 
-    // infrastrutture / trasporti / strade
     if (hasAny(t, [
       "highway=", "railway=", "public_transport=", "route=", "junction=",
       "amenity=bus_station", "highway=bus_stop", "highway=platform"
     ])) return true;
 
-    // parcheggi / accessi / aree tecniche
     if (hasAny(t, [
       "amenity=parking", "amenity=parking_entrance", "amenity=parking_space",
       "highway=rest_area", "amenity=fuel", "amenity=charging_station"
     ])) return true;
 
-    // industrie / capannoni / uffici / logistica
     if (hasAny(t, [
       "landuse=industrial", "landuse=commercial", "building=industrial",
       "building=warehouse", "building=office", "man_made=works"
     ])) return true;
 
-    // roba “tecnica” OSM che finisce nei dataset
     if (hasAny(t, [
       "man_made=survey_point", "power=", "telecom=", "pipeline=", "tower:type=",
       "boundary=", "place=locality"
     ])) return true;
 
-    // nomi tipici spazzatura
     if (hasAny(n, [
       "parcheggio", "stazione", "fermata", "area ", "intermedia", "intermedio",
       "cabina", "impianto", "linea", "tratto", "svincolo", "uscita", "km "
     ])) return true;
 
-    // “SpA azienda” (ma non spa terme)
     const looksCompany = (n.endsWith(" spa") || n.includes(" s p a") || n.includes(" s.p.a") || n.includes(" azienda "));
     const looksWellness = hasAny(n, ["terme","spa","wellness","termale","thermal"]);
     if (looksCompany && !looksWellness) return true;
@@ -647,7 +648,6 @@
     return false;
   }
 
-  // Relax keywords (nome)
   function looksWellnessByName(place) {
     const n = normName(place?.name || "");
     return hasAny(n, [
@@ -656,7 +656,6 @@
     ]);
   }
 
-  // Kids keywords (nome)
   function looksKidsByName(place) {
     const n = normName(place?.name || "");
     return hasAny(n, [
@@ -693,7 +692,6 @@
     );
   }
 
-  // Relax: tag + keyword (non troppo stretto)
   function isSpaPlace(place) {
     const t = tagsStr(place);
     const nm = normName(place?.name || "");
@@ -817,7 +815,6 @@
     );
   }
 
-  // ✅ Borgo: più rigoroso per evitare musei/random/spazi espositivi ecc.
   function isBorgo(place) {
     const t = tagsStr(place);
     const type = normalizeType(place?.type);
@@ -826,7 +823,6 @@
     const hasPlaceTag = t.includes("place=village") || t.includes("place=hamlet") || t.includes("place=suburb");
     const hasBorgoName = n.includes("borgo") || n.includes("centro storico") || n.includes("paese") || n.includes("frazione");
 
-    // se ha type borghi/borgo va bene, ma filtriamo rumore con ulteriori blocchi altrove
     if (type === "borghi" || type === "borgo") return true;
     return hasPlaceTag || hasBorgoName;
   }
@@ -846,7 +842,6 @@
     return t.includes("piste:type=") || t.includes("sport=skiing") || t.includes("aerialway=");
   }
 
-  // Escludi lodging/food solo se NON sono relax “vero”
   function isLodgingOrFood(place, category) {
     const t = tagsStr(place);
 
@@ -859,7 +854,6 @@
       if (isSpaPlace(place) || looksWellnessByName(place)) return false;
     }
 
-    // Cantine: ristoranti OK solo se wine-related
     if (category === "cantine" && (t.includes("amenity=restaurant") || t.includes("amenity=bar") || t.includes("amenity=cafe"))) {
       const n = normName(place?.name || "");
       if (hasAny(n, ["cantina","winery","wine","enoteca","degustaz"])) return false;
@@ -892,18 +886,15 @@
     return !hasFamilySignal;
   }
 
-  // ✅ Cantine (monetizzabile con tour/degustazioni)
   function isWinery(place) {
     const t = tagsStr(place);
     const n = normName(place?.name || "");
 
-    // Tag OSM tipici
     if (t.includes("craft=winery")) return true;
     if (t.includes("shop=wine")) return true;
     if (t.includes("amenity=wine_bar")) return true;
     if (t.includes("tourism=attraction") && t.includes("wine")) return true;
 
-    // Keyword nome
     if (hasAny(n, ["cantina","winery","vini","vino","enoteca","degustaz","wine tasting","wine tour"])) return true;
 
     return false;
@@ -961,7 +952,6 @@
     }
 
     if (cat === "cantine") {
-      // relaxed: permette anche enoteche e wine bar senza craft=winery
       const n = normName(place?.name || "");
       return isWinery(place) || hasAny(n, ["enoteca","degustaz","wine bar","wine"]);
     }
@@ -982,14 +972,20 @@
     return matchesCategoryStrict(place, cat);
   }
 
+  // FIX: unknown visibility non deve bloccare
   function matchesStyle(place, { wantChicche, wantClassici }) {
     const vis = normalizeVisibility(place?.visibility);
+
+    // nessun filtro (se l'utente toglie entrambe)
     if (!wantChicche && !wantClassici) return true;
+
+    // se manca visibility, lasciamo passare (così chicche-only non resta a secco)
+    if (vis === "unknown") return true;
+
     if (vis === "chicca") return !!wantChicche;
-    return !!wantClassici;
+    return !!wantClassici; // classica
   }
 
-  // ✅ Ovunque = MIX vero (solo mete sensate)
   function matchesAnyGoodCategory(place) {
     return (
       isNature(place) ||
@@ -1005,16 +1001,13 @@
     );
   }
 
-  // ✅ Borghi: filtro extra per evitare “cima/monte/forte/museo/spazio espositivo”
   function isNotBorgoNoise(place) {
     const t = tagsStr(place);
     const n = normName(place?.name || "");
 
-    // no musei/mostre/spazi espositivi
     if (t.includes("tourism=museum")) return false;
     if (hasAny(n, ["museo","spazio espositivo","galleria","mostra","ex ", "lanificio"])) return false;
 
-    // no montagna/colle/cima/forte ecc dentro borghi
     if (hasAny(n, ["monte","cima","col ","passo","forcella","malga","rifugio","forte"])) return false;
     if (hasAny(t, ["natural=peak","natural=saddle","tourism=alpine_hut","amenity=shelter"])) return false;
 
@@ -1109,13 +1102,9 @@
       const nm = String(p.name || "").trim();
       if (!nm || nm.length < 2) continue;
 
-      // ✅ pulizia globale
       if (isClearlyIrrelevantPlace(p)) continue;
-
-      // ✅ esclude lodging/food dove non serve
       if (isLodgingOrFood(p, category)) continue;
 
-      // ✅ Categoria
       let okCat = true;
       if (category === "ovunque") {
         okCat = matchesAnyGoodCategory(p);
@@ -1126,10 +1115,8 @@
       }
       if (!okCat) continue;
 
-      // ✅ Borghi: filtro extra
       if (category === "borghi" && !isNotBorgoNoise(p)) continue;
 
-      // ✅ stile
       if (!matchesStyle(p, styles)) continue;
 
       const pid = safeIdFromPlace(p);
@@ -1139,7 +1126,6 @@
       const driveMin = estCarMinutesFromKm(km);
       if (!Number.isFinite(driveMin) || driveMin > target) continue;
 
-      // evita roba troppo vicina
       if (km < (category === "family" ? 1.2 : 1.6)) continue;
 
       const isChicca = normalizeVisibility(p.visibility) === "chicca";
@@ -1151,7 +1137,6 @@
 
       if (!ignoreRotation) s -= rotationPenalty(pid, recentSet);
 
-      // RELAX: boost segnali veri
       if (category === "relax") {
         const t = tagsStr(p);
         if (t.includes("natural=hot_spring")) s += 0.18;
@@ -1160,7 +1145,6 @@
         if (t.includes("amenity=sauna") || t.includes("leisure=sauna") || t.includes("healthcare=sauna")) s += 0.10;
         if (looksWellnessByName(p)) s += 0.08;
 
-        // piscina non spa-like: penalità leggera
         if (t.includes("leisure=swimming_pool") && !isSpaPlace(p)) s -= 0.18;
       }
 
@@ -1241,7 +1225,10 @@
   }
 
   function visibilityLabel(place) {
-    return normalizeVisibility(place?.visibility) === "chicca" ? "✨ chicca" : "✅ classica";
+    const v = normalizeVisibility(place?.visibility);
+    if (v === "chicca") return "✨ chicca";
+    if (v === "classica") return "✅ classica";
+    return "⭐ selezione"; // visibility mancante
   }
 
   function shortWhatIs(place, category) {
@@ -1290,7 +1277,7 @@
     if (category === "storia") return "Luogo storico • verifica orari/mostre.";
     if (category === "mare") return "Mare • spiaggia/marina, stagione consigliata.";
     if (category === "montagna") return "Montagna • meteo importante.";
-    if (category === "citta") return "Città • centro,Ú";
+    if (category === "citta") return "Città • centro, musei e monumenti.";
     return "Meta consigliata in base a tempo e categoria.";
   }
 
@@ -1395,14 +1382,11 @@
     });
   }
 
-  // ✅ Dataset label: radius “silenzioso”
   function datasetInfoLabel(dataset, poolLen) {
     const src = String(dataset?.source || "");
     const file = src.split("/").pop() || "";
     const isRadius = file.includes("radius");
-    // UI: niente filename radius
     if (isRadius) return `POI offline (${poolLen})`;
-    // UI: file normale
     if (dataset?.kind === "pois_region") return `POI:${file} (${poolLen})`;
     if (dataset?.kind === "macro") return `MACRO:${file} (${poolLen})`;
     return `offline (${poolLen})`;
@@ -1492,7 +1476,6 @@
       const cat = category;
       const t = tagsStr(p);
 
-      // cantine: sempre tour/degustazioni
       if (cat === "cantine") {
         window.open(gygSearchUrl(name, areaLabel), "_blank", "noopener");
         return;
