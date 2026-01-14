@@ -1,0 +1,3144 @@
+{
+  "region_id": "it-trentino-alto-adige-cantine",
+  "country": "IT",
+  "label_it": "Trentino-Alto Adige/Südtirol • cantine",
+  "generated_at": "2026-01-14T19:44:28.696Z",
+  "places": [
+    {
+      "id": "node:2692275706",
+      "name": "Cantina Fondazione Edmund Mach",
+      "lat": 46.1946899,
+      "lon": 11.1346593,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=San Michele all'Adige",
+        "addr:housenumber=1",
+        "addr:postcode=38010",
+        "addr:street=Via Edmund Mach",
+        "craft=winery",
+        "email=cantina@fmach.it",
+        "name=Cantina Fondazione Edmund Mach",
+        "opening_hours=Mo-Fr 08:30-12:00,14:30-17:00; Sa 09:00-12:00",
+        "phone=+39 0461 615252",
+        "shop=wine",
+        "website=https://www.fmach.it/Azienda-Agricola/Cantina"
+      ],
+      "score": 173
+    },
+    {
+      "id": "node:9838131175",
+      "name": "Nals Margreid Enoteca 1764",
+      "lat": 46.5388334,
+      "lon": 11.2040385,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "email=info@nalsmargreid.com",
+        "name=Nals Margreid Enoteca 1764",
+        "opening_hours=Mo-Fr 09:00-18:00; Sa 09:30-12:00",
+        "phone=+390471678626",
+        "shop=wine",
+        "website=https://www.nalsmargreid.com/"
+      ],
+      "score": 173
+    },
+    {
+      "id": "way:373928092",
+      "name": "Kellereigenossenschaft Kurtatsch - Cantina cooperativa di Cortaccia",
+      "lat": 46.3050349,
+      "lon": 11.219806,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Kurtatsch an der Weinstraße - Cortaccia sulla Strada del Vino",
+        "addr:housenumber=23",
+        "addr:postcode=39040",
+        "addr:street=Weinstraße - Strada del Vino",
+        "building=yes",
+        "craft=winery",
+        "name=Kellereigenossenschaft Kurtatsch - Cantina cooperativa di Cortaccia",
+        "name:de=Kellereigenossenschaft Kurtatsch",
+        "name:it=Cantina cooperativa di Cortaccia",
+        "opening_hours=Mo-Sa 09:00-19:00",
+        "operator=Cantina Kurtatsch Soc. Agr. Coop.",
+        "phone=+39 0471 881 496",
+        "shop=wine",
+        "website=https://www.kellerei-kurtatsch.it"
+      ],
+      "score": 173
+    },
+    {
+      "id": "node:5942592985",
+      "name": "Cantina Produttori Bolzano Soc. Agric. Coop.",
+      "lat": 46.5014583,
+      "lon": 11.3121745,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Bolzano - Bozen",
+        "addr:housenumber=36",
+        "addr:postcode=39100",
+        "addr:street=Via San Maurizio - Moritzinger Weg",
+        "craft=winery",
+        "name:de=Kellerei Bozen Gen. Landw. Ges.",
+        "name:it=Cantina Produttori Bolzano Soc. Agric. Coop.",
+        "phone=+39 0471 270909",
+        "shop=wine",
+        "website=https://www.kellereibozen.com/"
+      ],
+      "score": 168
+    },
+    {
+      "id": "node:3906250749",
+      "name": "Villa Corniole",
+      "lat": 46.1589616,
+      "lon": 11.1551006,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Verla di Giovo",
+        "addr:housenumber=23",
+        "addr:postcode=38030",
+        "addr:street=Via al Grec",
+        "contact:phone=+39 0461 695067",
+        "craft=winery",
+        "name=Villa Corniole",
+        "opening_hours=Mo-Fr 09:00-12:00,14:00-18:00; Sa 09:00-12:00",
+        "operator=Villa Corniole",
+        "shop=wine",
+        "website=https://www.villacorniole.com/"
+      ],
+      "score": 148
+    },
+    {
+      "id": "node:4688379572",
+      "name": "San Michael",
+      "lat": 46.1949596,
+      "lon": 11.1334633,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "email=info@spumante-sanmichael.it",
+        "name=San Michael",
+        "opening_hours=Sa 8:30-12:30, 14:30-18:30",
+        "phone=+39 333 9300321",
+        "shop=wine",
+        "website=http://www.spumante-sanmichael.it"
+      ],
+      "score": 148
+    },
+    {
+      "id": "way:99504980",
+      "name": "Weingut & Hofbrennerei Unterortl",
+      "lat": 46.6503323,
+      "lon": 10.9748614,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Kastelbell-Tschars - Castelbello-Ciardes",
+        "addr:city:de=Kastelbell-Tschars",
+        "addr:city:it=Castelbello-Ciardes",
+        "addr:housenumber=1b",
+        "addr:place=Juval - Juvale",
+        "addr:place:de=Juval",
+        "addr:place:it=Juvale",
+        "addr:postcode=39020",
+        "building=yes",
+        "craft=winery",
+        "email=info@unterortl.it",
+        "name=Weingut & Hofbrennerei Unterortl",
+        "opening_hours=Sa 10:00-16:00; Su,PH off",
+        "operator=Familie Aurich",
+        "phone=+39 0473 667580",
+        "shop=wine",
+        "website=http://www.unterortl.it/"
+      ],
+      "score": 148
+    },
+    {
+      "id": "way:294649373",
+      "name": "Weingut Rebhof",
+      "lat": 46.6343625,
+      "lon": 10.922054,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Kastelbell-Tschars - Castelbello-Ciardes",
+        "addr:city:de=Kastelbell-Tschars",
+        "addr:city:it=Castelbello-Ciardes",
+        "addr:housenumber=23",
+        "addr:postcode=39020",
+        "addr:street=Römerstraße - Via Romana",
+        "addr:street:de=Römerstraße",
+        "addr:street:it=Via Romana",
+        "building=yes",
+        "craft=winery",
+        "fax=+39 0473 727354",
+        "name=Weingut Rebhof",
+        "opening_hours=Mo-Fr 08:00-12:00,14:00-17:00; Sa,Su off",
+        "operator=Familie Forcher",
+        "phone=+39 0473 624692",
+        "shop=wine",
+        "website=https://www.rebhof-vinschgau.com/"
+      ],
+      "score": 148
+    },
+    {
+      "id": "way:373368552",
+      "name": "Hofstätter GmbH",
+      "lat": 46.3417144,
+      "lon": 11.2395772,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=yes",
+        "craft=winery",
+        "email=info@hofstaetter.com",
+        "name=Hofstätter GmbH",
+        "opening_hours=Mo-Fr 09:30-13:00,14:00-18:00; Sa 09:30-15:00; PH off",
+        "phone=+39 0471 860161",
+        "shop=wine",
+        "website=www.hofstaetter.com"
+      ],
+      "score": 148
+    },
+    {
+      "id": "node:2079121246",
+      "name": "Villa Persani",
+      "lat": 46.1532692,
+      "lon": 11.1075139,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Lavis",
+        "addr:housenumber=13",
+        "addr:place=Pressano",
+        "addr:postcode=38015",
+        "addr:street=Via Guglielmo Marconi",
+        "contact:phone=+39 349 3605561",
+        "contact:website=http://www.villapersani.com/",
+        "craft=winery",
+        "name=Villa Persani",
+        "operator=Azienda Agricola Clementi Silvano",
+        "shop=wine"
+      ],
+      "score": 143
+    },
+    {
+      "id": "node:4167535647",
+      "name": "Cantine Monfort",
+      "lat": 46.1381831,
+      "lon": 11.1127531,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Lavis",
+        "addr:housenumber=21",
+        "addr:postcode=38015",
+        "addr:street=Via Carlo Sette",
+        "craft=winery",
+        "name=Cantine Monfort",
+        "phone=+39 0461 246353",
+        "ref:vatin=IT01535680225",
+        "shop=wine",
+        "website=https://www.cantinemonfort.it/"
+      ],
+      "score": 143
+    },
+    {
+      "id": "node:4592489941",
+      "name": "Maso Belvedere",
+      "lat": 46.153506,
+      "lon": 11.1198136,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "email=info@devigilivini.it",
+        "name=Maso Belvedere",
+        "phone=+39 0461 870233",
+        "ref:vatin=IT01706920228",
+        "shop=wine",
+        "website=https://devigilivini.it/"
+      ],
+      "score": 143
+    },
+    {
+      "id": "node:4765396371",
+      "name": "Rosi Eugenio",
+      "lat": 45.9339601,
+      "lon": 11.0943895,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Calliano",
+        "addr:housenumber=7",
+        "addr:postcode=38060",
+        "addr:street=Via 3 Novembre",
+        "craft=winery",
+        "name=Rosi Eugenio",
+        "phone=+393333752583",
+        "shop=wine",
+        "website=http://www.idolomitici.com/aziende/rosi/"
+      ],
+      "score": 143
+    },
+    {
+      "id": "node:5228432588",
+      "name": "Eredi di Cobelli Aldo",
+      "lat": 46.1684802,
+      "lon": 11.1254069,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Lavis",
+        "addr:housenumber=22",
+        "addr:street=Strada del vino",
+        "contact:mobile=+39 331 9672482",
+        "craft=winery",
+        "email=info@cobelli.it",
+        "name=Eredi di Cobelli Aldo",
+        "operator=Azienda Agricola Eredi di Cobelli Aldo",
+        "ref:vatin=IT01944350220",
+        "shop=wine",
+        "website=https://cobelli.it/"
+      ],
+      "score": 143
+    },
+    {
+      "id": "way:92892812",
+      "name": "Cesconi",
+      "lat": 46.1514946,
+      "lon": 11.1082917,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Lavis",
+        "addr:hamlet=Pressano",
+        "addr:housenumber=39",
+        "addr:postcode=38015",
+        "addr:street=Via Guglielmo Marconi",
+        "building=yes",
+        "contact:phone=+39 0461 240355",
+        "contact:website=http://www.cesconi.it/",
+        "craft=winery",
+        "name=Cesconi",
+        "operator=Azienda Agricola Cesconi",
+        "ref:vatin=IT01603670223",
+        "shop=wine"
+      ],
+      "score": 143
+    },
+    {
+      "id": "way:96961161",
+      "name": "Maso Furli",
+      "lat": 46.1485404,
+      "lon": 11.1103756,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=yes",
+        "craft=winery",
+        "email=info@masofurli.it",
+        "mobile=+39 348 3601062",
+        "name=Maso Furli",
+        "phone=+39 0461 240667",
+        "shop=wine",
+        "website=https://www.vinicantinamasofurli.it"
+      ],
+      "score": 143
+    },
+    {
+      "id": "way:98633615",
+      "name": "NeNo",
+      "lat": 46.1471542,
+      "lon": 11.0973539,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Lavis",
+        "addr:housenumber=35",
+        "addr:postcode=38015",
+        "addr:street=Via Fratelli Armellini",
+        "building=yes",
+        "craft=winery",
+        "email=info@ne-no.it",
+        "name=NeNo",
+        "phone=+39 0461 242044",
+        "shop=wine",
+        "website=http://www.ne-no.it/"
+      ],
+      "score": 143
+    },
+    {
+      "id": "relation:12360371",
+      "name": "Azienda Agricola Armando Simoncelli",
+      "lat": 45.8760984,
+      "lon": 11.0208488,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Rovereto",
+        "addr:housenumber=7",
+        "addr:place=Località Navesel",
+        "addr:postcode=38068",
+        "addr:province=Trento",
+        "building=yes",
+        "contact:email=info@simocelli.it",
+        "contact:phone=+39 0464 432373",
+        "contact:website=http://www.simoncelli.it",
+        "craft=winery",
+        "name=Azienda Agricola Armando Simoncelli",
+        "shop=wine",
+        "short_name=Az. Agr. Simoncelli",
+        "type=multipolygon"
+      ],
+      "score": 143
+    },
+    {
+      "id": "way:51676862",
+      "name": "Kellerei Terlan - Cantina Terlano",
+      "lat": 46.5307172,
+      "lon": 11.2516606,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=7",
+        "addr:street=Silberleitenweg",
+        "building=yes",
+        "craft=winery",
+        "description=open April till Dezember",
+        "name=Kellerei Terlan - Cantina Terlano",
+        "name:de=Kellerei Terlan",
+        "name:it=Cantina Terlano",
+        "opening_hours=Mo-Fr 09:00-18:00; Sa 09:00-12:30",
+        "operator=Cantina Terlan",
+        "phone=+390471257135",
+        "website=https://www.cantina-terlano.com/"
+      ],
+      "score": 118
+    },
+    {
+      "id": "node:9845827818",
+      "name": "Cantina Madonna delle Vittorie;Frantoio Madonna delle Vittorie",
+      "lat": 45.880404,
+      "lon": 10.8748965,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Arco",
+        "addr:housenumber=81",
+        "addr:postcode=38062",
+        "addr:street=Via Linfano",
+        "craft=winery",
+        "guest_house=agritourism",
+        "name=Cantina Madonna delle Vittorie;Frantoio Madonna delle Vittorie",
+        "phone=+39 0464 505432",
+        "shop=yes",
+        "tourism=guest_house",
+        "website=https://madonnadellevittorie.it/"
+      ],
+      "score": 113
+    },
+    {
+      "id": "way:92852657",
+      "name": "Cantina Convento Muri Gries - Kellerei Muri Gries",
+      "lat": 46.50454,
+      "lon": 11.3357947,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=yes",
+        "craft=winery",
+        "name=Cantina Convento Muri Gries - Kellerei Muri Gries",
+        "name:de=Kellerei Muri Gries",
+        "name:it=Cantina Convento Muri Gries",
+        "website=https://www.muri-gries.com/"
+      ],
+      "score": 113
+    },
+    {
+      "id": "way:107053221",
+      "name": "Kellerei St. Pauls - Cantina Produttori San Paolo",
+      "lat": 46.470973,
+      "lon": 11.2642493,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Eppan an der Weinstraße - Appiano sulla Strada del Vino",
+        "addr:hamlet=St. Pauls - San Paolo",
+        "addr:housenumber=21",
+        "addr:postcode=39057",
+        "addr:street=Schloss-Warth-Weg - Strada Castel Guardia",
+        "building=commercial",
+        "check_date=2025-09-16",
+        "craft=winery",
+        "name=Kellerei St. Pauls - Cantina Produttori San Paolo",
+        "name:de=Kellerei St. Pauls",
+        "name:it=Cantina Produttori San Paolo",
+        "phone=+390471662183",
+        "website=https://www.sanktpauls.wine/"
+      ],
+      "score": 113
+    },
+    {
+      "id": "way:107422606",
+      "name": "Kellerei Schreckbichl - Cantina Colterenzio",
+      "lat": 46.4637835,
+      "lon": 11.2885786,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=yes",
+        "craft=winery",
+        "name=Kellerei Schreckbichl - Cantina Colterenzio",
+        "name:de=Kellerei Schreckbichl",
+        "name:it=Cantina Colterenzio",
+        "website=https://www.colterenzio.it/"
+      ],
+      "score": 113
+    },
+    {
+      "id": "way:237948092",
+      "name": "Kellerei Tramin - Cantina",
+      "lat": 46.3452142,
+      "lon": 11.2514652,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=yes",
+        "craft=winery",
+        "name=Kellerei Tramin - Cantina",
+        "name:de=Kellerei Tramin",
+        "name:it=Cantina Tramin"
+      ],
+      "score": 105
+    },
+    {
+      "id": "way:890957370",
+      "name": "Kellerei/ Cantina von Braunbach",
+      "lat": 46.5122642,
+      "lon": 11.2762884,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=yes",
+        "craft=winery",
+        "name=Kellerei/ Cantina von Braunbach"
+      ],
+      "score": 105
+    },
+    {
+      "id": "node:2262804046",
+      "name": "Kellerei Girlan",
+      "lat": 46.4617975,
+      "lon": 11.2834558,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=24",
+        "addr:postcode=39057",
+        "addr:street=St.-Martin-Straße - Via San Martino",
+        "addr:street:de=St.-Martin-Straße",
+        "addr:street:it=Via San Martino",
+        "check_date=2024-09-21",
+        "craft=winery",
+        "name=Kellerei Girlan",
+        "opening_hours=Mo-Sa 09:00-12:30, 14:00-18:30",
+        "phone=+390471662403",
+        "website=https://www.girlan.it/"
+      ],
+      "score": 93
+    },
+    {
+      "id": "node:2749585760",
+      "name": "Enoteca 1000 e un vino",
+      "lat": 46.4957229,
+      "lon": 11.3552809,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Bolzano - Bozen",
+        "addr:city:de=Bozen",
+        "addr:city:it=Bolzano",
+        "addr:housenumber=37",
+        "addr:postcode=39100",
+        "addr:street=Via Alto Adige - Südtiroler Straße",
+        "addr:street:de=Südtiroler Straße",
+        "addr:street:it=Via Alto Adige",
+        "email=info@1000eunvino.it",
+        "name=Enoteca 1000 e un vino",
+        "opening_hours=Mo-Sa 09:30-23:00",
+        "phone=+39 0471 300 313",
+        "shop=wine",
+        "website=https://enoteca1000eunvino.com"
+      ],
+      "score": 93
+    },
+    {
+      "id": "node:2756026409",
+      "name": "Ansitz Rynnhof",
+      "lat": 46.3406478,
+      "lon": 11.238108,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Tramin an der Weinstraße - Termeno sulla Strada del Vino",
+        "addr:city:de=Tramin an der Weinstraße",
+        "addr:city:it=Termeno sulla Strada del Vino",
+        "addr:housenumber=13",
+        "addr:postcode=39040",
+        "addr:street=Schneckenthalerstraße - Via Schneckenthaler",
+        "addr:street:de=Schneckenthalerstraße",
+        "addr:street:it=Via Schneckenthaler",
+        "craft=winery",
+        "name=Ansitz Rynnhof",
+        "opening_hours=Tu-Sa 10:00-12:00; Tu & Th 15:00-18:00",
+        "operator=Brunhilde & Johann Bellutti",
+        "url=http://www.rynnhof.com",
+        "website=https://rynnhof.com"
+      ],
+      "score": 93
+    },
+    {
+      "id": "node:3046180743",
+      "name": "Wine Gallery",
+      "lat": 46.6500309,
+      "lon": 11.0059542,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Naturns - Naturno",
+        "addr:city:de=Naturns",
+        "addr:city:it=Naturno",
+        "addr:housenumber=35",
+        "addr:postcode=39025",
+        "addr:street=Hauptstraße - Via Principale",
+        "addr:street:de=Hauptstraße",
+        "addr:street:it=Via Principale",
+        "craft=winery",
+        "name=Wine Gallery",
+        "opening_hours=Mo-Fr 09:00-13:00,15:15-20:00; Sa 09:00-13:00; Su off",
+        "operator=Helmut Vent",
+        "phone=+39 0473 673155",
+        "website=http://wine-gallery.it/"
+      ],
+      "score": 93
+    },
+    {
+      "id": "node:3703986616",
+      "name": "Burggräfler Kellerei - Cantina Burggräfler",
+      "lat": 46.6478667,
+      "lon": 11.1452858,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "name=Burggräfler Kellerei - Cantina Burggräfler",
+        "name:de=Burggräfler Kellerei",
+        "name:it=Cantina Burggräfler",
+        "opening_hours=Mo-Fr 08:00-19:00; Sa 08:00-18:00; Su off",
+        "shop=wine",
+        "source=Unterkunftsverzeichnis Marling  2023, S. 40, schriftliche Erlaubnis des Tourismusvereins Marling vom 2016-08-16 für die Verwendung der Daten für OSM",
+        "source:date=2022-12-10",
+        "website=https://www.kellereimeran.it/"
+      ],
+      "score": 93
+    },
+    {
+      "id": "node:5085252561",
+      "name": "Rottensteiner Tenuta",
+      "lat": 46.5103158,
+      "lon": 11.3479854,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "access=customers",
+        "craft=winery",
+        "drink:wine=retail",
+        "email=info@rottensteiner.wine",
+        "entrance=yes",
+        "fax=+39 0471 407154",
+        "name=Rottensteiner Tenuta",
+        "opening_hours=Mo-Fr 08:00-12:00,14:00-18:00; Sa 09:00-12:00; PH off",
+        "operator=Hans Rottensteiner GmbH",
+        "phone=+39 0471 282015",
+        "website=https://www.rottensteiner.wine/"
+      ],
+      "score": 93
+    },
+    {
+      "id": "node:7448493483",
+      "name": "Obermoser",
+      "lat": 46.501725,
+      "lon": 11.3743531,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Bolzano - Bozen",
+        "addr:city:de=Bozen",
+        "addr:city:it=Bolzano",
+        "addr:housenumber=35",
+        "addr:postcode=39100",
+        "addr:street=Santa Maddalena di Sotto - Untermagdalena",
+        "addr:street:de=Untermagdalena",
+        "addr:street:it=Santa Maddalena di Sotto",
+        "craft=winery",
+        "description=Weingut Winzerweine Erzeugerabfüllungen; Az. Vitivinicola Vignaiolo Imbottigliati all'origine; Wine Estate Winegrower Estate Bottlings.",
+        "name=Obermoser",
+        "opening_hours=\"by appointment\"",
+        "operator=Fam. Rottensteiner",
+        "phone=+39 0471 973549",
+        "website=https://obermoser.wine/",
+        "wikidata=Q2010434",
+        "wikipedia=de:Obermoser (Weingut)"
+      ],
+      "score": 93
+    },
+    {
+      "id": "node:7906031382",
+      "name": "Weingut Dominikus",
+      "lat": 46.3837497,
+      "lon": 11.2471732,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=39",
+        "addr:postcode=39052",
+        "addr:street=St. Josef am See",
+        "craft=winery",
+        "name=Weingut Dominikus",
+        "opening_hours=Mo-Sa 08:00-19:00; Su 08:00-12:00",
+        "website=https://www.dominikus.it/"
+      ],
+      "score": 93
+    },
+    {
+      "id": "node:8791419279",
+      "name": "Loacker",
+      "lat": 46.4993926,
+      "lon": 11.3874718,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Loacker",
+        "opening_hours=Mo-Fr 09:00-13:00,14:00-17:00; PH off",
+        "website=https://loacker.bio"
+      ],
+      "score": 93
+    },
+    {
+      "id": "node:11782223550",
+      "name": "A. V. Elzenbaum",
+      "lat": 46.3416023,
+      "lon": 11.2404893,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Tramin an der Weinstraße - Termeno sulla Strada del Vino",
+        "addr:housenumber=4",
+        "addr:postcode=39040",
+        "addr:street=Hans-Feur-Straße - Via Hans Feur",
+        "craft=winery",
+        "name=A. V. Elzenbaum",
+        "opening_hours=Tu-Fr 10:00-12:00; Tu-Fr 15:00-19:00; Sa 10:00-15:00",
+        "website=https://www.elzenbaum.it"
+      ],
+      "score": 93
+    },
+    {
+      "id": "node:12180142601",
+      "name": "Weingut Abraham - Tenuta Abraham",
+      "lat": 46.4636085,
+      "lon": 11.2579691,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "contact:city=Eppan an der Weinstraße - Appiano sulla Strada del Vino",
+        "contact:city:de=Eppan an der Weinstraße",
+        "contact:city:it=Appiano sulla Strada del Vino",
+        "contact:hamlet=St. Michael - San Michele",
+        "contact:hamlet:de=St. Michael",
+        "contact:hamlet:it=San Michele",
+        "contact:housenumber=29",
+        "contact:postcode=39057",
+        "contact:street=Maderneidstraße - Via Maderneto",
+        "contact:street:de=Maderneidstraße",
+        "contact:street:it=Via Maderneto",
+        "contact:website=https://www.weingutabraham.it",
+        "craft=winery",
+        "name=Weingut Abraham - Tenuta Abraham",
+        "name:de=Weingut Abraham",
+        "name:it=Tenuta Abraham",
+        "note:contact:addr=Charlieu's Schema",
+        "opening_hours=Mo 16:00-17:00 || \"by appointment\""
+      ],
+      "score": 93
+    },
+    {
+      "id": "node:12766017251",
+      "name": "Haidenhof Weingut Tenuta Vitivinicola",
+      "lat": 46.6346287,
+      "lon": 11.1336345,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=17",
+        "addr:street=Lebenbergerstraße",
+        "craft=winery",
+        "description=Weinbergführung und Weinverkostung mit Panoramablick",
+        "name=Haidenhof Weingut Tenuta Vitivinicola",
+        "opening_hours=We 17:00-18:00; Mo-We, Sa, Su 10:00-18:00",
+        "phone=+390473564451",
+        "website=https://www.haidenhof.it/"
+      ],
+      "score": 93
+    },
+    {
+      "id": "node:13417854626",
+      "name": "Tenuta Egger-Ramer",
+      "lat": 46.5048993,
+      "lon": 11.3445283,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Bolzano - Bozen",
+        "addr:housenumber=5",
+        "addr:postcode=39100",
+        "addr:street=Via Guncina - Guntschnastraße",
+        "craft=winery",
+        "drink:wine=retail",
+        "email=info@egger-ramer.com",
+        "name:de=Weingut Egger-Ramer",
+        "name:it=Tenuta Egger-Ramer",
+        "opening_hours=Mo-Fr 08:30-12:30,14:30-18:00; Sa 10:00-13:00",
+        "operator=Egger Ramer GmbH",
+        "phone=+39 0471 280541",
+        "website=https://www.egger-ramer.com/"
+      ],
+      "score": 93
+    },
+    {
+      "id": "way:107478597",
+      "name": "K. Martini & Sohn",
+      "lat": 46.454189,
+      "lon": 11.2801731,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=commercial",
+        "craft=winery",
+        "description=Kellerei - Weinverkauf - Weinbar",
+        "email=info@martini-sohn.it",
+        "image=https://www.martini-sohn.it/cache/img-fotos-neue-fotos-martini-2-950.jpg",
+        "internet_access=yes",
+        "name=K. Martini & Sohn",
+        "opening_hours=Mo-Fr 08:00-12:00,14:00-18:00; Sa 10:00-13:00; Su off",
+        "phone=+39 0471 663156",
+        "smoking=outside",
+        "website=https://www.martini-sohn.it/de",
+        "wheelchair=yes"
+      ],
+      "score": 93
+    },
+    {
+      "id": "node:1675022614",
+      "name": "Vinoteca Cantina La-Vis",
+      "lat": 46.1377957,
+      "lon": 11.1078407,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Lavis",
+        "addr:country=IT",
+        "addr:housenumber=5",
+        "addr:postcode=38015",
+        "addr:street=Via del Carmine",
+        "email=vinoteca@la-vis.com",
+        "name=Vinoteca Cantina La-Vis",
+        "operator=Cantina La-Vis e Valle di Cembra S.C.A.",
+        "phone=+39 0461 440150",
+        "ref:vatin=IT00121770226",
+        "shop=wine",
+        "website=https://la-vis.com/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:2034632298",
+      "name": "Köfererhof",
+      "lat": 46.7445654,
+      "lon": 11.6506338,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=restaurant",
+        "craft=winery",
+        "name=Köfererhof",
+        "phone=+39 0472 836649",
+        "website=https://www.koefererhof.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:2749580887",
+      "name": "Plonerhof",
+      "lat": 46.5019902,
+      "lon": 11.3717343,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Bolzano - Bozen",
+        "addr:city:de=Bozen",
+        "addr:city:it=Bolzano",
+        "addr:housenumber=29",
+        "addr:postcode=39100",
+        "addr:street=Santa Maddalena di Sotto - Untermagdalena",
+        "addr:street:de=Untermagdalena",
+        "addr:street:it=Santa Maddalena di Sotto",
+        "craft=winery",
+        "email=info@weingut-plonerhof.com",
+        "name=Plonerhof",
+        "operator=Simon Geier",
+        "phone=+39 0471 975559",
+        "shop=alcohol",
+        "website=https://www.weingut-plonerhof.com/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:2749773164",
+      "name": "Castell Sallegg",
+      "lat": 46.4147081,
+      "lon": 11.2392946,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Kaltern an der Weinstraße - Caldaro sulla Strada del Vino",
+        "addr:city:de=Kaltern an der Weinstraße",
+        "addr:city:it=Caldaro sulla Strada del Vino",
+        "addr:housenumber=15",
+        "addr:postcode=39052",
+        "addr:street=Unterwinkel - Vicolo di Sotto",
+        "addr:street:de=Unterwinkel",
+        "addr:street:it=Vicolo di Sotto",
+        "craft=winery",
+        "name=Castell Sallegg",
+        "website=https://www.castelsallegg.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:2749773685",
+      "name": "Tröpfltalhof",
+      "lat": 46.4225962,
+      "lon": 11.2406556,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Kaltern an der Weinstraße - Caldaro sulla Strada del Vino",
+        "addr:city:de=Kaltern an der Weinstraße",
+        "addr:city:it=Caldaro sulla Strada del Vino",
+        "addr:housenumber=17",
+        "addr:postcode=39052",
+        "addr:street=Garnellenweg - Via Garnellen",
+        "addr:street:de=Garnellenweg",
+        "addr:street:it=Via Garnellen",
+        "craft=winery",
+        "name=Tröpfltalhof",
+        "operator=Andreas Dichristin",
+        "website=https://www.bioweinhof.it"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:2749774032",
+      "name": "Oberpreyhof",
+      "lat": 46.4164552,
+      "lon": 11.2379202,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Kaltern an der Weinstraße - Caldaro sulla Strada del Vino",
+        "addr:city:de=Kaltern an der Weinstraße",
+        "addr:city:it=Caldaro sulla Strada del Vino",
+        "addr:housenumber=2",
+        "addr:postcode=39052",
+        "addr:street=Garnellenweg - Via Garnellen",
+        "addr:street:de=Garnellenweg",
+        "addr:street:it=Via Garnellen",
+        "craft=winery",
+        "description=Der Oberpreyhof ist ein Familienbetrieb, der von der Familie Seppi geführt wird. Die Apartments bieten ein ideales Feriendomizil.  Aus den Weingüter werden die allseits beliebten Oberpreyhof-Weine gekeltert.",
+        "email=info@oberpreyhof.it",
+        "name=Oberpreyhof",
+        "operator=Familie Seppi",
+        "website=https://www.oberpreyhof.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:2755897588",
+      "name": "Peter Dipoli",
+      "lat": 46.3237712,
+      "lon": 11.2786411,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Neumarkt - Egna",
+        "addr:city:de=Neumarkt",
+        "addr:city:it=Egna",
+        "addr:hamlet=Vill - Villa",
+        "addr:hamlet:de=Vill",
+        "addr:hamlet:it=Villa",
+        "addr:housenumber=5",
+        "addr:postcode=39044",
+        "addr:street=Villnerstraße - Via Villa",
+        "addr:street:de=Villnerstraße",
+        "addr:street:it=Via Villa",
+        "craft=winery",
+        "email=info@dipoli.com",
+        "name=Peter Dipoli",
+        "phone=+390471813400",
+        "website=https://peterdipoli.com/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:4756889202",
+      "name": "Salizzoni",
+      "lat": 45.9358308,
+      "lon": 11.0944845,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=31",
+        "addr:street=Via Valentini",
+        "craft=winery",
+        "name=Salizzoni",
+        "phone=+390464834087",
+        "website=https://www.salizzoni.info/it/vini.html"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:7858045368",
+      "name": "Elena Walch",
+      "lat": 46.338633,
+      "lon": 11.2386495,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "contact:phone=+39 0471 860103",
+        "contact:website=https://www.elenawalch.com/",
+        "craft=winery",
+        "name=Elena Walch",
+        "ref:vatin=IT00851310219"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:8024328725",
+      "name": "Weingut Pacherhof",
+      "lat": 46.741682,
+      "lon": 11.6554119,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "contact:website=https://www.pacherhof.com",
+        "craft=winery",
+        "name=Weingut Pacherhof"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:8792057497",
+      "name": "Alois Lageder",
+      "lat": 46.2881334,
+      "lon": 11.20982,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Alois Lageder",
+        "website=https://aloislageder.eu"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:10945682230",
+      "name": "Wine Point",
+      "lat": 46.1633141,
+      "lon": 11.1188775,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Wine Point",
+        "operator=Maso Poli",
+        "website=https://www.masopoli.com/wine-point/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:11649337684",
+      "name": "Stroblhof",
+      "lat": 46.4497247,
+      "lon": 11.2495394,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Eppan an der Weinstraße - Appiano sulla Strada del Vino",
+        "addr:housenumber=25",
+        "addr:postcode=39057",
+        "addr:street=Pigenoer Weg - Via Piganò",
+        "craft=winery",
+        "name=Stroblhof",
+        "phone=+390471662250",
+        "website=https://stroblhof-weingut.com/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:11933961265",
+      "name": "Weingut Röck",
+      "lat": 46.636827,
+      "lon": 11.553362,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Villanders - Villandro",
+        "addr:city:de=Villanders",
+        "addr:city:it=Villandro",
+        "addr:housenumber=22",
+        "addr:postcode=39040",
+        "addr:street=St. Valentin - S. Valentino",
+        "addr:street:de=St. Valentin",
+        "addr:street:it=S. Valentino",
+        "contact:phone=+39 0472 847130",
+        "contact:website=https://www.roeck.bz/",
+        "craft=winery",
+        "name=Weingut Röck"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:12015203592",
+      "name": "VinoTales",
+      "lat": 46.0129977,
+      "lon": 11.2982826,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=98",
+        "addr:street=Via Dante Alighieri",
+        "craft=winery",
+        "name=VinoTales",
+        "website=https://vinotales.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:12246918400",
+      "name": "Muri-Gries",
+      "lat": 46.5031254,
+      "lon": 11.3346786,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Bolzano - Bozen",
+        "addr:housenumber=21",
+        "addr:postcode=39100",
+        "addr:street=Piazza Gries - Grieser Platz",
+        "craft=winery",
+        "name=Muri-Gries",
+        "website=https://www.muri-gries.com/it"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:12247080473",
+      "name": "Schmid Oberrautner",
+      "lat": 46.5055417,
+      "lon": 11.3364714,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Bolzano - Bozen",
+        "addr:housenumber=50",
+        "addr:postcode=39100",
+        "addr:street=Via Fago - Fagenstraße",
+        "addr:unit=C",
+        "craft=winery",
+        "name=Schmid Oberrautner",
+        "website=https://www.schmidoberrautner.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:12393182229",
+      "name": "Glassier",
+      "lat": 46.3234579,
+      "lon": 11.2800161,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Neumarkt - Egna",
+        "addr:housenumber=13",
+        "addr:postcode=39044",
+        "addr:street=Villnerstraße - Via Villa",
+        "craft=winery",
+        "email=bio@glassier.it",
+        "name=Glassier",
+        "operator=Stefan Vaja",
+        "website=https://www.glassier.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:13418243184",
+      "name": "Tenuta Castelfeder",
+      "lat": 46.2677863,
+      "lon": 11.2200596,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Kurtinig an der Weinstraße - Cortina sulla Strada del Vino",
+        "addr:housenumber=15",
+        "addr:postcode=39040",
+        "addr:street=Franz-Harpf-Straße - Via Franz Harpf",
+        "craft=winery",
+        "drink:wine=no",
+        "fax=+390471820410",
+        "name:de=Weingut Castelfeder",
+        "name:it=Tenuta Castelfeder",
+        "operator=Azienda Vinicola Castelfeder di Giovanett Günther & Co. Sas",
+        "phone=+390471820420",
+        "website=https://castelfeder.it"
+      ],
+      "score": 88
+    },
+    {
+      "id": "way:67375703",
+      "name": "Azienda Agricola Letrari",
+      "lat": 45.8893863,
+      "lon": 11.0204584,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Rovereto",
+        "addr:housenumber=11-13",
+        "addr:postcode=38059",
+        "addr:street=Via Monte Baldo",
+        "building=yes",
+        "craft=winery",
+        "email=info@letrari.it",
+        "name=Azienda Agricola Letrari",
+        "operator=Letrari Soc. Agr. ss",
+        "phone=+39 0464 480200",
+        "source=PCN ortofoto_colore 2006 - autorizzazione 10687/TRI",
+        "website=https://www.letrari.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "way:106495499",
+      "name": "Kellerei St. Michael-Eppan - Cantina Produttori",
+      "lat": 46.4523261,
+      "lon": 11.2687199,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Eppan an der Weinstraße - Appiano sulla Strada del Vino",
+        "addr:housenumber=17/19",
+        "addr:postcode=39057",
+        "addr:street=Umfahrungsstraße - Strada di Circonvallazione",
+        "building=yes",
+        "name=Kellerei St. Michael-Eppan - Cantina Produttori",
+        "name:de=Kellerei St. Michael-Eppan",
+        "name:it=Cantina Produttori S. Michele Appiano",
+        "phone=+3904710664654",
+        "shop=wine",
+        "website=https://www.stmichael.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "way:109935476",
+      "name": "Maso Thaler",
+      "lat": 46.3177713,
+      "lon": 11.3026969,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=yes",
+        "craft=winery",
+        "email=info@masothaler.it",
+        "name=Maso Thaler",
+        "operator=Filippo Motta",
+        "phone=+39 393 9877312",
+        "ref:vatin=IT01360630212",
+        "website=https://masothaler.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "way:109938127",
+      "name": "Franz Haas",
+      "lat": 46.3220065,
+      "lon": 11.2880962,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Montan - Montagna",
+        "addr:housenumber=6",
+        "addr:postcode=39040",
+        "addr:street=Villner Straße - Via Villa",
+        "building=yes",
+        "craft=winery",
+        "name=Franz Haas",
+        "website=http://www.franz-haas.com"
+      ],
+      "score": 88
+    },
+    {
+      "id": "way:119156743",
+      "name": "Zundlhof",
+      "lat": 46.4973562,
+      "lon": 11.3760663,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=yes",
+        "craft=winery",
+        "description=Wine Estate: Wines & Rooms",
+        "internet_access=no",
+        "name=Zundlhof",
+        "operator=Familie Ramoser",
+        "phone=+39 0471 978702",
+        "shop=alcohol",
+        "tourism=guest_house",
+        "website=https://www.zundlhof.it/",
+        "wheelchair=no"
+      ],
+      "score": 88
+    },
+    {
+      "id": "way:131861926",
+      "name": "Maso Martis",
+      "lat": 46.0925581,
+      "lon": 11.1337828,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Trento",
+        "addr:housenumber=52",
+        "addr:postcode=38121",
+        "addr:street=Via dell'Albera",
+        "building=yes",
+        "craft=winery",
+        "name=Maso Martis",
+        "tourism=wine_cellar",
+        "website=https://www.masomartis.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "way:165769540",
+      "name": "Weingut Manincor",
+      "lat": 46.3912659,
+      "lon": 11.2555673,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Kaltern an der Weinstraße - Caldaro sulla Strada del Vino",
+        "addr:city:de=Kaltern an der Weinstraße",
+        "addr:city:it=Caldaro sulla Strada del Vino",
+        "addr:housenumber=4",
+        "addr:place=St. Josef am See - San Giuseppe al Lago",
+        "addr:place:de=St. Josef am See",
+        "addr:place:it=San Giuseppe al Lago",
+        "addr:postcode=39052",
+        "contact:email=info@manincor.com",
+        "contact:fax=+39 0471 960204",
+        "contact:phone=+39 0471 960230",
+        "craft=winery",
+        "landuse=farmyard",
+        "name=Weingut Manincor",
+        "website=https://www.manincor.com/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "way:215119259",
+      "name": "Weingut Oberstein",
+      "lat": 46.6361991,
+      "lon": 11.1381387,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Tscherms - Cermes",
+        "addr:city:de=Tscherms",
+        "addr:city:it=Cermes",
+        "addr:housenumber=6",
+        "addr:postcode=39010",
+        "addr:street=Leitenweg - Via Vigneti",
+        "addr:street:de=Leitenweg",
+        "addr:street:it=Via Vigneti",
+        "building=yes",
+        "craft=winery",
+        "email=info@oberstein.it",
+        "name=Weingut Oberstein",
+        "operator=Joachim Wolf",
+        "phone=+393386169514",
+        "website=www.oberstein.it"
+      ],
+      "score": 88
+    },
+    {
+      "id": "way:226276543",
+      "name": "Befehlhof",
+      "lat": 46.6259729,
+      "lon": 10.814882,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Schlanders - Silandro",
+        "addr:city:de=Schlanders",
+        "addr:city:it=Silandro",
+        "addr:hamlet=Vetzan - Vezzano",
+        "addr:hamlet:de=Vetzan",
+        "addr:hamlet:it=Vezzano",
+        "addr:housenumber=2a",
+        "addr:postcode=39028",
+        "addr:street=Torgglweg - Via Torggl",
+        "addr:street:de=Torgglweg",
+        "addr:street:it=Via Torggl",
+        "building=wine_cellar",
+        "craft=winery",
+        "email=info@befehlhof.it",
+        "name=Befehlhof",
+        "phone=+39 0473 742197;+39 335 5455197",
+        "source=bing",
+        "tourism=wine_cellar",
+        "website=https://www.befehlhof.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "way:235751383",
+      "name": "Himmelreich-Hof",
+      "lat": 46.6440692,
+      "lon": 10.942466,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Kastelbell-Tschars - Castelbello-Ciardes",
+        "addr:city:de=Kastelbell-Tschars",
+        "addr:city:it=Castelbello-Ciardes",
+        "addr:housenumber=15a",
+        "addr:postcode=39020",
+        "addr:street=Klostergasse - Vicolo del Convento",
+        "addr:street:de=Klostergasse",
+        "addr:street:it=Vicolo del Convento",
+        "building=yes",
+        "craft=winery",
+        "description=Kellerei",
+        "email=m.fliri@rolmail.net",
+        "internet_access=no",
+        "name=Himmelreich-Hof",
+        "operator=Familie Fliri",
+        "phone=+39 0473 624417",
+        "tourism=chalet",
+        "website=https://www.himmelreich-hof.info/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "way:374341966",
+      "name": "Tiefenbrunner",
+      "lat": 46.3009563,
+      "lon": 11.2130006,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Kurtatsch an der Weinstraße - Cortaccia sulla Strada del Vino",
+        "addr:housenumber=4",
+        "addr:postcode=39040",
+        "addr:street=Schloßweg - Via Castello",
+        "building=yes",
+        "craft=winery",
+        "email=info@tiefenbrunner.com",
+        "name=Tiefenbrunner",
+        "phone=+39 0471 88 01 22",
+        "website=https://www.tiefenbrunner.com/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "way:643435573",
+      "name": "Kellerei Bozen",
+      "lat": 46.5022023,
+      "lon": 11.3118089,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=yes",
+        "craft=winery",
+        "name=Kellerei Bozen",
+        "website=https://www.kellereibozen.com/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "way:1327481579",
+      "name": "Cantina Salim",
+      "lat": 45.972231,
+      "lon": 10.9499024,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=house",
+        "building:use=retail",
+        "house=detached",
+        "name=Cantina Salim",
+        "roof:shape=flat",
+        "shop=wine",
+        "website=http://www.cantinasalim.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:6611403535",
+      "name": "Keller Bar Cantina",
+      "lat": 46.4253611,
+      "lon": 11.3349523,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=pub",
+        "name=Keller Bar Cantina",
+        "opening_hours=Mo-Su 08:00-13:00,17:00-22:00",
+        "shop=wine"
+      ],
+      "score": 85
+    },
+    {
+      "id": "node:522825394",
+      "name": "Cantina Lavis Valle di Cembra",
+      "lat": 46.1755429,
+      "lon": 11.2233565,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "name=Cantina Lavis Valle di Cembra",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:522825641",
+      "name": "Enoteca Zanotelli",
+      "lat": 46.1747926,
+      "lon": 11.2211989,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "name=Enoteca Zanotelli",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:538292905",
+      "name": "Thurnhof",
+      "lat": 46.4877528,
+      "lon": 11.3508369,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Thurnhof"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:1389586115",
+      "name": "Azienda Agricola Maso Salengo",
+      "lat": 45.9181566,
+      "lon": 11.0647815,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=13",
+        "addr:street=Via Giuseppe Zucchelli",
+        "amenity=bench",
+        "backrest=no",
+        "colour=gray",
+        "craft=winery",
+        "material=stone",
+        "name=Azienda Agricola Maso Salengo",
+        "seats=3"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:2749599344",
+      "name": "Griesbauer",
+      "lat": 46.4974899,
+      "lon": 11.3778907,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Bolzano - Bozen",
+        "addr:city:de=Bozen",
+        "addr:city:it=Bolzano",
+        "addr:housenumber=66",
+        "addr:postcode=39100",
+        "addr:street=Via Rencio - Rentschner Straße",
+        "addr:street:de=Rentschner Straße",
+        "addr:street:it=Via Rencio",
+        "craft=winery",
+        "name=Griesbauer",
+        "operator=Fam. Mumelter"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:3039144367",
+      "name": "Falkenstein",
+      "lat": 46.6551049,
+      "lon": 11.0051231,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Falkenstein"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:4331348289",
+      "name": "Weingut Köfelgut - Cantina Köfelgut",
+      "lat": 46.6302577,
+      "lon": 10.9016659,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=12",
+        "addr:postcode=39020",
+        "addr:street=Im Winkel - Rione Ai Tre Canti",
+        "name=Weingut Köfelgut - Cantina Köfelgut",
+        "name:de=Weingut Köfelgut",
+        "name:it=Cantina Köfelgut",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:5081911272",
+      "name": "Battisti",
+      "lat": 46.4124825,
+      "lon": 11.2461184,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Battisti"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:7097238472",
+      "name": "Weingut Tenuta Klaus Lentsch",
+      "lat": 46.4664978,
+      "lon": 11.2543624,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Eppan an der Weinstraße - Appiano sulla Strada del Vino",
+        "addr:housenumber=18/a",
+        "addr:postcode=39057",
+        "addr:street=Reinspergweg - Strada Castel Monteriva",
+        "check_date=2024-06-08",
+        "craft=winery",
+        "email=info@klauslentsch.eu",
+        "name=Weingut Tenuta Klaus Lentsch",
+        "name:de=Weingut Klaus Lentsch",
+        "name:en=Tenuta Klaus Lentsch",
+        "name:it=Tenuta Klaus Lentsch",
+        "operator=Klaus Lentsch",
+        "phone=+390471967263"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:7507605277",
+      "name": "Kellerei Tramin - Cantina",
+      "lat": 46.3452272,
+      "lon": 11.2513823,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "email=shop@kellereitramin.it",
+        "name=Kellerei Tramin - Cantina",
+        "name:de=Kellerei Tramin",
+        "name:it=Cantina Tramin",
+        "phone=+39 0471 096634",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:7589665170",
+      "name": "Azienda Agricola Pojer e Sandri",
+      "lat": 46.1928688,
+      "lon": 11.1555566,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Faedo",
+        "addr:housenumber=4",
+        "addr:postcode=38098",
+        "addr:street=Via Molini",
+        "craft=winery",
+        "entrance:primary=yes",
+        "entrance:type=building",
+        "name=Azienda Agricola Pojer e Sandri",
+        "numberplaque=missing"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:7655399385",
+      "name": "Kellerei Haderburg - Cantina Haderburg",
+      "lat": 46.2399341,
+      "lon": 11.2318456,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "name=Kellerei Haderburg - Cantina Haderburg",
+        "name:de=Kellerei Haderburg",
+        "name:en=Kellerei Haderburg",
+        "name:it=Cantina Haderburg",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:9865884119",
+      "name": "Azienda vitivinicola Grigoletti",
+      "lat": 45.9314405,
+      "lon": 11.0832196,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:street=Strada Provinciale Destra Adige",
+        "craft=winery",
+        "name=Azienda vitivinicola Grigoletti"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:10221160182",
+      "name": "Gojer (Glöggl)",
+      "lat": 46.4851179,
+      "lon": 11.4021607,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Gojer (Glöggl)",
+        "operator=Fam. Gojer Franz & Florian"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:11890791396",
+      "name": "Naturnser Vinothek",
+      "lat": 46.6501282,
+      "lon": 11.0050947,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Naturnser Vinothek"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:12248417770",
+      "name": "Enoteca Mattia Tonetti",
+      "lat": 46.2163262,
+      "lon": 11.0879698,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Mezzolombardo",
+        "addr:housenumber=5",
+        "addr:postcode=38017",
+        "addr:street=Via Cavalleggeri Udine",
+        "name=Enoteca Mattia Tonetti",
+        "phone=+393496238942",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:12864997018",
+      "name": "Casa Girelli",
+      "lat": 46.0484472,
+      "lon": 11.1308231,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Casa Girelli"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:13153806008",
+      "name": "Enoteca Segantini",
+      "lat": 45.9195069,
+      "lon": 10.8869376,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "check_date:opening_hours=2025-09-21",
+        "name=Enoteca Segantini",
+        "opening_hours:signed=no",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:13159744222",
+      "name": "Etyssa, produzione Trento Doc",
+      "lat": 46.0822103,
+      "lon": 11.1486731,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Etyssa, produzione Trento Doc"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:13305591621",
+      "name": "Azienda Agricola Salvetta",
+      "lat": 46.0452072,
+      "lon": 10.9481122,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Azienda Agricola Salvetta"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:13409110553",
+      "name": "Laimburg Versuchzentrum - Centro sperimentale",
+      "lat": 46.3825657,
+      "lon": 11.2874652,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Vadena - Pfatten",
+        "addr:housenumber=6",
+        "addr:postcode=39040",
+        "addr:street=via Laimburg",
+        "craft=winery",
+        "name=Laimburg Versuchzentrum - Centro sperimentale"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:13436260110",
+      "name": "Marco Wolf Vini",
+      "lat": 46.0527344,
+      "lon": 11.4945142,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Marco Wolf Vini"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:30691707",
+      "name": "Rivendita Cantina Rotari-Mezzocorona",
+      "lat": 46.2023401,
+      "lon": 11.1224842,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=yes",
+        "name=Rivendita Cantina Rotari-Mezzocorona",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:41800626",
+      "name": "Eisacktaler Kellerei - Cantina Valle Isarco",
+      "lat": 46.6479406,
+      "lon": 11.5838262,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=yes",
+        "name=Eisacktaler Kellerei - Cantina Valle Isarco",
+        "name:de=Eisacktaler Kellerei",
+        "name:en=Thomas Dorfmann Kellerei",
+        "name:it=Cantina Thomas Dorfmann",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:81085412",
+      "name": "Cantine naturali Torboli",
+      "lat": 45.9222755,
+      "lon": 10.8283438,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=yes",
+        "craft=winery",
+        "name=Cantine naturali Torboli"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:96961167",
+      "name": "Klinger",
+      "lat": 46.1512249,
+      "lon": 11.111173,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=yes",
+        "craft=winery",
+        "name=Klinger",
+        "phone=+39 3341539034"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:244591861",
+      "name": "Rottensteiner",
+      "lat": 46.5103618,
+      "lon": 11.3477161,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=yes",
+        "check_date=2023-04-21",
+        "craft=winery",
+        "name=Rottensteiner"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:244939634",
+      "name": "H. Lentsch",
+      "lat": 46.4062211,
+      "lon": 11.3206146,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Bronzolo - Branzoll",
+        "addr:city:de=Branzoll",
+        "addr:city:it=Bronzolo",
+        "addr:country=IT",
+        "addr:housenumber=71",
+        "addr:postcode=39051",
+        "addr:street=Via Nazionale - Reichsstraße",
+        "addr:street:de=Reichsstraße",
+        "addr:street:it=Via Nazionale",
+        "building=yes",
+        "check_date=2025-02-15",
+        "craft=winery",
+        "name=H. Lentsch"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:373391945",
+      "name": "Ansitz Rynnhof",
+      "lat": 46.3406376,
+      "lon": 11.2381173,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Tramin an der Weinstraße - Termeno sulla Strada del Vino",
+        "addr:housenumber=13",
+        "addr:postcode=39040",
+        "addr:street=Schneckenthalerstraße",
+        "building=yes",
+        "craft=winery",
+        "name=Ansitz Rynnhof"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:621451551",
+      "name": "Vinus",
+      "lat": 46.7175001,
+      "lon": 11.6573883,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=bar",
+        "contact:website=http://www.vinothekvinus.it/",
+        "indoor_seating=yes",
+        "name=Vinus",
+        "opening_hours=Tu 10:00-13:00,16:00-21:00; We-Fr 10:00-13:00,16:00-23:00; Sa 10:00-18:00; Su,Mo off",
+        "outdoor_seating=no",
+        "shop=wine",
+        "wheelchair=yes"
+      ],
+      "score": 68
+    },
+    {
+      "id": "node:670892803",
+      "name": "Bordeaux Keller",
+      "lat": 46.4548207,
+      "lon": 11.2589445,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "name=Bordeaux Keller",
+        "opening_hours=We-Fr 17:00-23:00; Sa 11:00-23:00",
+        "shop=wine",
+        "website=https://www.bordeauxkeller.it/"
+      ],
+      "score": 68
+    },
+    {
+      "id": "node:2159956231",
+      "name": "Weingut Peter Sölva und Söhne - Tenuta Peter Sölva e Figli",
+      "lat": 46.411829,
+      "lon": 11.2436595,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Kaltern an der Weinstraße - Caldaro sulla Strada del Vino",
+        "addr:city:de=Kaltern an der Weinstraße",
+        "addr:city:it=Caldaro sulla Strada del Vino",
+        "addr:housename=Weingut Peter Sölva",
+        "addr:housenumber=33",
+        "addr:postcode=39052",
+        "addr:street=Goldgasse - Via D'Oro",
+        "addr:street:de=Goldgasse",
+        "addr:street:it=Via D'Oro",
+        "currency:EUR=yes",
+        "name=Weingut Peter Sölva und Söhne - Tenuta Peter Sölva e Figli",
+        "name:de=Weingut Peter Sölva und Söhne",
+        "name:it=Tenuta Peter Sölva e Figli",
+        "opening_hours=Mo-Fr 10:00-13:00,15:00-20:00; Sa 10:00-20:00; Jul,Aug Th 10:00-13:00,15:00-23:00; Jul Fr off; Sep-Oct Su 11:00-17:00; Dec Fr 10:00-13:00,15:00-23:00",
+        "operator=Weingut Peter Sölva",
+        "outdoor_seating=yes",
+        "ref:vatin=IT02213140219",
+        "shop=wine",
+        "start_date=1731",
+        "website=https://www.soelva.com/"
+      ],
+      "score": 68
+    },
+    {
+      "id": "node:2426731321",
+      "name": "Manincor Vinothek",
+      "lat": 46.3912977,
+      "lon": 11.2558631,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Kaltern an der Weinstraße - Caldaro sulla Strada del Vino",
+        "addr:city:de=Kaltern an der Weinstraße",
+        "addr:city:it=Caldaro sulla Strada del Vino",
+        "addr:housenumber=4",
+        "addr:place=St. Josef am See - San Giuseppe al Lago",
+        "addr:place:de=St. Josef am See",
+        "addr:place:it=San Giuseppe al Lago",
+        "addr:postcode=39052",
+        "contact:email=weinverkauf@manincor.com",
+        "contact:fax=+39 0471 960204",
+        "contact:phone=+39 0471 960230",
+        "name=Manincor Vinothek",
+        "opening_hours=Mo-Fr 09:30-18:00; Sa 10:00-17:00",
+        "shop=wine",
+        "website=https://www.manincor.com/de/ab-hof-verkauf.html"
+      ],
+      "score": 68
+    },
+    {
+      "id": "node:3440530247",
+      "name": "Vinothek Amperg",
+      "lat": 46.4663693,
+      "lon": 11.2543713,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Eppan an der Weinstraße - Appiano sulla Strada del Vino",
+        "addr:housenumber=18/a",
+        "addr:postcode=39057",
+        "addr:street=Reinspergweg - Strada Castel Monteriva",
+        "currency:EUR=yes",
+        "email=info@klauslentsch.eu",
+        "name=Vinothek Amperg",
+        "opening_hours=TH-FR 11:00-14:00,17:00-21:00; SA 09:00-14:00||\"on appointment\"",
+        "operator=Weingut Klaus Lentsch",
+        "payment:cash=yes",
+        "payment:mastercard=yes",
+        "payment:visa=yes",
+        "phone=+390471967263",
+        "shop=wine",
+        "website=https://www.klauslentsch.eu/"
+      ],
+      "score": 68
+    },
+    {
+      "id": "node:3702610654",
+      "name": "Weinverkostung Popphof",
+      "lat": 46.6533619,
+      "lon": 11.1400127,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "name=Weinverkostung Popphof",
+        "opening_hours=Mo-Fr 16:00-18:00; Sa 10:00-11:00",
+        "operator=Andreas Menz",
+        "shop=wine",
+        "source=Unterkunftsverzeichnis Marling  2023, S. 40, schriftliche Erlaubnis des Tourismusvereins Marling vom 2016-08-16 für die Verwendung der Daten für OSM",
+        "source:date=2022-12-10",
+        "website=https://www.popphof.com/"
+      ],
+      "score": 68
+    },
+    {
+      "id": "node:3702730835",
+      "name": "Vinothek Saporito",
+      "lat": 46.6703424,
+      "lon": 11.0620998,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=23",
+        "addr:postcode=39020",
+        "addr:street=Vinschgauer Straße - Via Venosta",
+        "name=Vinothek Saporito",
+        "opening_hours=Mo-Fr 09:00-12:30, 15:00-20:00; Sa 09:00-14:30",
+        "phone=+39 329 646 3841",
+        "shop=wine",
+        "website=https://www.suedtirol.info/de/de/erlebnisse-und-events/plp-erlebnisse/erlebnisse-suedtirol/pdp-erlebnisse.smgpoifff58a1f289755f4022f6c12891398d6.saporito---shop-taste---more.rabland"
+      ],
+      "score": 68
+    },
+    {
+      "id": "node:3710452412",
+      "name": "Weingut Plonerhof",
+      "lat": 46.6707582,
+      "lon": 11.1315568,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "contact:email=info@weingut-plonerhof.it",
+        "contact:fax=+39 0473 490525",
+        "contact:phone=+39 0473 490525",
+        "name=Weingut Plonerhof",
+        "opening_hours=Mo-Fr 16:00+; Sa 09:00-12:00",
+        "operator=Tutzer Erhard",
+        "shop=wine",
+        "source=Unterkunftsverzeichnis Marling  2023, S. 40, schriftliche Erlaubnis des Tourismusvereins Marling vom 2016-08-16 für die Verwendung der Daten für OSM",
+        "source:date=2022-12-10",
+        "website=https://www.weingut-plonerhof.it/"
+      ],
+      "score": 68
+    },
+    {
+      "id": "node:3758749629",
+      "name": "winecenter",
+      "lat": 46.4173209,
+      "lon": 11.2499217,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Kaltern an der Weinstraße - Caldaro sulla Strada del Vino",
+        "addr:city:de=Kaltern an der Weinstraße",
+        "addr:city:it=Caldaro sulla Strada del Vino",
+        "addr:housenumber=7",
+        "addr:postcode=39052",
+        "addr:street=Bahnhofstraße - Via Stazione",
+        "addr:street:de=Bahnhofstraße",
+        "addr:street:it=Via Stazione",
+        "check_date:opening_hours=2024-08-27",
+        "email=winecenter@kellereikaltern.com",
+        "fax=+39 0471 964 454",
+        "level=0",
+        "name=winecenter",
+        "opening_hours=Mo-Fr 09:00-19:00; Sa 09:00-18:00; Su,PH 10:00-18:00",
+        "phone=+39 0471 963 149",
+        "second_hand=no",
+        "shop=wine",
+        "stroller=yes",
+        "website=https://www.kellereikaltern.com",
+        "wheelchair=yes"
+      ],
+      "score": 68
+    },
+    {
+      "id": "node:3918579437",
+      "name": "Enovalsugana",
+      "lat": 46.0477961,
+      "lon": 11.4602824,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Borgo Valsugana",
+        "addr:country=IT",
+        "addr:housenumber=21",
+        "addr:postcode=38051",
+        "addr:province=TN",
+        "addr:street=Via per Olle",
+        "check_date:opening_hours=2025-11-21",
+        "email=info@enovalsugana.com",
+        "name=Enovalsugana",
+        "opening_hours=Tu-Sa 08:30-12:00,15:00-19:00; Su,Mo off",
+        "operator=Enovalsugana Di Baldi Massimo E C. S.A.S.",
+        "payment:credit_cards=yes",
+        "payment:debit_cards=yes",
+        "phone=+39 0461 754060",
+        "ref:vatin=IT01653360220",
+        "shop=wine",
+        "website=https://www.enovalsugana.com/",
+        "wheelchair=yes"
+      ],
+      "score": 68
+    },
+    {
+      "id": "node:4113405863",
+      "name": "Vis à vis",
+      "lat": 46.4718963,
+      "lon": 11.262071,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=St. Pauls - San Paolo",
+        "addr:city:de=St. Pauls",
+        "addr:city:it=San Paolo",
+        "addr:housenumber=16",
+        "addr:postcode=39057",
+        "addr:street=Paulser Platz - Piazza San Paolo",
+        "addr:street:de=Paulser Platz",
+        "addr:street:it=Piazza San Paolo",
+        "email=info@visavis-enothek.com",
+        "name=Vis à vis",
+        "opening_hours=Mo-Su 09:00-21:00",
+        "operator=Schwarzer Martin",
+        "phone=+39 0471 662919",
+        "shop=wine",
+        "website=http://www.visavis-enothek.com"
+      ],
+      "score": 68
+    },
+    {
+      "id": "node:4290344689",
+      "name": "Winestore",
+      "lat": 46.4925701,
+      "lon": 11.4019114,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Bolzano - Bozen",
+        "addr:housenumber=5",
+        "addr:postcode=39100",
+        "addr:street=Gebewerbezone Kardaun",
+        "name=Winestore",
+        "opening_hours=08:00-17:00",
+        "operator=Winestore Weindiele",
+        "phone=+39 0471 642106",
+        "shop=wine",
+        "website=https://weindiele.com/"
+      ],
+      "score": 68
+    },
+    {
+      "id": "node:4522643190",
+      "name": "Relax",
+      "lat": 46.6683211,
+      "lon": 11.1655417,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=31",
+        "addr:postcode=39012",
+        "addr:street=Cavourstraße - Via Cavour",
+        "email=info@weine-Relax.it",
+        "name=Relax",
+        "name:de=Relax",
+        "opening_hours=Mo-Sa 09:00-01:30",
+        "phone=+390473236735",
+        "shop=wine",
+        "website=http://www.weine-Relax.it"
+      ],
+      "score": 68
+    },
+    {
+      "id": "node:5648436421",
+      "name": "Weingut Pardellerhof",
+      "lat": 46.6513446,
+      "lon": 11.1403604,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=15",
+        "addr:postcode=39020",
+        "addr:street=Mitterterzerstraße - Via Terzo di Mezzo",
+        "contact:phone=+39 339 1771577",
+        "email=info@pardellerhof.it",
+        "name=Weingut Pardellerhof",
+        "name:de=Weingut Pardellerhof",
+        "name:en=Winery Pardellerhof",
+        "name:fr=Vignoble Pardellerhof",
+        "name:it=Tenuta Pardellerhof",
+        "opening_hours=Mo-Sa 08:00-18:00",
+        "operator=Erwin Eccli",
+        "payment:cash=yes",
+        "payment:credit_cards=yes",
+        "shop=wine",
+        "website=https://www.pardellerhof.it/"
+      ],
+      "score": 68
+    },
+    {
+      "id": "node:10302717189",
+      "name": "Ritterhof",
+      "lat": 46.4149921,
+      "lon": 11.2489999,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "level=0",
+        "name=Ritterhof",
+        "opening_hours=Mo-Fr 09:00-18:00; Sa 09:30-13:00",
+        "phone=+39 0471 963298",
+        "shop=wine",
+        "website=https://www.ritterhof.it/"
+      ],
+      "score": 68
+    },
+    {
+      "id": "node:13417828884",
+      "name": "Wineshop Castelfeder",
+      "lat": 46.313197,
+      "lon": 11.2712153,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Neumarkt - Egna",
+        "addr:housenumber=8/1",
+        "addr:postcode=39044",
+        "addr:street=Marienstraße - Via della Madonna",
+        "email=wineshop@castelfeder.it",
+        "level=0",
+        "name=Wineshop Castelfeder",
+        "name:de=Weinshop Weingut Castelfeder",
+        "name:en=Wineshop Winery Castelfeder",
+        "name:it=Wineshop Tenuta Castelfeder",
+        "opening_hours=Mo-Fr 10:00-12:30,13:30-18:00",
+        "operator=Azienda Vinicola Castelfeder di Giovanett Günther & Co. Sas",
+        "phone=+390471812928",
+        "product=wine",
+        "shop=wine",
+        "website=https://castelfeder.it"
+      ],
+      "score": 68
+    },
+    {
+      "id": "way:374341980",
+      "name": "Tiefenbrunner",
+      "lat": 46.3007477,
+      "lon": 11.2126697,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Kurtatsch an der Weinstraße - Cortaccia sulla Strada del Vino",
+        "addr:housenumber=4",
+        "addr:postcode=39040",
+        "addr:street=Schloßweg - Via Castello",
+        "building=yes",
+        "name=Tiefenbrunner",
+        "opening_hours=Mo-Fr 08:30-18:30",
+        "shop=wine",
+        "website=https://www.tiefenbrunner.com/"
+      ],
+      "score": 68
+    },
+    {
+      "id": "node:2749775163",
+      "name": "Weingut Dominikus",
+      "lat": 46.3837108,
+      "lon": 11.2473896,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Kaltern an der Weinstraße - Caldaro sulla Strada del Vino",
+        "addr:city:de=Kaltern an der Weinstraße",
+        "addr:city:it=Caldaro sulla Strada del Vino",
+        "addr:housenumber=39",
+        "addr:place=St. Josef am See - San Giuseppe al Lago",
+        "addr:place:de=St. Josef am See",
+        "addr:place:it=San Giuseppe al Lago",
+        "addr:postcode=39052",
+        "contact:email=info@dominikus.it",
+        "contact:phone=+39 0471 960576",
+        "contact:website=https://www.dominikus.it/",
+        "name=Weingut Dominikus",
+        "shop=wine"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:2755882875",
+      "name": "ARUNDA GmbH / Srl",
+      "lat": 46.5881985,
+      "lon": 11.2567137,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Mölten - Meltina",
+        "addr:city:de=Mölten",
+        "addr:city:it=Meltina",
+        "addr:housenumber=18",
+        "addr:postcode=39010",
+        "addr:street=Prof.-Josef-Schwarz-Straße - Via Prof.-Josef-Schwarz",
+        "addr:street:de=Prof.-Josef-Schwarz-Straße",
+        "addr:street:it=Via Prof.-Josef-Schwarz",
+        "name=ARUNDA GmbH / Srl",
+        "name:de=ARUNDA GmbH",
+        "name:it=ARUNDA Srl",
+        "operator=Josef Reiterer",
+        "shop=wine",
+        "website=https://www.arundavivaldi.it/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:3610662165",
+      "name": "Vinothek Vinum Bonum",
+      "lat": 46.6831577,
+      "lon": 11.1223646,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "contact:email=info@vinumbonum-hilbring.it",
+        "contact:fax=+39 0473 200 767",
+        "contact:phone=+39 0473 440 050",
+        "name=Vinothek Vinum Bonum",
+        "shop=wine",
+        "website=http://www.vinumbonum-hilbring.it/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:3825016004",
+      "name": "Tenuta San Leonardo",
+      "lat": 45.7043896,
+      "lon": 10.9310785,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Avio",
+        "addr:housenumber=1",
+        "addr:postcode=38060",
+        "addr:street=Località San Leonardo",
+        "name=Tenuta San Leonardo",
+        "shop=wine",
+        "website=https://www.sanleonardo.it/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:3852658956",
+      "name": "Meraner Weinhaus",
+      "lat": 46.6656079,
+      "lon": 11.1606667,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Meran - Merano",
+        "addr:housenumber=76",
+        "addr:postcode=39012",
+        "addr:street=Romstraße - Via Roma",
+        "name=Meraner Weinhaus",
+        "shop=wine",
+        "website=https://www.meranerweinhaus.com/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:5420507116",
+      "name": "Azienda Agricola Foradori",
+      "lat": 46.2153978,
+      "lon": 11.09325,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Mezzolombardo",
+        "addr:housenumber=1",
+        "addr:postcode=38017",
+        "addr:street=Via Damiano Chiesa",
+        "name=Azienda Agricola Foradori",
+        "operator=Elisabetta Foradori",
+        "shop=wine",
+        "website=http://www.elisabettaforadori.com"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:7834499445",
+      "name": "Weingut In der Eben",
+      "lat": 46.4963787,
+      "lon": 11.4140963,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Ritten - Renon",
+        "addr:city:de=Ritten",
+        "addr:housenumber=21",
+        "addr:postcode=39053",
+        "addr:street=Unterplatten - Laste Basse",
+        "addr:street:de=Unterplatten",
+        "description=Bioland",
+        "description:de=Bioland",
+        "name=Weingut In der Eben",
+        "name:de=Weingut In der Eben",
+        "name:it=Az. vitivnicola In der Eben",
+        "operator=Urban Plattner",
+        "phone=+393339955238",
+        "shop=wine",
+        "website=https://indereben.it/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:9355412293",
+      "name": "Livio Bruni & Co.",
+      "lat": 46.2118226,
+      "lon": 11.0922064,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=34c",
+        "addr:postcode=38017",
+        "addr:street=Via Alcide De Gasperi",
+        "email=info@bruniwines.com",
+        "fixme=check position",
+        "name=Livio Bruni & Co.",
+        "phone=+39 0461 606065",
+        "ref:vatin=IT02098900224",
+        "shop=wine",
+        "website=https://www.bruniwines.com/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:10250551763",
+      "name": "Weingut Geier",
+      "lat": 46.667873,
+      "lon": 11.1283054,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "name=Weingut Geier",
+        "operator=Bernhard Geier",
+        "shop=wine",
+        "source=Unterkunftsverzeichnis Marling  2023, S. 40, schriftliche Erlaubnis des Tourismusvereins Marling vom 2016-08-16 für die Verwendung der Daten für OSM",
+        "source:date=2022-12-10",
+        "website=https://www.weingut-geier.com/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:10273072939",
+      "name": "Weingut Eichenstein",
+      "lat": 46.6575819,
+      "lon": 11.1402384,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "name=Weingut Eichenstein",
+        "operator=Familie Waldner",
+        "shop=wine",
+        "source=Unterkunftsverzeichnis Marling  2023, S. 40, schriftliche Erlaubnis des Tourismusvereins Marling vom 2016-08-16 für die Verwendung der Daten für OSM",
+        "source:date=2022-12-19",
+        "website=https://www.eichenstein.it/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:10727936230",
+      "name": "Vinothek caldarum",
+      "lat": 46.4177701,
+      "lon": 11.2499128,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "name=Vinothek caldarum",
+        "name:de=Vinothek caldarum",
+        "name:it=Enoteca caldarum",
+        "shop=wine",
+        "website=https://www.vinothekcaldarum.it/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:11903427851",
+      "name": "Gandolfi zum Pfau",
+      "lat": 46.500905,
+      "lon": 11.3569426,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Bolzano - Bozen",
+        "addr:housenumber=5a",
+        "addr:postcode=39100",
+        "addr:street=Via dei Bottai - Bindergasse",
+        "email=enoteca@gandolfi.bz.it",
+        "name=Gandolfi zum Pfau",
+        "name:de=Weinverkauf Gandolfi",
+        "name:it=Enoteca Gandolfi",
+        "phone=+39 0471 180 8053",
+        "shop=wine",
+        "website=https://www.gandolfi.bz.it/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:11903427852",
+      "name": "Gandolfi zum Sparerhof",
+      "lat": 46.4789582,
+      "lon": 11.2854425,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Bolzano - Bozen",
+        "addr:housenumber=43",
+        "addr:postcode=39100",
+        "addr:street=Bozner Straße - Via Bolzano",
+        "email=enoteca@gandolfi.bz.it",
+        "name=Gandolfi zum Sparerhof",
+        "name:de=Weinverkauf Gandolfi",
+        "name:it=Enoteca Gandolfi",
+        "phone=+39 0471 920335",
+        "shop=wine",
+        "website=https://www.gandolfi.bz.it/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:12465410435",
+      "name": "Kellerei St. Pauls",
+      "lat": 46.470994,
+      "lon": 11.2639447,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=21",
+        "addr:street=Schloss-Warth-Weg - Strada Castel Guardia",
+        "fax=+390471662530",
+        "name=Kellerei St. Pauls",
+        "phone=+390471662183",
+        "shop=wine",
+        "website=https://www.stpauls.wine/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:13291147752",
+      "name": "Enantico",
+      "lat": 46.0607419,
+      "lon": 11.2392063,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "name=Enantico",
+        "shop=wine",
+        "website=https://www.enantico.com/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "way:81025169",
+      "name": "Zeni",
+      "lat": 46.1943586,
+      "lon": 11.1309128,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Grumo",
+        "addr:housenumber=2",
+        "addr:postcode=30010",
+        "addr:street=Via Stretta",
+        "building=yes",
+        "email=info@zeni.tn.it",
+        "grappa=yes",
+        "name=Zeni",
+        "phone=+39 0461 650456",
+        "shop=wine",
+        "website=https://www.zeni.tn.it/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "way:233227321",
+      "name": "Kränzelhof",
+      "lat": 46.6267481,
+      "lon": 11.1476062,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Tscherms - Cermes",
+        "addr:city:de=Tscherms",
+        "addr:city:it=Cermes",
+        "addr:postcode=39010",
+        "addr:street=Gampenstraße - Via Palade",
+        "addr:street:de=Gampenstraße",
+        "addr:street:it=Via Palade",
+        "building=yes",
+        "contact:email=info@kraenzelhof.it",
+        "contact:website=https://www.kraenzelhof.it/",
+        "description=Wine shop",
+        "name=Kränzelhof",
+        "shop=wine"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:619378879",
+      "name": "Weinhaus Punkt",
+      "lat": 46.4134068,
+      "lon": 11.246068,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=cafe",
+        "cuisine=bistro",
+        "drink:wine=bottled",
+        "food=yes",
+        "indoor_seating=yes",
+        "level=-1;0",
+        "lunch=yes",
+        "name=Weinhaus Punkt",
+        "opening_hours=Mo off",
+        "outdoor_seating=yes",
+        "payment:credit_cards=yes",
+        "payment:debit_cards=yes",
+        "payment:satispay=yes",
+        "phone=+39 0471 964965",
+        "shop=wine",
+        "wheelchair:description=Lift zum Untergeschoss. Rollstuhl-WC in der Damentoilette."
+      ],
+      "score": 60
+    },
+    {
+      "id": "node:1480114998",
+      "name": "Vintothek",
+      "lat": 46.7421355,
+      "lon": 11.6480609,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "name=Vintothek",
+        "opening_hours=Mo-Fr 10:00-19:00; Sa 09:00-18:00",
+        "shop=wine",
+        "wheelchair=yes"
+      ],
+      "score": 60
+    },
+    {
+      "id": "node:7112988764",
+      "name": "Vinothek Castell Sallegg",
+      "lat": 46.4146516,
+      "lon": 11.2396465,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "name=Vinothek Castell Sallegg",
+        "opening_hours=Mo-Fr 10:00-13:00, 14:00-19:00; Sa 09:00-12:00; PH off",
+        "shop=wine"
+      ],
+      "score": 60
+    },
+    {
+      "id": "node:11708171114",
+      "name": "Enotheque Bernardi",
+      "lat": 46.7960626,
+      "lon": 11.9403413,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=6b",
+        "addr:street=Stuckstraße - Via Stuck",
+        "check_date=2024-03-09",
+        "name=Enotheque Bernardi",
+        "opening_hours=Mo-Th 09:00-23:00; Fr-Sa 09:00-24:00; Su,PH off",
+        "shop=wine",
+        "wheelchair=yes"
+      ],
+      "score": 60
+    },
+    {
+      "id": "node:621156832",
+      "name": "Weingalerie",
+      "lat": 46.7199285,
+      "lon": 11.6528586,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "amenity=bar",
+        "name=Weingalerie",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:943372601",
+      "name": "Al Picchio Nero",
+      "lat": 46.364515,
+      "lon": 11.0342607,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "cuisine=regional",
+        "name=Al Picchio Nero",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:2112857603",
+      "name": "La botega del vin",
+      "lat": 46.0572898,
+      "lon": 11.1181337,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Trento",
+        "addr:country=IT",
+        "addr:housenumber=2",
+        "addr:postcode=38122",
+        "addr:street=Via dei Muredei",
+        "name=La botega del vin",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:2432670241",
+      "name": "La Cantinota",
+      "lat": 46.7190725,
+      "lon": 11.654395,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "amenity=bar",
+        "name=La Cantinota",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:2749599358",
+      "name": "Carpe Diem",
+      "lat": 46.4954734,
+      "lon": 11.3454084,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Bolzano - Bozen",
+        "addr:city:de=Bozen",
+        "addr:city:it=Bolzano",
+        "addr:housenumber=66",
+        "addr:postcode=39100",
+        "addr:street=Viale Venezia - Venediger Straße",
+        "addr:street:de=Venediger Straße",
+        "addr:street:it=Viale Venezia",
+        "name=Carpe Diem",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:2749631118",
+      "name": "Kuenhof",
+      "lat": 46.6900434,
+      "lon": 11.6348865,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Brixen - Bressanone",
+        "addr:city:de=Brixen",
+        "addr:city:it=Bressanone",
+        "addr:housenumber=12",
+        "addr:place=Mahr - La Mara",
+        "addr:place:de=Mahr",
+        "addr:place:it=La Mara",
+        "addr:postcode=39042",
+        "addr:street=Lahner - Via Lahner",
+        "addr:street:de=Lahner",
+        "addr:street:it=Via Lahner",
+        "email=pliger.kuenhof@rolmail.net",
+        "name=Kuenhof",
+        "operator=Peter & Brigitte Pliger",
+        "phone=+390472850546",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:2756030266",
+      "name": "Traminer Weinhaus",
+      "lat": 46.3414424,
+      "lon": 11.2400354,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Tramin an der Weinstraße - Termeno sulla Strada del Vino",
+        "addr:city:de=Tramin an der Weinstraße",
+        "addr:city:it=Termeno sulla Strada del Vino",
+        "addr:housenumber=8",
+        "addr:postcode=39040",
+        "addr:street=Rathausplatz - Piazza Municipio",
+        "addr:street:de=Rathausplatz",
+        "addr:street:it=Piazza Municipio",
+        "name=Traminer Weinhaus",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:3385947355",
+      "name": "Vino",
+      "lat": 46.4770254,
+      "lon": 11.772075,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=155",
+        "addr:street=Stresa Dolomites",
+        "name=Vino",
+        "phone=+39 333 5737038",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:4417305145",
+      "name": "Wein Schmiede",
+      "lat": 46.4140222,
+      "lon": 11.2462437,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Wein Schmiede",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:4941869750",
+      "name": "Enovalsugana",
+      "lat": 46.0695907,
+      "lon": 11.2216063,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=25a",
+        "addr:place=Località Fratte",
+        "email=info@enovalsugana.com",
+        "name=Enovalsugana",
+        "operator=Enoteca Enovalsugana Di Baldi Massimo E C. S.A.S.",
+        "phone=+39 0461 533544",
+        "shop=wine",
+        "wheelchair=yes"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:6080020786",
+      "name": "WeinPunkt",
+      "lat": 46.7342553,
+      "lon": 11.646585,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=WeinPunkt",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:6388213543",
+      "name": "Rametz",
+      "lat": 46.5869921,
+      "lon": 11.2007674,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Rametz",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:6635686318",
+      "name": "Lo sFuso",
+      "lat": 46.7125636,
+      "lon": 11.6509672,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Lo sFuso",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:7655378885",
+      "name": "Hartmann Donà",
+      "lat": 46.4624685,
+      "lon": 11.2842199,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Hartmann Donà",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:10020658210",
+      "name": "Signorvino",
+      "lat": 46.6716144,
+      "lon": 11.1630079,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "check_date=2022-09-13",
+        "name=Signorvino",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:10304966943",
+      "name": "Gansl Vinothek",
+      "lat": 46.6392736,
+      "lon": 11.5656012,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "check_date=2025-07-25",
+        "name=Gansl Vinothek",
+        "name:de=Gansl Vinothek",
+        "name:it=Gansl Enoteca",
+        "shop=wine",
+        "wheelchair=yes"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:12367733776",
+      "name": "Santerhof",
+      "lat": 46.8033096,
+      "lon": 11.6749898,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Mühlbach - Rio di Pusteria",
+        "addr:housenumber=40",
+        "addr:postcode=39037",
+        "addr:state=32",
+        "addr:street=Pustertaler Straße - Via Val Pusteria",
+        "name=Santerhof",
+        "organic=yes",
+        "phone=+39 345 406 3937",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:12850381718",
+      "name": "Vineria Baroldi",
+      "lat": 45.8526357,
+      "lon": 10.978488,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Vineria Baroldi",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:13107063326",
+      "name": "Weinhandlung Forcher",
+      "lat": 46.631879,
+      "lon": 10.9181625,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Weinhandlung Forcher",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "way:541853186",
+      "name": "EnoValsugana Trento",
+      "lat": 46.0859583,
+      "lon": 11.1177304,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Trento",
+        "addr:housenumber=111",
+        "addr:postcode=38121",
+        "addr:street=Via del Brennero",
+        "building=yes",
+        "check_date=2023-07-16",
+        "name=EnoValsugana Trento",
+        "payment:american_express=yes",
+        "payment:cash=yes",
+        "payment:credit_cards=yes",
+        "payment:debit_cards=yes",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "way:699240545",
+      "name": "Dalzocchio",
+      "lat": 45.8906994,
+      "lon": 11.043074,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "indoor=room",
+        "level=0",
+        "name=Dalzocchio",
+        "room=shop",
+        "shop=wine"
+      ],
+      "score": 55
+    }
+  ]
+}

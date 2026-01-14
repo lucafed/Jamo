@@ -1,0 +1,135 @@
+{
+  "region_id": "it-calabria-relax",
+  "country": "IT",
+  "label_it": "Calabria • relax",
+  "generated_at": "2026-01-14T19:43:26.556Z",
+  "places": [
+    {
+      "id": "node:9934087219",
+      "name": "Terme di Agnana",
+      "lat": 38.2957602,
+      "lon": 16.2413185,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "access=yes",
+        "amenity=public_bath",
+        "bath:open_air=yes",
+        "bath:type=thermal",
+        "fee=no",
+        "name=Terme di Agnana",
+        "opening_hours=24/7",
+        "unisex=yes"
+      ],
+      "score": 160
+    },
+    {
+      "id": "way:274228070",
+      "name": "Vasca pubblica di Caronte",
+      "lat": 38.9747494,
+      "lon": 16.2589142,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "bath:type=hot_spring",
+        "fee=donation",
+        "intermittent=no",
+        "name=Vasca pubblica di Caronte",
+        "natural=hot_spring",
+        "water_characteristic=sulfuric"
+      ],
+      "score": 150
+    },
+    {
+      "id": "relation:9314247",
+      "name": "Parco Termale Acquaviva",
+      "lat": 39.4763427,
+      "lon": 15.9910887,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "name=Parco Termale Acquaviva",
+        "type=site"
+      ],
+      "score": 110
+    },
+    {
+      "id": "node:2885265040",
+      "name": "Corte dei Greci Giunone - Resort & Spa",
+      "lat": 39.4852783,
+      "lon": 16.9943772,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "leisure=spa",
+        "name=Corte dei Greci Giunone - Resort & Spa",
+        "phone=+39 0983 91115",
+        "tourism=hotel",
+        "website=http://www.cortedeigreci.net/"
+      ],
+      "score": 93
+    },
+    {
+      "id": "node:2885373660",
+      "name": "Corte dei Greci Zeus - Resort & Spa",
+      "lat": 39.4841402,
+      "lon": 16.9955282,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "leisure=spa",
+        "name=Corte dei Greci Zeus - Resort & Spa",
+        "phone=+39 0983 91115",
+        "tourism=hotel",
+        "website=http://www.cortedeigreci.net/"
+      ],
+      "score": 93
+    },
+    {
+      "id": "node:3047130512",
+      "name": "Vasche di fanghi termali Bruciarello",
+      "lat": 39.181659,
+      "lon": 16.8320947,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "name=Vasche di fanghi termali Bruciarello",
+        "natural=hot_spring",
+        "water_characteristic=mud"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:9554006110",
+      "name": "Piscina",
+      "lat": 38.9747458,
+      "lon": 16.2589184,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "fee=donation",
+        "intermittent=no",
+        "name=Piscina",
+        "natural=hot_spring"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:5840150829",
+      "name": "La Vurga",
+      "lat": 39.5049851,
+      "lon": 16.7054053,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "bath:open_air=yes",
+        "bath:sand_bath=yes",
+        "name=La Vurga"
+      ],
+      "score": 70
+    }
+  ]
+}

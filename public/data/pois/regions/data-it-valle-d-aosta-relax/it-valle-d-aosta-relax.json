@@ -1,0 +1,143 @@
+{
+  "region_id": "it-valle-d-aosta-relax",
+  "country": "IT",
+  "label_it": "Valle d'Aosta • relax",
+  "generated_at": "2026-01-14T19:43:43.413Z",
+  "places": [
+    {
+      "id": "way:1118748353",
+      "name": "QC Terme Pré Saint Didier",
+      "lat": 45.7622547,
+      "lon": 6.9858882,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "addr:postcode=11010",
+        "amenity=public_bath",
+        "bath:type=thermal",
+        "brand=QC Terme",
+        "brand:wikidata=Q115543071",
+        "contact:facebook=termedipre",
+        "email=info@termedipre.it",
+        "leisure=spa",
+        "name=QC Terme Pré Saint Didier",
+        "operator=QC Terme",
+        "phone=+39 0165 867272",
+        "ref:vatin=IT10541980966",
+        "start_date=1834",
+        "website=https://www.qcterme.com/it/pre-saint-didier/qc-terme-pre-saint-didier",
+        "wikidata=Q16613142",
+        "wikipedia=fr:Thermes de Pré-Saint-Didier"
+      ],
+      "score": 228
+    },
+    {
+      "id": "node:11495546107",
+      "name": "Sorgente Termale di Pré-Saint-Didier",
+      "lat": 45.7605492,
+      "lon": 6.9860699,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "intermittent=no",
+        "name=Sorgente Termale di Pré-Saint-Didier",
+        "natural=hot_spring",
+        "temperature=22"
+      ],
+      "score": 120
+    },
+    {
+      "id": "way:160998408",
+      "name": "Chalet Svizzero Hotel & Restaurant",
+      "lat": 45.7939279,
+      "lon": 6.9679243,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Courmayeur",
+        "addr:postcode=11013",
+        "addr:street=Strada Statale n. 26, 11",
+        "building=yes",
+        "building:levels=3",
+        "email=hotelsvizzero@legalmail.it",
+        "height=12",
+        "internet_access=wlan",
+        "internet_access:fee=customers",
+        "name=Chalet Svizzero Hotel & Restaurant",
+        "phone=+39 0165 848170",
+        "restaurant=yes",
+        "rooms=28",
+        "spa=yes",
+        "tourism=hotel",
+        "website=https://www.hotelsvizzero.com/"
+      ],
+      "score": 13
+    },
+    {
+      "id": "way:166437959",
+      "name": "Hermitage Hotel Relais & Chateaux",
+      "lat": 45.9316127,
+      "lon": 7.6293617,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Breuil-Cervinia",
+        "addr:postcode=11021",
+        "bar=yes",
+        "building=yes",
+        "check_date=2025-08-24",
+        "contact:facebook=https://www.facebook.com/Hotel-Hermitage-Breuil-Cervinia-146543068724437/",
+        "email=info@hotelhermitage.com",
+        "internet_access=wlan",
+        "internet_access:fee=customers",
+        "name=Hermitage Hotel Relais & Chateaux",
+        "phone=+39 0166 948998",
+        "restaurant=yes",
+        "spa=yes",
+        "stars=5",
+        "tourism=hotel",
+        "website=https://hotelhermitage.com/en/"
+      ],
+      "score": 13
+    },
+    {
+      "id": "way:166438442",
+      "name": "Aux Pieds du Roi",
+      "lat": 45.9383465,
+      "lon": 7.6290513,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=4",
+        "addr:postcode=11021",
+        "addr:street=Via Camillo Pellissier",
+        "building=hotel",
+        "check_date=2025-08-24",
+        "name=Aux Pieds du Roi",
+        "phone=+39 0166 940208",
+        "ref:cin=IT007071A1YT7Q8IIT",
+        "ref:vatin=IT01122210071",
+        "spa=yes",
+        "tourism=hotel",
+        "website=https://www.auxpiedsduroi.com/",
+        "wikidata=Q112018507"
+      ],
+      "score": 13
+    },
+    {
+      "id": "node:13094040739",
+      "name": "Valtur",
+      "lat": 45.9293647,
+      "lon": 7.6281845,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "check_date=2025-08-24",
+        "name=Valtur",
+        "spa=yes",
+        "tourism=hotel"
+      ],
+      "score": 0
+    }
+  ]
+}

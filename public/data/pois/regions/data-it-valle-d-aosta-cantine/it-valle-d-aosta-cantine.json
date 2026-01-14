@@ -1,0 +1,248 @@
+{
+  "region_id": "it-valle-d-aosta-cantine",
+  "country": "IT",
+  "label_it": "Valle d'Aosta • cantine",
+  "generated_at": "2026-01-14T19:43:50.188Z",
+  "places": [
+    {
+      "id": "node:7747050786",
+      "name": "Cave des Onze Communes",
+      "lat": 45.7034516,
+      "lon": 7.249849,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Aymavilles",
+        "addr:housenumber=14",
+        "addr:postcode=11010",
+        "addr:street=Località Urbains",
+        "craft=winery",
+        "name=Cave des Onze Communes",
+        "opening_hours=Mo-Fr 14:30-18:30; Sa 8:30-12:30, 14:30-18:30"
+      ],
+      "score": 85
+    },
+    {
+      "id": "node:7765255876",
+      "name": "Lo Triolet",
+      "lat": 45.6969803,
+      "lon": 7.1868329,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Lo Triolet"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:11133583464",
+      "name": "Tesori di Toscana la vineria",
+      "lat": 45.7348887,
+      "lon": 7.3033018,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "check_date=2023-08-21",
+        "craft=winery",
+        "name=Tesori di Toscana la vineria"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:161202379",
+      "name": "Azienda vitivinicola Ermes Pavese",
+      "lat": 45.7554047,
+      "lon": 7.0483077,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Morgex",
+        "addr:housenumber=22",
+        "addr:postcode=11017",
+        "addr:street=Strada Pineta",
+        "building=yes",
+        "craft=winery",
+        "name=Azienda vitivinicola Ermes Pavese",
+        "phone=+39 0165 800053"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:5459687621",
+      "name": "L’Uva e un Quarto",
+      "lat": 45.7354606,
+      "lon": 7.3176749,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Aosta",
+        "addr:housenumber=21:A",
+        "addr:postcode=11100",
+        "addr:street=Via - Rue Challand",
+        "name=L’Uva e un Quarto",
+        "opening_hours=Mo-Sa 16:00-20:30; Su off",
+        "phone=+39 0165 235842",
+        "shop=wine",
+        "website=https://www.luvaeunquarto.it/"
+      ],
+      "score": 68
+    },
+    {
+      "id": "node:563311749",
+      "name": "Cave Mont Blanc de Morgex et La Salle Soc. Coop.",
+      "lat": 45.7519737,
+      "lon": 7.0489025,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Morgex",
+        "addr:housenumber=31",
+        "addr:postcode=11017",
+        "addr:street=Strada des Iles - Chemin des Iles",
+        "name=Cave Mont Blanc de Morgex et La Salle Soc. Coop.",
+        "shop=wine",
+        "website=https://www.cavemontblanc.com/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:5111206427",
+      "name": "Ad Forum",
+      "lat": 45.737733,
+      "lon": 7.317653,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=11",
+        "addr:street=Via Monsignore Pierre-François de Sales - Rue Monseigneur Pierre-François de Sales",
+        "level=0",
+        "microbrewery=yes",
+        "name=Ad Forum",
+        "outdoor_seating=yes",
+        "shop=wine",
+        "website=https://www.adforum-enoteca.com/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:5111206386",
+      "name": "La bottegaccia",
+      "lat": 45.7387055,
+      "lon": 7.3262766,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Aosta",
+        "addr:housenumber=90",
+        "addr:street=Via Sant'Anselmo - Rue Saint-Anselme",
+        "facebook=https://www.facebook.com/labottegacciaosta/",
+        "level=0",
+        "name=La bottegaccia",
+        "opening_hours=Mo-Su 10:00-23:00",
+        "outdoor_seating=yes",
+        "phone=+39 388 8169229",
+        "shop=wine"
+      ],
+      "score": 60
+    },
+    {
+      "id": "node:6721919385",
+      "name": "Cave Cooperative Del L’Enfer",
+      "lat": 45.7047151,
+      "lon": 7.1664012,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "name=Cave Cooperative Del L’Enfer",
+        "opening_hours=Mo 15:00-18:00; We 15:00-18:00; Th,Fr 10:00-13:00,15:00-18:00; Sa 10:00-13:00,14:00-18:00",
+        "shop=wine"
+      ],
+      "score": 60
+    },
+    {
+      "id": "node:9577318500",
+      "name": "Vini Tipici Italiani",
+      "lat": 45.7905776,
+      "lon": 6.9710778,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "name=Vini Tipici Italiani",
+        "opening_hours=Mo-Su 09:30-12:30, 14:30-19:30",
+        "shop=wine"
+      ],
+      "score": 60
+    },
+    {
+      "id": "node:3073976210",
+      "name": "Obre Platz",
+      "lat": 45.7793864,
+      "lon": 7.8251758,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Obre Platz",
+        "shop=wine",
+        "wheelchair=no"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:3835501565",
+      "name": "TwentySeven",
+      "lat": 45.9353993,
+      "lon": 7.6305939,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "check_date=2025-08-21",
+        "name=TwentySeven",
+        "restaurant=yes",
+        "shop=wine",
+        "wheelchair=no"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:5492241223",
+      "name": "Les Crêtes",
+      "lat": 45.7046205,
+      "lon": 7.2475542,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Les Crêtes",
+        "name:fr=Les Crêtes",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:7742125361",
+      "name": "La Cave de Cogne",
+      "lat": 45.6084283,
+      "lon": 7.3559352,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=La Cave de Cogne",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:9483113175",
+      "name": "Lo Triolet",
+      "lat": 45.6966874,
+      "lon": 7.1857362,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Lo Triolet",
+        "shop=wine"
+      ],
+      "score": 55
+    }
+  ]
+}

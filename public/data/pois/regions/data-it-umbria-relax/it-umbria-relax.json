@@ -1,0 +1,54 @@
+{
+  "region_id": "it-umbria-relax",
+  "country": "IT",
+  "label_it": "Umbria • relax",
+  "generated_at": "2026-01-14T19:44:05.701Z",
+  "places": [
+    {
+      "id": "way:1415281999",
+      "name": "Terme di Ramici",
+      "lat": 42.5605633,
+      "lon": 12.2702135,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "bath:open_air=yes",
+        "bath:sand_bath=no",
+        "bath:type=thermal",
+        "building=no",
+        "charge=3.5 EUR",
+        "fee=yes",
+        "name=Terme di Ramici",
+        "opening_hours=Jul-Sep Mo-Su 09:30-19:00"
+      ],
+      "score": 160
+    },
+    {
+      "id": "relation:14060814",
+      "name": "Hotel Bramante Todi",
+      "lat": 42.7776727,
+      "lon": 12.3986801,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Todi",
+        "addr:housenumber=48",
+        "addr:postcode=06059",
+        "addr:street=Circonvallazione Orvietana",
+        "contact:email=bramante@hotelbramante.it",
+        "mobile=+39 338 4195703",
+        "name=Hotel Bramante Todi",
+        "phone=+39 075 894 8381",
+        "restaurant=yes",
+        "spa=yes",
+        "stars=4",
+        "swimming_pool=yes",
+        "tourism=hotel",
+        "type=multipolygon",
+        "website=https://www.hotelbramante.it/"
+      ],
+      "score": 13
+    }
+  ]
+}

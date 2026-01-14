@@ -1,0 +1,120 @@
+{
+  "region_id": "it-sardegna-relax",
+  "country": "IT",
+  "label_it": "Sardegna • relax",
+  "generated_at": "2026-01-14T19:44:19.445Z",
+  "places": [
+    {
+      "id": "way:422265952",
+      "name": "Terme Is Bangius",
+      "lat": 39.9962201,
+      "lon": 8.8054143,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Fordongianus",
+        "addr:place=Is Bangius",
+        "addr:postcode=09083",
+        "amenity=spa",
+        "building=yes",
+        "email=info@forumtraiani.it",
+        "name=Terme Is Bangius",
+        "natural=hot_spring",
+        "nohousenumber=yes",
+        "opening_hours=09:30-12:30,14:30-17:00",
+        "operator=Soc. Coop. Forum Traiani",
+        "payment:cash=yes",
+        "payment:credit_cards=no",
+        "payment:debit_cards=no",
+        "phone=+39 347 6214 3581",
+        "website=https://www.forumtraiani.it/"
+      ],
+      "score": 138
+    },
+    {
+      "id": "node:12208980087",
+      "name": "Terme Libere",
+      "lat": 40.4246968,
+      "lon": 9.110824,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "name=Terme Libere",
+        "natural=hot_spring"
+      ],
+      "score": 120
+    },
+    {
+      "id": "way:520329467",
+      "name": "Vasca termale",
+      "lat": 40.4233733,
+      "lon": 9.1213901,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "bath:type=hot_spring",
+        "building=yes",
+        "name=Vasca termale",
+        "natural=hot_spring"
+      ],
+      "score": 120
+    },
+    {
+      "id": "node:6512475923",
+      "name": "Fordongianus hot spring",
+      "lat": 39.9973827,
+      "lon": 8.808025,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "name=Fordongianus hot spring",
+        "natural=hot_spring"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:1098884274",
+      "name": "Spa",
+      "lat": 40.6920655,
+      "lon": 9.7372284,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "building=yes",
+        "leisure=spa",
+        "name=Spa"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:11693958439",
+      "name": "Bagni pubblici - Mercato settimanale",
+      "lat": 39.0681584,
+      "lon": 9.0153665,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Sarroch",
+        "addr:postcode=09018",
+        "addr:street=Via al Mare",
+        "amenity=public_bath",
+        "fee=yes",
+        "name=Bagni pubblici - Mercato settimanale"
+      ],
+      "score": 70
+    },
+    {
+      "id": "node:11693958440",
+      "name": "Bagni pubblici - Piazza Sa Ruxi",
+      "lat": 39.0661188,
+      "lon": 9.0113744,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "name=Bagni pubblici - Piazza Sa Ruxi"
+      ],
+      "score": 70
+    }
+  ]
+}

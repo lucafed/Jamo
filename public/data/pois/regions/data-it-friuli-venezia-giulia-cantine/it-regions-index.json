@@ -1,0 +1,221 @@
+{
+  "country": "IT",
+  "generated_at": "2026-01-14T18:20:20.210Z",
+  "items": [
+    {
+      "id": "it-piemonte",
+      "name": "Piemonte",
+      "iso3166_2": "IT-21",
+      "bbox": {
+        "minLat": 44.0597158,
+        "minLon": 6.6272658,
+        "maxLat": 46.4642213,
+        "maxLon": 9.2142404
+      }
+    },
+    {
+      "id": "it-valle-d-aosta",
+      "name": "Valle d'Aosta",
+      "iso3166_2": "IT-23",
+      "bbox": {
+        "minLat": 45.4669522,
+        "minLon": 6.8015322,
+        "maxLat": 45.9876787,
+        "maxLon": 7.939504
+      }
+    },
+    {
+      "id": "it-lombardia",
+      "name": "Lombardia",
+      "iso3166_2": "IT-25",
+      "bbox": {
+        "minLat": 44.6799091,
+        "minLon": 8.4978518,
+        "maxLat": 46.6353523,
+        "maxLon": 11.4276477
+      }
+    },
+    {
+      "id": "it-trentino-alto-adige",
+      "name": "Trentino-Alto Adige/Südtirol",
+      "iso3166_2": "IT-32",
+      "bbox": {
+        "minLat": 45.6728669,
+        "minLon": 10.3817965,
+        "maxLat": 47.0921485,
+        "maxLon": 12.4779748
+      }
+    },
+    {
+      "id": "it-veneto",
+      "name": "Veneto",
+      "iso3166_2": "IT-34",
+      "bbox": {
+        "minLat": 44.7924256,
+        "minLon": 10.6231032,
+        "maxLat": 46.6806148,
+        "maxLon": 13.1021703
+      }
+    },
+    {
+      "id": "it-friuli-venezia-giulia",
+      "name": "Friuli-Venezia Giulia",
+      "iso3166_2": "IT-36",
+      "bbox": {
+        "minLat": 45.5808987,
+        "minLon": 12.3213811,
+        "maxLat": 46.6479539,
+        "maxLon": 13.9186553
+      }
+    },
+    {
+      "id": "it-liguria",
+      "name": "Liguria",
+      "iso3166_2": "IT-42",
+      "bbox": {
+        "minLat": 43.7756906,
+        "minLon": 7.4951614,
+        "maxLat": 44.6764424,
+        "maxLon": 10.0715114
+      }
+    },
+    {
+      "id": "it-emilia-romagna",
+      "name": "Emilia-Romagna",
+      "iso3166_2": "IT-45",
+      "bbox": {
+        "minLat": 43.7308081,
+        "minLon": 9.1979117,
+        "maxLat": 45.1395001,
+        "maxLon": 12.7559006
+      }
+    },
+    {
+      "id": "it-toscana",
+      "name": "Toscana",
+      "iso3166_2": "IT-52",
+      "bbox": null
+    },
+    {
+      "id": "it-umbria",
+      "name": "Umbria",
+      "iso3166_2": "IT-55",
+      "bbox": {
+        "minLat": 42.3647769,
+        "minLon": 11.8920337,
+        "maxLat": 43.6173443,
+        "maxLon": 13.2641895
+      }
+    },
+    {
+      "id": "it-marche",
+      "name": "Marche",
+      "iso3166_2": "IT-57",
+      "bbox": {
+        "minLat": 42.6871561,
+        "minLon": 12.1854536,
+        "maxLat": 43.9715999,
+        "maxLon": 13.9163435
+      }
+    },
+    {
+      "id": "it-lazio",
+      "name": "Lazio",
+      "iso3166_2": "IT-62",
+      "bbox": {
+        "minLat": 40.7849283,
+        "minLon": 11.4491695,
+        "maxLat": 42.8387328,
+        "maxLon": 14.0276445
+      }
+    },
+    {
+      "id": "it-abruzzo",
+      "name": "Abruzzo",
+      "iso3166_2": "IT-65",
+      "bbox": {
+        "minLat": 41.6820382,
+        "minLon": 13.0189718,
+        "maxLat": 42.8950814,
+        "maxLon": 14.7838895
+      }
+    },
+    {
+      "id": "it-molise",
+      "name": "Molise",
+      "iso3166_2": "IT-67",
+      "bbox": {
+        "minLat": 41.3640631,
+        "minLon": 13.9410911,
+        "maxLat": 42.0702848,
+        "maxLon": 15.1616821
+      }
+    },
+    {
+      "id": "it-campania",
+      "name": "Campania",
+      "iso3166_2": "IT-72",
+      "bbox": {
+        "minLat": 39.9905158,
+        "minLon": 13.7623799,
+        "maxLat": 41.5080786,
+        "maxLon": 15.8064468
+      }
+    },
+    {
+      "id": "it-puglia",
+      "name": "Puglia",
+      "iso3166_2": "IT-75",
+      "bbox": {
+        "minLat": 39.7895944,
+        "minLon": 14.9341858,
+        "maxLat": 42.2264805,
+        "maxLon": 18.5205121
+      }
+    },
+    {
+      "id": "it-basilicata",
+      "name": "Basilicata",
+      "iso3166_2": "IT-77",
+      "bbox": {
+        "minLat": 39.8958079,
+        "minLon": 15.3349712,
+        "maxLat": 41.1395383,
+        "maxLon": 16.8670356
+      }
+    },
+    {
+      "id": "it-calabria",
+      "name": "Calabria",
+      "iso3166_2": "IT-78",
+      "bbox": {
+        "minLat": 37.9157947,
+        "minLon": 15.6298439,
+        "maxLat": 40.1449242,
+        "maxLon": 17.2064253
+      }
+    },
+    {
+      "id": "it-sicilia",
+      "name": "Sicilia",
+      "iso3166_2": "IT-82",
+      "bbox": {
+        "minLat": 35.4929521,
+        "minLon": 11.9258571,
+        "maxLat": 38.8176638,
+        "maxLon": 15.6530796
+      }
+    },
+    {
+      "id": "it-sardegna",
+      "name": "Sardegna",
+      "iso3166_2": "IT-88",
+      "bbox": {
+        "minLat": 38.8590846,
+        "minLon": 8.1308446,
+        "maxLat": 41.3131122,
+        "maxLon": 9.8293196
+      }
+    }
+  ]
+}

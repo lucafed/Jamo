@@ -1,0 +1,239 @@
+{
+  "region_id": "it-veneto-relax",
+  "country": "IT",
+  "label_it": "Veneto • relax",
+  "generated_at": "2026-01-14T19:43:59.990Z",
+  "places": [
+    {
+      "id": "node:5300784442",
+      "name": "Terme della Valpolicella",
+      "lat": 45.5047914,
+      "lon": 10.8434978,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "access=customers",
+        "amenity=public_bath",
+        "bath:type=thermal",
+        "name=Terme della Valpolicella"
+      ],
+      "score": 155
+    },
+    {
+      "id": "way:164757719",
+      "name": "Bibione Thermae",
+      "lat": 45.6335435,
+      "lon": 13.0409073,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=3",
+        "addr:street=Via delle Colonie",
+        "amenity=public_bath",
+        "bath:type=thermal",
+        "name=Bibione Thermae",
+        "opening_hours=Mo-Sa 08:00-12:30, 14:30-18:00; Su 08:00-12:30, 14:30-17:30",
+        "phone=+39 0431 441111",
+        "toilets:wheelchair=yes",
+        "unisex=yes",
+        "website=https://www.bibioneterme.it/eng/",
+        "wheelchair=yes"
+      ],
+      "score": 133
+    },
+    {
+      "id": "way:423970552",
+      "name": "Aquardens",
+      "lat": 45.5065656,
+      "lon": 10.82691,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "addr:country=IT",
+        "addr:housenumber=63",
+        "addr:street=Via Valpolicella",
+        "amenity=public_bath",
+        "bath:type=thermal",
+        "contact:facebook=https://www.facebook.com/Aquardens",
+        "name=Aquardens",
+        "phone=+39 045 67067",
+        "ref:vatin=IT03784080230",
+        "website=https://www.aquardens.it/"
+      ],
+      "score": 128
+    },
+    {
+      "id": "node:925495814",
+      "name": "Sorgente termale Val Calaona",
+      "lat": 45.2661968,
+      "lon": 11.642543,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "name=Sorgente termale Val Calaona",
+        "natural=hot_spring"
+      ],
+      "score": 120
+    },
+    {
+      "id": "way:364867534",
+      "name": "Corte Spa Water & Wellness",
+      "lat": 46.4301769,
+      "lon": 12.2339668,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "bath:type=spa",
+        "contact:phone=+39 0435 700216",
+        "fee=yes",
+        "name=Corte Spa Water & Wellness",
+        "reservation=required",
+        "website=https://cortespa.it/"
+      ],
+      "score": 103
+    },
+    {
+      "id": "way:1028341832",
+      "name": "Bagno",
+      "lat": 45.2871693,
+      "lon": 11.6472119,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "description=Antica vasca termale",
+        "name=Bagno",
+        "natural=hot_spring"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:1218457991",
+      "name": "Bagneto",
+      "lat": 45.2953708,
+      "lon": 11.644556,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "name=Bagneto",
+        "natural=hot_spring"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:311389293",
+      "name": "Albergo Ristorante Da Carla Failela",
+      "lat": 45.7554245,
+      "lon": 11.216721,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Valli del Pasubio",
+        "addr:housenumber=26",
+        "addr:postcode=36030",
+        "addr:street=Via Piazza Alta",
+        "contact:facebook=https://www.facebook.com/CarlaFailela/",
+        "contact:phone=+39 0445 630047",
+        "email=info@carlafailela.it",
+        "internet_access=wlan",
+        "leisure=spa",
+        "name=Albergo Ristorante Da Carla Failela",
+        "old_name=Locanda Bar da Bruno",
+        "opening_hours=Mo-Th 09:00-23:00; We off; Fr-Su 09:00-24:00",
+        "phone=+39 0445 590370",
+        "ref:vatin=IT00055070247",
+        "tourism=hotel",
+        "website=https://www.carlafailela.it/"
+      ],
+      "score": 78
+    },
+    {
+      "id": "node:2063000981",
+      "name": "New Suadis",
+      "lat": 45.4148928,
+      "lon": 10.974389,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "leisure=spa",
+        "name=New Suadis"
+      ],
+      "score": 60
+    },
+    {
+      "id": "way:60958888",
+      "name": "Palace Meggiorato",
+      "lat": 45.351566,
+      "lon": 11.7776653,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Abano Terme",
+        "addr:country=IT",
+        "addr:housenumber=49",
+        "addr:postcode=35031",
+        "addr:street=Via Pietro D'Abano",
+        "building=yes",
+        "contact:phone=+39 049 8669106",
+        "contact:website=http://www.hotelmeggiorato.it",
+        "name=Palace Meggiorato",
+        "spa=yes",
+        "tourism=hotel"
+      ],
+      "score": 13
+    },
+    {
+      "id": "way:60958903",
+      "name": "Savoia",
+      "lat": 45.3512643,
+      "lon": 11.7766084,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Abano Terme",
+        "addr:country=IT",
+        "addr:housenumber=49",
+        "addr:postcode=35031",
+        "addr:street=Via Pietro D'Abano",
+        "building=yes",
+        "contact:email=savoia@savoiaterme.it",
+        "contact:fax=+39 049 667777",
+        "contact:phone=+39 049 8231111",
+        "contact:website=http://www.savoiaterme.it/",
+        "internet_access=yes",
+        "name=Savoia",
+        "spa=yes",
+        "stars=4",
+        "tourism=hotel"
+      ],
+      "score": 13
+    },
+    {
+      "id": "way:130019228",
+      "name": "Due Torri",
+      "lat": 45.3524633,
+      "lon": 11.7784903,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Abano Terme",
+        "addr:country=IT",
+        "addr:housenumber=18",
+        "addr:postcode=35031",
+        "addr:street=Via Pietro D'Abano",
+        "building=yes",
+        "contact:email=duetorri@gbhotelsabano.it",
+        "contact:fax=+39 049 8669927",
+        "contact:phone=+39 049 8632100",
+        "contact:website=http://www.hotelduetorriabano.it/",
+        "internet_access=yes",
+        "name=Due Torri",
+        "spa=yes",
+        "stars=5",
+        "tourism=hotel",
+        "wikidata=Q111412793"
+      ],
+      "score": 13
+    }
+  ]
+}

@@ -1,0 +1,140 @@
+{
+  "region_id": "it-campania-relax",
+  "country": "IT",
+  "label_it": "Campania • relax",
+  "generated_at": "2026-01-14T19:43:25.348Z",
+  "places": [
+    {
+      "id": "way:823273950",
+      "name": "Centro Benessere",
+      "lat": 41.2228803,
+      "lon": 14.5269416,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "bath:type=thermal",
+        "building=commercial",
+        "name=Centro Benessere"
+      ],
+      "score": 135
+    },
+    {
+      "id": "node:1560220010",
+      "name": "TERME VULPACCHIO",
+      "lat": 40.6480955,
+      "lon": 15.231017,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "name=TERME VULPACCHIO",
+        "natural=hot_spring"
+      ],
+      "score": 120
+    },
+    {
+      "id": "node:11506477119",
+      "name": "Parco idrotermale Poseidon",
+      "lat": 40.7176524,
+      "lon": 13.8616248,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "name=Parco idrotermale Poseidon",
+        "natural=hot_spring"
+      ],
+      "score": 120
+    },
+    {
+      "id": "way:1323904669",
+      "name": "Fonte Delle Ninfe Nitrodi",
+      "lat": 40.7114623,
+      "lon": 13.9116712,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "bath:type=spa",
+        "contact:email=termedinitrodi@gmail.com",
+        "contact:phone=+39 081990528",
+        "contact:website=https://www.nitrodi.com/",
+        "fee=yes",
+        "location=outdoor",
+        "name=Fonte Delle Ninfe Nitrodi"
+      ],
+      "score": 83
+    },
+    {
+      "id": "node:2342080927",
+      "name": "Sorgente Sorgeto",
+      "lat": 40.6992452,
+      "lon": 13.8783851,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "drinking_water=no",
+        "intermittent=no",
+        "name=Sorgente Sorgeto",
+        "natural=hot_spring",
+        "tourism=yes"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:3062824394",
+      "name": "Stufe Antiche",
+      "lat": 40.8288677,
+      "lon": 14.1408357,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "name=Stufe Antiche",
+        "name:en=Sweating rooms",
+        "natural=hot_spring"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:5039903664",
+      "name": "Bocca Grande",
+      "lat": 40.8271455,
+      "lon": 14.1419596,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "name=Bocca Grande",
+        "natural=hot_spring"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:9530954907",
+      "name": "acqua solfurea",
+      "lat": 41.1249126,
+      "lon": 13.8898674,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "name=acqua solfurea",
+        "natural=hot_spring"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:245594801",
+      "name": "Negombo",
+      "lat": 40.7567539,
+      "lon": 13.8786657,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "bath:open_air=yes",
+        "bath:type=spa",
+        "contact:website=https://www.negombo.it/",
+        "name=Negombo"
+      ],
+      "score": 78
+    }
+  ]
+}

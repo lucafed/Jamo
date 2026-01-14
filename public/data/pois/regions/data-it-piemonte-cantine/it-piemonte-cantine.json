@@ -1,0 +1,6781 @@
+{
+  "region_id": "it-piemonte-cantine",
+  "country": "IT",
+  "label_it": "Piemonte • cantine",
+  "generated_at": "2026-01-14T19:43:26.969Z",
+  "places": [
+    {
+      "id": "way:151170437",
+      "name": "Enoteca Noi",
+      "lat": 44.8320796,
+      "lon": 7.3051158,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Bricherasio",
+        "addr:country=IT",
+        "addr:housenumber=2",
+        "addr:postcode=10060",
+        "addr:street=Via Vittorio Emanuele II",
+        "brand=Vignaioli Piemontesi",
+        "building=yes",
+        "craft=winery",
+        "name=Enoteca Noi",
+        "phone=+39 0121 599052",
+        "shop=wine",
+        "website=https://www.vignaiolipiemontesi.it/"
+      ],
+      "score": 168
+    },
+    {
+      "id": "node:4523014109",
+      "name": "Cantina del Glicine",
+      "lat": 44.7276255,
+      "lon": 8.1157267,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Neive",
+        "addr:housenumber=1",
+        "addr:postcode=12052",
+        "addr:street=Via Giulio Cesare",
+        "contact:mobile=+39 335 8371786",
+        "contact:phone=+39 0173 67215",
+        "craft=winery",
+        "description=La cantina risale al 1582, è fresca e profonda, costruita a mattoni pieni, soffitto a volte e pavimento in pietra, si estende sotto la casa e il giardino.",
+        "email=info@cantinadelglicine.com",
+        "name=Cantina del Glicine",
+        "shop=wine"
+      ],
+      "score": 160
+    },
+    {
+      "id": "node:7323613773",
+      "name": "Vini Tomatis Dario e figli",
+      "lat": 44.5405794,
+      "lon": 7.4792321,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Ceretto",
+        "addr:housenumber=15",
+        "addr:postcode=12022",
+        "addr:street=Strada San Martino",
+        "craft=winery",
+        "description=Vini tipici locali e succhi di frutta",
+        "name=Vini Tomatis Dario e figli",
+        "phone=+39 339 5489745",
+        "shop=wine"
+      ],
+      "score": 135
+    },
+    {
+      "id": "node:10206881764",
+      "name": "Il Nonnotto",
+      "lat": 44.8440072,
+      "lon": 8.4359276,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Oviglio",
+        "addr:housenumber=129",
+        "addr:postcode=15026",
+        "addr:street=Regione Boschi",
+        "contact:email=ilnonnotto@gmail.com",
+        "contact:facebook=ilnonnotto",
+        "contact:instagram=il_nonnotto",
+        "contact:mobile=+39 348 5938598",
+        "craft=winery",
+        "name=Il Nonnotto",
+        "official_name=Azienda agricola Il Nonnotto",
+        "operator=Balbiano Cristina",
+        "product=wine",
+        "ref:vatin=IT03787570138",
+        "shop=wine"
+      ],
+      "score": 135
+    },
+    {
+      "id": "node:4078743230",
+      "name": "Cantina sociale Rivalta Borimda",
+      "lat": 44.7087324,
+      "lon": 8.549882,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Rivalta Bormida",
+        "addr:housenumber=33",
+        "addr:postcode=15010",
+        "addr:street=Via Guglielmo Oberdan",
+        "craft=winery",
+        "email=info@cantinarivalta.it",
+        "name=Cantina sociale Rivalta Borimda",
+        "opening_hours=Mo-Su 08:00-12:00,14:00-18:00",
+        "phone=+39 0144 372149",
+        "website=https://cantinarivalta.it/"
+      ],
+      "score": 118
+    },
+    {
+      "id": "node:5672194304",
+      "name": "Enoteca Regionale",
+      "lat": 44.6111622,
+      "lon": 7.9438557,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Enoteca Regionale",
+        "opening_hours=Mo-Sa 10:00-18:30",
+        "website=https://www.enotecadelbarolo.it/",
+        "wheelchair=no"
+      ],
+      "score": 118
+    },
+    {
+      "id": "node:11064692706",
+      "name": "Cantina Montaribaldi",
+      "lat": 44.7044952,
+      "lon": 8.076505,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Barbaresco",
+        "addr:housenumber=12",
+        "addr:postcode=12050",
+        "addr:street=Strada Nicolini Alto",
+        "craft=winery",
+        "name=Cantina Montaribaldi",
+        "opening_hours=Mo-Su 09:00-18:00",
+        "phone=+39 0173 638220",
+        "website=https://www.montaribaldi.com/",
+        "wikidata=Q133502554"
+      ],
+      "score": 118
+    },
+    {
+      "id": "node:5723108327",
+      "name": "Cantina del Nebbiolo",
+      "lat": 44.7601912,
+      "lon": 8.0090133,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Vezza d'Alba",
+        "addr:housenumber=17",
+        "addr:postcode=12040",
+        "addr:street=Via Torino",
+        "craft=winery",
+        "name=Cantina del Nebbiolo",
+        "phone=+39 0173 65040",
+        "website=https://cantinadelnebbiolo.com/"
+      ],
+      "score": 113
+    },
+    {
+      "id": "node:7761391895",
+      "name": "La Guardia - Cantina",
+      "lat": 44.6728826,
+      "lon": 8.558235,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=La Guardia - Cantina",
+        "operator=La Guardia",
+        "phone=+39 0144 73076",
+        "website=https://www.laguardiavilladelfini.com/"
+      ],
+      "score": 113
+    },
+    {
+      "id": "node:11074064134",
+      "name": "Cantina Favaro",
+      "lat": 45.4387908,
+      "lon": 8.0193566,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Piverone",
+        "addr:housenumber=1bis",
+        "addr:postcode=10010",
+        "addr:street=Strada Chiusure",
+        "craft=winery",
+        "name=Cantina Favaro",
+        "phone=+39 0125 72606",
+        "phone:mobile=+39 347 4257790",
+        "website=https://www.cantinafavaro.it/"
+      ],
+      "score": 113
+    },
+    {
+      "id": "node:12083554073",
+      "name": "Gianni Ramello Winery",
+      "lat": 44.6358192,
+      "lon": 7.9323266,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=La Morra",
+        "addr:housenumber=19/a",
+        "addr:postcode=12064",
+        "addr:street=Via Vassalli",
+        "craft=winery",
+        "name=Gianni Ramello Winery",
+        "phone=+39 347 2224995",
+        "website=http://www.gianniramello.it/#eluidadc7751d"
+      ],
+      "score": 113
+    },
+    {
+      "id": "way:442203612",
+      "name": "Patrone Winery",
+      "lat": 44.5856644,
+      "lon": 8.1684703,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Cortemilia",
+        "addr:country=IT",
+        "addr:housenumber=15",
+        "addr:street=Strada Viarascio",
+        "craft=winery",
+        "name=Patrone Winery",
+        "website=http://www.patronewinery.it/"
+      ],
+      "score": 113
+    },
+    {
+      "id": "way:1193015539",
+      "name": "Cantina della Serra",
+      "lat": 45.4454312,
+      "lon": 8.0072554,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=yes",
+        "contact:city=Piverone",
+        "contact:housenumber=12",
+        "contact:phone=+39 0125 72166",
+        "contact:postcode=10010",
+        "contact:street=Strada Nuova",
+        "contact:website=https://www.cantinadellaserra.com/",
+        "craft=winery",
+        "name=Cantina della Serra"
+      ],
+      "score": 113
+    },
+    {
+      "id": "node:4492746207",
+      "name": "Cantina Alice Bel Colle",
+      "lat": 44.7250069,
+      "lon": 8.4392832,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Alice Bel Colle (Stazione)",
+        "addr:housenumber=9",
+        "addr:postcode=15010",
+        "addr:street=Regione Stazione",
+        "craft=winery",
+        "name=Cantina Alice Bel Colle",
+        "opening_hours=9:00-12:30; 14:30-18:30"
+      ],
+      "score": 110
+    },
+    {
+      "id": "node:4492631704",
+      "name": "Cantina sociale \"Tre secoli\" Sca - Punto vendita",
+      "lat": 44.7328577,
+      "lon": 8.4687221,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Ricaldone",
+        "addr:housenumber=2",
+        "addr:postcode=15010",
+        "addr:street=Via Roma",
+        "craft=winery",
+        "name=Cantina sociale \"Tre secoli\" Sca - Punto vendita",
+        "phone=+39 0144 74119"
+      ],
+      "score": 105
+    },
+    {
+      "id": "node:4492689178",
+      "name": "Cantina sociale \"Tre Secoli\" (vini rossi)",
+      "lat": 44.7326465,
+      "lon": 8.469663,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Ricaldone",
+        "addr:postcode=15010",
+        "addr:street=Via Roma",
+        "craft=winery",
+        "name=Cantina sociale \"Tre Secoli\" (vini rossi)"
+      ],
+      "score": 105
+    },
+    {
+      "id": "node:4492691749",
+      "name": "Cantina sociale \"Tre Secoli\" (vini bianchi)",
+      "lat": 44.7324618,
+      "lon": 8.4670257,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Cantina sociale \"Tre Secoli\" (vini bianchi)"
+      ],
+      "score": 105
+    },
+    {
+      "id": "node:4492749089",
+      "name": "Vecchia Cantina sociale di Alice Bel Colle e Sessame d'Asti",
+      "lat": 44.7239739,
+      "lon": 8.4400557,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Alice Bel Colle",
+        "addr:housenumber=11",
+        "addr:postcode=15010",
+        "addr:street=Regione Stazione",
+        "craft=winery",
+        "name=Vecchia Cantina sociale di Alice Bel Colle e Sessame d'Asti"
+      ],
+      "score": 105
+    },
+    {
+      "id": "node:5419620121",
+      "name": "Cantina Maccagno",
+      "lat": 44.7995974,
+      "lon": 7.9986019,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Canale",
+        "addr:housenumber=29",
+        "addr:postcode=12043",
+        "addr:street=Via Bonora",
+        "craft=winery",
+        "name=Cantina Maccagno",
+        "operator=Livio e Corrado Maccagno",
+        "phone=+39 0173 979438"
+      ],
+      "score": 105
+    },
+    {
+      "id": "node:5689173265",
+      "name": "Cantina Balbiano Merchiorre",
+      "lat": 45.0362112,
+      "lon": 7.8670713,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Andezeno",
+        "addr:housenumber=1",
+        "addr:postcode=10020",
+        "addr:street=Corso Vittorio Emanuele II",
+        "craft=winery",
+        "name=Cantina Balbiano Merchiorre"
+      ],
+      "score": 105
+    },
+    {
+      "id": "node:8209679294",
+      "name": "Cantina Fontechiara",
+      "lat": 45.6825912,
+      "lon": 8.5061438,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Cantina Fontechiara"
+      ],
+      "score": 105
+    },
+    {
+      "id": "node:12584535259",
+      "name": "Cantina Terre Sparse Balmetto",
+      "lat": 45.5249841,
+      "lon": 7.8567961,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Borgofranco d'Ivrea",
+        "addr:housenumber=145",
+        "addr:postcode=10013",
+        "addr:street=Via del Buonumore",
+        "contact:facebook=https://www.facebook.com/balmettoterresparse/",
+        "craft=winery",
+        "mobile=+39 349 620 8692",
+        "name=Cantina Terre Sparse Balmetto"
+      ],
+      "score": 105
+    },
+    {
+      "id": "way:58741275",
+      "name": "Cantina Sociale",
+      "lat": 44.8243016,
+      "lon": 8.231374,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=yes",
+        "craft=winery",
+        "name=Cantina Sociale"
+      ],
+      "score": 105
+    },
+    {
+      "id": "way:197176007",
+      "name": "Cantina Sociale di VIgnale",
+      "lat": 45.0099847,
+      "lon": 8.4017316,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=yes",
+        "craft=winery",
+        "name=Cantina Sociale di VIgnale"
+      ],
+      "score": 105
+    },
+    {
+      "id": "way:257692420",
+      "name": "Cantina Clavesana - Soc. Coop. Agricola",
+      "lat": 44.483291,
+      "lon": 7.8996092,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Clavesana",
+        "addr:housenumber=19",
+        "addr:postcode=12060",
+        "addr:street=Via Madonna della Neve",
+        "building=yes",
+        "craft=winery",
+        "name=Cantina Clavesana - Soc. Coop. Agricola",
+        "phone=+39 0173 790451"
+      ],
+      "score": 105
+    },
+    {
+      "id": "way:455388202",
+      "name": "Cantina Sociale Scurzolengo",
+      "lat": 44.9767801,
+      "lon": 8.2816363,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=yes",
+        "craft=winery",
+        "name=Cantina Sociale Scurzolengo"
+      ],
+      "score": 105
+    },
+    {
+      "id": "way:965121167",
+      "name": "Ex Cantina Sociale di Monale",
+      "lat": 44.9341582,
+      "lon": 8.0764509,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "disused:building=yes",
+        "name=Ex Cantina Sociale di Monale"
+      ],
+      "score": 105
+    },
+    {
+      "id": "way:1459864767",
+      "name": "Cantina sociale Vinchio - Vaglio Serra",
+      "lat": 44.8066383,
+      "lon": 8.3298519,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=yes",
+        "craft=winery",
+        "name=Cantina sociale Vinchio - Vaglio Serra"
+      ],
+      "score": 105
+    },
+    {
+      "id": "node:2617437912",
+      "name": "Enoteca Regionale di Ovada e del Monferrato",
+      "lat": 44.6376791,
+      "lon": 8.6458479,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Ovada",
+        "addr:housenumber=69",
+        "addr:postcode=15076",
+        "addr:street=Via Torino",
+        "email=enotecaregionaleovada@gmail.com",
+        "name=Enoteca Regionale di Ovada e del Monferrato",
+        "opening_hours=Tu-Sa 10:00-12:00,16:30-19:30; Su \"by appointment\"; Mo off",
+        "phone=+39 0143 346988",
+        "shop=wine",
+        "website=https://enotecaregionaleovada.com/"
+      ],
+      "score": 93
+    },
+    {
+      "id": "node:3435171563",
+      "name": "Azienda Vitivinicola \"Mossio Fratelli\"",
+      "lat": 44.6391234,
+      "lon": 8.0529402,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Rodello",
+        "addr:housenumber=22",
+        "addr:postcode=12050",
+        "addr:street=Via Montà",
+        "check_date=2025-06-19",
+        "craft=winery",
+        "name=Azienda Vitivinicola \"Mossio Fratelli\"",
+        "opening_hours=Mo-Su 08:00-18:00",
+        "phone=+390173617149",
+        "website=http://mossio.com/"
+      ],
+      "score": 93
+    },
+    {
+      "id": "node:3779415959",
+      "name": "Enoteca Parola",
+      "lat": 45.0693591,
+      "lon": 7.6859325,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Torino",
+        "addr:country=IT",
+        "addr:housenumber=7",
+        "addr:postcode=10123",
+        "addr:street=Via Cesare Battisti",
+        "email=info@parolavini.it",
+        "name=Enoteca Parola",
+        "opening_hours=Mo-Fr 11:00-23:00; Sa 12:00-22:00; Su off",
+        "phone=+39 0115174162",
+        "shop=wine",
+        "website=http://www.parolavini.it/"
+      ],
+      "score": 93
+    },
+    {
+      "id": "node:4736141317",
+      "name": "Enoteca Giardino di Vino",
+      "lat": 45.0471454,
+      "lon": 7.6296128,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Torino",
+        "addr:housenumber=113b",
+        "addr:postcode=10137",
+        "addr:street=Via Guido Reni",
+        "description=Vini sfusi e in bottiglia, Birra artigianale, Distillati, Grappe e Liquori, Dolci",
+        "email=info@giardinodivino.com",
+        "name=Enoteca Giardino di Vino",
+        "opening_hours=Tu-Sa 09:00-13:00,15:30-19:30",
+        "payment:american_express=yes",
+        "payment:cards=yes",
+        "payment:cash=yes",
+        "payment:coins=yes",
+        "payment:contactless=yes",
+        "payment:credit_cards=yes",
+        "payment:debit_cards=yes",
+        "payment:electronic_purses=yes",
+        "payment:maestro=yes",
+        "payment:mastercard=yes",
+        "payment:notes=yes",
+        "payment:visa=yes",
+        "payment:visa_debit=yes",
+        "payment:visa_electron=yes",
+        "shop=wine",
+        "website=https://enoteca.torino.it/"
+      ],
+      "score": 93
+    },
+    {
+      "id": "node:5406720720",
+      "name": "Enoteca Regionale del Monferrato",
+      "lat": 45.1374657,
+      "lon": 8.4467168,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Casale Monferrato",
+        "addr:postcode=15033",
+        "check_date=2024-11-30",
+        "contact:facebook=https://www.facebook.com/enotecaregionalemonferrato/",
+        "contact:instagram=https://www.instagram.com/enotecaregionalemonferrato/",
+        "email=enotecaregionalemonferrato@gmail.com",
+        "mobile=+39 351 512 2381",
+        "name=Enoteca Regionale del Monferrato",
+        "opening_hours=We,Th 17:00-23:00; Fr 17:00-02:00; Sa 11:00-02:00; Su 11:00-23:00",
+        "shop=wine",
+        "website=https://enotecadelmonferrato.it/"
+      ],
+      "score": 93
+    },
+    {
+      "id": "node:8378564544",
+      "name": "Azienda Vinicola Rocca Gabriele",
+      "lat": 45.1001933,
+      "lon": 8.0008758,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "email=rocca.gabriele@gmail.com",
+        "name=Azienda Vinicola Rocca Gabriele",
+        "opening_hours=Mo-Su 08:00-20:00",
+        "payment:cash=yes",
+        "phone=+39 334 6293329",
+        "website=http://www.rocca-vini.com/",
+        "wheelchair=yes"
+      ],
+      "score": 93
+    },
+    {
+      "id": "node:8907822815",
+      "name": "Azienda Agricola Abrigo Fratelli",
+      "lat": 44.6371077,
+      "lon": 8.022773,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Diano d'Alba",
+        "addr:housenumber=2",
+        "addr:postcode=12055",
+        "addr:street=Via Moglia Gerlotto",
+        "craft=winery",
+        "email=info@abrigofratelli.it",
+        "name=Azienda Agricola Abrigo Fratelli",
+        "opening_hours=Mo-Su 09:00-21:00",
+        "phone=+39 0173 69104",
+        "website=https://www.abrigofratelli.it/",
+        "wheelchair=yes"
+      ],
+      "score": 93
+    },
+    {
+      "id": "node:9232318439",
+      "name": "Enoteca Caffetteria Montecucco",
+      "lat": 45.0734049,
+      "lon": 7.6345402,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Torino",
+        "addr:housenumber=22b",
+        "addr:postcode=10139",
+        "addr:street=Corso Monte Cucco",
+        "name=Enoteca Caffetteria Montecucco",
+        "opening_hours=Mo-Sa 07:00-20:30",
+        "payment:cash=yes",
+        "payment:credit_cards=yes",
+        "payment:debit_cards=yes",
+        "payment:satispay=yes",
+        "phone=+39 011 727553",
+        "shop=wine",
+        "website=http://enotecamontecucco.com/"
+      ],
+      "score": 93
+    },
+    {
+      "id": "node:9386974956",
+      "name": "Casalone",
+      "lat": 44.999747,
+      "lon": 8.4839855,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "contact:city=Lu e Cuccaro Monferrato",
+        "contact:housenumber=100",
+        "contact:postcode=15037",
+        "contact:street=Via Guglielmo Marconi",
+        "craft=winery",
+        "email=info@casalone.com",
+        "name=Casalone",
+        "opening_hours=Mo-Sa 09:00-13:00,15:00-17:30",
+        "phone=+39 0131 741280",
+        "website=https://www.casalone.com/"
+      ],
+      "score": 93
+    },
+    {
+      "id": "node:11750739404",
+      "name": "Banca del Vino",
+      "lat": 44.6821682,
+      "lon": 7.8937771,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Bra",
+        "addr:housenumber=13",
+        "addr:postcode=12042",
+        "addr:street=Piazza Vittorio Emanuele II",
+        "craft=winery",
+        "level=-1",
+        "name=Banca del Vino",
+        "opening_hours=Mo-Sa 10:00-19:00",
+        "phone=+39 0172 458418",
+        "website=https://bancadelvino.it",
+        "wheelchair=yes"
+      ],
+      "score": 93
+    },
+    {
+      "id": "node:11878617465",
+      "name": "Enoteca Comunale Söri di Diano d'Alba",
+      "lat": 44.6505732,
+      "lon": 8.0271694,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Diano D'Alba",
+        "addr:housenumber=11",
+        "addr:postcode=12055",
+        "addr:street=Via Umberto Primo",
+        "contact:email=info@soridiano.it",
+        "contact:facebook=cantinacomunalesoridiano",
+        "contact:phone=+39 0173 468022",
+        "contact:twitter=SoriDianoDOCG",
+        "level=-1",
+        "name=Enoteca Comunale Söri di Diano d'Alba",
+        "opening_hours=Th-Fr 10:00-13:00,14:00-19:00; Sa-Su 10:00-19:00; Tu-We closed; PH closed",
+        "shop=wine",
+        "website=https://www.soridiano.it/",
+        "wheelchair=limited"
+      ],
+      "score": 93
+    },
+    {
+      "id": "node:11947705525",
+      "name": "Cantine Fontanafredda",
+      "lat": 44.6383107,
+      "lon": 7.9871137,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Serralunga d'Alba",
+        "addr:housenumber=15",
+        "addr:postcode=12050",
+        "addr:street=Via Alba",
+        "alt_name=Tenimenti di Fontanafredda",
+        "craft=winery",
+        "fixme=da modificare da punto in area",
+        "name=Cantine Fontanafredda",
+        "opening_hours=Mo-Su 10:00-19:30; PH closed",
+        "payment:debit_cards=yes",
+        "tactile_paving=no",
+        "website=https://www.fontanafredda.it",
+        "wheelchair=limited"
+      ],
+      "score": 93
+    },
+    {
+      "id": "way:382934971",
+      "name": "Az. Agricola Abrigo Fratelli",
+      "lat": 44.6371334,
+      "lon": 8.0223697,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Diano d'Alba",
+        "addr:housenumber=2",
+        "addr:postcode=12055",
+        "addr:street=Via Moglia Gerlotto",
+        "building=yes",
+        "craft=winery",
+        "name=Az. Agricola Abrigo Fratelli",
+        "opening_hours=Mo-Su 08:00-20:00",
+        "phone=+39 017369104",
+        "website=https://www.abrigofratelli.it/",
+        "wheelchair=yes"
+      ],
+      "score": 93
+    },
+    {
+      "id": "node:275603933",
+      "name": "Moccagatta",
+      "lat": 44.7181785,
+      "lon": 8.0846312,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Barbaresco",
+        "addr:housenumber=46",
+        "addr:postcode=12050",
+        "addr:street=Strada Rabajà",
+        "craft=winery",
+        "email=info@moccagatta.eu",
+        "name=Moccagatta",
+        "phone=+390173635228",
+        "website=https://www.moccagatta.eu/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:275951852",
+      "name": "Enoteca Regionale del Barbaresco",
+      "lat": 44.7252157,
+      "lon": 8.0808144,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Barbaresco",
+        "addr:housenumber=7",
+        "addr:postcode=12050",
+        "addr:street=Piazza del Municipio",
+        "name=Enoteca Regionale del Barbaresco",
+        "phone=+39 0173 635251",
+        "shop=wine",
+        "tourism=attraction",
+        "website=https://www.enotecadelbarbaresco.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:929003437",
+      "name": "Anna Maria Abbona",
+      "lat": 44.4873121,
+      "lon": 7.9570015,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "email=info@annamariabbona.it",
+        "fax=+39 0173 797228",
+        "name=Anna Maria Abbona",
+        "phone=+39 0173 797228",
+        "website=https://www.annamariabbona.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:1003009884",
+      "name": "Elio Grasso",
+      "lat": 44.5957713,
+      "lon": 7.9827481,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "contact:email=info@eliograsso.it",
+        "contact:website=https://www.eliograsso.it/",
+        "craft=winery",
+        "name=Elio Grasso"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:1634400526",
+      "name": "Cantina Produttori Nebbiolo Di Carema",
+      "lat": 45.5822141,
+      "lon": 7.8084901,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Carema",
+        "addr:housenumber=32",
+        "addr:postcode=10010",
+        "addr:street=Via Nazionale",
+        "contact:facebook=https://www.facebook.com/cantinacarema",
+        "email=cantinaproduttori@caremadoc.it",
+        "mobile=+39 340 3763332",
+        "name=Cantina Produttori Nebbiolo Di Carema",
+        "phone=+39 0125 811160",
+        "shop=wine",
+        "website=https://www.caremadoc.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:2947382127",
+      "name": "Cantina 366",
+      "lat": 45.3821503,
+      "lon": 7.7604814,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Bairo",
+        "addr:housenumber=6",
+        "addr:postcode=10010",
+        "addr:street=Via Agliè",
+        "email=info@cantina366.it",
+        "name=Cantina 366",
+        "phone=+39 335 7166345",
+        "shop=wine",
+        "website=https://www.cantina366.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:3686694344",
+      "name": "Azienda Agricola Mirù",
+      "lat": 45.5969673,
+      "lon": 8.423321,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Ghemme",
+        "addr:housenumber=24",
+        "addr:postcode=28074",
+        "addr:street=Piazza Antonelli",
+        "craft=winery",
+        "name=Azienda Agricola Mirù",
+        "operator=Arlunno Marco",
+        "phone=+39 0163 840032",
+        "website=https://www.aziendaagricolamiru.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:4133529945",
+      "name": "Tenuta di Costa Prà",
+      "lat": 44.4690685,
+      "lon": 7.9352863,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Tenuta di Costa Prà",
+        "phone=+39 0173790467",
+        "website=https://www.costapra.com/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:4278475947",
+      "name": "Enoteca Il vinoso",
+      "lat": 44.5308844,
+      "lon": 7.9472081,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=46",
+        "addr:street=Via Carlo Rovere",
+        "name=Enoteca Il vinoso",
+        "shop=wine",
+        "website=https://www.ilvinoso.com/it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:4381364165",
+      "name": "Cantina Sociale Barbera dei Sei Castelli",
+      "lat": 44.7780357,
+      "lon": 8.2775803,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Castelnuovo Calcea",
+        "addr:housenumber=41",
+        "addr:place=Regione Opessina",
+        "addr:postcode=14040",
+        "email=puntovendita@barberaseicastelli.it",
+        "name=Cantina Sociale Barbera dei Sei Castelli",
+        "phone=+39 0141 957137; +39 0141 954825",
+        "shop=wine",
+        "website=https://www.barberaseicastelli.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:4382762828",
+      "name": "Società agricola dacapo",
+      "lat": 44.8007562,
+      "lon": 8.2523455,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Società agricola dacapo",
+        "phone=+39 0141964921",
+        "website=http://www.dacapo.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:4483791468",
+      "name": "Enoteca Regionale Acqui \"Terme e Vino\"",
+      "lat": 44.6762274,
+      "lon": 8.469938,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Acqui Terme",
+        "addr:housenumber=7",
+        "addr:postcode=15011",
+        "addr:street=Piazza Levi",
+        "email=enoteca@termeevino.it",
+        "name=Enoteca Regionale Acqui \"Terme e Vino\"",
+        "phone=+39 0144 770273",
+        "shop=wine",
+        "website=https://www.termeevino.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:4487432354",
+      "name": "Cantina Vietti",
+      "lat": 44.6241083,
+      "lon": 7.9789234,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=5",
+        "addr:street=Piazza Vittorio Veneto",
+        "email=info@vietti.com",
+        "name=Cantina Vietti",
+        "phone=+39 0173 62825",
+        "shop=wine",
+        "website=https://www.vietti.com/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:4508127438",
+      "name": "Tenuta La Tenaglia",
+      "lat": 45.0923228,
+      "lon": 8.2745345,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Serralunga di Crea",
+        "addr:housenumber=5",
+        "addr:postcode=15020",
+        "addr:street=Strada Santuario di Crea",
+        "craft=winery",
+        "name=Tenuta La Tenaglia",
+        "website=https://www.tenutatenaglia.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:4789538799",
+      "name": "Azienda Agricola Ca d'Tulin",
+      "lat": 44.8232848,
+      "lon": 7.9959579,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Cisterna d'Asti",
+        "addr:housenumber=17",
+        "addr:postcode=14010",
+        "addr:street=Via Lame",
+        "contact:email=info@caditulin.it",
+        "contact:phone=+39 0141 383679",
+        "contact:website=https://www.caditulin.it/",
+        "craft=winery",
+        "name=Azienda Agricola Ca d'Tulin"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:4995327669",
+      "name": "Vicara",
+      "lat": 45.0851568,
+      "lon": 8.390895,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "contact:city=Rosignano Monferrato",
+        "contact:email=vicara@vicara.it",
+        "contact:facebook=https://www.facebook.com/vicara.vino/",
+        "contact:housenumber=5",
+        "contact:instagram=https://www.instagram.com/vicara_winery/",
+        "contact:postcode=15030",
+        "contact:street=Via Madonna delle Grazie",
+        "craft=winery",
+        "name=Vicara",
+        "website=https://www.vicara.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:5026707144",
+      "name": "Cantina Roche dei Barbari",
+      "lat": 44.7273527,
+      "lon": 8.0808735,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Barbaresco",
+        "addr:housenumber=60",
+        "addr:postcode=12050",
+        "addr:street=Via Torino",
+        "name=Cantina Roche dei Barbari",
+        "shop=wine",
+        "website=https://www.rocchedeibarbari.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:5026715036",
+      "name": "Cantina Gigi Bianco",
+      "lat": 44.727136,
+      "lon": 8.0801775,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Barbaresco",
+        "addr:housenumber=63",
+        "addr:postcode=12050",
+        "addr:street=Via Torino",
+        "name=Cantina Gigi Bianco",
+        "shop=wine",
+        "website=http://www.gigibianco.it"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:5627664505",
+      "name": "Azienda Agricola Occhetti Vittorio, Alfonso & Pierluigi",
+      "lat": 44.7752271,
+      "lon": 8.1418743,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Castagnole delle Lanze",
+        "addr:housenumber=36",
+        "addr:postcode=14054",
+        "addr:street=Via Susasco",
+        "craft=winery",
+        "name=Azienda Agricola Occhetti Vittorio, Alfonso & Pierluigi",
+        "website=https://sites.google.com/site/cascinaocchetti/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:5657046990",
+      "name": "Azienda vitivinicola La Briusa",
+      "lat": 44.8248708,
+      "lon": 8.2266079,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Azienda vitivinicola La Briusa",
+        "website=https://www.labriusawinery.com/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:6136121462",
+      "name": "Palazzo Rosso",
+      "lat": 44.6983468,
+      "lon": 7.9005466,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Pocapaglia",
+        "addr:housenumber=31",
+        "addr:place=Borgo San Martino",
+        "addr:postcode=12060",
+        "craft=winery",
+        "name=Palazzo Rosso",
+        "phone=+39 0172 425161",
+        "website=http://www.palazzorosso.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:6282895265",
+      "name": "La Badia",
+      "lat": 44.7327682,
+      "lon": 8.2112514,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=La Badia",
+        "website=http://www.labadiavini.it"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:7455147633",
+      "name": "Ristorante Enoteca La Marenda Sinoira",
+      "lat": 45.5588658,
+      "lon": 7.8427483,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Settimo Vittone",
+        "addr:housenumber=74",
+        "addr:place=Frazione Cornaley",
+        "addr:postcode=10010",
+        "amenity=restaurant",
+        "contact:facebook=https://www.facebook.com/p/La-marenda-sinoira-100063539564680/?locale=it_IT",
+        "email=lamarendasinoira@tiscali.it",
+        "name=Ristorante Enoteca La Marenda Sinoira",
+        "phone=+39 0125 658 470",
+        "shop=wine",
+        "website=https://www.lamarendasinoira.com/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:7761391894",
+      "name": "Villa Delfini",
+      "lat": 44.6700671,
+      "lon": 8.5563902,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Villa Delfini",
+        "operator=La Guardia",
+        "phone=+39 0144 73076",
+        "website=https://www.laguardiavilladelfini.com/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:7952543662",
+      "name": "Fratelli Ferrero",
+      "lat": 44.6373457,
+      "lon": 7.955323,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=La Morra",
+        "addr:housenumber=12",
+        "addr:place=Frazione Annunziata",
+        "addr:postcode=12064",
+        "craft=winery",
+        "email=baroloferrero@baroloferrero.com",
+        "name=Fratelli Ferrero",
+        "phone=+39 0173 50691",
+        "website=https://www.baroloferrero.com/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:7952543663",
+      "name": "Agricola Gian Piero Marrone",
+      "lat": 44.6375499,
+      "lon": 7.9554651,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=La Morra",
+        "addr:housenumber=13",
+        "addr:place=Frazione Annunziata",
+        "addr:postcode=12064",
+        "craft=winery",
+        "email=marrone@agricolamarrone.com",
+        "name=Agricola Gian Piero Marrone",
+        "phone=+39 0173 509288",
+        "website=https://www.agricolamarrone.com/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:8951438028",
+      "name": "Vini Fratelli Savigliano",
+      "lat": 44.6346937,
+      "lon": 8.0072174,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Valle Talloria",
+        "addr:housenumber=20",
+        "addr:postcode=12055",
+        "addr:street=Via Guido Cane",
+        "craft=winery",
+        "email=savigliano@saviglianovini.it",
+        "name=Vini Fratelli Savigliano",
+        "operator=Fratelli Savigliano",
+        "phone=+39 0173 231758",
+        "product=wine",
+        "website=https://www.saviglianovini.it/it/",
+        "wheelchair=yes"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:9197215644",
+      "name": "Merenda Con Corvi",
+      "lat": 44.8964413,
+      "lon": 7.3392369,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Pinerolo",
+        "addr:housenumber=8",
+        "addr:postcode=10064",
+        "addr:street=Via Santa Caterina",
+        "craft=winery",
+        "name=Merenda Con Corvi",
+        "website=http://www.merendaconcorvi.com/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:9717591767",
+      "name": "Montaribaldi",
+      "lat": 44.7045109,
+      "lon": 8.0765018,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Barbaresco",
+        "addr:housenumber=12",
+        "addr:postcode=12050",
+        "addr:street=Strada Nicolini Alto",
+        "contact:email=info@montaribaldi.com",
+        "contact:fax=+39 0173 638963",
+        "contact:phone=+39 0173 638220",
+        "craft=winery",
+        "name=Montaribaldi",
+        "ref:vatin=IT02736020047",
+        "website=https://www.montaribaldi.com"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:9909068170",
+      "name": "Rovero Lorenzo",
+      "lat": 45.6530606,
+      "lon": 8.2700989,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "contact:city=Sostegno",
+        "contact:housenumber=6",
+        "contact:postcode=13868",
+        "contact:street=Vicolo Fabbri Ferrai",
+        "craft=winery",
+        "mobile=+39 347 8183127",
+        "name=Rovero Lorenzo",
+        "website=https://www.lorenzorovero.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:9909068171",
+      "name": "Azienda Agricola Ceruti Lorenzo",
+      "lat": 45.6259209,
+      "lon": 8.2932664,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "contact:city=Sostegno",
+        "contact:housenumber=1",
+        "contact:postcode=13868",
+        "contact:street=Vicolo Gualino",
+        "craft=winery",
+        "name=Azienda Agricola Ceruti Lorenzo",
+        "phone=+39 348 7736378",
+        "website=https://www.cerutilorenzo.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:9909900852",
+      "name": "Roggero Bruno e Marco s.s.",
+      "lat": 45.0774804,
+      "lon": 7.9932213,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Albugnano",
+        "addr:housenumber=39",
+        "addr:postcode=14022",
+        "addr:street=Località Santo Stefano",
+        "craft=winery",
+        "name=Roggero Bruno e Marco s.s.",
+        "website=https://roggerovini.it"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:9983361369",
+      "name": "Cantina del Rubino",
+      "lat": 45.1591156,
+      "lon": 8.2266395,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Gabiano",
+        "addr:housenumber=10",
+        "addr:postcode=15020",
+        "addr:street=Piazza della Libertà",
+        "contact:facebook=https://www.facebook.com/cantina.delrubino.37",
+        "email=posta@cantinadelrubino.it",
+        "mobile=+39 328 8007776",
+        "name=Cantina del Rubino",
+        "shop=wine",
+        "website=http://www.cantinadelrubino.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:9988535508",
+      "name": "Azienda Agricola Marcello Meda",
+      "lat": 44.9855027,
+      "lon": 8.4954545,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Lu e Cuccaro Monferrato",
+        "addr:housenumber=73",
+        "addr:place=Cascina Dionigi",
+        "addr:postcode=15037",
+        "craft=winery",
+        "email=info@marcellomeda.com",
+        "name=Azienda Agricola Marcello Meda",
+        "phone=+39 3398422111",
+        "website=https://marcellomeda.com/en"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:10177901949",
+      "name": "Azienda vinicola Rostagno 1918",
+      "lat": 45.3268715,
+      "lon": 7.6048876,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=61",
+        "addr:place=Frazione Macchi",
+        "craft=winery",
+        "email=info@rostagnovini.it",
+        "mobile=+39 338 8603609",
+        "name=Azienda vinicola Rostagno 1918",
+        "phone=+39 0124 77727",
+        "website=https://rostagnovini.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:10185292389",
+      "name": "Quota Wine & Coffee",
+      "lat": 44.6794421,
+      "lon": 8.4655625,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Acqui Terme",
+        "addr:housenumber=28",
+        "addr:postcode=15011",
+        "addr:street=Via IV Novembre",
+        "craft=winery",
+        "email=danieleristorto@libero.it",
+        "mobile=+39 335 622 7024",
+        "name=Quota Wine & Coffee",
+        "website=https://quotavini.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:10994442656",
+      "name": "Bussi Piero",
+      "lat": 44.7511407,
+      "lon": 8.2223921,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Calosso",
+        "addr:housenumber=6",
+        "addr:postcode=14052",
+        "addr:street=Via Castagna",
+        "craft=winery",
+        "name=Bussi Piero",
+        "phone=+39 0141 853387",
+        "phone:mobile=+39 346 7705510",
+        "website=https://www.bussipierovini.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:12076574126",
+      "name": "Azienda Agricola Poderi La Collina",
+      "lat": 44.535931,
+      "lon": 7.9833908,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Dogliani",
+        "addr:housenumber=71",
+        "addr:place=Borgata Pianezzo",
+        "addr:postcode=12063",
+        "craft=winery",
+        "email=marengo@poderilacollina.it",
+        "name=Azienda Agricola Poderi La Collina",
+        "phone=+39 0173 70155",
+        "website=https://www.poderilacollina.it"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:12393430029",
+      "name": "Azienda Agricola Giorgio Sobrero",
+      "lat": 44.6242052,
+      "lon": 8.0242625,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Azienda Agricola Giorgio Sobrero",
+        "website=https://www.giorgiosobrero.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:12517962227",
+      "name": "Enoteca tregionale di Gattinara",
+      "lat": 45.617352,
+      "lon": 8.3711552,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Gattinara",
+        "addr:housenumber=112",
+        "addr:postcode=13045",
+        "addr:street=Corso Valsesia",
+        "name=Enoteca tregionale di Gattinara",
+        "shop=wine",
+        "website=https://www.enotecaregionaledigattinara.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:12595379975",
+      "name": "Isnardi Ernesto",
+      "lat": 44.7520162,
+      "lon": 8.0558017,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Castagnito",
+        "addr:housenumber=28",
+        "addr:postcode=12050",
+        "addr:street=Via Serra",
+        "craft=winery",
+        "name=Isnardi Ernesto",
+        "website=https://www.isnardiernesto.com/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:12704317598",
+      "name": "Enoteca Vineta",
+      "lat": 45.4673636,
+      "lon": 7.8763168,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Ivrea",
+        "addr:housenumber=4",
+        "addr:postcode=10015",
+        "addr:street=Piazza Santa Marta",
+        "contact:facebook=https://www.facebook.com/EnotecaVineta/",
+        "email=info@vineta.it",
+        "mobile=+39 351 5462157",
+        "name=Enoteca Vineta",
+        "shop=wine",
+        "website=https://vineta.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:12833104026",
+      "name": "Cantina Favaro",
+      "lat": 45.4368207,
+      "lon": 8.0226599,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Piverone",
+        "addr:housenumber=1bis",
+        "addr:postcode=10010",
+        "addr:street=Strada Chiusure",
+        "email=info@cantinafavaro.it",
+        "name=Cantina Favaro",
+        "phone=+39 0125 72606",
+        "shop=wine",
+        "website=https://www.cantinafavaro.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:12833379672",
+      "name": "Garage dell'Uva",
+      "lat": 45.4066518,
+      "lon": 7.9944886,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Settimo Rottaro",
+        "addr:housenumber=4",
+        "addr:postcode=10010",
+        "addr:street=Via Selva",
+        "craft=winery",
+        "email=info@garagedelluva.it",
+        "mobile=+39 335 1019609",
+        "name=Garage dell'Uva",
+        "website=https://www.garagedelluva.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:12833435580",
+      "name": "Azienda Agricola Giovanetto",
+      "lat": 45.5349409,
+      "lon": 7.8436722,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Settimo Vittone",
+        "addr:housenumber=44",
+        "addr:postcode=10010",
+        "addr:street=Montestrutto",
+        "craft=winery",
+        "email=adriano.giovanetto@libero.it",
+        "mobile=+39 347 3138300",
+        "name=Azienda Agricola Giovanetto",
+        "website=https://www.aziendaagricolagiovanetto.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:12899056797",
+      "name": "Montefiorito Srl. Societa’ Agricola",
+      "lat": 44.8814703,
+      "lon": 8.1522373,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Asti",
+        "addr:postcode=14010",
+        "craft=winery",
+        "email=info@montefiorito.it",
+        "name=Montefiorito Srl. Societa’ Agricola",
+        "website=https://www.montefiorito.com/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:12964470297",
+      "name": "Azienda Agricola Eraldo Revelli",
+      "lat": 44.4921225,
+      "lon": 7.9615354,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=29",
+        "addr:place=Localitá Pianbosco",
+        "craft=winery",
+        "name=Azienda Agricola Eraldo Revelli",
+        "phone=+3901732797154",
+        "website=https://eraldorevelli.com/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:13253152984",
+      "name": "La Trava",
+      "lat": 44.6892221,
+      "lon": 8.1472622,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "email=info@latrava.it",
+        "name=La Trava",
+        "website=https://www.latrava.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:13254754421",
+      "name": "Az. Agricola Cascina Quarino",
+      "lat": 45.0891956,
+      "lon": 8.0000572,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Aramengo",
+        "addr:housenumber=9",
+        "addr:place=Borgo Canova",
+        "addr:postcode=14020",
+        "craft=winery",
+        "name=Az. Agricola Cascina Quarino",
+        "website=https://www.cascinaquarino.com/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:13264495904",
+      "name": "Enoteca dal Temy",
+      "lat": 44.6786514,
+      "lon": 8.4645487,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Acqui Terme",
+        "addr:country=IT",
+        "addr:housenumber=40",
+        "addr:street=Via Crenna",
+        "name=Enoteca dal Temy",
+        "shop=wine",
+        "source=survey",
+        "website=https://www.facebook.com/daltemy/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:13328385102",
+      "name": "Fracchia & Berchialla Snc Enoteca",
+      "lat": 44.7014413,
+      "lon": 8.0354406,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=9",
+        "addr:postcode=12051",
+        "addr:street=Via Giuseppe Vernazza",
+        "name=Fracchia & Berchialla Snc Enoteca",
+        "shop=wine",
+        "website=https://www.fracchiaeberchialla.com/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:13328392202",
+      "name": "Fracchia & Berchialla Enoteca",
+      "lat": 44.7016892,
+      "lon": 8.0354365,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=9",
+        "addr:postcode=12051",
+        "addr:street=Via Giuseppe Vernazza",
+        "name=Fracchia & Berchialla Enoteca",
+        "shop=wine",
+        "website=https://www.fracchiaeberchialla.com/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "way:62296954",
+      "name": "Azienda Agricola Francesco Brigatti",
+      "lat": 45.6323428,
+      "lon": 8.5364607,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Suno",
+        "addr:housenumber=31",
+        "addr:postcode=28019",
+        "addr:street=Via Olmi",
+        "building=yes",
+        "craft=winery",
+        "email=info@vinibrigatti.it",
+        "name=Azienda Agricola Francesco Brigatti",
+        "phone=+39 322 85037",
+        "source=http://www.vinibrigatti.it",
+        "website=http://www.vinibrigatti.it"
+      ],
+      "score": 88
+    },
+    {
+      "id": "way:334328379",
+      "name": "Tenuta Il Corvo",
+      "lat": 45.6867714,
+      "lon": 8.4004185,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Boca",
+        "addr:housenumber=6",
+        "addr:street=Strada Vicinale delle Piane",
+        "building=yes",
+        "craft=winery",
+        "name=Tenuta Il Corvo",
+        "phone=+39 392 0111610",
+        "website=https://www.tenutailcorvo.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "way:363491673",
+      "name": "Ceretto Aziende Vinicole",
+      "lat": 44.6721994,
+      "lon": 7.9962927,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Alba",
+        "addr:housenumber=34",
+        "addr:postcode=12051",
+        "addr:street=Località San Cassiano",
+        "building=yes",
+        "craft=winery",
+        "name=Ceretto Aziende Vinicole",
+        "phone=+39 0173 282582",
+        "website=https://www.ceretto.com/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "way:382138216",
+      "name": "Poderi Elia",
+      "lat": 44.7425659,
+      "lon": 8.1345282,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Neive",
+        "addr:housenumber=2",
+        "addr:postcode=12057",
+        "addr:street=Via Pallareto",
+        "building=yes",
+        "craft=winery",
+        "email=info@poderielia.it",
+        "name=Poderi Elia",
+        "website=https://www.poderielia.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "way:383709497",
+      "name": "Cascina del Pozzo",
+      "lat": 44.7707416,
+      "lon": 8.0335354,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Castellinaldo",
+        "addr:housenumber=15",
+        "addr:postcode=12050",
+        "addr:street=Via del Pozzo",
+        "building=yes",
+        "craft=winery",
+        "name=Cascina del Pozzo",
+        "product=wine",
+        "website=https://www.cascinadelpozzo.com"
+      ],
+      "score": 88
+    },
+    {
+      "id": "way:780395634",
+      "name": "Monchiero vini",
+      "lat": 44.6220214,
+      "lon": 7.9746578,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Castiglione Falletto",
+        "addr:housenumber=49",
+        "addr:postcode=12060",
+        "addr:street=Via Alba - Monforte",
+        "craft=winery",
+        "name=Monchiero vini",
+        "website=https://www.monchierovini.com/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "way:781331874",
+      "name": "Tenuta L'Illuminata",
+      "lat": 44.648046,
+      "lon": 7.9085732,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=La Morra",
+        "addr:housenumber=30",
+        "addr:place=Località Sant'Anna",
+        "addr:postcode=12064",
+        "building=yes",
+        "craft=winery",
+        "name=Tenuta L'Illuminata",
+        "website=https://www.lilluminata.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "way:860985703",
+      "name": "Azienda Vitivinicola Sbarato",
+      "lat": 45.1524654,
+      "lon": 8.2374099,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "contact:facebook=https://www.facebook.com/sbaratovini",
+        "craft=winery",
+        "description=Produce vini rossi, vini bianchi, vini dolci e grappe.",
+        "email=tina.sbarato@aziendaagricolasbarato.com",
+        "mobile=+39 335 7029730",
+        "name=Azienda Vitivinicola Sbarato",
+        "phone=+39 0142 945159",
+        "start_date=1961",
+        "website=http://www.aziendaagricolasbarato.com/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "way:943151934",
+      "name": "Azienda vitivinicola Edoardo Patrone",
+      "lat": 46.1120798,
+      "lon": 8.2796568,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=yes",
+        "craft=winery",
+        "name=Azienda vitivinicola Edoardo Patrone",
+        "phone=+39 324 6126355",
+        "website=https://www.edoardopatrone.com/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "way:1102725857",
+      "name": "Tenuta La Pergola",
+      "lat": 44.8314211,
+      "lon": 8.0227502,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=yes",
+        "craft=winery",
+        "name=Tenuta La Pergola",
+        "website=https://tenutalapergola.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "way:1296280532",
+      "name": "Tenuta Barac",
+      "lat": 44.6844725,
+      "lon": 8.073893,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=yes",
+        "craft=winery",
+        "name=Tenuta Barac",
+        "website=https://www.barac.it"
+      ],
+      "score": 88
+    },
+    {
+      "id": "way:1335136615",
+      "name": "Azienda Agricola Cieck",
+      "lat": 45.3359789,
+      "lon": 7.8159651,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=San Giorgio Canavese",
+        "addr:housenumber=2",
+        "addr:postcode=10090",
+        "addr:street=Cascina Castagnola",
+        "craft=winery",
+        "email=info@cieck.it",
+        "landuse=farmyard",
+        "name=Azienda Agricola Cieck",
+        "phone=+39 0124 330522",
+        "website=https://www.cieck.it/it/vini-erbaluce-cieck/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:3343897455",
+      "name": "Enoteca Ferrero",
+      "lat": 45.0535938,
+      "lon": 7.6572245,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Torino",
+        "addr:housenumber=65",
+        "addr:postcode=10129",
+        "addr:street=Corso Alcide De Gasperi",
+        "name=Enoteca Ferrero",
+        "opening_hours=Tu-Sa 09:30-12:30,16:00-20:00; Mo 16:00-20:00; Su off",
+        "shop=wine",
+        "wheelchair=limited"
+      ],
+      "score": 85
+    },
+    {
+      "id": "node:3473467923",
+      "name": "Poderi dei Bricchi Astigiani",
+      "lat": 44.8224578,
+      "lon": 8.1907034,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Isola d'Asti",
+        "addr:housenumber=7",
+        "addr:postcode=14057",
+        "addr:street=Via Ritane",
+        "craft=winery",
+        "name=Poderi dei Bricchi Astigiani",
+        "opening_hours=Mo,Fr 08:30-18:00"
+      ],
+      "score": 85
+    },
+    {
+      "id": "node:4523080438",
+      "name": "Azienda Agrivinicola Sebaste",
+      "lat": 44.6171859,
+      "lon": 7.9307047,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Barolo",
+        "addr:housenumber=4",
+        "addr:postcode=12060",
+        "addr:street=Via San Pietro",
+        "craft=winery",
+        "description=Vieni a visitare la nostra cantina e con la degustazione guidata scopri come nascono i grandi vini del Piemonte: Barolo, Barbera, Dolcetto e Nebbiolo.",
+        "email=syllasebaste@syllasebaste.com",
+        "name=Azienda Agrivinicola Sebaste",
+        "opening_hours=Mo-Sa 09:30-18:30",
+        "phone=+39 0173 56266"
+      ],
+      "score": 85
+    },
+    {
+      "id": "node:6495461720",
+      "name": "Enoteca il Grappolo",
+      "lat": 45.7626482,
+      "lon": 8.5596668,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Arona",
+        "addr:housenumber=7",
+        "addr:postcode=28041",
+        "addr:street=Via Pertossi",
+        "internet_access=no",
+        "name=Enoteca il Grappolo",
+        "opening_hours=Mo 17:30-23:00; We-Fr 17:30-23:00; Sa-Su 12:30-23:00;PH off",
+        "shop=wine"
+      ],
+      "score": 85
+    },
+    {
+      "id": "node:12161816254",
+      "name": "À La Volée",
+      "lat": 45.0578933,
+      "lon": 7.6821616,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=À La Volée",
+        "opening_hours=Mo-Th 17:00-20:00; Tu-Th 11:00-13:00; Fr, Sa 11:00-13:30, 17:00-21:00"
+      ],
+      "score": 85
+    },
+    {
+      "id": "way:1021752658",
+      "name": "Azienda Agricola \"La Favorita\"",
+      "lat": 45.4306743,
+      "lon": 8.0524067,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "checkpoint=yes",
+        "checkpoint:brand=Big Bench Community Project",
+        "checkpoint:ref=187",
+        "checkpoint:type=stamp",
+        "contact:city=Viverone",
+        "contact:housenumber=51",
+        "contact:postcode=13886",
+        "contact:street=Via Zimone",
+        "craft=winery",
+        "description=Produzione e vendita di Erbaluce di Caluso D.O.C.G., Canavese Rosso D.O.C. e Spumante Erbaluce",
+        "landuse=farmyard",
+        "name=Azienda Agricola \"La Favorita\"",
+        "opening_hours=09:00-19:00",
+        "operator=Zaniboni Paolo",
+        "phone=+39 0161 987241"
+      ],
+      "score": 85
+    },
+    {
+      "id": "node:936955399",
+      "name": "Gozzelino Sergio",
+      "lat": 44.7812386,
+      "lon": 8.2134919,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Costigliole d'Asti",
+        "addr:housenumber=7",
+        "addr:postcode=14055",
+        "addr:street=Bricco Lù",
+        "craft=winery",
+        "name=Gozzelino Sergio",
+        "tourism=wine_cellar"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:3142241834",
+      "name": "Cantina del Pino",
+      "lat": 44.7309736,
+      "lon": 8.086236,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Barbaresco",
+        "addr:housenumber=31",
+        "addr:street=Strada Ovello",
+        "alt_name=Enoteca regionale del Barbaresco",
+        "name=Cantina del Pino",
+        "shop=wine",
+        "wheelchair=yes"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:3202697730",
+      "name": "Storica enoteca del Centro",
+      "lat": 45.5645565,
+      "lon": 8.0544273,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Biella",
+        "addr:housenumber=11a",
+        "addr:postcode=13900",
+        "addr:street=Via Antonio Gramsci",
+        "name=Storica enoteca del Centro",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:3328459598",
+      "name": "Cantina sociale \"La Maranzana\"",
+      "lat": 44.7576288,
+      "lon": 8.4730263,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Maranzana",
+        "addr:housenumber=20",
+        "addr:postcode=14040",
+        "addr:street=Via San Giovanni",
+        "name=Cantina sociale \"La Maranzana\"",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:3435208856",
+      "name": "Cantina Fratelli Giribaldi",
+      "lat": 44.6292861,
+      "lon": 8.0628751,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "name=Cantina Fratelli Giribaldi",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:3490595826",
+      "name": "Podere Ai Valloni",
+      "lat": 45.6870818,
+      "lon": 8.3815175,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Podere Ai Valloni"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:3765073482",
+      "name": "Cascina Christiana",
+      "lat": 44.7585741,
+      "lon": 8.3804996,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Cascina Christiana"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:3914079091",
+      "name": "Enoteca Devina",
+      "lat": 46.0666831,
+      "lon": 8.699147,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "check_date=2025-08-06",
+        "name=Enoteca Devina",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:4487432353",
+      "name": "Cantina Comunale Produttori Castiglione Falletto",
+      "lat": 44.6232516,
+      "lon": 7.9789194,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=24",
+        "addr:street=Via Camillo Benso Conte di Cavour",
+        "check_date=2024-11-02",
+        "name=Cantina Comunale Produttori Castiglione Falletto",
+        "payment:cash=yes",
+        "payment:contactless=yes",
+        "payment:credit_cards=yes",
+        "payment:mastercard=yes",
+        "payment:visa=yes",
+        "shop=wine",
+        "toilets=yes"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:4487432355",
+      "name": "Enoteca",
+      "lat": 44.6235184,
+      "lon": 7.9778908,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "name=Enoteca",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:4498442556",
+      "name": "Botto Vini",
+      "lat": 44.7335894,
+      "lon": 8.4657796,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Ricaldone",
+        "addr:housenumber=23",
+        "addr:postcode=15010",
+        "addr:street=Via San Rocco",
+        "craft=winery",
+        "name=Botto Vini",
+        "operator=Pier Luigi Botto, Andrea Botto, Stefano Botto",
+        "phone=+39 0144 74462"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:4498447289",
+      "name": "Rinaldi Vini",
+      "lat": 44.7337152,
+      "lon": 8.4712352,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Ricaldone",
+        "addr:housenumber=31",
+        "addr:postcode=15010",
+        "addr:street=Via Roma",
+        "craft=winery",
+        "name=Rinaldi Vini",
+        "operator=Andrea Rinaldi, Oreste Rinaldi",
+        "phone=+39 0144 745856"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:4498451134",
+      "name": "Paolo Pizzorni Vini",
+      "lat": 44.7047229,
+      "lon": 8.4810038,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Ricaldone",
+        "addr:housenumber=17",
+        "addr:postcode=15010",
+        "addr:street=Regione Rocche",
+        "craft=winery",
+        "name=Paolo Pizzorni Vini",
+        "operator=Paolo Pizzorni",
+        "phone=+39 0144 322378"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:4505087306",
+      "name": "Ca' di Cicul",
+      "lat": 44.7023106,
+      "lon": 8.4953249,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Strevi",
+        "addr:housenumber=19",
+        "addr:postcode=15019",
+        "addr:street=Regione Cavannone",
+        "craft=winery",
+        "name=Ca' di Cicul",
+        "operator=Carla Cristina Salina"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:4505097669",
+      "name": "Ca' di Cicul",
+      "lat": 44.7021217,
+      "lon": 8.4952756,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Strevi",
+        "addr:housenumber=19",
+        "addr:postcode=15019",
+        "addr:street=regione Cavannone",
+        "craft=winery",
+        "description=Produttore di Brachetto",
+        "name=Ca' di Cicul",
+        "operator=Salina Carla Cristina"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:4505101892",
+      "name": "Azienda Agricola Giulio Arnera",
+      "lat": 44.7121991,
+      "lon": 8.5309349,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Strevi",
+        "addr:housenumber=4",
+        "addr:postcode=15019",
+        "addr:street=Via Casa Braida",
+        "craft=winery",
+        "description=Produttore Brachetto",
+        "name=Azienda Agricola Giulio Arnera",
+        "operator=Arnera Matteo"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:4505987091",
+      "name": "Cuvage S.r.l.",
+      "lat": 44.6809726,
+      "lon": 8.4883999,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Acqui Terme",
+        "addr:housenumber=90",
+        "addr:postcode=15011",
+        "addr:street=Stradale Alessandria",
+        "craft=winery",
+        "name=Cuvage S.r.l."
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:4506047846",
+      "name": "Leporati Ermenegildo",
+      "lat": 45.1070505,
+      "lon": 8.436999,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Casale Monferrato",
+        "addr:housenumber=29",
+        "addr:postcode=15033",
+        "addr:street=Strada Asti",
+        "craft=winery",
+        "name=Leporati Ermenegildo"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:4506078125",
+      "name": "Cantine Cascina Valpane",
+      "lat": 45.0785791,
+      "lon": 8.3695449,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Ozzano Monferrato",
+        "addr:housenumber=10/1",
+        "addr:postcode=15039",
+        "addr:street=Cascina Valpane",
+        "craft=winery",
+        "name=Cantine Cascina Valpane"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:4508149889",
+      "name": "Casa Vinicola Marenco Srl",
+      "lat": 44.6952514,
+      "lon": 8.5208444,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Strevi",
+        "addr:housenumber=10",
+        "addr:postcode=15011",
+        "addr:street=Piazza Vittorio Emanuele II",
+        "check_date=2025-11-09",
+        "craft=winery",
+        "name=Casa Vinicola Marenco Srl"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:4508167309",
+      "name": "Az. Agraria La Favorita - Isituto Tecnico Agrario di Asti",
+      "lat": 44.9163476,
+      "lon": 8.1928107,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Asti",
+        "addr:housenumber=54",
+        "addr:postcode=14100",
+        "addr:street=Località Viatosto",
+        "check_date=2025-11-14",
+        "craft=winery",
+        "name=Az. Agraria La Favorita - Isituto Tecnico Agrario di Asti"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:4508206531",
+      "name": "Azienda Vitivinicola Cascina Fiore",
+      "lat": 44.7956655,
+      "lon": 8.1651203,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Costigliole d'Asti",
+        "addr:hamlet=Santa Margherita",
+        "addr:housenumber=2",
+        "addr:postcode=14055",
+        "addr:street=Strada Piazza",
+        "craft=winery",
+        "name=Azienda Vitivinicola Cascina Fiore"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:4508275667",
+      "name": "Azienda Agricola Garrone Evasio & Figlio",
+      "lat": 44.9949257,
+      "lon": 8.3051896,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Grana",
+        "addr:housenumber=58",
+        "addr:postcode=14031",
+        "addr:street=Via Roma",
+        "craft=winery",
+        "email=info@vinigarrone.it",
+        "name=Azienda Agricola Garrone Evasio & Figlio",
+        "operator=Azienda Agricola Garrone Evasio & Figlio",
+        "phone=+39 0141 63142",
+        "ref:vatin=IT00942450057"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:4511193158",
+      "name": "Araldica Castelvero",
+      "lat": 44.7204417,
+      "lon": 8.3839403,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Castel Boglione",
+        "addr:housenumber=2",
+        "addr:postcode=14040",
+        "addr:street=Viale Pietro Laudano",
+        "craft=winery",
+        "name=Araldica Castelvero"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:4590593863",
+      "name": "Enoteca Dionisio",
+      "lat": 45.0683858,
+      "lon": 7.5146326,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:street=Piazza San Rocco",
+        "name=Enoteca Dionisio",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:4734592971",
+      "name": "Enoteca il Grappolo",
+      "lat": 45.0717166,
+      "lon": 7.621076,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=15e",
+        "addr:postcode=10141",
+        "addr:street=Via Vandalino",
+        "name=Enoteca il Grappolo",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:4734924448",
+      "name": "Enoteca Lombardo",
+      "lat": 45.0502517,
+      "lon": 7.635861,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=133c",
+        "addr:postcode=10136",
+        "addr:street=Via Barletta",
+        "name=Enoteca Lombardo",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:4789522926",
+      "name": "Cantine Povero srl",
+      "lat": 44.8245128,
+      "lon": 8.013868,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Cisterna d'Asti",
+        "addr:housenumber=6",
+        "addr:postcode=14010",
+        "addr:street=Via Mattutina",
+        "craft=winery",
+        "name=Cantine Povero srl"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:4935784730",
+      "name": "La Cambusa - Enoteca - Wine Shop",
+      "lat": 45.8839656,
+      "lon": 8.5396789,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=27 Stresa",
+        "addr:postcode=28838",
+        "addr:street=Cavour",
+        "check_date=2025-08-07",
+        "name=La Cambusa - Enoteca - Wine Shop",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:5335070278",
+      "name": "Cantina Sociale del Freisa",
+      "lat": 45.0388751,
+      "lon": 7.9660796,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "name=Cantina Sociale del Freisa",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:6334978170",
+      "name": "Bacchus Cioccaro",
+      "lat": 45.0234536,
+      "lon": 8.2765626,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Bacchus Cioccaro"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:6364223737",
+      "name": "Cascina Montagnola",
+      "lat": 44.8960706,
+      "lon": 8.9365752,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Viguzzolo",
+        "addr:housenumber=1",
+        "addr:street=Strada vicinale della Montagnola Inferiore",
+        "craft=winery",
+        "name=Cascina Montagnola"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:6483870450",
+      "name": "Enoteca Simonotti",
+      "lat": 45.7606085,
+      "lon": 8.5620599,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Arona",
+        "addr:housenumber=19",
+        "addr:postcode=28041",
+        "addr:street=Corso Guglielmo Marconi",
+        "name=Enoteca Simonotti",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:6584044522",
+      "name": "Enoteca Brosio",
+      "lat": 45.0756151,
+      "lon": 7.6757686,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "check_date=2024-12-07",
+        "name=Enoteca Brosio",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:6835170251",
+      "name": "Cantina Quaggio",
+      "lat": 44.4111651,
+      "lon": 7.5524771,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "name=Cantina Quaggio",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:7271438957",
+      "name": "Enoteca Dell'Arco",
+      "lat": 46.0014499,
+      "lon": 8.3366963,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Premosello-Chiovenda",
+        "addr:housenumber=43c",
+        "addr:postcode=28803",
+        "addr:street=Via Milano",
+        "name=Enoteca Dell'Arco",
+        "phone=+39  349 776 1069",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:7629358494",
+      "name": "Cantina Ferro",
+      "lat": 46.0622207,
+      "lon": 8.6999255,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "check_date=2025-08-06",
+        "name=Cantina Ferro",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:7674081267",
+      "name": "'L Canton di... Vino",
+      "lat": 45.0949832,
+      "lon": 7.7160623,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Torino",
+        "addr:housenumber=15",
+        "addr:postcode=10154",
+        "addr:street=Piazza Sofia",
+        "craft=winery",
+        "name='L Canton di... Vino",
+        "phone=+39 011 3203214"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:7822469895",
+      "name": "Enoteca Re di Coppe",
+      "lat": 45.7984024,
+      "lon": 8.4059066,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Orta San Giulio",
+        "addr:housenumber=32",
+        "addr:postcode=28016",
+        "addr:street=Piazza Mario Motta",
+        "contact:facebook=https://www.facebook.com/Enoteca-re-di-coppe-Da-pepe-166227426725047",
+        "name=Enoteca Re di Coppe",
+        "phone=+39 0322 915871",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:7827822364",
+      "name": "Enoteca Cave du Roi",
+      "lat": 45.5697461,
+      "lon": 8.0496948,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "name=Enoteca Cave du Roi",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:7875713141",
+      "name": "Cascina Bandiera",
+      "lat": 44.7844374,
+      "lon": 9.071605,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Cascina Bandiera"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:8315008235",
+      "name": "La Casanella",
+      "lat": 44.6487814,
+      "lon": 8.716122,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=La Casanella"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:8587395407",
+      "name": "Azienda Vitivinicola Rhea",
+      "lat": 45.0592274,
+      "lon": 7.4117835,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Azienda Vitivinicola Rhea"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:8614303160",
+      "name": "Enoteca PerBacco",
+      "lat": 44.7682456,
+      "lon": 7.6776078,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Racconigi",
+        "addr:housenumber=5",
+        "addr:postcode=12035",
+        "addr:street=Via Angelo Spada",
+        "name=Enoteca PerBacco",
+        "phone=+39 320 3561919",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:8931236851",
+      "name": "Enoteca del vino sfuso di Vincenzo Forestieri",
+      "lat": 45.8139048,
+      "lon": 8.2547884,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Varallo",
+        "addr:housenumber=14",
+        "addr:street=Corso Roma",
+        "contact:facebook=https://it-it.facebook.com/pages/category/Product-Service/Enoteca-Del-Vino-Sfuso-1544724478943054/",
+        "name=Enoteca del vino sfuso di Vincenzo Forestieri",
+        "payment:cash=yes",
+        "payment:credit_cards=yes",
+        "phone=+393711793295",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:9094113396",
+      "name": "Il Barone Vino",
+      "lat": 45.4766298,
+      "lon": 8.6922862,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Galliate",
+        "addr:housenumber=44",
+        "addr:postcode=28066",
+        "addr:street=Viale Camillo Benso Conte di Cavour",
+        "craft=winery",
+        "name=Il Barone Vino"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:9465205662",
+      "name": "Cascina Occhetti",
+      "lat": 44.7660143,
+      "lon": 7.9598729,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Monteu Roero",
+        "addr:housenumber=40",
+        "addr:postcode=12040",
+        "addr:street=Frazione Occhetti",
+        "craft=winery",
+        "name=Cascina Occhetti",
+        "name:en=Occhetti winery"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:9471058691",
+      "name": "Michele Chiarlo",
+      "lat": 44.7313874,
+      "lon": 8.3221297,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Michele Chiarlo"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:9486883646",
+      "name": "Azienda Agricola Tintero",
+      "lat": 44.6878329,
+      "lon": 8.173461,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Azienda Agricola Tintero"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:9909068169",
+      "name": "Lodovico Roberto",
+      "lat": 45.6266902,
+      "lon": 8.2935762,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "contact:city=Casa del Bosco",
+        "contact:housenumber=2",
+        "contact:postcode=13868",
+        "contact:street=Vicolo Fileppi",
+        "craft=winery",
+        "name=Lodovico Roberto"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:9909068172",
+      "name": "Azienda Agricola Antoniotti Odilio di Antoniotti Mattia",
+      "lat": 45.6271219,
+      "lon": 8.2939527,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "contact:city=Casa del Bosco",
+        "contact:facebook=https://www.facebook.com/AziendaAgricolaAntoniottiOdilio/",
+        "contact:housenumber=5",
+        "contact:postcode=13868",
+        "contact:street=Vicolo Antoniotti",
+        "craft=winery",
+        "name=Azienda Agricola Antoniotti Odilio di Antoniotti Mattia",
+        "phone=+39 0163 860309"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:10085048140",
+      "name": "Centro storico",
+      "lat": 44.6109175,
+      "lon": 8.0006286,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Centro storico"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:10085049934",
+      "name": "2 calici",
+      "lat": 44.5837653,
+      "lon": 7.967715,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "check_date=2025-04-22",
+        "craft=winery",
+        "name=2 calici"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:10278005321",
+      "name": "Cantina fontechiara",
+      "lat": 45.6826444,
+      "lon": 8.5059185,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "name=Cantina fontechiara",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:10278130373",
+      "name": "Azienda Agricola Matteo Corregia",
+      "lat": 44.7890116,
+      "lon": 7.9727692,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Canale",
+        "addr:housenumber=124",
+        "addr:postcode=12043",
+        "addr:street=Via Santo Stefano Roero",
+        "craft=winery",
+        "name=Azienda Agricola Matteo Corregia"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:10300222159",
+      "name": "Dosaggio Zero bistrot con enoteca",
+      "lat": 45.0714867,
+      "lon": 7.5161368,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "check_date=2025-02-12",
+        "name=Dosaggio Zero bistrot con enoteca",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:10676197295",
+      "name": "Teo Costa",
+      "lat": 44.7728229,
+      "lon": 8.0266495,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Castellinaldo d’Alba",
+        "addr:housenumber=2",
+        "addr:postcode=12050",
+        "addr:street=Via San Salvario",
+        "craft=winery",
+        "name=Teo Costa"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:10768514974",
+      "name": "Claudio Mariotto",
+      "lat": 44.8829954,
+      "lon": 8.8873585,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Claudio Mariotto"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:10991929749",
+      "name": "Azienda Agricola La Canova",
+      "lat": 44.7351014,
+      "lon": 8.2431801,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Calosso",
+        "addr:housenumber=3",
+        "addr:postcode=14052",
+        "addr:street=Via Calva",
+        "craft=winery",
+        "name=Azienda Agricola La Canova"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:11001548350",
+      "name": "Scagliola Sansi",
+      "lat": 44.7401272,
+      "lon": 8.2465616,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Calosso",
+        "addr:housenumber=42;43",
+        "addr:postcode=14052",
+        "addr:street=Strada San Siro",
+        "craft=winery",
+        "name=Scagliola Sansi"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:11047844305",
+      "name": "Enoteca Baldovino",
+      "lat": 45.2449314,
+      "lon": 8.0194008,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=142a",
+        "addr:street=Via Don Carra",
+        "name=Enoteca Baldovino",
+        "phone=+39 0161 480154",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:11064690605",
+      "name": "Enoteca Regionale Del Roero Canale",
+      "lat": 44.7969534,
+      "lon": 7.9929668,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "name=Enoteca Regionale Del Roero Canale",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:11091142931",
+      "name": "Zero Enoteca",
+      "lat": 44.6950672,
+      "lon": 7.8551142,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Bra",
+        "addr:housenumber=10",
+        "addr:postcode=12042",
+        "addr:street=Via Pollenzo",
+        "name=Zero Enoteca",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:11096849701",
+      "name": "Cantine Carel",
+      "lat": 44.7754228,
+      "lon": 8.1910998,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Cantine Carel"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:11151954946",
+      "name": "Enoteca Nonsolovino",
+      "lat": 44.8155586,
+      "lon": 7.2453565,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Luserna San Giovanni",
+        "addr:housenumber=29",
+        "addr:postcode=10062",
+        "addr:street=Via Giosuè Gianavello",
+        "name=Enoteca Nonsolovino",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:11357149868",
+      "name": "La Cantina di Ale",
+      "lat": 45.0403262,
+      "lon": 7.6290293,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "name=La Cantina di Ale",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:11841309627",
+      "name": "Enoteca Frogline",
+      "lat": 45.0489195,
+      "lon": 7.4925578,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "name=Enoteca Frogline",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:11903506959",
+      "name": "Il Poggio di Gavi",
+      "lat": 44.7070646,
+      "lon": 8.7815732,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Il Poggio di Gavi"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:11903506964",
+      "name": "Il Scolca",
+      "lat": 44.7088689,
+      "lon": 8.7816276,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Il Scolca"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:11903523237",
+      "name": "Fontanassa",
+      "lat": 44.7047335,
+      "lon": 8.7882998,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=gavi",
+        "addr:housenumber=172",
+        "addr:postcode=15066",
+        "craft=winery",
+        "name=Fontanassa"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:11903806178",
+      "name": "Broglia",
+      "lat": 44.7108748,
+      "lon": 8.7890679,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Gavi",
+        "addr:housenumber=22",
+        "addr:postcode=15066",
+        "addr:street=Località Lomellina",
+        "craft=winery",
+        "name=Broglia"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:11903806463",
+      "name": "Azienda Vinicola La Lomellina",
+      "lat": 44.7127907,
+      "lon": 8.798392,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Azienda Vinicola La Lomellina"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:11911980129",
+      "name": "Enoteca del Castello",
+      "lat": 45.3655558,
+      "lon": 8.0753161,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "name=Enoteca del Castello",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:11984513654",
+      "name": "Stuzzivino",
+      "lat": 45.0790814,
+      "lon": 7.6521487,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Stuzzivino"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:12152764228",
+      "name": "Vallone",
+      "lat": 45.0165388,
+      "lon": 8.455871,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Vallone"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:12168873728",
+      "name": "Enoteca San Martino Saluzzo",
+      "lat": 44.6468126,
+      "lon": 7.485759,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "check_date=2024-09-10",
+        "name=Enoteca San Martino Saluzzo",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:12248381979",
+      "name": "Enoteca degli Infernot",
+      "lat": 45.0747576,
+      "lon": 8.3911687,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "check_date=2024-10-13",
+        "name=Enoteca degli Infernot",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:12310299220",
+      "name": "Tenuta Cucco",
+      "lat": 44.6122766,
+      "lon": 8.0016839,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Tenuta Cucco"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:12443978983",
+      "name": "Borgogno",
+      "lat": 44.6105156,
+      "lon": 7.9428175,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=1",
+        "addr:street=Via Gioberti",
+        "check_date=2024-12-23",
+        "craft=winery",
+        "name=Borgogno"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:12530256807",
+      "name": "Casina Mucci",
+      "lat": 44.5875628,
+      "lon": 8.0201442,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Casina Mucci"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:12583106672",
+      "name": "Vino sfuso enoteca",
+      "lat": 45.067433,
+      "lon": 7.5193762,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "name=Vino sfuso enoteca",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:12623033805",
+      "name": "Enoteca DG Wine",
+      "lat": 45.481217,
+      "lon": 7.8225281,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Lessolo",
+        "addr:housenumber=90",
+        "addr:postcode=10010",
+        "addr:street=Via Arduino Casale",
+        "contact:facebook=https://www.facebook.com/GrossoDaiana",
+        "email=ivanivaldi81@gmail.com",
+        "mobile=+39 379 181 8338",
+        "name=Enoteca DG Wine",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:12833357698",
+      "name": "Azienda Agricola Orsolani",
+      "lat": 45.3369721,
+      "lon": 7.8010793,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=San Giorgio Canavese",
+        "addr:housenumber=12",
+        "addr:postcode=10090",
+        "addr:street=Via Michele Chiesa",
+        "contact:facebook=https://www.facebook.com/OrsolaniWine/",
+        "craft=winery",
+        "email=info@orsolani.it",
+        "name=Azienda Agricola Orsolani",
+        "phone=+39 0124 32386"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:13060823092",
+      "name": "La cantina di Piuma",
+      "lat": 45.0595597,
+      "lon": 7.6734309,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "name=La cantina di Piuma",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:13245868808",
+      "name": "Il chiosso S.c.a.r.l.",
+      "lat": 45.6210574,
+      "lon": 8.3694635,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Gattinara",
+        "addr:housenumber=47",
+        "addr:street=Viale Guglielmo Marconi",
+        "craft=winery",
+        "name=Il chiosso S.c.a.r.l."
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:13358948043",
+      "name": "Cantine Manfredi",
+      "lat": 44.5135866,
+      "lon": 7.9156811,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Cantine Manfredi"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:13434434001",
+      "name": "Ioppa",
+      "lat": 45.6321224,
+      "lon": 8.4001297,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Ioppa"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:95787494",
+      "name": "Cantina Sociale \"Terrenostre\"",
+      "lat": 44.6619807,
+      "lon": 8.1934348,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Cossano Belbo",
+        "addr:housenumber=3",
+        "addr:postcode=12054",
+        "addr:street=Strada statale",
+        "name=Cantina Sociale \"Terrenostre\"",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:116962195",
+      "name": "Cantina Sociale di Mantovana",
+      "lat": 44.7307324,
+      "lon": 8.6220596,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=yes",
+        "name=Cantina Sociale di Mantovana",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:154144873",
+      "name": "Berteletti Fratelli Vini",
+      "lat": 45.6126667,
+      "lon": 8.3275421,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=manufacture",
+        "craft=winery",
+        "name=Berteletti Fratelli Vini"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:161451128",
+      "name": "Travaglini Vini",
+      "lat": 45.6181005,
+      "lon": 8.3573072,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=manufacture",
+        "craft=winery",
+        "name=Travaglini Vini"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:190836603",
+      "name": "Cantina Sociale",
+      "lat": 44.8394876,
+      "lon": 8.1137315,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=yes",
+        "name=Cantina Sociale",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:382138184",
+      "name": "Gaja",
+      "lat": 44.7261266,
+      "lon": 8.080692,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Barbaresco",
+        "addr:housenumber=18",
+        "addr:street=Via Torino",
+        "building=commercial",
+        "craft=winery",
+        "name=Gaja",
+        "wikidata=Q5517524",
+        "wikipedia=en:Gaja (wine)"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:382159739",
+      "name": "Millevite",
+      "lat": 44.6748389,
+      "lon": 8.1765619,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=yes",
+        "craft=winery",
+        "name=Millevite"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:383388619",
+      "name": "Tenuta Carretta",
+      "lat": 44.7317587,
+      "lon": 7.9885978,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=yes",
+        "craft=winery",
+        "name=Tenuta Carretta"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:383554565",
+      "name": "Giovanni Almondo",
+      "lat": 44.8170551,
+      "lon": 7.9607439,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Montà",
+        "addr:housenumber=26",
+        "addr:postcode=12046",
+        "addr:street=Via San Rocco",
+        "building=yes",
+        "craft=winery",
+        "name=Giovanni Almondo"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:574214993",
+      "name": "Tenuta Migliavacca",
+      "lat": 45.1243128,
+      "lon": 8.4091838,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=yes",
+        "craft=winery",
+        "name=Tenuta Migliavacca",
+        "operator=Francesco Brezza"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:599035665",
+      "name": "Agriturismo La Prevostura",
+      "lat": 45.5724803,
+      "lon": 8.2229994,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=restaurant",
+        "building=yes",
+        "craft=winery",
+        "cuisine=italian",
+        "name=Agriturismo La Prevostura"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:659298885",
+      "name": "Azienda Vitivinicola Enrico Crola",
+      "lat": 45.629238,
+      "lon": 8.5971554,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Mezzomerico",
+        "addr:housenumber=9",
+        "addr:postcode=28040",
+        "addr:street=Via Vergiasca",
+        "craft=winery",
+        "name=Azienda Vitivinicola Enrico Crola",
+        "phone=+39 347 801 7054"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:666888534",
+      "name": "Enoteca Marolo",
+      "lat": 44.8790029,
+      "lon": 7.9935914,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Ferrere",
+        "addr:housenumber=73",
+        "addr:postcode=14012",
+        "addr:street=Via Torino",
+        "building=yes",
+        "name=Enoteca Marolo",
+        "operator=Giovanni Marolo",
+        "payment:cash=yes",
+        "payment:debit_cards=yes",
+        "payment:mastercard=yes",
+        "payment:visa=yes",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:902742142",
+      "name": "Azienda Vitivinicola Rossotto",
+      "lat": 45.0939082,
+      "lon": 7.9214408,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Cinzano",
+        "addr:housenumber=17",
+        "addr:postcode=10090",
+        "addr:street=Via Colla",
+        "building=yes",
+        "craft=winery",
+        "name=Azienda Vitivinicola Rossotto"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:954442586",
+      "name": "Cantina Sociale Coop. Di Lu",
+      "lat": 45.0028758,
+      "lon": 8.4831084,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=retail",
+        "name=Cantina Sociale Coop. Di Lu",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:984853776",
+      "name": "Cantine Povero",
+      "lat": 44.8246757,
+      "lon": 8.0131838,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=yes",
+        "craft=winery",
+        "name=Cantine Povero"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:984853777",
+      "name": "Cantine Povero",
+      "lat": 44.8247213,
+      "lon": 8.0130305,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=yes",
+        "craft=winery",
+        "name=Cantine Povero"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:984853867",
+      "name": "Pescaja",
+      "lat": 44.8165931,
+      "lon": 8.0092609,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=yes",
+        "craft=winery",
+        "name=Pescaja"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:984853868",
+      "name": "Pescaja",
+      "lat": 44.8163926,
+      "lon": 8.009219,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=yes",
+        "craft=winery",
+        "name=Pescaja"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:984853972",
+      "name": "Cantine Povero",
+      "lat": 44.8251697,
+      "lon": 8.0132611,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=yes",
+        "craft=winery",
+        "name=Cantine Povero"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:984853974",
+      "name": "Cantine Povero",
+      "lat": 44.8250582,
+      "lon": 8.0134235,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=yes",
+        "craft=winery",
+        "name=Cantine Povero"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:984853975",
+      "name": "Cantine Povero",
+      "lat": 44.8249249,
+      "lon": 8.0132406,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=yes",
+        "craft=winery",
+        "name=Cantine Povero"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:984853976",
+      "name": "Cantine Povero",
+      "lat": 44.8247383,
+      "lon": 8.0136634,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=yes",
+        "craft=winery",
+        "name=Cantine Povero"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:984915396",
+      "name": "Vaudano Enrico e Figli",
+      "lat": 44.8266501,
+      "lon": 8.0007284,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=yes",
+        "craft=winery",
+        "name=Vaudano Enrico e Figli"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:1001367080",
+      "name": "Bossotti Vincenzo",
+      "lat": 44.8295326,
+      "lon": 8.0074668,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=yes",
+        "craft=winery",
+        "name=Bossotti Vincenzo"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:1238666191",
+      "name": "CELLAGRANDE",
+      "lat": 45.443314,
+      "lon": 8.0022593,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=yes",
+        "craft=winery",
+        "name=CELLAGRANDE"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:1408934715",
+      "name": "La Piemontina",
+      "lat": 45.5893922,
+      "lon": 8.4451586,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=yes",
+        "craft=winery",
+        "name=La Piemontina"
+      ],
+      "score": 80
+    },
+    {
+      "id": "relation:13428246",
+      "name": "Bossoti Vincenzo",
+      "lat": 44.8295089,
+      "lon": 8.0068998,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=yes",
+        "craft=winery",
+        "layer=-1",
+        "location=surface",
+        "name=Bossoti Vincenzo",
+        "type=multipolygon"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:4419242830",
+      "name": "Signorvino",
+      "lat": 45.4680534,
+      "lon": 8.4613798,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=restaurant",
+        "check_date=2024-10-30",
+        "indoor_seating=yes",
+        "name=Signorvino",
+        "opening_hours=Mo-Su 09:30-20:00; Jan 01 off; easter off; Dec 25 off",
+        "outdoor_seating=yes",
+        "ref=95",
+        "shop=wine",
+        "website=https://www.signorvino.com/it/negozi/piemonte/novara/vicolungo_san_martino_di_zusiagna_73-75_e_piazza_santa_rita/B015.html",
+        "wheelchair=limited"
+      ],
+      "score": 68
+    },
+    {
+      "id": "node:4455210390",
+      "name": "Negozio Cantine Fontanafredda",
+      "lat": 44.6382124,
+      "lon": 7.9877067,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Serralunga d'Alba",
+        "addr:housenumber=15",
+        "addr:postcode=12050",
+        "addr:street=Via Alba",
+        "baby_feeding=no",
+        "kids_area=no",
+        "level=0",
+        "name=Negozio Cantine Fontanafredda",
+        "opening_hours=Mo-Su 10:00-19:30; PH closed",
+        "operator=Cantine Fontanafredda",
+        "payment:bancomat=yes",
+        "payment:credit_cards=yes",
+        "payment:debit_cards=yes",
+        "shop=wine",
+        "website=https://www.fontanafredda.it",
+        "wheelchair=yes"
+      ],
+      "score": 68
+    },
+    {
+      "id": "node:5158368821",
+      "name": "Ca’ del Baio",
+      "lat": 44.7026213,
+      "lon": 8.0887858,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=33",
+        "addr:postcode=12050",
+        "addr:street=Via Ferrere Sottano",
+        "name=Ca’ del Baio",
+        "opening_hours=Mo-Sa 08:00-18:00",
+        "phone=+390173638219",
+        "shop=wine",
+        "website=https://cadelbaio.com/"
+      ],
+      "score": 68
+    },
+    {
+      "id": "node:7069771436",
+      "name": "B&R Bevande",
+      "lat": 45.0224788,
+      "lon": 7.6555862,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Torino",
+        "addr:housenumber=14",
+        "addr:postcode=10127",
+        "addr:street=Via Sette Comuni",
+        "email=info@berbevande.com",
+        "fax=+39 0113167706",
+        "name=B&R Bevande",
+        "opening_hours=Mo-Fr 08:00-12:30,15:00-19:30; Sa 09:00-12:30; PH off",
+        "payment:cash=yes",
+        "payment:contactless=yes",
+        "payment:credit_cards=yes",
+        "payment:debit_cards=yes",
+        "phone=+39 011612360",
+        "shop=wine",
+        "website=https://www.enotecabrbevande.it/"
+      ],
+      "score": 68
+    },
+    {
+      "id": "node:7168981053",
+      "name": "Vineria Lunallegra",
+      "lat": 44.4175317,
+      "lon": 7.4279469,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=82",
+        "addr:street=Via Roma",
+        "contact:facebook=https://www.facebook.com/vinerialunallegra/",
+        "description=Vasta scelta di vini del territorio, da tutta Italia ed internazionale",
+        "name=Vineria Lunallegra",
+        "opening_hours=Tu-Th 09:00-12:30,16:00-19:30; Fr,Sa 09:00-12:30,16:00-21:00; Su 09:00-13:00",
+        "phone=+39 0171 619876",
+        "shop=wine",
+        "website=https://www.vinerialunallegra.com/"
+      ],
+      "score": 68
+    },
+    {
+      "id": "node:7918383599",
+      "name": "Azienda Agricola Accornero Vini",
+      "lat": 45.0200256,
+      "lon": 8.3665891,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Vignale Monferrato",
+        "addr:housenumber=1",
+        "addr:postcode=15049",
+        "addr:street=Via ca’Cima",
+        "contact:facebook=aziendaagricolaaccornerovini",
+        "contact:instagram=accornerovini",
+        "email=info@accornerovini.it",
+        "fax=+39 0142 933512",
+        "name=Azienda Agricola Accornero Vini",
+        "opening_hours=Mo-Sa 08:00-12:00,14:30-18:00",
+        "phone=+39 0142 933317",
+        "shop=wine",
+        "website=https://www.accornerovini.it/"
+      ],
+      "score": 68
+    },
+    {
+      "id": "node:12132699817",
+      "name": "Zoppis Srl S.B.",
+      "lat": 45.7240368,
+      "lon": 8.4510257,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Briga Novarese",
+        "addr:housenumber=47",
+        "addr:postcode=28010",
+        "addr:street=Via Cesare Battisti",
+        "email=info@zoppis.com",
+        "name=Zoppis Srl S.B.",
+        "opening_hours=Mo-Sa 09:00-19:30",
+        "phone=+39 0322 96151",
+        "shop=wine",
+        "website=https://www.zoppis.com"
+      ],
+      "score": 68
+    },
+    {
+      "id": "node:936955133",
+      "name": "Bric Cenciurio",
+      "lat": 44.6098878,
+      "lon": 7.9414288,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Barolo",
+        "addr:country=IT",
+        "addr:housenumber=24",
+        "addr:postcode=12060",
+        "addr:street=Via Roma",
+        "contact:website=https://www.briccenciurio.com/",
+        "name=Bric Cenciurio",
+        "shop=wine"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:2286180507",
+      "name": "Azienda Agricola Cascina Garitina",
+      "lat": 44.7354069,
+      "lon": 8.3794302,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Castel Boglione",
+        "addr:housenumber=20",
+        "addr:postcode=14040",
+        "addr:street=Via Gianola",
+        "man_made=winery",
+        "name=Azienda Agricola Cascina Garitina",
+        "shop=wine",
+        "source=local knowledge",
+        "tasting=yes",
+        "tourism=attraction",
+        "website=www.cascinagaritina.com"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:2559740741",
+      "name": "Distilleria Gualco",
+      "lat": 44.6863006,
+      "lon": 8.6724209,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Silvano d'Orba",
+        "addr:housename=The distillery",
+        "addr:housenumber=5",
+        "addr:postcode=15060",
+        "addr:street=Via Venti Settembre",
+        "name=Distilleria Gualco",
+        "note=Produttori di grappa dal 1870.",
+        "shop=wine",
+        "website=https://www.distilleriagualco.it/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:2778432407",
+      "name": "Fontecuore",
+      "lat": 45.3411007,
+      "lon": 7.8190022,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=San Giorgio Canavese",
+        "addr:country=IT",
+        "addr:housenumber=11",
+        "addr:postcode=10090",
+        "addr:street=Strada Misobolo",
+        "email=tenuta@fontecuore.it",
+        "name=Fontecuore",
+        "phone=+39 0124 32364",
+        "shop=wine",
+        "website=http://www.fontecuore.it"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:2909468490",
+      "name": "Azienda Agricola Vitivinicola Silva",
+      "lat": 45.3685844,
+      "lon": 7.7801267,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Agliè",
+        "addr:country=IT",
+        "addr:housenumber=1",
+        "addr:postcode=10011",
+        "addr:street=Cascine Rogge",
+        "email=silva.stefano@eurexnet.it",
+        "fax=+390124429907",
+        "mobile=+39  347 3075648",
+        "name=Azienda Agricola Vitivinicola Silva",
+        "phone=+39 0124 33356",
+        "shop=wine",
+        "website=http://www.silvavini.com"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:2909469518",
+      "name": "Cascina Ceich - Cassis Morenico",
+      "lat": 45.3642104,
+      "lon": 7.7958085,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Agliè",
+        "addr:postcode=10011",
+        "addr:street=Via Commendator Giacomo Bardesono",
+        "contact:facebook=https://www.facebook.com/cassismorenico",
+        "email=cassismorenico@gmail.com",
+        "mobile=+39 339 3590297",
+        "name=Cascina Ceich - Cassis Morenico",
+        "shop=wine",
+        "website=https://www.cassismorenico.it/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:4387856790",
+      "name": "Gatto Pierfrancesco",
+      "lat": 44.9637866,
+      "lon": 8.3040871,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=15",
+        "addr:postcode=14030",
+        "addr:street=Via Vittorio Emanuele",
+        "email=info@vinigatto.it",
+        "name=Gatto Pierfrancesco",
+        "phone=+39 0141 292149",
+        "shop=wine",
+        "website=http://www.vinigatto.it/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:4691459689",
+      "name": "Cordero di Montezemolo",
+      "lat": 44.6407013,
+      "lon": 7.958753,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=67",
+        "addr:place=Frazione Annunziata",
+        "addr:postcode=12064",
+        "name=Cordero di Montezemolo",
+        "phone=+39 0173 50344",
+        "shop=wine",
+        "website=https://www.corderodimontezemolo.com/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:5159369937",
+      "name": "Az. Agr. CA' D' GAL",
+      "lat": 44.7111801,
+      "lon": 8.1956317,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Santo Stefano Belbo",
+        "addr:housenumber=1",
+        "addr:postcode=12058",
+        "addr:street=Strada Vecchia di Valdivilla",
+        "name=Az. Agr. CA' D' GAL",
+        "note=Frazione Valdivilla",
+        "operator=Boido Alessandro",
+        "shop=wine",
+        "website=https://cadgal.it/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:5404265873",
+      "name": "Azienda agricola Principiano Ferdinando",
+      "lat": 44.5872919,
+      "lon": 7.9671738,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Monteforte d'Alba",
+        "addr:housenumber=47",
+        "addr:postcode=12065",
+        "addr:street=Via Alba",
+        "name=Azienda agricola Principiano Ferdinando",
+        "shop=wine",
+        "website=http://www.ferdinandoprincipiano.it/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:5653992967",
+      "name": "Azienda agricola Chiesa Carlo",
+      "lat": 44.7940211,
+      "lon": 7.94703,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Santo Stefano Roero",
+        "addr:housenumber=10",
+        "addr:postcode=12040",
+        "addr:street=Frazione Sant'Antonio",
+        "contact:email=info@vinichiesa.it",
+        "contact:website=http://www.vinichiesa.it",
+        "name=Azienda agricola Chiesa Carlo",
+        "shop=wine"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:6569661323",
+      "name": "Tenuta La Meridiana",
+      "lat": 44.8054408,
+      "lon": 8.1995232,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=5",
+        "addr:postcode=14048",
+        "addr:street=Via Tana Bassa",
+        "name=Tenuta La Meridiana",
+        "shop=wine",
+        "website=https://tenutalameridiana.com/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:6593660838",
+      "name": "Vinicola 23",
+      "lat": 44.3916571,
+      "lon": 7.548995,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Cuneo",
+        "addr:housenumber=36",
+        "addr:postcode=12100",
+        "addr:street=Via Saluzzo",
+        "name=Vinicola 23",
+        "payment:apple_pay=yes",
+        "payment:cash=yes",
+        "payment:contactless=yes",
+        "payment:google_pay=yes",
+        "payment:satispay=yes",
+        "phone:mobile=+39 392 688 1212",
+        "shop=wine",
+        "website=https://www.vinicola23.it/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:7289025747",
+      "name": "Pelledoca",
+      "lat": 44.6452352,
+      "lon": 7.6569606,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=10",
+        "addr:street=Via Cravetta",
+        "contact:facebook=https://www.facebook.com/pelledoca/",
+        "cuisine=burger",
+        "fixme=position estimated",
+        "name=Pelledoca",
+        "phone=+39 339 440 7053",
+        "shop=wine",
+        "website=http://www.pelledoca.net/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:7375029746",
+      "name": "Pelledoca Wine",
+      "lat": 44.6453781,
+      "lon": 7.6568457,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "contact:mobile=+39 373 7571988",
+        "name=Pelledoca Wine",
+        "shop=wine",
+        "website=http://www.pelledoca.net/",
+        "winery=served"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:7685134889",
+      "name": "Azienda Agricola Roccasanta",
+      "lat": 44.6104276,
+      "lon": 8.1988906,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:street=Strada Provinciale Cortemilia - Acqui",
+        "email=info@aziendagricolaroccasanta.it",
+        "name=Azienda Agricola Roccasanta",
+        "name:en=Roccasanta winery",
+        "shop=wine",
+        "website=https://www.aziendagricolaroccasanta.it/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:8176236417",
+      "name": "Cabutto",
+      "lat": 44.6133576,
+      "lon": 7.9354341,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=13",
+        "addr:postcode=12060",
+        "addr:street=Via San Pietro",
+        "email=info@cabuttobarolo.com",
+        "name=Cabutto",
+        "phone=+39 0173 56168",
+        "shop=wine",
+        "website=https://cabuttobarolo.com/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:9295548333",
+      "name": "La Cantinetta di Barun",
+      "lat": 44.726105,
+      "lon": 8.1151305,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Neive",
+        "addr:housenumber=6",
+        "addr:postcode=12052",
+        "addr:street=Piazza Italia",
+        "name=La Cantinetta di Barun",
+        "operator=Ca'Barun Winery",
+        "shop=wine",
+        "website=https://al-palazzo-rosso.it/la-cantinetta-di-barun/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:9760056156",
+      "name": "Bar del Centro",
+      "lat": 45.1833645,
+      "lon": 7.71602,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Leini",
+        "addr:housenumber=100",
+        "addr:postcode=10040",
+        "addr:street=Via Carlo Alberto",
+        "name=Bar del Centro",
+        "phone=+39 011 4833326",
+        "shop=wine",
+        "website=https://www.bardelcentroleini.it/menu"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:9875174117",
+      "name": "Le Piane",
+      "lat": 45.6790888,
+      "lon": 8.4080436,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=2",
+        "addr:postcode=28010",
+        "addr:street=Piazza Giacomo Matteotti",
+        "email=info@bocapiane.com",
+        "name=Le Piane",
+        "phone=+39 338 289 8789",
+        "shop=wine",
+        "website=https://www.bocapiane.com/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:9917128218",
+      "name": "Ferraris Agricola",
+      "lat": 44.948489,
+      "lon": 8.2919869,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:postcode=14030",
+        "name=Ferraris Agricola",
+        "phone=+390141292202",
+        "shop=wine",
+        "website=https://www.ferrarisagricola.com/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:9928096217",
+      "name": "Rovero Vini Grappe Agriturismo",
+      "lat": 44.8692408,
+      "lon": 8.2191844,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=216",
+        "addr:postcode=14100",
+        "addr:street=Strada Val Donata",
+        "name=Rovero Vini Grappe Agriturismo",
+        "shop=wine",
+        "website=https://www.rovero.it/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:10058793979",
+      "name": "Azienda Agricola Silvio Grasso",
+      "lat": 44.6335619,
+      "lon": 7.9606784,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=La Morra",
+        "addr:housenumber=112",
+        "addr:place=Frazione Annunziata",
+        "addr:postcode=12064",
+        "contact:phone=+393516703545",
+        "contact:website=https://www.silviograsso.com",
+        "name=Azienda Agricola Silvio Grasso",
+        "shop=wine"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:10936630769",
+      "name": "La Cantinetta",
+      "lat": 45.0372724,
+      "lon": 7.6409536,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "name=La Cantinetta",
+        "phone=+39 011 390 852",
+        "shop=wine",
+        "website=http://www.pirrovarone.eu/it/la-cantinetta/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:11886612573",
+      "name": "Oneonthehill",
+      "lat": 44.6896302,
+      "lon": 8.0414906,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Alba",
+        "addr:country=IT",
+        "addr:housenumber=7",
+        "addr:postcode=12051",
+        "addr:street=Via Gaetano Donizetti",
+        "check_date:currency:XBT=2024-01-01",
+        "currency:XBT=yes",
+        "name=Oneonthehill",
+        "payment:onchain=yes",
+        "shop=wine",
+        "website=https://www.oneonthehill.com/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:11969129439",
+      "name": "Vinologo Belgio - Vini sfusi e Bag in box",
+      "lat": 45.0751067,
+      "lon": 7.7249823,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Torino",
+        "addr:housenumber=171",
+        "addr:postcode=10153",
+        "addr:street=Corso Belgio",
+        "check_date=2024-10-15",
+        "check_date:currency:XBT=2024-10-15",
+        "contact:email=m.ferro@vinologo.it",
+        "contact:facebook=https://www.facebook.com/vinologo.torino/",
+        "currency:XBT=yes",
+        "name=Vinologo Belgio - Vini sfusi e Bag in box",
+        "payment:lightning=yes",
+        "payment:lightning_contactless=yes",
+        "payment:onchain=yes",
+        "phone=+39 01 1898 1063",
+        "shop=wine",
+        "website=https://vinologo.it/landing/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:12797249403",
+      "name": "Orosia",
+      "lat": 45.4668731,
+      "lon": 7.9635773,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Bollengo",
+        "addr:housenumber=7",
+        "addr:postcode=10012",
+        "addr:street=Strada Piane Inferiore",
+        "contact:facebook=https://www.facebook.com/orosiawine/",
+        "email=orosia@orosia.it",
+        "name=Orosia",
+        "phone=+39 0125 57284",
+        "shop=wine",
+        "website=https://ilblogdiorosia.wordpress.com/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:12797254092",
+      "name": "La palera",
+      "lat": 45.3616201,
+      "lon": 7.9907432,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Borgomasino",
+        "addr:housenumber=2",
+        "addr:postcode=10031",
+        "addr:street=Vicolo Plana",
+        "email=info@lapalera.com",
+        "name=La palera",
+        "phone=+39 0125 670946",
+        "shop=wine",
+        "website=https://www.lapalera.com/it/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:12797260900",
+      "name": "Muraje Società Semplice Agricola",
+      "lat": 45.5843577,
+      "lon": 7.8142835,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Carema",
+        "addr:housenumber=20",
+        "addr:postcode=10010",
+        "addr:street=Via Croce",
+        "name=Muraje Società Semplice Agricola",
+        "phone=+39 351 811 2325",
+        "shop=wine",
+        "website=https://www.muraje.it/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:12797277063",
+      "name": "L'erm di Aimino Jyothi",
+      "lat": 45.3642231,
+      "lon": 7.9976987,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Borgomasino",
+        "addr:postcode=10031",
+        "addr:street=Via Sanrocco",
+        "contact:facebook=https://www.facebook.com/lermaiminojyothi/?locale=it_IT",
+        "email=info@lerm.it",
+        "name=L'erm di Aimino Jyothi",
+        "phone=+39 333 1008410",
+        "shop=wine",
+        "website=http://www.lerm.it/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:12797285745",
+      "name": "Cella Grande",
+      "lat": 45.5694491,
+      "lon": 7.8133724,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Carema",
+        "addr:housenumber=10",
+        "addr:postcode=10010",
+        "addr:street=Via Chiussuma",
+        "email=info@cellagrande.it",
+        "name=Cella Grande",
+        "phone=+39 344 0617953",
+        "shop=wine",
+        "website=https://vini.cellagrande.it/masun-carema/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:12832993343",
+      "name": "Cantine Briamara",
+      "lat": 45.3566088,
+      "lon": 7.8184136,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Cuceglio",
+        "addr:housenumber=9",
+        "addr:postcode=10090",
+        "addr:street=Via Montalenghe",
+        "email=info@cantinebriamara.it",
+        "name=Cantine Briamara",
+        "phone=+39 0124 32034",
+        "shop=wine",
+        "website=https://cantinebriamara.it/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:12833060201",
+      "name": "Società Agricola Rostagno 1918",
+      "lat": 45.3320722,
+      "lon": 7.5947826,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Forno Canavese",
+        "addr:housenumber=61",
+        "addr:place=Macchia",
+        "addr:postcode=10084",
+        "email=info@rostagnovini.it",
+        "mobile=+39 338 8603609",
+        "name=Società Agricola Rostagno 1918",
+        "shop=wine",
+        "website=https://rostagnovini.it/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:12833081828",
+      "name": "Azienda Agricola Le Masche",
+      "lat": 45.3191447,
+      "lon": 7.6164819,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Levone",
+        "addr:housenumber=15",
+        "addr:postcode=10070",
+        "addr:street=Via Rivara",
+        "contact:facebook=https://www.facebook.com/LeMascheAziendaAgricola/?locale=it_IT",
+        "email=info@lemasche.it",
+        "mobile=+39 349 0079819",
+        "name=Azienda Agricola Le Masche",
+        "shop=wine",
+        "website=https://www.lemasche.it/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:12833093193",
+      "name": "Buemi Vini",
+      "lat": 45.4474363,
+      "lon": 8.0262773,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Piverone",
+        "addr:housenumber=95",
+        "addr:postcode=10010",
+        "addr:street=Strada per Zimone",
+        "email=info@buemivini.it",
+        "mobile=+39 347 2465942",
+        "name=Buemi Vini",
+        "shop=wine",
+        "website=https://www.buemivini.com/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:12833097011",
+      "name": "La Masera",
+      "lat": 45.4519847,
+      "lon": 8.0047482,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Piverone",
+        "addr:housenumber=32",
+        "addr:postcode=10010",
+        "addr:street=Strada San Pietro",
+        "email=info@lamasera.it",
+        "mobile=+39 331 8016881",
+        "name=La Masera",
+        "shop=wine",
+        "website=https://www.lamasera.it/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:12833132117",
+      "name": "Terre del creario",
+      "lat": 45.3717187,
+      "lon": 7.6672656,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Valperga",
+        "addr:housenumber=1",
+        "addr:postcode=10087",
+        "addr:street=Località Granget",
+        "email=commerciale@terredelcreario.it",
+        "mobile=+39 348 8249078;+39 345 3352098",
+        "name=Terre del creario",
+        "shop=wine",
+        "website=https://terredelcreario.it/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:12833395783",
+      "name": "Azienda Agricola Caretto Loris Livio",
+      "lat": 45.3315808,
+      "lon": 7.7824539,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=San Giorgio Canavese",
+        "addr:postcode=10090",
+        "addr:street=Cascina Caretto",
+        "contact:facebook=https://www.facebook.com/Carettolorislivio/",
+        "email=info@vinidelcanavese.it",
+        "mobile=+39 370 3117412",
+        "name=Azienda Agricola Caretto Loris Livio",
+        "shop=wine",
+        "website=https://www.vinidelcanavese.it/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:12836363629",
+      "name": "Nuove Tradizioni",
+      "lat": 45.4230869,
+      "lon": 7.7687348,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Strambinello",
+        "addr:housenumber=1",
+        "addr:postcode=10010",
+        "addr:street=Via Cavour",
+        "contact:facebook=https://www.facebook.com/nt.wines",
+        "email=info@nuovetradizioniwines.it",
+        "mobile=+39 346 3277389",
+        "name=Nuove Tradizioni",
+        "shop=wine",
+        "website=https://www.nuovetradizioniwines.it/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:13037906948",
+      "name": "Il Carlino Ubriaco",
+      "lat": 45.0811311,
+      "lon": 7.6610794,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "contact:phone=+39 011 19717505",
+        "name=Il Carlino Ubriaco",
+        "shop=wine",
+        "website=https://www.ilcarlinoubriaco.it/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "way:205658511",
+      "name": "Cantine del Castello Conti",
+      "lat": 45.6943693,
+      "lon": 8.4301769,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Maggiora",
+        "addr:housenumber=15",
+        "addr:street=Via per Borgomanero",
+        "building=yes",
+        "email=info@castelloconti.it",
+        "name=Cantine del Castello Conti",
+        "phone=+39 0322 87187",
+        "shop=wine",
+        "website=https://www.castelloconti.it/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "way:375366689",
+      "name": "Cascina Chicco",
+      "lat": 44.7924932,
+      "lon": 7.9839943,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Canale",
+        "addr:country=IT",
+        "addr:housenumber=14",
+        "addr:postcode=12043",
+        "addr:street=Via Valentino",
+        "building=yes",
+        "name=Cascina Chicco",
+        "phone=+39 0173 979 411",
+        "shop=wine",
+        "website=https://www.cascinachicco.com/",
+        "wheelchair=yes"
+      ],
+      "score": 63
+    },
+    {
+      "id": "way:382755377",
+      "name": "Azienda Vitivinicola Villaro Sottano",
+      "lat": 44.5870706,
+      "lon": 8.025044,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=yes",
+        "email=info@piemontreisen.com",
+        "name=Azienda Vitivinicola Villaro Sottano",
+        "phone=+39 333 9916835",
+        "shop=wine",
+        "website=http://www.piemontweine.com/"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:1423089012",
+      "name": "La Boutique Del Gusto",
+      "lat": 45.0798331,
+      "lon": 7.5078124,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Rivoli",
+        "addr:country=IT",
+        "addr:housenumber=171a",
+        "addr:postcode=10098",
+        "addr:street=Corso Alcide De Gasperi",
+        "check_date=2025-07-31",
+        "name=La Boutique Del Gusto",
+        "opening_hours=Tu-Su 09:00-13:00,16:00-20:00; PH closed",
+        "shop=wine"
+      ],
+      "score": 60
+    },
+    {
+      "id": "node:3956304244",
+      "name": "Enotria",
+      "lat": 45.0804194,
+      "lon": 7.6425807,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Torino",
+        "addr:housenumber=51",
+        "addr:postcode=10145",
+        "addr:street=Via Domodossola",
+        "name=Enotria",
+        "opening_hours=Tu-Su 09:00-13:00, 16:00-19:30",
+        "shop=wine"
+      ],
+      "score": 60
+    },
+    {
+      "id": "node:4019351258",
+      "name": "La Crota 'd Ti Tin",
+      "lat": 45.1360529,
+      "lon": 7.0465391,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Susa",
+        "addr:housenumber=19",
+        "addr:postcode=10059",
+        "addr:street=Via Francesco Rolando",
+        "check_date=2024-09-21",
+        "name=La Crota 'd Ti Tin",
+        "opening_hours=Tu-Sa 09:00-13:00, Tu-Su 15:30-19:00",
+        "payment:credit_cards=yes",
+        "payment:debit_cards=yes",
+        "shop=wine",
+        "wheelchair=yes"
+      ],
+      "score": 60
+    },
+    {
+      "id": "node:4674566196",
+      "name": "L'angolo Di Vino",
+      "lat": 45.3289926,
+      "lon": 8.4256535,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Vercelli",
+        "addr:housenumber=59",
+        "addr:postcode=13100",
+        "addr:street=Corso Italia",
+        "check_date=2023-08-30",
+        "fixme=Verificare se esiste ancora.",
+        "name=L'angolo Di Vino",
+        "opening_hours=Mo 16:00-19:30; Tu-Sa 09:30-12:30,16:00-19:30",
+        "shop=wine"
+      ],
+      "score": 60
+    },
+    {
+      "id": "node:6897632719",
+      "name": "L'uva in Bottiglia",
+      "lat": 45.326038,
+      "lon": 8.4251263,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "check_date=2024-08-04",
+        "contact:city=Vercelli",
+        "contact:housenumber=6",
+        "contact:phone=+39 0161 217225",
+        "contact:postcode=13100",
+        "contact:street=Piazza Massimo d'Azeglio",
+        "name=L'uva in Bottiglia",
+        "opening_hours=Mo 15:30-19:30; Tu-Su 09:30-12:30,15:30-19:30",
+        "shop=wine",
+        "wheelchair=no"
+      ],
+      "score": 60
+    },
+    {
+      "id": "node:7865280942",
+      "name": "Vicolo Di... VIno",
+      "lat": 45.0766047,
+      "lon": 7.6752166,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "contact:city=Torino",
+        "contact:housenumber=34",
+        "contact:mobile=+39 348 4356754",
+        "contact:postcode=10122",
+        "contact:street=Via San Domenico",
+        "cuisine=bistro;deli",
+        "dinner=yes",
+        "food=yes",
+        "indoor_seating=yes",
+        "lunch=yes",
+        "name=Vicolo Di... VIno",
+        "opening_hours=Mo, Tu, Th-Sa 10:30-22:30",
+        "outdoor_seating=yes",
+        "phone=+39 011 19030631",
+        "shop=wine",
+        "takeaway=yes"
+      ],
+      "score": 60
+    },
+    {
+      "id": "node:8852460275",
+      "name": "Porto Birra",
+      "lat": 45.3255299,
+      "lon": 8.4255926,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "check_date=2024-07-05",
+        "name=Porto Birra",
+        "opening_hours=We,Th,Su 18:00-21:00; Fr,Sa 18:00-22:00",
+        "shop=wine",
+        "wheelchair=limited"
+      ],
+      "score": 60
+    },
+    {
+      "id": "node:9822855023",
+      "name": "Vinologo",
+      "lat": 45.0086448,
+      "lon": 7.8257992,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "level=0",
+        "name=Vinologo",
+        "opening_hours=Mo 15:30-19:30; Tu-Su 09:30-12:45,15:30-19:30",
+        "payment:cash=yes",
+        "payment:contactless=yes",
+        "payment:satispay=yes",
+        "phone=+39 0112386476",
+        "shop=wine"
+      ],
+      "score": 60
+    },
+    {
+      "id": "node:9919507717",
+      "name": "Vinoland",
+      "lat": 44.610663,
+      "lon": 7.9429153,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "name=Vinoland",
+        "opening_hours=Mo-Su 09:00-19:00",
+        "shop=wine"
+      ],
+      "score": 60
+    },
+    {
+      "id": "node:11635537211",
+      "name": "Enostor(i)e",
+      "lat": 45.324403,
+      "lon": 8.4147773,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Vercelli",
+        "addr:housenumber=18",
+        "addr:postcode=13100",
+        "addr:street=Corso Fiume 22 febbraio 1924",
+        "check_date=2024-10-07",
+        "description=Enoteca con mescita",
+        "name=Enostor(i)e",
+        "opening_hours=Mo-Sa 10:00-14:00,16:00-21:00; Su off",
+        "shop=wine",
+        "survey:date=2024-02-17"
+      ],
+      "score": 60
+    },
+    {
+      "id": "node:12387278724",
+      "name": "Mezzopieno",
+      "lat": 45.0199704,
+      "lon": 8.4555686,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Conzano",
+        "addr:housenumber=11",
+        "addr:postcode=15030",
+        "addr:street=Via Mezzavilla",
+        "contact:facebook=https://www.facebook.com/profile.php?id=61567162928982",
+        "contact:instagram=https://www.instagram.com/mezzopieno_winebar/",
+        "dog=yes",
+        "email=mezzopienoconzano@gmail.com",
+        "name=Mezzopieno",
+        "opening_hours=We-Fr 17:00-00:00; Sa-Su 11:00-00:00",
+        "operator=Mortarotti Alice",
+        "phone=+39 351 643 2035",
+        "ref:vatin=IT02752520060",
+        "shop=wine"
+      ],
+      "score": 60
+    },
+    {
+      "id": "node:347066457",
+      "name": "Cantine d'Italia",
+      "lat": 44.6770721,
+      "lon": 7.9903101,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Alba",
+        "addr:housenumber=4",
+        "addr:postcode=12051",
+        "addr:street=Via Renato Ratti",
+        "name=Cantine d'Italia",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:1470052242",
+      "name": "Tastè Vin",
+      "lat": 44.8985459,
+      "lon": 8.1968846,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Tastè Vin",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:2049366101",
+      "name": "Travaglini Vini",
+      "lat": 45.6185119,
+      "lon": 8.3572669,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Travaglini Vini",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:2069021844",
+      "name": "Azienda Agricola la Rivà",
+      "lat": 44.8212228,
+      "lon": 7.2884075,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Bricherasio",
+        "addr:country=IT",
+        "addr:housenumber=9",
+        "addr:postcode=10060",
+        "addr:street=Strada Rivà",
+        "contact:phone=+39 340 9816099",
+        "man_made=winery",
+        "name=Azienda Agricola la Rivà",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:2630658518",
+      "name": "Incontro Di Vite",
+      "lat": 45.4512136,
+      "lon": 7.878693,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Ivrea",
+        "addr:country=IT",
+        "addr:housenumber=265",
+        "addr:postcode=10015",
+        "addr:street=Via Torino",
+        "check_date=2024-07-13",
+        "contact:facebook=https://www.facebook.com/profile.php?id=61553112495995",
+        "email=incontrodivite@outlook.it",
+        "mobile=+39 327 4867526",
+        "name=Incontro Di Vite",
+        "shop=wine",
+        "wheelchair=no"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:2728461364",
+      "name": "Pietrini",
+      "lat": 45.1355178,
+      "lon": 7.0471429,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Susa",
+        "addr:housenumber=3",
+        "addr:postcode=10059",
+        "addr:street=Via Palazzo di Città",
+        "check_date=2025-07-12",
+        "name=Pietrini",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:2833646107",
+      "name": "Vinòmio",
+      "lat": 45.3253555,
+      "lon": 8.4185554,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "check_date=2024-04-27",
+        "contact:city=Vercelli",
+        "contact:housenumber=46",
+        "contact:postcode=13100",
+        "contact:street=Via Dante Alighieri",
+        "dog=yes",
+        "name=Vinòmio",
+        "shop=wine",
+        "start_date=2023-07",
+        "wheelchair=no"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:2909468489",
+      "name": "Azienda Agricola Vitivinicola Massoglia",
+      "lat": 45.3666352,
+      "lon": 7.7974778,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Agliè",
+        "addr:country=IT",
+        "addr:housenumber=1",
+        "addr:postcode=10011",
+        "addr:street=Via Fontanasse",
+        "contact:facebook=https://www.facebook.com/cantinamassoglia/?locale=it_IT",
+        "email=info@cantinamassoglia.it",
+        "mobile=+39 347 0636199",
+        "name=Azienda Agricola Vitivinicola Massoglia",
+        "phone=+39 0124 33704",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:3792347821",
+      "name": "La Boutique del Gusto",
+      "lat": 45.0970851,
+      "lon": 7.3670562,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Sant'Ambrogio di Torino",
+        "addr:postcode=10057",
+        "addr:street=Corso Moncenisio",
+        "name=La Boutique del Gusto",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:3898047977",
+      "name": "Azienda Vinicola Valle Erro",
+      "lat": 44.5954212,
+      "lon": 8.4178512,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Azienda Vinicola Valle Erro",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:4343767942",
+      "name": "Abrate Sergio",
+      "lat": 44.6995834,
+      "lon": 7.8485091,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Bra",
+        "addr:housenumber=24",
+        "addr:postcode=12042",
+        "addr:street=Via Umberto I",
+        "name=Abrate Sergio",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:4422259554",
+      "name": "Gomba Boschetti",
+      "lat": 44.6052354,
+      "lon": 7.946811,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Gomba Boschetti",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:4701627068",
+      "name": "Gaudio - Bricco Mondalino",
+      "lat": 45.0084461,
+      "lon": 8.4073934,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Gaudio - Bricco Mondalino",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:4732586426",
+      "name": "Tripel B",
+      "lat": 45.0945185,
+      "lon": 7.6831625,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=68",
+        "addr:postcode=10155",
+        "addr:street=Via Valprato",
+        "name=Tripel B",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:4734924083",
+      "name": "Le Dolcezze di Torino",
+      "lat": 45.0490733,
+      "lon": 7.6392823,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=97a",
+        "addr:postcode=10136",
+        "addr:street=Via Barletta",
+        "name=Le Dolcezze di Torino",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:4734924356",
+      "name": "Il Torchio",
+      "lat": 45.0475675,
+      "lon": 7.6436565,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=51a",
+        "addr:postcode=10136",
+        "addr:street=Via Barletta",
+        "name=Il Torchio",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:4739383852",
+      "name": "Vino Sfuso",
+      "lat": 45.719417,
+      "lon": 8.6143203,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "check_date=2025-09-18",
+        "name=Vino Sfuso",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:4785722978",
+      "name": "Bossotti Vincenzo Vignaiolo",
+      "lat": 44.8294234,
+      "lon": 8.0075606,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Bossotti Vincenzo Vignaiolo",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:4788052721",
+      "name": "Vaudano Enrico & Figli Snc",
+      "lat": 44.8265622,
+      "lon": 8.0007792,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Cisterna d'Asti",
+        "addr:housenumber=5",
+        "addr:postcode=14010",
+        "addr:street=Viale Renzo Cattaneo",
+        "name=Vaudano Enrico & Figli Snc",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:4881594748",
+      "name": "Vini d'Italia",
+      "lat": 46.0985392,
+      "lon": 8.6932698,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Vini d'Italia",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:4881594759",
+      "name": "Casa Bava",
+      "lat": 46.0610366,
+      "lon": 8.7003733,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Casa Bava",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:5030756804",
+      "name": "Bottega dei 4 vini",
+      "lat": 44.7261731,
+      "lon": 8.1156182,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Bottega dei 4 vini",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:5117627179",
+      "name": "Signorvino",
+      "lat": 45.0662504,
+      "lon": 7.6830872,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "level=0",
+        "name=Signorvino",
+        "outdoor_seating=yes",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:5229220221",
+      "name": "Capellano",
+      "lat": 44.6365543,
+      "lon": 7.9837549,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=13",
+        "addr:street=Via Alba",
+        "name=Capellano",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:5302680821",
+      "name": "Black Barrels",
+      "lat": 45.0842615,
+      "lon": 7.6586805,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Black Barrels",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:5488322171",
+      "name": "Peccato di Vino",
+      "lat": 45.0972198,
+      "lon": 7.3635285,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Sant'Ambrogio di Torino",
+        "addr:housenumber=13",
+        "addr:postcode=10057",
+        "addr:street=Via Torino",
+        "email=info@peccatodivino.shop",
+        "name=Peccato di Vino",
+        "phone=+39 011 19827276",
+        "shop=wine",
+        "start_date=2018-03-24"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:5735189621",
+      "name": "E. Pira e Figli",
+      "lat": 44.6100167,
+      "lon": 7.9401962,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=1",
+        "addr:street=Via Vittorio Veneto",
+        "name=E. Pira e Figli",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:5745699586",
+      "name": "Noi Vignaioli Piemontesi",
+      "lat": 44.745884,
+      "lon": 8.0601123,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Castagnito",
+        "addr:housenumber=15",
+        "addr:postcode=12050",
+        "addr:street=Via Alba",
+        "name=Noi Vignaioli Piemontesi",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:5820715445",
+      "name": "Cin Cin - Wine bar",
+      "lat": 45.7892239,
+      "lon": 8.5379789,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Cin Cin - Wine bar",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:5981331096",
+      "name": "Boeri Alfonso S.S.",
+      "lat": 44.7680597,
+      "lon": 8.1976202,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Boeri Alfonso S.S.",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:5981343087",
+      "name": "Boeri",
+      "lat": 44.7583211,
+      "lon": 8.2200204,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Boeri",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:6010640185",
+      "name": "Ca‘Rome",
+      "lat": 44.7126097,
+      "lon": 8.0890828,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=36",
+        "addr:street=Via Rabaja",
+        "name=Ca‘Rome",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:6226746098",
+      "name": "Pio Cesare",
+      "lat": 44.7015979,
+      "lon": 8.0388648,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Pio Cesare",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:6239350908",
+      "name": "La bottega del vino",
+      "lat": 44.384257,
+      "lon": 7.5433696,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=La bottega del vino",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:6282264125",
+      "name": "Vineria Fant da picc",
+      "lat": 45.7068184,
+      "lon": 8.5810113,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Borgo Ticino",
+        "addr:hamlet=Campagnola",
+        "addr:housenumber=68",
+        "addr:postcode=28040",
+        "addr:street=Via Principale",
+        "cuisine=italian;pizza",
+        "name=Vineria Fant da picc",
+        "phone=+39 392 457 0912",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:6301399169",
+      "name": "Non solo vino",
+      "lat": 45.7256003,
+      "lon": 8.2839236,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Non solo vino",
+        "phone=+39016322366",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:6342641186",
+      "name": "La cantinetta",
+      "lat": 44.3904384,
+      "lon": 7.5500289,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=6",
+        "addr:street=Piazza Boves",
+        "name=La cantinetta",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:6418919227",
+      "name": "I baccanali",
+      "lat": 44.3922551,
+      "lon": 7.5520635,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=I baccanali",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:6499353523",
+      "name": "Cuneovini",
+      "lat": 44.388797,
+      "lon": 7.5428778,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Cuneovini",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:6641661490",
+      "name": "Enzo Boglietti",
+      "lat": 44.6365099,
+      "lon": 7.9280974,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Enzo Boglietti",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:6745598658",
+      "name": "La Curia",
+      "lat": 44.6750215,
+      "lon": 8.4702811,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Acqui Terme",
+        "addr:housenumber=72",
+        "addr:postcode=15011",
+        "addr:street=Via alla Bollente",
+        "email=info@enotecalacuria.com",
+        "name=La Curia",
+        "phone=+39 0144 356049",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:6881979586",
+      "name": "Hilberg Pasquero",
+      "lat": 44.796867,
+      "lon": 8.0715072,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Hilberg Pasquero",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:7123000259",
+      "name": "Vinai del borgo",
+      "lat": 44.3889295,
+      "lon": 7.8216576,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Mondovì",
+        "addr:country=IT",
+        "addr:housenumber=16b",
+        "addr:postcode=12084",
+        "addr:street=Via Sant'Agostino",
+        "name=Vinai del borgo",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:7837955885",
+      "name": "Deltetto 1953",
+      "lat": 44.7929547,
+      "lon": 7.9993913,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=43",
+        "addr:postcode=12043",
+        "addr:street=Corso Alba",
+        "name=Deltetto 1953",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:7837970585",
+      "name": "Azienda Agricola Ettore Germano",
+      "lat": 44.6221629,
+      "lon": 7.9958837,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Azienda Agricola Ettore Germano",
+        "name:en=Ettore Germano Farm",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:7839841732",
+      "name": "Piacere divino",
+      "lat": 44.5567569,
+      "lon": 7.7326805,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Piacere divino",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:8301313030",
+      "name": "Cantine Berteletti",
+      "lat": 45.626054,
+      "lon": 8.321591,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Cantine Berteletti",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:8845864118",
+      "name": "Trediberri",
+      "lat": 44.63296,
+      "lon": 7.9442814,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Trediberri",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:9350516065",
+      "name": "Castello di Razzano",
+      "lat": 45.0513548,
+      "lon": 8.1988913,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Castello di Razzano",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:9471058690",
+      "name": "Michele Chiarlo",
+      "lat": 44.7315443,
+      "lon": 8.3218131,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Michele Chiarlo",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:9868385025",
+      "name": "Il Mosto",
+      "lat": 45.1151262,
+      "lon": 7.3103362,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Il Mosto",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:9919507619",
+      "name": "La Bottega Juliette Callert",
+      "lat": 44.6111642,
+      "lon": 7.9436129,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=La Bottega Juliette Callert",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:10081573964",
+      "name": "Il Sogno nel cassetto",
+      "lat": 45.011922,
+      "lon": 7.8258379,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "level=0",
+        "name=Il Sogno nel cassetto",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:10138155946",
+      "name": "Spaccio vini e olii",
+      "lat": 45.0731396,
+      "lon": 7.6823135,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=17b",
+        "addr:postcode=10122",
+        "addr:street=Via Conte Verde",
+        "name=Spaccio vini e olii",
+        "operator=Lorenzo Tuffanelli",
+        "ref:vatin=IT10223950964",
+        "shop=wine",
+        "wheelchair=no"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:10259334314",
+      "name": "Rampa's",
+      "lat": 45.0632423,
+      "lon": 7.6816312,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Rampa's",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:10278005318",
+      "name": "Madonna dell",
+      "lat": 45.7011898,
+      "lon": 8.4430925,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Madonna dell",
+        "name:it=Madonna dell'uva",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:10278005319",
+      "name": "Podere Ai Valloni",
+      "lat": 45.6872763,
+      "lon": 8.3814395,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Podere Ai Valloni",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:10278005320",
+      "name": "Azienda Agricola Alberto Crespi",
+      "lat": 45.6282941,
+      "lon": 8.5768016,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Azienda Agricola Alberto Crespi",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:10571468709",
+      "name": "Botz",
+      "lat": 45.06954,
+      "lon": 7.698776,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "cocktails=yes",
+        "drink:wine=served",
+        "food=yes",
+        "indoor_seating=yes",
+        "name=Botz",
+        "outdoor_seating=yes",
+        "payment:satispay=yes",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:10610484346",
+      "name": "La Colombera",
+      "lat": 44.882493,
+      "lon": 8.8850662,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=La Colombera",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:10768514973",
+      "name": "Claudio Mariotto",
+      "lat": 44.883003,
+      "lon": 8.8870441,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Claudio Mariotto",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:10771051724",
+      "name": "Cantine Venete",
+      "lat": 44.8946777,
+      "lon": 8.8504569,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Cantine Venete",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:10831656925",
+      "name": "La Vinicola Chierese",
+      "lat": 45.0135935,
+      "lon": 7.8220801,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=La Vinicola Chierese",
+        "shop=wine",
+        "wheelchair=limited"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:11020930995",
+      "name": "Vermuttino",
+      "lat": 45.0762635,
+      "lon": 7.6804973,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Torino",
+        "addr:housenumber=16c",
+        "addr:postcode=10122",
+        "addr:street=Via Franco Bonelli",
+        "name=Vermuttino",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:11126383735",
+      "name": "Frattin",
+      "lat": 45.6517504,
+      "lon": 8.2013626,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Frattin",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:11138383489",
+      "name": "La Nata",
+      "lat": 44.9521991,
+      "lon": 6.791465,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=La Nata",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:11362349378",
+      "name": "Malnat",
+      "lat": 45.4468939,
+      "lon": 8.6227952,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "check_date=2023-11-19",
+        "name=Malnat",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:11564993867",
+      "name": "Vini Sfusi",
+      "lat": 45.0846464,
+      "lon": 7.6588652,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Vini Sfusi",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:11602936985",
+      "name": "Capo di Vigna",
+      "lat": 45.9355016,
+      "lon": 8.5674973,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=51",
+        "addr:street=Via Roma",
+        "check_date=2024-02-09",
+        "level=0",
+        "name=Capo di Vigna",
+        "shop=wine",
+        "wheelchair=yes"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:11888609890",
+      "name": "Codici e Calici",
+      "lat": 45.0713257,
+      "lon": 7.6611045,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Torino",
+        "addr:housenumber=65/a",
+        "addr:postcode=10138",
+        "addr:street=Via Principi d'Acaja",
+        "name=Codici e Calici",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:11916087539",
+      "name": "Bottiglie Rotolanti",
+      "lat": 45.4754651,
+      "lon": 8.6940517,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Bottiglie Rotolanti",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:11934800267",
+      "name": "Angelica",
+      "lat": 44.7260069,
+      "lon": 7.3259679,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "check_date=2024-05-26",
+        "name=Angelica",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:12035343769",
+      "name": "Bianco Rosso Rosè",
+      "lat": 44.7011704,
+      "lon": 8.0344751,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Bianco Rosso Rosè",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:12066085957",
+      "name": "Ber",
+      "lat": 45.0737504,
+      "lon": 7.6637433,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Ber",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:12077177649",
+      "name": "La Casetta del Castello",
+      "lat": 44.7252203,
+      "lon": 8.1145456,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Neive",
+        "addr:housenumber=1",
+        "addr:postcode=12052",
+        "addr:street=Via Castelborgo",
+        "description=Degustazione e vendita dei prodotti del Castello di Neive",
+        "name=La Casetta del Castello",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:12092064979",
+      "name": "La Ragion Pura",
+      "lat": 45.9291164,
+      "lon": 8.5526018,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "check_date=2024-08-04",
+        "level=0",
+        "name=La Ragion Pura",
+        "shop=wine",
+        "wheelchair=yes"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:12122615561",
+      "name": "Il Grappolo Nobile",
+      "lat": 45.9306155,
+      "lon": 8.5625513,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "check_date=2024-08-20",
+        "level=0",
+        "name=Il Grappolo Nobile",
+        "shop=wine",
+        "wheelchair=no"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:12135793090",
+      "name": "El Cantun Del Vin Bon",
+      "lat": 44.8205709,
+      "lon": 7.2238799,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "check_date=2024-08-25",
+        "name=El Cantun Del Vin Bon",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:12230288164",
+      "name": "Vineria",
+      "lat": 45.4644635,
+      "lon": 8.6154133,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "check_date=2024-10-06",
+        "level=0",
+        "name=Vineria",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:12248381968",
+      "name": "Fratelli Arditi",
+      "lat": 45.070187,
+      "lon": 8.4005998,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "check_date=2024-10-13",
+        "name=Fratelli Arditi",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:12307002334",
+      "name": "La Barrique",
+      "lat": 44.7244205,
+      "lon": 8.0802187,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "check_date=2024-11-02",
+        "name=La Barrique",
+        "payment:cash=yes",
+        "payment:contactless=yes",
+        "payment:credit_cards=yes",
+        "payment:mastercard=yes",
+        "payment:visa=yes",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:12309210211",
+      "name": "La Risorseria",
+      "lat": 44.5890815,
+      "lon": 7.9273338,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=19",
+        "addr:street=Via Giordano",
+        "air_conditioning=yes",
+        "check_date=2024-11-03",
+        "name=La Risorseria",
+        "payment:cash=yes",
+        "payment:contactless=yes",
+        "payment:credit_cards=yes",
+        "payment:mastercard=yes",
+        "payment:visa=yes",
+        "shop=wine",
+        "source=survey",
+        "toilets=yes",
+        "wheelchair=yes"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:12371668081",
+      "name": "Malìa",
+      "lat": 44.8990659,
+      "lon": 8.2028267,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "check_date=2024-11-24",
+        "name=Malìa",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:12435570010",
+      "name": "I vini del Cüsu",
+      "lat": 45.3042686,
+      "lon": 8.4455664,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=I vini del Cüsu",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:12443718405",
+      "name": "Tavernacolo",
+      "lat": 45.0227949,
+      "lon": 7.6424702,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Torino",
+        "addr:housenumber=128/A",
+        "addr:postcode=10135",
+        "addr:street=Via Pietro Francesco Guala",
+        "air_conditioning=yes",
+        "mobile=+39 389 2677714",
+        "name=Tavernacolo",
+        "phone=+39 389 2677714",
+        "ref:vatin=12629890018",
+        "shop=wine",
+        "wheelchair=no"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:12480903786",
+      "name": "Vini al Calice",
+      "lat": 45.0555102,
+      "lon": 7.6123531,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "level=0",
+        "name=Vini al Calice",
+        "operator=shopville le gru",
+        "products=wine",
+        "services=tasting",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:12731307924",
+      "name": "Calici",
+      "lat": 44.7194892,
+      "lon": 8.2861993,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Calici",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:12744029673",
+      "name": "Cascina MiaQuiete",
+      "lat": 45.3624335,
+      "lon": 7.7948774,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Agliè",
+        "addr:housenumber=7a",
+        "addr:postcode=10011",
+        "addr:street=Via Commendator Giacomo Bardesono",
+        "contact:facebook=https://www.facebook.com/agricolt/?locale=it_IT",
+        "email=rarra83@gmail.com",
+        "mobile=+39 340 1677713",
+        "name=Cascina MiaQuiete",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:12833051744",
+      "name": "Società Agricola Le Querce",
+      "lat": 45.3298146,
+      "lon": 7.8315131,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Montalenghe",
+        "addr:housenumber=4",
+        "addr:postcode=10090",
+        "addr:street=Strada del Ruglio",
+        "name=Società Agricola Le Querce",
+        "phone=+39 011 9839121",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:12833101203",
+      "name": "Fratelli Borsetto",
+      "lat": 45.4414192,
+      "lon": 8.0191502,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Piverone",
+        "addr:housenumber=41",
+        "addr:postcode=10010",
+        "addr:street=Strada per Viverone",
+        "mobile=+39 347 2306119",
+        "name=Fratelli Borsetto",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:12833395188",
+      "name": "Figliej - Viticoltura di montagna",
+      "lat": 45.5441917,
+      "lon": 7.8373931,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Settimo Vittone",
+        "addr:housenumber=11",
+        "addr:postcode=10010",
+        "addr:street=Via Figliei",
+        "contact:facebook=https://www.facebook.com/Figliejvino/?locale=it_IT",
+        "email=cantinafigliej@gmail.com",
+        "mobile=+39 348 8869770",
+        "name=Figliej - Viticoltura di montagna",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:12836387929",
+      "name": "Valchyara",
+      "lat": 45.455524,
+      "lon": 7.8042786,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Val di Chy",
+        "addr:place=regione Pila",
+        "addr:postcode=10039",
+        "name=Valchyara",
+        "phone=+39 340 2931315",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:12951996610",
+      "name": "La Cantinella",
+      "lat": 45.071162,
+      "lon": 7.6533625,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=La Cantinella",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:13040850005",
+      "name": "Porta in Tavola",
+      "lat": 45.0715,
+      "lon": 7.6307505,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Porta in Tavola",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:13082038037",
+      "name": "Telesio 70",
+      "lat": 45.0802914,
+      "lon": 7.6279308,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Telesio 70",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:13155827799",
+      "name": "Vino e Altro",
+      "lat": 45.0702728,
+      "lon": 7.6477323,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Vino e Altro",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:13159886597",
+      "name": "Sartine",
+      "lat": 44.6527077,
+      "lon": 7.8578924,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Sartine",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:13167864106",
+      "name": "Sommeliers",
+      "lat": 45.0558298,
+      "lon": 7.6702972,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Sommeliers",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:13167960285",
+      "name": "Torino da Bere",
+      "lat": 45.0211376,
+      "lon": 7.6628145,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "level=0",
+        "name=Torino da Bere",
+        "payment:bancomat=yes",
+        "payment:credit_cards=yes",
+        "payment:satispay=yes",
+        "shop=wine",
+        "wheelchair=limited"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:13186218442",
+      "name": "Vineria Bertola",
+      "lat": 45.0710482,
+      "lon": 7.6781531,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Vineria Bertola",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:13288832086",
+      "name": "Sorso Vineria",
+      "lat": 45.0608241,
+      "lon": 7.6867465,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "check_date=2025-11-08",
+        "email=sorsovineria@gmail.com",
+        "name=Sorso Vineria",
+        "payment:cash=yes",
+        "payment:credit_cards=yes",
+        "payment:debit_cards=yes",
+        "phone=+39 351 785 3021",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:13293425202",
+      "name": "Vinoland",
+      "lat": 44.7263927,
+      "lon": 8.1153179,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Neive",
+        "addr:housenumber=2",
+        "addr:postcode=12052",
+        "addr:street=Via Cocito",
+        "name=Vinoland",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:13306041542",
+      "name": "Al Buon Vino",
+      "lat": 45.063234,
+      "lon": 7.6445894,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Al Buon Vino",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:13412923886",
+      "name": "Quartin Divino",
+      "lat": 45.0780412,
+      "lon": 7.6341304,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Quartin Divino",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "way:133510101",
+      "name": "Risto Pub Vineria Stefania Porrati",
+      "lat": 44.9924633,
+      "lon": 8.4573383,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=6",
+        "addr:street=Via Alessandria",
+        "amenity=restaurant",
+        "building=yes",
+        "name=Risto Pub Vineria Stefania Porrati",
+        "phone=+39 0131 771954",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "way:307010914",
+      "name": "Cantine Grassi",
+      "lat": 45.1225935,
+      "lon": 7.4967966,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "building=yes",
+        "name=Cantine Grassi",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "way:458718641",
+      "name": "enoteka",
+      "lat": 45.719408,
+      "lon": 8.5926046,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "building=yes",
+        "name=enoteka",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "way:474108975",
+      "name": "Canatovini Ca' Baldea",
+      "lat": 45.0252791,
+      "lon": 8.3657514,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "building=yes",
+        "name=Canatovini Ca' Baldea",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "way:475889023",
+      "name": "Mazzetti d'Altavilla",
+      "lat": 44.9932447,
+      "lon": 8.3777088,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "building=yes",
+        "name=Mazzetti d'Altavilla",
+        "shop=wine"
+      ],
+      "score": 55
+    }
+  ]
+}

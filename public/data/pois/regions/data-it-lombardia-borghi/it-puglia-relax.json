@@ -1,0 +1,60 @@
+{
+  "region_id": "it-puglia-relax",
+  "label_it": "Puglia • relax",
+  "generated_at": "2026-01-14T18:16:51.655Z",
+  "places": [
+    {
+      "id": "node:11048491267",
+      "name": "Stabilimento Termale Gattulla",
+      "lat": 40.0365984,
+      "lon": 18.4621523,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "bath:type=thermal",
+        "check_date=2023-07-15",
+        "level=1",
+        "name=Stabilimento Termale Gattulla",
+        "operator=Terme di Santa Cesarea"
+      ],
+      "score": 155
+    },
+    {
+      "id": "node:11048491271",
+      "name": "Piscina Sulfurea",
+      "lat": 40.0373144,
+      "lon": 18.4635252,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "bath:open_air=yes",
+        "bath:sand_bath=no",
+        "bath:type=hot_spring",
+        "check_date=2023-07-15",
+        "fee=yes",
+        "name=Piscina Sulfurea",
+        "opening_hours=09:30-19:00",
+        "operator=Terme di Santa Cesarea",
+        "source=survey",
+        "wheelchair=yes"
+      ],
+      "score": 75
+    },
+    {
+      "id": "way:404815595",
+      "name": "servizio igienico pubblico",
+      "lat": 41.5104604,
+      "lon": 15.3339806,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "building=yes",
+        "name=servizio igienico pubblico"
+      ],
+      "score": 70
+    }
+  ]
+}

@@ -1,0 +1,128 @@
+{
+  "region_id": "it-friuli-venezia-giulia-relax",
+  "country": "IT",
+  "label_it": "Friuli-Venezia Giulia • relax",
+  "generated_at": "2026-01-14T19:43:39.750Z",
+  "places": [
+    {
+      "id": "relation:17652697",
+      "name": "Terme di Lignano",
+      "lat": 45.6614127,
+      "lon": 13.107085,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Lignano Sabbiadoro",
+        "addr:hamlet=Lignano Riviera",
+        "addr:housenumber=1b",
+        "addr:postcode=33054",
+        "addr:province=Udine",
+        "addr:street=Lungomare Riccardo Riva",
+        "amenity=public_bath",
+        "bath:type=thermal",
+        "building=yes",
+        "email=terme@sil-lignano.net",
+        "it:fvg:ctrn:code=4AED",
+        "it:fvg:ctrn:revision=1AM",
+        "name=Terme di Lignano",
+        "opening_hours=Mo-Su 09:00-19:00",
+        "phone=+39 0431 422217",
+        "shower=yes",
+        "type=multipolygon",
+        "unisex=yes",
+        "website=https://www.termedilignano.it/"
+      ],
+      "score": 173
+    },
+    {
+      "id": "way:1214969963",
+      "name": "Terme Marine",
+      "lat": 45.6774792,
+      "lon": 13.4010004,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "bath:open_air=no",
+        "bath:type=thermal",
+        "building=yes",
+        "building:colour=white",
+        "building:material=concrete",
+        "contact:email=prenotazioniterme@gradoit.it",
+        "contact:phone=+39 0431 899309",
+        "contact:website=https://www.gradoit.it/it/scopri_le_terme_marine#",
+        "name=Terme Marine",
+        "roof:material=concrete",
+        "roof:shape=flat",
+        "shower=no",
+        "unisex=yes",
+        "wheelchair=yes"
+      ],
+      "score": 168
+    },
+    {
+      "id": "way:1110037198",
+      "name": "Riviera Resort",
+      "lat": 45.6609987,
+      "lon": 13.106388,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Lignano Sabbiadoro",
+        "addr:hamlet=Lignano Riviera",
+        "addr:housenumber=1c",
+        "addr:postcode=33054",
+        "addr:province=Udine",
+        "addr:street=Lungomare Riccardo Riva",
+        "amenity=public_bath",
+        "bath:open_air=yes",
+        "bath:type=thermal",
+        "contact:email=info@parcotermalerivieraresort.it",
+        "contact:phone=+39 0431 424490",
+        "contact:website=https://www.parcotermalerivieraresort.it/",
+        "name=Riviera Resort",
+        "opening_hours=Mo-Su 09:00-19:30",
+        "shower=yes",
+        "unisex=yes"
+      ],
+      "score": 133
+    },
+    {
+      "id": "node:6742347376",
+      "name": "Grien SPA",
+      "lat": 46.4640047,
+      "lon": 12.6927259,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "check_date=2025-09-05",
+        "fee=yes",
+        "leisure=sauna",
+        "name=Grien SPA",
+        "sauna=yes"
+      ],
+      "score": 90
+    },
+    {
+      "id": "relation:160703",
+      "name": "Là di Moret",
+      "lat": 46.0978919,
+      "lon": 13.229926,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "building=yes",
+        "height=21 m",
+        "it:fvg:ctrn:code=4AED",
+        "name=Là di Moret",
+        "spa=yes",
+        "stars=4",
+        "tourism=hotel",
+        "type=multipolygon",
+        "wheelchair=yes"
+      ],
+      "score": 0
+    }
+  ]
+}

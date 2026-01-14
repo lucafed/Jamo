@@ -1,0 +1,34 @@
+{
+  "region_id": "it-marche-relax",
+  "country": "IT",
+  "label_it": "Marche • relax",
+  "generated_at": "2026-01-14T19:44:15.025Z",
+  "places": [
+    {
+      "id": "node:11764262916",
+      "name": "Terme dell'Aspio",
+      "lat": 43.5328247,
+      "lon": 13.5177814,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "name=Terme dell'Aspio",
+        "natural=hot_spring"
+      ],
+      "score": 120
+    },
+    {
+      "id": "node:6689475197",
+      "name": "Lu Vurghe",
+      "lat": 42.779695,
+      "lon": 13.4136336,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "name=Lu Vurghe",
+        "natural=hot_spring"
+      ],
+      "score": 80
+    }
+  ]
+}

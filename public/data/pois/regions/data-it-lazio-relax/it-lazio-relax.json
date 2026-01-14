@@ -1,0 +1,398 @@
+{
+  "region_id": "it-lazio-relax",
+  "country": "IT",
+  "label_it": "Lazio • relax",
+  "generated_at": "2026-01-14T19:43:57.814Z",
+  "places": [
+    {
+      "id": "relation:2436896",
+      "name": "Terme di Stigliano",
+      "lat": 42.1158842,
+      "lon": 12.0399437,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "bath:type=thermal",
+        "name=Terme di Stigliano",
+        "phone=+39 06 99805977",
+        "type=multipolygon",
+        "website=https://www.termedistigliano.it/"
+      ],
+      "score": 168
+    },
+    {
+      "id": "way:27221401",
+      "name": "Terme di Cretone",
+      "lat": 42.0846291,
+      "lon": 12.6925409,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Palombara Sabina",
+        "addr:postcode=00018",
+        "addr:street=Strada dell'Acqua Sulfurea",
+        "amenity=public_bath",
+        "area=yes",
+        "bath:type=thermal",
+        "fee=yes",
+        "name=Terme di Cretone",
+        "website=https://www.termesabine.it"
+      ],
+      "score": 163
+    },
+    {
+      "id": "node:5407071117",
+      "name": "Pozzo Paliano",
+      "lat": 42.3763593,
+      "lon": 12.0571996,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "bath:open_air=yes",
+        "bath:type=hot_spring",
+        "name=Pozzo Paliano",
+        "natural=hot_spring",
+        "water_characteristic=sulfuric"
+      ],
+      "score": 150
+    },
+    {
+      "id": "way:61008685",
+      "name": "Sorgente Bagno del Papa",
+      "lat": 42.4139772,
+      "lon": 12.0651664,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "bath:open_air=yes",
+        "bath:type=hot_spring",
+        "name=Sorgente Bagno del Papa",
+        "natural=hot_spring",
+        "water=hot_spring",
+        "water_characteristic=sulfuric"
+      ],
+      "score": 150
+    },
+    {
+      "id": "way:296803227",
+      "name": "Terme Pompeo",
+      "lat": 41.682399,
+      "lon": 13.2700838,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Ferentino",
+        "addr:housenumber=km 76",
+        "addr:postcode=03013",
+        "addr:street=Via Casilina",
+        "amenity=spa",
+        "building=yes",
+        "contact:facebook=https://www.facebook.com/TermePompeo/",
+        "contact:instagram=http://www.instagram.com/termepompeo.it/",
+        "fee=yes",
+        "leisure=sports_centre",
+        "name=Terme Pompeo",
+        "natural=hot_spring",
+        "phone=+39 0775 244114",
+        "website=https://www.termepompeo.it/"
+      ],
+      "score": 133
+    },
+    {
+      "id": "node:5154802592",
+      "name": "Terme di Vulci",
+      "lat": 42.4615398,
+      "lon": 11.6371173,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "addr:street=Via delle Terme",
+        "amenity=public_bath",
+        "bath:type=hot_spring",
+        "name=Terme di Vulci",
+        "opening_hours=Mo-Su 10:00-19:00",
+        "phone=+39 0761 438574",
+        "website=https://termedivulci.com/"
+      ],
+      "score": 128
+    },
+    {
+      "id": "way:530969466",
+      "name": "piscine termali di vulci",
+      "lat": 42.4612802,
+      "lon": 11.6367969,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=canino",
+        "addr:postcode=01011",
+        "addr:street=Via delle Terme",
+        "amenity=public_bath",
+        "bath:open_air=yes",
+        "bath:sand_bath=yes",
+        "bath:type=thermal",
+        "fee=yes",
+        "name=piscine termali di vulci",
+        "opening_hours=Mo-Su 10:00-19:00",
+        "phone=+39 0761 438574",
+        "temporary=yes"
+      ],
+      "score": 125
+    },
+    {
+      "id": "way:418290537",
+      "name": "Complesso Termale Vescine",
+      "lat": 41.305405,
+      "lon": 13.8887819,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Castelforte",
+        "addr:hamlet=Suio",
+        "addr:housenumber=417",
+        "addr:postcode=04021",
+        "addr:street=Via delle Terme",
+        "amenity=public_bath",
+        "name=Complesso Termale Vescine",
+        "operator=Terme Vescine S.r.l.",
+        "swimming_pool=spa",
+        "website=https://www.termevescine.com/"
+      ],
+      "score": 118
+    },
+    {
+      "id": "way:1192263049",
+      "name": "Vasche di Musignano",
+      "lat": 42.4392916,
+      "lon": 11.7139541,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "bath:open_air=yes",
+        "bath:type=thermal",
+        "name=Vasche di Musignano",
+        "outdoor=yes",
+        "spring:type=hot",
+        "unisex=yes"
+      ],
+      "score": 115
+    },
+    {
+      "id": "node:5889300238",
+      "name": "Terme di Cottorella",
+      "lat": 42.3891808,
+      "lon": 12.8627089,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "bath:type=hot_spring",
+        "name=Terme di Cottorella"
+      ],
+      "score": 110
+    },
+    {
+      "id": "node:3965917778",
+      "name": "Sorgente Solfurea",
+      "lat": 42.1702485,
+      "lon": 12.0939895,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "name=Sorgente Solfurea",
+        "natural=hot_spring",
+        "water_characteristic=sulfuric",
+        "wikimedia_commons=File:Sorgente solfurea.jpg"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:5406914958",
+      "name": "Bagnaccio",
+      "lat": 42.4589229,
+      "lon": 12.0654309,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "bath:open_air=yes",
+        "name=Bagnaccio",
+        "natural=hot_spring",
+        "water_characteristic=sulfuric"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:5407083324",
+      "name": "Sorgenti San Cristoforo",
+      "lat": 42.3985368,
+      "lon": 12.0593447,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "name=Sorgenti San Cristoforo",
+        "natural=hot_spring",
+        "water_characteristic=sulfuric"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:5407086754",
+      "name": "Sorgenti dell’Asinello",
+      "lat": 42.4004872,
+      "lon": 12.0596518,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "name=Sorgenti dell’Asinello",
+        "natural=hot_spring",
+        "water_characteristic=sulfuric"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:5407113004",
+      "name": "Pozzo Cacciabella",
+      "lat": 42.4136454,
+      "lon": 12.0583219,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "name=Pozzo Cacciabella",
+        "natural=hot_spring",
+        "water_characteristic=sulfuric"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:5407203903",
+      "name": "Pozzo San Valentino",
+      "lat": 42.4217433,
+      "lon": 12.0748986,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "name=Pozzo San Valentino",
+        "natural=hot_spring",
+        "water_characteristic=sulfuric"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:5407302179",
+      "name": "Sorgente Zitelle",
+      "lat": 42.4261995,
+      "lon": 12.0608937,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "name=Sorgente Zitelle",
+        "natural=hot_spring",
+        "water_characteristic=sulfuric"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:9891374577",
+      "name": "Sorgente Solfurea",
+      "lat": 42.364234,
+      "lon": 11.8866196,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "name=Sorgente Solfurea",
+        "natural=hot_spring",
+        "water_characteristic=sulfuric"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:324098784",
+      "name": "Bagnaccio",
+      "lat": 42.460423,
+      "lon": 12.0708463,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "access=no",
+        "name=Bagnaccio",
+        "natural=hot_spring",
+        "note=Puddle Thermal Lake - Forbidden Access Lago di fango termale - Accesso Vietato",
+        "water=lake",
+        "water_characteristic=sulfuric",
+        "wheelchair=no"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:740650828",
+      "name": "Solfatara Diosilla",
+      "lat": 42.1329144,
+      "lon": 12.0845526,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "name=Solfatara Diosilla",
+        "natural=hot_spring",
+        "water_characteristic=sulfuric"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:1191473294",
+      "name": "La pozza",
+      "lat": 42.4548711,
+      "lon": 11.6361312,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "name=La pozza",
+        "natural=hot_spring"
+      ],
+      "score": 80
+    },
+    {
+      "id": "relation:14742470",
+      "name": "Solfatara vecchia",
+      "lat": 42.1372182,
+      "lon": 12.0782957,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "name=Solfatara vecchia",
+        "natural=hot_spring",
+        "old_name=Solfatara del Gorgoncino",
+        "type=multipolygon",
+        "water_characteristic=sulfuric",
+        "wikimedia_commons=File:Zolfarata.jpg"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:204019467",
+      "name": "The St. Regis Roma",
+      "lat": 41.9042079,
+      "lon": 12.4950912,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=3",
+        "addr:postcode=00185",
+        "addr:street=Via Vittorio Emanuele Orlando",
+        "award:hotelstars=5",
+        "check_date=2025-06-07",
+        "email=stregisrome@stregis.com",
+        "fax=+39 06 4747307",
+        "name=The St. Regis Roma",
+        "phone=+39 06 47091",
+        "spa=yes",
+        "tourism=hotel",
+        "website=http://www.stregisrome.com/"
+      ],
+      "score": 13
+    }
+  ]
+}

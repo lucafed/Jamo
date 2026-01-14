@@ -1,0 +1,370 @@
+{
+  "region_id": "it-lombardia-relax",
+  "country": "IT",
+  "label_it": "Lombardia • relax",
+  "generated_at": "2026-01-14T19:44:41.621Z",
+  "places": [
+    {
+      "id": "way:346588708",
+      "name": "Terme di Sirmione Virgilio",
+      "lat": 45.4640098,
+      "lon": 10.6105055,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "bath:type=thermal",
+        "name=Terme di Sirmione Virgilio"
+      ],
+      "score": 155
+    },
+    {
+      "id": "relation:13264262",
+      "name": "Terme di Vallio",
+      "lat": 45.6110831,
+      "lon": 10.403639,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "bath:type=thermal",
+        "name=Terme di Vallio",
+        "start_date=1955",
+        "type=multipolygon"
+      ],
+      "score": 155
+    },
+    {
+      "id": "node:12296947128",
+      "name": "Island spa",
+      "lat": 45.0851878,
+      "lon": 10.8571925,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Bagnolo San Vito",
+        "addr:housenumber=14",
+        "addr:postcode=46031",
+        "addr:street=Via Marco Biagi",
+        "amenity=public_bath",
+        "bath:open_air=no",
+        "bath:sand_bath=no",
+        "bath:type=thermal",
+        "charge:conditional=30€ @Mo-Fr, 35€ @ Sa-Su PH",
+        "email=info@island-spa.it",
+        "fee=yes",
+        "level=0",
+        "name=Island spa",
+        "opening_hours=Mo-Fr 09:30-20:30, PH Sa-Su 09:00-19:30",
+        "phone=+39 0376 414279",
+        "reservation=recommended",
+        "website=https://www.island-spa.it/"
+      ],
+      "score": 153
+    },
+    {
+      "id": "way:73485381",
+      "name": "Bagni Vecchi",
+      "lat": 46.4922163,
+      "lon": 10.3609825,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Valdidentro",
+        "addr:postcode=23038",
+        "addr:street=Via Bagni Vecchi",
+        "amenity=public_bath",
+        "bath:sand_bath=no",
+        "bath:type=thermal",
+        "check_date=2023-08-01",
+        "contact:email=infobagnivecchi@bagnidibormio.it",
+        "contact:phone=+39 0289747201",
+        "contact:website=https://www.qcterme.com/it/bormio/qc-terme-bagni-vecchi",
+        "fee=yes",
+        "name=Bagni Vecchi",
+        "opening_hours=Mo-Su 10:00-22:00; ",
+        "operator=QC Terme",
+        "operator:wikidata=Q115543071",
+        "ref:vatin=IT10541980966",
+        "wheelchair=no",
+        "wikidata=Q112140705"
+      ],
+      "score": 133
+    },
+    {
+      "id": "way:330277912",
+      "name": "Bagni Nuovi",
+      "lat": 46.4861095,
+      "lon": 10.3605096,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Valdidentro",
+        "addr:housenumber=7",
+        "addr:postcode=23038",
+        "addr:street=Via Bagni Nuovi",
+        "amenity=public_bath",
+        "bath:open_air=partial",
+        "bath:sand_bath=no",
+        "bath:type=thermal",
+        "brand=QC Terme",
+        "brand:wikidata=Q115543071",
+        "check_date=2023-12-14",
+        "contact:phone=+39 02 89747202",
+        "fee=yes",
+        "name=Bagni Nuovi",
+        "operator=QC Terme s.r.l.",
+        "ref:vatin=IT10541980966",
+        "website=https://www.qcterme.com/it/bormio/qc-terme-bagni-vecchi",
+        "wheelchair=no",
+        "wikidata=Q123884916"
+      ],
+      "score": 128
+    },
+    {
+      "id": "way:1393107384",
+      "name": "Aquaria",
+      "lat": 45.4949341,
+      "lon": 10.6045881,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=1",
+        "addr:street=Piazza Don Angelo Piatti",
+        "alt_name=Terme di Catullo;Terme di Sirmione",
+        "amenity=public_bath",
+        "bath:type=thermal",
+        "check_date=2025-05-11",
+        "fee=yes",
+        "name=Aquaria",
+        "opening_hours=Su-Th 09:00-22:00; Fr,Sa 09:00-24:00",
+        "operator=Terme e Grandi Alberghi Sirmione spa",
+        "payment:cash=yes",
+        "payment:mastercard=yes",
+        "payment:visa=yes",
+        "reservation=required",
+        "toilets:wheelchair=yes",
+        "website=https://www.termedisirmione.com/spathermalgarden/",
+        "wheelchair=yes",
+        "wheelchair:description=Wenn man höfflich fragt gibt es eine super saubere barrierefrei Toilette :)"
+      ],
+      "score": 128
+    },
+    {
+      "id": "node:1783595018",
+      "name": "Bormio Terme",
+      "lat": 46.4699722,
+      "lon": 10.3692332,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=14",
+        "addr:street=Via Stelvio",
+        "amenity=public_bath",
+        "contact:email=info@bormioterme.it",
+        "contact:phone=+390342901325",
+        "contact:website=https://www.bormioterme.it/",
+        "name=Bormio Terme"
+      ],
+      "score": 123
+    },
+    {
+      "id": "node:12209829458",
+      "name": "Terme di Trescore",
+      "lat": 45.6906752,
+      "lon": 9.8471329,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Trescore Balneario",
+        "addr:postcode=24069",
+        "addr:street=via Gramsci",
+        "amenity=public_bath",
+        "email=richieste@termeditrescore.it",
+        "healthcare:speciality=hydrotherapy",
+        "name=Terme di Trescore",
+        "operator=Terme di Trescore S.P.A.",
+        "phone=035 4255511",
+        "website=https://www.termeditrescore.it/"
+      ],
+      "score": 123
+    },
+    {
+      "id": "node:12308269875",
+      "name": "QC Terme San Pellegrino",
+      "lat": 45.8414835,
+      "lon": 9.6641981,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=53",
+        "addr:street=Viale della Vittoria",
+        "amenity=public_bath",
+        "brand=QC Terme",
+        "brand:wikidata=Q115543071",
+        "check_date=2024-11-02",
+        "contact:website=https://www.qcterme.com/it/san-pellegrino/qc-terme-san-pellegrino",
+        "name=QC Terme San Pellegrino",
+        "payment:cash=yes",
+        "payment:maestro=yes",
+        "payment:mastercard=yes",
+        "payment:visa=yes"
+      ],
+      "score": 118
+    },
+    {
+      "id": "node:12299807688",
+      "name": "Terme curative",
+      "lat": 45.8413064,
+      "lon": 9.665696,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "check_date=2024-11-02",
+        "disused:building=yes",
+        "name=Terme curative"
+      ],
+      "score": 110
+    },
+    {
+      "id": "node:13261062569",
+      "name": "Terme di Boario",
+      "lat": 45.8915171,
+      "lon": 10.186827,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "access=customers",
+        "amenity=public_bath",
+        "bath:type=hot_spring",
+        "fee=yes",
+        "fixme=Check type. Spa with hot springs, sauna etc",
+        "name=Terme di Boario"
+      ],
+      "score": 110
+    },
+    {
+      "id": "node:4263305031",
+      "name": "Villa Borghi Wellness Beauty & Spa",
+      "lat": 45.7730403,
+      "lon": 8.7041133,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "leisure=spa",
+        "name=Villa Borghi Wellness Beauty & Spa",
+        "opening_hours=Mo,Fr-Su 10:00-19:00; Tu-Th 11:00-20:00",
+        "phone=+39 0332 960914"
+      ],
+      "score": 90
+    },
+    {
+      "id": "node:11381869246",
+      "name": "Pozza Alta di Leonardo",
+      "lat": 46.4950649,
+      "lon": 10.3564216,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "name=Pozza Alta di Leonardo",
+        "natural=hot_spring"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:11381869247",
+      "name": "La pozza Bassa",
+      "lat": 46.4921488,
+      "lon": 10.3583132,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "name=La pozza Bassa",
+        "natural=hot_spring"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:368409443",
+      "name": "Pozza \"Leonardo da Vinci\"",
+      "lat": 46.492188,
+      "lon": 10.3582993,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "access=yes",
+        "bath:open_air=yes",
+        "bath:sand_bath=no",
+        "bath:type=hot_spring",
+        "drinking_water=no",
+        "fee=no",
+        "name=Pozza \"Leonardo da Vinci\"",
+        "natural=hot_spring",
+        "pump=no"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:747372560",
+      "name": "Impero Hotel",
+      "lat": 45.8325886,
+      "lon": 8.9086328,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Gaggiolo",
+        "addr:housenumber=1",
+        "addr:postcode=21050",
+        "addr:street=Via dei Bucaneve",
+        "amenity=restaurant",
+        "building=retail",
+        "cuisine=italian;pizza",
+        "internet_access=yes",
+        "leisure=spa",
+        "name=Impero Hotel",
+        "oven=wood_fired",
+        "phone=+39 0332 418006",
+        "tourism=hotel",
+        "website=https://imperohotel.it/"
+      ],
+      "score": 73
+    },
+    {
+      "id": "node:9026874314",
+      "name": "Baia del Silenzio",
+      "lat": 45.7050938,
+      "lon": 10.0731084,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "fee=no",
+        "name=Baia del Silenzio"
+      ],
+      "score": 70
+    },
+    {
+      "id": "node:9124493356",
+      "name": "Touring",
+      "lat": 46.1810793,
+      "lon": 10.3327892,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Edolo",
+        "addr:housenumber=7",
+        "addr:street=Piazza Martiri della Libertà",
+        "air_conditioning=yes",
+        "bar=yes",
+        "contact:email=info@touringedolo.it",
+        "contact:phone=+39 0364 1957960",
+        "contact:website=https://touringedolo.it/",
+        "name=Touring",
+        "spa=yes",
+        "tourism=hotel"
+      ],
+      "score": 13
+    }
+  ]
+}

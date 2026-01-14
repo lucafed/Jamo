@@ -1,0 +1,23 @@
+{
+  "region_id": "it-abruzzo-relax",
+  "country": "IT",
+  "label_it": "Abruzzo • relax",
+  "generated_at": "2026-01-14T19:43:31.379Z",
+  "places": [
+    {
+      "id": "node:12092880973",
+      "name": "Terme Alte",
+      "lat": 41.8568544,
+      "lon": 14.0854651,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "bath:type=thermal",
+        "indoor=yes",
+        "name=Terme Alte"
+      ],
+      "score": 155
+    }
+  ]
+}

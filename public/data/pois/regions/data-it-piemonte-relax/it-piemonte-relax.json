@@ -1,0 +1,307 @@
+{
+  "region_id": "it-piemonte-relax",
+  "country": "IT",
+  "label_it": "Piemonte • relax",
+  "generated_at": "2026-01-14T19:43:43.953Z",
+  "places": [
+    {
+      "id": "node:4509536327",
+      "name": "Stabilimento Curativo Nuove Terme",
+      "lat": 44.6734547,
+      "lon": 8.4676435,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Acqui Terme",
+        "addr:housenumber=5",
+        "addr:postcode=15011",
+        "addr:street=Via Venti Settembre",
+        "amenity=public_bath",
+        "bath:type=thermal",
+        "fee=yes",
+        "name=Stabilimento Curativo Nuove Terme",
+        "phone=+39 0144 324390",
+        "website=https://www.termediacqui.it/cure-termali/"
+      ],
+      "score": 168
+    },
+    {
+      "id": "node:2484805998",
+      "name": "Bagni di Craveggia",
+      "lat": 46.1979781,
+      "lon": 8.5398758,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "bath:type=hot_spring",
+        "historic=ruins",
+        "leisure=hot_spring",
+        "name=Bagni di Craveggia",
+        "natural=hot_spring",
+        "tourism=attraction",
+        "water_access=dipping",
+        "wikidata=Q799944",
+        "wikipedia=it:Bagni di Craveggia",
+        "wikipedia:de=Bagni di Craveggia",
+        "wikipedia:en=Bagni di Craveggia",
+        "wikipedia:nl=Bagni di Craveggia"
+      ],
+      "score": 150
+    },
+    {
+      "id": "node:105472783",
+      "name": "Terme di Lurisia",
+      "lat": 44.2953603,
+      "lon": 7.6979424,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=60",
+        "addr:street=Via delle Terme",
+        "leisure=spa",
+        "name=Terme di Lurisia",
+        "operator=Istituto Idrotermale Lurisia s.r.l.",
+        "ref:vatin=IT12063410158",
+        "tourism=attraction",
+        "wikidata=Q66053207"
+      ],
+      "score": 100
+    },
+    {
+      "id": "node:10572799363",
+      "name": "Hammam Al Bab",
+      "lat": 45.0764252,
+      "lon": 7.6879616,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "bath:type=hammam",
+        "contact:housenumber=15",
+        "contact:street=Via Gianfrancesco Fiochetto",
+        "level=1",
+        "name=Hammam Al Bab",
+        "opening_hours=Mo-Su 10:00-20:00",
+        "operator=Dar Al Hikma",
+        "payment:cash=only",
+        "phone=+39 011 5215111",
+        "website=https://www.daralhikma.it/hammam/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:9044817049",
+      "name": "Nivolano spa",
+      "lat": 44.3017794,
+      "lon": 7.7085205,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "leisure=spa",
+        "name=Nivolano spa"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:9123143906",
+      "name": "Pozze di Vinadio",
+      "lat": 44.2892522,
+      "lon": 7.0792955,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "name=Pozze di Vinadio",
+        "natural=hot_spring"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:1183433678",
+      "name": "Piscina Eden Club",
+      "lat": 45.3276156,
+      "lon": 8.4681655,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "access=private",
+        "amenity=public_bath",
+        "bath:type=pool",
+        "charge=7 EUR/day",
+        "check_date=2025-06-08",
+        "contact:city=Vinzaglio",
+        "contact:facebook=https://www.facebook.com/Piscinaedenclub/",
+        "contact:housenumber=18d",
+        "contact:postcode=28060",
+        "contact:street=SP 596 dei Cairoli",
+        "email=eden.club.piscina@gmail.com",
+        "fee=yes",
+        "name=Piscina Eden Club",
+        "opening_hours=09:30-20:00",
+        "operator=Circolo Sportivo A.S.D. Eden Club",
+        "phone=+39 349 3691096",
+        "private=members"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:2956230315",
+      "name": "B&B La Montanina",
+      "lat": 44.1916976,
+      "lon": 7.5702133,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Limone Piemonte",
+        "addr:country=IT",
+        "addr:housenumber=61",
+        "addr:place=Corso Nizza",
+        "addr:postcode=12015",
+        "guest_house=bed_and_breakfast",
+        "leisure=spa",
+        "name=B&B La Montanina",
+        "phone=+39 0171 921 24; +39 328 739 6153",
+        "tourism=guest_house",
+        "website=https://www.lamontanina-limone.it/"
+      ],
+      "score": 73
+    },
+    {
+      "id": "node:6618722772",
+      "name": "Borgo Fantino",
+      "lat": 44.1912307,
+      "lon": 7.5684825,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Limone Piemonte",
+        "addr:country=IT",
+        "addr:housenumber=54",
+        "addr:postcode=12015",
+        "addr:street=Corso Nizza",
+        "internet_access:fee=yes",
+        "leisure=spa",
+        "name=Borgo Fantino",
+        "phone=+39 0171 926669",
+        "tourism=apartment",
+        "website=https://www.borgofantino.it/"
+      ],
+      "score": 73
+    },
+    {
+      "id": "node:6618722779",
+      "name": "Fiocco di Neve Relais",
+      "lat": 44.2022041,
+      "lon": 7.5769107,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Limone Piemonte",
+        "addr:country=IT",
+        "addr:housenumber=2c",
+        "addr:postcode=12015",
+        "addr:street=Via Roma",
+        "internet_access:fee=yes",
+        "leisure=spa",
+        "name=Fiocco di Neve Relais",
+        "phone=+39 0171 926352",
+        "tourism=hotel",
+        "website=https://www.fioccodineverelais.com/",
+        "wikidata=Q111879038"
+      ],
+      "score": 73
+    },
+    {
+      "id": "way:389954082",
+      "name": "Hotel Edelweiss",
+      "lat": 44.1804478,
+      "lon": 7.565924,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=10",
+        "addr:street=Strada Statale 20",
+        "amenity=restaurant",
+        "building=yes",
+        "email=info@edelweisslimone.it",
+        "leisure=spa",
+        "name=Hotel Edelweiss",
+        "phone=+39 0171 928138",
+        "source=bing",
+        "tourism=hotel",
+        "website=https://www.edelweisslimone.it/"
+      ],
+      "score": 73
+    },
+    {
+      "id": "node:10554249791",
+      "name": "Le petit hammam",
+      "lat": 45.0896824,
+      "lon": 7.6940175,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "name=Le petit hammam"
+      ],
+      "score": 70
+    },
+    {
+      "id": "node:11084166217",
+      "name": "Laghetti Olbicella",
+      "lat": 44.5339981,
+      "lon": 8.5875611,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "name=Laghetti Olbicella"
+      ],
+      "score": 70
+    },
+    {
+      "id": "node:11084166246",
+      "name": "Gola dell'Orba",
+      "lat": 44.5918836,
+      "lon": 8.6074191,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "name=Gola dell'Orba"
+      ],
+      "score": 70
+    },
+    {
+      "id": "way:267189588",
+      "name": "Bora Bora",
+      "lat": 45.2889518,
+      "lon": 8.4556303,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "access=private",
+        "amenity=public_bath",
+        "bath:type=pool",
+        "check_date=2025-03-16",
+        "name=Bora Bora",
+        "private=members",
+        "start_date=2023-06-18"
+      ],
+      "score": 70
+    },
+    {
+      "id": "way:1210141979",
+      "name": "Bagni Pubblici di Piazza della pace",
+      "lat": 45.0202947,
+      "lon": 7.4715821,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "name=Bagni Pubblici di Piazza della pace"
+      ],
+      "score": 70
+    }
+  ]
+}

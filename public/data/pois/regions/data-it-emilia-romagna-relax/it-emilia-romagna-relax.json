@@ -1,0 +1,495 @@
+{
+  "region_id": "it-emilia-romagna-relax",
+  "country": "IT",
+  "label_it": "Emilia-Romagna • relax",
+  "generated_at": "2026-01-14T19:43:58.494Z",
+  "places": [
+    {
+      "id": "way:1265860211",
+      "name": "Terme di Castrocaro - Spa Termale Magiche Acque",
+      "lat": 44.1716986,
+      "lon": 11.9500405,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "bath:type=thermal",
+        "fee=yes",
+        "level=-1",
+        "name=Terme di Castrocaro - Spa Termale Magiche Acque",
+        "opening_hours=Su-We 10:00-20:00; Th-Sa 10:00-23:00",
+        "operator=GVM Care & Research",
+        "website=https://www.termedicastrocaro.it/home-magiche-acque/"
+      ],
+      "score": 188
+    },
+    {
+      "id": "node:2388253640",
+      "name": "Centro del Benessere Termale \"Thermae Oasis\" SPA",
+      "lat": 44.7314399,
+      "lon": 12.2288159,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "bath:type=thermal",
+        "name=Centro del Benessere Termale \"Thermae Oasis\" SPA",
+        "website=https://www.thermaeoasis.com"
+      ],
+      "score": 183
+    },
+    {
+      "id": "node:3797101958",
+      "name": "Terme San Luca - Pluricenter",
+      "lat": 44.5092074,
+      "lon": 11.2970308,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "bath:type=thermal",
+        "healthcare=doctor",
+        "name=Terme San Luca - Pluricenter",
+        "phone=+39 051 382564",
+        "website=https://www.maretermalebolognese.it/terme_san_luca_pluricenter_bologna_introduzione.htm",
+        "wheelchair=yes",
+        "wikidata=Q135653428"
+      ],
+      "score": 168
+    },
+    {
+      "id": "node:6658592011",
+      "name": "Piscina Termale",
+      "lat": 44.2709079,
+      "lon": 11.7213164,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "bath:open_air=no",
+        "bath:sand_bath=no",
+        "bath:type=thermal",
+        "covered=yes",
+        "fee=yes",
+        "name=Piscina Termale",
+        "shower=yes"
+      ],
+      "score": 155
+    },
+    {
+      "id": "way:179624029",
+      "name": "Terme Borrini",
+      "lat": 44.7288099,
+      "lon": 10.3946297,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "bath:type=thermal",
+        "building=yes",
+        "name=Terme Borrini",
+        "source=Regione Emilia Romagna",
+        "wikidata=Q29584891",
+        "wikipedia=it:Terme Borrini"
+      ],
+      "score": 155
+    },
+    {
+      "id": "way:261348060",
+      "name": "Terme di Castel San Pietro",
+      "lat": 44.3842532,
+      "lon": 11.5890732,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Castel San Pietro Terme",
+        "addr:housenumber=1113",
+        "addr:postcode=40024",
+        "addr:street=Viale delle Terme",
+        "amenity=public_bath",
+        "bath:type=thermal",
+        "name=Terme di Castel San Pietro",
+        "ref:corine_land_cover=1213",
+        "source=http://dati.emilia-romagna.it/dato/item/11-11-uso-del-suolo-2008.html"
+      ],
+      "score": 155
+    },
+    {
+      "id": "way:1149304458",
+      "name": "Terme della Salvarola",
+      "lat": 44.5193273,
+      "lon": 10.768023,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "bath:type=thermal",
+        "fee=yes",
+        "name=Terme della Salvarola",
+        "operator=Balnea",
+        "unisex=yes"
+      ],
+      "score": 155
+    },
+    {
+      "id": "way:1174236547",
+      "name": "Antico Stabilimento termale \"Terme Alte\"",
+      "lat": 44.1532677,
+      "lon": 10.9727049,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "bath:open_air=no",
+        "bath:type=thermal",
+        "closed=yes",
+        "name=Antico Stabilimento termale \"Terme Alte\"",
+        "wikidata=Q106073502"
+      ],
+      "score": 155
+    },
+    {
+      "id": "way:1259820043",
+      "name": "Terme dell'Agriturismo",
+      "lat": 44.3119332,
+      "lon": 11.4596624,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "bath:sand_bath=no",
+        "bath:type=thermal",
+        "check_date=2025-02-15",
+        "fee=yes",
+        "name=Terme dell'Agriturismo",
+        "seasonal=no"
+      ],
+      "score": 155
+    },
+    {
+      "id": "way:1354390635",
+      "name": "Terme Felsinee",
+      "lat": 44.4924943,
+      "lon": 11.2953152,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "bath:type=thermal",
+        "building=yes",
+        "name=Terme Felsinee",
+        "source=Regione Emilia Romagna;https://www.maretermalebolognese.it/terme-felsinee-bologna-casalecchio-corsi-piscina-cure-convenzione",
+        "wikidata=Q125505528"
+      ],
+      "score": 155
+    },
+    {
+      "id": "way:40702657",
+      "name": "Terme di Riccione",
+      "lat": 43.995481,
+      "lon": 12.670802,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "barrier=fence",
+        "bath:type=hot_spring",
+        "name=Terme di Riccione",
+        "website=https://riccioneterme.it"
+      ],
+      "score": 118
+    },
+    {
+      "id": "relation:2428656",
+      "name": "Terme Berzieri",
+      "lat": 44.8161157,
+      "lon": 9.9798504,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "building=yes",
+        "name=Terme Berzieri",
+        "source=Regione Emilia Romagna",
+        "type=multipolygon",
+        "website=https://www.termedisalsomaggiore.it/",
+        "wikidata=Q24934178",
+        "wikipedia=it:Terme Berzieri"
+      ],
+      "score": 118
+    },
+    {
+      "id": "way:182264657",
+      "name": "Terme \"Respighi\" di Tabiano",
+      "lat": 44.8027216,
+      "lon": 10.0213801,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "building=yes",
+        "name=Terme \"Respighi\" di Tabiano",
+        "source=Regione Emilia Romagna"
+      ],
+      "score": 110
+    },
+    {
+      "id": "way:182288771",
+      "name": "Terme Luigi Zoja",
+      "lat": 44.8163124,
+      "lon": 9.9839409,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "building=yes",
+        "name=Terme Luigi Zoja",
+        "source=Regione Emilia Romagna",
+        "wikidata=Q130535203"
+      ],
+      "score": 110
+    },
+    {
+      "id": "way:182312648",
+      "name": "Terme di Sant'Andrea",
+      "lat": 44.7263344,
+      "lon": 10.0880034,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "building=yes",
+        "name=Terme di Sant'Andrea",
+        "source=Regione Emilia Romagna"
+      ],
+      "score": 110
+    },
+    {
+      "id": "way:182312657",
+      "name": "Terme di Sant'Andrea",
+      "lat": 44.7256773,
+      "lon": 10.0893493,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "building=yes",
+        "name=Terme di Sant'Andrea",
+        "source=Regione Emilia Romagna"
+      ],
+      "score": 110
+    },
+    {
+      "id": "way:182312716",
+      "name": "Terme di Sant'Andrea",
+      "lat": 44.7256287,
+      "lon": 10.0895658,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "building=yes",
+        "name=Terme di Sant'Andrea",
+        "source=Regione Emilia Romagna"
+      ],
+      "score": 110
+    },
+    {
+      "id": "way:1459065183",
+      "name": "Terme di Lesignano de' Bagni",
+      "lat": 44.6444045,
+      "lon": 10.2955028,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "area=yes",
+        "mobile=+39 331 2827946",
+        "name=Terme di Lesignano de' Bagni"
+      ],
+      "score": 110
+    },
+    {
+      "id": "node:3730382207",
+      "name": "Brisighella Green Wellness",
+      "lat": 44.1964881,
+      "lon": 11.7020497,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Brisighella",
+        "addr:housenumber=86",
+        "addr:postcode=48013",
+        "addr:street=Via Corte",
+        "leisure=spa",
+        "name=Brisighella Green Wellness",
+        "phone=+39 339 4927440",
+        "tourism=guest_house",
+        "website=http://brisighellagreenwellness.com/"
+      ],
+      "score": 93
+    },
+    {
+      "id": "way:755681462",
+      "name": "Anusca Palace Wellnes & SPA",
+      "lat": 44.3855468,
+      "lon": 11.5876763,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Castel San Pietro Terme",
+        "addr:housenumber=1058",
+        "addr:postcode=40024",
+        "addr:street=Viale delle Terme",
+        "amenity=public_bath",
+        "bath:open_air=no",
+        "bath:sand_bath=no",
+        "bath:type=hot_spring",
+        "building=commercial",
+        "fee=yes",
+        "name=Anusca Palace Wellnes & SPA"
+      ],
+      "score": 90
+    },
+    {
+      "id": "node:5951278959",
+      "name": "Bollitore del Casetto di Campo in Fondo",
+      "lat": 44.3282509,
+      "lon": 11.599472,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "fixme=position and tag",
+        "name=Bollitore del Casetto di Campo in Fondo",
+        "natural=hot_spring",
+        "water_characteristic=mud"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:5951302496",
+      "name": "Bollitore di Banzolino",
+      "lat": 44.3097878,
+      "lon": 11.581583,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "fixme=è un bollitore, una sorgente di acqua e fango. Posizione",
+        "name=Bollitore di Banzolino",
+        "natural=hot_spring",
+        "water_characteristic=mud"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:1091596752",
+      "name": "Bibele MedSpa",
+      "lat": 44.2684309,
+      "lon": 11.350612,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "building=hotel",
+        "leisure=spa",
+        "name=Bibele MedSpa",
+        "sauna=yes",
+        "source=https://palazzo-loup.it/bibelemedspa"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:11712372768",
+      "name": "Bagni di sale",
+      "lat": 44.3116765,
+      "lon": 11.4613004,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "access=customers",
+        "amenity=public_bath",
+        "bath:type=salt",
+        "name=Bagni di sale"
+      ],
+      "score": 70
+    },
+    {
+      "id": "node:11758768437",
+      "name": "Bagno turco",
+      "lat": 44.1715977,
+      "lon": 11.9498027,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "bath:type=hammam",
+        "level=-1",
+        "name=Bagno turco",
+        "temperature=42"
+      ],
+      "score": 70
+    },
+    {
+      "id": "node:11758768441",
+      "name": "Bagno di vapore",
+      "lat": 44.1717622,
+      "lon": 11.9500483,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "bath:type=hammam",
+        "level=-1",
+        "name=Bagno di vapore",
+        "temperature=40"
+      ],
+      "score": 70
+    },
+    {
+      "id": "node:12121674647",
+      "name": "Iman Beauty Hammam",
+      "lat": 44.7121294,
+      "lon": 10.6032223,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "bath:open_air=no",
+        "bath:type=hammam",
+        "fee=yes",
+        "name=Iman Beauty Hammam"
+      ],
+      "score": 70
+    },
+    {
+      "id": "node:12121674648",
+      "name": "Camelot Club",
+      "lat": 44.6912279,
+      "lon": 10.6345362,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "bath:open_air=no",
+        "bath:type=hammam",
+        "fee=yes",
+        "name=Camelot Club"
+      ],
+      "score": 70
+    },
+    {
+      "id": "way:1275491392",
+      "name": "Piscina Molino Rosso",
+      "lat": 44.3809919,
+      "lon": 11.7364947,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "bath:type=pool",
+        "fee=yes",
+        "name=Piscina Molino Rosso"
+      ],
+      "score": 70
+    }
+  ]
+}
