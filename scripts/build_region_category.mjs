@@ -33,30 +33,28 @@ function normName(s) {
 function hasAny(str, arr) { return arr.some(k => str.includes(k)); }
 function tagEq(tags, k, v) { return String(tags?.[k] ?? "").toLowerCase() === String(v).toLowerCase(); }
 function hasTag(tags, k) { return tags?.[k] != null && String(tags[k]).trim() !== ""; }
+function tagsStr(tags) {
+  return Object.entries(tags || {})
+    .map(([k, v]) => `${String(k).toLowerCase()}=${String(v).toLowerCase()}`)
+    .join(" ");
+}
 
 // ---------------------- GLOBAL ANTI-SPAZZATURA ----------------------
 function isClearlyIrrelevant(p) {
-  const t = p.tags || {};
-  const ts = Object.entries(t).map(([k,v]) => `${String(k).toLowerCase()}=${String(v).toLowerCase()}`).join(" ");
+  const ts = tagsStr(p.tags);
   const n = normName(p.name || "");
 
-  // trasporti/strade
   if (hasAny(ts, ["highway=", "railway=", "public_transport=", "route=", "junction="])) return true;
   if (hasAny(ts, ["amenity=bus_station","highway=bus_stop","highway=platform"])) return true;
 
-  // parking/fuel/charging
   if (hasAny(ts, ["amenity=parking","amenity=parking_entrance","amenity=parking_space","highway=rest_area","amenity=fuel","amenity=charging_station"])) return true;
 
-  // industrial/commercial/office
   if (hasAny(ts, ["landuse=industrial","landuse=commercial","building=industrial","building=warehouse","building=office","man_made=works"])) return true;
 
-  // OSM technical noise
   if (hasAny(ts, ["man_made=survey_point","power=","telecom=","pipeline=","boundary=","place=locality"])) return true;
 
-  // nomi spazzatura
   if (hasAny(n, ["parcheggio","stazione","fermata","svincolo","uscita","cabina","impianto","linea","tratto","km "])) return true;
 
-  // “SpA azienda” (ma non spa terme)
   const looksCompany = (n.endsWith(" spa") || n.includes(" s p a") || n.includes(" s.p.a") || n.includes(" azienda "));
   const looksWellness = hasAny(n, ["terme","spa","wellness","termale","thermal"]);
   if (looksCompany && !looksWellness) return true;
@@ -66,8 +64,6 @@ function isClearlyIrrelevant(p) {
 
 // ---------------------- CATEGORY QUERIES ----------------------
 function overpassAreaSelectorByISO(iso3166_2) {
-  // Overpass: area by ISO3166-2 (admin boundary)
-  // tip: relazioni admin possono avere diversi tag, quindi includiamo entrambe.
   return `
     area["ISO3166-2"="${iso3166_2}"]["boundary"="administrative"]->.a;
   `;
@@ -106,7 +102,6 @@ ${area}
   way(area.a)["natural"="hot_spring"];
   relation(area.a)["natural"="hot_spring"];
 
-  // hotel con spa flag
   node(area.a)["tourism"="hotel"]["spa"];
   way(area.a)["tourism"="hotel"]["spa"];
   relation(area.a)["tourism"="hotel"]["spa"];
@@ -132,7 +127,6 @@ ${area}
   way(area.a)["amenity"="wine_bar"];
   relation(area.a)["amenity"="wine_bar"];
 
-  // attrazioni wine-related (non sempre perfette ma ci aiuta)
   node(area.a)["tourism"="attraction"]["wine"];
   way(area.a)["tourism"="attraction"]["wine"];
   relation(area.a)["tourism"="attraction"]["wine"];
@@ -141,22 +135,18 @@ out center tags;
 `;
   }
 
-  // borghi
   return `
 ${header}
 ${area}
 (
-  // place nodes
   node(area.a)["place"="village"];
   node(area.a)["place"="hamlet"];
   node(area.a)["place"="suburb"];
 
-  // centri storici / borgo come attraction (alcuni sono ottimi)
   node(area.a)["tourism"="attraction"]["name"];
   way(area.a)["tourism"="attraction"]["name"];
   relation(area.a)["tourism"="attraction"]["name"];
 
-  // historic settlements
   node(area.a)["historic"="city_gate"];
   node(area.a)["historic"="citywalls"];
   node(area.a)["historic"="castle"];
@@ -185,9 +175,7 @@ function scoreRelax(p) {
   if (hasTag(t,"opening_hours")) s += 5;
   if (hasTag(t,"phone") || hasTag(t,"contact:phone")) s += 5;
 
-  // penalità azienda
   if (n.includes("s.p.a") || n.includes("azienda")) s -= 25;
-
   return s;
 }
 
@@ -209,11 +197,9 @@ function scoreCantine(p) {
 }
 
 function isBorgoNoise(p) {
-  const t = p.tags || {};
-  const ts = Object.entries(t).map(([k,v]) => `${String(k).toLowerCase()}=${String(v).toLowerCase()}`).join(" ");
+  const ts = tagsStr(p.tags);
   const n = normName(p.name || "");
 
-  // fuori tema (montagna/museo/etc)
   if (ts.includes("tourism=museum")) return true;
   if (hasAny(n, ["museo","galleria","mostra","spazio espositivo"])) return true;
   if (hasAny(n, ["monte","cima","passo","rifugio","malga","forte"])) return true;
@@ -225,7 +211,7 @@ function isBorgoNoise(p) {
 function scoreBorghi(p) {
   const t = p.tags || {};
   const n = normName(p.name || "");
-  const ts = Object.entries(t).map(([k,v]) => `${String(k).toLowerCase()}=${String(v).toLowerCase()}`).join(" ");
+  const ts = tagsStr(t);
   let s = 0;
 
   if (ts.includes("place=village")) s += 55;
@@ -238,7 +224,6 @@ function scoreBorghi(p) {
   if (hasTag(t,"wikipedia") || hasTag(t,"wikidata")) s += 10;
   if (hasTag(t,"website") || hasTag(t,"contact:website")) s += 6;
 
-  // penalizza attraction generica senza place/keywords
   if (ts.includes("tourism=attraction") && !hasAny(n, ["borgo","centro storico"]) && !hasAny(ts, ["place=village","place=hamlet"])) s -= 12;
 
   return s;
@@ -251,7 +236,6 @@ function computeScore(category, p) {
 }
 
 function visibilityFromScore(score, category) {
-  // chicche = top (relax/cantine un po' più generose)
   const cut = category === "borghi" ? 70 : 60;
   return score >= cut ? "chicca" : "classica";
 }
@@ -266,11 +250,21 @@ async function main() {
     data = await overpass(q, { retries: 7, timeoutMs: 170000 });
   } catch (e) {
     console.error("⚠️ Overpass failed.");
+    // Se esiste già il file, non rompiamo il build
     if (fs.existsSync(OUT)) {
       console.log("✔ Keeping previous dataset (existing file found).");
       return;
     }
-    throw e;
+    // Altrimenti scriviamo un file vuoto valido (così la pipeline non muore)
+    await writeJson(OUT, {
+      region_id: `${REGION_ID}-${CATEGORY}`,
+      country: "IT",
+      label_it: `${region.name} • ${CATEGORY}`,
+      generated_at: new Date().toISOString(),
+      places: [],
+      error: "overpass_failed_first_time"
+    });
+    return;
   }
 
   const raw = (data.elements || [])
@@ -279,12 +273,10 @@ async function main() {
     .filter(p => (p.name || "").trim() && (p.name || "").trim() !== "(senza nome)")
     .filter(p => !isClearlyIrrelevant(p));
 
-  // borghi: ulteriore pulizia
   const cleaned = (CATEGORY === "borghi")
     ? raw.filter(p => !isBorgoNoise(p))
     : raw;
 
-  // dedupe: nome + coordinate
   const seen = new Set();
   const deduped = [];
   for (const p of cleaned) {
@@ -313,6 +305,7 @@ async function main() {
 
   await writeJson(OUT, {
     region_id: `${REGION_ID}-${CATEGORY}`,
+    country: "IT",
     label_it: `${region.name} • ${CATEGORY}`,
     generated_at: new Date().toISOString(),
     places
