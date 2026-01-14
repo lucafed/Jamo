@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { overpass, writeJson } from "./lib/overpass.mjs";
+import { writeJson } from "./lib/overpass.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -9,91 +9,151 @@ const __dirname = path.dirname(__filename);
 const REGIONS_CFG_PATH = path.join(__dirname, "..", "configs", "it", "regions.json");
 const cfg = JSON.parse(fs.readFileSync(REGIONS_CFG_PATH, "utf-8"));
 
-const OUT = path.join(__dirname, "..", "public", "data", "pois", "regions", "it-regions-index.json");
+const DIR = path.join(__dirname, "..", "public", "data", "pois", "regions");
+const OUT = path.join(DIR, "it-regions-index.json");
 
-function toBBox(bounds) {
-  if (!bounds) return null;
+const CATEGORIES = [
+  "core",
+  "mare",
+  "natura",
+  "panorami",
+  "trekking",
+  "family",
+  "storia",
+  "montagna",
+  "relax",
+  "borghi",
+  "citta",
+  "cantine",
+];
 
-  // Overpass tipicamente: { minlat, minlon, maxlat, maxlon }
-  const minLat = Number(bounds.minlat ?? bounds.minLat);
-  const minLon = Number(bounds.minlon ?? bounds.minLon);
-  const maxLat = Number(bounds.maxlat ?? bounds.maxLat);
-  const maxLon = Number(bounds.maxlon ?? bounds.maxLon);
+function safeReadJson(p) {
+  try {
+    const raw = fs.readFileSync(p, "utf-8");
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
 
-  if (![minLat, minLon, maxLat, maxLon].every(Number.isFinite)) return null;
+function bboxFromPlaces(places) {
+  let minLat = Infinity, minLon = Infinity, maxLat = -Infinity, maxLon = -Infinity;
+  let ok = false;
+
+  for (const x of (places || [])) {
+    const lat = Number(x?.lat);
+    const lon = Number(x?.lon);
+    if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
+    ok = true;
+    if (lat < minLat) minLat = lat;
+    if (lon < minLon) minLon = lon;
+    if (lat > maxLat) maxLat = lat;
+    if (lon > maxLon) maxLon = lon;
+  }
+
+  if (!ok) return null;
   return { minLat, minLon, maxLat, maxLon };
 }
 
-function bboxFromRelation(rel) {
-  // Overpass mette bounds direttamente sulla relation
-  // es: rel.bounds = { minlat, minlon, maxlat, maxlon }
-  return toBBox(rel?.bounds);
+function listJsonFiles(dir) {
+  if (!fs.existsSync(dir)) return [];
+  return fs
+    .readdirSync(dir)
+    .filter(f => f.endsWith(".json"))
+    .filter(f => f !== "it-regions-index.json")
+    .map(f => path.join(dir, f));
 }
 
-async function fetchRegionBBox(iso3166_2) {
-  // admin_level=4 è tipico per le regioni italiane
-  const q = `
-[out:json][timeout:180];
-(
-  relation["boundary"="administrative"]["ISO3166-2"="${iso3166_2}"]["admin_level"="4"];
-  relation["boundary"="administrative"]["ISO3166-2"="${iso3166_2}"];
-);
-out bb;
-`;
-
-  const data = await overpass(q, { retries: 5, timeoutMs: 150000 });
-
-  const rel = (data?.elements || []).find((x) => x.type === "relation");
-  if (!rel) return null;
-
-  return bboxFromRelation(rel);
+function parseRegionCategoryFromFilename(filePath) {
+  // expected: public/data/pois/regions/<regionId>-<category>.json
+  // example: it-lazio-natura.json
+  const base = path.basename(filePath);
+  const m = base.match(/^(.+)-([a-z0-9_]+)\.json$/i);
+  if (!m) return null;
+  const regionId = m[1];
+  const category = String(m[2]).toLowerCase();
+  return { regionId, category };
 }
 
 async function main() {
-  const regions = Array.isArray(cfg?.regions) ? cfg.regions : [];
-  const items = [];
+  fs.mkdirSync(DIR, { recursive: true });
 
-  console.log(`▶ Building IT regions index… (${regions.length} regions)`);
-  console.log(`CFG: ${REGIONS_CFG_PATH}`);
-  console.log(`OUT: ${OUT}`);
+  const regionsCfg = cfg.regions || [];
+  const regionsMap = new Map(regionsCfg.map(r => [String(r.id), r]));
 
-  for (const r of regions) {
-    const id = r?.id;
-    const name = r?.name;
-    const iso = r?.iso3166_2;
+  const files = listJsonFiles(DIR);
 
-    if (!id || !name || !iso) {
-      console.warn(`⚠ Skipping invalid region entry:`, r);
-      continue;
-    }
+  // Build: region -> category -> info
+  const perRegion = new Map();
 
-    try {
-      const bbox = await fetchRegionBBox(iso);
+  for (const f of files) {
+    const rc = parseRegionCategoryFromFilename(f);
+    if (!rc) continue;
 
-      if (!bbox) {
-        console.warn(`⚠ No bbox for ${id} (${iso}) → bbox:null`);
-        items.push({ id, name, iso3166_2: iso, bbox: null });
-        continue;
-      }
+    const { regionId, category } = rc;
+    if (!regionsMap.has(regionId)) continue; // ignore unknown files
+    if (!CATEGORIES.includes(category)) continue; // ignore garbage categories
 
-      console.log(`✔ ${id} (${iso}) bbox ok`);
-      items.push({ id, name, iso3166_2: iso, bbox });
-    } catch (e) {
-      console.warn(`⚠ Overpass failed for ${id} (${iso}) → bbox:null`);
-      items.push({ id, name, iso3166_2: iso, bbox: null });
-    }
+    const json = safeReadJson(f);
+    if (!json) continue;
+
+    const places = Array.isArray(json.places) ? json.places : [];
+    const count = places.length;
+    const bbox = bboxFromPlaces(places);
+
+    if (!perRegion.has(regionId)) perRegion.set(regionId, new Map());
+    perRegion.get(regionId).set(category, {
+      file: path.basename(f),
+      count,
+      bbox,
+      generated_at: json.generated_at || null,
+      label_it: json.label_it || null,
+    });
   }
+
+  // Assemble index respecting cfg order
+  const items = regionsCfg.map(r => {
+    const regionId = String(r.id);
+    const cats = perRegion.get(regionId) || new Map();
+
+    const categories = {};
+    let total = 0;
+
+    // keep a stable category order
+    for (const c of CATEGORIES) {
+      const info = cats.get(c);
+      if (!info) continue;
+      categories[c] = info;
+      total += Number(info.count || 0);
+    }
+
+    return {
+      id: regionId,
+      name: r.name,
+      iso3166_2: r.iso3166_2,
+      total_places: total,
+      categories, // map-like object
+    };
+  });
+
+  // Global summary
+  const summary = {
+    regions: items.length,
+    categories: CATEGORIES,
+    total_files_indexed: files.length,
+  };
 
   await writeJson(OUT, {
     country: "IT",
     generated_at: new Date().toISOString(),
+    summary,
     items,
   });
 
-  console.log(`✅ Written ${OUT} (${items.length} regions)`);
+  console.log(`✔ Written ${OUT} (${items.length} regions)`);
 }
 
-main().catch((e) => {
-  console.error("❌ build_it_regions_index failed:", e);
+main().catch(e => {
+  console.error(e);
   process.exit(1);
 });
