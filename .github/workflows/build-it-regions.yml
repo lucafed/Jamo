@@ -5,9 +5,13 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
+
     strategy:
       fail-fast: false
       matrix:
@@ -45,9 +49,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-
-      ❌ # QUESTO NON DEVE ESISTERE
-      ❌ # npm install / npm ci
 
       - name: Build dataset
         env:
