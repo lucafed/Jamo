@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-01-14T16:34:03.205Z",
+  "generated_at": "2026-01-14T21:33:29.158Z",
   "places": [
     {
       "id": "node:2692275706",
@@ -1118,26 +1118,6 @@
         "name=Cantina Bottenago",
         "operator=Società Agricola Erian S.r.l.",
         "ref:vatin=IT02658080987"
-      ],
-      "score": 108
-    },
-    {
-      "id": "way:1465639506",
-      "name": "Cantina Martinelli",
-      "lat": 45.7129514,
-      "lon": 9.7734713,
-      "type": "cantine",
-      "visibility": "classica",
-      "tags": [
-        "addr:city=Scanzorosciate (BG)",
-        "addr:housenumber=2",
-        "addr:postcode=24020",
-        "addr:street=Via San Giovanni",
-        "building=yes",
-        "craft=winery",
-        "name=Cantina Martinelli",
-        "phone=+39 328 9607182",
-        "website=https://www.cantinamartinelliscanzo.it/"
       ],
       "score": 108
     },
@@ -5992,19 +5972,6 @@
       "score": 80
     },
     {
-      "id": "node:13436260110",
-      "name": "Marco Wolf Vini",
-      "lat": 46.0527344,
-      "lon": 11.4945142,
-      "type": "cantine",
-      "visibility": "classica",
-      "tags": [
-        "craft=winery",
-        "name=Marco Wolf Vini"
-      ],
-      "score": 80
-    },
-    {
       "id": "way:81085412",
       "name": "Cantine naturali Torboli",
       "lat": 45.9222755,
@@ -8728,25 +8695,6 @@
       "score": 41
     },
     {
-      "id": "node:13453452622",
-      "name": "Enoteca Bonetti",
-      "lat": 45.5391826,
-      "lon": 10.2165849,
-      "type": "cantine",
-      "visibility": "classica",
-      "tags": [
-        "addr:city=Brescia",
-        "addr:housenumber=14",
-        "addr:postcode=25122",
-        "addr:street=Via Dante Alighieri",
-        "contact:website=https://www.enotecabonetti.it",
-        "name=Enoteca Bonetti",
-        "phone=+39 030 40522",
-        "shop=wine"
-      ],
-      "score": 41
-    },
-    {
       "id": "way:81025169",
       "name": "Zeni",
       "lat": 46.1943586,
@@ -9388,6 +9336,29 @@
         "shop=wine",
         "source=ds4273",
         "website=http://www.enotecastoricafaccioli.it/"
+      ],
+      "score": 35
+    },
+    {
+      "id": "node:1704741272",
+      "name": "Vini e oli bottega",
+      "lat": 44.4904158,
+      "lon": 11.3089426,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Bologna",
+        "addr:country=IT",
+        "addr:district=Saragozza",
+        "addr:housenumber=55",
+        "addr:postcode=40135",
+        "addr:street=Via Porrettana",
+        "contact:mobile=+39 333 3192495",
+        "description:it=Vini e olio extravergine d'oliva. Consegna gratuita nel comune di Bologna",
+        "name=Vini e oli bottega",
+        "shop=wine",
+        "source=ds4273",
+        "website=https://www.bottegavinieoli.it/"
       ],
       "score": 35
     },
@@ -10391,8 +10362,8 @@
     {
       "id": "node:7515782661",
       "name": "Enoteca Spirito Divino",
-      "lat": 44.5163169,
-      "lon": 11.3250857,
+      "lat": 44.51637,
+      "lon": 11.32514,
       "type": "cantine",
       "visibility": "classica",
       "tags": [
@@ -11817,23 +11788,6 @@
       "score": 25
     },
     {
-      "id": "node:4793725036",
-      "name": "Ai vini scelti",
-      "lat": 44.4950756,
-      "lon": 11.3245174,
-      "type": "cantine",
-      "visibility": "classica",
-      "tags": [
-        "addr:city=Bologna",
-        "addr:housenumber=36b",
-        "addr:postcode=40134",
-        "addr:street=Via Andrea Costa",
-        "name=Ai vini scelti",
-        "shop=wine"
-      ],
-      "score": 25
-    },
-    {
       "id": "node:5190525333",
       "name": "Il vinaio",
       "lat": 44.4996312,
@@ -13173,6 +13127,24 @@
       "score": 25
     },
     {
+      "id": "node:13239040793",
+      "name": "Ai vini scelti",
+      "lat": 44.4950701,
+      "lon": 11.3245462,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Bologna",
+        "addr:housenumber=36",
+        "addr:postcode=40134",
+        "addr:street=Via Andrea Costa",
+        "addr:unit=B",
+        "name=Ai vini scelti",
+        "shop=wine"
+      ],
+      "score": 25
+    },
+    {
       "id": "node:13315988709",
       "name": "Santa Chiara",
       "lat": 44.6450523,
@@ -13235,20 +13207,6 @@
       "tags": [
         "addr:street=Campo San Pantalon",
         "name=Vini Da Sam",
-        "shop=wine"
-      ],
-      "score": 25
-    },
-    {
-      "id": "node:13439438471",
-      "name": "Dalle Fusine",
-      "lat": 45.6630254,
-      "lon": 11.40937,
-      "type": "cantine",
-      "visibility": "classica",
-      "tags": [
-        "description=É lo stesso negozio della macelleria qui vicino.",
-        "name=Dalle Fusine",
         "shop=wine"
       ],
       "score": 25
