@@ -2,6 +2,7 @@
   "region_id": "it-liguria-relax",
   "country": "IT",
   "label_it": "Liguria • relax",
-  "generated_at": "2026-01-14T20:09:22.630Z",
-  "places": []
+  "generated_at": "2026-01-14T20:55:33.912Z",
+  "places": [],
+  "error": "overpass_failed_first_time"
 }

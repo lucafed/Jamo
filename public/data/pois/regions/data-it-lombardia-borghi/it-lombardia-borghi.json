@@ -1,7 +1,8 @@
 {
   "region_id": "it-lombardia-borghi",
+  "country": "IT",
   "label_it": "Lombardia • borghi",
-  "generated_at": "2026-01-14T18:17:01.569Z",
+  "generated_at": "2026-01-14T20:54:40.565Z",
   "places": [
     {
       "id": "node:62513426",
@@ -7934,8 +7935,8 @@
     {
       "id": "node:62516077",
       "name": "Mazzo di Valtellina",
-      "lat": 46.2586,
-      "lon": 10.256656,
+      "lat": 46.2585074,
+      "lon": 10.2563896,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -132296,8 +132297,8 @@
     {
       "id": "way:421122318",
       "name": "Anfiteatro Romano",
-      "lat": 45.4574395,
-      "lon": 9.1787243,
+      "lat": 45.4574397,
+      "lon": 9.17871,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
