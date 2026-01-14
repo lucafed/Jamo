@@ -1,0 +1,86 @@
+name: Build Italy Regions Datasets
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 3 * * 2" # martedì 03:00 UTC
+  push:
+    paths:
+      - "scripts/build_region_category.mjs"
+      - "scripts/build_it_regions_index.mjs"
+      - "scripts/lib/overpass.mjs"
+      - "configs/it/regions.json"
+      - ".github/workflows/build-it-regions.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-it-regions
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        category: [relax, borghi, cantine]
+        region_id:
+          - it-piemonte
+          - it-valle-d-aosta
+          - it-lombardia
+          - it-trentino-alto-adige
+          - it-veneto
+          - it-friuli-venezia-giulia
+          - it-liguria
+          - it-emilia-romagna
+          - it-toscana
+          - it-umbria
+          - it-marche
+          - it-lazio
+          - it-abruzzo
+          - it-molise
+          - it-campania
+          - it-puglia
+          - it-basilicata
+          - it-calabria
+          - it-sicilia
+          - it-sardegna
+
+    steps:
+      - name: Checkout (full history)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Build region dataset
+        run: node scripts/build_region_category.mjs
+        env:
+          REGION_ID: ${{ matrix.region_id }}
+          CATEGORY: ${{ matrix.category }}
+
+      - name: Build IT regions index (only once)
+        if: ${{ matrix.region_id == 'it-veneto' && matrix.category == 'relax' }}
+        run: node scripts/build_it_regions_index.mjs
+
+      - name: Commit & push (if changed)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add public/data/pois/regions/*.json || true
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          git commit -m "Update Italy regions datasets"
+          git pull --rebase origin main
+          git push origin main
