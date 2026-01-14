@@ -8,6 +8,7 @@ on:
     paths:
       - "scripts/build_relax_radius.mjs"
       - "scripts/build_borghi_radius.mjs"
+      - "scripts/build_cantine_radius.mjs"
       - "scripts/lib/overpass.mjs"
       - ".github/workflows/build-radius.yml"
 
@@ -46,14 +47,22 @@ jobs:
           CENTER_LON: "10.8686"
           RADIUS_KM: "120"
 
+      - name: Build Cantine radius
+        run: node scripts/build_cantine_radius.mjs
+        env:
+          CENTER_LAT: "45.5209"
+          CENTER_LON: "10.8686"
+          RADIUS_KM: "120"
+
       - name: Debug output
         run: |
           ls -lah public/data/pois/regions || true
           echo "-----"
           wc -c public/data/pois/regions/radius-relax.json || true
           wc -c public/data/pois/regions/radius-borghi.json || true
+          wc -c public/data/pois/regions/radius-cantine.json || true
           echo "-----"
-          head -c 400 public/data/pois/regions/radius-borghi.json || true
+          head -c 700 public/data/pois/regions/radius-cantine.json || true
           echo ""
 
       - name: Commit generated files (if changed) + Pull rebase + Push
@@ -63,13 +72,14 @@ jobs:
 
           git add public/data/pois/regions/radius-relax.json
           git add public/data/pois/regions/radius-borghi.json
+          git add public/data/pois/regions/radius-cantine.json
 
           if git diff --cached --quiet; then
             echo "No changes to commit."
             exit 0
           fi
 
-          git commit -m "Update radius datasets (Relax + Borghi)"
+          git commit -m "Update radius datasets (Relax + Borghi + Cantine)"
 
           git pull --rebase origin main
           git push origin main
