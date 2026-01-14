@@ -1,7 +1,8 @@
 {
   "region_id": "it-sicilia-borghi",
+  "country": "IT",
   "label_it": "Sicilia • borghi",
-  "generated_at": "2026-01-14T18:17:51.494Z",
+  "generated_at": "2026-01-14T20:02:04.412Z",
   "places": [
     {
       "id": "node:1280343597",

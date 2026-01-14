@@ -2,7 +2,7739 @@
   "region_id": "it-basilicata-borghi",
   "country": "IT",
   "label_it": "Basilicata • borghi",
-  "generated_at": "2026-01-14T19:44:59.442Z",
-  "places": [],
-  "error": "overpass_failed_first_time"
+  "generated_at": "2026-01-14T20:00:35.146Z",
+  "places": [
+    {
+      "id": "node:1782443719",
+      "name": "Borgo Taccone",
+      "lat": 40.7982811,
+      "lon": 16.1620122,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "name=Borgo Taccone",
+        "place=village",
+        "wikidata=Q3642544",
+        "wikipedia=it:Borgo Taccone"
+      ],
+      "score": 95
+    },
+    {
+      "id": "node:5068665271",
+      "name": "Borgo San Basilio",
+      "lat": 40.3056361,
+      "lon": 16.7710008,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "name=Borgo San Basilio",
+        "place=village"
+      ],
+      "score": 85
+    },
+    {
+      "id": "node:391661010",
+      "name": "Borgo Macchia di Ferrandina",
+      "lat": 40.4701106,
+      "lon": 16.5020365,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "name=Borgo Macchia di Ferrandina",
+        "place=hamlet"
+      ],
+      "score": 75
+    },
+    {
+      "id": "node:4198747997",
+      "name": "Borgo di Seluci",
+      "lat": 40.0749946,
+      "lon": 15.9624371,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "name=Borgo di Seluci",
+        "place=hamlet"
+      ],
+      "score": 75
+    },
+    {
+      "id": "node:13302412138",
+      "name": "Paglia Frazione",
+      "lat": 40.4514509,
+      "lon": 16.1047539,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "name=Paglia Frazione",
+        "place=hamlet"
+      ],
+      "score": 75
+    },
+    {
+      "id": "node:67280505",
+      "name": "Barile",
+      "lat": 40.946322,
+      "lon": 15.67266,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "gfoss_id=6365",
+        "name=Barile",
+        "name:aae=Barilli",
+        "name:it=Barile",
+        "place=village",
+        "population=3229",
+        "source=geodati.gfoss.it",
+        "website=http://www.comune.barile.pz.it",
+        "wikidata=Q52530",
+        "wikimedia_commons=Category:Barile",
+        "wikipedia=it:Barile (Italia)"
+      ],
+      "score": 71
+    },
+    {
+      "id": "node:67280603",
+      "name": "Fardella",
+      "lat": 40.113809,
+      "lon": 16.169782,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "ele=745",
+        "fax=+39 0973 572003",
+        "gfoss_id=6385",
+        "name=Fardella",
+        "phone=+39 0973 572051",
+        "place=village",
+        "population=576",
+        "population:date=2025-09-30",
+        "postal_code=85030",
+        "source=geodati.gfoss.it",
+        "source:population=wikipedia",
+        "website=https://www.comune.fardella.pz.it/",
+        "wikidata=Q52568",
+        "wikipedia=it:Fardella"
+      ],
+      "score": 71
+    },
+    {
+      "id": "node:67280745",
+      "name": "Rapolla",
+      "lat": 40.975723,
+      "lon": 15.67126,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "contact:facebook=https://www.facebook.com/ComuneRapolla/",
+        "contact:youtube=https://www.youtube.com/channel/UCCR8EuuqrnEXSHtSX6DqIjg",
+        "gfoss_id=6418",
+        "name=Rapolla",
+        "place=village",
+        "population=4648",
+        "source=geodati.gfoss.it",
+        "website=https://www.comune.rapolla.pz.it/",
+        "wikidata=Q52644",
+        "wikimedia_commons=Category:Rapolla",
+        "wikipedia=it:Rapolla"
+      ],
+      "score": 71
+    },
+    {
+      "id": "node:2663786391",
+      "name": "Abriola",
+      "lat": 40.5074284,
+      "lon": 15.8147487,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "gfoss_id=6355",
+        "name=Abriola",
+        "place=village",
+        "population=1542",
+        "source=geodati.gfoss.it",
+        "website=http://www.abriola.eu/",
+        "wikidata=Q52510",
+        "wikipedia=it:Abriola"
+      ],
+      "score": 71
+    },
+    {
+      "id": "node:67280340",
+      "name": "Garaguso",
+      "lat": 40.548418,
+      "lon": 16.227178,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6463",
+        "name=Garaguso",
+        "place=village",
+        "population=1193",
+        "source=geodati.gfoss.it",
+        "wikipedia=it:Garaguso"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:67280345",
+      "name": "Miglionico",
+      "lat": 40.5693922,
+      "lon": 16.5009658,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6469",
+        "name=Miglionico",
+        "place=village",
+        "population=2630",
+        "source=geodati.gfoss.it",
+        "wikipedia=it:Miglionico"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:67280364",
+      "name": "Salandra",
+      "lat": 40.527518,
+      "lon": 16.31918,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6478",
+        "name=Salandra",
+        "place=village",
+        "population=3109",
+        "source=geodati.gfoss.it",
+        "wikipedia=it:Salandra"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:67280386",
+      "name": "Accettura",
+      "lat": 40.491016,
+      "lon": 16.157977,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6455",
+        "name=Accettura",
+        "place=village",
+        "population=2436",
+        "source=geodati.gfoss.it",
+        "wikidata=Q30021917"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:67280389",
+      "name": "Calciano",
+      "lat": 40.588018,
+      "lon": 16.192376,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6458",
+        "name=Calciano",
+        "place=village",
+        "population=893",
+        "source=geodati.gfoss.it",
+        "wikidata=Q30023346"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:67280397",
+      "name": "Grassano",
+      "lat": 40.6326231,
+      "lon": 16.2828135,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6465",
+        "name=Grassano",
+        "place=village",
+        "population=5792",
+        "source=geodati.gfoss.it",
+        "wikipedia=it:Grassano"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:67280426",
+      "name": "Rotondella",
+      "lat": 40.171312,
+      "lon": 16.525589,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6477",
+        "name=Rotondella",
+        "name:ru=Ротонделла",
+        "place=village",
+        "population=3233",
+        "source=geodati.gfoss.it",
+        "wikidata=Q30029620"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:67280472",
+      "name": "Anzi",
+      "lat": 40.516615,
+      "lon": 15.924571,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6358",
+        "name=Anzi",
+        "place=village",
+        "population=1949",
+        "source=geodati.gfoss.it",
+        "wikidata=Q52513",
+        "wikipedia=it:Anzi (Italia)"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:67280536",
+      "name": "Calvera",
+      "lat": 40.149509,
+      "lon": 16.143881,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=630",
+        "gfoss_id=6370",
+        "name=Calvera",
+        "place=village",
+        "population=348",
+        "population:date=2025-09-30",
+        "source=geodati.gfoss.it",
+        "source:population=wikipedia",
+        "wikidata=Q52545",
+        "wikipedia=it:Calvera"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:67280544",
+      "name": "Brienza",
+      "lat": 40.4778488,
+      "lon": 15.6301506,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6367",
+        "name=Brienza",
+        "name:ru=Бриенца",
+        "place=village",
+        "population=4067",
+        "postal_code=85050",
+        "source=geodati.gfoss.it",
+        "wikidata=Q52534",
+        "wikipedia=it:Brienza"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:67280556",
+      "name": "Brindisi Montagna",
+      "lat": 40.609517,
+      "lon": 15.939771,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6368",
+        "name=Brindisi Montagna",
+        "place=village",
+        "population=905",
+        "source=geodati.gfoss.it",
+        "wikidata=Q30023151"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:67280587",
+      "name": "San Paolo Albanese",
+      "lat": 40.0365521,
+      "lon": 16.3349364,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6374",
+        "name=San Paolo Albanese",
+        "name:sq=Shën Pali Arbëreshëve",
+        "place=village",
+        "population=416",
+        "source=geodati.gfoss.it",
+        "wikidata=Q52664",
+        "wikipedia=en:San Paolo Albanese"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:67280597",
+      "name": "Castelluccio Superiore",
+      "lat": 40.010305,
+      "lon": 15.975079,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=680",
+        "gfoss_id=6377",
+        "name=Castelluccio Superiore",
+        "place=village",
+        "population=711",
+        "population:date=2025-09-30",
+        "source=geodati.gfoss.it",
+        "source:population=wikipedia",
+        "wikidata=Q52553",
+        "wikipedia=it:Castelluccio Superiore"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:67280613",
+      "name": "Episcopia",
+      "lat": 40.074807,
+      "lon": 16.098181,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=530",
+        "gfoss_id=6384",
+        "name=Episcopia",
+        "place=village",
+        "population=1210",
+        "population:date=2025-09-30",
+        "source=geodati.gfoss.it",
+        "source:population=wikipedia",
+        "wikidata=Q52567",
+        "wikipedia=it:Episcopia"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:67280621",
+      "name": "Corleto Perticara",
+      "lat": 40.383513,
+      "lon": 16.040676,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "addr:postcode=85012",
+        "gfoss_id=6383",
+        "name=Corleto Perticara",
+        "place=village",
+        "population=3018",
+        "source=geodati.gfoss.it",
+        "wikipedia=it:Corleto Perticara"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:67280638",
+      "name": "Grumento Nova",
+      "lat": 40.28281,
+      "lon": 15.888773,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6391",
+        "name=Grumento Nova",
+        "place=village",
+        "population=1839",
+        "source=geodati.gfoss.it",
+        "wikidata=Q30026258"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:67280656",
+      "name": "Filiano",
+      "lat": 40.810719,
+      "lon": 15.706163,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6386",
+        "name=Filiano",
+        "place=village",
+        "population=3298",
+        "source=geodati.gfoss.it",
+        "wikidata=Q52569",
+        "wikipedia=it:Filiano"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:67280683",
+      "name": "Guardia Perticara",
+      "lat": 40.360513,
+      "lon": 16.098877,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6392",
+        "name=Guardia Perticara",
+        "place=village",
+        "population=758",
+        "source=geodati.gfoss.it",
+        "wikidata=Q52577",
+        "wikipedia=it:Guardia Perticara"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:67280695",
+      "name": "Maschito",
+      "lat": 40.908922,
+      "lon": 15.829464,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6401",
+        "name=Maschito",
+        "name:aae=Mashqiti",
+        "place=village",
+        "population=1864",
+        "source=geodati.gfoss.it",
+        "wikidata=Q30027328"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:67280713",
+      "name": "Picerno",
+      "lat": 40.6384561,
+      "lon": 15.6358739,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6413",
+        "name=Picerno",
+        "place=village",
+        "population=6186",
+        "postal_code=85055",
+        "source=geodati.gfoss.it",
+        "wikidata=Q52634",
+        "wikipedia=it:Picerno"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:67280748",
+      "name": "Ripacandida",
+      "lat": 40.9117813,
+      "lon": 15.7247832,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "addr:postcode=85020",
+        "elevation=620 m",
+        "gfoss_id=6421",
+        "name=Ripacandida",
+        "place=village",
+        "population=1767",
+        "source=geodati.gfoss.it",
+        "wikidata=Q52647",
+        "wikipedia=it:Ripacandida"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:67280761",
+      "name": "Missanello",
+      "lat": 40.2819547,
+      "lon": 16.1663126,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6403",
+        "name=Missanello",
+        "place=village",
+        "population=604",
+        "source=geodati.gfoss.it",
+        "wikipedia=it:Missanello"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:67280806",
+      "name": "Satriano di Lucania",
+      "lat": 40.543914,
+      "lon": 15.638265,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6437",
+        "name=Satriano di Lucania",
+        "place=village",
+        "population=2353",
+        "postal_code=85050",
+        "source=geodati.gfoss.it",
+        "wikidata=Q52673",
+        "wikipedia=it:Satriano di Lucania"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:67280847",
+      "name": "Ruoti",
+      "lat": 40.7178788,
+      "lon": 15.6790066,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6425",
+        "name=Ruoti",
+        "place=village",
+        "population=3687",
+        "source=geodati.gfoss.it",
+        "wikidata=Q30029660"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:67280857",
+      "name": "San Chirico Nuovo",
+      "lat": 40.6767472,
+      "lon": 16.0785338,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6427",
+        "name=San Chirico Nuovo",
+        "place=village",
+        "population=1632",
+        "source=geodati.gfoss.it",
+        "wikipedia=it:San Chirico Nuovo"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:67280865",
+      "name": "San Costantino Albanese",
+      "lat": 40.035808,
+      "lon": 16.304686,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6429",
+        "name=San Costantino Albanese",
+        "name:sq=Shën Kostandinit i Arbëreshëve",
+        "place=village",
+        "population=884",
+        "source=geodati.gfoss.it",
+        "wikidata=Q52661",
+        "wikipedia=en:San Costantino Albanese"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:67280899",
+      "name": "Viggianello",
+      "lat": 39.9731948,
+      "lon": 16.0853528,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=500",
+        "gfoss_id=6451",
+        "name=Viggianello",
+        "place=village",
+        "population=2586",
+        "population:date=2025-09-30",
+        "source=geodati.gfoss.it",
+        "source:population=wikipedia",
+        "wikidata=Q52693",
+        "wikipedia=it:Viggianello (Italia)"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:67280905",
+      "name": "Tito",
+      "lat": 40.583615,
+      "lon": 15.675465,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6443",
+        "name=Tito",
+        "place=village",
+        "population=6387",
+        "postal_code=85050",
+        "source=geodati.gfoss.it",
+        "wikidata=Q52683",
+        "wikipedia=it:Tito (Italia)"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:67280909",
+      "name": "Teana",
+      "lat": 40.126872,
+      "lon": 16.1549542,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=806",
+        "gfoss_id=6441",
+        "name=Teana",
+        "place=village",
+        "population=500",
+        "population:date=2025-09-30",
+        "source=geodati.gfoss.it",
+        "source:population=wikipedia",
+        "wikidata=Q52681",
+        "wikipedia=it:Teana"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:67280916",
+      "name": "Tolve",
+      "lat": 40.694219,
+      "lon": 16.016271,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6444",
+        "name=Tolve",
+        "place=village",
+        "population=3620",
+        "source=geodati.gfoss.it",
+        "wikidata=Q30031145"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:67280956",
+      "name": "Armento",
+      "lat": 40.307712,
+      "lon": 16.064977,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6359",
+        "name=Armento",
+        "place=village",
+        "population=800",
+        "source=geodati.gfoss.it",
+        "wikipedia=it:Armento"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:67281029",
+      "name": "Gallicchio",
+      "lat": 40.289012,
+      "lon": 16.139079,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6389",
+        "name=Gallicchio",
+        "place=village",
+        "population=1018",
+        "source=geodati.gfoss.it",
+        "wikipedia=it:Gallicchio"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:67281068",
+      "name": "Castelluccio Inferiore",
+      "lat": 40.003905,
+      "lon": 15.980879,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=495",
+        "gfoss_id=6376",
+        "name=Castelluccio Inferiore",
+        "place=village",
+        "population=1863",
+        "population:date=2025-09-30",
+        "source=geodati.gfoss.it",
+        "source:population=wikipedia",
+        "wikidata=Q52552",
+        "wikipedia=it:Castelluccio Inferiore"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:67281288",
+      "name": "Pietrapertosa",
+      "lat": 40.5180167,
+      "lon": 16.0632073,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6415",
+        "name=Pietrapertosa",
+        "place=village",
+        "population=1312",
+        "source=geodati.gfoss.it",
+        "wikidata=Q52638",
+        "wikipedia=it:Pietrapertosa"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:67281314",
+      "name": "Sasso di Castalda",
+      "lat": 40.488266,
+      "lon": 15.6779633,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6436",
+        "name=Sasso di Castalda",
+        "place=village",
+        "population=871",
+        "postal_code=85050",
+        "source=geodati.gfoss.it",
+        "wikidata=Q52672",
+        "wikipedia=it:Sasso di Castalda"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:67281326",
+      "name": "Sant'Arcangelo",
+      "lat": 40.2466257,
+      "lon": 16.2746186,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6434",
+        "name=Sant'Arcangelo",
+        "name:ru=Сант-Арканджело",
+        "place=village",
+        "population=6637",
+        "source=geodati.gfoss.it",
+        "wikipedia=it:Sant'Arcangelo"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:67281353",
+      "name": "Ginestra",
+      "lat": 40.9301437,
+      "lon": 15.7344896,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6453",
+        "name=Ginestra",
+        "name:aae=Xhura",
+        "place=village",
+        "population=726",
+        "source=geodati.gfoss.it",
+        "wikidata=Q33675918"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:295970099",
+      "name": "Leonessa di Melfi",
+      "lat": 41.0770081,
+      "lon": 15.6040779,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Leonessa di Melfi",
+        "place=village",
+        "wikidata=Q3830591",
+        "wikipedia=it:Leonessa di Melfi"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:508495959",
+      "name": "Monticchio Bagni",
+      "lat": 40.9490145,
+      "lon": 15.5698591,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Monticchio Bagni",
+        "place=village",
+        "wikidata=Q593338",
+        "wikipedia=it:Monticchio (Rionero in Vulture)"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:1594361806",
+      "name": "Marconia",
+      "lat": 40.3627952,
+      "lon": 16.6876457,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Marconia",
+        "place=village",
+        "population=8258",
+        "source=ISTAT (2001)",
+        "wikidata=Q2832910",
+        "wikipedia=it:Marconia"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:1706829847",
+      "name": "Metaponto",
+      "lat": 40.3740777,
+      "lon": 16.8100961,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Metaponto",
+        "name:ru=Метапонто",
+        "place=village",
+        "wikidata=Q21888111",
+        "wikipedia=it:Metaponto"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:2106096741",
+      "name": "Pergola",
+      "lat": 40.4308172,
+      "lon": 15.6800565,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Pergola",
+        "place=village",
+        "wikidata=Q207463",
+        "wikipedia=it:Pergola (Italia)"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:2508972281",
+      "name": "Borgo La Martella",
+      "lat": 40.6609207,
+      "lon": 16.5357538,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Borgo La Martella",
+        "place=suburb",
+        "population=1500",
+        "postal_code=75100",
+        "wikipedia=it:La Martella"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:4322221616",
+      "name": "Possidente",
+      "lat": 40.7806928,
+      "lon": 15.7715687,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Possidente",
+        "place=village",
+        "wikidata=Q3909420",
+        "wikipedia=it:Possidente"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:4595284859",
+      "name": "Dragonetti",
+      "lat": 40.8318792,
+      "lon": 15.7162915,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=561",
+        "name=Dragonetti",
+        "place=village",
+        "population=287",
+        "wikidata=Q52569",
+        "wikipedia=it:Filiano#Dragonetti"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:5113841068",
+      "name": "Craco Peschiera",
+      "lat": 40.358909,
+      "lon": 16.495338,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Craco Peschiera",
+        "place=village",
+        "wikidata=Q18428680"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:8334213553",
+      "name": "Scalo di Baragiano",
+      "lat": 40.6932846,
+      "lon": 15.574716,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Scalo di Baragiano",
+        "place=village",
+        "wikidata=Q18429114"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:9886809757",
+      "name": "Centro storico",
+      "lat": 40.666972,
+      "lon": 16.6063603,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Centro storico",
+        "place=suburb",
+        "postal_code=75100",
+        "wikipedia=it:Quartieri di Matera"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:11144624107",
+      "name": "Tito Scalo",
+      "lat": 40.6097783,
+      "lon": 15.6980118,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Tito Scalo",
+        "place=village",
+        "population=1500",
+        "postal_code=85050",
+        "wikidata=Q3991898",
+        "wikipedia=it:Tito Scalo"
+      ],
+      "score": 65
+    },
+    {
+      "id": "node:67280708",
+      "name": "Marsico Nuovo",
+      "lat": 40.423012,
+      "lon": 15.734868,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=865",
+        "gfoss_id=6399",
+        "name=Marsico Nuovo",
+        "place=village",
+        "population=4010",
+        "postal_code=85052",
+        "source=geodati.gfoss.it;https://esploradati.censimentopopolazione.istat.it;https://www.comune.marsiconuovo.pz.it/it-it/vivere-il-comune/scheda",
+        "website=https://www.comune.marsiconuovo.pz.it/"
+      ],
+      "score": 61
+    },
+    {
+      "id": "node:1891352938",
+      "name": "Frusci",
+      "lat": 40.7822037,
+      "lon": 15.7424739,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Frusci",
+        "place=hamlet",
+        "population=192",
+        "website=https://www.italiamappata.it/basilicata/pz/339-frusci/",
+        "wikidata=Q18428896"
+      ],
+      "score": 61
+    },
+    {
+      "id": "node:67280342",
+      "name": "Irsina",
+      "lat": 40.7444119,
+      "lon": 16.2427058,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6467",
+        "name=Irsina",
+        "place=village",
+        "population=5732",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67280353",
+      "name": "Nova Siri",
+      "lat": 40.148212,
+      "lon": 16.538889,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6472",
+        "name=Nova Siri",
+        "place=village",
+        "population=6418",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67280367",
+      "name": "San Giorgio Lucano",
+      "lat": 40.11191,
+      "lon": 16.387986,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6479",
+        "name=San Giorgio Lucano",
+        "place=village",
+        "population=1510",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67280374",
+      "name": "Stigliano",
+      "lat": 40.4012383,
+      "lon": 16.2315939,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=910",
+        "gfoss_id=6481",
+        "name=Stigliano",
+        "place=village",
+        "population=5616",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67280376",
+      "name": "Tricarico",
+      "lat": 40.620076,
+      "lon": 16.1436174,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6482",
+        "name=Tricarico",
+        "place=village",
+        "population=6318",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67280378",
+      "name": "Valsinni",
+      "lat": 40.169912,
+      "lon": 16.443487,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6484",
+        "name=Valsinni",
+        "place=village",
+        "population=1797",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67280380",
+      "name": "Scanzano Jonico",
+      "lat": 40.2502425,
+      "lon": 16.6909586,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "alt_name=Scanzano Ionico",
+        "gfoss_id=6485",
+        "name=Scanzano Jonico",
+        "place=village",
+        "population=6711",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67280387",
+      "name": "Cirigliano",
+      "lat": 40.3929278,
+      "lon": 16.1718458,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6459",
+        "name=Cirigliano",
+        "place=village",
+        "population=445",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67280391",
+      "name": "Ferrandina",
+      "lat": 40.501218,
+      "lon": 16.454683,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6462",
+        "name=Ferrandina",
+        "name:ru=Феррандина",
+        "place=village",
+        "population=9358",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67280393",
+      "name": "Colobraro",
+      "lat": 40.187312,
+      "lon": 16.424986,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6460",
+        "name=Colobraro",
+        "place=village",
+        "population=1535",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67280399",
+      "name": "Gorgoglione",
+      "lat": 40.394414,
+      "lon": 16.144578,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6464",
+        "name=Gorgoglione",
+        "place=village",
+        "population=1179",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67280402",
+      "name": "Montalbano Jonico",
+      "lat": 40.2884103,
+      "lon": 16.5681711,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6470",
+        "name=Montalbano Jonico",
+        "place=village",
+        "population=7991",
+        "sorting_name=Montalbano Ionico",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67280407",
+      "name": "Grottole",
+      "lat": 40.6011322,
+      "lon": 16.3815386,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6466",
+        "name=Grottole",
+        "place=village",
+        "population=2607",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67280420",
+      "name": "Oliveto Lucano",
+      "lat": 40.535317,
+      "lon": 16.184577,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6473",
+        "name=Oliveto Lucano",
+        "place=village",
+        "population=587",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67280433",
+      "name": "Pomarico",
+      "lat": 40.5179442,
+      "lon": 16.5459445,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6476",
+        "name=Pomarico",
+        "place=village",
+        "population=4482",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67280443",
+      "name": "Tursi",
+      "lat": 40.2462858,
+      "lon": 16.4692793,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6483",
+        "name=Tursi",
+        "place=village",
+        "population=5510",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67280463",
+      "name": "Albano di Lucania",
+      "lat": 40.5844447,
+      "lon": 16.0367155,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6357",
+        "name=Albano di Lucania",
+        "place=village",
+        "population=1612",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67280490",
+      "name": "Acerenza",
+      "lat": 40.792121,
+      "lon": 15.936568,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6356",
+        "name=Acerenza",
+        "place=village",
+        "population=3010",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67280498",
+      "name": "Balvano",
+      "lat": 40.650315,
+      "lon": 15.514161,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6362",
+        "name=Balvano",
+        "place=village",
+        "population=2007",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67280514",
+      "name": "Atella",
+      "lat": 40.880321,
+      "lon": 15.650161,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6360",
+        "name=Atella",
+        "place=village",
+        "population=3726",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67280528",
+      "name": "Calvello",
+      "lat": 40.476014,
+      "lon": 15.84857,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6369",
+        "name=Calvello",
+        "place=village",
+        "population=2212",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67280578",
+      "name": "Castronuovo di Sant'Andrea",
+      "lat": 40.19071,
+      "lon": 16.185481,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6380",
+        "name=Castronuovo di Sant'Andrea",
+        "place=village",
+        "population=1439",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67280625",
+      "name": "Cersosimo",
+      "lat": 40.047009,
+      "lon": 16.349386,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6381",
+        "name=Cersosimo",
+        "place=village",
+        "population=847",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67280650",
+      "name": "Forenza",
+      "lat": 40.8595834,
+      "lon": 15.8552685,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6387",
+        "name=Forenza",
+        "place=village",
+        "population=2546",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67280704",
+      "name": "Marsicovetere",
+      "lat": 40.3766014,
+      "lon": 15.8244926,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6400",
+        "name=Marsicovetere",
+        "place=village",
+        "population=4703",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67280739",
+      "name": "Pignola",
+      "lat": 40.5736366,
+      "lon": 15.7835038,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6416",
+        "name=Pignola",
+        "place=village",
+        "population=5483",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67280770",
+      "name": "Muro Lucano",
+      "lat": 40.752517,
+      "lon": 15.485759,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6407",
+        "name=Muro Lucano",
+        "place=village",
+        "population=6110",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67280776",
+      "name": "Oppido Lucano",
+      "lat": 40.76182,
+      "lon": 15.98667,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6410",
+        "name=Oppido Lucano",
+        "name:it=Oppido Lucano",
+        "name:la=Oppidum",
+        "name:nap=Òppete",
+        "name:osc=Opinum",
+        "place=village",
+        "population=3593",
+        "population:date=2021-12-31",
+        "source:population=ISTAT"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67280781",
+      "name": "Pescopagano",
+      "lat": 40.8361203,
+      "lon": 15.3977737,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6412",
+        "name=Pescopagano",
+        "place=village",
+        "population=2147",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67280788",
+      "name": "San Severino Lucano",
+      "lat": 40.020607,
+      "lon": 16.137882,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6432",
+        "name=San Severino Lucano",
+        "place=village",
+        "population=1923",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67280822",
+      "name": "Savoia di Lucania",
+      "lat": 40.569813,
+      "lon": 15.552562,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6438",
+        "name=Savoia di Lucania",
+        "old_name=Salvia di Lucania",
+        "place=village",
+        "population=1236",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67280834",
+      "name": "Spinoso",
+      "lat": 40.2696937,
+      "lon": 15.9667687,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6440",
+        "name=Spinoso",
+        "place=village",
+        "population=1778",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67280893",
+      "name": "Trivigno",
+      "lat": 40.581017,
+      "lon": 15.989872,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6447",
+        "name=Trivigno",
+        "place=village",
+        "population=794",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67280904",
+      "name": "Vietri di Potenza",
+      "lat": 40.5984721,
+      "lon": 15.507662,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6450",
+        "name=Vietri di Potenza",
+        "place=village",
+        "population=3096",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67280913",
+      "name": "Trecchina",
+      "lat": 40.0256576,
+      "lon": 15.7767873,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6446",
+        "name=Trecchina",
+        "place=village",
+        "population=2404",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67280925",
+      "name": "Campomaggiore",
+      "lat": 40.565674,
+      "lon": 16.0715869,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6371",
+        "name=Campomaggiore",
+        "place=village",
+        "population=980",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67280943",
+      "name": "Bella",
+      "lat": 40.7605914,
+      "lon": 15.5392691,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6366",
+        "name=Bella",
+        "place=village",
+        "population=5440",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67280947",
+      "name": "Carbone",
+      "lat": 40.142409,
+      "lon": 16.08938,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6373",
+        "name=Carbone",
+        "place=village",
+        "population=853",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67280950",
+      "name": "Cancellara",
+      "lat": 40.730219,
+      "lon": 15.925769,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6372",
+        "name=Cancellara",
+        "place=village",
+        "population=1598",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67280959",
+      "name": "Viggiano",
+      "lat": 40.340114,
+      "lon": 15.9018352,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6452",
+        "name=Viggiano",
+        "place=village",
+        "population=3208",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67280965",
+      "name": "Baragiano",
+      "lat": 40.6797381,
+      "lon": 15.5939656,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6364",
+        "name=Baragiano",
+        "place=village",
+        "population=2751",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67280969",
+      "name": "Banzi",
+      "lat": 40.8612651,
+      "lon": 16.0123063,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6363",
+        "name=Banzi",
+        "place=village",
+        "population=1514",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67280973",
+      "name": "Latronico",
+      "lat": 40.089807,
+      "lon": 16.011778,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6394",
+        "name=Latronico",
+        "place=village",
+        "population=5279",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67280999",
+      "name": "Laurenzana",
+      "lat": 40.460514,
+      "lon": 15.970973,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6395",
+        "name=Laurenzana",
+        "place=village",
+        "population=2250",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67281015",
+      "name": "Francavilla in Sinni",
+      "lat": 40.0801916,
+      "lon": 16.203224,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6388",
+        "name=Francavilla in Sinni",
+        "place=village",
+        "population=4367",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67281043",
+      "name": "Castelsaraceno",
+      "lat": 40.163708,
+      "lon": 15.991877,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6379",
+        "name=Castelsaraceno",
+        "place=village",
+        "population=1730",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67281056",
+      "name": "Castelgrande",
+      "lat": 40.786617,
+      "lon": 15.430157,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6375",
+        "name=Castelgrande",
+        "place=village",
+        "population=1231",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67281081",
+      "name": "Palazzo San Gervasio",
+      "lat": 40.931324,
+      "lon": 15.980767,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6411",
+        "name=Palazzo San Gervasio",
+        "place=village",
+        "population=4888",
+        "source=ISTAT 2017"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67281100",
+      "name": "Pietragalla",
+      "lat": 40.7475222,
+      "lon": 15.8806483,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6414",
+        "name=Pietragalla",
+        "place=village",
+        "population=4210",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67281107",
+      "name": "Nemoli",
+      "lat": 40.067505,
+      "lon": 15.800274,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6408",
+        "name=Nemoli",
+        "place=village",
+        "population=1561",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67281112",
+      "name": "Noepoli",
+      "lat": 40.086809,
+      "lon": 16.329685,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6409",
+        "name=Noepoli",
+        "place=village",
+        "population=1189",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67281182",
+      "name": "San Chirico Raparo",
+      "lat": 40.1907152,
+      "lon": 16.0763475,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6428",
+        "name=San Chirico Raparo",
+        "place=village",
+        "population=1304",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67281213",
+      "name": "Rotonda",
+      "lat": 39.9527864,
+      "lon": 16.0390877,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6424",
+        "name=Rotonda",
+        "place=village",
+        "population=3888",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67281227",
+      "name": "Roccanova",
+      "lat": 40.212011,
+      "lon": 16.203181,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6423",
+        "name=Roccanova",
+        "place=village",
+        "population=1759",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67281239",
+      "name": "Rivello",
+      "lat": 40.078005,
+      "lon": 15.756073,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6422",
+        "name=Rivello",
+        "place=village",
+        "population=3010",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67281276",
+      "name": "Rapone",
+      "lat": 40.8469209,
+      "lon": 15.5004593,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6419",
+        "name=Rapone",
+        "place=village",
+        "population=1203",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67281291",
+      "name": "Vaglio Basilicata",
+      "lat": 40.6663967,
+      "lon": 15.9212469,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6448",
+        "name=Vaglio Basilicata",
+        "place=village",
+        "population=2217",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67281293",
+      "name": "Tramutola",
+      "lat": 40.3148645,
+      "lon": 15.7903642,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6445",
+        "name=Tramutola",
+        "place=village",
+        "population=3251",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67281294",
+      "name": "Terranova di Pollino",
+      "lat": 39.978107,
+      "lon": 16.296286,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6442",
+        "name=Terranova di Pollino",
+        "place=village",
+        "population=1534",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67281304",
+      "name": "Senise",
+      "lat": 40.1471578,
+      "lon": 16.289501,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6439",
+        "name=Senise",
+        "name:ru=Сенизе",
+        "place=village",
+        "population=7182",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67281334",
+      "name": "Sant'Angelo Le Fratte",
+      "lat": 40.545913,
+      "lon": 15.558963,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6433",
+        "name=Sant'Angelo Le Fratte",
+        "place=village",
+        "population=1472",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67281345",
+      "name": "Paterno",
+      "lat": 40.378311,
+      "lon": 15.732769,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6454",
+        "name=Paterno",
+        "place=village",
+        "population=3994",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:67281359",
+      "name": "San Martino d'Agri",
+      "lat": 40.2397458,
+      "lon": 16.0530431,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6431",
+        "name=San Martino d'Agri",
+        "place=village",
+        "population=969",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:508495556",
+      "name": "Monticchio Sgarroni",
+      "lat": 40.9220509,
+      "lon": 15.6032747,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Monticchio Sgarroni",
+        "place=hamlet",
+        "wikidata=Q593338",
+        "wikipedia=it:Monticchio (Rionero in Vulture)"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:1216305579",
+      "name": "San Brancato",
+      "lat": 40.2570883,
+      "lon": 16.2585911,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=San Brancato",
+        "place=village"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:1221459706",
+      "name": "Tintera",
+      "lat": 40.574503,
+      "lon": 15.7667976,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Tintera",
+        "place=village"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:1244754601",
+      "name": "Santa Caterina",
+      "lat": 39.9866231,
+      "lon": 15.7294842,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Santa Caterina",
+        "place=hamlet",
+        "wikidata=Q3948938",
+        "wikipedia=it:Santa Caterina (Maratea)"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:1244755100",
+      "name": "Brefaro",
+      "lat": 39.9926126,
+      "lon": 15.7652107,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Brefaro",
+        "place=hamlet",
+        "wikidata=Q3644179",
+        "wikipedia=it:Brefaro"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:1244757844",
+      "name": "Porto di Maratea",
+      "lat": 39.989797,
+      "lon": 15.7090967,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Porto di Maratea",
+        "place=hamlet",
+        "wikidata=Q3909124",
+        "wikipedia=it:Porto (Maratea)"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:1412305499",
+      "name": "Nova Siri Scalo",
+      "lat": 40.1333221,
+      "lon": 16.6357615,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Nova Siri Scalo",
+        "place=village"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:1442041317",
+      "name": "Foggiano",
+      "lat": 40.9581395,
+      "lon": 15.5741123,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Foggiano",
+        "place=hamlet",
+        "wikidata=Q3746998",
+        "wikipedia=it:Foggiano (Melfi)"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:1706829840",
+      "name": "Lido di Metaponto",
+      "lat": 40.3605814,
+      "lon": 16.835227,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Lido di Metaponto",
+        "place=village"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:1820420523",
+      "name": "Mira Valle",
+      "lat": 40.6897646,
+      "lon": 16.6987819,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Mira Valle",
+        "place=village"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:1822853004",
+      "name": "Pedale della Palomba",
+      "lat": 40.6835137,
+      "lon": 16.6194382,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Pedale della Palomba",
+        "place=village"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:1822853036",
+      "name": "Trasano",
+      "lat": 40.6717345,
+      "lon": 16.6467499,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Trasano",
+        "place=village"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:1822958160",
+      "name": "Tempa Maledetta",
+      "lat": 40.6340475,
+      "lon": 16.5196976,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Tempa Maledetta",
+        "place=village"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:1822958164",
+      "name": "Trione della Chiesa",
+      "lat": 40.6047701,
+      "lon": 16.5593384,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Trione della Chiesa",
+        "place=village"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:1822958218",
+      "name": "la Macalla",
+      "lat": 40.6285318,
+      "lon": 16.5081555,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=la Macalla",
+        "place=village"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:1822977043",
+      "name": "Grotta Pignata",
+      "lat": 40.6914034,
+      "lon": 16.5687316,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Grotta Pignata",
+        "place=village"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:1824114288",
+      "name": "Fontana di Vite",
+      "lat": 40.7332778,
+      "lon": 16.5963328,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Fontana di Vite",
+        "place=village"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:1825427017",
+      "name": "Lama di Pepe",
+      "lat": 40.6771346,
+      "lon": 16.4835947,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Lama di Pepe",
+        "place=village"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:1825427024",
+      "name": "Piano di Chiattamura",
+      "lat": 40.669877,
+      "lon": 16.5259696,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Piano di Chiattamura",
+        "place=village"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:1825427025",
+      "name": "Sant'Agostino",
+      "lat": 40.6836277,
+      "lon": 16.487811,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Sant'Agostino",
+        "place=village"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:1884328412",
+      "name": "Scalera",
+      "lat": 40.8596734,
+      "lon": 15.7187127,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=668",
+        "name=Scalera",
+        "place=hamlet",
+        "population=548",
+        "population:date=2011",
+        "source:population=wikipedia",
+        "wikidata=Q18429113",
+        "wikipedia=sh:Scalera, Potenza"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:1891355399",
+      "name": "Masi",
+      "lat": 40.8030891,
+      "lon": 15.7239264,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Masi",
+        "place=hamlet",
+        "wikidata=Q18428961"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:2620301249",
+      "name": "Galaino",
+      "lat": 40.3814003,
+      "lon": 15.764506,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Galaino",
+        "place=village"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:2956475806",
+      "name": "Giarrossa",
+      "lat": 40.6326484,
+      "lon": 15.7453813,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Giarrossa",
+        "place=village"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:3094257086",
+      "name": "Sarconi",
+      "lat": 40.2471338,
+      "lon": 15.8887046,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6435",
+        "name=Sarconi",
+        "place=village",
+        "population=1351",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:3139563330",
+      "name": "Rotale",
+      "lat": 40.0850693,
+      "lon": 15.712307,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Rotale",
+        "place=village"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:3367650482",
+      "name": "Timmari",
+      "lat": 40.6538914,
+      "lon": 16.4691856,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Timmari",
+        "place=hamlet",
+        "wikidata=Q4012842",
+        "wikipedia=it:Villaggio Timmari"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:3828946382",
+      "name": "San Fele",
+      "lat": 40.8193255,
+      "lon": 15.5384276,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=San Fele",
+        "place=village",
+        "population=2982"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:3901387555",
+      "name": "Villa d'Agri",
+      "lat": 40.3548302,
+      "lon": 15.8257646,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Villa d'Agri",
+        "place=village"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:4177174185",
+      "name": "Cerri",
+      "lat": 40.0708758,
+      "lon": 15.9798472,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Cerri",
+        "place=hamlet",
+        "wikidata=Q18428828"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:4195174853",
+      "name": "Calda",
+      "lat": 40.0877563,
+      "lon": 15.9822894,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Calda",
+        "place=village"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:4341626987",
+      "name": "Marina di Maratea",
+      "lat": 39.9581607,
+      "lon": 15.7361369,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Marina di Maratea",
+        "place=hamlet",
+        "wikidata=Q1817255",
+        "wikipedia=it:Marina di Maratea"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:4365479397",
+      "name": "Aliano",
+      "lat": 40.3113743,
+      "lon": 16.2320074,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Aliano",
+        "place=village",
+        "population=1009"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:4399545307",
+      "name": "San Giorgio di Melfi",
+      "lat": 40.9595278,
+      "lon": 15.5864312,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=San Giorgio di Melfi",
+        "place=hamlet",
+        "wikidata=Q3947223",
+        "wikipedia=it:San Giorgio di Melfi"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:4399545308",
+      "name": "San Nicola di Melfi",
+      "lat": 41.0717121,
+      "lon": 15.6863764,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=San Nicola di Melfi",
+        "place=hamlet",
+        "wikidata=Q2130589",
+        "wikipedia=it:San Nicola di Melfi"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:4422752990",
+      "name": "Cersuta",
+      "lat": 40.014678,
+      "lon": 15.6787455,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Cersuta",
+        "place=hamlet",
+        "wikidata=Q3665164",
+        "wikipedia=it:Cersuta"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:4435092727",
+      "name": "Massa",
+      "lat": 39.9846938,
+      "lon": 15.7474409,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=462",
+        "name=Massa",
+        "place=hamlet",
+        "population=607",
+        "population:date=2001",
+        "source:population=wikipedia",
+        "wikidata=Q3850863",
+        "wikipedia=it:Massa (Maratea)"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:4441308755",
+      "name": "Pecorone",
+      "lat": 40.0727238,
+      "lon": 15.8549211,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Pecorone",
+        "place=hamlet",
+        "wikidata=Q3898551",
+        "wikipedia=it:Pecorone"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:4455593825",
+      "name": "Anglona",
+      "lat": 40.2411803,
+      "lon": 16.560291,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Anglona",
+        "place=hamlet",
+        "wikidata=Q3617392",
+        "wikipedia=it:Anglona (Tursi)"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:4499275275",
+      "name": "Casinello",
+      "lat": 40.3329037,
+      "lon": 16.7505294,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Casinello",
+        "place=hamlet",
+        "wikidata=Q17623973",
+        "wikipedia=it:Casinello"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:5036784816",
+      "name": "Castelmezzano",
+      "lat": 40.5302366,
+      "lon": 16.0465508,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6378",
+        "name=Castelmezzano",
+        "place=village",
+        "population=970",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:5431778469",
+      "name": "Castel Lagopesole",
+      "lat": 40.8049034,
+      "lon": 15.7339009,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Castel Lagopesole",
+        "place=hamlet",
+        "population=721",
+        "source:population=wikipedia",
+        "wikidata=Q1131792",
+        "wikipedia=it:Castel Lagopesole"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:7856975265",
+      "name": "Moliterno",
+      "lat": 40.2423024,
+      "lon": 15.868903,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6404",
+        "name=Moliterno",
+        "place=village",
+        "population=4592",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:8299410084",
+      "name": "Madonna dell'Assunta",
+      "lat": 40.6305456,
+      "lon": 15.6320402,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Madonna dell'Assunta",
+        "place=hamlet",
+        "postal_code=85055",
+        "wikidata=Q18428939"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:8299422648",
+      "name": "Masseria degli Aviglianesi",
+      "lat": 40.661629,
+      "lon": 15.5827948,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Masseria degli Aviglianesi",
+        "place=hamlet",
+        "wikidata=Q18428940"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:8752795551",
+      "name": "Santa Maria d'Irsi",
+      "lat": 40.7199856,
+      "lon": 16.3624781,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Santa Maria d'Irsi",
+        "place=hamlet",
+        "wikidata=Q18428703"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:8929348102",
+      "name": "Serra di Pepe",
+      "lat": 40.7467957,
+      "lon": 15.6872508,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Serra di Pepe",
+        "place=hamlet",
+        "wikidata=Q18429125"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:9195707706",
+      "name": "Alianello Nuovo",
+      "lat": 40.2808892,
+      "lon": 16.2489775,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Alianello Nuovo",
+        "place=hamlet",
+        "wikidata=Q2694450",
+        "wikipedia=it:Alianello"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:9396356331",
+      "name": "San Cataldo",
+      "lat": 40.7461261,
+      "lon": 15.6698446,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=San Cataldo",
+        "place=village"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:9886876944",
+      "name": "Borgo Venusio",
+      "lat": 40.7219037,
+      "lon": 16.5798804,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Borgo Venusio",
+        "place=suburb",
+        "postal_code=75100"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:10015619818",
+      "name": "Tinchi",
+      "lat": 40.3592406,
+      "lon": 16.6464972,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Tinchi",
+        "place=village",
+        "population=506",
+        "source=ISTAT (2001)"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:11361420336",
+      "name": "Genzano di Lucania",
+      "lat": 40.8467115,
+      "lon": 16.0313301,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Genzano di Lucania",
+        "place=village",
+        "population=5262",
+        "population:date=2021-12-31",
+        "source:population=wikipedia"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:13340226148",
+      "name": "Stagliozzo",
+      "lat": 40.8009334,
+      "lon": 15.7693435,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=864",
+        "name=Stagliozzo",
+        "place=hamlet",
+        "population=166",
+        "population:date=2011",
+        "source:population=wikipedia",
+        "wikidata=Q18429136",
+        "wikipedia=sh:Stagliozzo, Potenza"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:13342170899",
+      "name": "Sassano",
+      "lat": 40.8067434,
+      "lon": 15.7768109,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=947",
+        "name=Sassano",
+        "place=hamlet",
+        "population=72",
+        "population:date=2011",
+        "source:population=wikipedia",
+        "wikidata=Q18429112",
+        "wikipedia=sh:Sassano, Potenza"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:13342174103",
+      "name": "Lacciola",
+      "lat": 40.8212376,
+      "lon": 15.7750415,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=767",
+        "name=Lacciola",
+        "place=hamlet",
+        "population=45",
+        "source:population=wikipedia",
+        "wikidata=Q18428925",
+        "wikipedia=sh:Lacciola, Potenza"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:13342174104",
+      "name": "Carpini",
+      "lat": 40.8247274,
+      "lon": 15.7775379,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=778",
+        "name=Carpini",
+        "place=hamlet",
+        "population=42",
+        "source:population=wikipedia",
+        "wikidata=Q18428791",
+        "wikipedia=sh:Carpini, Potenza"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:13342211407",
+      "name": "Chicone",
+      "lat": 40.8099804,
+      "lon": 15.7530021,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=793",
+        "name=Chicone",
+        "place=hamlet",
+        "population=56",
+        "population:date=2011",
+        "source:population=wikipedia",
+        "wikidata=Q18428832",
+        "wikipedia=sh:Chicone, Potenza"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:512539774",
+      "name": "Boreano",
+      "lat": 41.0100242,
+      "lon": 15.8757426,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Boreano",
+        "place=hamlet",
+        "website=https://www.italiamappata.it/basilicata/pz/152-boreano/"
+      ],
+      "score": 51
+    },
+    {
+      "id": "node:1894525616",
+      "name": "Sarnelli",
+      "lat": 40.7858989,
+      "lon": 15.7585843,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Sarnelli",
+        "place=hamlet",
+        "population=183",
+        "website=https://www.italiamappata.it/basilicata/pz/681-sarnelli/"
+      ],
+      "score": 51
+    },
+    {
+      "id": "node:9404391394",
+      "name": "Bagni di San Cataldo",
+      "lat": 40.7487007,
+      "lon": 15.657375,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Bagni di San Cataldo",
+        "place=hamlet",
+        "population=42",
+        "website=https://www.italiamappata.it/basilicata/pz/138-bagni-di-san-cataldo/"
+      ],
+      "score": 51
+    },
+    {
+      "id": "node:9480355935",
+      "name": "Sant'Antonio Casalini Vecchio",
+      "lat": 40.7281836,
+      "lon": 15.602776,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Sant'Antonio Casalini Vecchio",
+        "place=hamlet",
+        "population=67",
+        "website=https://www.italiamappata.it/basilicata/pz/664-sant-antonio-casalini-vecchio/"
+      ],
+      "score": 51
+    },
+    {
+      "id": "node:9485227890",
+      "name": "Sant'Antonio Casalini",
+      "lat": 40.7321806,
+      "lon": 15.5934218,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Sant'Antonio Casalini",
+        "place=hamlet",
+        "population=28",
+        "website=https://www.italiamappata.it/basilicata/pz/663-sant-antonio-casalini/"
+      ],
+      "score": 51
+    },
+    {
+      "id": "node:9588568946",
+      "name": "Braida",
+      "lat": 40.7663147,
+      "lon": 15.5321239,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Braida",
+        "place=hamlet",
+        "population=77",
+        "website=https://www.italiamappata.it/basilicata/pz/158-braida/"
+      ],
+      "score": 51
+    },
+    {
+      "id": "node:9589186452",
+      "name": "Taverna Pugliese",
+      "lat": 40.7643523,
+      "lon": 15.5243522,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Taverna Pugliese",
+        "place=hamlet",
+        "website=https://www.italiamappata.it/basilicata/pz/715-taverna-pugliese/"
+      ],
+      "score": 51
+    },
+    {
+      "id": "node:13128840854",
+      "name": "Gaudiano",
+      "lat": 41.0875809,
+      "lon": 15.8787898,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Gaudiano",
+        "place=hamlet",
+        "population=32",
+        "population:date=2010-06-08",
+        "website=https://www.parcoofanto.it/borgo-gaudiano-lavello/"
+      ],
+      "score": 51
+    },
+    {
+      "id": "node:13310450190",
+      "name": "Tittarella",
+      "lat": 40.8281167,
+      "lon": 15.6902868,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Tittarella",
+        "place=hamlet",
+        "website=https://www.italiamappata.it/basilicata/pz/726-tittarella/"
+      ],
+      "score": 51
+    },
+    {
+      "id": "node:13310450191",
+      "name": "Inforchia",
+      "lat": 40.8285479,
+      "lon": 15.6848618,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Inforchia",
+        "place=hamlet",
+        "population=79",
+        "website=https://www.italiamappata.it/basilicata/pz/369-inforchia/"
+      ],
+      "score": 51
+    },
+    {
+      "id": "node:13310450200",
+      "name": "Sant'Ilario",
+      "lat": 40.790893,
+      "lon": 15.6663193,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Sant'Ilario",
+        "place=hamlet",
+        "population=139",
+        "website=https://www.italiamappata.it/basilicata/pz/665-sant-ilario/"
+      ],
+      "score": 51
+    },
+    {
+      "id": "node:13310737076",
+      "name": "Gianturco",
+      "lat": 40.8131852,
+      "lon": 15.7223885,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Gianturco",
+        "place=hamlet",
+        "population=39",
+        "website=https://www.italiamappata.it/basilicata/pz/350-gianturco/"
+      ],
+      "score": 51
+    },
+    {
+      "id": "node:13310737077",
+      "name": "Piano del Conte",
+      "lat": 40.8293778,
+      "lon": 15.7528923,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Piano del Conte",
+        "place=hamlet",
+        "population=124",
+        "website=https://www.italiamappata.it/basilicata/pz/568-piano-del-conte/"
+      ],
+      "score": 51
+    },
+    {
+      "id": "node:13310757676",
+      "name": "Lella",
+      "lat": 40.8212214,
+      "lon": 15.7331504,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Lella",
+        "place=hamlet",
+        "population=19",
+        "website=https://www.italiamappata.it/basilicata/pz/387-lella/"
+      ],
+      "score": 51
+    },
+    {
+      "id": "node:13338386969",
+      "name": "Iscalunga",
+      "lat": 40.8247393,
+      "lon": 15.7074454,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=502",
+        "name=Iscalunga",
+        "place=hamlet",
+        "population=87",
+        "website=https://www.italiamappata.it/basilicata/pz/371-iscalunga/"
+      ],
+      "score": 51
+    },
+    {
+      "id": "node:418440165",
+      "name": "Voscari",
+      "lat": 39.98992,
+      "lon": 16.1543321,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Voscari",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:418442311",
+      "name": "Lazzicelli",
+      "lat": 40.0001671,
+      "lon": 16.1424397,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Lazzicelli",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:418444176",
+      "name": "Mezzana Cianci",
+      "lat": 39.9898429,
+      "lon": 16.1667621,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Mezzana Cianci",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:418445938",
+      "name": "Mezzana Torre",
+      "lat": 39.989762,
+      "lon": 16.1763183,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Mezzana Torre",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:418447295",
+      "name": "Mezzana Salice",
+      "lat": 39.9803905,
+      "lon": 16.1752454,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Mezzana Salice",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:418449680",
+      "name": "Mezzana Frido",
+      "lat": 39.9750394,
+      "lon": 16.1747918,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Mezzana Frido",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:418451531",
+      "name": "Prastio",
+      "lat": 39.9577789,
+      "lon": 16.1166121,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Prastio",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:418456834",
+      "name": "Santa Rosalia",
+      "lat": 39.9826034,
+      "lon": 16.0951292,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Santa Rosalia",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:426021246",
+      "name": "Varco",
+      "lat": 39.981604,
+      "lon": 16.1693943,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Varco",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:426172958",
+      "name": "Falascoso",
+      "lat": 40.0254077,
+      "lon": 16.1210949,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=750.0",
+        "name=Falascoso",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:426180340",
+      "name": "Cornale",
+      "lat": 40.0426929,
+      "lon": 16.117167,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=698",
+        "name=Cornale",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:426182385",
+      "name": "Muscello",
+      "lat": 40.0104404,
+      "lon": 16.1259357,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=918.0",
+        "name=Muscello",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:426198449",
+      "name": "Cropani",
+      "lat": 40.0444329,
+      "lon": 16.127442,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=790.0",
+        "name=Cropani",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:471654952",
+      "name": "Casa del Conte",
+      "lat": 39.9688189,
+      "lon": 16.2544904,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Casa del Conte",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:1221461367",
+      "name": "Il Palazzo",
+      "lat": 40.5442042,
+      "lon": 15.7760991,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Il Palazzo",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:1663020632",
+      "name": "San Costantino",
+      "lat": 40.0731024,
+      "lon": 15.6876567,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=San Costantino",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:1706923591",
+      "name": "San Basilio",
+      "lat": 40.3233022,
+      "lon": 16.7110314,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=San Basilio",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:1706923595",
+      "name": "San Teodoro Nuovo",
+      "lat": 40.3472391,
+      "lon": 16.7393131,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=San Teodoro Nuovo",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:1706923600",
+      "name": "San Teodoro Vecchio",
+      "lat": 40.3727604,
+      "lon": 16.745925,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=San Teodoro Vecchio",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:1706923607",
+      "name": "Spineto",
+      "lat": 40.4298123,
+      "lon": 16.758288,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Spineto",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:1820420541",
+      "name": "Pianelle",
+      "lat": 40.5863535,
+      "lon": 16.6665716,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Pianelle",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:1891337960",
+      "name": "Sterpito di Filiano di sopra",
+      "lat": 40.7883798,
+      "lon": 15.685088,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Sterpito di Filiano di sopra",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:1891339049",
+      "name": "Sterpito di Filiano di sotto",
+      "lat": 40.7953133,
+      "lon": 15.6829096,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Sterpito di Filiano di sotto",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:1891342621",
+      "name": "Giannattasio",
+      "lat": 40.7938718,
+      "lon": 15.6885431,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Giannattasio",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:1891355398",
+      "name": "Signore",
+      "lat": 40.7976647,
+      "lon": 15.729418,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Signore",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:2228832141",
+      "name": "Cognone",
+      "lat": 40.4395197,
+      "lon": 15.7323191,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Cognone",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:2445053375",
+      "name": "Ponte Giacoia",
+      "lat": 40.7235137,
+      "lon": 15.5104759,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Ponte Giacoia",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:2610840169",
+      "name": "Villaggio Siano",
+      "lat": 40.8364812,
+      "lon": 16.1475297,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Villaggio Siano",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:2717219148",
+      "name": "Castagna",
+      "lat": 40.1662973,
+      "lon": 16.4747505,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Castagna",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:2717239653",
+      "name": "Serra di Croce 1",
+      "lat": 40.3399612,
+      "lon": 16.359892,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Serra di Croce 1",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:2956475809",
+      "name": "Porco Morto",
+      "lat": 40.6353636,
+      "lon": 15.7038522,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Porco Morto",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:3005332560",
+      "name": "Montagnola",
+      "lat": 40.558041,
+      "lon": 16.3313627,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Montagnola",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:3076210475",
+      "name": "Caprarico",
+      "lat": 40.3069145,
+      "lon": 16.4040012,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Caprarico",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:3144585468",
+      "name": "Contrada Ciciniello",
+      "lat": 40.6168214,
+      "lon": 15.780562,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Contrada Ciciniello",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:3144585469",
+      "name": "Contrada Tora",
+      "lat": 40.6057264,
+      "lon": 15.7629412,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Contrada Tora",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:4193350740",
+      "name": "Varrazzo",
+      "lat": 40.0732372,
+      "lon": 15.9923889,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Varrazzo",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:4193350741",
+      "name": "Masullo",
+      "lat": 40.0743413,
+      "lon": 16.0000925,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Masullo",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:4193350742",
+      "name": "Pantoni",
+      "lat": 40.0700991,
+      "lon": 16.0088825,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Pantoni",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:4193350743",
+      "name": "Procoio",
+      "lat": 40.0632476,
+      "lon": 16.0218154,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Procoio",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:4195152718",
+      "name": "Iannazzo",
+      "lat": 40.0883861,
+      "lon": 15.9701154,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Iannazzo",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:4198747998",
+      "name": "Timponi di Seluci",
+      "lat": 40.0601051,
+      "lon": 15.9661893,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Timponi di Seluci",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:4254612956",
+      "name": "Lucarelli",
+      "lat": 40.0565925,
+      "lon": 16.0234111,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Lucarelli",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:4254612957",
+      "name": "Preti",
+      "lat": 40.0474202,
+      "lon": 16.0282734,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Preti",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:4254625665",
+      "name": "Perricchio",
+      "lat": 40.0419032,
+      "lon": 16.0387196,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Perricchio",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:4757673818",
+      "name": "Canocchielle",
+      "lat": 39.9747434,
+      "lon": 16.1709208,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Canocchielle",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:4895169402",
+      "name": "Caprarico sotto",
+      "lat": 40.3024308,
+      "lon": 16.4343961,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Caprarico sotto",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:4895169403",
+      "name": "Caprarico Vallo",
+      "lat": 40.3072425,
+      "lon": 16.3965414,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Caprarico Vallo",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:4995579097",
+      "name": "Medichetta",
+      "lat": 40.0652041,
+      "lon": 15.6905714,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Medichetta",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:5184722033",
+      "name": "Manca di sopra",
+      "lat": 40.0666891,
+      "lon": 16.0987159,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Manca di sopra",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:5184725570",
+      "name": "Manca di basso",
+      "lat": 40.075341,
+      "lon": 16.1289308,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Manca di basso",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:5255544284",
+      "name": "Torno",
+      "lat": 39.9810144,
+      "lon": 16.1247159,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Torno",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:5326239901",
+      "name": "Fontana d'Eboli",
+      "lat": 40.1832027,
+      "lon": 15.8763342,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Fontana d'Eboli",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:5562030107",
+      "name": "Laghi di Monticchio",
+      "lat": 40.9362096,
+      "lon": 15.6098909,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Laghi di Monticchio",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:5581200497",
+      "name": "Vaccaro",
+      "lat": 40.7989808,
+      "lon": 15.7137988,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=714",
+        "name=Vaccaro",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:5581200498",
+      "name": "Cammarota",
+      "lat": 40.8012965,
+      "lon": 15.7143263,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=690",
+        "name=Cammarota",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:6193766619",
+      "name": "Cogliandrino",
+      "lat": 40.0932374,
+      "lon": 15.9294206,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Cogliandrino",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:6193766620",
+      "name": "Frusci",
+      "lat": 40.120886,
+      "lon": 15.952384,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Frusci",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:6213528319",
+      "name": "Lido di Policoro",
+      "lat": 40.1863624,
+      "lon": 16.715514,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Lido di Policoro",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:6621296171",
+      "name": "Macchia",
+      "lat": 40.3417294,
+      "lon": 16.8073391,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Macchia",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:6823798450",
+      "name": "Serra Marina",
+      "lat": 40.4440247,
+      "lon": 16.7808446,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "addr:postcode=75012",
+        "alt_name=Serramarina",
+        "name=Serra Marina",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:7473896248",
+      "name": "Recoleta",
+      "lat": 40.2514621,
+      "lon": 16.6532785,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Recoleta",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:7476157874",
+      "name": "Terzo Marzoccolo",
+      "lat": 40.2772667,
+      "lon": 16.7193593,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Terzo Marzoccolo",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:7476260869",
+      "name": "Terzo Cavone",
+      "lat": 40.2903249,
+      "lon": 16.7259068,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Terzo Cavone",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:7571841953",
+      "name": "Pedali",
+      "lat": 39.9947283,
+      "lon": 16.0592973,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Pedali",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:7577368365",
+      "name": "Rione Portobello",
+      "lat": 40.3559179,
+      "lon": 16.6835625,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Rione Portobello",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:7608290431",
+      "name": "Centro Agricolo",
+      "lat": 40.3599048,
+      "lon": 16.6663406,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Centro Agricolo",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:8022383840",
+      "name": "Perosa",
+      "lat": 40.0764617,
+      "lon": 16.0689827,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Perosa",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:8932959299",
+      "name": "Micele",
+      "lat": 40.7419633,
+      "lon": 15.6918883,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Micele",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:9055502404",
+      "name": "Incasciaturo di Sotto",
+      "lat": 40.7073705,
+      "lon": 15.7286941,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Incasciaturo di Sotto",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:9055793940",
+      "name": "Incasciaturo di Sopra",
+      "lat": 40.7074569,
+      "lon": 15.7318304,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Incasciaturo di Sopra",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:9057899100",
+      "name": "Acqua Bianca",
+      "lat": 40.708629,
+      "lon": 15.7244289,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Acqua Bianca",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:9061607962",
+      "name": "Toppo di Scioscio",
+      "lat": 40.6958226,
+      "lon": 15.7210144,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Toppo di Scioscio",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:9087407012",
+      "name": "Porcile",
+      "lat": 40.6975977,
+      "lon": 15.7136531,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Porcile",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:9120080813",
+      "name": "Marcone",
+      "lat": 40.6867928,
+      "lon": 15.6942621,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Marcone",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:9137760400",
+      "name": "Cesina",
+      "lat": 40.6864277,
+      "lon": 15.6732215,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Cesina",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:9141329828",
+      "name": "Valle in Casa",
+      "lat": 40.6854098,
+      "lon": 15.6563705,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Valle in Casa",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:9161249072",
+      "name": "Avriola",
+      "lat": 40.702034,
+      "lon": 15.6531841,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Avriola",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:9191658654",
+      "name": "Valle dell'Olmo",
+      "lat": 40.6960982,
+      "lon": 15.6471075,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Valle dell'Olmo",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:9191658655",
+      "name": "Bosco Grande",
+      "lat": 40.6905391,
+      "lon": 15.6821975,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Bosco Grande",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:9191658656",
+      "name": "Croce",
+      "lat": 40.7031554,
+      "lon": 15.6856066,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Croce",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:9191658657",
+      "name": "Caivano",
+      "lat": 40.7077405,
+      "lon": 15.706446,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Caivano",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:9191658659",
+      "name": "San Giovanni",
+      "lat": 40.7393824,
+      "lon": 15.6699908,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=San Giovanni",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:9372152169",
+      "name": "Valle della Pietra",
+      "lat": 40.7696411,
+      "lon": 15.6761008,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Valle della Pietra",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:9427545708",
+      "name": "Castrio",
+      "lat": 40.4906121,
+      "lon": 16.1954463,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Castrio",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:9487958165",
+      "name": "Pietra Scritta",
+      "lat": 40.7310902,
+      "lon": 15.6173873,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Pietra Scritta",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:9490765862",
+      "name": "Re pupillo",
+      "lat": 40.7333828,
+      "lon": 15.6102177,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Re pupillo",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:9499953120",
+      "name": "Carlotta",
+      "lat": 40.729265,
+      "lon": 15.5491921,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Carlotta",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:9527198896",
+      "name": "Panevino",
+      "lat": 40.2117518,
+      "lon": 16.6079593,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Panevino",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:9529973027",
+      "name": "Andriace",
+      "lat": 40.3097653,
+      "lon": 16.6760489,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Andriace",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:9532321860",
+      "name": "Bella Muro",
+      "lat": 40.7012646,
+      "lon": 15.5427953,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Bella Muro",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:9562003725",
+      "name": "Poggiolungo",
+      "lat": 40.7502714,
+      "lon": 15.6115723,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Poggiolungo",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:9562879188",
+      "name": "Martiniglio",
+      "lat": 40.7537754,
+      "lon": 15.5896586,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Martiniglio",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:9621481017",
+      "name": "Pierno",
+      "lat": 40.7931203,
+      "lon": 15.6049713,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Pierno",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:9949185273",
+      "name": "Menavoli",
+      "lat": 40.040955,
+      "lon": 15.8594057,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Menavoli",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:9988634738",
+      "name": "Acquafredda",
+      "lat": 40.0352297,
+      "lon": 15.6734133,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Acquafredda",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:10073514882",
+      "name": "La Taverna",
+      "lat": 40.3457782,
+      "lon": 16.0655754,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=La Taverna",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:10077605674",
+      "name": "Serra di Croce 2",
+      "lat": 40.3352683,
+      "lon": 16.3724532,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Serra di Croce 2",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:10082126237",
+      "name": "Borgata Caputo",
+      "lat": 40.3166959,
+      "lon": 16.3491529,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Borgata Caputo",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:10178351577",
+      "name": "Mazzapone",
+      "lat": 40.8782628,
+      "lon": 15.5001144,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Mazzapone",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:10216854714",
+      "name": "Forestella",
+      "lat": 40.8613367,
+      "lon": 15.5113193,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Forestella",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:10276885587",
+      "name": "Borgata Sant'Antonio",
+      "lat": 40.3192441,
+      "lon": 16.3929427,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Borgata Sant'Antonio",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:10707299779",
+      "name": "Sant'Andrea",
+      "lat": 40.8978385,
+      "lon": 15.5915924,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Sant'Andrea",
+        "place=hamlet",
+        "population=144"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:11411987697",
+      "name": "Rotondella Due",
+      "lat": 40.178078,
+      "lon": 16.5865062,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Rotondella Due",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:11707751708",
+      "name": "Bosco Grande",
+      "lat": 40.6959904,
+      "lon": 15.847152,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Bosco Grande",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:12025560790",
+      "name": "Campestre",
+      "lat": 40.7840304,
+      "lon": 15.4197671,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Campestre",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:12077976948",
+      "name": "Barrata",
+      "lat": 40.7046092,
+      "lon": 15.8278736,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Barrata",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:12078720385",
+      "name": "Colucci",
+      "lat": 40.6801804,
+      "lon": 15.8407965,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Colucci",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:12083746280",
+      "name": "Cavalieri",
+      "lat": 40.6815371,
+      "lon": 15.8338711,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Cavalieri",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:12415365125",
+      "name": "Melara",
+      "lat": 39.9960228,
+      "lon": 15.8668138,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Melara",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:12419775313",
+      "name": "Alte Coste",
+      "lat": 40.0096908,
+      "lon": 15.8468067,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Alte Coste",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:12435800980",
+      "name": "Acqua Nocella",
+      "lat": 39.9248664,
+      "lon": 16.0437783,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Acqua Nocella",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:13302412121",
+      "name": "Castelone di San Vittorino",
+      "lat": 40.4621917,
+      "lon": 16.0987695,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Castelone di San Vittorino",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:13302412122",
+      "name": "Pianta del Pozzo",
+      "lat": 40.463189,
+      "lon": 16.1002973,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Pianta del Pozzo",
+        "place=hamlet",
+        "population=4"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:13302412123",
+      "name": "Cervo Morto",
+      "lat": 40.4579476,
+      "lon": 16.0974196,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Cervo Morto",
+        "place=hamlet",
+        "population=3"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:13302412124",
+      "name": "Vantaggio",
+      "lat": 40.4614404,
+      "lon": 16.0934968,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Vantaggio",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:13302412125",
+      "name": "Flusso",
+      "lat": 40.4615908,
+      "lon": 16.085976,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Flusso",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:13302412129",
+      "name": "Leone di Angeliche",
+      "lat": 40.4614103,
+      "lon": 16.0754887,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Leone di Angeliche",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:13302412131",
+      "name": "Castello nella Campana",
+      "lat": 40.4730706,
+      "lon": 16.0602676,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Castello nella Campana",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:13302412132",
+      "name": "Santo Ruanada",
+      "lat": 40.4729969,
+      "lon": 16.0568656,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Santo Ruanada",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:13302412134",
+      "name": "Pietra Blanca",
+      "lat": 40.4587202,
+      "lon": 16.050298,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Pietra Blanca",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:13302412135",
+      "name": "Armando",
+      "lat": 40.4552879,
+      "lon": 16.0542928,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Armando",
+        "place=hamlet",
+        "population=4"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:13302412137",
+      "name": "Stanza",
+      "lat": 40.4529995,
+      "lon": 16.0992637,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "abandoned=yes",
+        "name=Stanza",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:13302412139",
+      "name": "Albicucca",
+      "lat": 40.4436651,
+      "lon": 16.1247253,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Albicucca",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:13302412140",
+      "name": "Limousine",
+      "lat": 40.460072,
+      "lon": 16.137712,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Limousine",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:13302412142",
+      "name": "La Ruccienta",
+      "lat": 40.475179,
+      "lon": 16.1392218,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=La Ruccienta",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:13304501350",
+      "name": "Terra desolata di Vancura",
+      "lat": 40.2703989,
+      "lon": 16.4272036,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Terra desolata di Vancura",
+        "place=hamlet",
+        "population=6"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:13304501351",
+      "name": "Cielo",
+      "lat": 40.2552081,
+      "lon": 16.4278404,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Cielo",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:13304501352",
+      "name": "Cuglioni",
+      "lat": 40.2269123,
+      "lon": 16.4110957,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Cuglioni",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:13304501353",
+      "name": "Compabusta",
+      "lat": 40.2157704,
+      "lon": 16.4047891,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Compabusta",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:13304501354",
+      "name": "Melo di Sanchez",
+      "lat": 40.221155,
+      "lon": 16.3993813,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Melo di Sanchez",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:13304501355",
+      "name": "Valle del Suda",
+      "lat": 40.1846698,
+      "lon": 16.3875758,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Valle del Suda",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:13304501357",
+      "name": "Peggio",
+      "lat": 40.1742554,
+      "lon": 16.3776485,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Peggio",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:13304501358",
+      "name": "Piazza del Rubino",
+      "lat": 40.1632021,
+      "lon": 16.3772592,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Piazza del Rubino",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:13305549310",
+      "name": "Comparare",
+      "lat": 40.3631758,
+      "lon": 16.1509903,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Comparare",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:13305549311",
+      "name": "L'Ostiario di Oca",
+      "lat": 40.377742,
+      "lon": 16.1407528,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=L'Ostiario di Oca",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:13305549312",
+      "name": "Chiesa Montana",
+      "lat": 40.3787982,
+      "lon": 16.1456868,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Chiesa Montana",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:13305549321",
+      "name": "Santo Felice",
+      "lat": 40.3899352,
+      "lon": 16.1370941,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Santo Felice",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:13305549323",
+      "name": "Eoliche",
+      "lat": 40.3840467,
+      "lon": 16.1286573,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Eoliche",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:13305549325",
+      "name": "Separgio",
+      "lat": 40.3587001,
+      "lon": 16.0738439,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Separgio",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:13333773278",
+      "name": "Ghiasti",
+      "lat": 40.7916223,
+      "lon": 15.7153083,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Ghiasti",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:13351808827",
+      "name": "Cecci",
+      "lat": 40.8262965,
+      "lon": 15.6563567,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Cecci",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:13354237316",
+      "name": "Capo d'Elci",
+      "lat": 40.0764701,
+      "lon": 15.74802,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Capo d'Elci",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:13360096877",
+      "name": "Santa Filomena",
+      "lat": 40.8197795,
+      "lon": 15.5592256,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=871",
+        "name=Santa Filomena",
+        "place=hamlet",
+        "population=434"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:13392780511",
+      "name": "Pennarone",
+      "lat": 40.1705281,
+      "lon": 15.7178843,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Pennarone",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:13404293749",
+      "name": "Giuliano",
+      "lat": 40.6831995,
+      "lon": 15.7728747,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Giuliano",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:13423381170",
+      "name": "Sella del Titolo",
+      "lat": 40.1857813,
+      "lon": 16.1374129,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Sella del Titolo",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:13430980287",
+      "name": "Piano dei Peri",
+      "lat": 39.9971852,
+      "lon": 15.7933883,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Piano dei Peri",
+        "place=hamlet"
+      ],
+      "score": 45
+    },
+    {
+      "id": "node:1244751756",
+      "name": "Castrocucco",
+      "lat": 39.9377799,
+      "lon": 15.7645203,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Castrocucco",
+        "place=suburb",
+        "wikidata=Q3663124",
+        "wikipedia=it:Castrocucco"
+      ],
+      "score": 35
+    },
+    {
+      "id": "node:1822852992",
+      "name": "Zona PAIP 2",
+      "lat": 40.6778824,
+      "lon": 16.5725824,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Zona PAIP 2",
+        "place=suburb",
+        "wikipedia=it:Quartieri di Matera"
+      ],
+      "score": 35
+    },
+    {
+      "id": "node:2506759010",
+      "name": "Matera 2000",
+      "lat": 40.6800727,
+      "lon": 16.5778994,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Matera 2000",
+        "place=suburb",
+        "wikipedia=it:Quartieri di Matera"
+      ],
+      "score": 35
+    },
+    {
+      "id": "node:9885990339",
+      "name": "Serra Rifusa",
+      "lat": 40.6823629,
+      "lon": 16.5861774,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Serra Rifusa",
+        "place=suburb",
+        "postal_code=75100",
+        "wikipedia=it:Quartieri di Matera"
+      ],
+      "score": 35
+    },
+    {
+      "id": "node:9886732841",
+      "name": "San Pardo",
+      "lat": 40.6778645,
+      "lon": 16.5948148,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=San Pardo",
+        "place=suburb",
+        "postal_code=75100",
+        "wikidata=Q3927252",
+        "wikipedia=it:Quartieri di Matera"
+      ],
+      "score": 35
+    },
+    {
+      "id": "node:9886742438",
+      "name": "San Giacomo",
+      "lat": 40.672155,
+      "lon": 16.5810721,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=San Giacomo",
+        "place=suburb",
+        "postal_code=75100",
+        "wikipedia=it:Quartieri di Matera"
+      ],
+      "score": 35
+    },
+    {
+      "id": "node:9886751306",
+      "name": "Villa Longo",
+      "lat": 40.6771739,
+      "lon": 16.5905207,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Villa Longo",
+        "place=suburb",
+        "postal_code=75100",
+        "wikidata=Q3927252",
+        "wikipedia=it:Quartieri di Matera"
+      ],
+      "score": 35
+    },
+    {
+      "id": "node:9886756954",
+      "name": "Platani",
+      "lat": 40.6758635,
+      "lon": 16.5903177,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Platani",
+        "place=suburb",
+        "postal_code=75100",
+        "wikidata=Q3927252",
+        "wikipedia=it:Quartieri di Matera"
+      ],
+      "score": 35
+    },
+    {
+      "id": "node:9886757633",
+      "name": "Olmi",
+      "lat": 40.6745364,
+      "lon": 16.5893785,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Olmi",
+        "place=suburb",
+        "postal_code=75100",
+        "wikidata=Q3927252",
+        "wikipedia=it:Quartieri di Matera"
+      ],
+      "score": 35
+    },
+    {
+      "id": "node:9886789322",
+      "name": "Piccianello",
+      "lat": 40.6751682,
+      "lon": 16.6030596,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Piccianello",
+        "place=suburb",
+        "postal_code=75100",
+        "wikipedia=it:Quartieri di Matera"
+      ],
+      "score": 35
+    },
+    {
+      "id": "node:9886794057",
+      "name": "Piazza Guglielmo Marconi Ex Mercato Ortofrutticolo",
+      "lat": 40.6740086,
+      "lon": 16.6008508,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Piazza Guglielmo Marconi Ex Mercato Ortofrutticolo",
+        "place=suburb",
+        "postal_code=75100",
+        "wikipedia=it:Quartieri di Matera"
+      ],
+      "score": 35
+    },
+    {
+      "id": "node:9886812446",
+      "name": "Serra Venerdì",
+      "lat": 40.6659692,
+      "lon": 16.5928116,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Serra Venerdì",
+        "place=suburb",
+        "postal_code=75100",
+        "wikipedia=it:Quartieri di Matera"
+      ],
+      "score": 35
+    },
+    {
+      "id": "node:9886818947",
+      "name": "Lanera",
+      "lat": 40.6595075,
+      "lon": 16.6045693,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Lanera",
+        "place=suburb",
+        "postal_code=75100",
+        "wikipedia=it:Quartieri di Matera"
+      ],
+      "score": 35
+    },
+    {
+      "id": "node:9886821953",
+      "name": "Pini",
+      "lat": 40.6578007,
+      "lon": 16.6124551,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Pini",
+        "place=suburb",
+        "postal_code=75100",
+        "wikipedia=it:Quartieri di Matera"
+      ],
+      "score": 35
+    },
+    {
+      "id": "node:9886824452",
+      "name": "Agna",
+      "lat": 40.6469765,
+      "lon": 16.6207036,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Agna",
+        "place=suburb",
+        "postal_code=75100",
+        "wikipedia=it:Quartieri di Matera"
+      ],
+      "score": 35
+    },
+    {
+      "id": "node:9887971997",
+      "name": "Rioni Sassi",
+      "lat": 40.6665373,
+      "lon": 16.6110577,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Rioni Sassi",
+        "place=suburb",
+        "postal_code=75100",
+        "wikipedia=it:Sassi di Matera"
+      ],
+      "score": 35
+    },
+    {
+      "id": "node:2508817204",
+      "name": "Rione Spine Bianche",
+      "lat": 40.6744238,
+      "lon": 16.5959856,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Rione Spine Bianche",
+        "place=suburb",
+        "postal_code=75100",
+        "website=https://archidiap.com/opera/quartiere-spine-bianche-matera/"
+      ],
+      "score": 31
+    },
+    {
+      "id": "node:9901923588",
+      "name": "Zona Industriale Jesce",
+      "lat": 40.7412858,
+      "lon": 16.6671045,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Zona Industriale Jesce",
+        "place=suburb",
+        "postal_code=75100",
+        "website=https://www.csi.matera.it/jesce-matera/"
+      ],
+      "score": 31
+    },
+    {
+      "id": "node:9953423949",
+      "name": "Villaggio Marinagri",
+      "lat": 40.2016175,
+      "lon": 16.7277822,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Torre Mozza",
+        "addr:postcode=75025",
+        "addr:province=Matera",
+        "addr:street=Viale San Giusto",
+        "contact:facebook=https://www.facebook.com/hotelmarinagri/",
+        "contact:instagram=https://instagram.com/hotelmarinagri?igshid=YmMyMTA2M2Y=",
+        "contact:tripadvisor=https://www.tripadvisor.it/Hotel_Review-g1020248-d649208-Reviews-Greenblu_Marinagri_Hotel_SPA-Policoro_Province_of_Matera_Basilicata.html",
+        "contact:whatsapp=+39 080 222 9999",
+        "name=Villaggio Marinagri",
+        "place=suburb",
+        "website=https://www.hotelmarinagri.it/"
+      ],
+      "score": 31
+    },
+    {
+      "id": "node:9231070416",
+      "name": "Porta del Borgo",
+      "lat": 40.3606156,
+      "lon": 16.098947,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "barrier=sally_port",
+        "name=Porta del Borgo",
+        "tourism=attraction"
+      ],
+      "score": 30
+    },
+    {
+      "id": "node:1820420550",
+      "name": "Serra d'Alto",
+      "lat": 40.7012759,
+      "lon": 16.6198367,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Serra d'Alto",
+        "place=suburb"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:1822852924",
+      "name": "Acquarium",
+      "lat": 40.6831379,
+      "lon": 16.579017,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Acquarium",
+        "place=suburb"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:1822852990",
+      "name": "Zona PAIP 1",
+      "lat": 40.6713628,
+      "lon": 16.5732507,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Zona PAIP 1",
+        "place=suburb",
+        "postal_code=75100"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:3669248468",
+      "name": "Lauria Inferiore",
+      "lat": 40.0412706,
+      "lon": 15.8356864,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Lauria Inferiore",
+        "place=suburb"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:7730647049",
+      "name": "Rione Loreto",
+      "lat": 40.3915604,
+      "lon": 16.5532153,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Rione Loreto",
+        "place=suburb"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:9445429099",
+      "name": "Rione Cammarelle",
+      "lat": 40.3921599,
+      "lon": 16.5550178,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Rione Cammarelle",
+        "place=suburb"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:9885947552",
+      "name": "Centro",
+      "lat": 40.6674521,
+      "lon": 16.5996168,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Centro",
+        "place=suburb",
+        "postal_code=75100"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:9886862637",
+      "name": "Contrada Trasanello Cementeria",
+      "lat": 40.6749017,
+      "lon": 16.6576018,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Contrada Trasanello Cementeria",
+        "place=suburb",
+        "postal_code=75100"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:9886866429",
+      "name": "Contrada \"Terlecchia\" Centro di Geodesia Spaziale Matera",
+      "lat": 40.6492124,
+      "lon": 16.7042364,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Matera",
+        "addr:street=Località Terlecchia",
+        "name=Contrada \"Terlecchia\" Centro di Geodesia Spaziale Matera",
+        "place=suburb"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:9886876786",
+      "name": "Z.I. La Martella",
+      "lat": 40.6790865,
+      "lon": 16.5383386,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Z.I. La Martella",
+        "place=suburb",
+        "postal_code=75100"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:9886883897",
+      "name": "Nucleo Abitato Picciano B",
+      "lat": 40.69421,
+      "lon": 16.4581061,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Nucleo Abitato Picciano B",
+        "place=suburb"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:9886894364",
+      "name": "Santuario Madonna di Picciano",
+      "lat": 40.6988864,
+      "lon": 16.4725793,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Santuario Madonna di Picciano",
+        "place=suburb"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:9886896832",
+      "name": "Nucleo Abitato Picciano A",
+      "lat": 40.71074,
+      "lon": 16.4859351,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Nucleo Abitato Picciano A",
+        "place=suburb",
+        "postal_code=75100"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:9886897873",
+      "name": "Contrada Picciano / Masseria Leone",
+      "lat": 40.714154,
+      "lon": 16.4776087,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Contrada Picciano / Masseria Leone",
+        "place=suburb",
+        "postal_code=75100"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:9901915485",
+      "name": "Masseria Danese / Centrale Enel",
+      "lat": 40.7312969,
+      "lon": 16.6812074,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Masseria Danese / Centrale Enel",
+        "place=suburb",
+        "postal_code=75100"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:9901961293",
+      "name": "Contrada Ciccolocane / Valdadige",
+      "lat": 40.7328744,
+      "lon": 16.5736393,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Contrada Ciccolocane / Valdadige",
+        "place=suburb",
+        "postal_code=75100"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:11501196447",
+      "name": "Risorgimento",
+      "lat": 40.6442935,
+      "lon": 15.7978598,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Risorgimento",
+        "place=suburb"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:11501292899",
+      "name": "Bucaletto",
+      "lat": 40.6344876,
+      "lon": 15.834296,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Bucaletto",
+        "place=suburb"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:11501325486",
+      "name": "Francioso",
+      "lat": 40.6296916,
+      "lon": 15.8042693,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Francioso",
+        "place=suburb"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:11501328587",
+      "name": "Macchia romana",
+      "lat": 40.650865,
+      "lon": 15.8008498,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Macchia romana",
+        "place=suburb"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:11501401597",
+      "name": "Santa Croce",
+      "lat": 40.6382364,
+      "lon": 15.8110108,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Santa Croce",
+        "place=suburb"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:11501405189",
+      "name": "Gallitello",
+      "lat": 40.6332833,
+      "lon": 15.7882914,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Gallitello",
+        "place=suburb"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:11501411275",
+      "name": "Santa Maria",
+      "lat": 40.6453032,
+      "lon": 15.8041087,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Santa Maria",
+        "place=suburb"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:11501413190",
+      "name": "Quartiere Europa",
+      "lat": 40.6404869,
+      "lon": 15.7890697,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Quartiere Europa",
+        "place=suburb"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:11501420172",
+      "name": "Quartiere Università",
+      "lat": 40.6455898,
+      "lon": 15.8104221,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Quartiere Università",
+        "place=suburb"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:11537272475",
+      "name": "Rossellino",
+      "lat": 40.6249782,
+      "lon": 15.8086403,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Rossellino",
+        "place=suburb"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:11537282070",
+      "name": "Betlemme",
+      "lat": 40.6429514,
+      "lon": 15.8289782,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "is_in=Caserta, Campania, Italy",
+        "name=Betlemme",
+        "place=suburb"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:11537293689",
+      "name": "Botte",
+      "lat": 40.6639046,
+      "lon": 15.8085937,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Botte",
+        "place=suburb"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:11537297468",
+      "name": "Cocuzzo",
+      "lat": 40.6400509,
+      "lon": 15.7944339,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Cocuzzo",
+        "place=suburb"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:11537299624",
+      "name": "Malvaccaro",
+      "lat": 40.6530448,
+      "lon": 15.7806119,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Malvaccaro",
+        "place=suburb"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:11552606073",
+      "name": "Contrada Baragiano",
+      "lat": 40.6590402,
+      "lon": 15.8158407,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Contrada Baragiano",
+        "place=suburb"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:11552822840",
+      "name": "Marrucaro",
+      "lat": 40.6321576,
+      "lon": 15.8252158,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Marrucaro",
+        "place=suburb"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:11552831918",
+      "name": "Serra",
+      "lat": 40.6573028,
+      "lon": 15.7850954,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Serra",
+        "place=suburb"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:11560054748",
+      "name": "Verderuolo",
+      "lat": 40.6520494,
+      "lon": 15.7935464,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Verderuolo",
+        "place=suburb"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:11591538276",
+      "name": "San Vito",
+      "lat": 40.6399136,
+      "lon": 15.8175028,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=San Vito",
+        "place=suburb"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:11591540834",
+      "name": "San Rocco",
+      "lat": 40.6419503,
+      "lon": 15.81223,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=San Rocco",
+        "place=suburb"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:11691023477",
+      "name": "Macchia Giocoli",
+      "lat": 40.6492144,
+      "lon": 15.7861215,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Macchia Giocoli",
+        "place=suburb"
+      ],
+      "score": 25
+    },
+    {
+      "id": "relation:10951071",
+      "name": "Palatium Regium",
+      "lat": 40.932633,
+      "lon": 15.9894418,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "building=yes",
+        "castle_type=manor",
+        "historic=castle",
+        "name=Palatium Regium",
+        "tourism=attraction",
+        "type=multipolygon",
+        "website=https://fondoambiente.it/luoghi/castello-marchesale-di-palazzo-san-gervasio?ldc",
+        "wikidata=Q67130928",
+        "wikipedia=it:Castello marchesale (Palazzo San Gervasio)"
+      ],
+      "score": 19
+    },
+    {
+      "id": "relation:14561416",
+      "name": "Castel Lagopesole",
+      "lat": 40.8072119,
+      "lon": 15.7331126,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "building=yes",
+        "historic=castle",
+        "name=Castel Lagopesole",
+        "opening_hours=May 01-Sep 30: Mo-Su 09:30-13:00,16:00-19:00; Oct 01-Apr 30: Mo-Su 09:30-13:00,15:00-17:00; Jan 01,02,Dec 24-26,31 off",
+        "phone=+39 0971 86083",
+        "source=bing",
+        "tourism=attraction",
+        "type=multipolygon",
+        "website=https://www.castellodilagopesole.com/",
+        "wikidata=Q3662646",
+        "wikimedia_commons=Category:Castello di Lagopesole",
+        "wikipedia=it:Castello di Lagopesole"
+      ],
+      "score": 19
+    },
+    {
+      "id": "node:2785599541",
+      "name": "Porta Piazzile",
+      "lat": 40.4876006,
+      "lon": 16.250546,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "barrier=sally_port",
+        "historic=city_gate",
+        "name=Porta Piazzile"
+      ],
+      "score": 15
+    },
+    {
+      "id": "node:3698670645",
+      "name": "Castello - Palazzo Bernardi",
+      "lat": 40.282693,
+      "lon": 16.1662768,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "historic=castle",
+        "name=Castello - Palazzo Bernardi"
+      ],
+      "score": 15
+    },
+    {
+      "id": "node:8148521009",
+      "name": "Porta Calcinaia",
+      "lat": 40.9959726,
+      "lon": 15.651941,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "historic=city_gate",
+        "name=Porta Calcinaia"
+      ],
+      "score": 15
+    },
+    {
+      "id": "node:8418717127",
+      "name": "Palazzo Margherita",
+      "lat": 40.4076792,
+      "lon": 16.687389,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "castle_type=palace",
+        "historic=castle",
+        "name=Palazzo Margherita",
+        "wikimedia_commons=File:Interno di Palazzo Margherita.jpg"
+      ],
+      "score": 15
+    },
+    {
+      "id": "node:9463355941",
+      "name": "Porta del Mulino o San Martino",
+      "lat": 40.2907167,
+      "lon": 16.5599263,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "historic=city_gate",
+        "name=Porta del Mulino o San Martino"
+      ],
+      "score": 15
+    },
+    {
+      "id": "node:9471037349",
+      "name": "Porta San Pietro o Pandosia",
+      "lat": 40.2905805,
+      "lon": 16.5617938,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "historic=city_gate",
+        "material=mattoni",
+        "maxheight=8",
+        "name=Porta San Pietro o Pandosia",
+        "old_name=Porta Pandosia"
+      ],
+      "score": 15
+    },
+    {
+      "id": "node:9484650649",
+      "name": "Porta della Terra o Eraclea",
+      "lat": 40.2915433,
+      "lon": 16.5624596,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "historic=city_gate",
+        "name=Porta della Terra o Eraclea"
+      ],
+      "score": 15
+    },
+    {
+      "id": "node:9484650650",
+      "name": "Porta dell'Osannale o Metaponto",
+      "lat": 40.2937508,
+      "lon": 16.56149,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "historic=city_gate",
+        "name=Porta dell'Osannale o Metaponto"
+      ],
+      "score": 15
+    },
+    {
+      "id": "node:9484650651",
+      "name": "Porta Solferino",
+      "lat": 40.2901629,
+      "lon": 16.5611731,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "historic=city_gate",
+        "name=Porta Solferino"
+      ],
+      "score": 15
+    },
+    {
+      "id": "node:13249838521",
+      "name": "Portello",
+      "lat": 40.1230188,
+      "lon": 16.2145007,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "alt_name=Porta di Santa Lucia",
+        "barrier=sally_port",
+        "bicycle=yes",
+        "foot=yes",
+        "historic=city_gate",
+        "loc_name=Purtiello",
+        "name=Portello"
+      ],
+      "score": 15
+    },
+    {
+      "id": "way:1445839167",
+      "name": "Castello di Moliterno",
+      "lat": 40.2409586,
+      "lon": 15.8715052,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "barrier=wall",
+        "castle_type=fortress",
+        "historic=castle",
+        "name=Castello di Moliterno",
+        "tourism=attraction",
+        "wikidata=Q108139066"
+      ],
+      "score": 13
+    },
+    {
+      "id": "relation:6459788",
+      "name": "Castello",
+      "lat": 40.4031428,
+      "lon": 16.6880222,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "castle_type=defensive",
+        "historic=castle",
+        "name=Castello",
+        "tourism=attraction",
+        "type=multipolygon",
+        "wikidata=Q3662486"
+      ],
+      "score": 13
+    },
+    {
+      "id": "node:3989955325",
+      "name": "Cripta del Peccato Originale",
+      "lat": 40.6206668,
+      "lon": 16.5634234,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "building=cave",
+        "historic=archaeological_site",
+        "name=Cripta del Peccato Originale",
+        "tourism=attraction",
+        "website=https://www.criptadelpeccatooriginale.it/",
+        "wikidata=Q50880532",
+        "wikipedia=it:Cripta del Peccato Originale"
+      ],
+      "score": 4
+    },
+    {
+      "id": "way:33887449",
+      "name": "Santuario di Hera (Tavole Palatine)",
+      "lat": 40.4160624,
+      "lon": 16.8167302,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "access=yes",
+        "alt_name=Tavole Palatine",
+        "archaeological_site=temple",
+        "building=temple",
+        "fee=no",
+        "historic=archaeological_site",
+        "historic:civilization=ancient_greek",
+        "historic:period=classical_greece",
+        "name=Santuario di Hera (Tavole Palatine)",
+        "name:el=Ναός της Ήρας",
+        "start_date=C5 BC",
+        "tourism=attraction",
+        "website=https://museometaponto.beniculturali.it/tempio-delle-tavole-palatine/",
+        "wikidata=Q3981620",
+        "wikipedia=it:Tavole Palatine"
+      ],
+      "score": 4
+    },
+    {
+      "id": "way:70083562",
+      "name": "Parco archeologico Metaponto",
+      "lat": 40.3834016,
+      "lon": 16.8247397,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "access=yes",
+        "archaeological_site=city",
+        "email=sba-bas.metapontomuseo@beniculturali.it",
+        "historic=archaeological_site",
+        "historic:civilization=ancient_greek",
+        "historic:period=archaic_greece",
+        "name=Parco archeologico Metaponto",
+        "name:el=Μεταπόντιο",
+        "opening_hours=Mo 14:00-(sunset-1:00); Tu-Su 09:00-(sunset-1:00)",
+        "phone=+39 0835 745327",
+        "start_date=700 BC",
+        "tourism=attraction",
+        "website=http://musei.beniculturali.it/musei?mid=325&nome=parco-archeologico-dellarea-urbana",
+        "wikidata=Q1058770",
+        "wikipedia=it:Metaponto (sito archeologico)"
+      ],
+      "score": 4
+    },
+    {
+      "id": "way:107829170",
+      "name": "Sito archeologico \"Torre di Satriano\"",
+      "lat": 40.5688832,
+      "lon": 15.6383083,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "archaeological_site=settlement",
+        "email=associazionememoria@gmail.com",
+        "historic=archaeological_site",
+        "historic:civilization=medieval",
+        "name=Sito archeologico \"Torre di Satriano\"",
+        "opening_hours=Sa-Su 10:00-13:00,17:00-19:00",
+        "phone=+393294588795",
+        "tourism=attraction",
+        "website=http://www.torresatriano.it/",
+        "wikidata=Q3950804",
+        "wikipedia=it:Satrianum"
+      ],
+      "score": 4
+    },
+    {
+      "id": "way:145667236",
+      "name": "Cattedrale della Madonna della Bruna e di Sant'Eustachio",
+      "lat": 40.666804,
+      "lon": 16.6113289,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Matera",
+        "addr:postcode=75100",
+        "addr:street=Piazza del Duomo",
+        "alt_name=Cattedrale di Maria Santissima della Bruna e di Sant'Eustachio",
+        "amenity=place_of_worship",
+        "basilica=minor",
+        "building=cathedral",
+        "contact:phone=+39 0835 332908",
+        "denomination=catholic",
+        "fee=3,5",
+        "height=30",
+        "historic=yes",
+        "material=stone",
+        "name=Cattedrale della Madonna della Bruna e di Sant'Eustachio",
+        "opening_hours=Mo-Sa 09:00-17:30; Su 09:00-10:00, 12:30-17:30",
+        "phone=+39 0835 332 908",
+        "religion=christian",
+        "roof:shape=gabled",
+        "start_date=1230",
+        "tourism=attraction",
+        "website=http://www.matera-irsina.chiesacattolica.it/",
+        "wheelchair=limited",
+        "wheelchair:description=accesso da via del riscatto dall'annesso museo diocesano. avvisare personale interno",
+        "wikidata=Q2942710",
+        "wikimedia_commons=Category:Cathedral (Matera)",
+        "wikipedia=it:Cattedrale di Matera"
+      ],
+      "score": 4
+    },
+    {
+      "id": "way:242363549",
+      "name": "Chiesa di San Giovanni Battista",
+      "lat": 40.6677738,
+      "lon": 16.6079389,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "amenity=place_of_worship",
+        "building=church",
+        "check_date=2024-09-17",
+        "denomination=catholic",
+        "historic=yes",
+        "name=Chiesa di San Giovanni Battista",
+        "religion=christian",
+        "roof:shape=gabled",
+        "start_date=1233",
+        "tourism=attraction",
+        "website=https://www.wikimatera.it/cosa-vedere-a-matera/la-cattedrale-le-chiese-ed-i-santuari-di-matera/chiesa-di-san-giovanni-battista/",
+        "wheelchair=yes",
+        "wikidata=Q3581896",
+        "wikimedia_commons=Category:San Giovanni Battista (Matera)",
+        "wikipedia=it:Chiesa di San Giovanni Battista (Matera)"
+      ],
+      "score": 4
+    },
+    {
+      "id": "way:244636560",
+      "name": "Casa Cava",
+      "lat": 40.6685083,
+      "lon": 16.6092326,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "building=yes",
+        "building:colour=#d6bd94",
+        "building:material=stone",
+        "name=Casa Cava",
+        "roof:colour=#c9be93",
+        "roof:material=roof_tiles",
+        "tourism=attraction",
+        "website=https://www.wikimatera.it/cosa-vedere-a-matera/matera-sotterranea-gioielli-nelle-viscere-della-terra/casa-cava-un-teatro-scavato-nella-roccia/",
+        "wikidata=Q29904967"
+      ],
+      "score": 4
+    },
+    {
+      "id": "way:586067088",
+      "name": "Abbazia di San Michele",
+      "lat": 40.9353685,
+      "lon": 15.6164634,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "building=yes",
+        "name=Abbazia di San Michele",
+        "note=8 Maggio e 28 Settembre Festa di San Michele",
+        "religion=christian",
+        "tourism=attraction",
+        "website=http://www.badiasanmichele.it/badiasanmichele/Homepage.html",
+        "wikidata=Q19545267",
+        "wikipedia=it:Abbazia di San Michele Arcangelo (Monticchio)"
+      ],
+      "score": 4
+    },
+    {
+      "id": "relation:3274279",
+      "name": "Convento di Sant'Agostino",
+      "lat": 40.6703485,
+      "lon": 16.6100307,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "amenity=place_of_worship",
+        "building=church",
+        "denomination=catholic",
+        "historic=yes",
+        "layer=1",
+        "name=Convento di Sant'Agostino",
+        "religion=christian",
+        "start_date=1592",
+        "tourism=attraction",
+        "type=multipolygon",
+        "website=https://www.isassidimatera.com/chiesa-sant-agostino/",
+        "wikidata=Q3689590",
+        "wikimedia_commons=Category:Sant'Agostino (Matera)",
+        "wikipedia=it:Convento di Sant'Agostino (Matera)"
+      ],
+      "score": 4
+    },
+    {
+      "id": "way:386531213",
+      "name": "Palazzo Ducale",
+      "lat": 40.7476528,
+      "lon": 15.8812607,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "building=yes",
+        "historic=castle",
+        "name=Palazzo Ducale",
+        "tourism=attraction"
+      ],
+      "score": 3
+    },
+    {
+      "id": "relation:6441853",
+      "name": "Palazzo Marchesale Donnaperna",
+      "lat": 40.5169853,
+      "lon": 16.5473523,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "building=yes",
+        "castle_type=stately",
+        "historic=castle",
+        "name=Palazzo Marchesale Donnaperna",
+        "tourism=attraction",
+        "type=multipolygon"
+      ],
+      "score": 3
+    },
+    {
+      "id": "node:2279682700",
+      "name": "Sassi di Matera",
+      "lat": 40.6660561,
+      "lon": 16.6115607,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "heritage=1",
+        "heritage:operator=whc",
+        "name=Sassi di Matera",
+        "tourism=attraction",
+        "wikidata=Q2350404",
+        "wikipedia=it:Sassi di Matera"
+      ],
+      "score": -2
+    },
+    {
+      "id": "node:2505720174",
+      "name": "Santa Lucia alle Malve",
+      "lat": 40.663199,
+      "lon": 16.6124822,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Matera",
+        "addr:postcode=75100",
+        "addr:street=Rione Malve",
+        "amenity=place_of_worship",
+        "building=church",
+        "denomination=catholic",
+        "historic=yes",
+        "importance=regional",
+        "name=Santa Lucia alle Malve",
+        "operator=Oltre L'Arte",
+        "phone:mobile=+39 327 9803776",
+        "religion=christian",
+        "tourism=attraction",
+        "wikidata=Q24798546",
+        "wikipedia=it:Chiesa di Santa Lucia alle Malve"
+      ],
+      "score": -2
+    },
+    {
+      "id": "way:145667235",
+      "name": "Chiesa dei Santi Pietro e Paolo",
+      "lat": 40.6644029,
+      "lon": 16.6127037,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "amenity=place_of_worship",
+        "building=church",
+        "denomination=catholic",
+        "historic=yes",
+        "loc_name=Chiesa San Pietro Caveoso",
+        "name=Chiesa dei Santi Pietro e Paolo",
+        "religion=christian",
+        "start_date=1218",
+        "tourism=attraction",
+        "wheelchair=limited",
+        "wikidata=Q3668371",
+        "wikipedia=it:Chiesa dei Santi Pietro e Paolo (Matera)"
+      ],
+      "score": -2
+    },
+    {
+      "id": "way:230731818",
+      "name": "Il Volo dell'Angelo",
+      "lat": 40.5298375,
+      "lon": 16.056522,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "aerialway=zip_line",
+        "name=Il Volo dell'Angelo",
+        "tourism=attraction",
+        "wikidata=Q56258947"
+      ],
+      "score": -2
+    },
+    {
+      "id": "way:243615692",
+      "name": "Palazzo dell'Annunziata",
+      "lat": 40.6669292,
+      "lon": 16.6057105,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "building=yes",
+        "building:levels=5",
+        "height=9 m",
+        "historic=yes",
+        "name=Palazzo dell'Annunziata",
+        "source=http://dati.comune.matera.it/dataset/mappa-matera-con-civici-solo-dei-sassi",
+        "start_date=1735",
+        "tourism=attraction",
+        "wheelchair=yes",
+        "wikidata=Q3891391",
+        "wikipedia=it:Palazzo dell'Annunziata"
+      ],
+      "score": -2
+    },
+    {
+      "id": "way:243684879",
+      "name": "Villaggio Saraceno",
+      "lat": 40.6167064,
+      "lon": 16.6553218,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "historic=ruins",
+        "name=Villaggio Saraceno",
+        "tourism=attraction",
+        "wheelchair=no",
+        "wikidata=Q16621650",
+        "wikipedia=it:Villaggio Saraceno"
+      ],
+      "score": -2
+    },
+    {
+      "id": "way:260319619",
+      "name": "Parco Urbano dei Palmenti",
+      "lat": 40.7488796,
+      "lon": 15.8861107,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "leisure=park",
+        "name=Parco Urbano dei Palmenti",
+        "tourism=attraction",
+        "wikidata=Q35832039"
+      ],
+      "score": -2
+    },
+    {
+      "id": "way:267066065",
+      "name": "Torre di Picerno",
+      "lat": 40.640355,
+      "lon": 15.6369207,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "historic=tower",
+        "man_made=tower",
+        "name=Torre di Picerno",
+        "tourism=attraction",
+        "wikidata=Q34526527"
+      ],
+      "score": -2
+    },
+    {
+      "id": "way:434332005",
+      "name": "Pomarico Vecchio",
+      "lat": 40.4652758,
+      "lon": 16.5770213,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "archaeological_site=settlement",
+        "historic=archaeological_site",
+        "landuse=grass",
+        "name=Pomarico Vecchio",
+        "ric:civilization=ancient_greek",
+        "tourism=attraction",
+        "wikidata=Q124213352"
+      ],
+      "score": -2
+    },
+    {
+      "id": "way:628939826",
+      "name": "Statua del Cristo Redentore",
+      "lat": 39.9877629,
+      "lon": 15.7203801,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "building=yes",
+        "historic=monument",
+        "name=Statua del Cristo Redentore",
+        "tourism=attraction",
+        "wikidata=Q267210",
+        "wikipedia=it:Redentore di Maratea"
+      ],
+      "score": -2
+    },
+    {
+      "id": "way:1003732191",
+      "name": "Torre Molfese",
+      "lat": 40.2521064,
+      "lon": 16.2504561,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "building=yes",
+        "historic=building",
+        "name=Torre Molfese",
+        "tourism=attraction",
+        "wikipedia=it:Torre Molfese"
+      ],
+      "score": -2
+    },
+    {
+      "id": "relation:13452176",
+      "name": "Monastero Santa Maria dell'Orsoleo",
+      "lat": 40.2394533,
+      "lon": 16.2441784,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Sant'Arcangelo",
+        "addr:postcode=85037",
+        "addr:province=Provincia di Potenza",
+        "amenity=historical",
+        "building=monastery",
+        "historic=monastery",
+        "name=Monastero Santa Maria dell'Orsoleo",
+        "tourism=attraction",
+        "type=multipolygon",
+        "wikipedia=it:Abbazia di Santa Maria d'Orsoleo"
+      ],
+      "score": -2
+    },
+    {
+      "id": "node:508495669",
+      "name": "Rovine Abbazia di Sant'Ippolito",
+      "lat": 40.9332772,
+      "lon": 15.6096491,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "historic=ruins",
+        "historic:civilization=medieval",
+        "name=Rovine Abbazia di Sant'Ippolito",
+        "religion=christian",
+        "ruins=monastery",
+        "tourism=attraction",
+        "website=https://www.parcovulture.it/it/turismo/architettura-storica/255-la-badia-di-sant-ippolito.html#:~:text=Sull'istmo%2C%20tra%20il%20Lago,periodo%20successivo%2C%20la%20torre%20campanaria."
+      ],
+      "score": -6
+    },
+    {
+      "id": "node:5044691721",
+      "name": "Chiesa Diruta dei Ss. Luca e Giuliano",
+      "lat": 40.598954,
+      "lon": 16.386113,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "addr:street=Giuseppe Garibaldi",
+        "name=Chiesa Diruta dei Ss. Luca e Giuliano",
+        "tourism=attraction",
+        "website=http://www.chieseitaliane.chiesacattolica.it/chieseitaliane/AccessoEsterno.do?mode=guest&type=auto&code=24061#action=ricerca%2Frisultati&view=griglia&locale=it&ordine=&ambito=XD&liberadescr=CHIESA&liberaluogo=GROTTOLE&highlight=Chiesa"
+      ],
+      "score": -6
+    },
+    {
+      "id": "node:5600219732",
+      "name": "Parco Rapaci La Maddalena",
+      "lat": 40.9909505,
+      "lon": 15.6428328,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "description=Per le famiglie e appassionati che vogliono visitare iil parco rapaci ed ammirare il volo dei falchi.",
+        "email=falconieri@deartevenandi.it",
+        "leisure=park",
+        "name=Parco Rapaci La Maddalena",
+        "name:it=Centro per la Conservazione della Natura in Basilicata",
+        "tourism=attraction",
+        "website=http://www.deartevenandi.it"
+      ],
+      "score": -6
+    },
+    {
+      "id": "node:9165527044",
+      "name": "I Cinti di Grassano - Geosito Nazionale",
+      "lat": 40.6347357,
+      "lon": 16.278533,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=I Cinti di Grassano - Geosito Nazionale",
+        "tourism=attraction",
+        "website=https://vox-populi-vox-dei3.webnode.it/products/i-cinti-di-grassano/"
+      ],
+      "score": -6
+    },
+    {
+      "id": "node:11612771604",
+      "name": "Grottole - Membro dell'Associazione dei Borghi Autentici d'Italia",
+      "lat": 40.6012215,
+      "lon": 16.3817096,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Grottole - Membro dell'Associazione dei Borghi Autentici d'Italia",
+        "opening_hours=24/7",
+        "reservation=no",
+        "tourism=attraction",
+        "website=https://www.borghiautenticiditalia.it"
+      ],
+      "score": -6
+    },
+    {
+      "id": "node:11612771605",
+      "name": "Aliano - Membro dell'Associazione dei Borghi Autentici d'Italia",
+      "lat": 40.3113906,
+      "lon": 16.2320249,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Aliano - Membro dell'Associazione dei Borghi Autentici d'Italia",
+        "opening_hours=24/7",
+        "reservation=no",
+        "tourism=attraction",
+        "website=https://www.borghiautenticiditalia.it"
+      ],
+      "score": -6
+    },
+    {
+      "id": "node:11612771606",
+      "name": "Accettura - Membro dell'Associazione dei Borghi Autentici d'Italia",
+      "lat": 40.4910302,
+      "lon": 16.158005,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Accettura - Membro dell'Associazione dei Borghi Autentici d'Italia",
+        "opening_hours=24/7",
+        "reservation=no",
+        "tourism=attraction",
+        "website=https://www.borghiautenticiditalia.it"
+      ],
+      "score": -6
+    },
+    {
+      "id": "node:11612790312",
+      "name": "Rotonda - Membro dell'Associazione dei Borghi Autentici d'Italia",
+      "lat": 39.9529034,
+      "lon": 16.0392451,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Rotonda - Membro dell'Associazione dei Borghi Autentici d'Italia",
+        "opening_hours=24/7",
+        "reservation=no",
+        "tourism=attraction",
+        "website=https://www.borghiautenticiditalia.it"
+      ],
+      "score": -6
+    },
+    {
+      "id": "node:11612790313",
+      "name": "Moliterno - Membro dell'Associazione dei Borghi Autentici d'Italia",
+      "lat": 40.2423186,
+      "lon": 15.8689544,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Moliterno - Membro dell'Associazione dei Borghi Autentici d'Italia",
+        "opening_hours=24/7",
+        "reservation=no",
+        "tourism=attraction",
+        "website=https://www.borghiautenticiditalia.it"
+      ],
+      "score": -6
+    },
+    {
+      "id": "way:583175988",
+      "name": "Ruderi di Calciano",
+      "lat": 40.5873285,
+      "lon": 16.1976855,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "area=yes",
+        "name=Ruderi di Calciano",
+        "tourism=attraction",
+        "website=https://www.parcogallipolicognato.it/index.php/banca-dati-del-parco-online/15-urbane/1043-calciano-ruderi-della-chiesa-di-maria-santissima-della-rocca"
+      ],
+      "score": -6
+    },
+    {
+      "id": "node:687119045",
+      "name": "Case rupestri",
+      "lat": 40.9898837,
+      "lon": 15.7305367,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Case rupestri",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "node:687119329",
+      "name": "Case rupestri",
+      "lat": 40.9837113,
+      "lon": 15.7595195,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Case rupestri",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "node:687119533",
+      "name": "Case rupestri",
+      "lat": 40.9753903,
+      "lon": 15.7898954,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Case rupestri",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "node:2204988542",
+      "name": "Cristo La Gravinella",
+      "lat": 40.6823242,
+      "lon": 16.5928148,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Cristo La Gravinella",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "node:2511270027",
+      "name": "San Nicola all'Ofra",
+      "lat": 40.6403032,
+      "lon": 16.6348206,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "historic=archaeological_site",
+        "name=San Nicola all'Ofra",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "node:2822243248",
+      "name": "La Pitrizza",
+      "lat": 40.2506774,
+      "lon": 16.4704619,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=La Pitrizza",
+        "start_date=1594",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "node:3309918332",
+      "name": "Masseria Fortificata di Leonessa - sec. XIII",
+      "lat": 41.0771115,
+      "lon": 15.6038985,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Masseria Fortificata di Leonessa - sec. XIII",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "node:4326880650",
+      "name": "Acqua Calicchio",
+      "lat": 40.4942944,
+      "lon": 16.5392154,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "amenity=fountain",
+        "historic=yes",
+        "name=Acqua Calicchio",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "node:4370311725",
+      "name": "Cascate Vallone del Tuorno",
+      "lat": 40.5859457,
+      "lon": 15.5415599,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Cascate Vallone del Tuorno",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "node:4492710950",
+      "name": "Circo glaciale (GS 3)",
+      "lat": 39.9076999,
+      "lon": 16.1919926,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=2100",
+        "name=Circo glaciale (GS 3)",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "node:4492711819",
+      "name": "Circo glaciale (GS 3)",
+      "lat": 39.9051486,
+      "lon": 16.1946748,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=2100",
+        "name=Circo glaciale (GS 3)",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "node:4492716294",
+      "name": "Circo glaciale Dolcedorme -Pollino (GS7)",
+      "lat": 39.9002926,
+      "lon": 16.2016271,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Circo glaciale Dolcedorme -Pollino (GS7)",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "node:4496292790",
+      "name": "Volo dell'Angelo",
+      "lat": 40.5260241,
+      "lon": 16.0633295,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Volo dell'Angelo",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "node:4496292989",
+      "name": "Volo dell'Angelo",
+      "lat": 40.5336204,
+      "lon": 16.0496557,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Volo dell'Angelo",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "node:5018756135",
+      "name": "Valli glaciali (GS 10)",
+      "lat": 39.9204696,
+      "lon": 16.186656,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Valli glaciali (GS 10)",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "node:5196515502",
+      "name": "Giostra panoramica RB Ride",
+      "lat": 40.0207584,
+      "lon": 16.1547291,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Giostra panoramica RB Ride",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "node:5565302789",
+      "name": "Circo glaciale Dolcedorme (GS8)",
+      "lat": 39.8986101,
+      "lon": 16.2109105,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Circo glaciale Dolcedorme (GS8)",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "node:5966771886",
+      "name": "Casa del poeta Rocco Scotellaro",
+      "lat": 40.6213183,
+      "lon": 16.145944,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "building=yes",
+        "name=Casa del poeta Rocco Scotellaro",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "node:6012006766",
+      "name": "murales",
+      "lat": 40.6221954,
+      "lon": 16.146361,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=murales",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "node:6593463299",
+      "name": "Chiesa Madonna delle Virtù",
+      "lat": 40.6684181,
+      "lon": 16.6112198,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "amenity=place_of_worship",
+        "name=Chiesa Madonna delle Virtù",
+        "name:ru=Каменная церковь Мадонна добродетели и святитель Николай Греческий",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "node:8954175925",
+      "name": "Porta Nuova",
+      "lat": 40.5275002,
+      "lon": 16.3171591,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Porta Nuova",
+        "opening_hours=24/7",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "node:9126139859",
+      "name": "Entrata Ponte Tibetano Castel Saraceno",
+      "lat": 40.1650493,
+      "lon": 15.9918729,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Entrata Ponte Tibetano Castel Saraceno",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "node:9190459976",
+      "name": "Casa con gli occhi",
+      "lat": 40.3116424,
+      "lon": 16.2319341,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "building=yes",
+        "name=Casa con gli occhi",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "node:9224562456",
+      "name": "Grotta dei Briganti",
+      "lat": 40.3929952,
+      "lon": 16.1443297,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Grotta dei Briganti",
+        "natural=cave_entrance",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "node:9439560549",
+      "name": "Porta Concordia",
+      "lat": 40.35963,
+      "lon": 16.0998321,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "barrier=sally_port",
+        "material=stone",
+        "maxheight=5",
+        "name=Porta Concordia",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "node:9439560550",
+      "name": "Casa con gli occhi",
+      "lat": 40.3614762,
+      "lon": 16.0983279,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "building=yes",
+        "name=Casa con gli occhi",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "node:9570331556",
+      "name": "Santuario Madonna di Viggiano",
+      "lat": 40.3803065,
+      "lon": 15.8582614,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Santuario Madonna di Viggiano",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "node:10087221697",
+      "name": "Falesia di Viggiano",
+      "lat": 40.3417686,
+      "lon": 15.89443,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Falesia di Viggiano",
+        "natural=rock",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "node:10148949118",
+      "name": "Fontana dell'amore",
+      "lat": 40.6653131,
+      "lon": 16.6115292,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=26",
+        "addr:street=Via Muro",
+        "name=Fontana dell'amore",
+        "tourism=attraction",
+        "wheelchair=no"
+      ],
+      "score": -12
+    },
+    {
+      "id": "node:10891508912",
+      "name": "Fontana Gentilizia della famiglia Gioia",
+      "lat": 39.9719815,
+      "lon": 16.0886561,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "amenity=fountain",
+        "name=Fontana Gentilizia della famiglia Gioia",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "node:11133701195",
+      "name": "basilicata alpaca",
+      "lat": 40.7836482,
+      "lon": 15.9328294,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=basilicata alpaca",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "node:11246929637",
+      "name": "Tomba di Carlo Levi",
+      "lat": 40.3124766,
+      "lon": 16.2276271,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Tomba di Carlo Levi",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "node:11601466938",
+      "name": "Castelmezzano - Nella lista I Borghi più Belli d'Italia",
+      "lat": 40.5303819,
+      "lon": 16.0467631,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Castelmezzano - Nella lista I Borghi più Belli d'Italia",
+        "opening_hours=24/7",
+        "reservation=no",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "node:11601561114",
+      "name": "Irsina - Nella lista I Borghi più Belli d'Italia",
+      "lat": 40.7445418,
+      "lon": 16.2428709,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Irsina - Nella lista I Borghi più Belli d'Italia",
+        "opening_hours=24/7",
+        "reservation=no",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "node:11601561115",
+      "name": "Acerenza - Nella lista I Borghi più Belli d'Italia",
+      "lat": 40.7923546,
+      "lon": 15.937114,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Acerenza - Nella lista I Borghi più Belli d'Italia",
+        "opening_hours=24/7",
+        "reservation=no",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "node:11601561116",
+      "name": "Guardia Perticara - Nella lista I Borghi più Belli d'Italia",
+      "lat": 40.3605713,
+      "lon": 16.0989395,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Guardia Perticara - Nella lista I Borghi più Belli d'Italia",
+        "opening_hours=24/7",
+        "reservation=no",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "node:11601580853",
+      "name": "Viggianello - Nella lista I Borghi più belli d'Italia",
+      "lat": 39.9733728,
+      "lon": 16.0851339,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Viggianello - Nella lista I Borghi più belli d'Italia",
+        "opening_hours=24/7",
+        "reservation=no",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "node:11601580854",
+      "name": "Venosa - Nella lista I Borghi più belli d'Italia",
+      "lat": 40.961505,
+      "lon": 15.8150456,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Venosa - Nella lista I Borghi più belli d'Italia",
+        "opening_hours=24/7",
+        "reservation=no",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "node:11601580855",
+      "name": "Pietrapertosa - Nella lista I Borghi più belli d'Italia",
+      "lat": 40.5181768,
+      "lon": 16.063069,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Pietrapertosa - Nella lista I Borghi più belli d'Italia",
+        "opening_hours=24/7",
+        "reservation=no",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "node:11601580856",
+      "name": "Miglionico - Nella lista \"I Borghi più belli d'Italia\"",
+      "lat": 40.5695336,
+      "lon": 16.5010545,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Miglionico - Nella lista \"I Borghi più belli d'Italia\"",
+        "opening_hours=24/7",
+        "reservation=no",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "node:11601580857",
+      "name": "Maratea - Nella lista I Borghi più belli d'Italia",
+      "lat": 39.9932504,
+      "lon": 15.7230686,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Maratea - Nella lista I Borghi più belli d'Italia",
+        "opening_hours=24/7",
+        "reservation=no",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "node:12151880699",
+      "name": "La Matrona",
+      "lat": 40.6651753,
+      "lon": 16.6115963,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "addr:street=Rione Pianelle",
+        "name=La Matrona",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "node:12872656989",
+      "name": "Porta Fontana",
+      "lat": 40.6217584,
+      "lon": 16.1440106,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Porta Fontana",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "node:12873459189",
+      "name": "Chiesa Monastica di Santa Chiara e cappella del crocifisso",
+      "lat": 40.620921,
+      "lon": 16.1468046,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Chiesa Monastica di Santa Chiara e cappella del crocifisso",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "node:13201545701",
+      "name": "Chiesa di San Donato",
+      "lat": 40.9132602,
+      "lon": 15.7303182,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "addr:postcode=85020",
+        "addr:street=Piazzale S. Donato",
+        "name=Chiesa di San Donato",
+        "name:en=Sanctuary of San Donato",
+        "phone=+390972644145",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "way:230731819",
+      "name": "Il Volo dell'Angelo",
+      "lat": 40.5248491,
+      "lon": 16.0516578,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "aerialway=zip_line",
+        "layer=3",
+        "name=Il Volo dell'Angelo",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "way:254648423",
+      "name": "S. Antonio Abate",
+      "lat": 40.6625037,
+      "lon": 16.3311503,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "amenity=place_of_worship",
+        "building=church",
+        "denomination=catholic",
+        "historic=yes",
+        "name=S. Antonio Abate",
+        "religion=christian",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "way:360558433",
+      "name": "Santa Maria del Vetrano",
+      "lat": 40.4598424,
+      "lon": 16.7127987,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "area=yes",
+        "description=Casale fortificato del XVI secolo",
+        "name=Santa Maria del Vetrano",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "way:433226605",
+      "name": "S. Antonio da Padova",
+      "lat": 40.517265,
+      "lon": 16.5469743,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Pomarico",
+        "addr:postcode=75016",
+        "addr:street=Corso Giuseppe Garibaldi",
+        "amenity=place_of_worship",
+        "building=church",
+        "denomination=catholic",
+        "historic=church",
+        "name=S. Antonio da Padova",
+        "religion=christian",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "way:433227654",
+      "name": "S. Rocco",
+      "lat": 40.5162926,
+      "lon": 16.5481998,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "amenity=place_of_worship",
+        "building=church",
+        "denomination=catholic",
+        "historic=church",
+        "name=S. Rocco",
+        "religion=christian",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "way:433227655",
+      "name": "SS. Addolorata",
+      "lat": 40.5143778,
+      "lon": 16.5494471,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "amenity=place_of_worship",
+        "building=church",
+        "denomination=catholic",
+        "historic=church",
+        "image=https://it.wikipedia.org/wiki/File:Pomarico_SS_Addolorata.jpg",
+        "name=SS. Addolorata",
+        "religion=christian",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "way:433261826",
+      "name": "Madonna della Porticella",
+      "lat": 40.5537322,
+      "lon": 16.4897289,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Miglionico",
+        "amenity=place_of_worship",
+        "building=church",
+        "denomination=catholic",
+        "historic=church",
+        "name=Madonna della Porticella",
+        "religion=christian",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "way:434333583",
+      "name": "Chiesa Madre S. Michele Arcangelo",
+      "lat": 40.5140854,
+      "lon": 16.5519344,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "amenity=place_of_worship",
+        "building=church",
+        "denomination=catholic",
+        "historic=church",
+        "image=https://it.wikipedia.org/wiki/File:CampanilePomarico.jpg",
+        "name=Chiesa Madre S. Michele Arcangelo",
+        "religion=christian",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "way:434376806",
+      "name": "Madonna della Nova",
+      "lat": 40.4812039,
+      "lon": 16.5693827,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "amenity=place_of_worship",
+        "building=church",
+        "denomination=catholic",
+        "historic=church",
+        "name=Madonna della Nova",
+        "religion=christian",
+        "ruins=yes",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "way:434710804",
+      "name": "Torre dell'orologio",
+      "lat": 40.5140462,
+      "lon": 16.5494778,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "amenity=clock",
+        "building=public",
+        "display=analog",
+        "man_made=tower",
+        "name=Torre dell'orologio",
+        "support=wall_mounted",
+        "tourism=attraction",
+        "tower:type=bell_tower",
+        "visibility=area",
+        "wikimedia_commons=File:Pomarico_Torre.jpg"
+      ],
+      "score": -12
+    },
+    {
+      "id": "way:435106070",
+      "name": "Altojanni",
+      "lat": 40.6602483,
+      "lon": 16.3497243,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "historic=archaeological_site",
+        "landuse=grass",
+        "name=Altojanni",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "way:435633432",
+      "name": "Casa del Miracolo di S. Francesco",
+      "lat": 40.5149267,
+      "lon": 16.5497745,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "amenity=place_of_worship",
+        "building=house",
+        "denomination=catholic",
+        "historic=yes",
+        "name=Casa del Miracolo di S. Francesco",
+        "religion=christian",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "way:452721329",
+      "name": "Geosito - Sequenza ofiolitica Timpa di Pietrasasso (GS )50",
+      "lat": 39.9961165,
+      "lon": 16.2661758,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Terranova di Pollino",
+        "addr:postcode=85030",
+        "description=Quest'area, ricadente nel Pollino Geopark racchiude uno dei pochi affioramenti di sequenza ofiolitica dell'Appennino meridionale.",
+        "ele=1300",
+        "name=Geosito - Sequenza ofiolitica Timpa di Pietrasasso (GS )50",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "way:452722574",
+      "name": "Geosito - Sequenza ofiolitica di Timpa delle Murge (GS 49)",
+      "lat": 39.9792198,
+      "lon": 16.2533378,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Terranova di Pollino",
+        "addr:postcode=85030",
+        "description=La sequenza ofiolitica meglio esposta e completa dell'Appennino meridionale",
+        "name=Geosito - Sequenza ofiolitica di Timpa delle Murge (GS 49)",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "way:919385440",
+      "name": "Pineta Comunale",
+      "lat": 40.0901645,
+      "lon": 16.0077991,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "leisure=park",
+        "name=Pineta Comunale",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "way:966805050",
+      "name": "Terme La Calda",
+      "lat": 40.0808518,
+      "lon": 15.9827673,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "leisure=park",
+        "name=Terme La Calda",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "way:967609909",
+      "name": "Ruderi del Castello Normanno",
+      "lat": 40.5278615,
+      "lon": 16.3158757,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "building=yes",
+        "historic=ruins",
+        "name=Ruderi del Castello Normanno",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "way:967876000",
+      "name": "Torre dell'orologio",
+      "lat": 40.5272257,
+      "lon": 16.3172336,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "building=yes",
+        "man_made=campanile",
+        "name=Torre dell'orologio",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "way:991412406",
+      "name": "Casa Nera del Conte Nicola Necchia",
+      "lat": 40.5554995,
+      "lon": 16.6649567,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "building=yes",
+        "historic=building",
+        "name=Casa Nera del Conte Nicola Necchia",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "way:992030520",
+      "name": "Locanda Prisco - Carlo Levi Grassano",
+      "lat": 40.6332642,
+      "lon": 16.2788223,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "building=yes",
+        "name=Locanda Prisco - Carlo Levi Grassano",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "way:999041699",
+      "name": "Le macine",
+      "lat": 40.3921503,
+      "lon": 16.1465309,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "building=yes",
+        "craft=oil_mill",
+        "historic=building",
+        "name=Le macine",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "way:1038827459",
+      "name": "Villa del Marchese",
+      "lat": 40.3362841,
+      "lon": 15.9002258,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "alt_name=Villa San Felice",
+        "building=yes",
+        "historic=manor",
+        "name=Villa del Marchese",
+        "tourism=attraction"
+      ],
+      "score": -12
+    },
+    {
+      "id": "relation:6459497",
+      "name": "Ex Convento Francescano",
+      "lat": 40.5174208,
+      "lon": 16.5468429,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Pomarico",
+        "addr:postcode=75016",
+        "addr:street=Corso Giuseppe Garibaldi",
+        "building=civic",
+        "historic=monastery",
+        "name=Ex Convento Francescano",
+        "tourism=attraction",
+        "type=multipolygon"
+      ],
+      "score": -12
+    }
+  ]
 }
