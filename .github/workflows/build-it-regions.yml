@@ -1,16 +1,9 @@
 name: Build Italy Regions Datasets
 
 on:
-  workflow_dispatch:
   push:
-    paths:
-      - "scripts/**"
-      - "configs/it/**"
-      - ".github/workflows/build-it-regions.yml"
-
-concurrency:
-  group: build-it-regions-${{ github.ref }}
-  cancel-in-progress: true
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -18,8 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        category: [borghi, relax, cantine]
-        region_id:
+        region:
           - it-abruzzo
           - it-basilicata
           - it-calabria
@@ -38,8 +30,12 @@ jobs:
           - it-toscana
           - it-trentino-alto-adige
           - it-umbria
-          - it-valle-daosta
+          - it-valle-d-aosta
           - it-veneto
+        category:
+          - borghi
+          - relax
+          - cantine
 
     steps:
       - name: Checkout
@@ -50,54 +46,20 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install deps (if any)
-        run: |
-          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+      ❌ # QUESTO NON DEVE ESISTERE
+      ❌ # npm install / npm ci
 
       - name: Build dataset
         env:
-          REGION_ID: ${{ matrix.region_id }}
+          REGION_ID: ${{ matrix.region }}
           CATEGORY: ${{ matrix.category }}
         run: |
           node scripts/build_region_category.mjs
-          ls -lah public/data/pois/regions || true
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: it-${{ matrix.region_id }}-${{ matrix.category }}
-          path: public/data/pois/regions/${{ matrix.region_id }}-${{ matrix.category }}.json
-          if-no-files-found: error
-
-  commit:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Download all artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: _artifacts
-
-      - name: Copy artifacts into public folder
+      - name: Commit & push (if changed)
         run: |
-          mkdir -p public/data/pois/regions
-          find _artifacts -type f -name "*.json" -print -exec cp -f {} public/data/pois/regions/ \;
-          ls -lah public/data/pois/regions | head -n 200
-
-      - name: Commit & push
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add public/data/pois/regions/*.json
-          if git diff --cached --quiet; then
-            echo "No changes to commit."
-            exit 0
-          fi
-          git commit -m "chore(data): update IT regional datasets"
-          git pull --rebase origin main
-          git push origin main
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add public/data
+          git commit -m "build: ${{ matrix.region }} ${{ matrix.category }}" || exit 0
+          git push
