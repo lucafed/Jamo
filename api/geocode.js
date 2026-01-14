@@ -1,7 +1,7 @@
 // /api/geocode.js — Robust geocoding (OFFLINE index first, Nominatim fallback) — v2.3
 // Supports:
-//   GET  /api/geocode?q=...&cc=IT        (cc opzionale = paese preferito)
-//   POST /api/geocode { q: "...", cc:"IT" }
+//   GET  /api/geocode?q=...&cc=IT
+//   POST /api/geocode { q:"...", cc:"IT" }
 //
 // Returns:
 //   { ok:true, result:{ label, lat, lon, country_code }, candidates:[...], source:"offline_index|nominatim" }
@@ -23,9 +23,7 @@ const NOMINATIM_UA =
   `Jamo/2.3 (Vercel; ${NOMINATIM_EMAIL || "no-email"})`;
 
 // ---- helpers ----
-function now() {
-  return Date.now();
-}
+function now() { return Date.now(); }
 
 function cleanQ(q) {
   return String(q || "").trim().replace(/\s+/g, " ");
@@ -43,13 +41,11 @@ function norm(s) {
 function shortLabel(displayName) {
   const parts = String(displayName || "")
     .split(",")
-    .map((s) => s.trim())
+    .map(s => s.trim())
     .filter(Boolean);
   return parts.slice(0, 3).join(", ") || displayName || "";
 }
 
-// Normalizza country code per coerenza con dataset
-// - Nominatim usa spesso GB, non UK
 function normalizeCountryCode(cc) {
   const up = String(cc || "").toUpperCase().trim();
   if (!up) return "";
@@ -62,38 +58,13 @@ function okResult(label, lat, lon, country_code = "") {
     label: String(label || "").trim(),
     lat: Number(lat),
     lon: Number(lon),
-    country_code: normalizeCountryCode(country_code),
+    country_code: normalizeCountryCode(country_code)
   };
 }
 
-// ---- CITY-QUERY HEURISTIC (per evitare quartieri/POI come partenza) ----
-function looksLikeCityQuery(q) {
-  const n = norm(q);
-  if (!n) return false;
-
-  // parole che indicano POI / zone / indirizzi
-  const bad = [
-    "via",
-    "viale",
-    "piazza",
-    "quartiere",
-    "zona",
-    "barriera",
-    "frazione",
-    "borgo",
-    "localita",
-    "stazione",
-    "aeroporto",
-    "uscita",
-    "svincolo",
-    "casello",
-  ];
-
-  if (bad.some((b) => n.includes(b))) return false;
-  if (/\d/.test(n)) return false; // numeri = indirizzo
-  if (n.split(" ").length > 2) return false;
-
-  return true;
+function normalizeHintCC(cc) {
+  const up = normalizeCountryCode(cc);
+  return up && up.length === 2 ? up : "";
 }
 
 // ---- OFFLINE INDEX (cold-start cached in memory) ----
@@ -131,25 +102,25 @@ function loadIndexOnce() {
   }
 }
 
-function offlineSearch(q, preferredCC = "", opts = {}) {
+function offlineSearch(q, ccHint = "") {
   loadIndexOnce();
   if (!INDEX || !NAME_MAP) return null;
 
   const nq = norm(q);
   if (!nq) return null;
 
-  const forcePlaceType = Array.isArray(opts.forcePlaceType) ? opts.forcePlaceType : null;
+  const hint = normalizeHintCC(ccHint);
 
   // 1) Exact match
   if (NAME_MAP.has(nq)) {
     const hits = NAME_MAP.get(nq) || [];
-    const best = pickBestOffline(hits, q, preferredCC, forcePlaceType);
-    if (best) return buildOfflineResponse(best, hits);
+    const best = pickBestOffline(hits, q, hint);
+    if (best) return buildOfflineResponse(best, hits, hint);
   }
 
   // 2) StartsWith / Contains match (limit)
   const places = INDEX.places;
-  const maxScan = Math.min(places.length, 220000); // safety
+  const maxScan = Math.min(places.length, 200000); // safety
   const starts = [];
   const contains = [];
 
@@ -161,78 +132,79 @@ function offlineSearch(q, preferredCC = "", opts = {}) {
     if (pn.startsWith(nq)) starts.push(p);
     else if (pn.includes(nq)) contains.push(p);
 
-    if (starts.length >= 14) break;
+    if (starts.length >= 12) break;
   }
 
-  const hits = (starts.length ? starts : contains).slice(0, 14);
+  const hits = (starts.length ? starts : contains).slice(0, 12);
   if (!hits.length) return null;
 
-  const best = pickBestOffline(hits, q, preferredCC, forcePlaceType);
+  const best = pickBestOffline(hits, q, hint);
   if (!best) return null;
-  return buildOfflineResponse(best, hits);
+  return buildOfflineResponse(best, hits, hint);
 }
 
-function offlineScore(p, qRaw, preferredCC = "", forcePlaceType = null) {
-  const lat = Number(p.lat);
-  const lon = Number(p.lng ?? p.lon);
-  if (!Number.isFinite(lat) || !Number.isFinite(lon)) return -1e9;
+function pickBestOffline(hits, qRaw, ccHint = "") {
+  let best = null;
+  let bestScore = -1;
 
   const qn = norm(qRaw);
-  const pn = norm(p.name);
-
-  const cc = normalizeCountryCode(p.country || "");
-  const pref = normalizeCountryCode(preferredCC || "");
-
-  // base: population (log)
-  const pop = Number(p.population || 0);
-  let s = Math.log10(Math.max(1000, pop)); // 3..7 tipico
-
-  // exact match = grosso boost
-  if (pn === qn) s += 3.2;
-
-  // place type preference (se la query sembra città)
-  if (forcePlaceType) {
-    const pt = String(p.place || "").toLowerCase().trim(); // city|town|village|suburb|...
-    if (forcePlaceType.includes(pt)) s += 2.2;
-    else s -= 4.2; // quartieri/poi penalizzati forte
-  }
-
-  // preferisci country se fornito (cc=IT)
-  if (pref && cc) {
-    if (cc === pref) s += 1.4;
-    else s -= 0.6;
-  }
-
-  // penalizza fortemente “suburb” quando stiamo cercando città
-  const pt = String(p.place || "").toLowerCase().trim();
-  if (forcePlaceType && pt === "suburb") s -= 2.0;
-
-  return s;
-}
-
-function pickBestOffline(hits, qRaw, preferredCC = "", forcePlaceType = null) {
-  let best = null;
-  let bestScore = -1e9;
+  const hint = normalizeHintCC(ccHint);
 
   for (const p of hits) {
-    const s = offlineScore(p, qRaw, preferredCC, forcePlaceType);
+    const lat = Number(p.lat);
+    const lon = Number(p.lng ?? p.lon);
+    if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
+
+    const pop = Number(p.population || 0);
+    const pcc = normalizeCountryCode(p.country || "");
+
+    // base: popolazione
+    let s = Math.log10(Math.max(1000, pop));
+
+    // match esatto nome
+    if (norm(p.name) === qn) s += 2;
+
+    // bias paese se dato
+    if (hint && pcc === hint) s += 6;
+
+    // super-boost per città italiane comuni se hint IT
+    if (hint === "IT") {
+      const city = qn;
+      if (["milano","roma","napoli","torino","bologna","firenze","venezia","verona","genova","palermo","bari"].includes(city)) {
+        if (pcc === "IT") s += 8;
+      }
+    }
+
     if (s > bestScore) {
       bestScore = s;
       best = p;
     }
   }
-
-  // Attach score for later decisions (non esportato)
-  if (best) best.__score = bestScore;
   return best;
 }
 
-function buildOfflineResponse(best, hits) {
+function buildOfflineResponse(best, hits, ccHint = "") {
   const cc = normalizeCountryCode(best.country || "");
-  const result = okResult(`${best.name}${cc ? ", " + cc : ""}`, best.lat, best.lng ?? best.lon, cc);
+  const result = okResult(
+    `${best.name}${cc ? ", " + cc : ""}`,
+    best.lat,
+    best.lng ?? best.lon,
+    cc
+  );
 
-  const candidates = hits
-    .map((p) => {
+  const hint = normalizeHintCC(ccHint);
+
+  // metti davanti i candidati del paese hint
+  const ordered = [...hits].sort((a,b) => {
+    const acc = normalizeCountryCode(a.country || "");
+    const bcc = normalizeCountryCode(b.country || "");
+    const ah = hint && acc === hint ? 1 : 0;
+    const bh = hint && bcc === hint ? 1 : 0;
+    return bh - ah;
+  });
+
+  const candidates = ordered
+    .map(p => {
       const lat = Number(p.lat);
       const lon = Number(p.lng ?? p.lon);
       if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
@@ -241,25 +213,24 @@ function buildOfflineResponse(best, hits) {
         label: `${p.name}${pcc ? ", " + pcc : ""}`,
         lat,
         lon,
-        country_code: pcc,
+        country_code: pcc
       };
     })
     .filter(Boolean)
     .slice(0, 5);
 
-  return { ok: true, result, candidates, source: "offline_index", _bestScore: best.__score ?? null };
+  return { ok: true, result, candidates, source: "offline_index" };
 }
 
 // ---- NOMINATIM fallback ----
-async function nominatimSearch(q, req, preferredCC = "") {
-  const pref = normalizeCountryCode(preferredCC || "");
-  const countrycodes = pref ? `&countrycodes=${encodeURIComponent(pref.toLowerCase())}` : "";
+async function nominatimSearch(q, req, ccHint = "") {
+  const hint = normalizeHintCC(ccHint);
 
   const base =
     "https://nominatim.openstreetmap.org/search" +
-    `?format=jsonv2&limit=5&addressdetails=1&accept-language=it,en` +
-    `${countrycodes}` +
+    `?format=jsonv2&limit=7&addressdetails=1&accept-language=it,en` +
     `&q=${encodeURIComponent(q)}` +
+    (hint ? `&countrycodes=${encodeURIComponent(hint.toLowerCase())}` : "") +
     (NOMINATIM_EMAIL ? `&email=${encodeURIComponent(NOMINATIM_EMAIL)}` : "");
 
   const proto = req.headers["x-forwarded-proto"] || "https";
@@ -268,9 +239,9 @@ async function nominatimSearch(q, req, preferredCC = "") {
   const r = await fetch(base, {
     headers: {
       "User-Agent": NOMINATIM_UA,
-      Accept: "application/json",
-      Referer: `${proto}://${host}/`,
-    },
+      "Accept": "application/json",
+      "Referer": `${proto}://${host}/`
+    }
   });
 
   if (!r.ok) {
@@ -282,7 +253,12 @@ async function nominatimSearch(q, req, preferredCC = "") {
     return { ok: false, error: "Nessun risultato trovato", source: "nominatim" };
   }
 
-  const best = arr[0];
+  // se non abbiamo usato countrycodes (hint vuoto), scegli best con bias hint se presente
+  let best = arr[0];
+  if (hint) {
+    const preferred = arr.find(x => normalizeCountryCode(x.address?.country_code || "") === hint);
+    if (preferred) best = preferred;
+  }
 
   const lat = Number(best.lat);
   const lon = Number(best.lon);
@@ -295,13 +271,13 @@ async function nominatimSearch(q, req, preferredCC = "") {
 
   const candidates = arr
     .slice(0, 5)
-    .map((x) => ({
+    .map(x => ({
       label: shortLabel(x.display_name),
       lat: Number(x.lat),
       lon: Number(x.lon),
-      country_code: normalizeCountryCode(x.address?.country_code || ""),
+      country_code: normalizeCountryCode(x.address?.country_code || "")
     }))
-    .filter((x) => Number.isFinite(x.lat) && Number.isFinite(x.lon));
+    .filter(x => Number.isFinite(x.lat) && Number.isFinite(x.lon));
 
   return { ok: true, result, candidates, source: "nominatim" };
 }
@@ -315,65 +291,47 @@ export default async function handler(req, res) {
 
     const qRaw =
       req.method === "GET"
-        ? Array.isArray(req.query?.q)
-          ? req.query.q[0]
-          : req.query?.q
-        : req.body?.q ?? req.body?.query;
+        ? (Array.isArray(req.query?.q) ? req.query.q[0] : req.query?.q)
+        : (req.body?.q ?? req.body?.query);
 
     const ccRaw =
       req.method === "GET"
-        ? Array.isArray(req.query?.cc)
-          ? req.query.cc[0]
-          : req.query?.cc
-        : req.body?.cc;
+        ? (Array.isArray(req.query?.cc) ? req.query.cc[0] : req.query?.cc)
+        : (req.body?.cc ?? req.body?.country_code);
 
     const q = cleanQ(qRaw);
-    const preferredCC = normalizeCountryCode(ccRaw || "");
+    const ccHint = normalizeHintCC(ccRaw);
 
     if (!q) return res.status(400).json({ ok: false, error: "Missing q" });
 
-    const cacheKey = `v2.3:${q.toLowerCase()}|cc:${preferredCC || "-"}`;
+    const cacheKey = `v2.3:${q.toLowerCase()}|${ccHint || "-"}`;
     const hit = cache.get(cacheKey);
     if (hit && now() - hit.ts < TTL_MS) {
       return res.status(200).json(hit.data);
     }
 
-    // If the query looks like a city, force offline to prefer city/town (avoid suburbs/POIs)
-    const forceCity = looksLikeCityQuery(q);
-    const forcePlaceType = forceCity ? ["city", "town"] : null;
-
     // 1) Offline index
-    const offline = offlineSearch(q, preferredCC, { forcePlaceType });
-
-    // Safety: if "city query" but offline best is clearly not good enough, use Nominatim.
-    // (evita casi tipo: prende un posto strano perché "Milano" non era presente come city)
+    const offline = offlineSearch(q, ccHint);
     if (offline?.ok) {
-      const bestScore = typeof offline._bestScore === "number" ? offline._bestScore : null;
-
-      // soglia: se sembra città ma score troppo basso, meglio Nominatim
-      const shouldNominatim =
-        forceCity && (bestScore == null || bestScore < 4.2); // ~pop bassa / niente match / non city-town
-
-      if (!shouldNominatim) {
-        const data = {
-          ok: true,
-          result: offline.result,
-          candidates: offline.candidates || [],
-          source: offline.source || "offline_index",
-        };
-        cache.set(cacheKey, { ts: now(), data });
-        return res.status(200).json(data);
-      }
+      const data = {
+        ok: true,
+        result: offline.result,
+        candidates: offline.candidates || [],
+        source: offline.source || "offline_index"
+      };
+      cache.set(cacheKey, { ts: now(), data });
+      return res.status(200).json(data);
     }
 
     // 2) Nominatim fallback
-    const nom = await nominatimSearch(q, req, preferredCC);
+    const nom = await nominatimSearch(q, req, ccHint);
     const data = nom.ok
       ? { ok: true, result: nom.result, candidates: nom.candidates || [], source: nom.source || "nominatim" }
       : { ok: false, error: nom.error || "Geocoding fallito", source: nom.source || "nominatim" };
 
     cache.set(cacheKey, { ts: now(), data });
     return res.status(200).json(data);
+
   } catch (e) {
     return res.status(200).json({ ok: false, error: String(e?.message || e) });
   }
