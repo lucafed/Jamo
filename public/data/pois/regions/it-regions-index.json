@@ -1,9 +1,9 @@
 {
   "country": "IT",
-  "generated_at": "2026-01-15T08:50:44.761Z",
+  "generated_at": "2026-01-15T10:13:13.034Z",
   "summary": {
     "regions": 20,
-    "categories_canon": [
+    "categories": [
       "core",
       "mare",
       "natura",
@@ -17,400 +17,879 @@
       "citta",
       "cantine"
     ],
-    "aliases": {
-      "panorami": [
-        "viewpoints"
-      ],
-      "trekking": [
-        "hiking"
-      ],
-      "citta": [
-        "città",
-        "city"
-      ]
-    },
-    "total_files_seen": 83
+    "total_files_found_in_dir": 83,
+    "total_files_indexed": 60
   },
   "items": [
     {
       "id": "it-piemonte",
       "name": "Piemonte",
       "iso3166_2": "IT-21",
-      "bbox": {
-        "minLat": 44.0604327,
-        "minLon": 6.6286151,
-        "maxLat": 46.4591425,
-        "maxLon": 9.2082535
-      },
-      "total_places": 29508,
-      "paths": {
-        "core": "/data/pois/regions/it-piemonte.json"
-      },
-      "counts": {
-        "core": 29508
-      },
-      "generated_at": "2026-01-15T08:35:09.368Z"
+      "total_places": 10371,
+      "categories": {
+        "relax": {
+          "file": "it-piemonte-relax.json",
+          "count": 16,
+          "bbox": {
+            "minLat": 44.1804478,
+            "minLon": 7.0792955,
+            "maxLat": 46.1979781,
+            "maxLon": 8.6074191
+          },
+          "generated_at": "2026-01-14T18:16:39.774Z",
+          "label_it": "Piemonte • relax"
+        },
+        "borghi": {
+          "file": "it-piemonte-borghi.json",
+          "count": 9959,
+          "bbox": {
+            "minLat": 44.0833358,
+            "minLon": 6.6765887,
+            "maxLat": 46.4239514,
+            "maxLon": 9.1893806
+          },
+          "generated_at": "2026-01-14T18:17:45.093Z",
+          "label_it": "Piemonte • borghi"
+        },
+        "cantine": {
+          "file": "it-piemonte-cantine.json",
+          "count": 396,
+          "bbox": {
+            "minLat": 44.384257,
+            "minLon": 6.791465,
+            "maxLat": 46.1120798,
+            "maxLon": 9.071605
+          },
+          "generated_at": "2026-01-14T18:16:48.777Z",
+          "label_it": "Piemonte • cantine"
+        }
+      }
     },
     {
       "id": "it-valle-d-aosta",
       "name": "Valle d'Aosta",
       "iso3166_2": "IT-23",
-      "bbox": {
-        "minLat": 45.4669522,
-        "minLon": 6.802571,
-        "maxLat": 45.9865879,
-        "maxLon": 7.9745102
-      },
-      "total_places": 6219,
-      "paths": {
-        "core": "/data/pois/regions/it-valle-d-aosta.json"
-      },
-      "counts": {
-        "core": 6219
-      },
-      "generated_at": "2026-01-15T08:47:32.472Z"
+      "total_places": 3091,
+      "categories": {
+        "relax": {
+          "file": "it-valle-d-aosta-relax.json",
+          "count": 6,
+          "bbox": {
+            "minLat": 45.7605492,
+            "minLon": 6.9679243,
+            "maxLat": 45.9383465,
+            "maxLon": 7.6293617
+          },
+          "generated_at": "2026-01-15T08:46:59.127Z",
+          "label_it": "Valle d'Aosta • relax"
+        },
+        "borghi": {
+          "file": "it-valle-d-aosta-borghi.json",
+          "count": 3070,
+          "bbox": {
+            "minLat": 45.5194305,
+            "minLon": 6.8236974,
+            "maxLat": 45.9542941,
+            "maxLon": 7.9284609
+          },
+          "generated_at": "2026-01-15T08:47:47.533Z",
+          "label_it": "Valle d'Aosta • borghi"
+        },
+        "cantine": {
+          "file": "it-valle-d-aosta-cantine.json",
+          "count": 15,
+          "bbox": {
+            "minLat": 45.6084283,
+            "minLon": 6.9710778,
+            "maxLat": 45.9353993,
+            "maxLon": 7.8251758
+          },
+          "generated_at": "2026-01-14T18:17:54.162Z",
+          "label_it": "Valle d'Aosta • cantine"
+        }
+      }
     },
     {
       "id": "it-lombardia",
       "name": "Lombardia",
       "iso3166_2": "IT-25",
-      "bbox": {
-        "minLat": 44.5988843,
-        "minLon": 8.4129662,
-        "maxLat": 46.6423781,
-        "maxLon": 11.6757289
-      },
-      "total_places": 32330,
-      "paths": {
-        "core": "/data/pois/regions/it-lombardia.json"
-      },
-      "counts": {
-        "core": 32330
-      },
-      "generated_at": "2026-01-15T08:29:55.451Z"
+      "total_places": 10021,
+      "categories": {
+        "relax": {
+          "file": "it-lombardia-relax.json",
+          "count": 18,
+          "bbox": {
+            "minLat": 45.0851878,
+            "minLon": 8.7041133,
+            "maxLat": 46.4950649,
+            "maxLon": 10.8571925
+          },
+          "generated_at": "2026-01-14T18:16:20.847Z",
+          "label_it": "Lombardia • relax"
+        },
+        "borghi": {
+          "file": "it-lombardia-borghi.json",
+          "count": 9577,
+          "bbox": {
+            "minLat": 44.6895579,
+            "minLon": 8.533436,
+            "maxLat": 46.5383888,
+            "maxLon": 11.418911
+          },
+          "generated_at": "2026-01-14T18:17:01.569Z",
+          "label_it": "Lombardia • borghi"
+        },
+        "cantine": {
+          "file": "it-lombardia-cantine.json",
+          "count": 426,
+          "bbox": {
+            "minLat": 44.9553764,
+            "minLon": 8.5805917,
+            "maxLat": 46.4671111,
+            "maxLon": 11.0269733
+          },
+          "generated_at": "2026-01-15T08:29:21.953Z",
+          "label_it": "Lombardia • cantine"
+        }
+      }
     },
     {
       "id": "it-trentino-alto-adige",
       "name": "Trentino-Alto Adige/Südtirol",
       "iso3166_2": "IT-32",
-      "bbox": {
-        "minLat": 45.6136345,
-        "minLon": 10.39256,
-        "maxLat": 47.0921479,
-        "maxLon": 12.4689554
-      },
-      "total_places": 21303,
-      "paths": {
-        "core": "/data/pois/regions/it-trentino-alto-adige.json"
-      },
-      "counts": {
-        "core": 21303
-      },
-      "generated_at": "2026-01-15T08:44:55.337Z"
+      "total_places": 3231,
+      "categories": {
+        "relax": {
+          "file": "it-trentino-alto-adige-relax.json",
+          "count": 10,
+          "bbox": {
+            "minLat": 46.0145985,
+            "minLon": 10.8080855,
+            "maxLat": 46.7485621,
+            "maxLon": 12.2157259
+          },
+          "generated_at": "2026-01-15T10:02:14.879Z",
+          "label_it": "Trentino-Alto Adige/Südtirol • relax"
+        },
+        "borghi": {
+          "file": "it-trentino-alto-adige-borghi.json",
+          "count": 3061,
+          "bbox": {
+            "minLat": 45.6985834,
+            "minLon": 10.4614086,
+            "maxLat": 47.0500067,
+            "maxLon": 12.3665871
+          },
+          "generated_at": "2026-01-14T18:16:54.289Z",
+          "label_it": "Trentino-Alto Adige/Südtirol • borghi"
+        },
+        "cantine": {
+          "file": "it-trentino-alto-adige-cantine.json",
+          "count": 160,
+          "bbox": {
+            "minLat": 45.7043896,
+            "minLon": 10.814882,
+            "maxLat": 46.8033096,
+            "maxLon": 11.9403413
+          },
+          "generated_at": "2026-01-14T18:16:19.791Z",
+          "label_it": "Trentino-Alto Adige/Südtirol • cantine"
+        }
+      }
     },
     {
       "id": "it-veneto",
       "name": "Veneto",
       "iso3166_2": "IT-34",
-      "bbox": {
-        "minLat": 44.8050764,
-        "minLon": 9.8205877,
-        "maxLat": 46.6784817,
-        "maxLon": 13.1009244
-      },
-      "total_places": 15599,
-      "paths": {
-        "core": "/data/pois/regions/it-veneto.json"
-      },
-      "counts": {
-        "core": 15599
-      },
-      "generated_at": null
+      "total_places": 12301,
+      "categories": {
+        "relax": {
+          "file": "it-veneto-relax.json",
+          "count": 12,
+          "bbox": {
+            "minLat": 45.2661968,
+            "minLon": 10.82691,
+            "maxLat": 46.4301769,
+            "maxLon": 13.0409073
+          },
+          "generated_at": "2026-01-14T18:16:25.438Z",
+          "label_it": "Veneto • relax"
+        },
+        "borghi": {
+          "file": "it-veneto-borghi.json",
+          "count": 12000,
+          "bbox": {
+            "minLat": 44.6379316,
+            "minLon": 10.2236435,
+            "maxLat": 46.6998619,
+            "maxLon": 13.0989475
+          },
+          "generated_at": "2026-01-13T04:01:51.749Z",
+          "label_it": "Veneto • Borghi (pulito)"
+        },
+        "cantine": {
+          "file": "it-veneto-cantine.json",
+          "count": 289,
+          "bbox": {
+            "minLat": 44.7707202,
+            "minLon": 10.2167783,
+            "maxLat": 46.6551049,
+            "maxLon": 13.1556377
+          },
+          "generated_at": "2026-01-15T03:59:43.516Z",
+          "label_it": "Veneto • Cantine"
+        }
+      }
     },
     {
       "id": "it-friuli-venezia-giulia",
       "name": "Friuli-Venezia Giulia",
       "iso3166_2": "IT-36",
-      "bbox": {
-        "minLat": 45.5790255,
-        "minLon": 12.3179724,
-        "maxLat": 46.6477455,
-        "maxLon": 13.9086659
-      },
-      "total_places": 12818,
-      "paths": {
-        "core": "/data/pois/regions/it-friuli-venezia-giulia.json"
-      },
-      "counts": {
-        "core": 12818
-      },
-      "generated_at": "2026-01-15T08:23:03.381Z"
+      "total_places": 2543,
+      "categories": {
+        "relax": {
+          "file": "it-friuli-venezia-giulia-relax.json",
+          "count": 5,
+          "bbox": {
+            "minLat": 45.6609987,
+            "minLon": 12.6927259,
+            "maxLat": 46.4640047,
+            "maxLon": 13.4010004
+          },
+          "generated_at": "2026-01-14T18:16:32.467Z",
+          "label_it": "Friuli-Venezia Giulia • relax"
+        },
+        "borghi": {
+          "file": "it-friuli-venezia-giulia-borghi.json",
+          "count": 2267,
+          "bbox": {
+            "minLat": 45.5843493,
+            "minLon": 12.3321839,
+            "maxLat": 46.586831,
+            "maxLon": 13.9085368
+          },
+          "generated_at": "2026-01-14T18:17:04.124Z",
+          "label_it": "Friuli-Venezia Giulia • borghi"
+        },
+        "cantine": {
+          "file": "it-friuli-venezia-giulia-cantine.json",
+          "count": 271,
+          "bbox": {
+            "minLat": 45.6026412,
+            "minLon": 12.445841,
+            "maxLat": 46.5670723,
+            "maxLon": 13.8503624
+          },
+          "generated_at": "2026-01-14T18:16:18.111Z",
+          "label_it": "Friuli-Venezia Giulia • cantine"
+        }
+      }
     },
     {
       "id": "it-liguria",
       "name": "Liguria",
       "iso3166_2": "IT-42",
-      "bbox": {
-        "minLat": 43.7774433,
-        "minLon": 7.4962666,
-        "maxLat": 44.8014883,
-        "maxLon": 10.0712574
-      },
-      "total_places": 10142,
-      "paths": {
-        "core": "/data/pois/regions/it-liguria.json"
-      },
-      "counts": {
-        "core": 10142
-      },
-      "generated_at": "2026-01-15T08:26:54.186Z"
+      "total_places": 2544,
+      "categories": {
+        "relax": {
+          "file": "it-liguria-relax.json",
+          "count": 0,
+          "bbox": null,
+          "generated_at": "2026-01-15T08:25:38.679Z",
+          "label_it": "Liguria • relax"
+        },
+        "borghi": {
+          "file": "it-liguria-borghi.json",
+          "count": 2452,
+          "bbox": {
+            "minLat": 43.7803902,
+            "minLon": 7.5148239,
+            "maxLat": 44.6662663,
+            "maxLon": 10.0539817
+          },
+          "generated_at": "2026-01-15T08:26:41.097Z",
+          "label_it": "Liguria • borghi"
+        },
+        "cantine": {
+          "file": "it-liguria-cantine.json",
+          "count": 92,
+          "bbox": {
+            "minLat": 43.778403,
+            "minLon": 7.6113027,
+            "maxLat": 44.5699709,
+            "maxLon": 10.0181595
+          },
+          "generated_at": "2026-01-15T08:27:13.203Z",
+          "label_it": "Liguria • cantine"
+        }
+      }
     },
     {
       "id": "it-emilia-romagna",
       "name": "Emilia-Romagna",
       "iso3166_2": "IT-45",
-      "bbox": {
-        "minLat": 43.7499848,
-        "minLon": 9.1278762,
-        "maxLat": 45.1448612,
-        "maxLon": 12.7506002
-      },
-      "total_places": 20021,
-      "paths": {
-        "core": "/data/pois/regions/it-emilia-romagna.json"
-      },
-      "counts": {
-        "core": 20021
-      },
-      "generated_at": "2026-01-15T08:21:40.354Z"
+      "total_places": 8624,
+      "categories": {
+        "relax": {
+          "file": "it-emilia-romagna-relax.json",
+          "count": 29,
+          "bbox": {
+            "minLat": 43.995481,
+            "minLon": 9.9798504,
+            "maxLat": 44.8163124,
+            "maxLon": 12.670802
+          },
+          "generated_at": "2026-01-14T18:16:41.504Z",
+          "label_it": "Emilia-Romagna • relax"
+        },
+        "borghi": {
+          "file": "it-emilia-romagna-borghi.json",
+          "count": 8364,
+          "bbox": {
+            "minLat": 43.7533389,
+            "minLon": 9.203691,
+            "maxLat": 45.1151109,
+            "maxLon": 12.7258302
+          },
+          "generated_at": "2026-01-14T18:18:01.409Z",
+          "label_it": "Emilia-Romagna • borghi"
+        },
+        "cantine": {
+          "file": "it-emilia-romagna-cantine.json",
+          "count": 231,
+          "bbox": {
+            "minLat": 43.8338061,
+            "minLon": 9.3554838,
+            "maxLat": 45.0501063,
+            "maxLon": 12.6551704
+          },
+          "generated_at": "2026-01-15T08:21:06.643Z",
+          "label_it": "Emilia-Romagna • cantine"
+        }
+      }
     },
     {
       "id": "it-toscana",
       "name": "Toscana",
       "iso3166_2": "IT-52",
-      "bbox": {
-        "minLat": 42.2383217,
-        "minLon": 9.6867924,
-        "maxLat": 44.4840739,
-        "maxLon": 12.3532043
-      },
-      "total_places": 35000,
-      "paths": {
-        "core": "/data/pois/regions/it-toscana.json"
-      },
-      "counts": {
-        "core": 35000
-      },
-      "generated_at": "2026-01-15T08:42:47.843Z"
+      "total_places": 6338,
+      "categories": {
+        "relax": {
+          "file": "it-toscana-relax.json",
+          "count": 30,
+          "bbox": {
+            "minLat": 42.552387,
+            "minLon": 10.580046,
+            "maxLat": 44.0120653,
+            "maxLon": 11.8733868
+          },
+          "generated_at": "2026-01-15T08:41:06.266Z",
+          "label_it": "Toscana • relax"
+        },
+        "borghi": {
+          "file": "it-toscana-borghi.json",
+          "count": 5891,
+          "bbox": {
+            "minLat": 42.254379,
+            "minLon": 9.7197686,
+            "maxLat": 44.4625555,
+            "maxLon": 12.3301567
+          },
+          "generated_at": "2026-01-15T08:42:09.522Z",
+          "label_it": "Toscana • borghi"
+        },
+        "cantine": {
+          "file": "it-toscana-cantine.json",
+          "count": 417,
+          "bbox": {
+            "minLat": 42.3591435,
+            "minLon": 10.044215,
+            "maxLat": 44.2030728,
+            "maxLon": 12.139486
+          },
+          "generated_at": "2026-01-14T18:16:36.917Z",
+          "label_it": "Toscana • cantine"
+        }
+      }
     },
     {
       "id": "it-umbria",
       "name": "Umbria",
       "iso3166_2": "IT-55",
-      "bbox": {
-        "minLat": 42.2582454,
-        "minLon": 11.8819532,
-        "maxLat": 43.6294973,
-        "maxLon": 13.2544186
-      },
-      "total_places": 5680,
-      "paths": {
-        "core": "/data/pois/regions/it-umbria.json"
-      },
-      "counts": {
-        "core": 5680
-      },
-      "generated_at": "2026-01-15T08:46:17.090Z"
+      "total_places": 2168,
+      "categories": {
+        "relax": {
+          "file": "it-umbria-relax.json",
+          "count": 2,
+          "bbox": {
+            "minLat": 42.5605633,
+            "minLon": 12.2702135,
+            "maxLat": 42.7776727,
+            "maxLon": 12.3986801
+          },
+          "generated_at": "2026-01-14T18:16:17.116Z",
+          "label_it": "Umbria • relax"
+        },
+        "borghi": {
+          "file": "it-umbria-borghi.json",
+          "count": 2087,
+          "bbox": {
+            "minLat": 42.3823882,
+            "minLon": 11.918305,
+            "maxLat": 43.6039932,
+            "maxLon": 13.2076515
+          },
+          "generated_at": "2026-01-14T18:18:06.511Z",
+          "label_it": "Umbria • borghi"
+        },
+        "cantine": {
+          "file": "it-umbria-cantine.json",
+          "count": 79,
+          "bbox": {
+            "minLat": 42.502567,
+            "minLon": 11.9832133,
+            "maxLat": 43.5251918,
+            "maxLon": 12.7892475
+          },
+          "generated_at": "2026-01-14T18:17:48.563Z",
+          "label_it": "Umbria • cantine"
+        }
+      }
     },
     {
       "id": "it-marche",
       "name": "Marche",
       "iso3166_2": "IT-57",
-      "bbox": {
-        "minLat": 42.6795957,
-        "minLon": 12.2021242,
-        "maxLat": 43.9668745,
-        "maxLon": 13.903491
-      },
-      "total_places": 6773,
-      "paths": {
-        "core": "/data/pois/regions/it-marche.json"
-      },
-      "counts": {
-        "core": 6773
-      },
-      "generated_at": "2026-01-15T08:30:53.879Z"
+      "total_places": 2951,
+      "categories": {
+        "relax": {
+          "file": "it-marche-relax.json",
+          "count": 2,
+          "bbox": {
+            "minLat": 42.779695,
+            "minLon": 13.4136336,
+            "maxLat": 43.5328247,
+            "maxLon": 13.5177814
+          },
+          "generated_at": "2026-01-14T19:40:33.046Z",
+          "label_it": "Marche • relax"
+        },
+        "borghi": {
+          "file": "it-marche-borghi.json",
+          "count": 2820,
+          "bbox": {
+            "minLat": 42.7244084,
+            "minLon": 12.2333137,
+            "maxLat": 43.9668745,
+            "maxLon": 13.903491
+          },
+          "generated_at": "2026-01-14T18:17:44.006Z",
+          "label_it": "Marche • borghi"
+        },
+        "cantine": {
+          "file": "it-marche-cantine.json",
+          "count": 129,
+          "bbox": {
+            "minLat": 42.7460122,
+            "minLon": 12.6341165,
+            "maxLat": 43.9453929,
+            "maxLon": 13.8869309
+          },
+          "generated_at": "2026-01-15T08:31:18.587Z",
+          "label_it": "Marche • cantine"
+        }
+      }
     },
     {
       "id": "it-lazio",
       "name": "Lazio",
       "iso3166_2": "IT-62",
-      "bbox": {
-        "minLat": 40.7863253,
-        "minLon": 11.4981953,
-        "maxLat": 42.8311594,
-        "maxLon": 14.0536529
-      },
-      "total_places": 9219,
-      "paths": {
-        "core": "/data/pois/regions/it-lazio.json"
-      },
-      "counts": {
-        "core": 9219
-      },
-      "generated_at": "2026-01-15T08:25:18.746Z"
+      "total_places": 2511,
+      "categories": {
+        "relax": {
+          "file": "it-lazio-relax.json",
+          "count": 23,
+          "bbox": {
+            "minLat": 41.305405,
+            "minLon": 11.6361312,
+            "maxLat": 42.4615398,
+            "maxLon": 13.8887819
+          },
+          "generated_at": "2026-01-14T18:16:43.220Z",
+          "label_it": "Lazio • relax"
+        },
+        "borghi": {
+          "file": "it-lazio-borghi.json",
+          "count": 2314,
+          "bbox": {
+            "minLat": 40.796002,
+            "minLon": 11.4981953,
+            "maxLat": 42.822697,
+            "maxLon": 13.9880338
+          },
+          "generated_at": "2026-01-15T08:24:44.006Z",
+          "label_it": "Lazio • borghi"
+        },
+        "cantine": {
+          "file": "it-lazio-cantine.json",
+          "count": 174,
+          "bbox": {
+            "minLat": 40.8941433,
+            "minLon": 11.7358103,
+            "maxLat": 42.744392,
+            "maxLon": 13.8287062
+          },
+          "generated_at": "2026-01-14T18:16:59.564Z",
+          "label_it": "Lazio • cantine"
+        }
+      }
     },
     {
       "id": "it-abruzzo",
       "name": "Abruzzo",
       "iso3166_2": "IT-65",
-      "bbox": {
-        "minLat": 41.6808744,
-        "minLon": 13.0391833,
-        "maxLat": 42.8933561,
-        "maxLon": 14.7623451
-      },
-      "total_places": 6224,
-      "paths": {
-        "core": "/data/pois/regions/it-abruzzo.json"
-      },
-      "counts": {
-        "core": 6224
-      },
-      "generated_at": "2026-01-15T08:14:16.054Z"
+      "total_places": 2486,
+      "categories": {
+        "relax": {
+          "file": "it-abruzzo-relax.json",
+          "count": 1,
+          "bbox": {
+            "minLat": 41.8568544,
+            "minLon": 14.0854651,
+            "maxLat": 41.8568544,
+            "maxLon": 14.0854651
+          },
+          "generated_at": "2026-01-14T18:16:23.248Z",
+          "label_it": "Abruzzo • relax"
+        },
+        "borghi": {
+          "file": "it-abruzzo-borghi.json",
+          "count": 2388,
+          "bbox": {
+            "minLat": 41.7339376,
+            "minLon": 13.039387,
+            "maxLat": 42.8933561,
+            "maxLon": 14.7477724
+          },
+          "generated_at": "2026-01-15T08:13:47.457Z",
+          "label_it": "Abruzzo • borghi"
+        },
+        "cantine": {
+          "file": "it-abruzzo-cantine.json",
+          "count": 97,
+          "bbox": {
+            "minLat": 41.8486504,
+            "minLon": 13.2288642,
+            "maxLat": 42.8561821,
+            "maxLon": 14.7228513
+          },
+          "generated_at": "2026-01-14T18:16:56.215Z",
+          "label_it": "Abruzzo • cantine"
+        }
+      }
     },
     {
       "id": "it-molise",
       "name": "Molise",
       "iso3166_2": "IT-67",
-      "bbox": {
-        "minLat": 41.3748061,
-        "minLon": 13.9420222,
-        "maxLat": 42.0456482,
-        "maxLon": 15.1325731
-      },
-      "total_places": 1366,
-      "paths": {
-        "core": "/data/pois/regions/it-molise.json"
-      },
-      "counts": {
-        "core": 1366
-      },
-      "generated_at": "2026-01-15T08:32:34.017Z"
+      "total_places": 546,
+      "categories": {
+        "relax": {
+          "file": "it-molise-relax.json",
+          "count": 0,
+          "bbox": null,
+          "generated_at": "2026-01-14T18:16:26.053Z",
+          "label_it": "Molise • relax"
+        },
+        "borghi": {
+          "file": "it-molise-borghi.json",
+          "count": 531,
+          "bbox": {
+            "minLat": 41.3986885,
+            "minLon": 14.006816,
+            "maxLat": 42.011439,
+            "maxLon": 15.1230027
+          },
+          "generated_at": "2026-01-15T08:32:21.621Z",
+          "label_it": "Molise • borghi"
+        },
+        "cantine": {
+          "file": "it-molise-cantine.json",
+          "count": 15,
+          "bbox": {
+            "minLat": 41.6116049,
+            "minLon": 14.5804748,
+            "maxLat": 42.0355969,
+            "maxLon": 15.1000989
+          },
+          "generated_at": "2026-01-15T08:32:49.507Z",
+          "label_it": "Molise • cantine"
+        }
+      }
     },
     {
       "id": "it-campania",
       "name": "Campania",
       "iso3166_2": "IT-72",
-      "bbox": {
-        "minLat": 39.9928265,
-        "minLon": 13.765325,
-        "maxLat": 41.4969735,
-        "maxLon": 15.8005256
-      },
-      "total_places": 7401,
-      "paths": {
-        "core": "/data/pois/regions/it-campania.json"
-      },
-      "counts": {
-        "core": 7401
-      },
-      "generated_at": "2026-01-15T08:19:18.132Z"
+      "total_places": 2518,
+      "categories": {
+        "relax": {
+          "file": "it-campania-relax.json",
+          "count": 9,
+          "bbox": {
+            "minLat": 40.6480955,
+            "minLon": 13.8616248,
+            "maxLat": 41.2228803,
+            "maxLon": 15.231017
+          },
+          "generated_at": "2026-01-14T18:16:13.344Z",
+          "label_it": "Campania • relax"
+        },
+        "borghi": {
+          "file": "it-campania-borghi.json",
+          "count": 2396,
+          "bbox": {
+            "minLat": 39.9980064,
+            "minLon": 13.8301348,
+            "maxLat": 41.4921322,
+            "maxLon": 15.7010623
+          },
+          "generated_at": "2026-01-14T18:17:32.884Z",
+          "label_it": "Campania • borghi"
+        },
+        "cantine": {
+          "file": "it-campania-cantine.json",
+          "count": 113,
+          "bbox": {
+            "minLat": 39.9989769,
+            "minLon": 13.8150616,
+            "maxLat": 41.2894355,
+            "maxLon": 15.6269714
+          },
+          "generated_at": "2026-01-14T18:16:50.346Z",
+          "label_it": "Campania • cantine"
+        }
+      }
     },
     {
       "id": "it-puglia",
       "name": "Puglia",
       "iso3166_2": "IT-75",
-      "bbox": {
-        "minLat": 39.7900669,
-        "minLon": 14.9504885,
-        "maxLat": 42.1385083,
-        "maxLon": 18.5168691
-      },
-      "total_places": 3662,
-      "paths": {
-        "core": "/data/pois/regions/it-puglia.json"
-      },
-      "counts": {
-        "core": 3662
-      },
-      "generated_at": "2026-01-15T08:36:43.770Z"
+      "total_places": 989,
+      "categories": {
+        "relax": {
+          "file": "it-puglia-relax.json",
+          "count": 3,
+          "bbox": {
+            "minLat": 40.0365984,
+            "minLon": 15.3339806,
+            "maxLat": 41.5104604,
+            "maxLon": 18.4635252
+          },
+          "generated_at": "2026-01-14T18:16:51.655Z",
+          "label_it": "Puglia • relax"
+        },
+        "borghi": {
+          "file": "it-puglia-borghi.json",
+          "count": 837,
+          "bbox": {
+            "minLat": 39.7995053,
+            "minLon": 14.9758598,
+            "maxLat": 42.1385083,
+            "maxLon": 18.5146881
+          },
+          "generated_at": "2026-01-15T08:36:28.390Z",
+          "label_it": "Puglia • borghi"
+        },
+        "cantine": {
+          "file": "it-puglia-cantine.json",
+          "count": 149,
+          "bbox": {
+            "minLat": 39.7974509,
+            "minLon": 15.2825765,
+            "maxLat": 42.1142203,
+            "maxLon": 18.4917903
+          },
+          "generated_at": "2026-01-15T08:36:49.654Z",
+          "label_it": "Puglia • cantine"
+        }
+      }
     },
     {
       "id": "it-basilicata",
       "name": "Basilicata",
       "iso3166_2": "IT-77",
-      "bbox": {
-        "minLat": 39.8966859,
-        "minLon": 15.3750985,
-        "maxLat": 41.1667499,
-        "maxLon": 16.8629787
-      },
-      "total_places": 2729,
-      "paths": {
-        "core": "/data/pois/regions/it-basilicata.json"
-      },
-      "counts": {
-        "core": 2729
-      },
-      "generated_at": "2026-01-15T08:16:19.606Z"
+      "total_places": 497,
+      "categories": {
+        "relax": {
+          "file": "it-basilicata-relax.json",
+          "count": 1,
+          "bbox": {
+            "minLat": 40.6667143,
+            "minLon": 16.6082869,
+            "maxLat": 40.6667143,
+            "maxLon": 16.6082869
+          },
+          "generated_at": "2026-01-15T08:14:37.070Z",
+          "label_it": "Basilicata • relax"
+        },
+        "borghi": {
+          "file": "it-basilicata-borghi.json",
+          "count": 487,
+          "bbox": {
+            "minLat": 39.8986101,
+            "minLon": 15.3977737,
+            "maxLat": 41.0875809,
+            "maxLon": 16.835227
+          },
+          "generated_at": "2026-01-15T08:15:27.135Z",
+          "label_it": "Basilicata • borghi"
+        },
+        "cantine": {
+          "file": "it-basilicata-cantine.json",
+          "count": 9,
+          "bbox": {
+            "minLat": 39.9538461,
+            "minLon": 15.6861457,
+            "maxLat": 41.0580875,
+            "maxLon": 16.6094902
+          },
+          "generated_at": "2026-01-15T08:15:51.828Z",
+          "label_it": "Basilicata • cantine"
+        }
+      }
     },
     {
       "id": "it-calabria",
       "name": "Calabria",
       "iso3166_2": "IT-78",
-      "bbox": {
-        "minLat": 37.9182514,
-        "minLon": 15.6324341,
-        "maxLat": 40.1266005,
-        "maxLon": 17.2056535
-      },
-      "total_places": 4390,
-      "paths": {
-        "core": "/data/pois/regions/it-calabria.json"
-      },
-      "counts": {
-        "core": 4390
-      },
-      "generated_at": "2026-01-15T08:17:16.660Z"
+      "total_places": 1734,
+      "categories": {
+        "relax": {
+          "file": "it-calabria-relax.json",
+          "count": 8,
+          "bbox": {
+            "minLat": 38.2957602,
+            "minLon": 15.9910887,
+            "maxLat": 39.5049851,
+            "maxLon": 16.9955282
+          },
+          "generated_at": "2026-01-14T18:17:13.287Z",
+          "label_it": "Calabria • relax"
+        },
+        "borghi": {
+          "file": "it-calabria-borghi.json",
+          "count": 1701,
+          "bbox": {
+            "minLat": 37.9195805,
+            "minLon": 15.637449,
+            "maxLat": 40.1098803,
+            "maxLon": 17.2044559
+          },
+          "generated_at": "2026-01-14T18:17:31.888Z",
+          "label_it": "Calabria • borghi"
+        },
+        "cantine": {
+          "file": "it-calabria-cantine.json",
+          "count": 25,
+          "bbox": {
+            "minLat": 38.088983,
+            "minLon": 15.7909331,
+            "maxLat": 39.8160195,
+            "maxLon": 17.1346826
+          },
+          "generated_at": "2026-01-15T08:17:37.470Z",
+          "label_it": "Calabria • cantine"
+        }
+      }
     },
     {
       "id": "it-sicilia",
       "name": "Sicilia",
       "iso3166_2": "IT-82",
-      "bbox": {
-        "minLat": 35.4963837,
-        "minLon": 11.9290503,
-        "maxLat": 38.8110117,
-        "maxLon": 15.6437209
-      },
-      "total_places": 10945,
-      "paths": {
-        "core": "/data/pois/regions/it-sicilia.json"
-      },
-      "counts": {
-        "core": 10945
-      },
-      "generated_at": "2026-01-15T08:40:17.016Z"
+      "total_places": 2816,
+      "categories": {
+        "relax": {
+          "file": "it-sicilia-relax.json",
+          "count": 9,
+          "bbox": {
+            "minLat": 37.2961188,
+            "minLon": 12.8919914,
+            "maxLat": 38.1339361,
+            "maxLon": 15.1700607
+          },
+          "generated_at": "2026-01-15T08:39:21.999Z",
+          "label_it": "Sicilia • relax"
+        },
+        "borghi": {
+          "file": "it-sicilia-borghi.json",
+          "count": 2638,
+          "bbox": {
+            "minLat": 35.5035259,
+            "minLon": 11.9298915,
+            "maxLat": 38.8040486,
+            "maxLon": 15.6459476
+          },
+          "generated_at": "2026-01-14T18:17:51.494Z",
+          "label_it": "Sicilia • borghi"
+        },
+        "cantine": {
+          "file": "it-sicilia-cantine.json",
+          "count": 169,
+          "bbox": {
+            "minLat": 36.7189436,
+            "minLon": 11.941709,
+            "maxLat": 38.3725213,
+            "maxLon": 15.5523327
+          },
+          "generated_at": "2026-01-14T18:17:40.727Z",
+          "label_it": "Sicilia • cantine"
+        }
+      }
     },
     {
       "id": "it-sardegna",
       "name": "Sardegna",
       "iso3166_2": "IT-88",
-      "bbox": {
-        "minLat": 38.8659596,
-        "minLon": 8.14783,
-        "maxLat": 41.2989557,
-        "maxLon": 9.827541
-      },
-      "total_places": 32762,
-      "paths": {
-        "core": "/data/pois/regions/it-sardegna.json"
-      },
-      "counts": {
-        "core": 32762
-      },
-      "generated_at": "2026-01-15T08:38:26.592Z"
+      "total_places": 1632,
+      "categories": {
+        "relax": {
+          "file": "it-sardegna-relax.json",
+          "count": 7,
+          "bbox": {
+            "minLat": 39.0661188,
+            "minLon": 8.8054143,
+            "maxLat": 40.6920655,
+            "maxLon": 9.7372284
+          },
+          "generated_at": "2026-01-15T08:37:22.537Z",
+          "label_it": "Sardegna • relax"
+        },
+        "borghi": {
+          "file": "it-sardegna-borghi.json",
+          "count": 1554,
+          "bbox": {
+            "minLat": 38.8839169,
+            "minLon": 8.148171,
+            "maxLat": 41.2482379,
+            "maxLon": 9.827541
+          },
+          "generated_at": "2026-01-14T18:17:37.447Z",
+          "label_it": "Sardegna • borghi"
+        },
+        "cantine": {
+          "file": "it-sardegna-cantine.json",
+          "count": 71,
+          "bbox": {
+            "minLat": 39.0001456,
+            "minLon": 8.2445683,
+            "maxLat": 41.0691685,
+            "maxLon": 9.7488521
+          },
+          "generated_at": "2026-01-15T08:38:45.967Z",
+          "label_it": "Sardegna • cantine"
+        }
+      }
     }
   ]
 }
