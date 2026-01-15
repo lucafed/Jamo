@@ -469,15 +469,14 @@
     return MACROS_INDEX;
   }
 
-  // FIX: rimosso pezzo corrotto, funzione valida
   function findCountryMacroPath(cc) {
     if (!MACROS_INDEX?.items?.length) return null;
     const c = String(cc || "").toUpperCase();
     if (!c) return null;
 
-    const hit = MACROS_INDEX.items.find(x =>
-      String(x?.id || "") === `euuk_country_${c.toLowerCase()}` ||
-      String(x?.path || "").includes(`euuk_country_${c.toLowerCase()}.json`)
+    const hit =—allignRemoveThis—MACROS_INDEX.items.find(x =>
+      String(x.id || "") === `euuk_country_${c.toLowerCase()}` ||
+      String(x.path || "").includes(`euuk_country_${c.toLowerCase()}.json`)
     );
     return hit?.path || null;
   }
@@ -536,22 +535,24 @@
     const urls = [];
     const push = (u) => { const s = String(u || "").trim(); if (s) urls.push(s); };
 
-    const cat = canonicalCategory(categoryUI);
+    const cat = canonicalCategory(categoryUI); // core / mare / natura / ... / borghi / relax / cantine / viewpoints / hiking / citta
+
     const cc = String(origin?.country_code || "").toUpperCase();
 
+    // ✅ Robust: se coordinate cadono in bbox IT → Italia anche se cc vuoto
     const regionId = pickItalyRegionIdByOrigin(origin);
     const isItaly = (cc === "IT") || !!regionId;
 
-    // 1) Italia region-specific
+    // 1) Se Italia e regione trovata: prova file regionale specifico categoria
     if (isItaly && regionId) {
       if (cat !== "core") push(`/data/pois/regions/${regionId}-${cat}.json`);
       push(`/data/pois/regions/${regionId}.json`);
     }
 
-    // 2) Radius fallback
+    // 2) Radius (hai questi file veri in repo)
     if (cat !== "core") push(`/data/pois/regions/radius-${cat}.json`);
 
-    // 3) Macro paese + fallback
+    // 3) Macro paese (se esiste) + fallback
     const countryMacro = findCountryMacroPathRobust(cc || (isItaly ? "IT" : ""));
     if (countryMacro) push(countryMacro);
     for (const u of CFG.FALLBACK_MACRO_URLS) push(u);
