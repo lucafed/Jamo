@@ -1,0 +1,159 @@
+{
+  "region_id": "it-basilicata-cantine",
+  "label_it": "Basilicata • cantine",
+  "generated_at": "2026-01-15T08:15:51.828Z",
+  "places": [
+    {
+      "id": "way:1117975319",
+      "name": "Paternoster",
+      "lat": 40.9429992,
+      "lon": 15.6861457,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Barile",
+        "addr:postcode=85022",
+        "addr:street=Contrada Valle del Titolo",
+        "building=yes",
+        "contact:facebook=https://www.facebook.com/tommasiwines/",
+        "contact:instagram=https://www.instagram.com/paternosterwine/",
+        "contact:twitter=https://twitter.com/tommasiwine",
+        "contact:youtube=https://www.youtube.com/user/Tommasiwine/",
+        "craft=winery",
+        "email=info@paternosterwine.it",
+        "name=Paternoster",
+        "operator=S.S. Agricola Tommasi Viticoltori",
+        "phone=+39 0972 770224",
+        "ref:vatin=IT02628200236",
+        "website=https://paternosterwine.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:9789633077",
+      "name": "Enoteca \"Matera DOC\"",
+      "lat": 40.666061,
+      "lon": 16.6038785,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "air_conditioning=yes",
+        "brand=Vari",
+        "building:levels=1",
+        "check_date=2022-06-02",
+        "internet_access=no",
+        "name=Enoteca \"Matera DOC\"",
+        "opening_hours=Mo-Sa 10:00-13:00; Su 17:00-21:00",
+        "payment:mastercard=yes",
+        "payment:visa=yes",
+        "phone=+39 338 604 1211",
+        "shop=wine",
+        "wheelchair=no"
+      ],
+      "score": 85
+    },
+    {
+      "id": "node:10017513751",
+      "name": "Cantina di Bacco",
+      "lat": 40.6412176,
+      "lon": 15.8255633,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "check_date=2022-09-12",
+        "name=Cantina di Bacco",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:1261856886",
+      "name": "Azienda agricola Catalano Saverio Mauro",
+      "lat": 41.0580875,
+      "lon": 15.7656833,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Azienda agricola Catalano Saverio Mauro"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:4191859556",
+      "name": "Vino e Dintorni",
+      "lat": 40.663701,
+      "lon": 16.6094902,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Matera",
+        "addr:housenumber=32",
+        "addr:postcode=75100",
+        "addr:street=Via Domenico Ridola",
+        "name=Vino e Dintorni",
+        "operator=Massari Francesco",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:9554828254",
+      "name": "Sorsi e Morsi",
+      "lat": 40.491237,
+      "lon": 16.1577499,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Sorsi e Morsi",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:9935946561",
+      "name": "GUSTO DIVINO",
+      "lat": 40.6689198,
+      "lon": 16.6009088,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "check_date=2022-08-06",
+        "name=GUSTO DIVINO",
+        "phone=+39 338 400 2079",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:12213846283",
+      "name": "Pollino Divino - Vineria",
+      "lat": 39.9538461,
+      "lon": 16.0398749,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Rotonda",
+        "name=Pollino Divino - Vineria",
+        "payment:cards=yes",
+        "payment:cash=yes",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:13104444602",
+      "name": "Angolo DiVino",
+      "lat": 40.6749459,
+      "lon": 16.5996265,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:street=Via Guglielmo Marconi",
+        "name=Angolo DiVino",
+        "shop=wine"
+      ],
+      "score": 55
+    }
+  ]
+}

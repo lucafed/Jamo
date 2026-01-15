@@ -1,0 +1,268 @@
+{
+  "region_id": "it-molise-cantine",
+  "label_it": "Molise • cantine",
+  "generated_at": "2026-01-15T08:32:49.507Z",
+  "places": [
+    {
+      "id": "way:662601218",
+      "name": "Azienda Agricola Cianfagna",
+      "lat": 41.8691262,
+      "lon": 14.755535,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Acquaviva Collecroce",
+        "addr:street=C.da Bosco Pampini",
+        "building=farm",
+        "craft=winery",
+        "name=Azienda Agricola Cianfagna",
+        "operator=Azienda Agricola Cianfagna",
+        "shop=wine",
+        "website=http://www.cianfagna.com/"
+      ],
+      "score": 143
+    },
+    {
+      "id": "relation:9210432",
+      "name": "Cantina Giagnacovo",
+      "lat": 41.7178434,
+      "lon": 14.5804748,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=San Biase",
+        "addr:housenumber=3",
+        "addr:postcode=86020",
+        "addr:street=Contrada Vignale",
+        "building=yes",
+        "craft=winery",
+        "name=Cantina Giagnacovo",
+        "operator=Cantina Giagnacovo",
+        "phone=+390874 701564",
+        "type=multipolygon"
+      ],
+      "score": 105
+    },
+    {
+      "id": "way:200494011",
+      "name": "Angelo d'Uva",
+      "lat": 41.8056854,
+      "lon": 14.9450618,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Larino",
+        "building=yes",
+        "craft=winery",
+        "name=Angelo d'Uva",
+        "operator=Angelo d'Uva",
+        "website=https://www.cantineduva.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "way:662345745",
+      "name": "Terresacre",
+      "lat": 42.0355969,
+      "lon": 14.8075604,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Montenero di Bisaccia",
+        "building=yes",
+        "craft=winery",
+        "name=Terresacre",
+        "website=http://www.terresacre.net/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "way:662603291",
+      "name": "Claudio Cipressi",
+      "lat": 41.8713448,
+      "lon": 14.6914033,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=San Felice del Molise",
+        "addr:housenumber=5/B",
+        "addr:street=Contrada Montagna",
+        "building=yes",
+        "craft=winery",
+        "name=Claudio Cipressi",
+        "operator=Claudio Cipressi",
+        "website=https://www.claudiocipressi.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "way:662640085",
+      "name": "VI.NI.CA. s.r.l. Società Agricola",
+      "lat": 41.6116049,
+      "lon": 14.6844998,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Ripalimosani",
+        "addr:housenumber=4",
+        "addr:street=Contrada Costa Bianca",
+        "building=yes",
+        "craft=winery",
+        "name=VI.NI.CA. s.r.l. Società Agricola",
+        "operator=VI.NI.CA. s.r.l. Società Agricola",
+        "website=https://www.vinica.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "way:662642364",
+      "name": "Di Majo Norante",
+      "lat": 41.9112219,
+      "lon": 15.1000989,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Campomarino",
+        "addr:housenumber=6",
+        "addr:street=C.da Ramitello",
+        "building=yes",
+        "craft=winery",
+        "name=Di Majo Norante",
+        "operator=Di Majo Norante",
+        "website=https://www.dimajonorante.com/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "way:662650782",
+      "name": "Cantine Borgo di Colloredo",
+      "lat": 41.8870853,
+      "lon": 15.0760528,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Campomarino",
+        "addr:housenumber=15",
+        "addr:street=Via Colloredo",
+        "building=commercial",
+        "craft=winery",
+        "name=Cantine Borgo di Colloredo",
+        "operator=Cantine Borgo di Colloredo",
+        "website=https://www.borgodicolloredo.com/wp/homepage-en/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "way:662690455",
+      "name": "Cantine Tenimenti Grieco",
+      "lat": 41.9044008,
+      "lon": 15.0070632,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Portocannone",
+        "addr:street=SP40",
+        "building=yes",
+        "craft=winery",
+        "name=Cantine Tenimenti Grieco",
+        "operator=Cantine Tenimenti Grieco",
+        "website=https://www.tenimentigrieco.it/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "way:662738499",
+      "name": "Cantine Di Tullio",
+      "lat": 41.9370948,
+      "lon": 15.0663477,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Campomarino",
+        "addr:street=Contrada Cianaluca",
+        "building=yes",
+        "craft=winery",
+        "name=Cantine Di Tullio",
+        "operator=Cantine Di Tullio",
+        "website=http://cantineditullio.com/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "relation:9206442",
+      "name": "Tenute Martarosa",
+      "lat": 41.9013364,
+      "lon": 15.0729193,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=yes",
+        "craft=winery",
+        "name=Tenute Martarosa",
+        "type=multipolygon",
+        "website=https://www.tenutemartarosa.com/"
+      ],
+      "score": 88
+    },
+    {
+      "id": "way:352616754",
+      "name": "Cantine Catabbo",
+      "lat": 41.8785835,
+      "lon": 15.0288664,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Cantine Catabbo",
+        "phone=+39 0875 604945"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:662683500",
+      "name": "Azienda Agricola Cieri",
+      "lat": 41.9900412,
+      "lon": 14.9069634,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Termoli",
+        "addr:housenumber=17",
+        "addr:street=Contrada Colle Granata",
+        "building=yes",
+        "craft=winery",
+        "name=Azienda Agricola Cieri",
+        "operator=Azienda Agricola Cieri",
+        "phone=+390875 52357"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:10992801068",
+      "name": "Sàpido",
+      "lat": 42.0034239,
+      "lon": 14.9958653,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "check_date=2023-06-20",
+        "name=Sàpido",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:12105884723",
+      "name": "Vini San Nicola",
+      "lat": 42.0003772,
+      "lon": 14.9866874,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Vini San Nicola",
+        "shop=wine"
+      ],
+      "score": 55
+    }
+  ]
+}

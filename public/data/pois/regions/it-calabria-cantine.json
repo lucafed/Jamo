@@ -1,0 +1,380 @@
+{
+  "region_id": "it-calabria-cantine",
+  "label_it": "Calabria • cantine",
+  "generated_at": "2026-01-15T08:17:37.470Z",
+  "places": [
+    {
+      "id": "way:571719994",
+      "name": "Cantina Masicei",
+      "lat": 38.6432815,
+      "lon": 15.8787905,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=yes",
+        "craft=winery",
+        "name=Cantina Masicei"
+      ],
+      "score": 105
+    },
+    {
+      "id": "node:13111056144",
+      "name": "Cantine Benvenuto",
+      "lat": 38.7786382,
+      "lon": 16.2516282,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Francavilla Angitola",
+        "addr:postcode=89815",
+        "addr:street=C/da ziopà",
+        "craft=winery",
+        "email=cantinebenvenuto@gmail.com",
+        "name=Cantine Benvenuto",
+        "opening_hours=Mo-Sa 09:00-13:00, Mo-Sa 15:00-18:00",
+        "operator=Giovanni Celeste",
+        "phone=+39 327 8352893",
+        "product=wine",
+        "website=https://cantinebenvenuto.it"
+      ],
+      "score": 93
+    },
+    {
+      "id": "node:10727969522",
+      "name": "Cantine Artese",
+      "lat": 38.7060299,
+      "lon": 16.083203,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Vibo Valentia",
+        "addr:housenumber=24",
+        "addr:postcode=89900",
+        "addr:street=Via Roma",
+        "craft=winery",
+        "name=Cantine Artese",
+        "operator=Giovanna",
+        "phone=+393482406829",
+        "website=https://www.viniartese.it"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:4407261098",
+      "name": "Enoteca Tropeano",
+      "lat": 38.6783457,
+      "lon": 15.8963995,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=41",
+        "addr:postcode=89861",
+        "addr:street=Via Indipendenza",
+        "name=Enoteca Tropeano",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:5101080122",
+      "name": "Dell'Aera Vigneti & Cantina",
+      "lat": 38.9054538,
+      "lon": 16.7157958,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "name=Dell'Aera Vigneti & Cantina",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:5640185742",
+      "name": "L'enoteca della Terrazza",
+      "lat": 38.2719316,
+      "lon": 16.2191119,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "name=L'enoteca della Terrazza",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:5654207316",
+      "name": "Enoteca Russo",
+      "lat": 38.6636462,
+      "lon": 15.8646309,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "name=Enoteca Russo",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:12123691994",
+      "name": "Enoteca Lombardo",
+      "lat": 38.4332763,
+      "lon": 15.8930257,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "name=Enoteca Lombardo",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:12186743279",
+      "name": "Trupia - Cantine Rombolà",
+      "lat": 38.6439367,
+      "lon": 15.8860073,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Trupia - Cantine Rombolà"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:12995641463",
+      "name": "Enoteca Tigani",
+      "lat": 38.4094921,
+      "lon": 16.0802758,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Polistena",
+        "addr:postcode=89024",
+        "addr:street=Via Palmiro Togliatti",
+        "name=Enoteca Tigani",
+        "shop=wine"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:12997569608",
+      "name": "Statti",
+      "lat": 38.9226835,
+      "lon": 16.3244412,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Statti"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:10557034410",
+      "name": "Sapuri Calabrisi",
+      "lat": 38.2731359,
+      "lon": 16.2185153,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Gerace",
+        "addr:housenumber=3",
+        "addr:postcode=89040",
+        "addr:street=Via Nazario Sauro",
+        "brand=Vino al Bergamotto",
+        "email=prodottitipicigerace@gmail.com",
+        "internet_access=yes",
+        "name=Sapuri Calabrisi",
+        "opening_hours=Mo-Su 10:00-21:00",
+        "payment:cash=yes",
+        "payment:contactless=yes",
+        "payment:credit_cards=yes",
+        "payment:debit_cards=yes",
+        "payment:paypal=yes",
+        "phone=+39 327 946 6372",
+        "shop=wine",
+        "website=https://sapuricalabrisi.com"
+      ],
+      "score": 68
+    },
+    {
+      "id": "node:6358423741",
+      "name": "Azienda Agricola Baccellieri",
+      "lat": 38.088983,
+      "lon": 16.1466087,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Bianco",
+        "addr:housenumber=4",
+        "addr:postcode=89032",
+        "addr:street=Via Concordia",
+        "name=Azienda Agricola Baccellieri",
+        "operator=Mariolina Baccellieri",
+        "shop=wine",
+        "website=https://www.baccellieri.net"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:5100149930",
+      "name": "Casa Vinicola Giuseppe Luca Di Raffaele Luca",
+      "lat": 39.3712204,
+      "lon": 17.1166802,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Casa Vinicola Giuseppe Luca Di Raffaele Luca",
+        "name:it=Casa Vinicola Giuseppe Luca Di Raffaele Luca",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:5100150223",
+      "name": "Casa Vinicola 'Ippolito'",
+      "lat": 39.3745518,
+      "lon": 17.126595,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Casa Vinicola 'Ippolito'",
+        "name:it=Vinicola 'Ippolito'",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:5100172621",
+      "name": "Casa Vinicola 'A'Vita'",
+      "lat": 39.3714524,
+      "lon": 17.1155757,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Casa Vinicola 'A'Vita'",
+        "name:it=Casa Vinicola 'A'Vita'",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:5100176121",
+      "name": "Cantine Librandi",
+      "lat": 39.3762594,
+      "lon": 17.1174919,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Cantine Librandi",
+        "name:it=Cantine Librandi",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:7596217478",
+      "name": "Barbato’s wine bar",
+      "lat": 38.3529733,
+      "lon": 16.0753645,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Barbato’s wine bar",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:10842489756",
+      "name": "L'assaggio",
+      "lat": 39.0779456,
+      "lon": 17.1253129,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=L'assaggio",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:12145839285",
+      "name": "Il Deposito",
+      "lat": 38.6628416,
+      "lon": 15.864117,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Il Deposito",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:12218439379",
+      "name": "La Dispensa",
+      "lat": 38.9116558,
+      "lon": 16.5871497,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=La Dispensa",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:12684997916",
+      "name": "Donna Concetta Vini e Sfizi",
+      "lat": 39.8160195,
+      "lon": 15.7909331,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Donna Concetta Vini e Sfizi",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:12865310654",
+      "name": "Di Sotto Wine Bar",
+      "lat": 39.3291057,
+      "lon": 16.2419137,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Di Sotto Wine Bar",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:13057614582",
+      "name": "DiVino",
+      "lat": 39.0803328,
+      "lon": 17.1346826,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=DiVino",
+        "shop=wine"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:13236929605",
+      "name": "The Kick",
+      "lat": 39.6189885,
+      "lon": 16.6381812,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=The Kick",
+        "shop=wine"
+      ],
+      "score": 55
+    }
+  ]
+}

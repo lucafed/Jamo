@@ -1,0 +1,137 @@
+{
+  "region_id": "it-sicilia-relax",
+  "label_it": "Sicilia • relax",
+  "generated_at": "2026-01-15T08:39:21.999Z",
+  "places": [
+    {
+      "id": "way:255645051",
+      "name": "Polle del Crimiso",
+      "lat": 37.9724089,
+      "lon": 12.8933422,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "alt_name=Terme libere di Segesta",
+        "amenity=public_bath",
+        "bath:open_air=yes",
+        "bath:type=thermal",
+        "fee=no",
+        "name=Polle del Crimiso",
+        "natural=hot_spring"
+      ],
+      "score": 195
+    },
+    {
+      "id": "way:1054812445",
+      "name": "Pozza Termale Sclafani Bagni",
+      "lat": 37.826522,
+      "lon": 13.8542979,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "bath:open_air=yes",
+        "bath:type=thermal",
+        "fee=no",
+        "name=Pozza Termale Sclafani Bagni",
+        "name:scn=Urio Cavuro Sclafani"
+      ],
+      "score": 155
+    },
+    {
+      "id": "node:1587428132",
+      "name": "Terme segestane",
+      "lat": 37.9720998,
+      "lon": 12.8919914,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "name=Terme segestane",
+        "natural=hot_spring"
+      ],
+      "score": 120
+    },
+    {
+      "id": "node:13378194203",
+      "name": "Parkplatz freie Thermalquelle",
+      "lat": 37.9736931,
+      "lon": 12.8938237,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "name=Parkplatz freie Thermalquelle",
+        "natural=hot_spring"
+      ],
+      "score": 120
+    },
+    {
+      "id": "way:248847699",
+      "name": "Stabilimento Termale",
+      "lat": 37.5041953,
+      "lon": 13.088866,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "building=public",
+        "name=Stabilimento Termale"
+      ],
+      "score": 110
+    },
+    {
+      "id": "node:8356628144",
+      "name": "Acqua Mintina",
+      "lat": 37.4034726,
+      "lon": 14.0545345,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "name=Acqua Mintina",
+        "natural=hot_spring"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:9692868856",
+      "name": "Surgiva Cavura Sclafani",
+      "lat": 37.8265125,
+      "lon": 13.854327,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "name=Surgiva Cavura Sclafani",
+        "name:scn=Surgiva Cavura Sclafani",
+        "natural=hot_spring"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:13393665501",
+      "name": "Piscina Comunale Agrigento",
+      "lat": 37.2961188,
+      "lon": 13.5606059,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "name=Piscina Comunale Agrigento",
+        "name:en=Agrigento Municipal Pool",
+        "opening_hours=Mo-Fr 09:00-21:00; Sa 09:00-19:00; Su 09:00-12:00"
+      ],
+      "score": 75
+    },
+    {
+      "id": "node:2471018240",
+      "name": "Parco Augusto",
+      "lat": 38.1339361,
+      "lon": 15.1700607,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "leisure=spa",
+        "name=Parco Augusto"
+      ],
+      "score": 60
+    }
+  ]
+}

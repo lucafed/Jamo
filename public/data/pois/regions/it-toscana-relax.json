@@ -1,0 +1,610 @@
+{
+  "region_id": "it-toscana-relax",
+  "label_it": "Toscana • relax",
+  "generated_at": "2026-01-15T08:41:06.266Z",
+  "places": [
+    {
+      "id": "node:4811563054",
+      "name": "Terme di Casciana",
+      "lat": 43.5269432,
+      "lon": 10.6169236,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "bath:type=thermal",
+        "name=Terme di Casciana",
+        "natural=hot_spring",
+        "wheelchair=yes"
+      ],
+      "score": 235
+    },
+    {
+      "id": "way:303823934",
+      "name": "Terme Antica Querciolaia",
+      "lat": 43.2920221,
+      "lon": 11.6071989,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "access=customers",
+        "addr:city=Rapolano Terme",
+        "addr:housenumber=22",
+        "addr:postcode=53040",
+        "addr:street=Via Trieste",
+        "amenity=public_bath",
+        "bath:open_air=yes",
+        "bath:type=thermal",
+        "name=Terme Antica Querciolaia",
+        "opening_hours=Mo-Fr 09:00-19:00",
+        "phone=+39 0577 724091",
+        "website=https://www.termeaq.it/"
+      ],
+      "score": 173
+    },
+    {
+      "id": "way:714980311",
+      "name": "Terme di Gambassi",
+      "lat": 43.5379491,
+      "lon": 10.9528893,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Gambassi Terme",
+        "addr:housenumber=1",
+        "addr:postcode=50050",
+        "addr:street=Piazza Giuseppe di Vittorio",
+        "amenity=public_bath",
+        "bath:open_air=no",
+        "bath:type=thermal",
+        "building=yes",
+        "contact:phone=+39 0571 638863",
+        "contact:website=https://www.termedigambassi.com/",
+        "height=8.29",
+        "name=Terme di Gambassi",
+        "opening_hours=09:30-19:00"
+      ],
+      "score": 173
+    },
+    {
+      "id": "way:714986639",
+      "name": "Terme di Petriolo",
+      "lat": 43.0805708,
+      "lon": 11.3002133,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Monticiano",
+        "addr:postcode=53015",
+        "addr:street=Strada Provinciale di Petriolo",
+        "amenity=public_bath",
+        "bath:type=thermal",
+        "building=commercial",
+        "fee=yes",
+        "height=11.49",
+        "min_age=6",
+        "name=Terme di Petriolo",
+        "opening_hours=Mo-Su 09:00-19:00",
+        "phone=+39 0577 757104",
+        "phone:mobile=+39 346 3314555",
+        "start_date=early 2000s",
+        "website=https://www.termepetriolo.it/"
+      ],
+      "score": 173
+    },
+    {
+      "id": "way:874054757",
+      "name": "Terme Libere, Acqua Borra",
+      "lat": 43.3081374,
+      "lon": 11.4283208,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Castelnuovo Berardegna",
+        "addr:postcode=53019",
+        "amenity=public_bath",
+        "bath:open_air=yes",
+        "bath:sand_bath=no",
+        "bath:type=thermal",
+        "fee=no",
+        "name=Terme Libere, Acqua Borra",
+        "opening_hours=24/7",
+        "website=https://www.comune.castelnuovo.si.it/it/vivere/737714"
+      ],
+      "score": 168
+    },
+    {
+      "id": "way:1242376336",
+      "name": "Grotta Giusti Terme",
+      "lat": 43.8665355,
+      "lon": 10.8310764,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "bath:type=thermal",
+        "email=terme@grottagiustispa.com",
+        "name=Grotta Giusti Terme",
+        "phone=+39 0572 9077992",
+        "website=https://terme.grottagiustispa.com/"
+      ],
+      "score": 168
+    },
+    {
+      "id": "way:1238858747",
+      "name": "Terme di Saturnia",
+      "lat": 42.6581461,
+      "lon": 11.5167352,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "bath:open_air=no",
+        "bath:type=thermal",
+        "contact:website=https://www.saturniadayspa.com/",
+        "name=Terme di Saturnia",
+        "unisex=yes"
+      ],
+      "score": 163
+    },
+    {
+      "id": "way:147409111",
+      "name": "piscina termale calidario",
+      "lat": 43.0385505,
+      "lon": 10.5978096,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "access=customers",
+        "addr:city=Venturina Terme",
+        "addr:housenumber=6",
+        "addr:postcode=57021",
+        "addr:street=Via di Caldana",
+        "amenity=public_bath",
+        "bath:type=thermal",
+        "check_date=2025-12-27",
+        "fee=yes",
+        "leisure=swimming_pool",
+        "location=outdoor",
+        "name=piscina termale calidario",
+        "opening_hours=Mo-Su 09:30-21:00",
+        "swimming_pool=outdoor"
+      ],
+      "score": 160
+    },
+    {
+      "id": "way:762371723",
+      "name": "Terme di Chianciano",
+      "lat": 43.042636,
+      "lon": 11.8160974,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Chianciano Terme",
+        "addr:housenumber=12",
+        "addr:postcode=53012",
+        "addr:street=Via delle Rose",
+        "amenity=public_bath",
+        "bath:open_air=yes",
+        "bath:type=thermal",
+        "building=yes",
+        "name=Terme di Chianciano",
+        "opening_hours=09:00-19:00"
+      ],
+      "score": 160
+    },
+    {
+      "id": "way:874064411",
+      "name": "Terme San Giovanni",
+      "lat": 43.2807132,
+      "lon": 11.5904059,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Rapolano Terme",
+        "addr:housenumber=52",
+        "addr:postcode=53040",
+        "addr:street=Strada Comunale delle Terme di San Giovanni",
+        "amenity=public_bath",
+        "bath:open_air=yes",
+        "bath:type=thermal",
+        "email=info@termesangiovanni.it",
+        "long_name=Terme San Giovanni - Rapolano",
+        "name=Terme San Giovanni",
+        "opening_hours=Mo-Su 09:00 - 20:00"
+      ],
+      "score": 160
+    },
+    {
+      "id": "way:874068386",
+      "name": "Le Caldane - Terme Etruche - Romane",
+      "lat": 43.3907548,
+      "lon": 11.1344273,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Colle di Val d'Elsa",
+        "addr:housenumber=72",
+        "addr:postcode=53034",
+        "addr:street=Strada Provinciale 541 Traversa Maremmana",
+        "amenity=public_bath",
+        "bath:open_air=yes",
+        "bath:sand_bath=no",
+        "bath:type=thermal",
+        "description=Terme Etrusche - Romane",
+        "fee=no",
+        "historic=yes",
+        "name=Le Caldane - Terme Etruche - Romane",
+        "opening_hours=24/7",
+        "tourism=attraction",
+        "wikipedia=it:Le Caldane"
+      ],
+      "score": 160
+    },
+    {
+      "id": "node:12976904813",
+      "name": "Asmana Wellness World",
+      "lat": 43.8310706,
+      "lon": 11.1487134,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Campi Bisenzio",
+        "addr:housenumber=9",
+        "addr:street=Via Giovanni Michelucci",
+        "amenity=public_bath",
+        "bath=type=thermal",
+        "beauty=spa",
+        "leisure=spa",
+        "name=Asmana Wellness World",
+        "phone=+39055776771",
+        "shop=beauty",
+        "tourism=spa_resort"
+      ],
+      "score": 155
+    },
+    {
+      "id": "way:870455266",
+      "name": "Terme dell'Osa",
+      "lat": 42.552387,
+      "lon": 11.1760955,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Fonteblanda",
+        "addr:housenumber=15",
+        "addr:postcode=58010",
+        "addr:street=Via dei Bagnacci",
+        "addr:unit=località osa",
+        "alt_name=terme i bagnacci",
+        "amenity=public_bath",
+        "bath:open_air=yes",
+        "bath:sand_bath=yes",
+        "bath:type=thermal",
+        "name=Terme dell'Osa",
+        "wikidata=Q3984390",
+        "wikipedia=it:Terme dell'Osa"
+      ],
+      "score": 155
+    },
+    {
+      "id": "way:870474465",
+      "name": "Terme San Filippo",
+      "lat": 42.9292202,
+      "lon": 11.703278,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Bagni San Filippo",
+        "addr:postcode=53023",
+        "addr:street=Via Fosso Bianco",
+        "amenity=public_bath",
+        "bath:open_air=yes",
+        "bath:sand_bath=yes",
+        "bath:type=thermal",
+        "check_date=2024-09-02",
+        "description=bagni pubblici aperti 24 ore su 24",
+        "name=Terme San Filippo"
+      ],
+      "score": 155
+    },
+    {
+      "id": "way:871903978",
+      "name": "Terme Sorgente Sant'Elena",
+      "lat": 43.0563147,
+      "lon": 11.8217092,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Chianciano Terme",
+        "addr:housenumber=112",
+        "addr:postcode=53042",
+        "addr:street=Viale della Libertà",
+        "amenity=public_bath",
+        "bath:open_air=yes",
+        "bath:type=thermal",
+        "building=yes",
+        "name=Terme Sorgente Sant'Elena"
+      ],
+      "score": 155
+    },
+    {
+      "id": "way:874066600",
+      "name": "Terme di Montepulciano",
+      "lat": 43.0734677,
+      "lon": 11.8021872,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Montepulciano",
+        "addr:housenumber=46",
+        "addr:postcode=53045",
+        "addr:street=Vai delle Terme Sud",
+        "amenity=public_bath",
+        "bath:open_air=no",
+        "bath:type=thermal",
+        "email=info@termedimontepulciano.it",
+        "fee=yes",
+        "layer=-1",
+        "name=Terme di Montepulciano"
+      ],
+      "score": 155
+    },
+    {
+      "id": "way:1203655666",
+      "name": "Sorgente Termale",
+      "lat": 43.308041,
+      "lon": 11.4286123,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "bath:open_air=yes",
+        "bath:sand_bath=no",
+        "bath:type=thermal",
+        "name=Sorgente Termale",
+        "salt=no"
+      ],
+      "score": 155
+    },
+    {
+      "id": "relation:6014859",
+      "name": "Parco Acquasanta",
+      "lat": 43.0412573,
+      "lon": 11.8174513,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Chianciano Terme",
+        "addr:housenumber=3",
+        "addr:postcode=53042",
+        "addr:street=Piazza Martiri Perugini",
+        "alt_name=Parco Acqua Santa",
+        "amenity=public_bath",
+        "bath:open_air=yes",
+        "bath:type=thermal",
+        "building=retail",
+        "fee=yes",
+        "long_name=Parco Acquasanta di Terme di Chianciano SpA",
+        "name=Parco Acquasanta",
+        "opening_hours=08:00-20:00",
+        "operator=Terme di Chianciano SpA",
+        "type=multipolygon",
+        "website=https://www.chiancianoterme.com/"
+      ],
+      "score": 128
+    },
+    {
+      "id": "way:844788611",
+      "name": "Bagno Bossolo",
+      "lat": 42.8696801,
+      "lon": 11.8733868,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=San Casciano dei Bagni",
+        "addr:postcode=53040",
+        "alt_name=Bagno Boscolo",
+        "amenity=public_bath",
+        "bath:open_air=yes",
+        "bath:type=thermal",
+        "building=yes",
+        "fee=no",
+        "name=Bagno Bossolo",
+        "opening_hours=24/7",
+        "swimming_pool=spa"
+      ],
+      "score": 120
+    },
+    {
+      "id": "way:870450158",
+      "name": "Cascate del Mulino",
+      "lat": 42.6480695,
+      "lon": 11.5127069,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "access=yes",
+        "alt_name=Cascate del Molino",
+        "amenity=public_bath",
+        "bath:open_air=yes",
+        "bath:sand_bath=yes",
+        "bath:type=thermal",
+        "fee=no",
+        "name=Cascate del Mulino",
+        "natural=water",
+        "opening_hours=24/7",
+        "shower=no",
+        "unisex=yes",
+        "water=stream"
+      ],
+      "score": 120
+    },
+    {
+      "id": "way:870477618",
+      "name": "Bagni di Petriolo",
+      "lat": 43.0795353,
+      "lon": 11.2999537,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Bagni di Petriolo",
+        "addr:postcode=53015",
+        "addr:street=Strada Provinciale di Petriolo",
+        "amenity=public_bath",
+        "bath:open_air=yes",
+        "bath:type=thermal",
+        "fee=no",
+        "name=Bagni di Petriolo",
+        "opening_hours=24/7",
+        "shower=no"
+      ],
+      "score": 120
+    },
+    {
+      "id": "node:7379064898",
+      "name": "Doccie basse",
+      "lat": 44.0120653,
+      "lon": 10.580046,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "bath:type=thermal",
+        "name=Doccie basse"
+      ],
+      "score": 115
+    },
+    {
+      "id": "node:8121021816",
+      "name": "Piscine Termali Theia",
+      "lat": 43.0432038,
+      "lon": 11.8091026,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "access=permissive",
+        "addr:city=Chianciano Terme",
+        "addr:postcode=53042",
+        "addr:street=Piazza Guglielmo Marconi",
+        "amenity=public_bath",
+        "bath:open_air=yes",
+        "bath:sand_bath=yes",
+        "bath:type=thermal",
+        "drinking_water=no",
+        "fee=yes",
+        "intermittent=no",
+        "location=outdoor",
+        "name=Piscine Termali Theia",
+        "natural=spring",
+        "operator=http://www.piscinetermalitheia.it/",
+        "swimming_pool=spa"
+      ],
+      "score": 115
+    },
+    {
+      "id": "node:1101214945",
+      "name": "La Balena Bianca",
+      "lat": 42.9291292,
+      "lon": 11.703166,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "drinking_water=no",
+        "intermittent=no",
+        "leisure=hot_spring",
+        "name=La Balena Bianca",
+        "natural=hot_spring",
+        "tourism=attraction",
+        "website=www.bagnisanfilippoterme.it",
+        "wheelchair=no"
+      ],
+      "score": 88
+    },
+    {
+      "id": "node:2510332201",
+      "name": "Il Bollore",
+      "lat": 42.927377,
+      "lon": 11.6935758,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "bath:type=hot_spring",
+        "intermittent=no",
+        "name=Il Bollore",
+        "natural=hot_spring"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:3039475733",
+      "name": "Sorgente il Palagio",
+      "lat": 43.498609,
+      "lon": 10.872008,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "name=Sorgente il Palagio",
+        "natural=hot_spring"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:3528727136",
+      "name": "Mofeta dei Borboi",
+      "lat": 43.4435512,
+      "lon": 10.7155796,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "name=Mofeta dei Borboi",
+        "natural=hot_spring"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:11994619003",
+      "name": "Pozzo Landa",
+      "lat": 43.2645907,
+      "lon": 10.8768375,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "name=Pozzo Landa",
+        "natural=hot_spring"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:12040504932",
+      "name": "Sorgente del Fungo Bianco",
+      "lat": 43.0798851,
+      "lon": 11.2921738,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "access=yes",
+        "intermittent=no",
+        "leisure=hot_tub",
+        "location=outdoor",
+        "name=Sorgente del Fungo Bianco",
+        "natural=hot_spring"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:948833900",
+      "name": "Salone Sensoriale",
+      "lat": 43.0399375,
+      "lon": 11.8177404,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "amenity=public_bath",
+        "building=yes",
+        "name=Salone Sensoriale"
+      ],
+      "score": 70
+    }
+  ]
+}

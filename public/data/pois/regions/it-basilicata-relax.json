@@ -1,0 +1,37 @@
+{
+  "region_id": "it-basilicata-relax",
+  "label_it": "Basilicata • relax",
+  "generated_at": "2026-01-15T08:14:37.070Z",
+  "places": [
+    {
+      "id": "node:6763618365",
+      "name": "Locanda di San Martino",
+      "lat": 40.6667143,
+      "lon": 16.6082869,
+      "type": "relax",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Matera",
+        "addr:housenumber=71",
+        "addr:postcode=75100",
+        "addr:street=Via Fiorentini",
+        "amenity=public_bath",
+        "bath:open_air=no",
+        "bath:type=thermal",
+        "charge=25 EUR",
+        "description:en=Ancient Roman public baths carved in limestone rock",
+        "description:it=Antiche Termae Romanae scavate nella roccia tufacea",
+        "email=info@locandadisanmartino.it",
+        "fax=+39 0835 256472",
+        "fee=yes",
+        "min_age=18",
+        "name=Locanda di San Martino",
+        "opening_hours=Mo-Su 08:00-13:00,14:00-21:30",
+        "phone=+39 0835 256600",
+        "reservation=recommended",
+        "website=http://www.locandadisanmartino.it/en/termae-romanae-3/"
+      ],
+      "score": 133
+    }
+  ]
+}
