@@ -3,21 +3,23 @@ name: Build Italy Regions Datasets
 on:
   workflow_dispatch:
   push:
-    branches: ["main"]
+    branches: [ "main" ]
     paths:
       - "scripts/**"
       - "configs/it/**"
       - ".github/workflows/build-it-regions.yml"
   schedule:
-    - cron: "50 3 * * *" # ogni giorno 03:50 UTC (05:50 IT circa) -> puoi cambiare dopo
-
-# ✅ PERMESSI per evitare 403 sul push
-permissions:
-  contents: write
+    # 07:30 Italia (CET) = 06:30 UTC
+    # In estate (CEST) diventa 08:30 locali. Se vuoi fisso alle 07:30 anche d’estate te lo adatto.
+    - cron: "30 6 * * *"
 
 concurrency:
   group: build-it-regions
   cancel-in-progress: false
+
+# Serve per poter fare commit/push dal job "commit"
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -26,7 +28,6 @@ jobs:
 
     strategy:
       fail-fast: false
-      # ✅ RIDUCE IL “MARTELLO” SU OVERPASS
       max-parallel: 2
       matrix:
         region:
@@ -48,10 +49,9 @@ jobs:
           - it-toscana
           - it-trentino-alto-adige
           - it-umbria
-          # ✅ FIX ID REGIONE (deve combaciare con configs/it/regions.json)
           - it-valle-d-aosta
           - it-veneto
-        kind: [core, relax, borghi, cantine]
+        kind: [ core, relax, borghi, cantine ]
 
     steps:
       - name: Checkout
@@ -65,13 +65,8 @@ jobs:
           node-version: 20
 
       - name: Install deps
-        run: npm ci
-
-      # ✅ “anticollisione”: una micro-pausa prima di sparare a Overpass (riduce ban/429)
-      - name: Warmup delay
         run: |
-          echo "Warmup delay..."
-          sleep $(( (RANDOM % 8) + 2 ))
+          if [ -f package-lock.json ]; then npm ci; else npm install; fi
 
       - name: Build dataset
         env:
@@ -95,18 +90,13 @@ jobs:
   commit:
     name: Commit generated datasets
     runs-on: ubuntu-latest
-    needs: [build]
-
-    # ✅ ridichiariamo i permessi anche qui (per sicurezza)
-    permissions:
-      contents: write
+    needs: [ build ]
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          persist-credentials: true
 
       - name: Download all artifacts
         uses: actions/download-artifact@v4
@@ -116,7 +106,7 @@ jobs:
       - name: Copy artifacts into repo
         run: |
           mkdir -p public/data/pois/regions
-          find /tmp/artifacts -type f -name "*.json" -maxdepth 5 -print -exec cp -f {} public/data/pois/regions/ \;
+          find /tmp/artifacts -type f -name "*.json" -maxdepth 4 -print -exec cp -f {} public/data/pois/regions/ \;
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -124,13 +114,16 @@ jobs:
           node-version: 20
 
       - name: Install deps
-        run: npm ci
+        run: |
+          if [ -f package-lock.json ]; then npm ci; else npm install; fi
 
       - name: Rebuild indexes
         run: |
           node scripts/build_it_regions_index.mjs || true
 
       - name: Commit & Push (single commit)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
