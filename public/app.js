@@ -1,14 +1,14 @@
-/* Jamo — app.js v19.0 (FULL, REGION-FIRST)
+/* Jamo — app.js v19.0 (FULL)
  * Mobile-first • Offline-first • Flusso pulito • Risultato centrale
  *
  * ✅ NO GPS
- * ✅ OFFLINE datasets in /public/data/...
- * ✅ IT: regione da bbox (it-regions-index.json)
- * ✅ PRIORITÀ:
- *    1) Regione (categoria) → 2) Regione (core) → 3) Italia radius (categoria) → 4) Macro
- * ✅ Se regione ha pochi risultati entro minuti, poi consente fuori regione
- * ✅ Chicche/Classici non blocca se dataset non ha "visibility"
- * ✅ FIX tap: listeners su container, niente overlay che cattura tocchi
+ * ✅ OFFLINE (dataset in /public/data/...)
+ * ✅ Italia: regioni automatiche via bbox (it-regions-index.json)
+ * ✅ Per ogni categoria: prova <regione>-<categoria>.json → <regione>.json → radius-<categoria>.json → macro
+ * ✅ PRIORITÀ: prima DENTRO regione, poi FUORI regione (ma sempre entro i minuti scelti)
+ * ✅ Pulsante “Cambia partenza” (reset partenza + nuova ricerca semplice)
+ * ✅ Pulizia forte anti-spazzatura
+ * ✅ FIX: se dataset non ha visibility => non blocca chicche/classici
  */
 
 (() => {
@@ -28,13 +28,20 @@
     ALTS_INITIAL: 6,
     ALTS_PAGE: 6,
 
+    // ✅ Italia regions index (bbox + paths)
     IT_REGIONS_INDEX_URL: "/data/pois/regions/it-regions-index.json",
 
+    // ✅ Macro (ultimissimo fallback)
     MACROS_INDEX_URL: "/data/macros/macros_index.json",
     FALLBACK_MACRO_URLS: [
       "/data/macros/euuk_country_it.json",
       "/data/macros/euuk_macro_all.json",
     ],
+
+    // ✅ Priorità "dentro regione", ma fuori ok
+    PREFER_INSIDE_FIRST: true,
+    PREFER_INSIDE_MIN_FIRST: 5,  // quante opzioni finali proviamo a prendere dentro regione prima di usare fuori
+    PREFER_INSIDE_MIN_CHOSEN: 1, // se c'è almeno 1 dentro, scegliamo quella come prima scelta (se possibile)
 
     LIVE_ENABLED: false,
 
@@ -46,10 +53,6 @@
     },
 
     CLONE_KM: 2.2,
-
-    // ✅ quanto “insistere” sulla regione prima di permettere fuori regione
-    REGION_MIN_RESULTS: 8,      // se trovi >=8 nella regione, non esci fuori
-    REGION_SOFT_MIN_RESULTS: 3, // se trovi >=3, puoi usare comunque la regione ma poi aggiungere fuori
   };
 
   // -------------------- STATE --------------------
@@ -62,8 +65,7 @@
   let MACROS_INDEX = null;
   let IT_REGIONS_INDEX = null;
 
-  // Nota: ora gestiamo dataset multipli (region + fallback)
-  let DATASETS_USED = []; // [{kind, source, placesLen}...]
+  let DATASET = { key: null, kind: null, source: null, places: [], meta: {} };
 
   let ALL_OPTIONS = [];
   let VISIBLE_ALTS = 0;
@@ -147,10 +149,10 @@
     st.id = "jamo-mini-css";
     st.textContent = `
       .moreBtn{width:100%; border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.04); color:#fff; border-radius:16px; padding:12px; font-weight:950; cursor:pointer;}
-      .optBtn{width:100%; text-align:left; border:1px solid rgba(255,255,255,.10); background:rgba(255,255,255,.03); color:#fff; border-radius:16px; padding:12px; cursor:pointer;}
-      .optBtn:active{transform:scale(.99)}
-      .optList{display:flex; flex-direction:column; gap:10px;}
-      .pill{display:inline-flex; gap:8px; align-items:center; padding:7px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.14); background:rgba(0,0,0,.25); font-weight:850; font-size:13px;}
+      .pill{display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; font-weight:900; font-size:12px;
+        background:rgba(0,224,255,.10); border:1px solid rgba(0,224,255,.18);}
+      .pillOut{background:rgba(255,180,80,.10); border:1px solid rgba(255,180,80,.22);}
+      .btnDanger{background:rgba(255,90,90,.12); border:1px solid rgba(255,90,90,.30); color:#fff;}
     `;
     document.head.appendChild(st);
   }
@@ -223,6 +225,25 @@
     collapseOriginCard(true);
   }
 
+  function clearOrigin({ keepLabel = false } = {}) {
+    if (!keepLabel) $("originLabel") && ($("originLabel").value = "");
+    $("originLat") && ($("originLat").value = "");
+    $("originLon") && ($("originLon").value = "");
+    $("originCC") && ($("originCC").value = "");
+
+    localStorage.removeItem("jamo_origin");
+    localStorage.removeItem("jamo_region_id");
+
+    DATASET = { key: null, kind: null, source: null, places: [], meta: {} };
+    ALL_OPTIONS = [];
+    CURRENT_CHOSEN = null;
+
+    if ($("originStatus")) $("originStatus").textContent = "📍 Inserisci una nuova partenza e premi “Usa questo luogo”.";
+    showStatus("warn", "Partenza cancellata. Inserisci una nuova città/luogo e premi “Usa questo luogo”.");
+    collapseOriginCard(false);
+    scrollToId("quickStartCard");
+  }
+
   function getOrigin() {
     const lat = Number($("originLat")?.value);
     const lon = Number($("originLon")?.value);
@@ -246,6 +267,29 @@
       } catch {}
     }
     return null;
+  }
+
+  function ensureChangeOriginButton() {
+    const card = $("quickStartCard");
+    if (!card) return;
+
+    if (card.dataset.changeBtnReady) return;
+    card.dataset.changeBtnReady = "1";
+
+    // prova a metterlo vicino allo status o in fondo al blocco partenza
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.id = "btnChangeOrigin";
+    btn.className = "btn btnDanger";
+    btn.style.width = "100%";
+    btn.style.marginTop = "10px";
+    btn.textContent = "🔁 Cambia partenza";
+
+    const status = $("originStatus");
+    if (status && status.parentElement) status.parentElement.appendChild(btn);
+    else card.appendChild(btn);
+
+    btn.addEventListener("click", () => clearOrigin({ keepLabel: false }));
   }
 
   function collapseOriginCard(shouldCollapse) {
@@ -445,9 +489,8 @@
     return out;
   }
 
-  // -------------------- IT REGIONS INDEX --------------------
+  // -------------------- ITALY REGIONS INDEX --------------------
   async function loadItalyRegionsIndexSafe(signal) {
-    if (IT_REGIONS_INDEX?.items?.length) return IT_REGIONS_INDEX;
     try {
       IT_REGIONS_INDEX = await fetchJson(CFG.IT_REGIONS_INDEX_URL, { signal });
     } catch {
@@ -456,27 +499,21 @@
     return IT_REGIONS_INDEX;
   }
 
-  function pickItalyRegionByOrigin(origin) {
+  function getItalyRegionByOrigin(origin) {
     const lat = Number(origin?.lat);
     const lon = Number(origin?.lon);
     if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
-    const items = IT_REGIONS_INDEX?.items;
-    if (!Array.isArray(items) || !items.length) return null;
+    if (!IT_REGIONS_INDEX?.items?.length) return null;
 
-    // se ci sono bbox che si sovrappongono, scegli quella con bbox più “stretta” (area min)
-    let best = null;
-    for (const r of items) {
+    for (const r of IT_REGIONS_INDEX.items) {
       if (!r?.bbox) continue;
-      if (!withinBBox(lat, lon, r.bbox)) continue;
-      const area = Math.abs((r.bbox.maxLat - r.bbox.minLat) * (r.bbox.maxLon - r.bbox.minLon));
-      if (!best || area < best.area) best = { r, area };
+      if (withinBBox(lat, lon, r.bbox)) return r;
     }
-    return best?.r || null;
+    return null;
   }
 
   // -------------------- MACROS INDEX --------------------
   async function loadMacrosIndexSafe(signal) {
-    if (MACROS_INDEX?.items?.length) return MACROS_INDEX;
     try { MACROS_INDEX = await fetchJson(CFG.MACROS_INDEX_URL, { signal }); }
     catch { MACROS_INDEX = null; }
     return MACROS_INDEX;
@@ -518,8 +555,8 @@
     }
   }
 
-  function canonicalCategory(cat) {
-    const c = String(cat || "").toLowerCase().trim();
+  function canonicalCategory(catUI) {
+    const c = String(catUI || "").toLowerCase().trim();
     if (!c || c === "ovunque") return "core";
     if (c === "panorami") return "viewpoints";
     if (c === "trekking") return "hiking";
@@ -527,98 +564,84 @@
     return c;
   }
 
-  function datasetInfoLabel(kind, src, poolLen) {
-    const file = String(src || "").split("/").pop() || "";
-    if (kind === "region") return `POI:${file} (${poolLen})`;
-    if (kind === "radius") return `RADIUS:${file} (${poolLen})`;
-    if (kind === "macro") return `MACRO:${file} (${poolLen})`;
-    return `offline (${poolLen})`;
+  function preferredDatasetUrls(origin, categoryUI) {
+    const urls = [];
+    const push = (u) => { const s = String(u || "").trim(); if (s) urls.push(s); };
+
+    const cat = canonicalCategory(categoryUI);
+    const cc = String(origin?.country_code || "").toUpperCase();
+
+    const region = getItalyRegionByOrigin(origin);
+    const isItaly = (cc === "IT") || !!region;
+
+    // 1) Se Italia e regione trovata: prova file regionale specifico categoria → poi core regionale
+    if (isItaly && region?.id) {
+      const regionId = String(region.id);
+      if (cat !== "core") push(`/data/pois/regions/${regionId}-${cat}.json`);
+      push(`/data/pois/regions/${regionId}.json`);
+    }
+
+    // 2) Radius (sempre disponibile come fallback)
+    if (cat !== "core") push(`/data/pois/regions/radius-${cat}.json`);
+
+    // 3) Macro paese + fallback
+    const countryMacro = findCountryMacroPathRobust(cc || (isItaly ? "IT" : ""));
+    if (countryMacro) push(countryMacro);
+    for (const u of CFG.FALLBACK_MACRO_URLS) push(u);
+
+    // 4) Macro salvato
+    const savedMacro = localStorage.getItem("jamo_macro_url");
+    if (savedMacro) push(savedMacro);
+
+    // uniq
+    const out = [];
+    const seen = new Set();
+    for (const u of urls) {
+      if (!u || seen.has(u)) continue;
+      seen.add(u);
+      out.push(u);
+    }
+    return out;
   }
 
-  // ✅ Carica in ordine: regione→radius→macro, ma soprattutto: regione PRIMA
-  async function loadPoolsRegionFirst(origin, categoryUI, { signal } = {}) {
+  async function ensureDatasetLoaded(origin, categoryUI, { signal } = {}) {
     await loadItalyRegionsIndexSafe(signal);
     await loadMacrosIndexSafe(signal);
 
-    DATASETS_USED = [];
+    const preferred = preferredDatasetUrls(origin, categoryUI);
+    const key = `${origin?.lat?.toFixed?.(3) || "x"}|${origin?.lon?.toFixed?.(3) || "y"}|${String(categoryUI || "ovunque")}|${preferred[0] || "none"}`;
 
-    const cc = String(origin?.country_code || "").toUpperCase();
-    const region = pickItalyRegionByOrigin(origin);
-    const isItaly = (cc === "IT") || !!region;
+    if (DATASET?.places?.length && DATASET.key === key) return DATASET;
 
-    const cat = canonicalCategory(categoryUI);
-
-    const pools = []; // [{kind, source, places, bbox?}]
-
-    // 1) Regione categoria (se esiste in index)
-    if (isItaly && region?.id) {
-      const rid = String(region.id);
-      const p1 = (cat !== "core") ? (region.paths?.[cat] || `/data/pois/regions/${rid}-${cat}.json`) : null;
-      if (p1) {
-        const loaded = await tryLoadPlacesFile(p1, signal);
-        if (loaded) {
-          pools.push({ kind: "region", source: p1, places: loaded.places, bbox: region.bbox || null, regionId: rid });
-          DATASETS_USED.push({ kind: "region", source: p1, placesLen: loaded.places.length });
-        }
-      }
-      // 2) Regione core
-      const p2 = region.paths?.core || `/data/pois/regions/${rid}.json`;
-      if (p2) {
-        const loaded = await tryLoadPlacesFile(p2, signal);
-        if (loaded) {
-          pools.push({ kind: "region", source: p2, places: loaded.places, bbox: region.bbox || null, regionId: rid });
-          DATASETS_USED.push({ kind: "region", source: p2, placesLen: loaded.places.length });
-        }
-      }
-    }
-
-    // 3) Radius categoria (solo se cat non core)
-    if (cat !== "core") {
-      const p3 = `/data/pois/regions/radius-${cat}.json`;
-      const loaded = await tryLoadPlacesFile(p3, signal);
-      if (loaded) {
-        pools.push({ kind: "radius", source: p3, places: loaded.places, bbox: null });
-        DATASETS_USED.push({ kind: "radius", source: p3, placesLen: loaded.places.length });
-      }
-    }
-
-    // 4) Macro paese + fallback
-    const countryMacro = findCountryMacroPathRobust(cc || (isItaly ? "IT" : ""));
-    const macroUrls = [];
-    if (countryMacro) macroUrls.push(countryMacro);
-    for (const u of CFG.FALLBACK_MACRO_URLS) macroUrls.push(u);
-
-    const savedMacro = localStorage.getItem("jamo_macro_url");
-    if (savedMacro) macroUrls.push(savedMacro);
-
-    const uniq = [];
-    const seen = new Set();
-    for (const u of macroUrls) {
-      const s = String(u || "").trim();
-      if (!s || seen.has(s)) continue;
-      seen.add(s);
-      uniq.push(s);
-    }
-
-    for (const u of uniq) {
-      const loaded = await tryLoadPlacesFile(u, signal);
+    for (const url of preferred) {
+      const loaded = await tryLoadPlacesFile(url, signal);
       if (!loaded) continue;
-      pools.push({ kind: "macro", source: u, places: loaded.places, bbox: null });
-      DATASETS_USED.push({ kind: "macro", source: u, placesLen: loaded.places.length });
-      localStorage.setItem("jamo_macro_url", u);
-      // non serve caricarne 20, basta 1 macro valida
-      break;
+
+      const file = String(url).split("/").pop() || "";
+      const isRadius = file.startsWith("radius-");
+      const isRegional = url.includes("/data/pois/regions/") && file.startsWith("it-");
+
+      DATASET = {
+        key,
+        kind: isRadius ? "radius" : isRegional ? "pois_region" : "macro",
+        source: url,
+        places: loaded.places,
+        meta: { raw: loaded.json, cc: String(origin?.country_code || "").toUpperCase() },
+      };
+
+      if (DATASET.kind === "macro") localStorage.setItem("jamo_macro_url", url);
+
+      console.log("[JAMO] dataset loaded:", url, "places:", loaded.places.length);
+      return DATASET;
     }
 
-    if (!pools.length) throw new Error("Nessun dataset offline valido disponibile.");
-
-    return { pools, region };
+    throw new Error("Nessun dataset offline valido disponibile.");
   }
 
   // -------------------- GEOCODING --------------------
   async function geocodeLabel(label) {
     const q = String(label || "").trim();
-    if (!q) throw new Error("Scrivi un luogo (es: Verona, Padova, Venezia...)");
+    if (!q) throw new Error("Scrivi un luogo (es: Verona, L'Aquila, Roma...)");
     const r = await fetch(`/api/geocode?q=${encodeURIComponent(q)}`, { method: "GET", cache: "no-store" });
     const j = await r.json().catch(() => null);
     if (!j) throw new Error("Geocoding fallito (risposta vuota)");
@@ -632,8 +655,13 @@
   // -------------------- TAGS / FILTERS --------------------
   function placeTags(place) { return (place.tags || []).map(t => String(t).toLowerCase()); }
   function tagsStr(place) { return placeTags(place).join(" "); }
-  function hasAny(str, arr) { for (const k of arr) if (str.includes(k)) return true; return false; }
 
+  function hasAny(str, arr) {
+    for (const k of arr) if (str.includes(k)) return true;
+    return false;
+  }
+
+  // ✅ Anti-spazzatura globale
   function isClearlyIrrelevantPlace(place) {
     const t = tagsStr(place);
     const n = normName(place?.name || "");
@@ -918,6 +946,7 @@
     if (t.includes("tourism=attraction") && t.includes("wine")) return true;
 
     if (hasAny(n, ["cantina","winery","vini","vino","enoteca","degustaz","wine tasting","wine tour"])) return true;
+
     return false;
   }
 
@@ -995,6 +1024,7 @@
     return matchesCategoryStrict(place, cat);
   }
 
+  // FIX: unknown visibility non deve bloccare
   function matchesStyle(place, { wantChicche, wantClassici }) {
     const vis = normalizeVisibility(place?.visibility);
 
@@ -1138,6 +1168,7 @@
       if (!okCat) continue;
 
       if (canonicalCategory(categoryUI) === "borghi" && !isNotBorgoNoise(p)) continue;
+
       if (!matchesStyle(p, styles)) continue;
 
       const pid = safeIdFromPlace(p);
@@ -1165,6 +1196,7 @@
         if (t.includes("amenity=spa") || t.includes("leisure=spa") || t.includes("tourism=spa")) s += 0.14;
         if (t.includes("amenity=sauna") || t.includes("leisure=sauna") || t.includes("healthcare=sauna")) s += 0.10;
         if (looksWellnessByName(p)) s += 0.08;
+
         if (t.includes("leisure=swimming_pool") && !isSpaPlace(p)) s -= 0.18;
       }
 
@@ -1225,7 +1257,43 @@
     return out;
   }
 
-  // -------------------- COPY / LABELS --------------------
+  function splitInsideOutside(list, regionBBox) {
+    const inside = [];
+    const outside = [];
+    for (const x of (list || [])) {
+      const p = x?.place;
+      if (!p) continue;
+      const ok = regionBBox && withinBBox(Number(p.lat), Number(p.lon), regionBBox);
+      (ok ? inside : outside).push(x);
+    }
+    return { inside, outside };
+  }
+
+  function composePreferredOptions(list, regionBBox) {
+    if (!CFG.PREFER_INSIDE_FIRST || !regionBBox) return list;
+
+    const { inside, outside } = splitInsideOutside(list, regionBBox);
+    if (!inside.length) return list;
+
+    const final = [];
+    const takeInside = Math.min(inside.length, Math.max(1, CFG.PREFER_INSIDE_MIN_FIRST));
+    for (let i = 0; i < takeInside; i++) final.push(inside[i]);
+
+    for (const x of outside) {
+      if (final.length >= list.length) break;
+      final.push(x);
+    }
+
+    // aggiungi eventuali inside rimasti (per non perdere risultati)
+    for (const x of inside) {
+      if (final.length >= list.length) break;
+      if (!final.some(y => y.pid === x.pid)) final.push(x);
+    }
+
+    return final;
+  }
+
+  // -------------------- COPY --------------------
   function typeBadge(categoryUI) {
     const category = String(categoryUI || "");
     const map = {
@@ -1250,6 +1318,12 @@
     if (v === "chicca") return "✨ chicca";
     if (v === "classica") return "✅ classica";
     return "⭐ selezione";
+  }
+
+  function inOutLabel(isInside) {
+    return isInside
+      ? `<span class="pill">🏷️ Dentro regione</span>`
+      : `<span class="pill pillOut">🌍 Fuori regione</span>`;
   }
 
   function shortWhatIs(place, categoryUI) {
@@ -1325,8 +1399,8 @@
         <div class="small muted" style="margin-top:6px;">Tip: aumenta minuti oppure cambia categoria/stile.</div>
         <div class="small muted" style="margin-top:10px;">Dataset: ${escapeHtml(datasetInfo || "offline")}</div>
         <div class="row wraprow" style="gap:10px; margin-top:12px;">
-          <button class="btnGhost" id="btnResetRotation" type="button">🧽 Reset “oggi”</button>
-          <button class="btn btnPrimary" id="btnTryAgain" type="button">🎯 Riprova</button>
+          <button class="btnGhost" id="btnResetRotation">🧽 Reset “oggi”</button>
+          <button class="btn btnPrimary" id="btnTryAgain">🎯 Riprova</button>
         </div>
       </div>
     `;
@@ -1342,7 +1416,7 @@
     scrollToId("resultCard");
   }
 
-  function renderOptionsList() {
+  function renderOptionsList(regionBBox) {
     const chosen = CURRENT_CHOSEN;
     if (!chosen) return "";
 
@@ -1358,6 +1432,8 @@
       const sub = `${escapeHtml((p.area || p.country || "—").trim())} • ${p.lat.toFixed(3)}, ${p.lon.toFixed(3)}`;
       const vis = visibilityLabel(p);
       const active = (CURRENT_CHOSEN?.pid === x.pid) ? "active" : "";
+      const inside = regionBBox ? withinBBox(Number(p.lat), Number(p.lon), regionBBox) : false;
+
       return `
         <button class="optBtn ${active}" data-pid="${escapeHtml(x.pid)}" type="button">
           <div style="display:flex; justify-content:space-between; gap:10px;">
@@ -1365,6 +1441,7 @@
             <div class="small muted" style="font-weight:950;">${time}</div>
           </div>
           <div class="small muted" style="margin-top:6px;">${escapeHtml(vis)} • ${sub}</div>
+          <div style="margin-top:8px;">${inOutLabel(inside)}</div>
         </button>
       `;
     }).join("");
@@ -1381,22 +1458,22 @@
     `;
   }
 
-  function bindOptionsClicks(meta) {
+  function bindOptionsClicks() {
     const area = $("resultArea");
     if (!area) return;
 
-    area.querySelectorAll(".optBtn").forEach(btn => {
+    area.querySelectorAll(".optBtn")?.forEach(btn => {
       btn.addEventListener("click", () => {
         const pid2 = btn.getAttribute("data-pid");
         const found = ALL_OPTIONS.find(x => x.pid === pid2);
         if (!found) return;
-        openChosen(found, { ...meta, scroll: true });
+        openChosen(found, { scroll: true });
       });
     });
 
     $("btnMoreAlts")?.addEventListener("click", () => {
       VISIBLE_ALTS = Math.min((ALL_OPTIONS.length - 1), VISIBLE_ALTS + CFG.ALTS_PAGE);
-      openChosen(CURRENT_CHOSEN, { ...meta, scroll: false });
+      openChosen(CURRENT_CHOSEN, { scroll: false });
       setTimeout(() => {
         const more = $("btnMoreAlts");
         (more || $("resultCard"))?.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -1404,7 +1481,16 @@
     });
   }
 
-  function renderChosenCard(origin, chosen, categoryUI, datasetInfo, usedMinutes, maxMinutesInput, meta) {
+  function datasetInfoLabel(dataset, poolLen) {
+    const src = String(dataset?.source || "");
+    const file = src.split("/").pop() || "";
+    if (dataset?.kind === "radius") return `RADIUS:${file} (${poolLen})`;
+    if (dataset?.kind === "pois_region") return `POI:${file} (${poolLen})`;
+    if (dataset?.kind === "macro") return `MACRO:${file} (${poolLen})`;
+    return `offline (${poolLen})`;
+  }
+
+  function renderChosenCard(origin, chosen, categoryUI, datasetInfo, usedMinutes, maxMinutesInput, regionBBox) {
     const area = $("resultArea");
     if (!area) return;
 
@@ -1423,8 +1509,9 @@
 
     const what = shortWhatIs(p, categoryUI);
     const vis = visibilityLabel(p);
-
     const widenText = usedMinutes && usedMinutes !== maxMinutesInput ? ` • widen: ${usedMinutes} min` : "";
+
+    const inside = regionBBox ? withinBBox(lat, lon, regionBBox) : false;
 
     area.innerHTML = `
       <div style="border-radius:18px; overflow:hidden; border:1px solid rgba(0,224,255,.18);">
@@ -1440,6 +1527,7 @@
             <div class="pill">${tb.emoji} ${tb.label}</div>
             <div class="pill">🚗 ~${chosen.driveMin} min • ${fmtKm(chosen.km)}</div>
             <div class="pill">${escapeHtml(vis)}</div>
+            ${inOutLabel(inside)}
           </div>
         </div>
 
@@ -1475,7 +1563,7 @@
             <button class="btnGhost" id="btnSearchAgain" type="button">🎯 Nuova ricerca</button>
           </div>
 
-          ${renderOptionsList()}
+          ${renderOptionsList(regionBBox)}
         </div>
       </div>
     `;
@@ -1528,45 +1616,13 @@
       scrollToId("searchCard");
     });
 
-    bindOptionsClicks(meta);
+    bindOptionsClicks();
 
     LAST_SHOWN_PID = pid;
     SESSION_SEEN.add(pid);
     addRecent(pid);
 
     scrollToId("resultCard");
-  }
-
-  // -------------------- MULTI-POOL SEARCH (REGION FIRST) --------------------
-  function combineAndScore(pools, origin, minutes, categoryUI, styles, regionBBox) {
-    // 1) prima prova SOLO le pool "region" (se presenti)
-    const regionPools = pools.filter(p => p.kind === "region");
-    const otherPools = pools.filter(p => p.kind !== "region");
-
-    const attempt = (poolList, label) => {
-      let merged = [];
-      for (const pl of poolList) merged = merged.concat(pl.places || []);
-      const res = pickTopOptions(merged, origin, minutes, categoryUI, styles);
-      return { list: dedupeDiverse(res.list), usedFallback: res.usedFallback, label };
-    };
-
-    // A) tentativo regione
-    if (regionPools.length) {
-      const a = attempt(regionPools, "region");
-      // se vuoi “davvero” solo in regione, qui potresti filtrare per bbox,
-      // ma tu hai detto: “va bene fuori regione, però prima regione”.
-      // Quindi: diamo un BOOST a ciò che è dentro bbox regione (senza escludere).
-      if (a.list.length) {
-        for (const x of a.list) {
-          if (regionBBox && withinBBox(x.place.lat, x.place.lon, regionBBox)) x.score += 0.05;
-        }
-        a.list.sort((u,v)=> (v.score-u.score) || (u.driveMin-v.driveMin));
-      }
-      return a;
-    }
-
-    // B) se non c’è regione, usa tutto
-    return attempt(pools, "all");
   }
 
   // -------------------- SEARCH --------------------
@@ -1591,9 +1647,13 @@
       const categoryUI = getActiveCategory();
       const styles = getActiveStyles();
 
-      const { pools, region } = await loadPoolsRegionFirst(origin, categoryUI, { signal });
-      if (token !== SEARCH_TOKEN) return;
+      await ensureDatasetLoaded(origin, categoryUI, { signal });
 
+      const basePool = Array.isArray(DATASET?.places) ? DATASET.places : [];
+      const datasetInfo = datasetInfoLabel(DATASET, basePool.length);
+
+      // ✅ regione (se siamo in Italia e index disponibile)
+      const region = getItalyRegionByOrigin(origin);
       const regionBBox = region?.bbox || null;
 
       const steps = widenMinutesSteps(maxMinutesInput, categoryUI);
@@ -1601,65 +1661,21 @@
       let usedMinutes = steps[0];
       let usedFallback = false;
       let poolCandidates = [];
-      let chosenDatasetInfo = "";
 
       for (const mins of steps) {
         usedMinutes = mins;
 
-        // 1) prova regione (se presente)
-        const attemptRegion = combineAndScore(pools.filter(p=>p.kind==="region"), origin, mins, categoryUI, styles, regionBBox);
-        let regionList = attemptRegion.list;
+        const res = pickTopOptions(basePool, origin, mins, categoryUI, styles);
+        usedFallback = !!res.usedFallback;
 
-        if (forbidPid) regionList = regionList.filter(x => x.pid !== forbidPid);
+        let list = dedupeDiverse(res.list);
+        if (forbidPid) list = list.filter(x => x.pid !== forbidPid);
 
-        // Se regione ha abbastanza risultati, stop qui
-        if (regionList.length >= CFG.REGION_MIN_RESULTS) {
-          poolCandidates = regionList;
-          usedFallback = attemptRegion.usedFallback;
+        // ✅ priorità dentro regione, ma fuori ok
+        list = composePreferredOptions(list, regionBBox);
 
-          // dataset info: mostra il primo dataset regione effettivamente caricato
-          const firstRegion = pools.find(p=>p.kind==="region");
-          chosenDatasetInfo = datasetInfoLabel("region", firstRegion?.source, firstRegion?.places?.length || 0);
-          break;
-        }
-
-        // Se regione ha pochi risultati ma non zero, li teniamo e completiamo con fuori regione
-        if (regionList.length >= CFG.REGION_SOFT_MIN_RESULTS) {
-          // completa con radius/macro
-          const otherPools = pools.filter(p=>p.kind!=="region");
-          let mergedOther = [];
-          for (const pl of otherPools) mergedOther = mergedOther.concat(pl.places || []);
-          const attemptOther = pickTopOptions(mergedOther, origin, mins, categoryUI, styles);
-          let otherList = dedupeDiverse(attemptOther.list);
-          if (forbidPid) otherList = otherList.filter(x => x.pid !== forbidPid);
-
-          // Unisci (prima regione)
-          const combined = dedupeDiverse(regionList.concat(otherList));
-          poolCandidates = combined;
-
-          usedFallback = attemptRegion.usedFallback || attemptOther.usedFallback;
-
-          const firstRegion = pools.find(p=>p.kind==="region");
-          const firstOther = pools.find(p=>p.kind!=="region");
-          chosenDatasetInfo =
-            `REGION:${(firstRegion?.source||"").split("/").pop() || "—"} + ${datasetInfoLabel(firstOther?.kind, firstOther?.source, firstOther?.places?.length || 0)}`;
-          break;
-        }
-
-        // Se regione non dà niente: prova direttamente fuori regione (radius/macro)
-        const otherPools = pools.filter(p=>p.kind!=="region");
-        let mergedOther = [];
-        for (const pl of otherPools) mergedOther = mergedOther.concat(pl.places || []);
-        const attemptOther = pickTopOptions(mergedOther, origin, mins, categoryUI, styles);
-        let otherList = dedupeDiverse(attemptOther.list);
-        if (forbidPid) otherList = otherList.filter(x => x.pid !== forbidPid);
-
-        if (otherList.length) {
-          poolCandidates = otherList;
-          usedFallback = attemptOther.usedFallback;
-
-          const firstOther = pools.find(p=>p.kind!=="region");
-          chosenDatasetInfo = datasetInfoLabel(firstOther?.kind, firstOther?.source, firstOther?.places?.length || 0);
+        if (list.length) {
+          poolCandidates = list;
           break;
         }
 
@@ -1669,13 +1685,21 @@
       if (token !== SEARCH_TOKEN) return;
 
       if (!poolCandidates.length) {
-        const ds = (DATASETS_USED || []).map(x => `${x.kind}:${(x.source||"").split("/").pop()} (${x.placesLen})`).join(" • ");
-        renderNoResult(maxMinutesInput, categoryUI, ds || "offline");
+        renderNoResult(maxMinutesInput, categoryUI, datasetInfo);
         showStatus("warn", `Nessuna meta entro ${maxMinutesInput} min per "${categoryUI}". Aumenta minuti o cambia categoria/stile.`);
         return;
       }
 
+      // limita pool
       ALL_OPTIONS = poolCandidates.slice(0, CFG.OPTIONS_POOL_MAX);
+
+      // ✅ se esiste almeno 1 dentro regione, prova a scegliere quello come "chosen"
+      if (CFG.PREFER_INSIDE_FIRST && regionBBox) {
+        const insideFirst = ALL_OPTIONS.find(x => withinBBox(Number(x.place?.lat), Number(x.place?.lon), regionBBox));
+        if (insideFirst && CFG.PREFER_INSIDE_MIN_CHOSEN >= 1) {
+          ALL_OPTIONS = [insideFirst, ...ALL_OPTIONS.filter(x => x.pid !== insideFirst.pid)];
+        }
+      }
 
       const chosen = ALL_OPTIONS[0];
       CURRENT_CHOSEN = chosen;
@@ -1683,14 +1707,13 @@
       const maxAlts = Math.max(0, ALL_OPTIONS.length - 1);
       VISIBLE_ALTS = Math.min(CFG.ALTS_INITIAL, maxAlts);
 
-      const meta = { origin, categoryUI, datasetInfo: chosenDatasetInfo, usedMinutes, maxMinutesInput };
-      renderChosenCard(origin, chosen, categoryUI, chosenDatasetInfo, usedMinutes, maxMinutesInput, meta);
+      renderChosenCard(origin, chosen, categoryUI, datasetInfo, usedMinutes, maxMinutesInput, regionBBox);
 
       if (!silent) {
         const extra = usedMinutes !== maxMinutesInput ? ` (ho allargato a ${usedMinutes} min)` : "";
         const fb = usedFallback ? " • criteri allargati per trovare più risultati" : "";
         const reg = region?.name ? ` • regione: ${region.name}` : "";
-        showStatus("ok", `Trovate ${ALL_OPTIONS.length} opzioni ✅ • categoria: ${categoryUI}${extra}${reg}${fb}`);
+        showStatus("ok", `Trovate ${ALL_OPTIONS.length} opzioni ✅ • categoria: ${categoryUI}${extra}${fb}${reg}`);
       }
     } catch (e) {
       if (String(e?.name || "").includes("Abort")) return;
@@ -1701,13 +1724,16 @@
 
   function openChosen(chosen, meta = {}) {
     const origin = meta.origin || getOrigin();
-    const categoryUI = meta.categoryUI || getActiveCategory();
+    const categoryUI = meta.category || getActiveCategory();
     const datasetInfo = meta.datasetInfo || "";
     const usedMinutes = meta.usedMinutes;
     const maxMinutesInput = meta.maxMinutesInput || Number($("maxMinutes")?.value) || 120;
 
+    const region = getItalyRegionByOrigin(origin);
+    const regionBBox = region?.bbox || null;
+
     CURRENT_CHOSEN = chosen;
-    renderChosenCard(origin, chosen, categoryUI, datasetInfo, usedMinutes, maxMinutesInput, meta);
+    renderChosenCard(origin, chosen, categoryUI, datasetInfo, usedMinutes, maxMinutesInput, regionBBox);
 
     if (meta.scroll !== false) scrollToId("resultCard");
   }
@@ -1732,9 +1758,16 @@
 
         const result = await geocodeLabel(label);
 
-        setOrigin({ label: result.label || label, lat: result.lat, lon: result.lon, country_code: result.country_code || "" });
+        setOrigin({
+          label: result.label || label,
+          lat: result.lat,
+          lon: result.lon,
+          country_code: result.country_code || ""
+        });
 
         showStatus("ok", "Partenza impostata ✅ Ora scegli categoria/stile e premi CERCA.");
+        DATASET = { key: null, kind: null, source: null, places: [], meta: {} };
+
         scrollToId("searchCard");
       } catch (e) {
         console.error(e);
@@ -1743,6 +1776,10 @@
         scrollToId("quickStartCard");
       }
     });
+
+    // ✅ pulsante “cambia partenza”
+    ensureChangeOriginButton();
+    $("btnChangeOrigin")?.addEventListener("click", () => clearOrigin({ keepLabel: false }));
   }
 
   // -------------------- MAIN BUTTONS --------------------
@@ -1769,6 +1806,10 @@
 
     const origin = getOrigin();
     if (origin) collapseOriginCard(true);
+    else {
+      if ($("originStatus")) $("originStatus").textContent = "📍 Inserisci una partenza e premi “Usa questo luogo”.";
+      collapseOriginCard(false);
+    }
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot, { once: true });
@@ -1779,6 +1820,7 @@
     resetRotation,
     resetVisited,
     getOrigin,
-    getDatasetsUsed: () => DATASETS_USED
+    clearOrigin,
+    getDataset: () => DATASET
   };
 })();
