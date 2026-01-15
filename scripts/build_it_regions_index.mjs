@@ -12,7 +12,8 @@ const cfg = JSON.parse(fs.readFileSync(REGIONS_CFG_PATH, "utf-8"));
 const DIR = path.join(__dirname, "..", "public", "data", "pois", "regions");
 const OUT = path.join(DIR, "it-regions-index.json");
 
-const CATEGORIES = [
+// 👇 categorie “canoniche” che vuoi indicizzare (quelle dei tuoi file)
+const CATEGORIES_CANON = [
   "core",
   "mare",
   "natura",
@@ -27,6 +28,22 @@ const CATEGORIES = [
   "cantine",
 ];
 
+// 👇 alias per compatibilità con app.js (viewpoints/hiking)
+const CATEGORY_ALIASES = {
+  panorami: ["viewpoints"],
+  trekking: ["hiking"],
+  citta: ["città", "city"], // extra innocui (non usati dall’app, ma ok)
+};
+
+// Normalizza i “cat” dai nomi file
+function normCat(s) {
+  return String(s || "")
+    .toLowerCase()
+    .trim()
+    .replaceAll("à", "a")
+    .replaceAll("-", "_");
+}
+
 function safeReadJson(p) {
   try {
     const raw = fs.readFileSync(p, "utf-8");
@@ -36,6 +53,7 @@ function safeReadJson(p) {
   }
 }
 
+// bbox da places
 function bboxFromPlaces(places) {
   let minLat = Infinity, minLon = Infinity, maxLat = -Infinity, maxLon = -Infinity;
   let ok = false;
@@ -55,6 +73,18 @@ function bboxFromPlaces(places) {
   return { minLat, minLon, maxLat, maxLon };
 }
 
+function mergeBBox(a, b) {
+  if (!a && !b) return null;
+  if (!a) return b;
+  if (!b) return a;
+  return {
+    minLat: Math.min(a.minLat, b.minLat),
+    minLon: Math.min(a.minLon, b.minLon),
+    maxLat: Math.max(a.maxLat, b.maxLat),
+    maxLon: Math.max(a.maxLon, b.maxLon),
+  };
+}
+
 function listJsonFiles(dir) {
   if (!fs.existsSync(dir)) return [];
   return fs
@@ -65,34 +95,54 @@ function listJsonFiles(dir) {
 }
 
 function parseRegionCategoryFromFilename(filePath) {
-  // expected: public/data/pois/regions/<regionId>-<category>.json
-  // example: it-lazio-natura.json
+  // expected:
+  // - it-lazio.json                 -> core
+  // - it-lazio-relax.json           -> relax
+  // - it-emilia-romagna-panorami.json -> panorami
   const base = path.basename(filePath);
+
+  // core: it-xxx.json
+  if (/^it-[a-z0-9-]+\.json$/i.test(base)) {
+    const regionId = base.replace(/\.json$/i, "");
+    return { regionId, category: "core" };
+  }
+
+  // category: it-xxx-<cat>.json
   const m = base.match(/^(.+)-([a-z0-9_]+)\.json$/i);
   if (!m) return null;
+
   const regionId = m[1];
-  const category = String(m[2]).toLowerCase();
+  const category = normCat(m[2]);
   return { regionId, category };
+}
+
+// trasforma fileName in web path per la PWA (serve a app.js)
+function webPathFromFile(fileName) {
+  return `/data/pois/regions/${fileName}`;
 }
 
 async function main() {
   fs.mkdirSync(DIR, { recursive: true });
 
-  const regionsCfg = cfg.regions || [];
+  const regionsCfg = Array.isArray(cfg.regions) ? cfg.regions : [];
   const regionsMap = new Map(regionsCfg.map(r => [String(r.id), r]));
 
   const files = listJsonFiles(DIR);
 
-  // Build: region -> category -> info
+  // regionId -> info
   const perRegion = new Map();
 
   for (const f of files) {
     const rc = parseRegionCategoryFromFilename(f);
     if (!rc) continue;
 
-    const { regionId, category } = rc;
-    if (!regionsMap.has(regionId)) continue; // ignore unknown files
-    if (!CATEGORIES.includes(category)) continue; // ignore garbage categories
+    const { regionId } = rc;
+    let category = normCat(rc.category);
+
+    if (!regionsMap.has(regionId)) continue;
+
+    // accetta solo categorie note (core compreso)
+    if (!CATEGORIES_CANON.includes(category)) continue;
 
     const json = safeReadJson(f);
     if (!json) continue;
@@ -101,46 +151,89 @@ async function main() {
     const count = places.length;
     const bbox = bboxFromPlaces(places);
 
-    if (!perRegion.has(regionId)) perRegion.set(regionId, new Map());
-    perRegion.get(regionId).set(category, {
-      file: path.basename(f),
-      count,
-      bbox,
-      generated_at: json.generated_at || null,
-      label_it: json.label_it || null,
-    });
+    if (!perRegion.has(regionId)) {
+      perRegion.set(regionId, {
+        // paths per categoria (quello che legge app.js)
+        paths: {},
+        // opzionale: counts utili per debug/monitor
+        counts: {},
+        // bbox regione (merge)
+        bbox: null,
+        // meta
+        generated_at: null,
+      });
+    }
+
+    const info = perRegion.get(regionId);
+    const fileName = path.basename(f);
+
+    // salva path canonico
+    info.paths[category] = webPathFromFile(fileName);
+    info.counts[category] = count;
+
+    // alias compatibilità (es: panorami -> viewpoints)
+    const aliases = CATEGORY_ALIASES[category] || [];
+    for (const a of aliases) {
+      const ak = normCat(a);
+      if (!info.paths[ak]) info.paths[ak] = webPathFromFile(fileName);
+      if (!info.counts[ak]) info.counts[ak] = count;
+    }
+
+    // bbox regione = unione bbox di tutti i file trovati
+    info.bbox = mergeBBox(info.bbox, bbox);
+
+    // tieni una generated_at “qualunque”
+    if (!info.generated_at) info.generated_at = json.generated_at || null;
   }
 
-  // Assemble index respecting cfg order
+  // Assemble index rispettando ordine cfg
   const items = regionsCfg.map(r => {
     const regionId = String(r.id);
-    const cats = perRegion.get(regionId) || new Map();
+    const p = perRegion.get(regionId);
 
-    const categories = {};
+    // bbox: se in cfg c’è bbox/bounds, preferiscila
+    const cfgBBox = r.bbox || r.bounds || null;
+    let bbox = null;
+
+    if (
+      cfgBBox &&
+      Number.isFinite(cfgBBox.minLat) && Number.isFinite(cfgBBox.maxLat) &&
+      Number.isFinite(cfgBBox.minLon) && Number.isFinite(cfgBBox.maxLon)
+    ) {
+      bbox = cfgBBox;
+    } else if (
+      cfgBBox &&
+      Number.isFinite(cfgBBox.south) && Number.isFinite(cfgBBox.north) &&
+      Number.isFinite(cfgBBox.west) && Number.isFinite(cfgBBox.east)
+    ) {
+      bbox = { minLat: cfgBBox.south, maxLat: cfgBBox.north, minLon: cfgBBox.west, maxLon: cfgBBox.east };
+    } else {
+      bbox = p?.bbox || null;
+    }
+
+    // total places (solo canoniche, così è pulito)
     let total = 0;
-
-    // keep a stable category order
-    for (const c of CATEGORIES) {
-      const info = cats.get(c);
-      if (!info) continue;
-      categories[c] = info;
-      total += Number(info.count || 0);
+    if (p?.counts) {
+      for (const c of CATEGORIES_CANON) total += Number(p.counts[c] || 0);
     }
 
     return {
       id: regionId,
-      name: r.name,
-      iso3166_2: r.iso3166_2,
-      total_places: total,
-      categories, // map-like object
+      name: r.name || null,
+      iso3166_2: r.iso3166_2 || null,
+      bbox,                  // ✅ quello che serve per capire la regione via coordinate
+      total_places: total,   // utile per debug
+      paths: p?.paths || {}, // ✅ quello che serve a app.js (core/relax/borghi/cantine/...)
+      counts: p?.counts || {}, // opzionale
+      generated_at: p?.generated_at || null,
     };
   });
 
-  // Global summary
   const summary = {
     regions: items.length,
-    categories: CATEGORIES,
-    total_files_indexed: files.length,
+    categories_canon: CATEGORIES_CANON,
+    aliases: CATEGORY_ALIASES,
+    total_files_seen: files.length,
   };
 
   await writeJson(OUT, {
