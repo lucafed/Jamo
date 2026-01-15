@@ -3,11 +3,17 @@ name: Build Italy Regions Datasets
 on:
   workflow_dispatch:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
     paths:
       - "scripts/**"
       - "configs/it/**"
       - ".github/workflows/build-it-regions.yml"
+  schedule:
+    - cron: "50 3 * * *" # ogni giorno 03:50 UTC (05:50 IT circa) -> puoi cambiare dopo
+
+# ✅ PERMESSI per evitare 403 sul push
+permissions:
+  contents: write
 
 concurrency:
   group: build-it-regions
@@ -20,29 +26,32 @@ jobs:
 
     strategy:
       fail-fast: false
+      # ✅ RIDUCE IL “MARTELLO” SU OVERPASS
+      max-parallel: 2
       matrix:
         region:
-          - it-piemonte
-          - it-valle-d-aosta
-          - it-lombardia
-          - it-trentino-alto-adige
-          - it-veneto
-          - it-friuli-venezia-giulia
-          - it-liguria
-          - it-emilia-romagna
-          - it-toscana
-          - it-umbria
-          - it-marche
-          - it-lazio
           - it-abruzzo
-          - it-molise
-          - it-campania
-          - it-puglia
           - it-basilicata
           - it-calabria
-          - it-sicilia
+          - it-campania
+          - it-emilia-romagna
+          - it-friuli-venezia-giulia
+          - it-lazio
+          - it-liguria
+          - it-lombardia
+          - it-marche
+          - it-molise
+          - it-piemonte
+          - it-puglia
           - it-sardegna
-        kind: [ core, relax, borghi, cantine ]
+          - it-sicilia
+          - it-toscana
+          - it-trentino-alto-adige
+          - it-umbria
+          # ✅ FIX ID REGIONE (deve combaciare con configs/it/regions.json)
+          - it-valle-d-aosta
+          - it-veneto
+        kind: [core, relax, borghi, cantine]
 
     steps:
       - name: Checkout
@@ -56,8 +65,13 @@ jobs:
           node-version: 20
 
       - name: Install deps
+        run: npm ci
+
+      # ✅ “anticollisione”: una micro-pausa prima di sparare a Overpass (riduce ban/429)
+      - name: Warmup delay
         run: |
-          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+          echo "Warmup delay..."
+          sleep $(( (RANDOM % 8) + 2 ))
 
       - name: Build dataset
         env:
@@ -81,17 +95,18 @@ jobs:
   commit:
     name: Commit generated datasets
     runs-on: ubuntu-latest
-    needs: [ build ]
+    needs: [build]
+
+    # ✅ ridichiariamo i permessi anche qui (per sicurezza)
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Pull latest (avoid push rejected)
-        run: |
-          git pull --rebase origin main
+          persist-credentials: true
 
       - name: Download all artifacts
         uses: actions/download-artifact@v4
@@ -101,7 +116,7 @@ jobs:
       - name: Copy artifacts into repo
         run: |
           mkdir -p public/data/pois/regions
-          find /tmp/artifacts -type f -name "*.json" -maxdepth 4 -print -exec cp -f {} public/data/pois/regions/ \;
+          find /tmp/artifacts -type f -name "*.json" -maxdepth 5 -print -exec cp -f {} public/data/pois/regions/ \;
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -109,8 +124,7 @@ jobs:
           node-version: 20
 
       - name: Install deps
-        run: |
-          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+        run: npm ci
 
       - name: Rebuild indexes
         run: |
@@ -129,4 +143,5 @@ jobs:
           fi
 
           git commit -m "build: italy regions datasets"
+          git pull --rebase origin main
           git push origin main
