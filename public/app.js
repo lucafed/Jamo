@@ -1,14 +1,15 @@
-/* Jamo — app.js v17.2
+/* Jamo — app.js v18.0
  * Mobile-first • Offline-only • Flusso pulito • Risultato centrale
  *
  * ✅ NO GPS
  * ✅ OFFLINE-ONLY (dataset in /public/data/...)
- * ✅ Relax + Borghi + Cantine (+ tutte le regioni IT via index)
+ * ✅ Italia: AUTO regione via it-regions-index.json (bbox)
+ * ✅ Italia: MAI macro EU (solo regional + fallback core + radius ultima spiaggia)
+ * ✅ Relax + Borghi + Cantine (e tutte le categorie: se il file non esiste -> fallback core)
  * ✅ Ovunque = MIX vero (solo mete "buone")
  * ✅ Pulizia forte anti-spazzatura (infrastrutture/aree tecniche/parcheggi ecc.)
  * ✅ Radius = fallback silenzioso (non mostrato come "radius-*.json" in UI)
  * ✅ FIX: se dataset non ha visibility => non blocca chicche/classici
- * ✅ FIX: Region-first per TUTTA Italia (via it-regions-index.json)
  */
 
 (() => {
@@ -28,20 +29,21 @@
     ALTS_INITIAL: 6,
     ALTS_PAGE: 6,
 
+    // ✅ IT regions index (bbox + ids)
+    IT_REGIONS_INDEX_URL: "/data/pois/regions/it-regions-index.json",
+
+    // 🔻 MACRO: consentite SOLO fuori Italia
     MACROS_INDEX_URL: "/data/macros/macros_index.json",
     FALLBACK_MACRO_URLS: [
       "/data/macros/euuk_country_it.json",
       "/data/macros/euuk_macro_all.json",
     ],
 
-    // ✅ Index regioni (generato dai tuoi workflow)
-    IT_REGIONS_INDEX_URL: "/data/pois/regions/it-regions-index.json",
-
-    // ✅ Radius (fallback, anche fuori Italia)
-    RADIUS_BY_CATEGORY: {
-      relax: "/data/pois/regions/relax-radius.json",
-      borghi: "/data/pois/regions/borghi-radius.json",
-      cantine: "/data/pois/regions/cantine-radius.json",
+    // ✅ Radius fallback (ultima spiaggia)
+    RADIUS_BY_CAT: {
+      relax: "/data/pois/regions/radius-relax.json",
+      borghi: "/data/pois/regions/radius-borghi.json",
+      cantine: "/data/pois/regions/radius-cantine.json",
     },
 
     LIVE_ENABLED: false,
@@ -64,6 +66,9 @@
   let SEARCH_ABORT = null;
 
   let MACROS_INDEX = null;
+
+  // ✅ Regions index cached
+  let IT_REGIONS_INDEX = null;
 
   let DATASET = { key: null, kind: null, source: null, places: [], meta: {} };
 
@@ -115,7 +120,10 @@
 
   function withinBBox(lat, lon, bbox) {
     if (!bbox) return false;
-    return lat >= bbox.minLat && lat <= bbox.maxLat && lon >= bbox.minLon && lon <= bbox.maxLon;
+    return (
+      lat >= bbox.minLat && lat <= bbox.maxLat &&
+      lon >= bbox.minLon && lon <= bbox.maxLon
+    );
   }
 
   function isWinterNow() {
@@ -403,7 +411,6 @@
   }
 
   // -------------------- DATA NORMALIZATION --------------------
-  // FIX: se manca visibility => "unknown" (non blocca chicche/classici)
   function normalizeVisibility(v) {
     const raw = String(v ?? "").trim();
     if (!raw) return "unknown";
@@ -442,10 +449,9 @@
     return out;
   }
 
-  // -------------------- DATASET LOADING --------------------
-  let IT_REGIONS_INDEX = null;
-
+  // -------------------- IT REGIONS INDEX --------------------
   async function loadItRegionsIndexSafe(signal) {
+    if (IT_REGIONS_INDEX?.items?.length) return IT_REGIONS_INDEX;
     try {
       IT_REGIONS_INDEX = await fetchJson(CFG.IT_REGIONS_INDEX_URL, { signal });
     } catch {
@@ -454,89 +460,67 @@
     return IT_REGIONS_INDEX;
   }
 
-  function getRegionsListFromIndex() {
-    const idx = IT_REGIONS_INDEX;
-    if (!idx) return [];
-    const arr = idx.items || idx.regions || idx.list || [];
-    return Array.isArray(arr) ? arr : [];
-  }
-
-  function regionPathFromIndex(regionId, category) {
-    const regions = getRegionsListFromIndex();
-    const r = regions.find(x => String(x.id || x.regionId || "").trim() === String(regionId));
-    if (!r) return "";
-
-    const paths = r.paths || r.files || r.urls || {};
-
-    if (!category || category === "core" || category === "ovunque") {
-      return paths.core || paths.base || paths.main || "";
-    }
-
-    return (paths[category] || paths[`${category}`] || "");
-  }
-
-  function regionBBoxFromIndex(regionId) {
-    const regions = getRegionsListFromIndex();
-    const r = regions.find(x => String(x.id || x.regionId || "").trim() === String(regionId));
-    if (!r) return null;
-
-    const b = r.bbox || r.bounds || r.BBOX || null;
-    if (!b) return null;
-
-    if (
-      Number.isFinite(b.minLat) && Number.isFinite(b.maxLat) &&
-      Number.isFinite(b.minLon) && Number.isFinite(b.maxLon)
-    ) return b;
-
-    if (
-      Number.isFinite(b.south) && Number.isFinite(b.north) &&
-      Number.isFinite(b.west) && Number.isFinite(b.east)
-    ) {
-      return { minLat: b.south, maxLat: b.north, minLon: b.west, maxLon: b.east };
-    }
-
-    return null;
-  }
-
-  function pickItRegionIdFromOrigin(origin) {
+  function findItRegionIdFromOrigin(origin) {
     const lat = Number(origin?.lat);
     const lon = Number(origin?.lon);
-    const cc = String(origin?.country_code || "").toUpperCase();
-    if (cc !== "IT") return "";
+    if (!Number.isFinite(lat) || !Number.isFinite(lon)) return "";
 
-    const regions = getRegionsListFromIndex();
-    if (!regions.length) return "";
+    if (!IT_REGIONS_INDEX?.items?.length) return "";
 
-    const saved = localStorage.getItem("jamo_region_id");
-    if (saved) {
-      const bb = regionBBoxFromIndex(saved);
-      if (bb && withinBBox(lat, lon, bb)) return saved;
+    for (const it of IT_REGIONS_INDEX.items) {
+      const bbox = it?.bbox;
+      if (bbox && withinBBox(lat, lon, bbox)) return String(it.id || "");
     }
-
-    for (const r of regions) {
-      const id = String(r.id || r.regionId || "").trim();
-      if (!id) continue;
-      const bb = regionBBoxFromIndex(id);
-      if (bb && withinBBox(lat, lon, bb)) return id;
-    }
-
     return "";
   }
 
-  function defaultRegionalPath(regionId, category) {
-    if (!regionId) return "";
-    if (!category || category === "ovunque" || category === "core") {
-      return `/data/pois/regions/${regionId}.json`;
-    }
-    return `/data/pois/regions/${regionId}-${category}.json`;
+  // UI category -> filename category (canon + alias)
+  function mapCategoryToFileCat(cat) {
+    const c = String(cat || "").toLowerCase().trim();
+    if (!c || c === "ovunque") return "core";
+
+    // aliases (dal tuo index)
+    if (c === "viewpoints") return "panorami";
+    if (c === "hiking") return "trekking";
+    if (c === "città" || c === "city") return "citta";
+
+    // già canon
+    return c;
   }
 
+  function itRegionCorePath(regionId) {
+    // usa index se presente, altrimenti convenzione
+    const hit = IT_REGIONS_INDEX?.items?.find(x => String(x.id) === String(regionId));
+    if (hit?.paths?.core) return String(hit.paths.core);
+    return `/data/pois/regions/${regionId}.json`;
+  }
+
+  function itRegionCategoryPath(regionId, fileCat) {
+    if (!regionId) return "";
+    if (!fileCat || fileCat === "core") return itRegionCorePath(regionId);
+    return `/data/pois/regions/${regionId}-${fileCat}.json`;
+  }
+
+  // -------------------- MACROS (solo estero) --------------------
   async function loadMacrosIndexSafe(signal) {
     try { MACROS_INDEX = await fetchJson(CFG.MACROS_INDEX_URL, { signal }); }
     catch { MACROS_INDEX = null; }
     return MACROS_INDEX;
   }
 
+  function findCountryMacroPath(cc) {
+    if (!MACROS_INDEX?.items?.length) return null;
+    const c = String(cc || "").toUpperCase();
+    if (!c) return null;
+
+    const hit = MACROS_INDEX.items.find(x =>
+      String(x.id || "") === `euuk_country_${c.toLowerCase()}` ||
+      String(x.path || "").includes(`euuk_country_${c.toLowerCase()}.json`)
+    );
+    return hit?.path || null;
+  }
+
+  // -------------------- DATASET LOADING --------------------
   async function tryLoadPlacesFile(url, signal) {
     try {
       const r = await fetch(url, { cache: "no-store", signal });
@@ -557,52 +541,41 @@
     }
   }
 
-  function findCountryMacroPath(cc) {
-    if (!MACROS_INDEX?.items?.length) return null;
-    const c = String(cc || "").toUpperCase();
-    if (!c) return null;
-
-    const hit = MACROS_INDEX.items.find(x =>
-      String(x.id || "") === `euuk_country_${c.toLowerCase()}` ||
-      String(x.path || "").includes(`euuk_country_${c.toLowerCase()}.json`)
-    );
-    return hit?.path || null;
-  }
-
   function preferredDatasetUrls(origin, category) {
     const urls = [];
     const cc = String(origin?.country_code || "").toUpperCase();
+    const fileCat = mapCategoryToFileCat(category);
 
-    const regionId = pickItRegionIdFromOrigin(origin);
+    // ✅ IT: SOLO regional (categoria -> core) + radius come ultima spiaggia
+    if (cc === "IT") {
+      const regionId = findItRegionIdFromOrigin(origin);
 
-    const add = (u) => { if (u) urls.push(u); };
+      // 1) categoria specifica (se esiste)
+      if (regionId) urls.push(itRegionCategoryPath(regionId, fileCat));
 
-    const addRegional = (rid, catKey) => {
-      const fromIndex = regionPathFromIndex(rid, catKey);
-      add(fromIndex || defaultRegionalPath(rid, catKey));
-    };
+      // 2) core regione
+      if (regionId) urls.push(itRegionCorePath(regionId));
 
-    if (regionId) {
-      localStorage.setItem("jamo_region_id", regionId);
-
-      if (category && category !== "ovunque") addRegional(regionId, category);
-      addRegional(regionId, "core");
+      // 3) radius ultima spiaggia (solo per alcune categorie)
+      if (CFG.RADIUS_BY_CAT[String(category)]) urls.push(CFG.RADIUS_BY_CAT[String(category)]);
+      return uniqUrls(urls);
     }
 
-    const radiusUrl = CFG.RADIUS_BY_CATEGORY?.[category];
-
-    if (category === "relax") add(radiusUrl);
-    if (category === "borghi") add(radiusUrl);
-
+    // 🌍 Estero: macro paese + fallback + radius
+    urls.push(...Object.values(CFG.RADIUS_BY_CAT)); // radius prima: utile per estero
+    // macros index + macro paese + fallback
+    // (carichiamo index in ensureDatasetLoaded)
     const countryMacro = findCountryMacroPath(cc);
-    add(countryMacro);
-    for (const u of CFG.FALLBACK_MACRO_URLS) add(u);
-
-    if (category === "cantine") add(radiusUrl);
+    if (countryMacro) urls.push(countryMacro);
+    for (const u of CFG.FALLBACK_MACRO_URLS) urls.push(u);
 
     const savedMacro = localStorage.getItem("jamo_macro_url");
-    add(savedMacro);
+    if (savedMacro) urls.push(savedMacro);
 
+    return uniqUrls(urls);
+  }
+
+  function uniqUrls(urls) {
     const out = [];
     const seen = new Set();
     for (const u of urls) {
@@ -615,11 +588,21 @@
   }
 
   async function ensureDatasetLoaded(origin, category, { signal } = {}) {
+    // carica index IT per bbox
     await loadItRegionsIndexSafe(signal);
-    await loadMacrosIndexSafe(signal);
+
+    // macro index solo se estero
+    const cc = String(origin?.country_code || "").toUpperCase();
+    if (cc !== "IT") await loadMacrosIndexSafe(signal);
 
     const preferred = preferredDatasetUrls(origin, category);
-    const key = `${origin?.lat?.toFixed?.(3) || "x"}|${origin?.lon?.toFixed?.(3) || "y"}|${String(category || "ovunque")}|${preferred.join(",")}`;
+
+    const key = [
+      origin?.lat?.toFixed?.(3) || "x",
+      origin?.lon?.toFixed?.(3) || "y",
+      String(category || "ovunque"),
+      preferred[0] || "none",
+    ].join("|");
 
     if (DATASET?.places?.length && DATASET.key === key) return DATASET;
 
@@ -627,18 +610,19 @@
       const loaded = await tryLoadPlacesFile(url, signal);
       if (!loaded) continue;
 
-      const file = (url.split("/").pop() || "");
-      const isRadius = file.includes("radius");
-      const isRegional = url.includes("/data/pois/regions/") && !isRadius;
+      const file = String(url).split("/").pop() || "";
+      const isRegional = url.includes("/data/pois/regions/") && file.startsWith("it-");
+      const isRadius = file.startsWith("radius-");
 
       DATASET = {
         key,
-        kind: isRadius ? "radius" : (isRegional ? "pois_region" : "macro"),
+        kind: isRegional ? "pois_region" : (isRadius ? "pois_radius" : "macro"),
         source: url,
         places: loaded.places,
-        meta: { raw: loaded.json, cc: String(origin?.country_code || "").toUpperCase() },
+        meta: { raw: loaded.json, cc },
       };
 
+      // salva macro solo se macro
       if (DATASET.kind === "macro") localStorage.setItem("jamo_macro_url", url);
 
       console.log("[JAMO] dataset loaded:", url, "places:", loaded.places.length);
@@ -1032,12 +1016,10 @@
     return matchesCategoryStrict(place, cat);
   }
 
-  // FIX: unknown visibility non deve bloccare
   function matchesStyle(place, { wantChicche, wantClassici }) {
     const vis = normalizeVisibility(place?.visibility);
 
     if (!wantChicche && !wantClassici) return true;
-
     if (vis === "unknown") return true;
 
     if (vis === "chicca") return !!wantChicche;
@@ -1440,11 +1422,22 @@
     });
   }
 
-  function datasetInfoLabel(dataset, poolLen) {
+  function datasetInfoLabel(dataset, poolLen, origin, category) {
     const src = String(dataset?.source || "");
     const file = src.split("/").pop() || "";
-    if (dataset?.kind === "radius") return `POI offline (${poolLen})`;
-    if (dataset?.kind === "pois_region") return `REGION:${file} (${poolLen})`;
+
+    const cc = String(origin?.country_code || "").toUpperCase();
+    if (cc === "IT" && IT_REGIONS_INDEX?.items?.length) {
+      const regionId = findItRegionIdFromOrigin(origin);
+      const regionName = IT_REGIONS_INDEX.items.find(x => String(x.id) === String(regionId))?.name || regionId || "Italia";
+      const fileCat = mapCategoryToFileCat(category);
+      const kind = dataset?.kind === "pois_radius" ? "RADIUS" : "IT";
+      return `${kind}:${regionName}/${fileCat} (${poolLen})`;
+    }
+
+    const isRadius = file.includes("radius");
+    if (isRadius) return `POI offline (${poolLen})`;
+    if (dataset?.kind === "pois_region") return `POI:${file} (${poolLen})`;
     if (dataset?.kind === "macro") return `MACRO:${file} (${poolLen})`;
     return `offline (${poolLen})`;
   }
@@ -1607,7 +1600,7 @@
       await ensureDatasetLoaded(origin, category, { signal });
 
       const basePool = Array.isArray(DATASET?.places) ? DATASET.places : [];
-      const datasetInfo = datasetInfoLabel(DATASET, basePool.length);
+      const datasetInfo = datasetInfoLabel(DATASET, basePool.length, origin, category);
 
       const steps = widenMinutesSteps(maxMinutesInput, category);
 
@@ -1740,6 +1733,7 @@
     resetRotation,
     resetVisited,
     getOrigin,
-    getDataset: () => DATASET
+    getDataset: () => DATASET,
+    getItRegionsIndex: () => IT_REGIONS_INDEX
   };
 })();
