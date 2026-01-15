@@ -1,13 +1,12 @@
-/* Jamo — app.js v18.0
+/* Jamo — app.js v18.0 (FULL)
  * Mobile-first • Offline-only • Flusso pulito • Risultato centrale
  *
- * ✅ Offline-only (dataset in /public/data/...)
- * ✅ Auto-selezione regione IT via it-regions-index.json
- * ✅ Relax + Borghi + Cantine: preferisci dataset dedicato regionale, poi core, poi radius silenzioso
- * ✅ Tutte le altre categorie: usa core regionale + filtri in app.js (come Veneto)
- * ✅ Ovunque = MIX vero (solo mete "buone")
- * ✅ Pulizia forte anti-spazzatura
- * ✅ Radius = fallback silenzioso (mai mostrato come "radius-*.json" in UI)
+ * ✅ NO GPS
+ * ✅ OFFLINE-ONLY (dataset in /public/data/...)
+ * ✅ Italia: regioni automatiche via bbox (it-regions-index.json)
+ * ✅ Per ogni categoria: prova <regione>-<categoria>.json → <regione>.json → radius-<categoria>.json → macro
+ * ✅ Pulizia forte anti-spazzatura (infrastrutture/aree tecniche/parcheggi ecc.)
+ * ✅ Radius = fallback silenzioso (non mostrato come "radius-*.json" in UI, ma come RADIUS:...)
  * ✅ FIX: se dataset non ha visibility => non blocca chicche/classici
  */
 
@@ -28,22 +27,15 @@
     ALTS_INITIAL: 6,
     ALTS_PAGE: 6,
 
-    // Indice regioni Italia (generato)
+    // ✅ Italia regions index (bbox + counts)
     IT_REGIONS_INDEX_URL: "/data/pois/regions/it-regions-index.json",
 
-    // Macro (EU/UK) fallback solo se fuori Italia o se non troviamo nulla
+    // ✅ Macro (ultimissimo fallback)
     MACROS_INDEX_URL: "/data/macros/macros_index.json",
     FALLBACK_MACRO_URLS: [
       "/data/macros/euuk_country_it.json",
       "/data/macros/euuk_macro_all.json",
     ],
-
-    // Radius (fallback silenzioso)
-    RADIUS_BY_CATEGORY: {
-      relax: "/data/pois/regions/radius-relax.json",
-      borghi: "/data/pois/regions/radius-borghi.json",
-      cantine: "/data/pois/regions/radius-cantine.json",
-    },
 
     LIVE_ENABLED: false,
 
@@ -65,6 +57,8 @@
   let SEARCH_ABORT = null;
 
   let MACROS_INDEX = null;
+
+  // ✅ IT regions index (bbox)
   let IT_REGIONS_INDEX = null;
 
   let DATASET = { key: null, kind: null, source: null, places: [], meta: {} };
@@ -420,8 +414,8 @@
     if (s === "borgo") return "borghi";
     if (s === "borghi") return "borghi";
     if (s === "città" || s === "citta") return "citta";
-    if (s === "viewpoints") return "panorami";
-    if (s === "hiking") return "trekking";
+    if (s === "panorami") return "viewpoints";
+    if (s === "trekking") return "hiking";
     return s;
   }
 
@@ -445,19 +439,65 @@
     return out;
   }
 
-  // -------------------- INDEX LOADING --------------------
+  // -------------------- ITALY REGIONS INDEX --------------------
+  async function loadItalyRegionsIndexSafe(signal) {
+    try {
+      IT_REGIONS_INDEX = await fetchJson(CFG.IT_REGIONS_INDEX_URL, { signal });
+    } catch {
+      IT_REGIONS_INDEX = null;
+    }
+    return IT_REGIONS_INDEX;
+  }
+
+  function pickItalyRegionIdByOrigin(origin) {
+    const lat = Number(origin?.lat);
+    const lon = Number(origin?.lon);
+    if (!Number.isFinite(lat) || !Number.isFinite(lon)) return "";
+    if (!IT_REGIONS_INDEX?.items?.length) return "";
+
+    for (const r of IT_REGIONS_INDEX.items) {
+      if (!r?.bbox) continue;
+      if (withinBBox(lat, lon, r.bbox)) return String(r.id || "");
+    }
+    return "";
+  }
+
+  // -------------------- MACROS INDEX --------------------
   async function loadMacrosIndexSafe(signal) {
     try { MACROS_INDEX = await fetchJson(CFG.MACROS_INDEX_URL, { signal }); }
     catch { MACROS_INDEX = null; }
     return MACROS_INDEX;
   }
 
-  async function loadItRegionsIndexSafe(signal) {
-    try { IT_REGIONS_INDEX = await fetchJson(CFG.IT_REGIONS_INDEX_URL, { signal }); }
-    catch { IT_REGIONS_INDEX = null; }
-    return IT_REGIONS_INDEX;
+  function findCountryMacroPath(cc) {
+    if (!MACROS_INDEX?.items?.length) return null;
+    const c = String(cc || "").toUpperCase();
+    if (!c) return null;
+
+    const hit =—allignRemoveThis—MACROS_INDEX.items.find(x =>
+      String(x.id || "") === `euuk_country_${c.toLowerCase()}` ||
+      String(x.path || "").includes(`euuk_country_${c.toLowerCase()}.json`)
+    );
+    return hit?.path || null;
   }
 
+  // NOTE: il repo macro index può variare; quindi gestiamo robusto:
+  function findCountryMacroPathRobust(cc) {
+    if (!MACROS_INDEX?.items?.length) return null;
+    const c = String(cc || "").toUpperCase();
+    if (!c) return null;
+
+    for (const x of MACROS_INDEX.items) {
+      const id = String(x?.id || "");
+      const p = String(x?.path || "");
+      if (id === `euuk_country_${c.toLowerCase()}`) return p || null;
+      if (p.endsWith(`/euuk_country_${c.toLowerCase()}.json`)) return p || null;
+      if (p.includes(`euuk_country_${c.toLowerCase()}.json`)) return p || null;
+    }
+    return null;
+  }
+
+  // -------------------- DATASET LOADING --------------------
   async function tryLoadPlacesFile(url, signal) {
     try {
       const r = await fetch(url, { cache: "no-store", signal });
@@ -478,96 +518,46 @@
     }
   }
 
-  function findCountryMacroPath(cc) {
-    if (!MACROS_INDEX?.items?.length) return null;
-    const c = String(cc || "").toUpperCase();
-    if (!c) return null;
+  function canonicalCategory(cat) {
+    const c = String(cat || "").toLowerCase().trim();
+    if (!c || c === "ovunque") return "core";
 
-    const hit = MACROS_INDEX.items.find(x =>
-      String(x.id || "") === `euuk_country_${c.toLowerCase()}` ||
-      String(x.path || "").includes(`euuk_country_${c.toLowerCase()}.json`)
-    );
-    return hit?.path || null;
+    // alias UI → file
+    if (c === "panorami") return "viewpoints";
+    if (c === "trekking") return "hiking";
+    if (c === "città" || c === "city") return "citta";
+
+    // già canoniche
+    return c;
   }
 
-  function pickItalyRegionIdByOrigin(origin) {
-    const lat = Number(origin?.lat);
-    const lon = Number(origin?.lon);
-    if (!Number.isFinite(lat) || !Number.isFinite(lon)) return "";
-
-    if (!IT_REGIONS_INDEX?.items?.length) return "";
-
-    for (const r of IT_REGIONS_INDEX.items) {
-      if (!r?.bbox) continue;
-      if (withinBBox(lat, lon, r.bbox)) return String(r.id || "");
-    }
-    return "";
-  }
-
-  function italyRegionPaths(regionId) {
-    if (!regionId || !IT_REGIONS_INDEX?.items?.length) return null;
-    const r = IT_REGIONS_INDEX.items.find(x => String(x.id) === String(regionId));
-    if (!r) return null;
-
-    const paths = r.paths || r.categories || {}; // compat
-    const counts = r.counts || {};
-    const bbox = r.bbox || null;
-
-    return { regionId, name: r.name || regionId, paths, counts, bbox };
-  }
-
-  function preferredDatasetUrls(origin, category) {
+  function preferredDatasetUrls(origin, categoryUI) {
     const urls = [];
+    const push = (u) => { const s = String(u || "").trim(); if (s) urls.push(s); };
+
+    const cat = canonicalCategory(categoryUI); // core / mare / natura / ... / borghi / relax / cantine / viewpoints / hiking / citta
 
     const cc = String(origin?.country_code || "").toUpperCase();
-    const isItaly = (cc === "IT");
 
-    // Assicurati di avere l’indice regioni (se disponibile)
-    const regionId = isItaly ? pickItalyRegionIdByOrigin(origin) : "";
-    const reg = isItaly ? italyRegionPaths(regionId) : null;
+    // ✅ Robust: se coordinate cadono in bbox IT → Italia anche se cc vuoto
+    const regionId = pickItalyRegionIdByOrigin(origin);
+    const isItaly = (cc === "IT") || !!regionId;
 
-    const push = (u) => {
-      const s = String(u || "").trim();
-      if (s) urls.push(s);
-    };
-
-    const pushIfExistsByIndex = (cat) => {
-      if (!reg?.paths) return false;
-      const u = reg.paths[cat];
-      if (u) { push(u); return true; }
-      return false;
-    };
-
-    // 1) Italia: preferisci dataset regionali
-    if (isItaly && reg) {
-      // Per relax/borghi/cantine: prima il dedicato, poi core
-      if (category === "relax") {
-        if (!pushIfExistsByIndex("relax")) { /* ok */ }
-        pushIfExistsByIndex("core");
-        // radius dopo, come fallback
-        push(CFG.RADIUS_BY_CATEGORY.relax);
-      } else if (category === "borghi") {
-        if (!pushIfExistsByIndex("borghi")) { /* ok */ }
-        pushIfExistsByIndex("core");
-        // radius SOLO dopo (borghi radius spesso sporco)
-        push(CFG.RADIUS_BY_CATEGORY.borghi);
-      } else if (category === "cantine") {
-        if (!pushIfExistsByIndex("cantine")) { /* ok */ }
-        pushIfExistsByIndex("core");
-        push(CFG.RADIUS_BY_CATEGORY.cantine);
-      } else {
-        // Tutte le altre categorie: usa core regionale (come Veneto)
-        pushIfExistsByIndex("core");
-      }
+    // 1) Se Italia e regione trovata: prova file regionale specifico categoria
+    if (isItaly && regionId) {
+      if (cat !== "core") push(`/data/pois/regions/${regionId}-${cat}.json`);
+      push(`/data/pois/regions/${regionId}.json`);
     }
 
-    // 2) Macro paese (fuori Italia o fallback)
-    // (se sei in IT ma per qualche motivo non hai region match o dataset vuoto, cade qui)
-    const countryMacro = findCountryMacroPath(cc);
+    // 2) Radius (hai questi file veri in repo)
+    if (cat !== "core") push(`/data/pois/regions/radius-${cat}.json`);
+
+    // 3) Macro paese (se esiste) + fallback
+    const countryMacro = findCountryMacroPathRobust(cc || (isItaly ? "IT" : ""));
     if (countryMacro) push(countryMacro);
     for (const u of CFG.FALLBACK_MACRO_URLS) push(u);
 
-    // 3) ultimo macro salvato
+    // 4) Macro salvato
     const savedMacro = localStorage.getItem("jamo_macro_url");
     if (savedMacro) push(savedMacro);
 
@@ -582,12 +572,12 @@
     return out;
   }
 
-  async function ensureDatasetLoaded(origin, category, { signal } = {}) {
+  async function ensureDatasetLoaded(origin, categoryUI, { signal } = {}) {
+    await loadItalyRegionsIndexSafe(signal);
     await loadMacrosIndexSafe(signal);
-    await loadItRegionsIndexSafe(signal);
 
-    const preferred = preferredDatasetUrls(origin, category);
-    const key = `${origin?.lat?.toFixed?.(3) || "x"}|${origin?.lon?.toFixed?.(3) || "y"}|${String(category || "ovunque")}|${preferred[0] || "none"}`;
+    const preferred = preferredDatasetUrls(origin, categoryUI);
+    const key = `${origin?.lat?.toFixed?.(3) || "x"}|${origin?.lon?.toFixed?.(3) || "y"}|${String(categoryUI || "ovunque")}|${preferred[0] || "none"}`;
 
     if (DATASET?.places?.length && DATASET.key === key) return DATASET;
 
@@ -595,20 +585,19 @@
       const loaded = await tryLoadPlacesFile(url, signal);
       if (!loaded) continue;
 
-      const isRegional = url.includes("/data/pois/regions/");
+      const file = String(url).split("/").pop() || "";
+      const isRadius = file.startsWith("radius-");
+      const isRegional = url.includes("/data/pois/regions/") && file.startsWith("it-");
+
       DATASET = {
         key,
-        kind: isRegional ? "pois_region" : "macro",
+        kind: isRadius ? "radius" : isRegional ? "pois_region" : "macro",
         source: url,
         places: loaded.places,
-        meta: {
-          raw: loaded.json,
-          cc: String(origin?.country_code || "").toUpperCase(),
-          regionId: String(pickItalyRegionIdByOrigin(origin) || ""),
-        },
+        meta: { raw: loaded.json, cc: String(origin?.country_code || "").toUpperCase() },
       };
 
-      if (!isRegional) localStorage.setItem("jamo_macro_url", url);
+      if (DATASET.kind === "macro") localStorage.setItem("jamo_macro_url", url);
 
       console.log("[JAMO] dataset loaded:", url, "places:", loaded.places.length);
       return DATASET;
@@ -620,7 +609,7 @@
   // -------------------- GEOCODING --------------------
   async function geocodeLabel(label) {
     const q = String(label || "").trim();
-    if (!q) throw new Error("Scrivi un luogo (es: Verona, Milano, Roma...)");
+    if (!q) throw new Error("Scrivi un luogo (es: Verona, Padova, Venezia...)");
     const r = await fetch(`/api/geocode?q=${encodeURIComponent(q)}`, { method: "GET", cache: "no-store" });
     const j = await r.json().catch(() => null);
     if (!j) throw new Error("Geocoding fallito (risposta vuota)");
@@ -805,7 +794,7 @@
     const t = tagsStr(place);
     const type = normalizeType(place?.type);
 
-    if (type === "trekking") return true;
+    if (type === "hiking") return true;
     if (t.includes("amenity=shelter") || t.includes("tourism=alpine_hut")) return true;
 
     if (t.includes("information=guidepost")) {
@@ -928,8 +917,9 @@
     return false;
   }
 
-  function matchesCategoryStrict(place, cat) {
-    if (!cat || cat === "ovunque") return true;
+  function matchesCategoryStrict(place, catUI) {
+    const cat = canonicalCategory(catUI);
+    if (!cat || cat === "core") return true;
 
     const type = normalizeType(place?.type);
     const t = tagsStr(place);
@@ -948,8 +938,8 @@
     if (cat === "borghi") return isBorgo(place);
     if (cat === "citta") return isCity(place);
     if (cat === "montagna") return isMountain(place);
-    if (cat === "panorami") return isRealViewpoint(place);
-    if (cat === "trekking") return isHiking(place);
+    if (cat === "viewpoints") return isRealViewpoint(place);
+    if (cat === "hiking") return isHiking(place);
     if (cat === "cantine") return isWinery(place);
 
     if (cat === "family") {
@@ -971,8 +961,9 @@
     return true;
   }
 
-  function matchesCategoryRelaxed(place, cat) {
-    if (!cat || cat === "ovunque") return true;
+  function matchesCategoryRelaxed(place, catUI) {
+    const cat = canonicalCategory(catUI);
+    if (!cat || cat === "core") return true;
     const t = tagsStr(place);
 
     if (cat === "relax") {
@@ -1005,7 +996,6 @@
 
     if (!wantChicche && !wantClassici) return true;
 
-    // se manca visibility, lasciamo passare (così chicche-only non resta a secco)
     if (vis === "unknown") return true;
 
     if (vis === "chicca") return !!wantChicche;
@@ -1066,7 +1056,8 @@
     return 0;
   }
 
-  function familyBoost(place, category) {
+  function familyBoost(place, categoryUI) {
+    const category = canonicalCategory(categoryUI);
     if (category !== "family") return 0;
     if (isThemePark(place)) return 0.28;
     if (isWaterPark(place)) return 0.24;
@@ -1079,7 +1070,8 @@
     return 0;
   }
 
-  function cantineBoost(place, category) {
+  function cantineBoost(place, categoryUI) {
+    const category = canonicalCategory(categoryUI);
     if (category !== "cantine") return 0;
     const t = tagsStr(place);
     const n = normName(place?.name || "");
@@ -1091,7 +1083,8 @@
     return b;
   }
 
-  function widenMinutesSteps(m, category) {
+  function widenMinutesSteps(m, categoryUI) {
+    const category = canonicalCategory(categoryUI);
     const base = clamp(Number(m) || 120, 10, 600);
     const steps = [base];
     const muls =
@@ -1107,7 +1100,7 @@
   }
 
   // -------------------- PICK OPTIONS --------------------
-  function buildCandidatesFromPool(pool, origin, maxMinutes, category, styles, {
+  function buildCandidatesFromPool(pool, origin, maxMinutes, categoryUI, styles, {
     ignoreVisited=false,
     ignoreRotation=false,
     relaxedCategory=false
@@ -1129,19 +1122,19 @@
       if (!nm || nm.length < 2) continue;
 
       if (isClearlyIrrelevantPlace(p)) continue;
-      if (isLodgingOrFood(p, category)) continue;
+      if (isLodgingOrFood(p, canonicalCategory(categoryUI))) continue;
 
       let okCat = true;
-      if (category === "ovunque") {
+      if (String(categoryUI) === "ovunque") {
         okCat = matchesAnyGoodCategory(p);
       } else {
         okCat = relaxedCategory
-          ? matchesCategoryRelaxed(p, category)
-          : matchesCategoryStrict(p, category);
+          ? matchesCategoryRelaxed(p, categoryUI)
+          : matchesCategoryStrict(p, categoryUI);
       }
       if (!okCat) continue;
 
-      if (category === "borghi" && !isNotBorgoNoise(p)) continue;
+      if (canonicalCategory(categoryUI) === "borghi" && !isNotBorgoNoise(p)) continue;
 
       if (!matchesStyle(p, styles)) continue;
 
@@ -1152,18 +1145,18 @@
       const driveMin = estCarMinutesFromKm(km);
       if (!Number.isFinite(driveMin) || driveMin > target) continue;
 
-      if (km < (category === "family" ? 1.2 : 1.6)) continue;
+      if (km < (canonicalCategory(categoryUI) === "family" ? 1.2 : 1.6)) continue;
 
       const isChicca = normalizeVisibility(p.visibility) === "chicca";
       let s = baseScorePlace({ driveMin, targetMin: target, beautyScore: p.beauty_score, isChicca });
 
-      s += familyBoost(p, category);
+      s += familyBoost(p, categoryUI);
       s += seasonAdjust(p);
-      s += cantineBoost(p, category);
+      s += cantineBoost(p, categoryUI);
 
       if (!ignoreRotation) s -= rotationPenalty(pid, recentSet);
 
-      if (category === "relax") {
+      if (canonicalCategory(categoryUI) === "relax") {
         const t = tagsStr(p);
         if (t.includes("natural=hot_spring")) s += 0.18;
         if (t.includes("amenity=public_bath")) s += 0.14;
@@ -1181,17 +1174,17 @@
     return candidates;
   }
 
-  function pickTopOptions(pool, origin, minutes, category, styles) {
-    let c = buildCandidatesFromPool(pool, origin, minutes, category, styles, { ignoreVisited:false, ignoreRotation:false, relaxedCategory:false });
+  function pickTopOptions(pool, origin, minutes, categoryUI, styles) {
+    let c = buildCandidatesFromPool(pool, origin, minutes, categoryUI, styles, { ignoreVisited:false, ignoreRotation:false, relaxedCategory:false });
     if (c.length) return { list: c, usedFallback: false };
 
-    c = buildCandidatesFromPool(pool, origin, minutes, category, styles, { ignoreVisited:false, ignoreRotation:true, relaxedCategory:false });
+    c = buildCandidatesFromPool(pool, origin, minutes, categoryUI, styles, { ignoreVisited:false, ignoreRotation:true, relaxedCategory:false });
     if (c.length) return { list: c, usedFallback: false };
 
-    c = buildCandidatesFromPool(pool, origin, minutes, category, styles, { ignoreVisited:false, ignoreRotation:true, relaxedCategory:true });
+    c = buildCandidatesFromPool(pool, origin, minutes, categoryUI, styles, { ignoreVisited:false, ignoreRotation:true, relaxedCategory:true });
     if (c.length) return { list: c, usedFallback: true };
 
-    c = buildCandidatesFromPool(pool, origin, minutes, category, styles, { ignoreVisited:true, ignoreRotation:true, relaxedCategory:true });
+    c = buildCandidatesFromPool(pool, origin, minutes, categoryUI, styles, { ignoreVisited:true, ignoreRotation:true, relaxedCategory:true });
     return { list: c, usedFallback: true };
   }
 
@@ -1232,7 +1225,8 @@
   }
 
   // -------------------- COPY --------------------
-  function typeBadge(category) {
+  function typeBadge(categoryUI) {
+    const category = String(categoryUI || "");
     const map = {
       natura: { emoji:"🌿", label:"Natura" },
       family: { emoji:"👨‍👩‍👧‍👦", label:"Family" },
@@ -1257,7 +1251,8 @@
     return "⭐ selezione";
   }
 
-  function shortWhatIs(place, category) {
+  function shortWhatIs(place, categoryUI) {
+    const category = canonicalCategory(categoryUI);
     const t = tagsStr(place);
     const n = normName(place?.name || "");
 
@@ -1275,7 +1270,7 @@
     }
     if (category === "relax") return "Relax • terme/spa/sauna (spesso su prenotazione).";
     if (category === "borghi") return "Borgo • centro storico, scorci e foto.";
-    if (category === "ovunque") {
+    if (String(categoryUI) === "ovunque") {
       if (isWinery(place)) return "Cantina/Enoteca • degustazioni e visite.";
       if (isSpaPlace(place) || hasAny(n, ["terme","spa","wellness"])) return "Relax • terme/spa.";
       if (matchesCategoryStrict(place,"storia")) return "Storia • castelli/musei/attrazioni.";
@@ -1298,8 +1293,8 @@
       return "Spot naturalistico • perfetto per uscita veloce.";
     }
 
-    if (category === "panorami") return "Panorama vero • ottimo al tramonto.";
-    if (category === "trekking") return "Trekking • controlla meteo e sentiero.";
+    if (category === "viewpoints") return "Panorama vero • ottimo al tramonto.";
+    if (category === "hiking") return "Trekking • controlla meteo e sentiero.";
     if (category === "storia") return "Luogo storico • verifica orari/mostre.";
     if (category === "mare") return "Mare • spiaggia/marina, stagione consigliata.";
     if (category === "montagna") return "Montagna • meteo importante.";
@@ -1319,13 +1314,13 @@
     `;
   }
 
-  function renderNoResult(maxMinutesShown, category, datasetInfo) {
+  function renderNoResult(maxMinutesShown, categoryUI, datasetInfo) {
     const area = $("resultArea");
     if (!area) return;
 
     area.innerHTML = `
       <div class="card" style="box-shadow:none; border-color:rgba(255,90,90,.40); background:rgba(255,90,90,.10);">
-        <div class="small">❌ Nessuna meta trovata entro <b>${maxMinutesShown} min</b> per <b>${escapeHtml(category)}</b>.</div>
+        <div class="small">❌ Nessuna meta trovata entro <b>${maxMinutesShown} min</b> per <b>${escapeHtml(categoryUI)}</b>.</div>
         <div class="small muted" style="margin-top:6px;">Tip: aumenta minuti oppure cambia categoria/stile.</div>
         <div class="small muted" style="margin-top:10px;">Dataset: ${escapeHtml(datasetInfo || "offline")}</div>
         <div class="row wraprow" style="gap:10px; margin-top:12px;">
@@ -1411,21 +1406,20 @@
   function datasetInfoLabel(dataset, poolLen) {
     const src = String(dataset?.source || "");
     const file = src.split("/").pop() || "";
-    const isRadius = file.includes("radius");
-    if (isRadius) return `POI offline (${poolLen})`; // SILENZIOSO
+    if (dataset?.kind === "radius") return `RADIUS:${file} (${poolLen})`;
     if (dataset?.kind === "pois_region") return `POI:${file} (${poolLen})`;
     if (dataset?.kind === "macro") return `MACRO:${file} (${poolLen})`;
     return `offline (${poolLen})`;
   }
 
-  function renderChosenCard(origin, chosen, category, datasetInfo, usedMinutes, maxMinutesInput) {
+  function renderChosenCard(origin, chosen, categoryUI, datasetInfo, usedMinutes, maxMinutesInput) {
     const area = $("resultArea");
     if (!area) return;
 
     const p = chosen.place;
     const pid = chosen.pid;
 
-    const tb = typeBadge(category);
+    const tb = typeBadge(categoryUI);
     const areaLabel = (p.area || p.country || "").trim() || "—";
     const name = p.name || "";
 
@@ -1435,7 +1429,7 @@
     const img1 = osmStaticImgPrimary(lat, lon, zoom);
     const img2 = osmStaticImgFallback(lat, lon, zoom);
 
-    const what = shortWhatIs(p, category);
+    const what = shortWhatIs(p, categoryUI);
     const vis = visibilityLabel(p);
 
     const widenText = usedMinutes && usedMinutes !== maxMinutesInput ? ` • widen: ${usedMinutes} min` : "";
@@ -1499,7 +1493,7 @@
     });
 
     $("btnBook")?.addEventListener("click", () => {
-      const cat = category;
+      const cat = canonicalCategory(categoryUI);
       const t = tagsStr(p);
 
       if (cat === "cantine") {
@@ -1570,15 +1564,15 @@
       }
 
       const maxMinutesInput = clamp(Number($("maxMinutes")?.value) || 120, 10, 600);
-      const category = getActiveCategory();
+      const categoryUI = getActiveCategory();
       const styles = getActiveStyles();
 
-      await ensureDatasetLoaded(origin, category, { signal });
+      await ensureDatasetLoaded(origin, categoryUI, { signal });
 
       const basePool = Array.isArray(DATASET?.places) ? DATASET.places : [];
       const datasetInfo = datasetInfoLabel(DATASET, basePool.length);
 
-      const steps = widenMinutesSteps(maxMinutesInput, category);
+      const steps = widenMinutesSteps(maxMinutesInput, categoryUI);
 
       let usedMinutes = steps[0];
       let usedFallback = false;
@@ -1587,7 +1581,7 @@
       for (const mins of steps) {
         usedMinutes = mins;
 
-        const res = pickTopOptions(basePool, origin, mins, category, styles);
+        const res = pickTopOptions(basePool, origin, mins, categoryUI, styles);
         usedFallback = !!res.usedFallback;
 
         poolCandidates = dedupeDiverse(res.list);
@@ -1601,8 +1595,8 @@
       if (token !== SEARCH_TOKEN) return;
 
       if (!poolCandidates.length) {
-        renderNoResult(maxMinutesInput, category, datasetInfo);
-        showStatus("warn", `Nessuna meta entro ${maxMinutesInput} min per "${category}". Aumenta minuti o cambia categoria/stile.`);
+        renderNoResult(maxMinutesInput, categoryUI, datasetInfo);
+        showStatus("warn", `Nessuna meta entro ${maxMinutesInput} min per "${categoryUI}". Aumenta minuti o cambia categoria/stile.`);
         return;
       }
 
@@ -1614,12 +1608,12 @@
       const maxAlts = Math.max(0, ALL_OPTIONS.length - 1);
       VISIBLE_ALTS = Math.min(CFG.ALTS_INITIAL, maxAlts);
 
-      renderChosenCard(origin, chosen, category, datasetInfo, usedMinutes, maxMinutesInput);
+      renderChosenCard(origin, chosen, categoryUI, datasetInfo, usedMinutes, maxMinutesInput);
 
       if (!silent) {
         const extra = usedMinutes !== maxMinutesInput ? ` (ho allargato a ${usedMinutes} min)` : "";
         const fb = usedFallback ? " • criteri allargati per trovare più risultati" : "";
-        showStatus("ok", `Trovate ${ALL_OPTIONS.length} opzioni ✅ • categoria: ${category}${extra}${fb}`);
+        showStatus("ok", `Trovate ${ALL_OPTIONS.length} opzioni ✅ • categoria: ${categoryUI}${extra}${fb}`);
       }
     } catch (e) {
       if (String(e?.name || "").includes("Abort")) return;
@@ -1630,13 +1624,13 @@
 
   function openChosen(chosen, meta = {}) {
     const origin = meta.origin || getOrigin();
-    const category = meta.category || getActiveCategory();
-    const datasetInfo = meta.datasetInfo || datasetInfoLabel(DATASET, (DATASET?.places || []).length);
+    const categoryUI = meta.category || getActiveCategory();
+    const datasetInfo = meta.datasetInfo || "";
     const usedMinutes = meta.usedMinutes;
     const maxMinutesInput = meta.maxMinutesInput || Number($("maxMinutes")?.value) || 120;
 
     CURRENT_CHOSEN = chosen;
-    renderChosenCard(origin, chosen, category, datasetInfo, usedMinutes, maxMinutesInput);
+    renderChosenCard(origin, chosen, categoryUI, datasetInfo, usedMinutes, maxMinutesInput);
 
     if (meta.scroll !== false) scrollToId("resultCard");
   }
@@ -1660,6 +1654,8 @@
         if ($("originStatus")) $("originStatus").textContent = "🔎 Cerco il luogo…";
 
         const result = await geocodeLabel(label);
+
+        // ✅ se country_code manca, lo lasciamo comunque (regione via bbox)
         setOrigin({ label: result.label || label, lat: result.lat, lon: result.lon, country_code: result.country_code || "" });
 
         showStatus("ok", "Partenza impostata ✅ Ora scegli categoria/stile e premi CERCA.");
