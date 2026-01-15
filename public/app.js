@@ -1,13 +1,14 @@
-/* Jamo — app.js v19.0 (FULL FIX)
- * Mobile-first • Offline-only • Flusso pulito • Risultato centrale
+/* Jamo — app.js v19.0 (FULL, REGION-FIRST)
+ * Mobile-first • Offline-first • Flusso pulito • Risultato centrale
  *
  * ✅ NO GPS
- * ✅ OFFLINE-ONLY (dataset in /public/data/...)
- * ✅ Italia: usa origin.region_id (da geocode) → fallback bbox via it-regions-index.json
- * ✅ Per ogni categoria: prova <regione>-<categoria>.json → <regione>.json → radius-<categoria>.json → macro
- * ✅ Pulizia forte anti-spazzatura (infrastrutture/aree tecniche/parcheggi ecc.)
- * ✅ Radius = fallback silenzioso (non mostrato come "radius-*.json" in UI, ma come RADIUS:...)
- * ✅ FIX: se dataset non ha visibility => non blocca chicche/classici
+ * ✅ OFFLINE datasets in /public/data/...
+ * ✅ IT: regione da bbox (it-regions-index.json)
+ * ✅ PRIORITÀ:
+ *    1) Regione (categoria) → 2) Regione (core) → 3) Italia radius (categoria) → 4) Macro
+ * ✅ Se regione ha pochi risultati entro minuti, poi consente fuori regione
+ * ✅ Chicche/Classici non blocca se dataset non ha "visibility"
+ * ✅ FIX tap: listeners su container, niente overlay che cattura tocchi
  */
 
 (() => {
@@ -27,10 +28,8 @@
     ALTS_INITIAL: 6,
     ALTS_PAGE: 6,
 
-    // ✅ Italia regions index (bbox + counts)
     IT_REGIONS_INDEX_URL: "/data/pois/regions/it-regions-index.json",
 
-    // ✅ Macro (ultimissimo fallback)
     MACROS_INDEX_URL: "/data/macros/macros_index.json",
     FALLBACK_MACRO_URLS: [
       "/data/macros/euuk_country_it.json",
@@ -47,6 +46,10 @@
     },
 
     CLONE_KM: 2.2,
+
+    // ✅ quanto “insistere” sulla regione prima di permettere fuori regione
+    REGION_MIN_RESULTS: 8,      // se trovi >=8 nella regione, non esci fuori
+    REGION_SOFT_MIN_RESULTS: 3, // se trovi >=3, puoi usare comunque la regione ma poi aggiungere fuori
   };
 
   // -------------------- STATE --------------------
@@ -59,7 +62,8 @@
   let MACROS_INDEX = null;
   let IT_REGIONS_INDEX = null;
 
-  let DATASET = { key: null, kind: null, source: null, places: [], meta: {} };
+  // Nota: ora gestiamo dataset multipli (region + fallback)
+  let DATASETS_USED = []; // [{kind, source, placesLen}...]
 
   let ALL_OPTIONS = [];
   let VISIBLE_ALTS = 0;
@@ -143,9 +147,10 @@
     st.id = "jamo-mini-css";
     st.textContent = `
       .moreBtn{width:100%; border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.04); color:#fff; border-radius:16px; padding:12px; font-weight:950; cursor:pointer;}
-      .optBtn{width:100%; text-align:left; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.03); color:#fff; border-radius:16px; padding:12px; margin-bottom:10px; cursor:pointer;}
-      .optBtn.active{border-color:rgba(0,224,255,.35); background:rgba(0,224,255,.06);}
-      .pill{display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.14); background:rgba(10,15,20,.55); color:#fff; font-weight:900; font-size:13px;}
+      .optBtn{width:100%; text-align:left; border:1px solid rgba(255,255,255,.10); background:rgba(255,255,255,.03); color:#fff; border-radius:16px; padding:12px; cursor:pointer;}
+      .optBtn:active{transform:scale(.99)}
+      .optList{display:flex; flex-direction:column; gap:10px;}
+      .pill{display:inline-flex; gap:8px; align-items:center; padding:7px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.14); background:rgba(0,0,0,.25); font-weight:850; font-size:13px;}
     `;
     document.head.appendChild(st);
   }
@@ -200,7 +205,7 @@
   }
 
   // -------------------- ORIGIN STORAGE --------------------
-  function setOrigin({ label, lat, lon, country_code, region_id, region_name }) {
+  function setOrigin({ label, lat, lon, country_code }) {
     $("originLabel") && ($("originLabel").value = label ?? "");
     $("originLat") && ($("originLat").value = String(lat));
     $("originLon") && ($("originLon").value = String(lon));
@@ -208,20 +213,11 @@
     const cc = String(country_code || "").toUpperCase();
     $("originCC") && ($("originCC").value = cc);
 
-    const rid = String(region_id || "");
-    const rname = String(region_name || "");
-    $("originRegionId") && ($("originRegionId").value = rid);
-    $("originRegionName") && ($("originRegionName").value = rname);
-
-    localStorage.setItem(
-      "jamo_origin",
-      JSON.stringify({ label, lat, lon, country_code: cc, region_id: rid, region_name: rname })
-    );
+    localStorage.setItem("jamo_origin", JSON.stringify({ label, lat, lon, country_code: cc }));
 
     if ($("originStatus")) {
-      const extra = rid ? ` • ${rid}` : "";
       $("originStatus").textContent =
-        `✅ Partenza impostata: ${label || "posizione"} (${Number(lat).toFixed(4)}, ${Number(lon).toFixed(4)})${cc ? " • " + cc : ""}${extra}`;
+        `✅ Partenza impostata: ${label || "posizione"} (${Number(lat).toFixed(4)}, ${Number(lon).toFixed(4)})${cc ? " • " + cc : ""}`;
     }
 
     collapseOriginCard(true);
@@ -232,12 +228,8 @@
     const lon = Number($("originLon")?.value);
     const label = ($("originLabel")?.value || "").trim();
     const ccDom = String($("originCC")?.value || "").toUpperCase();
-    const ridDom = String($("originRegionId")?.value || "");
-    const rnameDom = String($("originRegionName")?.value || "");
 
-    if (Number.isFinite(lat) && Number.isFinite(lon)) {
-      return { label, lat, lon, country_code: ccDom, region_id: ridDom, region_name: rnameDom };
-    }
+    if (Number.isFinite(lat) && Number.isFinite(lon)) return { label, lat, lon, country_code: ccDom };
 
     const raw = localStorage.getItem("jamo_origin");
     if (raw) {
@@ -249,8 +241,6 @@
             lat: Number(o.lat),
             lon: Number(o.lon),
             country_code: String(o.country_code || "").toUpperCase(),
-            region_id: String(o.region_id || ""),
-            region_name: String(o.region_name || ""),
           };
         }
       } catch {}
@@ -296,14 +286,7 @@
     try {
       const o = JSON.parse(raw);
       if (Number.isFinite(Number(o?.lat)) && Number.isFinite(Number(o?.lon))) {
-        setOrigin({
-          label: o.label,
-          lat: o.lat,
-          lon: o.lon,
-          country_code: o.country_code || "",
-          region_id: o.region_id || "",
-          region_name: o.region_name || "",
-        });
+        setOrigin({ label: o.label, lat: o.lat, lon: o.lon, country_code: o.country_code || "" });
         collapseOriginCard(true);
       }
     } catch {}
@@ -462,28 +445,38 @@
     return out;
   }
 
-  // -------------------- ITALY REGIONS INDEX --------------------
+  // -------------------- IT REGIONS INDEX --------------------
   async function loadItalyRegionsIndexSafe(signal) {
-    try { IT_REGIONS_INDEX = await fetchJson(CFG.IT_REGIONS_INDEX_URL, { signal }); }
-    catch { IT_REGIONS_INDEX = null; }
+    if (IT_REGIONS_INDEX?.items?.length) return IT_REGIONS_INDEX;
+    try {
+      IT_REGIONS_INDEX = await fetchJson(CFG.IT_REGIONS_INDEX_URL, { signal });
+    } catch {
+      IT_REGIONS_INDEX = null;
+    }
     return IT_REGIONS_INDEX;
   }
 
-  function pickItalyRegionIdByOriginBBox(origin) {
+  function pickItalyRegionByOrigin(origin) {
     const lat = Number(origin?.lat);
     const lon = Number(origin?.lon);
-    if (!Number.isFinite(lat) || !Number.isFinite(lon)) return "";
-    if (!IT_REGIONS_INDEX?.items?.length) return "";
+    if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
+    const items = IT_REGIONS_INDEX?.items;
+    if (!Array.isArray(items) || !items.length) return null;
 
-    for (const r of IT_REGIONS_INDEX.items) {
+    // se ci sono bbox che si sovrappongono, scegli quella con bbox più “stretta” (area min)
+    let best = null;
+    for (const r of items) {
       if (!r?.bbox) continue;
-      if (withinBBox(lat, lon, r.bbox)) return String(r.id || "");
+      if (!withinBBox(lat, lon, r.bbox)) continue;
+      const area = Math.abs((r.bbox.maxLat - r.bbox.minLat) * (r.bbox.maxLon - r.bbox.minLon));
+      if (!best || area < best.area) best = { r, area };
     }
-    return "";
+    return best?.r || null;
   }
 
   // -------------------- MACROS INDEX --------------------
   async function loadMacrosIndexSafe(signal) {
+    if (MACROS_INDEX?.items?.length) return MACROS_INDEX;
     try { MACROS_INDEX = await fetchJson(CFG.MACROS_INDEX_URL, { signal }); }
     catch { MACROS_INDEX = null; }
     return MACROS_INDEX;
@@ -534,87 +527,98 @@
     return c;
   }
 
-  function preferredDatasetUrls(origin, categoryUI) {
-    const urls = [];
-    const push = (u) => { const s = String(u || "").trim(); if (s) urls.push(s); };
-
-    const cat = canonicalCategory(categoryUI);
-    const cc = String(origin?.country_code || "").toUpperCase();
-
-    // ✅ Regione IT deterministica: prima region_id dal geocode, poi bbox
-    const regionFromGeocode = String(origin?.region_id || "").trim();
-    const regionFromBBox = pickItalyRegionIdByOriginBBox(origin);
-    const regionId = regionFromGeocode || regionFromBBox;
-
-    const isItaly = (cc === "IT") || !!regionId;
-
-    // 1) Italia: file regionale categoria → core regione
-    if (isItaly && regionId) {
-      if (cat !== "core") push(`/data/pois/regions/${regionId}-${cat}.json`);
-      push(`/data/pois/regions/${regionId}.json`);
-    }
-
-    // 2) Radius
-    if (cat !== "core") push(`/data/pois/regions/radius-${cat}.json`);
-
-    // 3) Macro paese (se esiste)
-    const countryMacro = findCountryMacroPathRobust(cc || (isItaly ? "IT" : ""));
-    if (countryMacro) push(countryMacro);
-    for (const u of CFG.FALLBACK_MACRO_URLS) push(u);
-
-    // 4) Macro salvato
-    const savedMacro = localStorage.getItem("jamo_macro_url");
-    if (savedMacro) push(savedMacro);
-
-    // uniq
-    const out = [];
-    const seen = new Set();
-    for (const u of urls) {
-      if (!u || seen.has(u)) continue;
-      seen.add(u);
-      out.push(u);
-    }
-    return out;
+  function datasetInfoLabel(kind, src, poolLen) {
+    const file = String(src || "").split("/").pop() || "";
+    if (kind === "region") return `POI:${file} (${poolLen})`;
+    if (kind === "radius") return `RADIUS:${file} (${poolLen})`;
+    if (kind === "macro") return `MACRO:${file} (${poolLen})`;
+    return `offline (${poolLen})`;
   }
 
-  async function ensureDatasetLoaded(origin, categoryUI, { signal } = {}) {
+  // ✅ Carica in ordine: regione→radius→macro, ma soprattutto: regione PRIMA
+  async function loadPoolsRegionFirst(origin, categoryUI, { signal } = {}) {
     await loadItalyRegionsIndexSafe(signal);
     await loadMacrosIndexSafe(signal);
 
-    const preferred = preferredDatasetUrls(origin, categoryUI);
-    const key = `${origin?.lat?.toFixed?.(3) || "x"}|${origin?.lon?.toFixed?.(3) || "y"}|${String(categoryUI || "ovunque")}|${preferred[0] || "none"}`;
+    DATASETS_USED = [];
 
-    if (DATASET?.places?.length && DATASET.key === key) return DATASET;
+    const cc = String(origin?.country_code || "").toUpperCase();
+    const region = pickItalyRegionByOrigin(origin);
+    const isItaly = (cc === "IT") || !!region;
 
-    for (const url of preferred) {
-      const loaded = await tryLoadPlacesFile(url, signal);
-      if (!loaded) continue;
+    const cat = canonicalCategory(categoryUI);
 
-      const file = String(url).split("/").pop() || "";
-      const isRadius = file.startsWith("radius-");
-      const isRegional = url.includes("/data/pois/regions/") && file.startsWith("it-");
+    const pools = []; // [{kind, source, places, bbox?}]
 
-      DATASET = {
-        key,
-        kind: isRadius ? "radius" : isRegional ? "pois_region" : "macro",
-        source: url,
-        places: loaded.places,
-        meta: { raw: loaded.json, cc: String(origin?.country_code || "").toUpperCase() },
-      };
-
-      if (DATASET.kind === "macro") localStorage.setItem("jamo_macro_url", url);
-
-      console.log("[JAMO] dataset loaded:", url, "places:", loaded.places.length);
-      return DATASET;
+    // 1) Regione categoria (se esiste in index)
+    if (isItaly && region?.id) {
+      const rid = String(region.id);
+      const p1 = (cat !== "core") ? (region.paths?.[cat] || `/data/pois/regions/${rid}-${cat}.json`) : null;
+      if (p1) {
+        const loaded = await tryLoadPlacesFile(p1, signal);
+        if (loaded) {
+          pools.push({ kind: "region", source: p1, places: loaded.places, bbox: region.bbox || null, regionId: rid });
+          DATASETS_USED.push({ kind: "region", source: p1, placesLen: loaded.places.length });
+        }
+      }
+      // 2) Regione core
+      const p2 = region.paths?.core || `/data/pois/regions/${rid}.json`;
+      if (p2) {
+        const loaded = await tryLoadPlacesFile(p2, signal);
+        if (loaded) {
+          pools.push({ kind: "region", source: p2, places: loaded.places, bbox: region.bbox || null, regionId: rid });
+          DATASETS_USED.push({ kind: "region", source: p2, placesLen: loaded.places.length });
+        }
+      }
     }
 
-    throw new Error("Nessun dataset offline valido disponibile.");
+    // 3) Radius categoria (solo se cat non core)
+    if (cat !== "core") {
+      const p3 = `/data/pois/regions/radius-${cat}.json`;
+      const loaded = await tryLoadPlacesFile(p3, signal);
+      if (loaded) {
+        pools.push({ kind: "radius", source: p3, places: loaded.places, bbox: null });
+        DATASETS_USED.push({ kind: "radius", source: p3, placesLen: loaded.places.length });
+      }
+    }
+
+    // 4) Macro paese + fallback
+    const countryMacro = findCountryMacroPathRobust(cc || (isItaly ? "IT" : ""));
+    const macroUrls = [];
+    if (countryMacro) macroUrls.push(countryMacro);
+    for (const u of CFG.FALLBACK_MACRO_URLS) macroUrls.push(u);
+
+    const savedMacro = localStorage.getItem("jamo_macro_url");
+    if (savedMacro) macroUrls.push(savedMacro);
+
+    const uniq = [];
+    const seen = new Set();
+    for (const u of macroUrls) {
+      const s = String(u || "").trim();
+      if (!s || seen.has(s)) continue;
+      seen.add(s);
+      uniq.push(s);
+    }
+
+    for (const u of uniq) {
+      const loaded = await tryLoadPlacesFile(u, signal);
+      if (!loaded) continue;
+      pools.push({ kind: "macro", source: u, places: loaded.places, bbox: null });
+      DATASETS_USED.push({ kind: "macro", source: u, placesLen: loaded.places.length });
+      localStorage.setItem("jamo_macro_url", u);
+      // non serve caricarne 20, basta 1 macro valida
+      break;
+    }
+
+    if (!pools.length) throw new Error("Nessun dataset offline valido disponibile.");
+
+    return { pools, region };
   }
 
   // -------------------- GEOCODING --------------------
   async function geocodeLabel(label) {
     const q = String(label || "").trim();
-    if (!q) throw new Error("Scrivi un luogo (es: Verona, L'Aquila, Roma...)");
+    if (!q) throw new Error("Scrivi un luogo (es: Verona, Padova, Venezia...)");
     const r = await fetch(`/api/geocode?q=${encodeURIComponent(q)}`, { method: "GET", cache: "no-store" });
     const j = await r.json().catch(() => null);
     if (!j) throw new Error("Geocoding fallito (risposta vuota)");
@@ -628,11 +632,7 @@
   // -------------------- TAGS / FILTERS --------------------
   function placeTags(place) { return (place.tags || []).map(t => String(t).toLowerCase()); }
   function tagsStr(place) { return placeTags(place).join(" "); }
-
-  function hasAny(str, arr) {
-    for (const k of arr) if (str.includes(k)) return true;
-    return false;
-  }
+  function hasAny(str, arr) { for (const k of arr) if (str.includes(k)) return true; return false; }
 
   function isClearlyIrrelevantPlace(place) {
     const t = tagsStr(place);
@@ -918,7 +918,6 @@
     if (t.includes("tourism=attraction") && t.includes("wine")) return true;
 
     if (hasAny(n, ["cantina","winery","vini","vino","enoteca","degustaz","wine tasting","wine tour"])) return true;
-
     return false;
   }
 
@@ -1139,7 +1138,6 @@
       if (!okCat) continue;
 
       if (canonicalCategory(categoryUI) === "borghi" && !isNotBorgoNoise(p)) continue;
-
       if (!matchesStyle(p, styles)) continue;
 
       const pid = safeIdFromPlace(p);
@@ -1227,7 +1225,7 @@
     return out;
   }
 
-  // -------------------- COPY --------------------
+  // -------------------- COPY / LABELS --------------------
   function typeBadge(categoryUI) {
     const category = String(categoryUI || "");
     const map = {
@@ -1383,22 +1381,22 @@
     `;
   }
 
-  function bindOptionsClicks() {
+  function bindOptionsClicks(meta) {
     const area = $("resultArea");
     if (!area) return;
 
-    area.querySelectorAll(".optBtn")?.forEach(btn => {
+    area.querySelectorAll(".optBtn").forEach(btn => {
       btn.addEventListener("click", () => {
         const pid2 = btn.getAttribute("data-pid");
         const found = ALL_OPTIONS.find(x => x.pid === pid2);
         if (!found) return;
-        openChosen(found, { scroll: true });
+        openChosen(found, { ...meta, scroll: true });
       });
     });
 
     $("btnMoreAlts")?.addEventListener("click", () => {
       VISIBLE_ALTS = Math.min((ALL_OPTIONS.length - 1), VISIBLE_ALTS + CFG.ALTS_PAGE);
-      openChosen(CURRENT_CHOSEN, { scroll: false });
+      openChosen(CURRENT_CHOSEN, { ...meta, scroll: false });
       setTimeout(() => {
         const more = $("btnMoreAlts");
         (more || $("resultCard"))?.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -1406,16 +1404,7 @@
     });
   }
 
-  function datasetInfoLabel(dataset, poolLen) {
-    const src = String(dataset?.source || "");
-    const file = src.split("/").pop() || "";
-    if (dataset?.kind === "radius") return `RADIUS:${file} (${poolLen})`;
-    if (dataset?.kind === "pois_region") return `POI:${file} (${poolLen})`;
-    if (dataset?.kind === "macro") return `MACRO:${file} (${poolLen})`;
-    return `offline (${poolLen})`;
-  }
-
-  function renderChosenCard(origin, chosen, categoryUI, datasetInfo, usedMinutes, maxMinutesInput) {
+  function renderChosenCard(origin, chosen, categoryUI, datasetInfo, usedMinutes, maxMinutesInput, meta) {
     const area = $("resultArea");
     if (!area) return;
 
@@ -1539,13 +1528,45 @@
       scrollToId("searchCard");
     });
 
-    bindOptionsClicks();
+    bindOptionsClicks(meta);
 
     LAST_SHOWN_PID = pid;
     SESSION_SEEN.add(pid);
     addRecent(pid);
 
     scrollToId("resultCard");
+  }
+
+  // -------------------- MULTI-POOL SEARCH (REGION FIRST) --------------------
+  function combineAndScore(pools, origin, minutes, categoryUI, styles, regionBBox) {
+    // 1) prima prova SOLO le pool "region" (se presenti)
+    const regionPools = pools.filter(p => p.kind === "region");
+    const otherPools = pools.filter(p => p.kind !== "region");
+
+    const attempt = (poolList, label) => {
+      let merged = [];
+      for (const pl of poolList) merged = merged.concat(pl.places || []);
+      const res = pickTopOptions(merged, origin, minutes, categoryUI, styles);
+      return { list: dedupeDiverse(res.list), usedFallback: res.usedFallback, label };
+    };
+
+    // A) tentativo regione
+    if (regionPools.length) {
+      const a = attempt(regionPools, "region");
+      // se vuoi “davvero” solo in regione, qui potresti filtrare per bbox,
+      // ma tu hai detto: “va bene fuori regione, però prima regione”.
+      // Quindi: diamo un BOOST a ciò che è dentro bbox regione (senza escludere).
+      if (a.list.length) {
+        for (const x of a.list) {
+          if (regionBBox && withinBBox(x.place.lat, x.place.lon, regionBBox)) x.score += 0.05;
+        }
+        a.list.sort((u,v)=> (v.score-u.score) || (u.driveMin-v.driveMin));
+      }
+      return a;
+    }
+
+    // B) se non c’è regione, usa tutto
+    return attempt(pools, "all");
   }
 
   // -------------------- SEARCH --------------------
@@ -1570,35 +1591,86 @@
       const categoryUI = getActiveCategory();
       const styles = getActiveStyles();
 
-      await ensureDatasetLoaded(origin, categoryUI, { signal });
+      const { pools, region } = await loadPoolsRegionFirst(origin, categoryUI, { signal });
+      if (token !== SEARCH_TOKEN) return;
 
-      const basePool = Array.isArray(DATASET?.places) ? DATASET.places : [];
-      const datasetInfo = datasetInfoLabel(DATASET, basePool.length);
+      const regionBBox = region?.bbox || null;
 
       const steps = widenMinutesSteps(maxMinutesInput, categoryUI);
 
       let usedMinutes = steps[0];
       let usedFallback = false;
       let poolCandidates = [];
+      let chosenDatasetInfo = "";
 
       for (const mins of steps) {
         usedMinutes = mins;
 
-        const res = pickTopOptions(basePool, origin, mins, categoryUI, styles);
-        usedFallback = !!res.usedFallback;
+        // 1) prova regione (se presente)
+        const attemptRegion = combineAndScore(pools.filter(p=>p.kind==="region"), origin, mins, categoryUI, styles, regionBBox);
+        let regionList = attemptRegion.list;
 
-        poolCandidates = dedupeDiverse(res.list);
+        if (forbidPid) regionList = regionList.filter(x => x.pid !== forbidPid);
 
-        if (forbidPid) poolCandidates = poolCandidates.filter(x => x.pid !== forbidPid);
+        // Se regione ha abbastanza risultati, stop qui
+        if (regionList.length >= CFG.REGION_MIN_RESULTS) {
+          poolCandidates = regionList;
+          usedFallback = attemptRegion.usedFallback;
 
-        if (poolCandidates.length) break;
+          // dataset info: mostra il primo dataset regione effettivamente caricato
+          const firstRegion = pools.find(p=>p.kind==="region");
+          chosenDatasetInfo = datasetInfoLabel("region", firstRegion?.source, firstRegion?.places?.length || 0);
+          break;
+        }
+
+        // Se regione ha pochi risultati ma non zero, li teniamo e completiamo con fuori regione
+        if (regionList.length >= CFG.REGION_SOFT_MIN_RESULTS) {
+          // completa con radius/macro
+          const otherPools = pools.filter(p=>p.kind!=="region");
+          let mergedOther = [];
+          for (const pl of otherPools) mergedOther = mergedOther.concat(pl.places || []);
+          const attemptOther = pickTopOptions(mergedOther, origin, mins, categoryUI, styles);
+          let otherList = dedupeDiverse(attemptOther.list);
+          if (forbidPid) otherList = otherList.filter(x => x.pid !== forbidPid);
+
+          // Unisci (prima regione)
+          const combined = dedupeDiverse(regionList.concat(otherList));
+          poolCandidates = combined;
+
+          usedFallback = attemptRegion.usedFallback || attemptOther.usedFallback;
+
+          const firstRegion = pools.find(p=>p.kind==="region");
+          const firstOther = pools.find(p=>p.kind!=="region");
+          chosenDatasetInfo =
+            `REGION:${(firstRegion?.source||"").split("/").pop() || "—"} + ${datasetInfoLabel(firstOther?.kind, firstOther?.source, firstOther?.places?.length || 0)}`;
+          break;
+        }
+
+        // Se regione non dà niente: prova direttamente fuori regione (radius/macro)
+        const otherPools = pools.filter(p=>p.kind!=="region");
+        let mergedOther = [];
+        for (const pl of otherPools) mergedOther = mergedOther.concat(pl.places || []);
+        const attemptOther = pickTopOptions(mergedOther, origin, mins, categoryUI, styles);
+        let otherList = dedupeDiverse(attemptOther.list);
+        if (forbidPid) otherList = otherList.filter(x => x.pid !== forbidPid);
+
+        if (otherList.length) {
+          poolCandidates = otherList;
+          usedFallback = attemptOther.usedFallback;
+
+          const firstOther = pools.find(p=>p.kind!=="region");
+          chosenDatasetInfo = datasetInfoLabel(firstOther?.kind, firstOther?.source, firstOther?.places?.length || 0);
+          break;
+        }
+
         if (token !== SEARCH_TOKEN) return;
       }
 
       if (token !== SEARCH_TOKEN) return;
 
       if (!poolCandidates.length) {
-        renderNoResult(maxMinutesInput, categoryUI, datasetInfo);
+        const ds = (DATASETS_USED || []).map(x => `${x.kind}:${(x.source||"").split("/").pop()} (${x.placesLen})`).join(" • ");
+        renderNoResult(maxMinutesInput, categoryUI, ds || "offline");
         showStatus("warn", `Nessuna meta entro ${maxMinutesInput} min per "${categoryUI}". Aumenta minuti o cambia categoria/stile.`);
         return;
       }
@@ -1611,12 +1683,14 @@
       const maxAlts = Math.max(0, ALL_OPTIONS.length - 1);
       VISIBLE_ALTS = Math.min(CFG.ALTS_INITIAL, maxAlts);
 
-      renderChosenCard(origin, chosen, categoryUI, datasetInfo, usedMinutes, maxMinutesInput);
+      const meta = { origin, categoryUI, datasetInfo: chosenDatasetInfo, usedMinutes, maxMinutesInput };
+      renderChosenCard(origin, chosen, categoryUI, chosenDatasetInfo, usedMinutes, maxMinutesInput, meta);
 
       if (!silent) {
         const extra = usedMinutes !== maxMinutesInput ? ` (ho allargato a ${usedMinutes} min)` : "";
         const fb = usedFallback ? " • criteri allargati per trovare più risultati" : "";
-        showStatus("ok", `Trovate ${ALL_OPTIONS.length} opzioni ✅ • categoria: ${categoryUI}${extra}${fb}`);
+        const reg = region?.name ? ` • regione: ${region.name}` : "";
+        showStatus("ok", `Trovate ${ALL_OPTIONS.length} opzioni ✅ • categoria: ${categoryUI}${extra}${reg}${fb}`);
       }
     } catch (e) {
       if (String(e?.name || "").includes("Abort")) return;
@@ -1627,13 +1701,13 @@
 
   function openChosen(chosen, meta = {}) {
     const origin = meta.origin || getOrigin();
-    const categoryUI = meta.category || getActiveCategory();
-    const datasetInfo = meta.datasetInfo || datasetInfoLabel(DATASET, (DATASET?.places || []).length);
+    const categoryUI = meta.categoryUI || getActiveCategory();
+    const datasetInfo = meta.datasetInfo || "";
     const usedMinutes = meta.usedMinutes;
     const maxMinutesInput = meta.maxMinutesInput || Number($("maxMinutes")?.value) || 120;
 
     CURRENT_CHOSEN = chosen;
-    renderChosenCard(origin, chosen, categoryUI, datasetInfo, usedMinutes, maxMinutesInput);
+    renderChosenCard(origin, chosen, categoryUI, datasetInfo, usedMinutes, maxMinutesInput, meta);
 
     if (meta.scroll !== false) scrollToId("resultCard");
   }
@@ -1658,18 +1732,9 @@
 
         const result = await geocodeLabel(label);
 
-        setOrigin({
-          label: result.label || label,
-          lat: result.lat,
-          lon: result.lon,
-          country_code: result.country_code || "",
-          region_id: result.region_id || "",
-          region_name: result.region_name || "",
-        });
+        setOrigin({ label: result.label || label, lat: result.lat, lon: result.lon, country_code: result.country_code || "" });
 
         showStatus("ok", "Partenza impostata ✅ Ora scegli categoria/stile e premi CERCA.");
-        DATASET = { key: null, kind: null, source: null, places: [], meta: {} };
-
         scrollToId("searchCard");
       } catch (e) {
         console.error(e);
@@ -1714,6 +1779,6 @@
     resetRotation,
     resetVisited,
     getOrigin,
-    getDataset: () => DATASET
+    getDatasetsUsed: () => DATASETS_USED
   };
 })();
