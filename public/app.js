@@ -1,13 +1,22 @@
-/* Jamo — app.js v18.0 (FULL)
- * Mobile-first • Offline-only • Flusso pulito • Risultato centrale
+/* Jamo — app.js v19.0 (FULL, FIXED)
+ * Mobile-first • Offline-first • Flusso pulito • Risultato centrale
  *
  * ✅ NO GPS
  * ✅ OFFLINE-ONLY (dataset in /public/data/...)
  * ✅ Italia: regioni automatiche via bbox (it-regions-index.json)
- * ✅ Per ogni categoria: prova <regione>-<categoria>.json → <regione>.json → radius-<categoria>.json → macro
- * ✅ Pulizia forte anti-spazzatura (infrastrutture/aree tecniche/parcheggi ecc.)
- * ✅ Radius = fallback silenzioso (non mostrato come "radius-*.json" in UI, ma come RADIUS:...)
+ * ✅ Fallback dataset per categoria:
+ *    1) /data/pois/regions/<regionId>-<cat>.json   (se esiste)
+ *    2) /data/pois/regions/<regionId>.json        (core regionale)
+ *    3) /data/pois/regions/radius-<cat>.json      (se esiste)
+ *    4) macro paese / fallback macro (ultimissimo)
+ *
+ * ✅ Pulizia anti-spazzatura (infrastrutture/aree tecniche/parcheggi ecc.)
+ * ✅ Radius = fallback silenzioso (in UI mostrato come RADIUS:...)
  * ✅ FIX: se dataset non ha visibility => non blocca chicche/classici
+ *
+ * NOTA:
+ * - Nel tuo repo vedo sicuramente: it-<regione>.json + it-<regione>-relax/borghi/cantine + radius-relax/borghi/cantine.
+ * - Per le altre categorie (natura/mare/storia/family/...) userà core regionale e filtra per tag/nome.
  */
 
 (() => {
@@ -27,10 +36,10 @@
     ALTS_INITIAL: 6,
     ALTS_PAGE: 6,
 
-    // ✅ Italia regions index (bbox + counts)
+    // Italia regions index (bbox + counts + paths)
     IT_REGIONS_INDEX_URL: "/data/pois/regions/it-regions-index.json",
 
-    // ✅ Macro (ultimissimo fallback)
+    // Macro (ultimissimo fallback)
     MACROS_INDEX_URL: "/data/macros/macros_index.json",
     FALLBACK_MACRO_URLS: [
       "/data/macros/euuk_country_it.json",
@@ -57,8 +66,6 @@
   let SEARCH_ABORT = null;
 
   let MACROS_INDEX = null;
-
-  // ✅ IT regions index (bbox)
   let IT_REGIONS_INDEX = null;
 
   let DATASET = { key: null, kind: null, source: null, places: [], meta: {} };
@@ -145,6 +152,7 @@
     st.id = "jamo-mini-css";
     st.textContent = `
       .moreBtn{width:100%; border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.04); color:#fff; border-radius:16px; padding:12px; font-weight:950; cursor:pointer;}
+      .moreBtn:active{transform:scale(.99)}
     `;
     document.head.appendChild(st);
   }
@@ -264,7 +272,7 @@
         const icon = $("originToggleIcon");
         if (icon) icon.textContent = collapsed ? "⬆️" : "⬇️";
         if (!collapsed) scrollToId("quickStartCard");
-      });
+      }, { passive: true });
     }
 
     if (typeof shouldCollapse === "boolean") {
@@ -349,6 +357,7 @@
     const el = $(containerId);
     if (!el) return;
 
+    // click delegation (mobile friendly)
     el.addEventListener("click", (e) => {
       const chip = e.target.closest(".chip");
       if (!chip) return;
@@ -364,7 +373,7 @@
         const v = Number(chip.dataset.min);
         if (Number.isFinite(v) && $("maxMinutes")) $("maxMinutes").value = String(v);
       }
-    });
+    }, { passive: true });
   }
 
   function initTimeChipsSync() {
@@ -376,7 +385,7 @@
       chips.forEach(c => c.classList.remove("active"));
       const match = chips.find(c => Number(c.dataset.min) === v);
       if (match) match.classList.add("active");
-    });
+    }, { passive: true });
   }
 
   function getActiveCategory() {
@@ -433,6 +442,7 @@
     out.type = normalizeType(out.type || out.primary_category || out.category || "");
     out.visibility = normalizeVisibility(out.visibility);
 
+    // dataset spesso ha tags come array di stringhe "k=v"
     out.tags = Array.isArray(out.tags) ? out.tags.map(x => String(x).toLowerCase()) : [];
     out.country = String(out.country || "").toUpperCase();
     out.area = String(out.area || "");
@@ -469,30 +479,18 @@
     return MACROS_INDEX;
   }
 
-  function findCountryMacroPath(cc) {
-    if (!MACROS_INDEX?.items?.length) return null;
-    const c = String(cc || "").toUpperCase();
-    if (!c) return null;
-
-    const hit =—allignRemoveThis—MACROS_INDEX.items.find(x =>
-      String(x.id || "") === `euuk_country_${c.toLowerCase()}` ||
-      String(x.path || "").includes(`euuk_country_${c.toLowerCase()}.json`)
-    );
-    return hit?.path || null;
-  }
-
-  // NOTE: il repo macro index può variare; quindi gestiamo robusto:
   function findCountryMacroPathRobust(cc) {
     if (!MACROS_INDEX?.items?.length) return null;
     const c = String(cc || "").toUpperCase();
     if (!c) return null;
 
+    const want = `euuk_country_${c.toLowerCase()}`;
+
     for (const x of MACROS_INDEX.items) {
       const id = String(x?.id || "");
       const p = String(x?.path || "");
-      if (id === `euuk_country_${c.toLowerCase()}`) return p || null;
-      if (p.endsWith(`/euuk_country_${c.toLowerCase()}.json`)) return p || null;
-      if (p.includes(`euuk_country_${c.toLowerCase()}.json`)) return p || null;
+      if (id === want) return p || null;
+      if (p.includes(`${want}.json`)) return p || null;
     }
     return null;
   }
@@ -518,16 +516,15 @@
     }
   }
 
-  function canonicalCategory(cat) {
-    const c = String(cat || "").toLowerCase().trim();
+  function canonicalCategory(catUI) {
+    const c = String(catUI || "").toLowerCase().trim();
     if (!c || c === "ovunque") return "core";
 
-    // alias UI → file
+    // alias UI → file / logica
     if (c === "panorami") return "viewpoints";
     if (c === "trekking") return "hiking";
     if (c === "città" || c === "city") return "citta";
 
-    // già canoniche
     return c;
   }
 
@@ -535,25 +532,24 @@
     const urls = [];
     const push = (u) => { const s = String(u || "").trim(); if (s) urls.push(s); };
 
-    const cat = canonicalCategory(categoryUI); // core / mare / natura / ... / borghi / relax / cantine / viewpoints / hiking / citta
-
+    const cat = canonicalCategory(categoryUI);
     const cc = String(origin?.country_code || "").toUpperCase();
 
-    // ✅ Robust: se coordinate cadono in bbox IT → Italia anche se cc vuoto
     const regionId = pickItalyRegionIdByOrigin(origin);
     const isItaly = (cc === "IT") || !!regionId;
 
-    // 1) Se Italia e regione trovata: prova file regionale specifico categoria
+    // 1) Regional specific category (se non core)
     if (isItaly && regionId) {
       if (cat !== "core") push(`/data/pois/regions/${regionId}-${cat}.json`);
       push(`/data/pois/regions/${regionId}.json`);
     }
 
-    // 2) Radius (hai questi file veri in repo)
+    // 2) Radius per categoria (se non core) — nel tuo repo: radius-relax/borghi/cantine
     if (cat !== "core") push(`/data/pois/regions/radius-${cat}.json`);
 
-    // 3) Macro paese (se esiste) + fallback
-    const countryMacro = findCountryMacroPathRobust(cc || (isItaly ? "IT" : ""));
+    // 3) Macro paese + fallback macro
+    const macroCC = (cc || (isItaly ? "IT" : ""));
+    const countryMacro = findCountryMacroPathRobust(macroCC);
     if (countryMacro) push(countryMacro);
     for (const u of CFG.FALLBACK_MACRO_URLS) push(u);
 
@@ -629,6 +625,7 @@
     return false;
   }
 
+  // ✅ Anti-spazzatura globale
   function isClearlyIrrelevantPlace(place) {
     const t = tagsStr(place);
     const n = normName(place?.name || "");
@@ -910,7 +907,6 @@
     if (t.includes("craft=winery")) return true;
     if (t.includes("shop=wine")) return true;
     if (t.includes("amenity=wine_bar")) return true;
-    if (t.includes("tourism=attraction") && t.includes("wine")) return true;
 
     if (hasAny(n, ["cantina","winery","vini","vino","enoteca","degustaz","wine tasting","wine tour"])) return true;
 
@@ -991,13 +987,12 @@
     return matchesCategoryStrict(place, cat);
   }
 
+  // unknown visibility non deve bloccare
   function matchesStyle(place, { wantChicche, wantClassici }) {
     const vis = normalizeVisibility(place?.visibility);
 
     if (!wantChicche && !wantClassici) return true;
-
     if (vis === "unknown") return true;
-
     if (vis === "chicca") return !!wantChicche;
     return !!wantClassici;
   }
@@ -1324,8 +1319,8 @@
         <div class="small muted" style="margin-top:6px;">Tip: aumenta minuti oppure cambia categoria/stile.</div>
         <div class="small muted" style="margin-top:10px;">Dataset: ${escapeHtml(datasetInfo || "offline")}</div>
         <div class="row wraprow" style="gap:10px; margin-top:12px;">
-          <button class="btnGhost" id="btnResetRotation">🧽 Reset “oggi”</button>
-          <button class="btn btnPrimary" id="btnTryAgain">🎯 Riprova</button>
+          <button class="btnGhost" id="btnResetRotation" type="button">🧽 Reset “oggi”</button>
+          <button class="btn btnPrimary" id="btnTryAgain" type="button">🎯 Riprova</button>
         </div>
       </div>
     `;
@@ -1585,7 +1580,6 @@
         usedFallback = !!res.usedFallback;
 
         poolCandidates = dedupeDiverse(res.list);
-
         if (forbidPid) poolCandidates = poolCandidates.filter(x => x.pid !== forbidPid);
 
         if (poolCandidates.length) break;
@@ -1655,7 +1649,7 @@
 
         const result = await geocodeLabel(label);
 
-        // ✅ se country_code manca, lo lasciamo comunque (regione via bbox)
+        // se country_code manca, va bene: regione via bbox
         setOrigin({ label: result.label || label, lat: result.lat, lon: result.lon, country_code: result.country_code || "" });
 
         showStatus("ok", "Partenza impostata ✅ Ora scegli categoria/stile e premi CERCA.");
@@ -1668,13 +1662,13 @@
         showStatus("err", `Geocoding fallito: ${String(e.message || e)}`);
         scrollToId("quickStartCard");
       }
-    });
+    }, { passive: true });
   }
 
   // -------------------- MAIN BUTTONS --------------------
   function bindMainButtons() {
-    $("btnFind")?.addEventListener("click", () => runSearch({ silent: false }));
-    $("btnResetVisited")?.addEventListener("click", () => { resetVisited(); showStatus("ok", "Visitati resettati ✅"); });
+    $("btnFind")?.addEventListener("click", () => runSearch({ silent: false }), { passive: true });
+    $("btnResetVisited")?.addEventListener("click", () => { resetVisited(); showStatus("ok", "Visitati resettati ✅"); }, { passive: true });
   }
 
   function initChipsAll() {
@@ -1700,6 +1694,7 @@
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot, { once: true });
   else boot();
 
+  // Debug API
   window.__jamo = {
     runSearch,
     resetRotation,
