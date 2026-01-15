@@ -1,22 +1,13 @@
-/* Jamo — app.js v19.0 (FULL, FIXED)
- * Mobile-first • Offline-first • Flusso pulito • Risultato centrale
+/* Jamo — app.js v19.0 (FULL FIX)
+ * Mobile-first • Offline-only • Flusso pulito • Risultato centrale
  *
  * ✅ NO GPS
  * ✅ OFFLINE-ONLY (dataset in /public/data/...)
- * ✅ Italia: regioni automatiche via bbox (it-regions-index.json)
- * ✅ Fallback dataset per categoria:
- *    1) /data/pois/regions/<regionId>-<cat>.json   (se esiste)
- *    2) /data/pois/regions/<regionId>.json        (core regionale)
- *    3) /data/pois/regions/radius-<cat>.json      (se esiste)
- *    4) macro paese / fallback macro (ultimissimo)
- *
- * ✅ Pulizia anti-spazzatura (infrastrutture/aree tecniche/parcheggi ecc.)
- * ✅ Radius = fallback silenzioso (in UI mostrato come RADIUS:...)
+ * ✅ Italia: usa origin.region_id (da geocode) → fallback bbox via it-regions-index.json
+ * ✅ Per ogni categoria: prova <regione>-<categoria>.json → <regione>.json → radius-<categoria>.json → macro
+ * ✅ Pulizia forte anti-spazzatura (infrastrutture/aree tecniche/parcheggi ecc.)
+ * ✅ Radius = fallback silenzioso (non mostrato come "radius-*.json" in UI, ma come RADIUS:...)
  * ✅ FIX: se dataset non ha visibility => non blocca chicche/classici
- *
- * NOTA:
- * - Nel tuo repo vedo sicuramente: it-<regione>.json + it-<regione>-relax/borghi/cantine + radius-relax/borghi/cantine.
- * - Per le altre categorie (natura/mare/storia/family/...) userà core regionale e filtra per tag/nome.
  */
 
 (() => {
@@ -36,10 +27,10 @@
     ALTS_INITIAL: 6,
     ALTS_PAGE: 6,
 
-    // Italia regions index (bbox + counts + paths)
+    // ✅ Italia regions index (bbox + counts)
     IT_REGIONS_INDEX_URL: "/data/pois/regions/it-regions-index.json",
 
-    // Macro (ultimissimo fallback)
+    // ✅ Macro (ultimissimo fallback)
     MACROS_INDEX_URL: "/data/macros/macros_index.json",
     FALLBACK_MACRO_URLS: [
       "/data/macros/euuk_country_it.json",
@@ -152,7 +143,9 @@
     st.id = "jamo-mini-css";
     st.textContent = `
       .moreBtn{width:100%; border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.04); color:#fff; border-radius:16px; padding:12px; font-weight:950; cursor:pointer;}
-      .moreBtn:active{transform:scale(.99)}
+      .optBtn{width:100%; text-align:left; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.03); color:#fff; border-radius:16px; padding:12px; margin-bottom:10px; cursor:pointer;}
+      .optBtn.active{border-color:rgba(0,224,255,.35); background:rgba(0,224,255,.06);}
+      .pill{display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.14); background:rgba(10,15,20,.55); color:#fff; font-weight:900; font-size:13px;}
     `;
     document.head.appendChild(st);
   }
@@ -207,7 +200,7 @@
   }
 
   // -------------------- ORIGIN STORAGE --------------------
-  function setOrigin({ label, lat, lon, country_code }) {
+  function setOrigin({ label, lat, lon, country_code, region_id, region_name }) {
     $("originLabel") && ($("originLabel").value = label ?? "");
     $("originLat") && ($("originLat").value = String(lat));
     $("originLon") && ($("originLon").value = String(lon));
@@ -215,11 +208,20 @@
     const cc = String(country_code || "").toUpperCase();
     $("originCC") && ($("originCC").value = cc);
 
-    localStorage.setItem("jamo_origin", JSON.stringify({ label, lat, lon, country_code: cc }));
+    const rid = String(region_id || "");
+    const rname = String(region_name || "");
+    $("originRegionId") && ($("originRegionId").value = rid);
+    $("originRegionName") && ($("originRegionName").value = rname);
+
+    localStorage.setItem(
+      "jamo_origin",
+      JSON.stringify({ label, lat, lon, country_code: cc, region_id: rid, region_name: rname })
+    );
 
     if ($("originStatus")) {
+      const extra = rid ? ` • ${rid}` : "";
       $("originStatus").textContent =
-        `✅ Partenza impostata: ${label || "posizione"} (${Number(lat).toFixed(4)}, ${Number(lon).toFixed(4)})${cc ? " • " + cc : ""}`;
+        `✅ Partenza impostata: ${label || "posizione"} (${Number(lat).toFixed(4)}, ${Number(lon).toFixed(4)})${cc ? " • " + cc : ""}${extra}`;
     }
 
     collapseOriginCard(true);
@@ -230,8 +232,12 @@
     const lon = Number($("originLon")?.value);
     const label = ($("originLabel")?.value || "").trim();
     const ccDom = String($("originCC")?.value || "").toUpperCase();
+    const ridDom = String($("originRegionId")?.value || "");
+    const rnameDom = String($("originRegionName")?.value || "");
 
-    if (Number.isFinite(lat) && Number.isFinite(lon)) return { label, lat, lon, country_code: ccDom };
+    if (Number.isFinite(lat) && Number.isFinite(lon)) {
+      return { label, lat, lon, country_code: ccDom, region_id: ridDom, region_name: rnameDom };
+    }
 
     const raw = localStorage.getItem("jamo_origin");
     if (raw) {
@@ -243,6 +249,8 @@
             lat: Number(o.lat),
             lon: Number(o.lon),
             country_code: String(o.country_code || "").toUpperCase(),
+            region_id: String(o.region_id || ""),
+            region_name: String(o.region_name || ""),
           };
         }
       } catch {}
@@ -272,7 +280,7 @@
         const icon = $("originToggleIcon");
         if (icon) icon.textContent = collapsed ? "⬆️" : "⬇️";
         if (!collapsed) scrollToId("quickStartCard");
-      }, { passive: true });
+      });
     }
 
     if (typeof shouldCollapse === "boolean") {
@@ -288,7 +296,14 @@
     try {
       const o = JSON.parse(raw);
       if (Number.isFinite(Number(o?.lat)) && Number.isFinite(Number(o?.lon))) {
-        setOrigin({ label: o.label, lat: o.lat, lon: o.lon, country_code: o.country_code || "" });
+        setOrigin({
+          label: o.label,
+          lat: o.lat,
+          lon: o.lon,
+          country_code: o.country_code || "",
+          region_id: o.region_id || "",
+          region_name: o.region_name || "",
+        });
         collapseOriginCard(true);
       }
     } catch {}
@@ -357,7 +372,6 @@
     const el = $(containerId);
     if (!el) return;
 
-    // click delegation (mobile friendly)
     el.addEventListener("click", (e) => {
       const chip = e.target.closest(".chip");
       if (!chip) return;
@@ -373,7 +387,7 @@
         const v = Number(chip.dataset.min);
         if (Number.isFinite(v) && $("maxMinutes")) $("maxMinutes").value = String(v);
       }
-    }, { passive: true });
+    });
   }
 
   function initTimeChipsSync() {
@@ -385,7 +399,7 @@
       chips.forEach(c => c.classList.remove("active"));
       const match = chips.find(c => Number(c.dataset.min) === v);
       if (match) match.classList.add("active");
-    }, { passive: true });
+    });
   }
 
   function getActiveCategory() {
@@ -442,7 +456,6 @@
     out.type = normalizeType(out.type || out.primary_category || out.category || "");
     out.visibility = normalizeVisibility(out.visibility);
 
-    // dataset spesso ha tags come array di stringhe "k=v"
     out.tags = Array.isArray(out.tags) ? out.tags.map(x => String(x).toLowerCase()) : [];
     out.country = String(out.country || "").toUpperCase();
     out.area = String(out.area || "");
@@ -451,15 +464,12 @@
 
   // -------------------- ITALY REGIONS INDEX --------------------
   async function loadItalyRegionsIndexSafe(signal) {
-    try {
-      IT_REGIONS_INDEX = await fetchJson(CFG.IT_REGIONS_INDEX_URL, { signal });
-    } catch {
-      IT_REGIONS_INDEX = null;
-    }
+    try { IT_REGIONS_INDEX = await fetchJson(CFG.IT_REGIONS_INDEX_URL, { signal }); }
+    catch { IT_REGIONS_INDEX = null; }
     return IT_REGIONS_INDEX;
   }
 
-  function pickItalyRegionIdByOrigin(origin) {
+  function pickItalyRegionIdByOriginBBox(origin) {
     const lat = Number(origin?.lat);
     const lon = Number(origin?.lon);
     if (!Number.isFinite(lat) || !Number.isFinite(lon)) return "";
@@ -484,13 +494,12 @@
     const c = String(cc || "").toUpperCase();
     if (!c) return null;
 
-    const want = `euuk_country_${c.toLowerCase()}`;
-
     for (const x of MACROS_INDEX.items) {
       const id = String(x?.id || "");
       const p = String(x?.path || "");
-      if (id === want) return p || null;
-      if (p.includes(`${want}.json`)) return p || null;
+      if (id === `euuk_country_${c.toLowerCase()}`) return p || null;
+      if (p.endsWith(`/euuk_country_${c.toLowerCase()}.json`)) return p || null;
+      if (p.includes(`euuk_country_${c.toLowerCase()}.json`)) return p || null;
     }
     return null;
   }
@@ -516,15 +525,12 @@
     }
   }
 
-  function canonicalCategory(catUI) {
-    const c = String(catUI || "").toLowerCase().trim();
+  function canonicalCategory(cat) {
+    const c = String(cat || "").toLowerCase().trim();
     if (!c || c === "ovunque") return "core";
-
-    // alias UI → file / logica
     if (c === "panorami") return "viewpoints";
     if (c === "trekking") return "hiking";
     if (c === "città" || c === "city") return "citta";
-
     return c;
   }
 
@@ -535,21 +541,24 @@
     const cat = canonicalCategory(categoryUI);
     const cc = String(origin?.country_code || "").toUpperCase();
 
-    const regionId = pickItalyRegionIdByOrigin(origin);
+    // ✅ Regione IT deterministica: prima region_id dal geocode, poi bbox
+    const regionFromGeocode = String(origin?.region_id || "").trim();
+    const regionFromBBox = pickItalyRegionIdByOriginBBox(origin);
+    const regionId = regionFromGeocode || regionFromBBox;
+
     const isItaly = (cc === "IT") || !!regionId;
 
-    // 1) Regional specific category (se non core)
+    // 1) Italia: file regionale categoria → core regione
     if (isItaly && regionId) {
       if (cat !== "core") push(`/data/pois/regions/${regionId}-${cat}.json`);
       push(`/data/pois/regions/${regionId}.json`);
     }
 
-    // 2) Radius per categoria (se non core) — nel tuo repo: radius-relax/borghi/cantine
+    // 2) Radius
     if (cat !== "core") push(`/data/pois/regions/radius-${cat}.json`);
 
-    // 3) Macro paese + fallback macro
-    const macroCC = (cc || (isItaly ? "IT" : ""));
-    const countryMacro = findCountryMacroPathRobust(macroCC);
+    // 3) Macro paese (se esiste)
+    const countryMacro = findCountryMacroPathRobust(cc || (isItaly ? "IT" : ""));
     if (countryMacro) push(countryMacro);
     for (const u of CFG.FALLBACK_MACRO_URLS) push(u);
 
@@ -605,7 +614,7 @@
   // -------------------- GEOCODING --------------------
   async function geocodeLabel(label) {
     const q = String(label || "").trim();
-    if (!q) throw new Error("Scrivi un luogo (es: Verona, Padova, Venezia...)");
+    if (!q) throw new Error("Scrivi un luogo (es: Verona, L'Aquila, Roma...)");
     const r = await fetch(`/api/geocode?q=${encodeURIComponent(q)}`, { method: "GET", cache: "no-store" });
     const j = await r.json().catch(() => null);
     if (!j) throw new Error("Geocoding fallito (risposta vuota)");
@@ -625,7 +634,6 @@
     return false;
   }
 
-  // ✅ Anti-spazzatura globale
   function isClearlyIrrelevantPlace(place) {
     const t = tagsStr(place);
     const n = normName(place?.name || "");
@@ -907,6 +915,7 @@
     if (t.includes("craft=winery")) return true;
     if (t.includes("shop=wine")) return true;
     if (t.includes("amenity=wine_bar")) return true;
+    if (t.includes("tourism=attraction") && t.includes("wine")) return true;
 
     if (hasAny(n, ["cantina","winery","vini","vino","enoteca","degustaz","wine tasting","wine tour"])) return true;
 
@@ -987,12 +996,12 @@
     return matchesCategoryStrict(place, cat);
   }
 
-  // unknown visibility non deve bloccare
   function matchesStyle(place, { wantChicche, wantClassici }) {
     const vis = normalizeVisibility(place?.visibility);
 
     if (!wantChicche && !wantClassici) return true;
     if (vis === "unknown") return true;
+
     if (vis === "chicca") return !!wantChicche;
     return !!wantClassici;
   }
@@ -1158,7 +1167,6 @@
         if (t.includes("amenity=spa") || t.includes("leisure=spa") || t.includes("tourism=spa")) s += 0.14;
         if (t.includes("amenity=sauna") || t.includes("leisure=sauna") || t.includes("healthcare=sauna")) s += 0.10;
         if (looksWellnessByName(p)) s += 0.08;
-
         if (t.includes("leisure=swimming_pool") && !isSpaPlace(p)) s -= 0.18;
       }
 
@@ -1580,6 +1588,7 @@
         usedFallback = !!res.usedFallback;
 
         poolCandidates = dedupeDiverse(res.list);
+
         if (forbidPid) poolCandidates = poolCandidates.filter(x => x.pid !== forbidPid);
 
         if (poolCandidates.length) break;
@@ -1619,7 +1628,7 @@
   function openChosen(chosen, meta = {}) {
     const origin = meta.origin || getOrigin();
     const categoryUI = meta.category || getActiveCategory();
-    const datasetInfo = meta.datasetInfo || "";
+    const datasetInfo = meta.datasetInfo || datasetInfoLabel(DATASET, (DATASET?.places || []).length);
     const usedMinutes = meta.usedMinutes;
     const maxMinutesInput = meta.maxMinutesInput || Number($("maxMinutes")?.value) || 120;
 
@@ -1649,8 +1658,14 @@
 
         const result = await geocodeLabel(label);
 
-        // se country_code manca, va bene: regione via bbox
-        setOrigin({ label: result.label || label, lat: result.lat, lon: result.lon, country_code: result.country_code || "" });
+        setOrigin({
+          label: result.label || label,
+          lat: result.lat,
+          lon: result.lon,
+          country_code: result.country_code || "",
+          region_id: result.region_id || "",
+          region_name: result.region_name || "",
+        });
 
         showStatus("ok", "Partenza impostata ✅ Ora scegli categoria/stile e premi CERCA.");
         DATASET = { key: null, kind: null, source: null, places: [], meta: {} };
@@ -1662,13 +1677,13 @@
         showStatus("err", `Geocoding fallito: ${String(e.message || e)}`);
         scrollToId("quickStartCard");
       }
-    }, { passive: true });
+    });
   }
 
   // -------------------- MAIN BUTTONS --------------------
   function bindMainButtons() {
-    $("btnFind")?.addEventListener("click", () => runSearch({ silent: false }), { passive: true });
-    $("btnResetVisited")?.addEventListener("click", () => { resetVisited(); showStatus("ok", "Visitati resettati ✅"); }, { passive: true });
+    $("btnFind")?.addEventListener("click", () => runSearch({ silent: false }));
+    $("btnResetVisited")?.addEventListener("click", () => { resetVisited(); showStatus("ok", "Visitati resettati ✅"); });
   }
 
   function initChipsAll() {
@@ -1694,7 +1709,6 @@
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot, { once: true });
   else boot();
 
-  // Debug API
   window.__jamo = {
     runSearch,
     resetRotation,
