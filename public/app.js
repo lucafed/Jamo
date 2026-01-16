@@ -1132,6 +1132,43 @@ if (cat === "storia") {
       isWinery(place)
     );
   }
+  function inferShowcaseCategory(place) {
+  // ordine importante: assegna la prima categoria “forte”
+  if (isSpaPlace(place)) return "relax";
+  if (isThemePark(place) || isWaterPark(place) || isZooOrAquarium(place) || isKidsMuseum(place) || isAdventurePark(place)) return "family";
+  if (isRealViewpoint(place)) return "viewpoints";
+  if (matchesCategoryStrict(place, "storia")) return "storia";
+  if (isNature(place)) return "natura";
+  if (isMountain(place)) return "montagna";
+  if (isHiking(place)) return "hiking";
+  if (isBorgo(place)) return "borghi";
+  if (isCity(place)) return "citta";
+  if (isWinery(place)) return "cantine";
+  return "altro";
+}
+
+function showcaseBeautyBonus(place) {
+  const t = tagsStr(place);
+  let b = 0;
+
+  // segnali “wow”
+  if (t.includes("wikipedia=") || t.includes("wikidata=")) b += 0.10;
+  if (t.includes("heritage=") || t.includes("historic=")) b += 0.06;
+  if (t.includes("tourism=viewpoint")) b += 0.12;
+  if (t.includes("natural=waterfall")) b += 0.12;
+  if (t.includes("natural=peak")) b += 0.08;
+  if (t.includes("boundary=national_park") || t.includes("leisure=nature_reserve")) b += 0.08;
+  if (t.includes("tourism=museum")) b += 0.05;
+  if (t.includes("tourism=attraction")) b += 0.05;
+
+  return b;
+}
+
+// random “buono”: leggero rumore per mischiare senza far vincere roba scarsa
+function jitter() {
+  return (Math.random() - 0.5) * 0.06; // ±0.03
+}
+
 
   function isNotBorgoNoise(place) {
     const t = tagsStr(place);
