@@ -1010,13 +1010,22 @@ function isTouristicVisitabile(place, categoryUI) {
     if (cat === "natura") return isNature(place);
     if (cat === "mare") return type === "mare" || t.includes("natural=beach") || t.includes("leisure=marina") || t.includes("natural=coastline");
     if (cat === "storia") {
-      return (
-        type === "storia" ||
-        t.includes("historic=castle") || t.includes("historic=fort") ||
-        t.includes("historic=citywalls") || t.includes("historic=archaeological_site") ||
-        t.includes("tourism=museum") || t.includes("tourism=attraction")
-      );
-    }
+  // ✅ SOLO storia turistica (evita centri espositivi/locali)
+  return (
+    t.includes("historic=castle") ||
+    t.includes("historic=fort") ||
+    t.includes("historic=citywalls") ||
+    t.includes("historic=archaeological_site") ||
+    t.includes("historic=ruins") ||
+    t.includes("historic=monument") ||
+    t.includes("historic=memorial") ||
+    t.includes("historic=manor") ||
+    t.includes("historic=palace") ||
+    t.includes("tourism=museum") ||
+    t.includes("tourism=attraction")
+  );
+}
+
     if (cat === "relax") return isSpaPlace(place);
     if (cat === "borghi") return isBorgo(place);
     if (cat === "citta") return isCity(place);
