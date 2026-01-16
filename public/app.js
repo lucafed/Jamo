@@ -1232,6 +1232,14 @@ function isTouristicVisitabile(place, categoryUI) {
 
       const isChicca = normalizeVisibility(p.visibility) === "chicca";
       let s = baseScorePlace({ driveMin, targetMin: target, beautyScore: p.beauty_score, isChicca });
+      // se l'utente seleziona solo chicche/classici, penalizza gli "unknown"
+if (styles?.wantChicche && !styles?.wantClassici) {
+  if (normalizeVisibility(p.visibility) === "unknown") s -= 0.06;
+}
+if (styles?.wantClassici && !styles?.wantChicche) {
+  if (normalizeVisibility(p.visibility) === "unknown") s -= 0.04;
+}
+
 
       s += familyBoost(p, categoryUI);
       s += seasonAdjust(p);
