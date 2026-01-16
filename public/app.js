@@ -1168,6 +1168,80 @@ function showcaseBeautyBonus(place) {
 function jitter() {
   return (Math.random() - 0.5) * 0.06; // ±0.03
 }
+  function buildShowcaseOvvunque(pool, origin, maxMinutes, styles, opts = {}) {
+  const visited = getVisitedSet();
+  const recentSet = getRecentSet();
+
+  const target = Number(maxMinutes);
+  const oLat = Number(origin.lat);
+  const oLon = Number(origin.lon);
+
+  const buckets = new Map(); // cat -> candidates[]
+  const MAX_PER_BUCKET = 18;
+
+  for (const raw of pool) {
+    const p = normalizePlace(raw);
+    if (!p) continue;
+
+    const nm = String(p.name || "").trim();
+    if (!nm || nm.length < 2) continue;
+
+    // filtri base
+    if (isClearlyIrrelevantPlace(p)) continue;
+    if (isLodgingOrFood(p, "core")) continue;
+
+    // ✅ gate turistico
+    if (!isTouristicVisitabile(p, "ovunque")) continue;
+
+    const pid = safeIdFromPlace(p);
+    if (!opts.ignoreVisited && visited.has(pid)) continue;
+
+    const km = haversineKm(oLat, oLon, p.lat, p.lon);
+    const driveMin = estCarMinutesFromKm(km);
+    if (!Number.isFinite(driveMin) || driveMin > target) continue;
+
+    if (km < 1.6) continue;
+    if (!matchesStyle(p, styles)) continue;
+
+    const cat = inferShowcaseCategory(p);
+    if (cat === "altro") continue;
+
+    const isChicca = normalizeVisibility(p.visibility) === "chicca";
+    let s = baseScorePlace({ driveMin, targetMin: target, beautyScore: p.beauty_score, isChicca });
+
+    s += showcaseBeautyBonus(p);
+    s += seasonAdjust(p);
+
+    if (!opts.ignoreRotation) s -= rotationPenalty(pid, recentSet);
+
+    // random controllato
+    s += jitter();
+
+    const item = { place: p, pid, km, driveMin, score: Number(s.toFixed(4)) };
+
+    if (!buckets.has(cat)) buckets.set(cat, []);
+    buckets.get(cat).push(item);
+  }
+
+  // ordina e prendi i migliori per bucket
+  for (const [cat, arr] of buckets.entries()) {
+    arr.sort((a, b) => (b.score - a.score) || (a.driveMin - b.driveMin));
+    buckets.set(cat, arr.slice(0, MAX_PER_BUCKET));
+  }
+
+  // merge + shuffle per ottenere mix + random
+  let merged = [];
+  for (const arr of buckets.values()) merged = merged.concat(arr);
+
+  // shuffle
+  for (let i = merged.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [merged[i], merged[j]] = [merged[j], merged[i]];
+  }
+
+  return dedupeDiverse(merged);
+}
+
 
 
   function isNotBorgoNoise(place) {
