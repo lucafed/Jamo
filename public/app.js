@@ -1205,6 +1205,8 @@ function isTouristicVisitabile(place, categoryUI) {
 
       if (isClearlyIrrelevantPlace(p)) continue;
       if (isLodgingOrFood(p, canonicalCategory(categoryUI))) continue;
+      if (!isTouristicVisitabile(p, categoryUI)) continue;
+
 
       let okCat = true;
       if (String(categoryUI) === "ovunque") {
