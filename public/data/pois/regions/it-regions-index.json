@@ -1,6 +1,6 @@
 {
   "country": "IT",
-  "generated_at": "2026-01-15T15:52:26.503Z",
+  "generated_at": "2026-01-16T07:37:42.849Z",
   "summary": {
     "regions": 20,
     "categories_canon": [
@@ -130,7 +130,7 @@
         "borghi": 3061,
         "cantine": 160
       },
-      "generated_at": "2026-01-15T15:42:53.746Z"
+      "generated_at": "2026-01-16T07:29:25.568Z"
     },
     {
       "id": "it-veneto",
