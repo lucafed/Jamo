@@ -1410,6 +1410,27 @@ if (styles?.wantClassici && !styles?.wantChicche) {
   }
 
   function pickTopOptions(pool, origin, minutes, categoryUI, styles) {
+    // 🌟 OVUNQUE = VETRINA JAMO (mix bello + random controllato)
+if (String(categoryUI) === "ovunque") {
+  let list = buildShowcaseOvvunque(pool, origin, minutes, styles, {
+    ignoreVisited: false,
+    ignoreRotation: false
+  });
+  if (list.length) return { list, usedFallback: false };
+
+  list = buildShowcaseOvvunque(pool, origin, minutes, styles, {
+    ignoreVisited: false,
+    ignoreRotation: true
+  });
+  if (list.length) return { list, usedFallback: true };
+
+  list = buildShowcaseOvvunque(pool, origin, minutes, styles, {
+    ignoreVisited: true,
+    ignoreRotation: true
+  });
+  return { list, usedFallback: true };
+}
+
     let c = buildCandidatesFromPool(pool, origin, minutes, categoryUI, styles, { ignoreVisited:false, ignoreRotation:false, relaxedCategory:false });
     if (c.length) return { list: c, usedFallback: false };
 
