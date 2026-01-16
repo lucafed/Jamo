@@ -633,6 +633,85 @@
   function placeTags(place) { return (place.tags || []).map(t => String(t).toLowerCase()); }
   function tagsStr(place) { return placeTags(place).join(" "); }
   function hasAny(str, arr) { for (const k of arr) if (str.includes(k)) return true; return false; }
+  function hasQualitySignals(place) {
+  const t = tagsStr(place);
+  return (
+    t.includes("wikipedia=") ||
+    t.includes("wikidata=") ||
+    t.includes("website=") ||
+    t.includes("opening_hours=") ||
+    t.includes("contact:website=")
+  );
+}
+
+// ✅ GATE TURISTICO: se non passa qui, non può MAI diventare meta
+function isTouristicVisitabile(place, categoryUI) {
+  const t = tagsStr(place);
+  const n = normName(place?.name || "");
+  const cat = canonicalCategory(categoryUI);
+
+  // segnali forti (visitabile quasi sempre)
+  const strong =
+    t.includes("tourism=attraction") ||
+    t.includes("tourism=museum") ||
+    t.includes("tourism=gallery") ||
+    t.includes("tourism=viewpoint") ||
+    t.includes("tourism=theme_park") ||
+    t.includes("tourism=zoo") ||
+    t.includes("tourism=aquarium") ||
+    t.includes("historic=") ||
+    t.includes("heritage=") ||
+    t.includes("natural=peak") ||
+    t.includes("natural=beach") ||
+    t.includes("natural=waterfall") ||
+    t.includes("natural=cave_entrance") ||
+    t.includes("natural=volcano") ||
+    t.includes("leisure=nature_reserve") ||
+    t.includes("boundary=national_park") ||
+    t.includes("leisure=park") ||
+    t.includes("leisure=garden") ||
+    t.includes("man_made=lighthouse") ||
+    t.includes("man_made=tower") ||
+    t.includes("man_made=observation_tower") ||
+    t.includes("tower:type=observation");
+
+  const quality = hasQualitySignals(place);
+
+  // categorie speciali
+  if (cat === "relax") {
+    // relax = solo vero relax/spa/terme
+    return isSpaPlace(place);
+  }
+
+  if (cat === "cantine") {
+    // cantine: per essere "turistico/visitabile" richiedi segnali qualità
+    return isWinery(place) && quality;
+  }
+
+  if (cat === "family") {
+    // family: ok attrazioni kids forti
+    if (isThemePark(place) || isWaterPark(place) || isZooOrAquarium(place) || isKidsMuseum(place) || isAdventurePark(place)) return true;
+
+    // playground/parchi: SOLO se "qualificati" (altrimenti parchetto di quartiere)
+    if (tagsStr(place).includes("leisure=playground") || isPlaygroundOrPark(place)) {
+      return quality || hasAny(n, ["parco avventura","acquario","zoo","museo","planetario","science center"]);
+    }
+
+    // altro: deve essere forte
+    return strong;
+  }
+
+  // default: deve essere forte
+  if (strong) return true;
+
+  // fallback controllato: qualità + keyword turistica nel nome (evita fiumi/boschi random)
+  if (quality && hasAny(n, ["castell", "abbazi", "duomo", "cattedral", "museo", "belvedere", "gole", "cascat", "parco", "riserva", "oasi", "lago"])) {
+    return true;
+  }
+
+  return false;
+}
+
 
   function isClearlyIrrelevantPlace(place) {
     const t = tagsStr(place);
