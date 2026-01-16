@@ -676,6 +676,31 @@ function isTouristicVisitabile(place, categoryUI) {
     t.includes("tower:type=observation");
 
   const quality = hasQualitySignals(place);
+  // ❌ filtro STORIA: no spazi espositivi / ex-industriali se non turistici veri
+if (cat === "storia") {
+  const n = normName(place?.name || "");
+
+  const looksExIndustrial = hasAny(n, [
+    "spazio espositivo",
+    "centro espositivo",
+    "centro culturale",
+    "lanificio",
+    "opificio",
+    "fabbrica",
+    "shed",
+    "turbine",
+    "ex "
+  ]);
+
+  const isMuseumOrAttraction =
+    t.includes("tourism=museum") ||
+    t.includes("tourism=attraction");
+
+  if (looksExIndustrial && !isMuseumOrAttraction) {
+    return false;
+  }
+}
+
 
   // categorie speciali
   if (cat === "relax") {
