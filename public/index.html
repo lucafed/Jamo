@@ -14,7 +14,6 @@
 
   <style>
     :root{
-      /* Palette “leggibile” (più contrasto) */
       --bg:#050C10;
       --surface:#0C151B;
       --surface2:#0A1217;
@@ -29,7 +28,6 @@
 
       --radius: 18px;
 
-      /* Ombre “pulite” */
       --shadow-card: 0 6px 16px rgba(0,0,0,.35);
       --shadow-hero: 0 14px 38px rgba(0,0,0,.55);
       --shadow-cta: 0 12px 30px rgba(0,224,255,.22);
@@ -153,12 +151,12 @@
       justify-content:center;
       gap:8px;
       user-select:none;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
     }
     .btn:active{ transform: translateY(1px); }
 
-    .btnPrimary{
-      box-shadow: var(--shadow-cta);
-    }
+    .btnPrimary{ box-shadow: var(--shadow-cta); }
 
     .btnGhost{
       border:1px solid var(--border2);
@@ -173,6 +171,8 @@
       justify-content:center;
       gap:8px;
       user-select:none;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
     }
 
     .hr{ height:1px; background: rgba(255,255,255,.10); margin: 12px 0; }
@@ -197,10 +197,8 @@
     /* Collasso Partenza (app.js aggiunge classe) */
     #quickStartCard.collapsed .originBody{ display:none; }
 
-    /* Result helpers */
     #resultArea{ margin-top: 10px; }
 
-    /* Buttons grid dentro la scheda risultato */
     .actionGrid{
       display:grid;
       grid-template-columns: 1fr 1fr;
@@ -208,40 +206,9 @@
       margin-top: 12px;
     }
 
-    .optList{
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      margin-top: 12px;
-    }
-
-    .optBtn{
-      width:100%;
-      text-align:left;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.05);
-      border-radius: 16px;
-      padding: 12px;
-      cursor:pointer;
-      color: var(--text);
-    }
-    .optBtn.active{
-      border-color: rgba(0,224,255,.60);
-      background: rgba(0,224,255,.10);
-    }
-
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.28);
-      font-size: 12px;
-      font-weight: 900;
-      color: rgba(255,255,255,.92);
-    }
+    /* Sotto-filtri Eventi (mostrati solo quando Eventi è attivo) */
+    #eventsSubfilters{ display:none; margin-top:10px; }
+    #eventsSubfilters.active{ display:block; }
   </style>
 </head>
 
@@ -252,13 +219,13 @@
         <div class="logo" aria-hidden="true"></div>
         <div class="title">
           <h1>Jamo</h1>
-          <p>Auto-only • Offline • Categoria precisa • Chicche + Classici</p>
+          <p>Auto-only • Offline • Solo turistico • Monetizzabile</p>
         </div>
       </div>
-      <button id="btnInstall" class="btnInstall">➕ Installa</button>
+      <button id="btnInstall" class="btnInstall" type="button">➕ Installa</button>
     </div>
 
-    <!-- 1) PARTENZA (collassabile dopo set) -->
+    <!-- 1) PARTENZA -->
     <div class="card" id="quickStartCard">
       <!-- app.js inserisce qui il toggle “📍 Partenza” -->
       <div class="originBody">
@@ -266,12 +233,17 @@
         <div class="small">Scrivi un luogo e premi “Usa questo luogo”. (GPS disattivato)</div>
 
         <div style="margin-top:10px;">
-          <input id="originLabel" type="text" placeholder="Es: Verona / Padova / Via Roma 10" />
+          <input id="originLabel" type="text" placeholder="Es: Bussolengo / Verona / Via Roma 10" />
         </div>
 
         <div class="row wraprow" style="margin-top:10px;">
           <button id="btnUseGPS" class="btn" type="button" style="flex:1; min-width:160px;">📍 GPS</button>
           <button id="btnFindPlace" class="btnGhost" type="button" style="flex:1; min-width:160px;">🔎 Usa questo luogo</button>
+        </div>
+
+        <!-- ✅ NUOVO: reset rapido partenza -->
+        <div class="row wraprow" style="margin-top:10px;">
+          <button id="btnResetOrigin" class="btnGhost" type="button" style="width:100%;">🧽 Cambia partenza (reset)</button>
         </div>
 
         <div id="originStatus" class="small muted" style="margin-top:10px;"></div>
@@ -291,7 +263,7 @@
       </div>
     </div>
 
-    <!-- 2) FILTRI + CERCA SUBITO DOPO STILE -->
+    <!-- 2) FILTRI -->
     <div class="card" id="searchCard">
       <div class="hTitle">2) Tempo • Categoria • Stile</div>
 
@@ -315,19 +287,42 @@
 
       <div class="small">Categoria</div>
       <div class="chiprow" id="categoryChips" style="margin-top:8px;">
-        <div class="chip active" data-cat="ovunque">🎲 Ovunque</div>
-        <div class="chip" data-cat="natura">🌿 Natura</div>
-        <div class="chip" data-cat="viewpoints">🌅 Panorami</div>
-        <div class="chip" data-cat="hiking">🥾 Trekking</div>
-        <div class="chip" data-cat="family">👨‍👩‍👧‍👦 Family</div>
+        <!-- ✅ Rimossi: Ovunque, Città, Panorami -->
+        <div class="chip active" data-cat="natura">🌿 Natura</div>
+        <div class="chip" data-cat="trekking">🥾 Trekking</div>
+        <div class="chip" data-cat="borghi">🏘️ Borghi</div>
         <div class="chip" data-cat="storia">🏛️ Storia</div>
         <div class="chip" data-cat="montagna">🏔️ Montagna</div>
         <div class="chip" data-cat="mare">🌊 Mare</div>
         <div class="chip" data-cat="relax">🧖 Relax</div>
-        <div class="chip" data-cat="borghi">🏘️ Borghi</div>
-        <div class="chip" data-cat="citta">🏙️ Città</div>
-        <!-- ✅ NUOVO -->
+        <div class="chip" data-cat="family">👨‍👩‍👧‍👦 Family</div>
         <div class="chip" data-cat="cantine">🍷 Cantine</div>
+        <div class="chip" data-cat="eventi">🎉 Eventi</div>
+      </div>
+
+      <!-- ✅ Subfiltri Eventi (app.js li usa) -->
+      <div id="eventsSubfilters">
+        <div class="hr"></div>
+        <div class="small">Eventi (sottocategoria)</div>
+        <div class="chiprow" id="eventTypeChips" style="margin-top:8px;">
+          <div class="chip active" data-etype="tutti">⭐ Tutti</div>
+          <div class="chip" data-etype="sagre">🍝 Sagre & Food</div>
+          <div class="chip" data-etype="concerti">🎵 Concerti / Live</div>
+          <div class="chip" data-etype="mostre">🖼️ Mostre</div>
+          <div class="chip" data-etype="fiere">🎪 Festival / Fiere</div>
+          <div class="chip" data-etype="family">👨‍👩‍👧‍👦 Family</div>
+          <div class="chip" data-etype="sport">🏟️ Sport</div>
+        </div>
+
+        <div style="margin-top:10px;">
+          <div class="small">Quando</div>
+          <div class="chiprow" id="eventWhenChips" style="margin-top:8px;">
+            <div class="chip active" data-ewhen="oggi">📅 Oggi</div>
+            <div class="chip" data-ewhen="weekend">🗓️ Weekend</div>
+            <div class="chip" data-ewhen="7giorni">⏱️ 7 giorni</div>
+          </div>
+          <div class="small muted" style="margin-top:6px;">Offline: ricorrenti • Online (se c’è rete): eventi freschi.</div>
+        </div>
       </div>
 
       <div class="hr"></div>
@@ -338,7 +333,6 @@
         <div class="chip active" data-style="classici">✅ Classici</div>
       </div>
 
-      <!-- ✅ CERCA SUBITO DOPO STILE -->
       <div class="row wraprow" style="margin-top:12px;">
         <button id="btnFind" class="btn btnPrimary" type="button" style="flex:1; min-width:220px;">🎯 CERCA</button>
         <button id="btnResetVisited" class="btnGhost" type="button">♻️ Reset visitati</button>
@@ -349,18 +343,18 @@
       </div>
     </div>
 
-    <!-- 3) RISULTATO: centrale e focus -->
+    <!-- 3) RISULTATO -->
     <div class="card resultCard" id="resultCard">
       <div class="hTitle">Risultato</div>
-      <div class="small muted">Premi <b>CERCA</b> per ricevere 5 opzioni. Tocca un’opzione per aprire la scheda.</div>
+      <div class="small muted">Premi <b>CERCA</b> per vedere opzioni coerenti con la categoria scelta.</div>
       <div id="resultArea"></div>
     </div>
 
-    <div class="footer">Jamo • PWA • Auto-only • Offline</div>
+    <div class="footer">Jamo • PWA • Auto-only • Offline-first</div>
   </div>
 
-  <!-- ✅ aggiorna versione -->
-  <script src="/app.js?v=17.0"></script>
+  <!-- ✅ aggiorna versione qui quando mettiamo app.js nuovo -->
+  <script src="/app.js?v=20.0"></script>
 
   <script>
     // PWA install prompt
@@ -383,6 +377,27 @@
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("/sw.js").catch(()=>{});
     }
+
+    // ✅ Reset rapido partenza (non dipende da app.js)
+    document.getElementById("btnResetOrigin")?.addEventListener("click", () => {
+      try {
+        localStorage.removeItem("jamo_origin");
+        // non tocchiamo visited/recent qui
+      } catch {}
+      const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
+      setVal("originLabel", "");
+      setVal("originLat", "");
+      setVal("originLon", "");
+      setVal("originCC", "");
+      const st = document.getElementById("originStatus");
+      if (st) st.textContent = "🧽 Partenza resettata. Inserisci un nuovo luogo e premi “Usa questo luogo”.";
+      const card = document.getElementById("quickStartCard");
+      if (card) card.classList.remove("collapsed");
+      const tgl = document.getElementById("originToggleIcon");
+      if (tgl) tgl.textContent = "⬇️";
+      document.getElementById("originLabel")?.focus();
+      setTimeout(()=> document.getElementById("quickStartCard")?.scrollIntoView({behavior:"smooth",block:"start"}), 30);
+    });
   </script>
 </body>
 </html>
