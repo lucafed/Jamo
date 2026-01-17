@@ -1,9 +1,8 @@
-/* Jamo — app.js (MONETIZABLE ONLY, CLEAN)
- * ✅ SOLO luoghi turistici monetizzabili
+/* Jamo — app.js (MONETIZABLE ONLY, CLICK-SAFE)
+ * ✅ SOLO POI turistici monetizzabili
  * ✅ OFFLINE datasets /public/data/...
- * ✅ IT: regione da bbox (it-regions-index.json) + fallback macro
- * ✅ Region-first
- * ❌ Rimossi: rotazione/visited/random showcase/chips/css/filtri inutili
+ * ✅ Region-first (IT bbox) + fallback macro
+ * ✅ CLICK FIX: event delegation + pointer-events hardening
  */
 
 (() => {
@@ -26,17 +25,29 @@
     AFFILIATE: {
       BOOKING_AID: "",
       GYG_PARTNER_ID: "",
-      VIATOR_PID: "",
       THEFORK_AFFID: "",
     },
 
-    // “monetizzabile” = deve avere almeno 1 canale serio
-    // (ticket/tour OR stay OR food OR wellness OR winery)
     MIN_SCORE: 0.55,
-
-    // risultati massimi
     MAX_RESULTS: 30,
   };
+
+  // -------------------- CLICK HARDENING CSS --------------------
+  function injectClickSafeCssOnce() {
+    if (document.getElementById("jamo-clicksafe-css")) return;
+    const st = document.createElement("style");
+    st.id = "jamo-clicksafe-css";
+    st.textContent = `
+      /* Ensure clicks reach buttons */
+      #resultArea, #resultArea * { -webkit-tap-highlight-color: transparent; }
+      #resultArea button { pointer-events: auto !important; }
+      #resultArea .card { position: relative; }
+      /* If any overlay exists inside cards, prevent it from stealing taps */
+      #resultArea .card::before,
+      #resultArea .card::after { pointer-events: none !important; }
+    `;
+    document.head.appendChild(st);
+  }
 
   // -------------------- UTIL --------------------
   const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
@@ -92,7 +103,7 @@
     return lat >= bbox.minLat && lat <= bbox.maxLat && lon >= bbox.minLon && lon <= bbox.maxLon;
   }
 
-  // -------------------- LINKS (MONETIZATION) --------------------
+  // -------------------- LINKS --------------------
   function mapsDirUrl(oLat, oLon, dLat, dLon) {
     return `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(
       oLat + "," + oLon
@@ -133,7 +144,6 @@
   }
 
   function foodSearchUrl(name, area, lat, lon) {
-    // TheFork aff: se non lo hai, Maps è la cosa più “monetizzabile” comunque.
     const q = `ristoranti vicino ${name} ${area || ""}`.trim();
     const aff = CFG.AFFILIATE.THEFORK_AFFID?.trim();
     if (!aff) {
@@ -207,28 +217,22 @@
     );
   }
 
-  // -------------------- HARD KILL “SPAZZATURA” --------------------
+  // -------------------- IRRELEVANT FILTER --------------------
   function isClearlyIrrelevantPlace(place) {
     const t = tagsStr(place);
     const n = normName(place?.name || "");
 
-    // trasporti / rete
     if (hasAny(t, ["highway=", "railway=", "public_transport=", "route=", "junction="])) return true;
     if (hasAny(t, ["amenity=bus_station", "highway=bus_stop", "highway=platform"])) return true;
 
-    // parcheggi / fuel / charging
     if (hasAny(t, ["amenity=parking", "amenity=parking_entrance", "amenity=fuel", "amenity=charging_station", "highway=rest_area"])) return true;
 
-    // industria / commerciale / capannoni
     if (hasAny(t, ["landuse=industrial", "landuse=commercial", "building=industrial", "building=warehouse", "man_made=works"])) return true;
 
-    // tecnici
     if (hasAny(t, ["power=", "telecom=", "pipeline=", "man_made=survey_point"])) return true;
 
-    // nomi “tecnici”
     if (hasAny(n, ["parcheggio", "stazione", "fermata", "svincolo", "uscita", "km "])) return true;
 
-    // ex-industriale / “spazio espositivo” generico = NO a meno che sia museo/attrazione (gestito nel gate)
     return false;
   }
 
@@ -257,7 +261,6 @@
     const t = tagsStr(place);
     const n = normName(place?.name || "");
 
-    // ticket/tour forti
     const strong =
       t.includes("tourism=attraction") ||
       t.includes("tourism=museum") ||
@@ -277,7 +280,6 @@
 
     if (strong) return true;
 
-    // fallback solo se qualità + keyword “turistica”
     const quality = hasQualitySignals(place);
     if (!quality) return false;
 
@@ -309,7 +311,6 @@
     if (!place?.name || place.name.length < 2) return false;
     if (isClearlyIrrelevantPlace(place)) return false;
 
-    // se “spazio espositivo / ex fabbrica” ecc: accetta solo se è museo/attrazione vera
     const n = normName(place?.name || "");
     if (hasAny(n, ["spazio espositivo", "centro espositivo", "lanificio", "opificio", "fabbrica", "ex "])) {
       const t = tagsStr(place);
@@ -317,36 +318,26 @@
       if (!ok) return false;
     }
 
-    // canali monetizzazione
-    const ticket = isTicketAttraction(place);
-    const wellness = isSpa(place);
-    const winery = isWinery(place);
-    const stay = isStay(place);
-    const food = isFood(place);
-
-    return ticket || wellness || winery || stay || food;
+    return isTicketAttraction(place) || isSpa(place) || isWinery(place) || isStay(place) || isFood(place);
   }
 
   function monetizationKind(place) {
-    // serve a scegliere il bottone “Prenota” giusto
     if (isTicketAttraction(place) || isWinery(place)) return "ticket";
     if (isSpa(place) || isStay(place)) return "stay";
     if (isFood(place)) return "food";
     return "ticket";
   }
 
-  // -------------------- SCORING (SIMPLE) --------------------
+  // -------------------- SCORING --------------------
   function scorePlace({ driveMin, targetMin, place }) {
     const t = clamp(1 - Math.abs(driveMin - targetMin) / Math.max(20, targetMin * 0.9), 0, 1);
 
     let bonus = 0;
     const ts = tagsStr(place);
 
-    // qualità/info aumenta conversione
     if (hasQualitySignals(place)) bonus += 0.10;
     if (ts.includes("wikipedia=") || ts.includes("wikidata=")) bonus += 0.08;
 
-    // ticket è il più monetizzabile
     if (isTicketAttraction(place)) bonus += 0.18;
     if (isSpa(place)) bonus += 0.14;
     if (isWinery(place)) bonus += 0.14;
@@ -356,7 +347,7 @@
     return Number((0.70 * t + bonus).toFixed(4));
   }
 
-  // -------------------- REGION FIRST LOADING --------------------
+  // -------------------- DATASET INDEXES --------------------
   let IT_REGIONS_INDEX = null;
   let MACROS_INDEX = null;
 
@@ -413,9 +404,8 @@
     const region = pickItalyRegionByOrigin(origin);
     const isItaly = (cc === "IT") || !!region;
 
-    const pools = []; // [{kind, source, places, bbox?}]
+    const pools = [];
 
-    // 1) Regione core (basta questo)
     if (isItaly && region?.id) {
       const rid = String(region.id);
       const p2 = region.paths?.core || `/data/pois/regions/${rid}.json`;
@@ -423,7 +413,6 @@
       if (loaded) pools.push({ kind: "region", source: p2, places: loaded.places, bbox: region.bbox || null });
     }
 
-    // 2) Macro paese + fallback
     const countryMacro = findCountryMacroPathRobust(cc || (isItaly ? "IT" : ""));
     const macroUrls = [];
     if (countryMacro) macroUrls.push(countryMacro);
@@ -449,14 +438,15 @@
     return { pools, region };
   }
 
-  // -------------------- ORIGIN (NO GPS) --------------------
+  // -------------------- ORIGIN --------------------
   function setOrigin({ label, lat, lon, country_code }) {
     $("originLabel") && ($("originLabel").value = label ?? "");
     $("originLat") && ($("originLat").value = String(lat));
     $("originLon") && ($("originLon").value = String(lon));
     $("originCC") && ($("originCC").value = String(country_code || "").toUpperCase());
-    localStorage.setItem("jamo_origin", JSON.stringify({ label, lat, lon, country_code: String(country_code || "").toUpperCase() }));
-
+    localStorage.setItem("jamo_origin", JSON.stringify({
+      label, lat, lon, country_code: String(country_code || "").toUpperCase()
+    }));
     if ($("originStatus")) {
       $("originStatus").textContent =
         `✅ Partenza: ${label || "posizione"} (${Number(lat).toFixed(4)}, ${Number(lon).toFixed(4)})`;
@@ -495,7 +485,7 @@
     return j.result;
   }
 
-  // -------------------- SEARCH CORE --------------------
+  // -------------------- SEARCH --------------------
   function buildCandidates(places, origin, maxMinutes) {
     const oLat = Number(origin.lat);
     const oLon = Number(origin.lon);
@@ -506,13 +496,12 @@
       const p = normalizePlace(raw);
       if (!p) continue;
 
-      // SOLO monetizzabili
       if (!isMonetizableTouristic(p)) continue;
 
       const km = haversineKm(oLat, oLon, p.lat, p.lon);
       const driveMin = estCarMinutesFromKm(km);
       if (!Number.isFinite(driveMin) || driveMin > target) continue;
-      if (km < 1.2) continue; // evita roba sotto casa
+      if (km < 1.2) continue;
 
       const score = scorePlace({ driveMin, targetMin: target, place: p });
       if (score < CFG.MIN_SCORE) continue;
@@ -532,7 +521,7 @@
       area.innerHTML = `
         <div class="card" style="box-shadow:none; border-color:rgba(255,90,90,.40); background:rgba(255,90,90,.10);">
           <div style="font-weight:950;">❌ Nessun luogo monetizzabile trovato nei minuti scelti.</div>
-          <div class="small muted" style="margin-top:8px;">Prova ad aumentare i minuti o cambia partenza.</div>
+          <div class="small muted" style="margin-top:8px;">Aumenta i minuti o cambia partenza.</div>
           <div class="small muted" style="margin-top:10px;">Dataset: ${escapeHtml(datasetLabel || "offline")}</div>
         </div>
       `;
@@ -540,14 +529,18 @@
     }
 
     const reg = region?.name ? ` • regione: ${escapeHtml(region.name)}` : "";
+
     const items = list.map((x) => {
       const p = x.place;
       const name = escapeHtml(p.name || "");
       const areaLabel = escapeHtml((p.area || p.country || "—").trim());
+
       const kind = monetizationKind(p);
 
       const go = mapsDirUrl(origin.lat, origin.lon, p.lat, p.lon);
-      const book = (kind === "ticket") ? gygSearchUrl(p.name, p.area || p.country) : bookingSearchUrl(p.name, p.area || p.country);
+      const book = (kind === "ticket")
+        ? gygSearchUrl(p.name, p.area || p.country)
+        : bookingSearchUrl(p.name, p.area || p.country);
       const eat = foodSearchUrl(p.name, p.area || p.country, p.lat, p.lon);
       const photos = googleImagesUrl(p.name, p.area || p.country);
       const wiki = wikiUrl(p.name, p.area || p.country);
@@ -565,17 +558,18 @@
             <div style="font-weight:1000; font-size:20px; line-height:1.15;">${name}</div>
             <div class="pill">${badge}</div>
           </div>
+
           <div class="small muted" style="margin-top:6px;">
             🚗 ~${x.driveMin} min • ${Math.round(x.km)} km • 📍 ${areaLabel}
           </div>
           <div class="small muted" style="margin-top:6px;">score: ${x.score}</div>
 
           <div class="row wraprow" style="gap:10px; margin-top:12px;">
-            <button class="btn btnPrimary" data-open="${escapeHtml(go)}" type="button">🧭 Vai</button>
-            <button class="btn" data-open="${escapeHtml(book)}" type="button">🎟️ Prenota</button>
-            <button class="btnGhost" data-open="${escapeHtml(eat)}" type="button">🍝 Mangia</button>
-            <button class="btnGhost" data-open="${escapeHtml(photos)}" type="button">📸 Foto</button>
-            <button class="btnGhost" data-open="${escapeHtml(wiki)}" type="button">📚 Wiki</button>
+            <button type="button" class="btn btnPrimary" data-open="${escapeHtml(go)}">🧭 Vai</button>
+            <button type="button" class="btn" data-open="${escapeHtml(book)}">🎟️ Prenota</button>
+            <button type="button" class="btnGhost" data-open="${escapeHtml(eat)}">🍝 Mangia</button>
+            <button type="button" class="btnGhost" data-open="${escapeHtml(photos)}">📸 Foto</button>
+            <button type="button" class="btnGhost" data-open="${escapeHtml(wiki)}">📚 Wiki</button>
           </div>
         </div>
       `;
@@ -587,13 +581,6 @@
       </div>
       ${items}
     `;
-
-    area.querySelectorAll("button[data-open]").forEach((b) => {
-      b.addEventListener("click", () => {
-        const url = b.getAttribute("data-open");
-        if (url) window.open(url, "_blank", "noopener");
-      });
-    });
   }
 
   async function runSearchMonetizable() {
@@ -604,7 +591,6 @@
     const ac = new AbortController();
     const { pools, region } = await loadPoolsRegionFirst(origin, { signal: ac.signal });
 
-    // region-first: proviamo regione, poi macro
     let datasetLabel = "";
     let list = [];
 
@@ -623,9 +609,10 @@
     }
 
     renderResults(origin, region, list, datasetLabel);
+    return list.length;
   }
 
-  // -------------------- UI BINDING (MINIMO) --------------------
+  // -------------------- STATUS --------------------
   function showStatus(type, text) {
     const box = $("statusBox");
     const t = $("statusText");
@@ -645,12 +632,42 @@
     t.textContent = "";
   }
 
-  function disableGPS() {
-    const b = $("btnUseGPS");
-    if (b) { b.style.display = "none"; b.disabled = true; b.setAttribute("aria-hidden", "true"); }
+  // -------------------- CLICK: EVENT DELEGATION (FIX) --------------------
+  function bindResultAreaDelegation() {
+    const area = $("resultArea");
+    if (!area || area.dataset.boundClicks) return;
+    area.dataset.boundClicks = "1";
+
+    // capture = true: prende il tap prima di overlay/listener strani
+    area.addEventListener("click", (e) => {
+      const btn = e.target.closest("button[data-open]");
+      if (!btn) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      const url = btn.getAttribute("data-open");
+      if (!url) return;
+
+      // apri in modo sicuro
+      window.open(url, "_blank", "noopener");
+    }, true);
   }
 
+  // -------------------- ORIGIN BUTTONS --------------------
+  function disableGPS() {
+    const b = $("btnUseGPS");
+    if (b) {
+      b.style.display = "none";
+      b.disabled = true;
+      b.setAttribute("aria-hidden", "true");
+    }
+  }
+
+  // -------------------- BOOT --------------------
   function boot() {
+    injectClickSafeCssOnce();
+    bindResultAreaDelegation();
     disableGPS();
     hideStatus();
 
@@ -659,9 +676,7 @@
     if (raw) {
       try {
         const o = JSON.parse(raw);
-        if (Number.isFinite(Number(o?.lat)) && Number.isFinite(Number(o?.lon))) {
-          setOrigin(o);
-        }
+        if (Number.isFinite(Number(o?.lat)) && Number.isFinite(Number(o?.lon))) setOrigin(o);
       } catch {}
     }
 
@@ -670,7 +685,12 @@
         const label = $("originLabel")?.value || "";
         if ($("originStatus")) $("originStatus").textContent = "🔎 Cerco il luogo…";
         const result = await geocodeLabel(label);
-        setOrigin({ label: result.label || label, lat: result.lat, lon: result.lon, country_code: result.country_code || "" });
+        setOrigin({
+          label: result.label || label,
+          lat: result.lat,
+          lon: result.lon,
+          country_code: result.country_code || "",
+        });
         showStatus("ok", "Partenza impostata ✅");
       } catch (e) {
         showStatus("err", `Geocoding fallito: ${String(e.message || e)}`);
@@ -681,8 +701,8 @@
       try {
         hideStatus();
         showStatus("ok", "🔎 Cerco solo POI monetizzabili…");
-        await runSearchMonetizable();
-        showStatus("ok", "✅ Fatto: solo luoghi monetizzabili.");
+        const n = await runSearchMonetizable();
+        showStatus("ok", n ? "✅ Trovati POI monetizzabili." : "⚠️ Nessun POI monetizzabile nei minuti scelti.");
       } catch (e) {
         showStatus("err", `Errore: ${String(e.message || e)}`);
       }
@@ -692,6 +712,5 @@
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot, { once: true });
   else boot();
 
-  // expose (debug)
   window.__jamoMonetizable = { runSearchMonetizable };
 })();
