@@ -1,10 +1,9 @@
 {
   "days_ahead": 60,
-  "max_events": 20000,
+  "max_events": 25000,
 
   "providers": {
     "ticketmaster": { "enabled": true, "apikey_env": "TICKETMASTER_API_KEY" },
-    "eventbrite": { "enabled": true, "token_env": "EVENTBRITE_TOKEN" },
     "openagenda": { "enabled": true, "apikey_env": "OPENAGENDA_API_KEY" }
   },
 
