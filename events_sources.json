@@ -1,0 +1,18 @@
+{
+  "days_ahead": 60,
+  "max_events": 5000,
+  "sources": [
+    {
+      "id": "comune_laquila",
+      "type": "ics",
+      "url": "INCOLLA_QUI_IL_LINK_ICS",
+      "default_region": "Abruzzo"
+    },
+    {
+      "id": "teatro_verona",
+      "type": "rss",
+      "url": "INCOLLA_QUI_IL_LINK_RSS",
+      "default_region": "Veneto"
+    }
+  ]
+}
