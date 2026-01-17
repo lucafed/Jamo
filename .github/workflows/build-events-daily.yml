@@ -20,21 +20,22 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Install deps (if package-lock exists)
-        run: |
-          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+      - name: Install (no deps)
+        run: echo "No deps"
 
       - name: Build events dataset
         env:
           JAMO_UA: "JamoEventsBot/1.0 (github actions)"
-        run: |
-          node scripts/build-events.mjs
+          TICKETMASTER_API_KEY: ${{ secrets.TICKETMASTER_API_KEY }}
+          OPENAGENDA_API_KEY: ${{ secrets.OPENAGENDA_API_KEY }}
+          OA_ENDPOINT: ${{ secrets.OA_ENDPOINT }}
+        run: npm run build:events
 
       - name: Commit changes
         run: |
           git config user.name "jamo-bot"
           git config user.email "jamo-bot@users.noreply.github.com"
-          git add public/data/events/events_it.json cache/geocode-cache.json || true
+          git add public/data/events/events_all.json cache/geocode-cache.json || true
           if git diff --cached --quiet; then
             echo "No changes."
             exit 0
