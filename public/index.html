@@ -80,6 +80,8 @@
       border-radius: 14px;
       padding: 10px 12px;
       font-weight:800;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
     }
 
     .card{
@@ -131,6 +133,8 @@
       user-select:none;
       font-size: 13px;
       font-weight: 850;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
     }
     .chip.active{
       border-color: rgba(0,224,255,.70);
@@ -241,7 +245,7 @@
           <button id="btnFindPlace" class="btnGhost" type="button" style="flex:1; min-width:160px;">🔎 Usa questo luogo</button>
         </div>
 
-        <!-- ✅ NUOVO: reset rapido partenza -->
+        <!-- ✅ reset rapido partenza (gestito da app.js) -->
         <div class="row wraprow" style="margin-top:10px;">
           <button id="btnResetOrigin" class="btnGhost" type="button" style="width:100%;">🧽 Cambia partenza (reset)</button>
         </div>
@@ -287,7 +291,6 @@
 
       <div class="small">Categoria</div>
       <div class="chiprow" id="categoryChips" style="margin-top:8px;">
-        <!-- ✅ Rimossi: Ovunque, Città, Panorami -->
         <div class="chip active" data-cat="natura">🌿 Natura</div>
         <div class="chip" data-cat="trekking">🥾 Trekking</div>
         <div class="chip" data-cat="borghi">🏘️ Borghi</div>
@@ -300,7 +303,7 @@
         <div class="chip" data-cat="eventi">🎉 Eventi</div>
       </div>
 
-      <!-- ✅ Subfiltri Eventi (app.js li usa) -->
+      <!-- ✅ Subfiltri Eventi (app.js li mostra/nasconde) -->
       <div id="eventsSubfilters">
         <div class="hr"></div>
         <div class="small">Eventi (sottocategoria)</div>
@@ -353,8 +356,8 @@
     <div class="footer">Jamo • PWA • Auto-only • Offline-first</div>
   </div>
 
-  <!-- ✅ aggiorna versione qui quando mettiamo app.js nuovo -->
-  <script src="/app.js?v=20.0"></script>
+  <!-- ✅ app.js aggiornato -->
+  <script src="/app.js?v=22.2"></script>
 
   <script>
     // PWA install prompt
@@ -377,27 +380,6 @@
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("/sw.js").catch(()=>{});
     }
-
-    // ✅ Reset rapido partenza (non dipende da app.js)
-    document.getElementById("btnResetOrigin")?.addEventListener("click", () => {
-      try {
-        localStorage.removeItem("jamo_origin");
-        // non tocchiamo visited/recent qui
-      } catch {}
-      const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
-      setVal("originLabel", "");
-      setVal("originLat", "");
-      setVal("originLon", "");
-      setVal("originCC", "");
-      const st = document.getElementById("originStatus");
-      if (st) st.textContent = "🧽 Partenza resettata. Inserisci un nuovo luogo e premi “Usa questo luogo”.";
-      const card = document.getElementById("quickStartCard");
-      if (card) card.classList.remove("collapsed");
-      const tgl = document.getElementById("originToggleIcon");
-      if (tgl) tgl.textContent = "⬇️";
-      document.getElementById("originLabel")?.focus();
-      setTimeout(()=> document.getElementById("quickStartCard")?.scrollIntoView({behavior:"smooth",block:"start"}), 30);
-    });
   </script>
 </body>
 </html>
