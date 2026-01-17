@@ -1,9 +1,10 @@
-/* Jamo — app.js v21.0 (CLEAN • TOURISTIC • MONETIZZABILE • TAP-SAFE)
+/* Jamo — app.js v22.1 (CLEAN • TOURISTIC • MONETIZZABILE • TAP-SAFE)
  * ✅ Offline-first • ✅ NO GPS • ✅ Region-first IT
+ * ✅ Rimossi: Ovunque / Città / Panorami
  * ✅ Borghi: SOLO insediamenti veri (anti “ponte/locomotiva/torre”)
- * ✅ Sempre turistico (gate forte) + borghi turistici (score/boost)
- * ✅ UI: "Altre" non fa jump • Opzioni carine con iconcine • no lineette
- * ✅ Nuovo tasto: 🗑️ Cambia partenza (cancella e reimposta)
+ * ✅ Trekking & Mare: filtri più larghi (trova di più, sempre turistico)
+ * ✅ UI: "Altre destinazioni" non fa jump • opzioni con iconcine • no lineette
+ * ✅ Nuovo tasto: 🗑️ Cambia partenza
  */
 
 (() => {
@@ -19,7 +20,7 @@
     RECENT_TTL_MS: 1000 * 60 * 60 * 20,
     RECENT_MAX: 160,
 
-    OPTIONS_POOL_MAX: 70,
+    OPTIONS_POOL_MAX: 80,
     ALTS_INITIAL: 7,
     ALTS_PAGE: 8,
 
@@ -61,6 +62,11 @@
   let ALL_OPTIONS = [];
   let VISIBLE_ALTS = 0;
   let CURRENT_CHOSEN = null;
+
+  // per mantenere info quando tocchi “Altre”
+  let LAST_DATASET_INFO = "";
+  let LAST_USED_MINUTES = null;
+  let LAST_MAX_MINUTES_INPUT = null;
 
   // -------------------- UTIL --------------------
   const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
@@ -295,7 +301,9 @@
     $("originLon") && ($("originLon").value = "");
     $("originCC") && ($("originCC").value = "");
     if (!keepText) $("originLabel") && ($("originLabel").value = "");
-    if ($("originStatus")) $("originStatus").textContent = "🗑️ Partenza rimossa. Inserisci un luogo e premi “Usa questo luogo”.";
+    if ($("originStatus"))
+      $("originStatus").textContent =
+        "🗑️ Partenza rimossa. Inserisci un luogo e premi “Usa questo luogo”.";
     collapseOriginCard(false);
     showStatus("ok", "Partenza cancellata ✅");
     scrollToId("quickStartCard");
@@ -369,7 +377,6 @@
     const originBody = card.querySelector(".originBody");
     if (!originBody) return;
 
-    // inserisci un bottone rapido sotto ai bottoni "Usa questo luogo"
     const row = originBody.querySelector(".row.wraprow");
     if (!row) return;
 
@@ -435,16 +442,11 @@
     }
   }
   function saveRecent(list) {
-    localStorage.setItem(
-      "jamo_recent",
-      JSON.stringify(list.slice(0, CFG.RECENT_MAX))
-    );
+    localStorage.setItem("jamo_recent", JSON.stringify(list.slice(0, CFG.RECENT_MAX)));
   }
   function cleanupRecent(list) {
     const t = Date.now();
-    return list.filter(
-      (x) => x && x.pid && t - (x.ts || 0) <= CFG.RECENT_TTL_MS
-    );
+    return list.filter((x) => x && x.pid && t - (x.ts || 0) <= CFG.RECENT_TTL_MS);
   }
   function addRecent(pid) {
     const t = Date.now();
@@ -496,9 +498,7 @@
       if (!chip) return;
 
       if (!multi) {
-        [...el.querySelectorAll(".chip")].forEach((c) =>
-          c.classList.remove("active")
-        );
+        [...el.querySelectorAll(".chip")].forEach((c) => c.classList.remove("active"));
         chip.classList.add("active");
       } else {
         chip.classList.toggle("active");
@@ -506,8 +506,7 @@
 
       if (containerId === "timeChips") {
         const v = Number(chip.dataset.min);
-        if (Number.isFinite(v) && $("maxMinutes"))
-          $("maxMinutes").value = String(v);
+        if (Number.isFinite(v) && $("maxMinutes")) $("maxMinutes").value = String(v);
       }
     });
   }
@@ -524,17 +523,34 @@
     });
   }
 
+  // ✅ categorie ammesse (niente ovunque/citta/panorami)
+  const ALLOWED_CATS = new Set([
+    "natura",
+    "viewpoints", // non usata, ma lasciata per compat se dataset ha type (NON ESPOSTA)
+    "hiking",
+    "mare",
+    "relax",
+    "borghi",
+    "storia",
+    "family",
+    "cantine",
+    // "eventi" arriverà dopo, ora non la gestiamo qui
+  ]);
+
   function getActiveCategory() {
     const el = $("categoryChips");
     const active = el?.querySelector(".chip.active");
-    return active?.dataset.cat || "ovunque";
+    const cat = String(active?.dataset.cat || "").trim().toLowerCase();
+    if (cat && ALLOWED_CATS.has(canonicalCategory(cat))) return cat;
+    // fallback: prima chip in lista
+    const first = el?.querySelector(".chip");
+    const firstCat = String(first?.dataset.cat || "natura").toLowerCase();
+    return firstCat || "natura";
   }
 
   function getActiveStyles() {
     const el = $("styleChips");
-    const actives = [...(el?.querySelectorAll(".chip.active") || [])].map(
-      (c) => c.dataset.style
-    );
+    const actives = [...(el?.querySelectorAll(".chip.active") || [])].map((c) => c.dataset.style);
     return {
       wantChicche: actives.includes("chicche"),
       wantClassici: actives.includes("classici"),
@@ -561,10 +577,7 @@
   function normalizeType(t) {
     const s = String(t || "").toLowerCase().trim();
     if (!s) return "";
-    if (s === "borgo") return "borghi";
-    if (s === "borghi") return "borghi";
-    if (s === "città" || s === "citta") return "citta";
-    if (s === "panorami") return "viewpoints";
+    if (s === "borgo" || s === "borghi") return "borghi";
     if (s === "trekking") return "hiking";
     return s;
   }
@@ -583,7 +596,9 @@
     out.type = normalizeType(out.type || out.primary_category || out.category || "");
     out.visibility = normalizeVisibility(out.visibility);
 
-    out.tags = Array.isArray(out.tags) ? out.tags.map((x) => String(x).toLowerCase()) : [];
+    out.tags = Array.isArray(out.tags)
+      ? out.tags.map((x) => String(x).toLowerCase())
+      : [];
     out.country = String(out.country || "").toUpperCase();
     out.area = String(out.area || "");
     return out;
@@ -666,15 +681,11 @@
     }
   }
 
+  // ✅ NO ovunque / citta / panorami
   function canonicalCategory(cat) {
     const c = String(cat || "").toLowerCase().trim();
-    if (!c || c === "ovunque") return "core";
-    if (c === "panorami") return "viewpoints";
-    if (c === "viewpoints") return "viewpoints";
-    if (c === "trekking") return "hiking";
-    if (c === "hiking") return "hiking";
-    if (c === "città" || c === "citta" || c === "city") return "citta";
-    return c;
+    if (c === "trekking" || c === "hiking") return "hiking";
+    return c || "natura";
   }
 
   function datasetInfoLabel(kind, src, poolLen) {
@@ -698,40 +709,48 @@
     const cat = canonicalCategory(categoryUI);
     const pools = [];
 
-    // 1) Regione categoria
+    // 1) Regione categoria (se esiste)
     if (isItaly && region?.id) {
       const rid = String(region.id);
-      const p1 =
-        cat !== "core" ? region.paths?.[cat] || `/data/pois/regions/${rid}-${cat}.json` : null;
-      if (p1) {
-        const loaded = await tryLoadPlacesFile(p1, signal);
-        if (loaded) {
-          pools.push({ kind: "region", source: p1, places: loaded.places, bbox: region.bbox || null, regionId: rid });
-          DATASETS_USED.push({ kind: "region", source: p1, placesLen: loaded.places.length });
-        }
+      const p1 = region.paths?.[cat] || `/data/pois/regions/${rid}-${cat}.json`;
+      const loaded1 = await tryLoadPlacesFile(p1, signal);
+      if (loaded1) {
+        pools.push({
+          kind: "region",
+          source: p1,
+          places: loaded1.places,
+          bbox: region.bbox || null,
+          regionId: rid,
+        });
+        DATASETS_USED.push({ kind: "region", source: p1, placesLen: loaded1.places.length });
       }
-      // 2) Regione core
+
+      // 2) Regione core (sempre)
       const p2 = region.paths?.core || `/data/pois/regions/${rid}.json`;
-      if (p2) {
-        const loaded = await tryLoadPlacesFile(p2, signal);
-        if (loaded) {
-          pools.push({ kind: "region", source: p2, places: loaded.places, bbox: region.bbox || null, regionId: rid });
-          DATASETS_USED.push({ kind: "region", source: p2, placesLen: loaded.places.length });
-        }
+      const loaded2 = await tryLoadPlacesFile(p2, signal);
+      if (loaded2) {
+        pools.push({
+          kind: "region",
+          source: p2,
+          places: loaded2.places,
+          bbox: region.bbox || null,
+          regionId: rid,
+        });
+        DATASETS_USED.push({ kind: "region", source: p2, placesLen: loaded2.places.length });
       }
     }
 
-    // 3) Radius categoria
-    if (cat !== "core") {
+    // 3) Radius categoria (molto utile per hiking/mare)
+    {
       const p3 = `/data/pois/regions/radius-${cat}.json`;
-      const loaded = await tryLoadPlacesFile(p3, signal);
-      if (loaded) {
-        pools.push({ kind: "radius", source: p3, places: loaded.places, bbox: null });
-        DATASETS_USED.push({ kind: "radius", source: p3, placesLen: loaded.places.length });
+      const loaded3 = await tryLoadPlacesFile(p3, signal);
+      if (loaded3) {
+        pools.push({ kind: "radius", source: p3, places: loaded3.places, bbox: null });
+        DATASETS_USED.push({ kind: "radius", source: p3, placesLen: loaded3.places.length });
       }
     }
 
-    // 4) Macro paese + fallback
+    // 4) Macro paese + fallback (ultimo salvagente)
     const countryMacro = findCountryMacroPathRobust(cc || (isItaly ? "IT" : ""));
     const macroUrls = [];
     if (countryMacro) macroUrls.push(countryMacro);
@@ -779,11 +798,11 @@
 
   // -------------------- TAGS / FILTERS --------------------
   const placeTags = (place) => (place.tags || []).map((t) => String(t).toLowerCase());
-  const tagsStr = (place) => placeTags(place).join(" ");
-  const hasAny = (str, arr) => { for (const k of arr) if (str.includes(k)) return true; return false; };
+  const tagsStr2 = (place) => placeTags(place).join(" ");
+  const hasAny2 = (str, arr) => { for (const k of arr) if (str.includes(k)) return true; return false; };
 
   function hasQualitySignals(place) {
-    const t = tagsStr(place);
+    const t = tagsStr2(place);
     return (
       t.includes("wikipedia=") ||
       t.includes("wikidata=") ||
@@ -797,32 +816,32 @@
 
   // ---------- spazzatura ----------
   function isClearlyIrrelevantPlace(place) {
-    const t = tagsStr(place);
+    const t = tagsStr2(place);
     const n = normName(place?.name || "");
-    if (hasAny(t, ["highway=", "railway=", "public_transport=", "route=", "junction=", "highway=bus_stop", "highway=platform"])) return true;
-    if (hasAny(t, ["amenity=parking", "amenity=parking_entrance", "amenity=parking_space", "highway=rest_area", "amenity=fuel", "amenity=charging_station"])) return true;
-    if (hasAny(t, ["landuse=industrial", "landuse=commercial", "building=industrial", "building=warehouse", "building=office", "man_made=works"])) return true;
-    if (hasAny(t, ["man_made=survey_point", "power=", "telecom=", "pipeline=", "place=locality"])) return true;
-    if (hasAny(n, ["parcheggio", "stazione", "fermata", "svincolo", "uscita", "cabina", "impianto", "linea", "km "])) return true;
+    if (hasAny2(t, ["highway=", "railway=", "public_transport=", "route=", "junction=", "highway=bus_stop", "highway=platform"])) return true;
+    if (hasAny2(t, ["amenity=parking", "amenity=parking_entrance", "amenity=parking_space", "highway=rest_area", "amenity=fuel", "amenity=charging_station"])) return true;
+    if (hasAny2(t, ["landuse=industrial", "landuse=commercial", "building=industrial", "building=warehouse", "building=office", "man_made=works"])) return true;
+    if (hasAny2(t, ["man_made=survey_point", "power=", "telecom=", "pipeline=", "place=locality"])) return true;
+    if (hasAny2(n, ["parcheggio", "stazione", "fermata", "svincolo", "uscita", "cabina", "impianto", "linea", "km "])) return true;
     return false;
   }
 
   function looksWellnessByName(place) {
     const n = normName(place?.name || "");
-    return hasAny(n, ["terme","termale","thermal","spa","wellness","benessere","hammam","hamam","sauna"]);
+    return hasAny2(n, ["terme","termale","thermal","spa","wellness","benessere","hammam","hamam","sauna"]);
   }
   function looksBeachByName(place) {
     const n = normName(place?.name || "");
-    return hasAny(n, ["spiaggia","lido","baia","cala","scogliera","mare","beach"]);
+    return hasAny2(n, ["spiaggia","lido","baia","cala","scogliera","mare","beach"]);
   }
   function looksTrailByName(place) {
     const n = normName(place?.name || "");
-    return hasAny(n, ["sentier","cai","trail","anello","percorso","via ferrata","ferrata","trek"]);
+    return hasAny2(n, ["sentier","cai","trail","anello","percorso","via ferrata","ferrata","trek"]);
   }
 
   // --- monetizzabili ---
   function isSpaPlace(place) {
-    const t = tagsStr(place);
+    const t = tagsStr2(place);
     const nm = normName(place?.name || "");
     const spaTags =
       t.includes("amenity=spa") || t.includes("leisure=spa") || t.includes("tourism=spa") ||
@@ -834,26 +853,22 @@
       t.includes("leisure=swimming_pool") && (nm.includes("terme") || nm.includes("spa") || nm.includes("thermal") || nm.includes("wellness"));
     return spaTags || looksWellnessByName(place) || poolSpaLike;
   }
-  function isThemePark(place) { return tagsStr(place).includes("tourism=theme_park"); }
-  function isWaterPark(place) { return tagsStr(place).includes("leisure=water_park"); }
+  function isThemePark(place) { return tagsStr2(place).includes("tourism=theme_park"); }
+  function isWaterPark(place) { return tagsStr2(place).includes("leisure=water_park"); }
   function isZooOrAquarium(place) {
-    const t = tagsStr(place);
+    const t = tagsStr2(place);
     return t.includes("tourism=zoo") || t.includes("tourism=aquarium") || t.includes("amenity=aquarium");
   }
   function isAdventurePark(place) {
-    const t = tagsStr(place);
+    const t = tagsStr2(place);
     const n = normName(place?.name || "");
     return t.includes("leisure=adventure_park") || n.includes("parco avventura") || n.includes("zipline") || n.includes("percorsi sospesi");
   }
-  function isMuseum(place) { return tagsStr(place).includes("tourism=museum"); }
-  function isAttraction(place) { return tagsStr(place).includes("tourism=attraction"); }
-  function isRealViewpoint(place) {
-    const t = tagsStr(place);
-    return t.includes("tourism=viewpoint") || t.includes("man_made=observation_tower") || t.includes("tower:type=observation");
-  }
+  function isMuseum(place) { return tagsStr2(place).includes("tourism=museum"); }
+  function isAttraction(place) { return tagsStr2(place).includes("tourism=attraction"); }
 
   function isNature(place) {
-    const t = tagsStr(place);
+    const t = tagsStr2(place);
     const type = normalizeType(place?.type);
     return (
       type === "natura" ||
@@ -872,7 +887,7 @@
 
   // ✅ BORGH I: SOLO insediamenti veri + fallback controllato
   function isBorgo(place) {
-    const t = tagsStr(place);
+    const t = tagsStr2(place);
     const n = normName(place?.name || "");
     const type = normalizeType(place?.type);
 
@@ -883,7 +898,7 @@
       t.includes("place=suburb") ||
       t.includes("place=neighbourhood");
 
-    const nameLooksBorgo = hasAny(n, [
+    const nameLooksBorgo = hasAny2(n, [
       "borgo",
       "centro storico",
       "frazione",
@@ -892,7 +907,7 @@
       "castel"
     ]);
 
-    const nameLooksObject = hasAny(n, [
+    const nameLooksObject = hasAny2(n, [
       "ponte","locomotiva","treno","museo","area archeologica","villa comunale","parco",
       "torre","rocca","forte","bagno","cascata","gola","sorgente","belvedere","sentiero",
       "rifugio","spiaggia","lido"
@@ -905,65 +920,82 @@
     return false;
   }
 
-  function isCity(place) {
-    const t = tagsStr(place);
-    const type = normalizeType(place?.type);
-    return type === "citta" || t.includes("place=city") || t.includes("place=town");
-  }
-
+  // ✅ TREKKING più largo (trova di più, ma resta turistico)
   function isHiking(place) {
-    const t = tagsStr(place);
+    const t = tagsStr2(place);
     const type = normalizeType(place?.type);
     const n = normName(place?.name || "");
 
     if (type === "hiking") return true;
-    if (t.includes("tourism=alpine_hut") || t.includes("amenity=shelter") || t.includes("building=hut")) return true;
 
+    // rifugi/guidepost spesso utili come “meta”
+    if (t.includes("tourism=alpine_hut") || t.includes("amenity=shelter") || t.includes("building=hut")) return true;
+    if (t.includes("information=guidepost") || t.includes("information=route_marker")) return true;
+
+    // route/path
     const hasTrailTags =
       t.includes("route=hiking") ||
       t.includes("route=foot") ||
-      t.includes("information=route_marker") ||
-      t.includes("information=guidepost") ||
-      t.includes("sac_scale=") ||
       t.includes("highway=path") ||
-      t.includes("highway=footway");
+      t.includes("highway=footway") ||
+      t.includes("highway=track") ||           // ✅ aggiunto
+      t.includes("sac_scale=") ||
+      t.includes("trail_visibility=");
 
-    if (hasTrailTags) {
-      if (looksTrailByName(place)) return true;
-      if (hasQualitySignals(place) && (n.length >= 6)) return true;
-      if (t.includes("natural=peak") || isRealViewpoint(place)) return true;
-    }
+    // nome “sentiero/anello/Cai”
+    if (hasTrailTags && (looksTrailByName(place) || hasQualitySignals(place))) return true;
+
+    // fallback: picchi/belvederi (se collegati a hiking)
+    if (t.includes("natural=peak") && (hasTrailTags || looksTrailByName(place))) return true;
+
+    // ancora più permissivo ma solo se ha segnali qualità + nome “trail”
+    if (hasQualitySignals(place) && looksTrailByName(place) && n.length >= 6) return true;
+
     return false;
   }
 
+  // ✅ MARE più largo (trova di più)
   function isSea(place) {
-    const t = tagsStr(place);
+    const t = tagsStr2(place);
     const type = normalizeType(place?.type);
     const quality = hasQualitySignals(place);
+    const n = normName(place?.name || "");
 
     if (type === "mare") return true;
     if (t.includes("natural=beach")) return true;
     if (t.includes("leisure=marina")) return true;
+    if (t.includes("man_made=pier") && (looksBeachByName(place) || quality)) return true;
 
+    // molte spiagge sono solo “attraction” + nome
+    if (t.includes("tourism=attraction") && looksBeachByName(place)) return true;
+
+    // coastline generica -> accetta solo se nome/qualità
     if (t.includes("natural=coastline")) {
-      return looksBeachByName(place) || quality || isRealViewpoint(place);
+      return looksBeachByName(place) || quality;
     }
+
+    // nome da mare anche senza tag perfetti (ma solo se ha QUALCHE segnale)
+    if (looksBeachByName(place) && (quality || t.includes("tourism=") || t.includes("natural="))) return true;
+
+    // evita falsi: “mare” nel nome di un bar ecc (già filtrato food/lodging, ma extra)
+    if (hasAny2(n, ["bar", "ristorante", "hotel"]) && looksBeachByName(place)) return false;
+
     return false;
   }
 
   function isWinery(place) {
-    const t = tagsStr(place);
+    const t = tagsStr2(place);
     const n = normName(place?.name || "");
     if (t.includes("craft=winery")) return true;
     if (t.includes("shop=wine")) return true;
     if (t.includes("amenity=wine_bar")) return true;
-    if (hasAny(n, ["cantina","winery","vino","vini","enoteca","degustaz","wine tasting","wine tour"])) return true;
+    if (hasAny2(n, ["cantina","winery","vino","vini","enoteca","degustaz","wine tasting","wine tour"])) return true;
     return false;
   }
 
   // hotel/food: non meta (li usiamo per monetizzare)
   function isLodgingOrFood(place, category) {
-    const t = tagsStr(place);
+    const t = tagsStr2(place);
 
     const lodging =
       t.includes("tourism=hotel") || t.includes("tourism=hostel") || t.includes("tourism=guest_house") ||
@@ -986,31 +1018,27 @@
 
   // ✅ Gate turistico: sempre turistico, borghi inclusi ma reali
   function isTouristicVisitabile(place, categoryUI) {
-    const t = tagsStr(place);
+    const t = tagsStr2(place);
     const n = normName(place?.name || "");
     const cat = canonicalCategory(categoryUI);
     const quality = hasQualitySignals(place);
 
-    // categorie speciali (coerenza massima)
     if (cat === "borghi") return isBorgo(place);
     if (cat === "relax") return isSpaPlace(place);
     if (cat === "cantine") return isWinery(place) && (quality || t.includes("website="));
     if (cat === "hiking") return isHiking(place);
     if (cat === "mare") return isSea(place);
 
-    // forti
     const strong =
       t.includes("tourism=attraction") ||
       t.includes("tourism=museum") ||
       t.includes("tourism=gallery") ||
-      t.includes("tourism=viewpoint") ||
       t.includes("tourism=theme_park") ||
       t.includes("tourism=zoo") ||
       t.includes("tourism=aquarium") ||
       t.includes("historic=") ||
       t.includes("heritage=") ||
       t.includes("natural=peak") ||
-      t.includes("natural=beach") ||
       t.includes("natural=waterfall") ||
       t.includes("natural=cave_entrance") ||
       t.includes("natural=volcano") ||
@@ -1019,14 +1047,15 @@
       t.includes("leisure=park") ||
       t.includes("leisure=garden") ||
       t.includes("man_made=lighthouse") ||
-      t.includes("man_made=tower") ||
-      t.includes("man_made=observation_tower") ||
-      t.includes("tower:type=observation");
+      t.includes("man_made=tower");
 
     if (strong) return true;
 
     // fallback controllato: qualità + keyword turistica
-    if (quality && hasAny(n, ["castell","abbazi","duomo","cattedral","museo","belvedere","gole","cascat","parco","riserva","oasi","lago","forte","rocca"])) {
+    if (
+      quality &&
+      hasAny2(n, ["castell","abbazi","duomo","cattedral","museo","gole","cascat","parco","riserva","oasi","lago","forte","rocca"])
+    ) {
       return true;
     }
 
@@ -1035,18 +1064,15 @@
 
   function matchesCategoryStrict(place, catUI) {
     const cat = canonicalCategory(catUI);
-    if (!cat || cat === "core") return true;
 
     if (cat === "natura") return isNature(place);
-    if (cat === "viewpoints") return isRealViewpoint(place);
     if (cat === "hiking") return isHiking(place);
     if (cat === "mare") return isSea(place);
     if (cat === "relax") return isSpaPlace(place);
     if (cat === "borghi") return isBorgo(place);
-    if (cat === "citta") return isCity(place);
     if (cat === "cantine") return isWinery(place);
 
-    const t = tagsStr(place);
+    const t = tagsStr2(place);
     if (cat === "storia") {
       return (
         t.includes("historic=castle") ||
@@ -1071,6 +1097,7 @@
       );
     }
 
+    // default: se arriva qui, non bloccare (ma comunque passa dal gate turistico)
     return true;
   }
 
@@ -1099,15 +1126,19 @@
   }
 
   function seasonAdjust(place) {
-    const t = tagsStr(place);
-    const summerThing = t.includes("leisure=water_park") || t.includes("natural=beach") || t.includes("leisure=marina");
+    const t = tagsStr2(place);
+    const summerThing =
+      t.includes("leisure=water_park") ||
+      t.includes("natural=beach") ||
+      t.includes("leisure=marina");
+
     const winterThing = t.includes("piste:type=") || t.includes("sport=skiing") || t.includes("aerialway=");
 
     if (isWinterNow() && summerThing) return -0.18;
     if (isSummerNow() && winterThing) return -0.18;
 
     if (isWinterNow() && isSpaPlace(place)) return +0.12;
-    if (isSummerNow() && (summerThing || normalizeType(place?.type) === "mare")) return +0.06;
+    if (isSummerNow() && summerThing) return +0.06;
 
     return 0;
   }
@@ -1118,12 +1149,12 @@
 
   function borgoBoost(place, categoryUI) {
     if (canonicalCategory(categoryUI) !== "borghi") return 0;
-    const t = tagsStr(place);
+    const t = tagsStr2(place);
     const n = normName(place?.name || "");
     let b = 0;
     if (t.includes("historic=") || t.includes("heritage=")) b += 0.10;
     if (hasQualitySignals(place)) b += 0.08;
-    if (hasAny(n, ["centro storico","borgo","castel","rocca","pieve","duomo"])) b += 0.06;
+    if (hasAny2(n, ["centro storico","borgo","castel","rocca","pieve","duomo"])) b += 0.06;
     return b;
   }
 
@@ -1152,7 +1183,7 @@
       if (isLodgingOrFood(p, canonicalCategory(categoryUI))) continue;
 
       if (!isTouristicVisitabile(p, categoryUI)) continue;
-      if (!matchesCategoryStrict(p, categoryUI) && String(categoryUI) !== "ovunque") continue;
+      if (!matchesCategoryStrict(p, categoryUI)) continue;
 
       if (!matchesStyle(p, styles)) continue;
 
@@ -1237,21 +1268,16 @@
 
   // -------------------- LABELS / ICONS --------------------
   function typeBadge(categoryUI) {
-    const category = String(categoryUI || "");
+    const category = canonicalCategory(categoryUI);
     const map = {
       natura: { emoji:"🌿", label:"Natura" },
       family: { emoji:"👨‍👩‍👧‍👦", label:"Family" },
       storia: { emoji:"🏛️", label:"Storia" },
-      montagna:{ emoji:"🏔️", label:"Montagna" },
       mare:   { emoji:"🌊", label:"Mare" },
       relax:  { emoji:"🧖", label:"Relax" },
       borghi: { emoji:"🏘️", label:"Borghi" },
-      citta:  { emoji:"🏙️", label:"Città" },
       cantine:{ emoji:"🍷", label:"Cantine" },
-      viewpoints:{ emoji:"🌅", label:"Panorami" },
-      hiking:{ emoji:"🥾", label:"Trekking" },
-      ovunque:{ emoji:"🎲", label:"Meta" },
-      core:{ emoji:"🎲", label:"Meta" },
+      hiking: { emoji:"🥾", label:"Trekking" },
     };
     return map[category] || { emoji:"📍", label:"Meta" };
   }
@@ -1265,16 +1291,14 @@
 
   function shortWhatIs(place, categoryUI) {
     const category = canonicalCategory(categoryUI);
-    const t = tagsStr(place);
+    const t = tagsStr2(place);
 
     if (category === "cantine") return "Cantina/Enoteca • degustazioni e visite (prenotazione consigliata).";
     if (category === "relax") return "Relax • terme/spa/sauna (spesso su prenotazione).";
     if (category === "mare") return "Mare • spiaggia/baia/scogliera (stagione consigliata).";
     if (category === "hiking") return "Trekking • controlla meteo e percorso (scarpe ok).";
-    if (category === "viewpoints") return "Panorama vero • top al tramonto.";
     if (category === "storia") return "Storia • castelli/musei/attrazioni (verifica orari).";
     if (category === "borghi") return "Borgo • passeggiata nel centro, scorci e foto.";
-    if (category === "citta") return "Città • centro, musei e monumenti.";
     if (category === "natura") {
       if (t.includes("natural=waterfall")) return "Cascata • foto + passeggiata.";
       if (t.includes("natural=cave_entrance")) return "Grotta • verifica accesso/sicurezza.";
@@ -1303,7 +1327,7 @@
     area.innerHTML = `
       <div class="card clickSafe" style="box-shadow:none; border-color:rgba(255,90,90,.40); background:rgba(255,90,90,.10);">
         <div class="small">❌ Nessuna meta trovata entro <b>${maxMinutesShown} min</b> per <b>${escapeHtml(categoryUI)}</b>.</div>
-        <div class="small muted" style="margin-top:6px;">Tip: aumenta minuti oppure prova “Ovunque”.</div>
+        <div class="small muted" style="margin-top:6px;">Tip: aumenta i minuti oppure prova un’altra categoria.</div>
         <div class="small muted" style="margin-top:10px;">Dataset: ${escapeHtml(datasetInfo || "offline")}</div>
         <div class="row wraprow" style="gap:10px; margin-top:12px;">
           <button class="btnGhost" id="btnResetRotation" type="button">🧽 Reset “oggi”</button>
@@ -1455,7 +1479,7 @@
 
     $("btnBook")?.addEventListener("click", () => {
       const cat = canonicalCategory(categoryUI);
-      const tt = tagsStr(p);
+      const tt = tagsStr2(p);
 
       if (cat === "cantine") {
         window.open(gygSearchUrl(name, areaLabel), "_blank", "noopener");
@@ -1466,8 +1490,7 @@
         cat === "family" || cat === "storia" ||
         tt.includes("tourism=museum") || tt.includes("tourism=theme_park") ||
         tt.includes("tourism=zoo") || tt.includes("tourism=aquarium") ||
-        tt.includes("tourism=attraction") || tt.includes("leisure=water_park") ||
-        tt.includes("tourism=viewpoint");
+        tt.includes("tourism=attraction") || tt.includes("leisure=water_park");
 
       const url = isTicketish ? gygSearchUrl(name, areaLabel) : bookingSearchUrl(name, areaLabel);
       window.open(url, "_blank", "noopener");
@@ -1532,8 +1555,12 @@
         CURRENT_CHOSEN = found;
         const origin = getOrigin();
         const catUI = getActiveCategory();
-        const maxMinutesInput = clamp(Number($("maxMinutes")?.value) || 120, 10, 600);
-        renderChosenCard(origin, found, catUI, "", maxMinutesInput, maxMinutesInput);
+
+        // ✅ mantieni info ultima ricerca
+        const usedMinutes = Number(LAST_USED_MINUTES ?? $("maxMinutes")?.value ?? 120);
+        const maxMinutesInput = Number(LAST_MAX_MINUTES_INPUT ?? $("maxMinutes")?.value ?? 120);
+
+        renderChosenCard(origin, found, catUI, LAST_DATASET_INFO, usedMinutes, maxMinutesInput);
 
         setTimeout(() => {
           $("resultCard")?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -1551,8 +1578,8 @@
 
     const muls =
       category === "family" ? [1.15, 1.30, 1.50] :
-      category === "mare"   ? [1.20, 1.45, 1.70] :
-      category === "hiking" ? [1.20, 1.50, 1.80] :
+      category === "mare"   ? [1.15, 1.35, 1.55] :  // ✅ meno aggressivo, più coerente
+      category === "hiking" ? [1.15, 1.35, 1.60] :
                               [1.20, 1.40, 1.60];
 
     const steps = [base];
@@ -1572,6 +1599,7 @@
       return { list: dedupeDiverse(res.list), usedFallback: res.usedFallback };
     };
 
+    // Region first, ma include già region-cat + region-core
     if (regionPools.length) {
       const a = attempt(regionPools);
       if (a.list.length) {
@@ -1623,7 +1651,11 @@
       for (const mins of steps) {
         usedMinutes = mins;
 
-        const attemptRegion = combineAndScore(pools.filter(p => p.kind === "region"), origin, mins, categoryUI, styles, regionBBox);
+        const attemptRegion = combineAndScore(
+          pools.filter(p => p.kind === "region"),
+          origin, mins, categoryUI, styles, regionBBox
+        );
+
         let regionList = attemptRegion.list;
         if (forbidPid) regionList = regionList.filter((x) => x.pid !== forbidPid);
 
@@ -1648,7 +1680,8 @@
 
           const firstRegion = pools.find((p) => p.kind === "region");
           const firstOther = pools.find((p) => p.kind !== "region");
-          chosenDatasetInfo = `REGION:${(firstRegion?.source || "").split("/").pop() || "—"} + ${datasetInfoLabel(firstOther?.kind, firstOther?.source, firstOther?.places?.length || 0)}`;
+          chosenDatasetInfo =
+            `REGION:${(firstRegion?.source || "").split("/").pop() || "—"} + ${datasetInfoLabel(firstOther?.kind, firstOther?.source, firstOther?.places?.length || 0)}`;
           break;
         }
 
@@ -1674,7 +1707,9 @@
       if (token !== SEARCH_TOKEN) return;
 
       if (!poolCandidates.length) {
-        const ds = (DATASETS_USED || []).map((x) => `${x.kind}:${(x.source || "").split("/").pop()} (${x.placesLen})`).join(" • ");
+        const ds = (DATASETS_USED || [])
+          .map((x) => `${x.kind}:${(x.source || "").split("/").pop()} (${x.placesLen})`)
+          .join(" • ");
         renderNoResult(maxMinutesInput, categoryUI, ds || "offline");
         showStatus("warn", `Nessuna meta entro ${maxMinutesInput} min per "${categoryUI}".`);
         return;
@@ -1685,6 +1720,11 @@
 
       const maxAlts = Math.max(0, ALL_OPTIONS.length - 1);
       VISIBLE_ALTS = Math.min(CFG.ALTS_INITIAL, maxAlts);
+
+      // ✅ salva info per tap su “Altre”
+      LAST_DATASET_INFO = chosenDatasetInfo;
+      LAST_USED_MINUTES = usedMinutes;
+      LAST_MAX_MINUTES_INPUT = maxMinutesInput;
 
       renderChosenCard(origin, CURRENT_CHOSEN, categoryUI, chosenDatasetInfo, usedMinutes, maxMinutesInput);
 
@@ -1739,7 +1779,6 @@
       }
     });
 
-    // tasto rapido creato dinamicamente
     $("btnClearOrigin")?.addEventListener("click", () => clearOrigin({ keepText: false }));
   }
 
@@ -1764,7 +1803,7 @@
     injectMiniCssOnce();
     initChipsAll();
     restoreOrigin();
-    ensureClearOriginButton(); // ✅ nuovo bottone
+    ensureClearOriginButton();
     bindOriginButtons();
     bindMainButtons();
     bindResultAreaDelegation();
