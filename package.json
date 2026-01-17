@@ -10,7 +10,10 @@
   "scripts": {
     "build:region:core": "node scripts/build_region_core.mjs",
     "build:region:category": "node scripts/build_region_category.mjs",
-    "build:regions:index": "node scripts/build_it_regions_index.mjs"
+    "build:regions:index": "node scripts/build_it_regions_index.mjs",
+
+    "build:events": "node scripts/build-events.mjs",
+    "build:all": "npm run build:regions:index && npm run build:events"
   },
   "dependencies": {},
   "devDependencies": {}
