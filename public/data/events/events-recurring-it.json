@@ -1,0 +1,162 @@
+{
+  "version": "1.0.0",
+  "generated_at": "2026-01-17",
+  "license": "internal",
+  "notes": "Eventi ricorrenti: funziona offline. Date: month/day con range. Alcuni eventi sono 'window' (intervallo indicativo).",
+  "events": [
+    {
+      "id": "it-verona-bussolengo-fiera-di-san-valentino",
+      "title": "Fiera di San Valentino",
+      "etype": "fiere",
+      "visibility": "classica",
+      "city": "Bussolengo",
+      "province": "VR",
+      "region": "Veneto",
+      "country": "IT",
+      "lat": 45.4719,
+      "lon": 10.8619,
+      "season": ["winter"],
+      "date_rule": { "kind": "fixed_window", "from": { "m": 2, "d": 10 }, "to": { "m": 2, "d": 20 } },
+      "tags": ["fiera", "tradizione", "famiglie", "streetfood"],
+      "links": {
+        "official": "",
+        "tickets": "",
+        "more": ""
+      }
+    },
+    {
+      "id": "it-verona-verona-vinitaly",
+      "title": "Vinitaly (Verona)",
+      "etype": "fiere",
+      "visibility": "classica",
+      "city": "Verona",
+      "province": "VR",
+      "region": "Veneto",
+      "country": "IT",
+      "lat": 45.4384,
+      "lon": 10.9924,
+      "season": ["spring"],
+      "date_rule": { "kind": "fixed_window", "from": { "m": 4, "d": 1 }, "to": { "m": 4, "d": 15 } },
+      "tags": ["vino", "fiera", "degustazioni"],
+      "links": { "official": "", "tickets": "", "more": "" }
+    },
+
+    {
+      "id": "it-roma-roma-mercatini-natale",
+      "title": "Mercatini di Natale (principali)",
+      "etype": "fiere",
+      "visibility": "classica",
+      "city": "Roma",
+      "province": "RM",
+      "region": "Lazio",
+      "country": "IT",
+      "lat": 41.9028,
+      "lon": 12.4964,
+      "season": ["winter"],
+      "date_rule": { "kind": "fixed_window", "from": { "m": 11, "d": 20 }, "to": { "m": 1, "d": 7 } },
+      "tags": ["mercatini", "natale", "famiglie"],
+      "links": { "official": "", "tickets": "", "more": "" }
+    },
+
+    {
+      "id": "it-aq-laquila-perdonanza-celestiniana",
+      "title": "Perdonanza Celestiniana",
+      "etype": "fiere",
+      "visibility": "classica",
+      "city": "L'Aquila",
+      "province": "AQ",
+      "region": "Abruzzo",
+      "country": "IT",
+      "lat": 42.3499,
+      "lon": 13.3995,
+      "season": ["summer"],
+      "date_rule": { "kind": "fixed_window", "from": { "m": 8, "d": 20 }, "to": { "m": 8, "d": 30 } },
+      "tags": ["tradizione", "storia", "eventi", "cortei"],
+      "links": { "official": "", "tickets": "", "more": "" }
+    },
+
+    {
+      "id": "it-si-siena-palio-siena-luglio",
+      "title": "Palio di Siena (luglio)",
+      "etype": "sport",
+      "visibility": "classica",
+      "city": "Siena",
+      "province": "SI",
+      "region": "Toscana",
+      "country": "IT",
+      "lat": 43.3188,
+      "lon": 11.3308,
+      "season": ["summer"],
+      "date_rule": { "kind": "fixed_day", "on": { "m": 7, "d": 2 } },
+      "tags": ["palio", "tradizione", "storico"],
+      "links": { "official": "", "tickets": "", "more": "" }
+    },
+    {
+      "id": "it-si-siena-palio-siena-agosto",
+      "title": "Palio di Siena (agosto)",
+      "etype": "sport",
+      "visibility": "classica",
+      "city": "Siena",
+      "province": "SI",
+      "region": "Toscana",
+      "country": "IT",
+      "lat": 43.3188,
+      "lon": 11.3308,
+      "season": ["summer"],
+      "date_rule": { "kind": "fixed_day", "on": { "m": 8, "d": 16 } },
+      "tags": ["palio", "tradizione", "storico"],
+      "links": { "official": "", "tickets": "", "more": "" }
+    },
+
+    {
+      "id": "it-mi-milano-week-design",
+      "title": "Milano Design Week (indicativa)",
+      "etype": "fiere",
+      "visibility": "classica",
+      "city": "Milano",
+      "province": "MI",
+      "region": "Lombardia",
+      "country": "IT",
+      "lat": 45.4642,
+      "lon": 9.1900,
+      "season": ["spring"],
+      "date_rule": { "kind": "fixed_window", "from": { "m": 4, "d": 1 }, "to": { "m": 4, "d": 20 } },
+      "tags": ["design", "mostre", "fuorisalone"],
+      "links": { "official": "", "tickets": "", "more": "" }
+    },
+
+    {
+      "id": "it-ve-venezia-carnevale-venezia",
+      "title": "Carnevale di Venezia (finestra)",
+      "etype": "fiere",
+      "visibility": "classica",
+      "city": "Venezia",
+      "province": "VE",
+      "region": "Veneto",
+      "country": "IT",
+      "lat": 45.4408,
+      "lon": 12.3155,
+      "season": ["winter"],
+      "date_rule": { "kind": "fixed_window", "from": { "m": 2, "d": 1 }, "to": { "m": 2, "d": 28 } },
+      "tags": ["carnevale", "maschere", "sfilate"],
+      "links": { "official": "", "tickets": "", "more": "" }
+    },
+
+    {
+      "id": "it-na-napoli-mercatini-natale",
+      "title": "Mercatini di Natale (San Gregorio Armeno - finestra)",
+      "etype": "fiere",
+      "visibility": "classica",
+      "city": "Napoli",
+      "province": "NA",
+      "region": "Campania",
+      "country": "IT",
+      "lat": 40.8518,
+      "lon": 14.2681,
+      "season": ["winter"],
+      "date_rule": { "kind": "fixed_window", "from": { "m": 11, "d": 15 }, "to": { "m": 1, "d": 6 } },
+      "tags": ["presepi", "mercatini", "natale"],
+      "links": { "official": "", "tickets": "", "more": "" }
+    }
+  ]
+}
