@@ -1,173 +1,70 @@
 {
-  "days_ahead": 90,
+  "days_ahead": 60,
   "max_events": 30000,
 
-  "sources": [
-
-    /* =========================
-       AGGREGATORI EUROPEI OPEN
-       ========================= */
-
-    {
-      "id": "openagenda_europe",
-      "type": "ics",
-      "url": "https://openagenda.com/agenda.ics",
-      "default_region": "EU",
-      "default_place": "Europa",
-      "category": "culture"
+  "providers": {
+    "parks_it": {
+      "enabled": true
     },
 
-    {
-      "id": "culture_europe",
-      "type": "rss",
-      "url": "https://www.cultureurope.org/feed/",
-      "default_region": "EU",
-      "category": "culture"
-    },
-
-    /* =========================
-       ITALIA — TURISMO & FAMIGLIA
-       ========================= */
-
-    {
-      "id": "italia_turismo",
-      "type": "rss",
-      "url": "https://www.italia.it/rss/eventi.xml",
-      "default_region": "Italia",
-      "category": "family"
-    },
-
-    {
-      "id": "touring_club_italiano",
-      "type": "rss",
-      "url": "https://www.touringclub.it/rss/eventi",
-      "default_region": "Italia",
-      "category": "family"
-    },
-
-    {
-      "id": "eventi_famiglia_it",
-      "type": "rss",
-      "url": "https://www.familygo.eu/feed/",
-      "default_region": "Italia",
-      "category": "family"
-    },
-
-    /* =========================
-       EUROPA — EVENTI PER FAMIGLIE
-       ========================= */
-
-    {
-      "id": "visit_europe_family",
-      "type": "rss",
-      "url": "https://visiteurope.com/feed/",
-      "default_region": "EU",
-      "category": "family"
-    },
-
-    {
-      "id": "kids_europe",
-      "type": "rss",
-      "url": "https://www.europeankidsactivities.com/feed/",
-      "default_region": "EU",
-      "category": "family"
-    },
-
-    /* =========================
-       SPORT GENERICO
-       ========================= */
-
-    {
-      "id": "sport_europe",
-      "type": "rss",
-      "url": "https://www.sporteventseurope.com/rss",
-      "default_region": "EU",
-      "category": "sport"
-    },
-
-    {
-      "id": "decathlon_events",
-      "type": "rss",
-      "url": "https://www.decathlon.it/eventi/feed",
-      "default_region": "Italia",
-      "category": "sport"
-    },
-
-    /* =========================
-       CICLISMO (BIKE)
-       ========================= */
-
-    {
-      "id": "uci_events",
-      "type": "rss",
-      "url": "https://www.uci.org/rss/events",
-      "default_region": "EU",
-      "category": "bike"
-    },
-
-    {
-      "id": "cycling_events_eu",
-      "type": "rss",
-      "url": "https://www.cyclingnews.com/rss/events/",
-      "default_region": "EU",
-      "category": "bike"
-    },
-
-    {
-      "id": "granfondo_europe",
-      "type": "rss",
-      "url": "https://www.granfondoguide.com/Events/Feed",
-      "default_region": "EU",
-      "category": "bike"
-    },
-
-    /* =========================
-       MOTOCICLISMO
-       ========================= */
-
-    {
-      "id": "motoclub_europe",
-      "type": "rss",
-      "url": "https://www.moto.it/rss/eventi",
-      "default_region": "Italia",
-      "category": "motor"
-    },
-
-    {
-      "id": "motorcycle_events_eu",
-      "type": "rss",
-      "url": "https://www.motorcyclediaries.com/feed/",
-      "default_region": "EU",
-      "category": "motor"
-    },
-
-    {
-      "id": "harley_events",
-      "type": "rss",
-      "url": "https://www.harley-davidson.com/eu/en/events.rss",
-      "default_region": "EU",
-      "category": "motor"
-    },
-
-    /* =========================
-       MERCATI, SAGRE, STREET FOOD
-       ========================= */
-
-    {
-      "id": "street_food_europe",
-      "type": "rss",
-      "url": "https://www.streetfooditalia.it/feed/",
-      "default_region": "Italia",
-      "category": "food"
-    },
-
-    {
-      "id": "markets_europe",
-      "type": "rss",
-      "url": "https://www.europeanmarkets.com/rss/events",
-      "default_region": "EU",
-      "category": "market"
+    "ticketmaster": {
+      "enabled": false,
+      "apikey_env": "TICKETMASTER_API_KEY"
     }
+  },
 
+  "coverage": {
+    "italy": {
+      "enabled": true
+    },
+
+    "europe": {
+      "enabled": true,
+      "countries": [
+        { "cc": "IT" },
+        { "cc": "FR" },
+        { "cc": "DE" },
+        { "cc": "ES" },
+        { "cc": "GB" },
+        { "cc": "NL" },
+        { "cc": "BE" },
+        { "cc": "CH" },
+        { "cc": "AT" },
+        { "cc": "PT" },
+        { "cc": "IE" },
+        { "cc": "DK" },
+        { "cc": "SE" },
+        { "cc": "NO" },
+        { "cc": "FI" },
+        { "cc": "PL" },
+        { "cc": "CZ" },
+        { "cc": "HU" },
+        { "cc": "RO" },
+        { "cc": "GR" }
+      ]
+    }
+  },
+
+  "rss_ics_sources": [
+    {
+      "id": "ADD_CITY_FEED_1",
+      "type": "ics",
+      "url": "INCOLLA_QUI_URL_ICS_REALE",
+      "default_region": "Italia",
+      "default_place": "Roma, Italia",
+      "category": "family",
+      "fixed_lat": 41.9028,
+      "fixed_lon": 12.4964
+    },
+    {
+      "id": "ADD_CITY_FEED_2",
+      "type": "rss",
+      "url": "INCOLLA_QUI_URL_RSS_REALE",
+      "default_region": "EU",
+      "default_place": "Paris, France",
+      "category": "culture",
+      "fixed_lat": 48.8566,
+      "fixed_lon": 2.3522
+    }
   ]
 }
