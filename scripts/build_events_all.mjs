@@ -1,21 +1,10 @@
-// scripts/build_events_all.mjs
-// Jamo — Events Builder (IT + EU) — NO API KEY required
-// Output: /public/data/events/events_all.json
-//
-// ✅ Italia: Parks.it (auto-scopre link ICS per ogni regione) + geocoding Nominatim con cache
-// ✅ Fallback anti-zero: se LOCATION non geocodificabile → usa centro regione (non perdi eventi)
-// ✅ Europa: RSS/ICS da events_sources.json (aggiungi feed reali per massima copertura)
-// ✅ Categories: family / sport / bike / moto / music / food / market / culture / other
-
 import fs from "fs";
 import path from "path";
 
 const ROOT = process.cwd();
-const CFG_PATH = path.join(ROOT, "events_sources.json");
-
+const SOURCES_PATH = path.join(ROOT, "events_sources.json");
 const OUT_DIR = path.join(ROOT, "public", "data", "events");
 const OUT_PATH = path.join(OUT_DIR, "events_all.json");
-
 const CACHE_DIR = path.join(ROOT, "cache");
 const GEOCACHE_PATH = path.join(CACHE_DIR, "geocode-cache.json");
 
@@ -25,11 +14,7 @@ const NOMINATIM_ENDPOINT = "https://nominatim.openstreetmap.org/search";
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 function readJSON(p, fallback) {
-  try {
-    return JSON.parse(fs.readFileSync(p, "utf8"));
-  } catch {
-    return fallback;
-  }
+  try { return JSON.parse(fs.readFileSync(p, "utf8")); } catch { return fallback; }
 }
 function writeJSON(p, obj) {
   fs.mkdirSync(path.dirname(p), { recursive: true });
@@ -38,8 +23,7 @@ function writeJSON(p, obj) {
 function norm(s) {
   return String(s ?? "")
     .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
     .replace(/\s+/g, " ")
     .trim();
 }
@@ -49,67 +33,85 @@ function stripHtml(s) {
     .replace(/\s+/g, " ")
     .trim();
 }
-function iso(d) {
-  return d.toISOString();
-}
+function iso(d) { return d.toISOString(); }
+
 function withinWindow(d, now, daysAhead) {
   const t = d.getTime();
   const a = now.getTime();
   const b = a + daysAhead * 24 * 3600 * 1000;
   return t >= a - 6 * 3600 * 1000 && t <= b;
 }
+
 function makeId(src, title, startIso, lat, lon) {
-  const base = `${src}|${norm(title)}|${startIso}|${String(lat).slice(0, 7)}|${String(lon).slice(0, 7)}`;
+  const base = `${src}|${norm(title)}|${startIso}|${String(lat).slice(0,7)}|${String(lon).slice(0,7)}`;
   let h = 0;
   for (let i = 0; i < base.length; i++) h = (h * 31 + base.charCodeAt(i)) >>> 0;
   return `e_${h.toString(16)}`;
 }
 
-/* -------------------- Category guessing (esteso) -------------------- */
 function guessCategory(title, text) {
   const s = norm(`${title} ${text}`);
   if (!s) return "other";
-
-  // family / kids
-  if (/(bambin|family|kids|giochi|children|ragazz|baby|animazion|parco\s?giochi)/.test(s)) return "family";
-
-  // moto / motor
-  if (/(motoradun|motogp|moto\s?club|enduro|motocross|vespa|harley|ducati|ride\s?out|biker|motori|moto\s?tour)/.test(s))
-    return "moto";
-
-  // bike / cycling
-  if (/(ciclotur|cicl|mtb|gravel|bike|bici|pedalat|granfondo|cycl|giro|randonn)/.test(s)) return "bike";
-
-  // sport generico
-  if (/(gara|race|marathon|mezza\s?maratona|trail\s?run|running|triathlon|sport|torneo|match|campionato|fitness)/.test(s))
-    return "sport";
-
-  // altri
-  if (/(sagra|street\s?food|degust|vino|enogastr|food|taste|beer|birra)/.test(s)) return "food";
-  if (/(concerto|live|dj|music|festival|show|spettacolo)/.test(s)) return "music";
-  if (/(mercatino|market|fiera|expo|fair|artigian)/.test(s)) return "market";
-  if (/(mostra|museo|arte|theatre|teatro|cultura|conference|talk|cinema|rassegna|presentazione)/.test(s))
-    return "culture";
-
+  if (/(sagra|street food|degust|vino|enogastr|food|taste|birra|beer)/.test(s)) return "food";
+  if (/(concerto|live|dj|music|festival|show|spettacol)/.test(s)) return "music";
+  if (/(mercatino|market|fiera|expo|fair)/.test(s)) return "market";
+  if (/(mostra|museo|arte|theatre|teatro|cultura|conference|talk|cinema)/.test(s)) return "culture";
+  if (/(bambin|family|kids|giochi|children|ragazz)/.test(s)) return "family";
+  if (/(corsa|maratona|trail running|gara|sport|bike|bici|cicl|mtb|motoclub|moto|enduro|raduno)/.test(s)) return "sport";
   return "other";
 }
 
-/* -------------------- HTTP fetch helpers -------------------- */
-async function fetchText(url, headers = {}) {
-  const r = await fetch(url, {
-    headers: { "User-Agent": UA, Accept: "*/*", ...headers },
-    redirect: "follow",
-  });
-  if (!r.ok) throw new Error(`HTTP ${r.status} ${url}`);
-  return await r.text();
+/* -------------------- URL utils -------------------- */
+function absolutize(baseUrl, href) {
+  try { return new URL(href, baseUrl).toString(); }
+  catch { return href; }
 }
+function isParksUrl(u) {
+  const s = String(u || "");
+  return s.includes("://www.parks.it") || s.includes("://parks.it") || s.includes("://www.parks.") || s.includes("parks.it");
+}
+function httpsToHttpIfParks(u) {
+  const s = String(u || "");
+  if (!isParksUrl(s)) return s;
+  return s.replace(/^https:\/\//i, "http://");
+}
+
+/* -------------------- HTTP fetch with retries + parks http fallback -------------------- */
+async function fetchWithRetries(url, { accept = "*/*", extraHeaders = {}, attempts = 3 } = {}) {
+  let lastErr = null;
+  const headers = { "User-Agent": UA, "Accept": accept, ...extraHeaders };
+
+  const tries = [];
+  tries.push(url);
+
+  // Se parks.it e https, prova anche http
+  const httpAlt = httpsToHttpIfParks(url);
+  if (httpAlt && httpAlt !== url) tries.push(httpAlt);
+
+  for (const u0 of tries) {
+    for (let i = 0; i < attempts; i++) {
+      try {
+        const r = await fetch(u0, { headers, redirect: "follow" });
+        if (!r.ok) throw new Error(`HTTP ${r.status} ${u0}`);
+        return r;
+      } catch (e) {
+        lastErr = e;
+        const wait = 500 * (i + 1) * (i + 1);
+        await sleep(wait);
+      }
+    }
+  }
+
+  throw lastErr || new Error("fetch failed");
+}
+
 async function fetchJson(url, headers = {}) {
-  const r = await fetch(url, {
-    headers: { "User-Agent": UA, Accept: "application/json", ...headers },
-    redirect: "follow",
-  });
-  if (!r.ok) throw new Error(`HTTP ${r.status} ${url}`);
+  const r = await fetchWithRetries(url, { accept: "application/json", extraHeaders: headers });
   return await r.json();
+}
+async function fetchText(url, headers = {}) {
+  const r = await fetchWithRetries(url, { accept: "*/*", extraHeaders: headers });
+  return await r.text();
 }
 
 /* -------------------- Geocoding (Nominatim) cache + 1req/s -------------------- */
@@ -121,7 +123,7 @@ async function geocodePlace(q, cache) {
   await sleep(1100);
 
   const url = `${NOMINATIM_ENDPOINT}?format=jsonv2&limit=1&q=${encodeURIComponent(q)}`;
-  const j = await fetchJson(url).catch(() => null);
+  const j = await fetchJson(url);
   const first = Array.isArray(j) && j[0] ? j[0] : null;
   if (!first) return null;
 
@@ -173,16 +175,10 @@ function parseIcs(text) {
   const events = [];
   let cur = null;
 
-  for (const ln of lines) {
-    if (ln.startsWith("BEGIN:VEVENT")) {
-      cur = {};
-      continue;
-    }
-    if (ln.startsWith("END:VEVENT")) {
-      if (cur) events.push(cur);
-      cur = null;
-      continue;
-    }
+  for (const ln0 of lines) {
+    const ln = String(ln0 || "").trimEnd();
+    if (ln.startsWith("BEGIN:VEVENT")) { cur = {}; continue; }
+    if (ln.startsWith("END:VEVENT")) { if (cur) events.push(cur); cur = null; continue; }
     if (!cur) continue;
 
     const [k0, ...rest] = ln.split(":");
@@ -190,32 +186,25 @@ function parseIcs(text) {
     const k = k0.split(";")[0].trim().toUpperCase();
 
     if (k === "SUMMARY") cur.title = v;
+    if (k === "DESCRIPTION") cur.description = v;
     if (k === "DTSTART") cur.start = v;
     if (k === "DTEND") cur.end = v;
     if (k === "LOCATION") cur.location = v;
     if (k === "URL") cur.url = v;
-    if (k === "DESCRIPTION") cur.description = v;
   }
   return events;
 }
 function parseIcsDate(s) {
   const x = String(s || "").trim();
   if (!x) return null;
-
   if (/^\d{8}$/.test(x)) {
-    const y = x.slice(0, 4),
-      m = x.slice(4, 6),
-      d = x.slice(6, 8);
+    const y = x.slice(0,4), m = x.slice(4,6), d = x.slice(6,8);
     const dt = new Date(`${y}-${m}-${d}T12:00:00Z`);
     return Number.isFinite(dt.getTime()) ? dt : null;
   }
   if (/^\d{8}T\d{6}Z?$/.test(x)) {
-    const y = x.slice(0, 4),
-      mo = x.slice(4, 6),
-      d = x.slice(6, 8);
-    const hh = x.slice(9, 11),
-      mm = x.slice(11, 13),
-      ss = x.slice(13, 15);
+    const y = x.slice(0,4), mo = x.slice(4,6), d = x.slice(6,8);
+    const hh = x.slice(9,11), mm = x.slice(11,13), ss = x.slice(13,15);
     const z = x.endsWith("Z") ? "Z" : "";
     const dt = new Date(`${y}-${mo}-${d}T${hh}:${mm}:${ss}${z}`);
     return Number.isFinite(dt.getTime()) ? dt : null;
@@ -223,134 +212,31 @@ function parseIcsDate(s) {
   return parseDateMaybe(x);
 }
 
-/* -------------------- RSS / ICS sources from events_sources.json -------------------- */
-async function fetchRssSource(src, now, daysAhead, geocache) {
-  const txt = await fetchText(src.url);
-  const items = splitItems(txt);
-  const out = [];
-
-  for (const it of items) {
-    const title = stripHtml(stripCdata(extractTag(it, "title"))) || "Evento";
-    const link = stripCdata(extractTag(it, "link")) || "";
-    const pubDateRaw = stripCdata(extractTag(it, "pubDate")) || stripCdata(extractTag(it, "dc:date"));
-    const desc = stripHtml(stripCdata(extractTag(it, "description")));
-
-    const d = parseDateMaybe(pubDateRaw);
-    if (!d || !withinWindow(d, now, daysAhead)) continue;
-
-    let lat = Number(src.fixed_lat);
-    let lon = Number(src.fixed_lon);
-    let place = String(src.default_place || "").trim();
-
-    if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
-      const locCandidate = (desc.match(/(Luogo|Location|Dove)\s*:\s*([^.\n]+)/i)?.[2] || "").trim();
-      const q = locCandidate || place;
-      if (q) {
-        const g = await geocodePlace(q, geocache);
-        if (g) {
-          lat = g.lat;
-          lon = g.lon;
-          place = locCandidate || place || g.display;
-        }
-      }
-    }
-
-    if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
-
-    const forcedCat = String(src.category || "").trim();
-
-    out.push({
-      title,
-      start: iso(d),
-      end: null,
-      lat,
-      lon,
-      place,
-      city: "",
-      region: String(src.default_region || ""),
-      country_code: String(src.country_code || "").toUpperCase(),
-      url: link,
-      category: forcedCat || guessCategory(title, desc),
-      source: String(src.id || "rss"),
-    });
-  }
-  return out;
-}
-
-async function fetchIcsSource(src, now, daysAhead, geocache) {
-  const txt = await fetchText(src.url);
-  const evs = parseIcs(txt);
-  const out = [];
-
-  for (const ev of evs) {
-    const title = String(ev.title || "").trim() || "Evento";
-    const sd = parseIcsDate(ev.start);
-    if (!sd || !withinWindow(sd, now, daysAhead)) continue;
-
-    const ed = parseIcsDate(ev.end);
-    const loc = String(ev.location || src.default_place || "").trim();
-    const link = String(ev.url || "").trim();
-    const desc = String(ev.description || "").trim();
-
-    let lat = Number(src.fixed_lat);
-    let lon = Number(src.fixed_lon);
-    let place = loc || String(src.default_place || "").trim();
-
-    if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
-      if (place) {
-        const g = await geocodePlace(place, geocache);
-        if (g) {
-          lat = g.lat;
-          lon = g.lon;
-        }
-      }
-    }
-    if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
-
-    const forcedCat = String(src.category || "").trim();
-
-    out.push({
-      title,
-      start: iso(sd),
-      end: ed ? iso(ed) : null,
-      lat,
-      lon,
-      place: place || "",
-      city: "",
-      region: String(src.default_region || ""),
-      country_code: String(src.country_code || "").toUpperCase(),
-      url: link || "",
-      category: forcedCat || guessCategory(title, `${place} ${desc}`),
-      source: String(src.id || "ics"),
-    });
-  }
-  return out;
-}
-
-/* -------------------- Parks.it (Italia) -------------------- */
+/* -------------------- Parks.it Italy -------------------- */
 const IT_REGIONS = [
-  { slug: "piemonte", region: "Piemonte" },
-  { slug: "valle.d.aosta", region: "Valle d'Aosta" },
-  { slug: "lombardia", region: "Lombardia" },
-  { slug: "trentino.alto.adige", region: "Trentino-Alto Adige" },
-  { slug: "veneto", region: "Veneto" },
-  { slug: "friuli.venezia.giulia", region: "Friuli-Venezia Giulia" },
-  { slug: "liguria", region: "Liguria" },
-  { slug: "emilia-romagna", region: "Emilia-Romagna" },
-  { slug: "toscana", region: "Toscana" },
-  { slug: "umbria", region: "Umbria" },
-  { slug: "marche", region: "Marche" },
-  { slug: "lazio", region: "Lazio" },
-  { slug: "abruzzo", region: "Abruzzo" },
-  { slug: "molise", region: "Molise" },
-  { slug: "campania", region: "Campania" },
-  { slug: "puglia", region: "Puglia" },
-  { slug: "basilicata", region: "Basilicata" },
-  { slug: "calabria", region: "Calabria" },
-  { slug: "sicilia", region: "Sicilia" },
-  { slug: "sardegna", region: "Sardegna" }
+  { region: "Piemonte", slug: "piemonte" },
+  { region: "Valle d'Aosta", slug: "valledaosta" },
+  { region: "Lombardia", slug: "lombardia" },
+  { region: "Trentino-Alto Adige", slug: "trentinoaltoadige" },
+  { region: "Veneto", slug: "veneto" },
+  { region: "Friuli-Venezia Giulia", slug: "friuliveneziagiulia" },
+  { region: "Liguria", slug: "liguria" },
+  { region: "Emilia-Romagna", slug: "emiliaromagna" },
+  { region: "Toscana", slug: "toscana" },
+  { region: "Umbria", slug: "umbria" },
+  { region: "Marche", slug: "marche" },
+  { region: "Lazio", slug: "lazio" },
+  { region: "Abruzzo", slug: "abruzzo" },
+  { region: "Molise", slug: "molise" },
+  { region: "Campania", slug: "campania" },
+  { region: "Puglia", slug: "puglia" },
+  { region: "Basilicata", slug: "basilicata" },
+  { region: "Calabria", slug: "calabria" },
+  { region: "Sicilia", slug: "sicilia" },
+  { region: "Sardegna", slug: "sardegna" }
 ];
 
+// fallback coordinate centro regione (così non perdi eventi se LOCATION generica)
 const IT_REGION_CENTROIDS = {
   "Piemonte": { lat: 45.0667, lon: 7.7000 },
   "Valle d'Aosta": { lat: 45.7372, lon: 7.3201 },
@@ -374,18 +260,9 @@ const IT_REGION_CENTROIDS = {
   "Sardegna": { lat: 39.2238, lon: 9.1217 }
 };
 
-function absolutize(baseUrl, href) {
-  try {
-    return new URL(href, baseUrl).toString();
-  } catch {
-    return href;
-  }
-}
-
 function extractParksIcalUrl(html, baseUrl) {
   const candidates = [];
 
-  // href="..."
   const re1 = /href\s*=\s*"([^"]+)"/gi;
   let m;
   while ((m = re1.exec(html))) {
@@ -396,7 +273,6 @@ function extractParksIcalUrl(html, baseUrl) {
     }
   }
 
-  // href='...'
   const re2 = /href\s*=\s*'([^']+)'/gi;
   while ((m = re2.exec(html))) {
     const href = m[1];
@@ -406,16 +282,13 @@ function extractParksIcalUrl(html, baseUrl) {
     }
   }
 
-  // URL .ics in chiaro
   const re3 = /(https?:\/\/[^\s"'<>]+\.ics[^\s"'<>]*)/gi;
   while ((m = re3.exec(html))) candidates.push(m[1]);
 
-  // path relativo con .ics
   const re4 = /([^\s"'<>]+\.ics(?:\?[^\s"'<>]+)?)/gi;
   while ((m = re4.exec(html))) {
     const u = m[1];
-    if (u.startsWith("http")) candidates.push(u);
-    else candidates.push(absolutize(baseUrl, u));
+    candidates.push(u.startsWith("http") ? u : absolutize(baseUrl, u));
   }
 
   const seen = new Set();
@@ -432,6 +305,7 @@ function extractParksIcalUrl(html, baseUrl) {
 
 async function fetchParksItaly(now, daysAhead, geocache) {
   const out = [];
+
   let regionsOk = 0;
   let regionsWithIcs = 0;
   let totalVEVENT = 0;
@@ -439,19 +313,22 @@ async function fetchParksItaly(now, daysAhead, geocache) {
   let keptFallback = 0;
 
   for (const r of IT_REGIONS) {
-    const regionPage = `https://www.parks.it/regione.${r.slug}/man.php`;
+    // IMPORTANTISSIMO: per parks.it uso base http per facilitare i link ICS http-only
+    const regionPage = `http://www.parks.it/regione.${r.slug}/man.php`;
 
     try {
       const html = await fetchText(regionPage, { "Accept-Language": "it-IT,it;q=0.9,en;q=0.7" });
-      const icsUrl = extractParksIcalUrl(html, regionPage);
 
+      const icsUrl = extractParksIcalUrl(html, regionPage);
       if (!icsUrl) {
         console.log(`Parks.it: ${r.region} — NO ICS link found`);
         continue;
       }
       regionsWithIcs++;
 
+      // fetchText ha fallback https->http per parks, quindi qui copriamo entrambi
       const icsText = await fetchText(icsUrl, { "Accept-Language": "it-IT,it;q=0.9,en;q=0.7" });
+
       const evs = parseIcs(icsText);
       totalVEVENT += evs.length;
 
@@ -479,7 +356,6 @@ async function fetchParksItaly(now, daysAhead, geocache) {
           }
         }
 
-        // fallback centro regione
         if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
           const c = IT_REGION_CENTROIDS[r.region];
           if (!c) continue;
@@ -518,17 +394,108 @@ async function fetchParksItaly(now, daysAhead, geocache) {
 
   console.log(
     `Parks.it summary: regionsOk=${regionsOk}/${IT_REGIONS.length} regionsWithIcs=${regionsWithIcs} ` +
-      `totalVEVENT=${totalVEVENT} kept=${out.length} (geocoded=${keptGeocoded}, fallback=${keptFallback})`
+    `totalVEVENT=${totalVEVENT} kept=${out.length} (geocoded=${keptGeocoded}, fallback=${keptFallback})`
   );
 
   return out;
 }
 
+/* -------------------- RSS / ICS sources -------------------- */
+async function fetchRssSource(src, now, daysAhead, geocache) {
+  const txt = await fetchText(src.url);
+  const items = splitItems(txt);
+  const out = [];
+
+  for (const it of items) {
+    const title = stripHtml(stripCdata(extractTag(it, "title"))) || "Evento";
+    const link = stripCdata(extractTag(it, "link")) || "";
+    const pubDateRaw = stripCdata(extractTag(it, "pubDate")) || stripCdata(extractTag(it, "dc:date"));
+    const desc = stripHtml(stripCdata(extractTag(it, "description")));
+    const d = parseDateMaybe(pubDateRaw);
+    if (!d || !withinWindow(d, now, daysAhead)) continue;
+
+    let lat = Number(src.fixed_lat);
+    let lon = Number(src.fixed_lon);
+    let place = String(src.default_place || "").trim();
+    const city = String(src.default_city || "").trim();
+    const country_code = String(src.country_code || "").toUpperCase();
+
+    if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+      const locCandidate = (desc.match(/(Luogo|Location|Dove)\s*:\s*([^.\n]+)/i)?.[2] || "").trim();
+      const q = locCandidate || place || title;
+      if (q) {
+        const g = await geocodePlace(q, geocache);
+        if (g) { lat = g.lat; lon = g.lon; place = locCandidate || place || g.display; }
+      }
+    }
+    if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
+
+    out.push({
+      title,
+      start: iso(d),
+      end: null,
+      lat, lon,
+      city,
+      region: String(src.default_region || ""),
+      country_code,
+      place,
+      url: link,
+      category: String(src.category || guessCategory(title, desc)),
+      source: String(src.id || "rss")
+    });
+  }
+  return out;
+}
+
+async function fetchIcsSource(src, now, daysAhead, geocache) {
+  const txt = await fetchText(src.url);
+  const evs = parseIcs(txt);
+  const out = [];
+
+  for (const ev of evs) {
+    const title = String(ev.title || "").trim() || "Evento";
+    const sd = parseIcsDate(ev.start);
+    if (!sd || !withinWindow(sd, now, daysAhead)) continue;
+
+    const ed = parseIcsDate(ev.end);
+    const loc = String(ev.location || src.default_place || "").trim();
+    const link = String(ev.url || "").trim();
+    const desc = String(ev.description || "").trim();
+
+    let lat = Number(src.fixed_lat);
+    let lon = Number(src.fixed_lon);
+    let place = loc || String(src.default_place || "").trim();
+
+    if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+      if (place) {
+        const g = await geocodePlace(place, geocache);
+        if (g) { lat = g.lat; lon = g.lon; }
+      }
+    }
+    if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
+
+    out.push({
+      title,
+      start: iso(sd),
+      end: ed ? iso(ed) : null,
+      lat, lon,
+      city: String(src.default_city || "").trim(),
+      region: String(src.default_region || ""),
+      country_code: String(src.country_code || "").toUpperCase(),
+      place: place || "",
+      url: link || "",
+      category: String(src.category || guessCategory(title, `${place} ${desc}`)),
+      source: String(src.id || "ics")
+    });
+  }
+  return out;
+}
+
 /* -------------------- MAIN -------------------- */
 async function main() {
-  const cfg = readJSON(CFG_PATH, null);
+  const cfg = readJSON(SOURCES_PATH, null);
   if (!cfg) {
-    console.error("❌ events_sources.json mancante.");
+    console.error("events_sources.json mancante.");
     process.exit(2);
   }
 
@@ -538,35 +505,27 @@ async function main() {
   const geocache = readJSON(GEOCACHE_PATH, {});
   const now = new Date();
   const daysAhead = Number(cfg.days_ahead || 60);
-  const maxEvents = Number(cfg.max_events || 25000);
+  const maxEvents = Number(cfg.max_events || 30000);
 
-  const rawOut = [];
+  const out = [];
+  const seen = new Set();
 
-  const italyEnabled = !!cfg?.coverage?.italy?.enabled;
+  // Parks.it Italy
   const parksEnabled = !!cfg?.providers?.parks_it?.enabled;
-
-  // 1) Italia automatico (Parks.it)
-  if (italyEnabled && parksEnabled) {
-    console.log("▶ Building IT events from Parks.it…");
+  if (parksEnabled && cfg?.coverage?.italy?.enabled) {
     const evs = await fetchParksItaly(now, daysAhead, geocache).catch(() => []);
-    rawOut.push(...evs);
-  } else {
-    console.log("ℹ Parks.it disabled or Italy coverage disabled.");
+    for (const e of evs) out.push(e);
   }
 
-  // 2) RSS/ICS extra (EU)
-  const localSources = cfg.rss_ics_sources || cfg.sources || [];
-  console.log(`▶ Building RSS/ICS sources… sources: ${localSources.length}`);
-
-  for (const src of localSources) {
+  // RSS/ICS extra sources (se sono placeholder verranno skippati)
+  console.log(`► Building RSS/ICS sources... sources: ${(cfg.rss_ics_sources || []).length}`);
+  for (const src of (cfg.rss_ics_sources || [])) {
     const type = String(src.type || "").toLowerCase();
-    const url = String(src?.url || "").trim();
-    if (!url || !url.startsWith("http")) {
-      console.log(`- skip source ${src?.id || "unknown"} (missing/invalid url)`);
+    const url = String(src.url || "").trim();
+    if (!url || url.includes("INCOLLA_QUI")) {
+      console.log(`- skip source ${src.id} (missing/invalid url)`);
       continue;
     }
-
-    const sid = String(src.id || url);
     try {
       const evs =
         type === "rss"
@@ -574,19 +533,15 @@ async function main() {
           : type === "ics"
           ? await fetchIcsSource(src, now, daysAhead, geocache)
           : [];
-
-      console.log(`- source OK ${sid} (${type}) → ${evs.length}`);
-      rawOut.push(...evs);
+      for (const e of evs) out.push(e);
     } catch (e) {
-      console.log(`- source FAIL ${sid} (${type}) → ${String(e?.message || e)}`);
+      console.error(`Source failed ${src?.id}:`, e?.message || e);
     }
   }
 
-  // 3) Normalize + dedupe
-  const seen = new Set();
+  // Normalize IDs + dedupe + limit
   const normalized = [];
-
-  for (const e of rawOut) {
+  for (const e of out) {
     const title = String(e.title || "Evento").trim();
     const start = new Date(e.start);
     if (!Number.isFinite(start.getTime())) continue;
@@ -599,11 +554,8 @@ async function main() {
     const source = String(e.source || "unknown");
     const startIso = iso(start);
     const id = makeId(source, title, startIso, lat, lon);
-
     if (seen.has(id)) continue;
     seen.add(id);
-
-    const category = String(e.category || guessCategory(title, e.place)).toLowerCase().trim() || "other";
 
     normalized.push({
       id,
@@ -617,7 +569,7 @@ async function main() {
       region: String(e.region || "").trim(),
       country_code: String(e.country_code || "").toUpperCase(),
       url: String(e.url || "").trim(),
-      category,
+      category: String(e.category || guessCategory(title, e.place)).trim(),
       source
     });
 
@@ -638,6 +590,6 @@ async function main() {
 }
 
 main().catch((e) => {
-  console.error("❌ Build failed:", e);
+  console.error(e);
   process.exit(1);
 });
