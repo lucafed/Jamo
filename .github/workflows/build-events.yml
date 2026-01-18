@@ -1,0 +1,57 @@
+name: Build Events (daily)
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "15 3 * * *" # ogni giorno 03:15 UTC
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-events
+  cancel-in-progress: true
+
+jobs:
+  build-events:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install
+        run: npm ci
+
+      - name: Build events
+        env:
+          JAMO_UA: "JamoEventsBot/1.0 (github-actions)"
+        run: npm run build:events
+
+      - name: Show result head
+        run: |
+          echo "---- events_all.json (head) ----"
+          head -n 30 public/data/events/events_all.json || true
+          echo "---- events_all.json (stats) ----"
+          node -e "const fs=require('fs'); const j=JSON.parse(fs.readFileSync('public/data/events/events_all.json','utf8')); console.log({updated_at:j.updated_at,count:j.count,days_ahead:j.days_ahead});"
+
+      - name: Commit & push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add public/data/events/events_all.json cache/geocode-cache.json events_sources.json || true
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          git commit -m "chore(events): daily update"
+          git push
