@@ -1,73 +1,173 @@
 {
-  "days_ahead": 60,
-  "max_events": 25000,
+  "days_ahead": 90,
+  "max_events": 30000,
 
-  "providers": {
-    "ticketmaster": { "enabled": true, "apikey_env": "TICKETMASTER_API_KEY" },
-    "openagenda": { "enabled": true, "apikey_env": "OPENAGENDA_API_KEY" }
-  },
+  "sources": [
 
-  "coverage": {
-    "italy": {
-      "enabled": true,
-      "country_code": "IT",
-      "cities": [
-        { "name": "Roma", "lat": 41.9028, "lon": 12.4964, "radius_km": 70 },
-        { "name": "Milano", "lat": 45.4642, "lon": 9.1900, "radius_km": 60 },
-        { "name": "Napoli", "lat": 40.8518, "lon": 14.2681, "radius_km": 55 },
-        { "name": "Torino", "lat": 45.0703, "lon": 7.6869, "radius_km": 55 },
-        { "name": "Bologna", "lat": 44.4949, "lon": 11.3426, "radius_km": 55 },
-        { "name": "Firenze", "lat": 43.7696, "lon": 11.2558, "radius_km": 50 },
-        { "name": "Venezia", "lat": 45.4408, "lon": 12.3155, "radius_km": 45 },
-        { "name": "Verona", "lat": 45.4384, "lon": 10.9916, "radius_km": 45 },
-        { "name": "Bari", "lat": 41.1171, "lon": 16.8719, "radius_km": 55 },
-        { "name": "Palermo", "lat": 38.1157, "lon": 13.3615, "radius_km": 55 },
-        { "name": "Catania", "lat": 37.5079, "lon": 15.0830, "radius_km": 55 },
-        { "name": "Cagliari", "lat": 39.2238, "lon": 9.1217, "radius_km": 70 },
-        { "name": "L'Aquila", "lat": 42.3499, "lon": 13.3995, "radius_km": 75 }
-      ]
-    },
+    /* =========================
+       AGGREGATORI EUROPEI OPEN
+       ========================= */
 
-    "europe": {
-      "enabled": true,
-      "countries": [
-        { "cc": "FR", "cities": [ { "name": "Paris", "lat": 48.8566, "lon": 2.3522, "radius_km": 80 }, { "name": "Lyon", "lat": 45.7640, "lon": 4.8357, "radius_km": 65 }, { "name": "Marseille", "lat": 43.2965, "lon": 5.3698, "radius_km": 65 } ] },
-        { "cc": "ES", "cities": [ { "name": "Madrid", "lat": 40.4168, "lon": -3.7038, "radius_km": 85 }, { "name": "Barcelona", "lat": 41.3851, "lon": 2.1734, "radius_km": 70 }, { "name": "Valencia", "lat": 39.4699, "lon": -0.3763, "radius_km": 65 } ] },
-        { "cc": "DE", "cities": [ { "name": "Berlin", "lat": 52.5200, "lon": 13.4050, "radius_km": 85 }, { "name": "Munich", "lat": 48.1351, "lon": 11.5820, "radius_km": 70 }, { "name": "Hamburg", "lat": 53.5511, "lon": 9.9937, "radius_km": 70 } ] },
-        { "cc": "NL", "cities": [ { "name": "Amsterdam", "lat": 52.3676, "lon": 4.9041, "radius_km": 55 }, { "name": "Rotterdam", "lat": 51.9244, "lon": 4.4777, "radius_km": 55 } ] },
-        { "cc": "BE", "cities": [ { "name": "Brussels", "lat": 50.8503, "lon": 4.3517, "radius_km": 55 } ] },
-        { "cc": "AT", "cities": [ { "name": "Vienna", "lat": 48.2082, "lon": 16.3738, "radius_km": 60 } ] },
-        { "cc": "CH", "cities": [ { "name": "Zurich", "lat": 47.3769, "lon": 8.5417, "radius_km": 55 }, { "name": "Geneva", "lat": 46.2044, "lon": 6.1432, "radius_km": 55 } ] },
-        { "cc": "PT", "cities": [ { "name": "Lisbon", "lat": 38.7223, "lon": -9.1393, "radius_km": 70 }, { "name": "Porto", "lat": 41.1579, "lon": -8.6291, "radius_km": 65 } ] },
-        { "cc": "GB", "cities": [ { "name": "London", "lat": 51.5072, "lon": -0.1276, "radius_km": 90 }, { "name": "Manchester", "lat": 53.4808, "lon": -2.2426, "radius_km": 70 } ] },
-        { "cc": "IE", "cities": [ { "name": "Dublin", "lat": 53.3498, "lon": -6.2603, "radius_km": 65 } ] },
-        { "cc": "CZ", "cities": [ { "name": "Prague", "lat": 50.0755, "lon": 14.4378, "radius_km": 60 } ] },
-        { "cc": "PL", "cities": [ { "name": "Warsaw", "lat": 52.2297, "lon": 21.0122, "radius_km": 70 } ] },
-        { "cc": "GR", "cities": [ { "name": "Athens", "lat": 37.9838, "lon": 23.7275, "radius_km": 70 } ] },
-        { "cc": "HR", "cities": [ { "name": "Zagreb", "lat": 45.8150, "lon": 15.9819, "radius_km": 60 } ] },
-        { "cc": "HU", "cities": [ { "name": "Budapest", "lat": 47.4979, "lon": 19.0402, "radius_km": 70 } ] }
-      ]
-    }
-  },
-
-  "rss_ics_sources": [
     {
-      "id": "comune_laquila",
+      "id": "openagenda_europe",
       "type": "ics",
-      "url": "INCOLLA_QUI_IL_LINK_ICS",
-      "default_region": "Abruzzo",
-      "default_place": "L'Aquila, Abruzzo, Italia",
-      "fixed_lat": 42.3499,
-      "fixed_lon": 13.3995
+      "url": "https://openagenda.com/agenda.ics",
+      "default_region": "EU",
+      "default_place": "Europa",
+      "category": "culture"
     },
+
     {
-      "id": "teatro_verona",
+      "id": "culture_europe",
       "type": "rss",
-      "url": "INCOLLA_QUI_IL_LINK_RSS",
-      "default_region": "Veneto",
-      "default_place": "Verona, Veneto, Italia",
-      "fixed_lat": 45.4384,
-      "fixed_lon": 10.9916
+      "url": "https://www.cultureurope.org/feed/",
+      "default_region": "EU",
+      "category": "culture"
+    },
+
+    /* =========================
+       ITALIA — TURISMO & FAMIGLIA
+       ========================= */
+
+    {
+      "id": "italia_turismo",
+      "type": "rss",
+      "url": "https://www.italia.it/rss/eventi.xml",
+      "default_region": "Italia",
+      "category": "family"
+    },
+
+    {
+      "id": "touring_club_italiano",
+      "type": "rss",
+      "url": "https://www.touringclub.it/rss/eventi",
+      "default_region": "Italia",
+      "category": "family"
+    },
+
+    {
+      "id": "eventi_famiglia_it",
+      "type": "rss",
+      "url": "https://www.familygo.eu/feed/",
+      "default_region": "Italia",
+      "category": "family"
+    },
+
+    /* =========================
+       EUROPA — EVENTI PER FAMIGLIE
+       ========================= */
+
+    {
+      "id": "visit_europe_family",
+      "type": "rss",
+      "url": "https://visiteurope.com/feed/",
+      "default_region": "EU",
+      "category": "family"
+    },
+
+    {
+      "id": "kids_europe",
+      "type": "rss",
+      "url": "https://www.europeankidsactivities.com/feed/",
+      "default_region": "EU",
+      "category": "family"
+    },
+
+    /* =========================
+       SPORT GENERICO
+       ========================= */
+
+    {
+      "id": "sport_europe",
+      "type": "rss",
+      "url": "https://www.sporteventseurope.com/rss",
+      "default_region": "EU",
+      "category": "sport"
+    },
+
+    {
+      "id": "decathlon_events",
+      "type": "rss",
+      "url": "https://www.decathlon.it/eventi/feed",
+      "default_region": "Italia",
+      "category": "sport"
+    },
+
+    /* =========================
+       CICLISMO (BIKE)
+       ========================= */
+
+    {
+      "id": "uci_events",
+      "type": "rss",
+      "url": "https://www.uci.org/rss/events",
+      "default_region": "EU",
+      "category": "bike"
+    },
+
+    {
+      "id": "cycling_events_eu",
+      "type": "rss",
+      "url": "https://www.cyclingnews.com/rss/events/",
+      "default_region": "EU",
+      "category": "bike"
+    },
+
+    {
+      "id": "granfondo_europe",
+      "type": "rss",
+      "url": "https://www.granfondoguide.com/Events/Feed",
+      "default_region": "EU",
+      "category": "bike"
+    },
+
+    /* =========================
+       MOTOCICLISMO
+       ========================= */
+
+    {
+      "id": "motoclub_europe",
+      "type": "rss",
+      "url": "https://www.moto.it/rss/eventi",
+      "default_region": "Italia",
+      "category": "motor"
+    },
+
+    {
+      "id": "motorcycle_events_eu",
+      "type": "rss",
+      "url": "https://www.motorcyclediaries.com/feed/",
+      "default_region": "EU",
+      "category": "motor"
+    },
+
+    {
+      "id": "harley_events",
+      "type": "rss",
+      "url": "https://www.harley-davidson.com/eu/en/events.rss",
+      "default_region": "EU",
+      "category": "motor"
+    },
+
+    /* =========================
+       MERCATI, SAGRE, STREET FOOD
+       ========================= */
+
+    {
+      "id": "street_food_europe",
+      "type": "rss",
+      "url": "https://www.streetfooditalia.it/feed/",
+      "default_region": "Italia",
+      "category": "food"
+    },
+
+    {
+      "id": "markets_europe",
+      "type": "rss",
+      "url": "https://www.europeanmarkets.com/rss/events",
+      "default_region": "EU",
+      "category": "market"
     }
+
   ]
 }
