@@ -2,12 +2,18 @@ name: Build Italy Regions Datasets
 
 on:
   workflow_dispatch:
+
+  # Parte SOLO se tocchi codice/config/workflow (NON quando committa i JSON generati)
   push:
     branches: [ "main" ]
     paths:
       - "scripts/**"
       - "configs/it/**"
       - ".github/workflows/build-it-regions.yml"
+    paths-ignore:
+      - "public/data/**"
+      - "cache/**"
+
   schedule:
     # 07:30 Italia (CET) = 06:30 UTC
     # In estate (CEST) diventa 08:30 locali. Se vuoi fisso alle 07:30 anche d’estate te lo adatto.
@@ -17,7 +23,6 @@ concurrency:
   group: build-it-regions
   cancel-in-progress: false
 
-# Serve per poter fare commit/push dal job "commit"
 permissions:
   contents: write
 
@@ -59,10 +64,11 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Setup Node
+      - name: Setup Node 20
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: "20"
+          cache: "npm"
 
       - name: Install deps
         run: |
@@ -72,6 +78,7 @@ jobs:
         env:
           REGION_ID: ${{ matrix.region }}
           CATEGORY: ${{ matrix.kind }}
+          NODE_OPTIONS: "--dns-result-order=ipv4first"
         run: |
           mkdir -p public/data/pois/regions
           if [ "${{ matrix.kind }}" = "core" ]; then
@@ -108,10 +115,11 @@ jobs:
           mkdir -p public/data/pois/regions
           find /tmp/artifacts -type f -name "*.json" -maxdepth 4 -print -exec cp -f {} public/data/pois/regions/ \;
 
-      - name: Setup Node
+      - name: Setup Node 20
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: "20"
+          cache: "npm"
 
       - name: Install deps
         run: |
