@@ -10,9 +10,13 @@ const GEOCACHE_PATH = path.join(CACHE_DIR, "geocode-cache.json");
 
 const UA = process.env.JAMO_UA || "JamoEventsBot/1.0 (github actions)";
 const NOMINATIM_ENDPOINT = "https://nominatim.openstreetmap.org/search";
-const OVERPASS_ENDPOINT =
-  process.env.OVERPASS_ENDPOINT ||
-  "https://overpass-api.de/api/interpreter";
+
+// default fallback if config has none
+const DEFAULT_OVERPASS_ENDPOINTS = [
+  "https://overpass.kumi.systems/api/interpreter",
+  "https://overpass-api.de/api/interpreter",
+  "https://overpass.openstreetmap.ru/api/interpreter"
+];
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -66,23 +70,79 @@ function guessCategory(title, text) {
 
 /* -------------------- fetch helpers -------------------- */
 async function fetchJson(url, headers = {}) {
-  const r = await fetch(url, { headers: { "User-Agent": UA, "Accept": "application/json", ...headers }, redirect: "follow" });
+  const r = await fetch(url, {
+    headers: { "User-Agent": UA, "Accept": "application/json", ...headers },
+    redirect: "follow"
+  });
   if (!r.ok) throw new Error(`HTTP ${r.status} ${url}`);
   return await r.json();
 }
+
 async function fetchText(url, headers = {}) {
-  const r = await fetch(url, { headers: { "User-Agent": UA, "Accept": "*/*", ...headers }, redirect: "follow" });
+  const r = await fetch(url, {
+    headers: { "User-Agent": UA, "Accept": "*/*", ...headers },
+    redirect: "follow"
+  });
   if (!r.ok) throw new Error(`HTTP ${r.status} ${url}`);
   return await r.text();
 }
-async function postText(url, body, headers = {}) {
-  const r = await fetch(url, {
-    method: "POST",
-    headers: { "User-Agent": UA, "Accept": "*/*", "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8", ...headers },
-    body
-  });
-  if (!r.ok) throw new Error(`HTTP ${r.status} POST ${url}`);
-  return await r.text();
+
+async function postText(url, body, headers = {}, timeoutMs = 45000) {
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), Math.max(5000, timeoutMs));
+
+  try {
+    const r = await fetch(url, {
+      method: "POST",
+      headers: {
+        "User-Agent": UA,
+        "Accept": "*/*",
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+        ...headers
+      },
+      body,
+      signal: ctrl.signal
+    });
+    if (!r.ok) throw new Error(`HTTP ${r.status} POST ${url}`);
+    return await r.text();
+  } finally {
+    clearTimeout(t);
+  }
+}
+
+/**
+ * Overpass POST with:
+ * - endpoints fallback (try each)
+ * - retries for transient errors
+ */
+async function postOverpassWithFallback(endpoints, body, timeoutMs) {
+  const eps = (Array.isArray(endpoints) && endpoints.length ? endpoints : DEFAULT_OVERPASS_ENDPOINTS)
+    .map(String).filter(Boolean);
+
+  let lastErr = null;
+
+  for (const ep of eps) {
+    // retry a couple times per endpoint
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      try {
+        const txt = await postText(ep, body, {}, timeoutMs);
+        return txt;
+      } catch (e) {
+        lastErr = e;
+        const msg = String(e?.message || e);
+        console.error(`Overpass endpoint failed (attempt ${attempt}/2): ${ep} → ${msg}`);
+
+        // backoff
+        const wait = 800 * attempt + Math.floor(Math.random() * 600);
+        await sleep(wait);
+
+        // if it's a hard error (like 400 query), no point retrying
+        if (/HTTP 400/.test(msg)) break;
+      }
+    }
+  }
+
+  throw lastErr || new Error("All Overpass endpoints failed");
 }
 
 /* -------------------- Geocoding (Nominatim) cache + 1req/s (solo per RSS/ICS) -------------------- */
@@ -192,7 +252,9 @@ async function fetchRssSource(src, now, daysAhead, geocache) {
   for (const it of items) {
     const title = stripHtml(stripCdata(extractTag(it, "title"))) || "Evento";
     const link = stripCdata(extractTag(it, "link")) || "";
-    const pubDateRaw = stripCdata(extractTag(it, "pubDate")) || stripCdata(extractTag(it, "dc:date"));
+    const pubDateRaw =
+      stripCdata(extractTag(it, "pubDate")) ||
+      stripCdata(extractTag(it, "dc:date"));
     const desc = stripHtml(stripCdata(extractTag(it, "description")));
     const d = parseDateMaybe(pubDateRaw);
     if (!d || !withinWindow(d, now, daysAhead)) continue;
@@ -337,13 +399,13 @@ function osmCategoryFromTags(title, tags) {
   return guessCategory(title, blob);
 }
 
-async function fetchOverpassForCity({ name, lat, lon, radius_km }, now, daysAhead, timeoutMs) {
-  const radius = Math.max(5, Math.round(Number(radius_km || 40) * 1000));
+async function fetchOverpassForCity({ name, lat, lon, radius_km }, now, daysAhead, timeoutMs, endpoints) {
+  const radius = Math.max(8, Math.round(Number(radius_km || 40) * 1000));
 
   // Query: only objects that likely represent events AND have some date tag
   // We can’t filter by date inside Overpass reliably -> we filter in JS.
   const q = `
-[out:json][timeout:${Math.max(10, Math.round((timeoutMs || 30000) / 1000))}];
+[out:json][timeout:${Math.max(15, Math.round((timeoutMs || 45000) / 1000))}];
 (
   nwr(around:${radius},${lat},${lon})["event"]["start_date"];
   nwr(around:${radius},${lat},${lon})["event"]["date"];
@@ -359,7 +421,7 @@ out center tags;
   `.trim();
 
   const body = `data=${encodeURIComponent(q)}`;
-  const txt = await postText(OVERPASS_ENDPOINT, body);
+  const txt = await postOverpassWithFallback(endpoints, body, timeoutMs);
   const j = JSON.parse(txt);
 
   const elements = Array.isArray(j?.elements) ? j.elements : [];
@@ -374,8 +436,7 @@ out center tags;
     const endRaw = tags.end_date || tags["end_date:date"] || "";
 
     const sd = parseOsmDate(startRaw);
-    if (!sd) continue; // IMPORTANT: senza data non lo considero "evento"
-
+    if (!sd) continue; // senza data non lo considero "evento"
     if (!withinWindow(sd, now, daysAhead)) continue;
 
     const ed = parseOsmDate(endRaw);
@@ -394,7 +455,7 @@ out center tags;
       lat: lat2,
       lon: lon2,
       city: name || "",
-      country_code: "", // lo mettiamo dopo in normalize con fallback IT/EU
+      country_code: "", // set later
       place,
       region: "",
       url,
@@ -425,10 +486,14 @@ async function main() {
   const out = [];
   const seen = new Set();
 
-  // -------- OSM Overpass provider (no key) --------
+  // Overpass config
   const osmEnabled = !!cfg?.providers?.osm_overpass?.enabled;
-  const osmTimeout = Number(cfg?.providers?.osm_overpass?.timeout_ms || 30000);
+  const osmTimeout = Number(cfg?.providers?.osm_overpass?.timeout_ms || 45000);
+  const overpassEndpoints = Array.isArray(cfg?.providers?.osm_overpass?.endpoints) && cfg.providers.osm_overpass.endpoints.length
+    ? cfg.providers.osm_overpass.endpoints
+    : DEFAULT_OVERPASS_ENDPOINTS;
 
+  // -------- OSM Overpass provider (no key) --------
   if (osmEnabled) {
     const itEnabled = !!cfg?.coverage?.italy?.enabled;
     const euEnabled = !!cfg?.coverage?.europe?.enabled;
@@ -437,8 +502,7 @@ async function main() {
       const cities = Array.isArray(cfg.coverage.italy.cities) ? cfg.coverage.italy.cities : [];
       for (const c of cities) {
         try {
-          const evs = await fetchOverpassForCity(c, now, daysAhead, osmTimeout);
-          // mark IT by default if missing
+          const evs = await fetchOverpassForCity(c, now, daysAhead, osmTimeout, overpassEndpoints);
           for (const e of evs) {
             if (!e.country_code) e.country_code = "IT";
             out.push(e);
@@ -446,7 +510,7 @@ async function main() {
         } catch (e) {
           console.error(`Overpass IT city failed (${c?.name || "?"}):`, e?.message || e);
         }
-        await sleep(400);
+        await sleep(450);
         if (out.length >= maxEvents) break;
       }
     }
@@ -455,8 +519,7 @@ async function main() {
       const cities = Array.isArray(cfg.coverage.europe.cities) ? cfg.coverage.europe.cities : [];
       for (const c of cities) {
         try {
-          const evs = await fetchOverpassForCity(c, now, daysAhead, osmTimeout);
-          // optional: cc on city (if you add it), else keep blank
+          const evs = await fetchOverpassForCity(c, now, daysAhead, osmTimeout, overpassEndpoints);
           const cc = String(c?.cc || "").toUpperCase();
           for (const e of evs) {
             if (cc && !e.country_code) e.country_code = cc;
@@ -465,7 +528,7 @@ async function main() {
         } catch (e) {
           console.error(`Overpass EU city failed (${c?.name || "?"}):`, e?.message || e);
         }
-        await sleep(400);
+        await sleep(450);
         if (out.length >= maxEvents) break;
       }
     }
