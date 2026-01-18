@@ -1,0 +1,133 @@
+{
+  "days_ahead": 60,
+  "max_events": 30000,
+
+  "providers": {
+    "osm_overpass": {
+      "enabled": true,
+      "timeout_ms": 30000
+    }
+  },
+
+  "coverage": {
+    "italy": {
+      "enabled": true,
+      "cities": [
+        { "name": "Roma", "lat": 41.9028, "lon": 12.4964, "radius_km": 55 },
+        { "name": "Milano", "lat": 45.4642, "lon": 9.1900, "radius_km": 45 },
+        { "name": "Napoli", "lat": 40.8518, "lon": 14.2681, "radius_km": 45 },
+        { "name": "Torino", "lat": 45.0703, "lon": 7.6869, "radius_km": 45 },
+        { "name": "Palermo", "lat": 38.1157, "lon": 13.3615, "radius_km": 55 },
+        { "name": "Genova", "lat": 44.4056, "lon": 8.9463, "radius_km": 45 },
+        { "name": "Bologna", "lat": 44.4949, "lon": 11.3426, "radius_km": 40 },
+        { "name": "Firenze", "lat": 43.7696, "lon": 11.2558, "radius_km": 40 },
+        { "name": "Venezia", "lat": 45.4408, "lon": 12.3155, "radius_km": 45 },
+        { "name": "Verona", "lat": 45.4384, "lon": 10.9916, "radius_km": 35 },
+        { "name": "Padova", "lat": 45.4064, "lon": 11.8768, "radius_km": 30 },
+        { "name": "Trieste", "lat": 45.6495, "lon": 13.7768, "radius_km": 35 },
+        { "name": "Bari", "lat": 41.1171, "lon": 16.8719, "radius_km": 40 },
+        { "name": "Catania", "lat": 37.5079, "lon": 15.0830, "radius_km": 40 },
+        { "name": "Cagliari", "lat": 39.2238, "lon": 9.1217, "radius_km": 40 },
+        { "name": "Messina", "lat": 38.1938, "lon": 15.5540, "radius_km": 35 },
+        { "name": "Reggio Calabria", "lat": 38.1113, "lon": 15.6473, "radius_km": 35 },
+        { "name": "Taranto", "lat": 40.4644, "lon": 17.2470, "radius_km": 35 },
+        { "name": "Salerno", "lat": 40.6824, "lon": 14.7681, "radius_km": 35 },
+        { "name": "Perugia", "lat": 43.1107, "lon": 12.3908, "radius_km": 35 },
+        { "name": "Ancona", "lat": 43.6158, "lon": 13.5189, "radius_km": 35 },
+        { "name": "Pescara", "lat": 42.4618, "lon": 14.2161, "radius_km": 30 },
+        { "name": "L'Aquila", "lat": 42.3498, "lon": 13.3995, "radius_km": 35 },
+        { "name": "Campobasso", "lat": 41.5629, "lon": 14.6681, "radius_km": 28 },
+        { "name": "Potenza", "lat": 40.6404, "lon": 15.8056, "radius_km": 30 },
+        { "name": "Matera", "lat": 40.6663, "lon": 16.6043, "radius_km": 30 },
+        { "name": "Trento", "lat": 46.0748, "lon": 11.1217, "radius_km": 35 },
+        { "name": "Bolzano", "lat": 46.4983, "lon": 11.3548, "radius_km": 35 },
+        { "name": "Aosta", "lat": 45.7370, "lon": 7.3170, "radius_km": 30 },
+
+        { "name": "Pisa", "lat": 43.7228, "lon": 10.4017, "radius_km": 28 },
+        { "name": "Siena", "lat": 43.3188, "lon": 11.3308, "radius_km": 28 },
+        { "name": "Lucca", "lat": 43.8429, "lon": 10.5027, "radius_km": 25 },
+        { "name": "Rimini", "lat": 44.0678, "lon": 12.5695, "radius_km": 28 },
+        { "name": "Ravenna", "lat": 44.4184, "lon": 12.2035, "radius_km": 28 },
+        { "name": "Ferrara", "lat": 44.8350, "lon": 11.6198, "radius_km": 25 },
+        { "name": "Parma", "lat": 44.8015, "lon": 10.3279, "radius_km": 25 },
+        { "name": "Modena", "lat": 44.6471, "lon": 10.9252, "radius_km": 25 },
+        { "name": "Reggio Emilia", "lat": 44.6983, "lon": 10.6304, "radius_km": 25 },
+        { "name": "Brescia", "lat": 45.5416, "lon": 10.2118, "radius_km": 25 },
+        { "name": "Bergamo", "lat": 45.6983, "lon": 9.6773, "radius_km": 25 },
+        { "name": "Como", "lat": 45.8081, "lon": 9.0852, "radius_km": 22 },
+        { "name": "Trento", "lat": 46.0748, "lon": 11.1217, "radius_km": 30 },
+        { "name": "Udine", "lat": 46.0635, "lon": 13.2356, "radius_km": 25 },
+        { "name": "Lecce", "lat": 40.3515, "lon": 18.1750, "radius_km": 30 },
+        { "name": "Brindisi", "lat": 40.6327, "lon": 17.9410, "radius_km": 25 },
+        { "name": "Siracusa", "lat": 37.0755, "lon": 15.2866, "radius_km": 30 },
+        { "name": "Taormina", "lat": 37.8516, "lon": 15.2850, "radius_km": 25 },
+        { "name": "Sanremo", "lat": 43.8159, "lon": 7.7761, "radius_km": 25 },
+        { "name": "La Spezia", "lat": 44.1025, "lon": 9.8241, "radius_km": 25 }
+      ]
+    },
+
+    "europe": {
+      "enabled": true,
+      "cities": [
+        { "cc": "FR", "name": "Paris", "lat": 48.8566, "lon": 2.3522, "radius_km": 55 },
+        { "cc": "FR", "name": "Lyon", "lat": 45.7640, "lon": 4.8357, "radius_km": 45 },
+        { "cc": "FR", "name": "Marseille", "lat": 43.2965, "lon": 5.3698, "radius_km": 45 },
+        { "cc": "FR", "name": "Nice", "lat": 43.7102, "lon": 7.2620, "radius_km": 35 },
+
+        { "cc": "DE", "name": "Berlin", "lat": 52.5200, "lon": 13.4050, "radius_km": 60 },
+        { "cc": "DE", "name": "Munich", "lat": 48.1351, "lon": 11.5820, "radius_km": 50 },
+        { "cc": "DE", "name": "Hamburg", "lat": 53.5511, "lon": 9.9937, "radius_km": 50 },
+        { "cc": "DE", "name": "Cologne", "lat": 50.9375, "lon": 6.9603, "radius_km": 45 },
+        { "cc": "DE", "name": "Frankfurt", "lat": 50.1109, "lon": 8.6821, "radius_km": 45 },
+
+        { "cc": "ES", "name": "Madrid", "lat": 40.4168, "lon": -3.7038, "radius_km": 60 },
+        { "cc": "ES", "name": "Barcelona", "lat": 41.3851, "lon": 2.1734, "radius_km": 55 },
+        { "cc": "ES", "name": "Valencia", "lat": 39.4699, "lon": -0.3763, "radius_km": 45 },
+        { "cc": "ES", "name": "Seville", "lat": 37.3891, "lon": -5.9845, "radius_km": 45 },
+
+        { "cc": "GB", "name": "London", "lat": 51.5074, "lon": -0.1278, "radius_km": 65 },
+        { "cc": "GB", "name": "Manchester", "lat": 53.4808, "lon": -2.2426, "radius_km": 45 },
+        { "cc": "GB", "name": "Birmingham", "lat": 52.4862, "lon": -1.8904, "radius_km": 45 },
+        { "cc": "GB", "name": "Edinburgh", "lat": 55.9533, "lon": -3.1883, "radius_km": 40 },
+        { "cc": "IE", "name": "Dublin", "lat": 53.3498, "lon": -6.2603, "radius_km": 45 },
+
+        { "cc": "NL", "name": "Amsterdam", "lat": 52.3676, "lon": 4.9041, "radius_km": 40 },
+        { "cc": "NL", "name": "Rotterdam", "lat": 51.9244, "lon": 4.4777, "radius_km": 35 },
+        { "cc": "BE", "name": "Brussels", "lat": 50.8503, "lon": 4.3517, "radius_km": 35 },
+        { "cc": "BE", "name": "Antwerp", "lat": 51.2194, "lon": 4.4025, "radius_km": 35 },
+
+        { "cc": "CH", "name": "Zurich", "lat": 47.3769, "lon": 8.5417, "radius_km": 35 },
+        { "cc": "CH", "name": "Geneva", "lat": 46.2044, "lon": 6.1432, "radius_km": 35 },
+        { "cc": "AT", "name": "Vienna", "lat": 48.2082, "lon": 16.3738, "radius_km": 45 },
+        { "cc": "AT", "name": "Salzburg", "lat": 47.8095, "lon": 13.0550, "radius_km": 35 },
+
+        { "cc": "PT", "name": "Lisbon", "lat": 38.7223, "lon": -9.1393, "radius_km": 50 },
+        { "cc": "PT", "name": "Porto", "lat": 41.1579, "lon": -8.6291, "radius_km": 40 },
+
+        { "cc": "DK", "name": "Copenhagen", "lat": 55.6761, "lon": 12.5683, "radius_km": 40 },
+        { "cc": "SE", "name": "Stockholm", "lat": 59.3293, "lon": 18.0686, "radius_km": 45 },
+        { "cc": "NO", "name": "Oslo", "lat": 59.9139, "lon": 10.7522, "radius_km": 40 },
+        { "cc": "FI", "name": "Helsinki", "lat": 60.1699, "lon": 24.9384, "radius_km": 40 },
+
+        { "cc": "PL", "name": "Warsaw", "lat": 52.2297, "lon": 21.0122, "radius_km": 50 },
+        { "cc": "PL", "name": "Krakow", "lat": 50.0647, "lon": 19.9450, "radius_km": 40 },
+        { "cc": "CZ", "name": "Prague", "lat": 50.0755, "lon": 14.4378, "radius_km": 45 },
+        { "cc": "HU", "name": "Budapest", "lat": 47.4979, "lon": 19.0402, "radius_km": 45 },
+
+        { "cc": "RO", "name": "Bucharest", "lat": 44.4268, "lon": 26.1025, "radius_km": 50 },
+        { "cc": "GR", "name": "Athens", "lat": 37.9838, "lon": 23.7275, "radius_km": 45 },
+
+        { "cc": "HR", "name": "Zagreb", "lat": 45.8150, "lon": 15.9819, "radius_km": 40 },
+        { "cc": "SI", "name": "Ljubljana", "lat": 46.0569, "lon": 14.5058, "radius_km": 35 },
+        { "cc": "SK", "name": "Bratislava", "lat": 48.1486, "lon": 17.1077, "radius_km": 35 },
+
+        { "cc": "BG", "name": "Sofia", "lat": 42.6977, "lon": 23.3219, "radius_km": 40 },
+        { "cc": "EE", "name": "Tallinn", "lat": 59.4370, "lon": 24.7536, "radius_km": 35 },
+        { "cc": "LV", "name": "Riga", "lat": 56.9496, "lon": 24.1052, "radius_km": 35 },
+        { "cc": "LT", "name": "Vilnius", "lat": 54.6872, "lon": 25.2797, "radius_km": 35 }
+      ]
+    }
+  },
+
+  "sources": []
+}
