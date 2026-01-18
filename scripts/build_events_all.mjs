@@ -1,17 +1,29 @@
+// scripts/build_events_all.mjs
+// Jamo — Events builder (IT + EU) — offline output
+// - Reads events_sources.generated.json (preferred) or events_sources.json
+// - Providers: OSM Overpass (no key) + RSS/ICS
+// - Robust Overpass: endpoints fallback + retries + backoff
+// Node >= 20, type=module
+
 import fs from "fs";
 import path from "path";
 
 const ROOT = process.cwd();
+
+// Prefer generated sources
+const SOURCES_PATH_GEN = path.join(ROOT, "events_sources.generated.json");
 const SOURCES_PATH = path.join(ROOT, "events_sources.json");
+
 const OUT_DIR = path.join(ROOT, "public", "data", "events");
 const OUT_PATH = path.join(OUT_DIR, "events_all.json");
+
 const CACHE_DIR = path.join(ROOT, "cache");
 const GEOCACHE_PATH = path.join(CACHE_DIR, "geocode-cache.json");
 
 const UA = process.env.JAMO_UA || "JamoEventsBot/1.0 (github actions)";
 const NOMINATIM_ENDPOINT = "https://nominatim.openstreetmap.org/search";
 
-// default fallback if config has none
+// Default Overpass fallback endpoints (can be overridden by cfg.providers.osm_overpass.endpoints)
 const DEFAULT_OVERPASS_ENDPOINTS = [
   "https://overpass.kumi.systems/api/interpreter",
   "https://overpass-api.de/api/interpreter",
@@ -21,16 +33,22 @@ const DEFAULT_OVERPASS_ENDPOINTS = [
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 function readJSON(p, fallback) {
-  try { return JSON.parse(fs.readFileSync(p, "utf8")); } catch { return fallback; }
+  try {
+    return JSON.parse(fs.readFileSync(p, "utf8"));
+  } catch {
+    return fallback;
+  }
 }
 function writeJSON(p, obj) {
   fs.mkdirSync(path.dirname(p), { recursive: true });
   fs.writeFileSync(p, JSON.stringify(obj, null, 2));
 }
+
 function norm(s) {
   return String(s ?? "")
     .toLowerCase()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
     .replace(/\s+/g, " ")
     .trim();
 }
@@ -40,17 +58,20 @@ function stripHtml(s) {
     .replace(/\s+/g, " ")
     .trim();
 }
-function iso(d) { return d.toISOString(); }
+function iso(d) {
+  return d.toISOString();
+}
 
 function withinWindow(d, now, daysAhead) {
   const t = d.getTime();
   const a = now.getTime();
   const b = a + daysAhead * 24 * 3600 * 1000;
+  // allow a little past (6h) to catch "today" feeds
   return t >= a - 6 * 3600 * 1000 && t <= b;
 }
 
 function makeId(src, title, startIso, lat, lon) {
-  const base = `${src}|${norm(title)}|${startIso}|${String(lat).slice(0,7)}|${String(lon).slice(0,7)}`;
+  const base = `${src}|${norm(title)}|${startIso}|${String(lat).slice(0, 7)}|${String(lon).slice(0, 7)}`;
   let h = 0;
   for (let i = 0; i < base.length; i++) h = (h * 31 + base.charCodeAt(i)) >>> 0;
   return `e_${h.toString(16)}`;
@@ -65,13 +86,14 @@ function guessCategory(title, text) {
   if (/(mostra|museo|arte|theatre|teatro|cultura|conference|talk|cinema)/.test(s)) return "culture";
   if (/(bambin|family|kids|giochi|children|ragazz|parco|zoo|acquario)/.test(s)) return "family";
   if (/(corsa|maratona|trail|gara|sport|bike|bici|cicl|mtb|cycling|motoclub|moto|enduro|raduno|run)/.test(s)) return "sport";
+  if (/(trek|hike|outdoor|escurs|cammin|mountain|montagna|rifugio)/.test(s)) return "outdoor";
   return "other";
 }
 
 /* -------------------- fetch helpers -------------------- */
 async function fetchJson(url, headers = {}) {
   const r = await fetch(url, {
-    headers: { "User-Agent": UA, "Accept": "application/json", ...headers },
+    headers: { "User-Agent": UA, Accept: "application/json", ...headers },
     redirect: "follow"
   });
   if (!r.ok) throw new Error(`HTTP ${r.status} ${url}`);
@@ -80,72 +102,34 @@ async function fetchJson(url, headers = {}) {
 
 async function fetchText(url, headers = {}) {
   const r = await fetch(url, {
-    headers: { "User-Agent": UA, "Accept": "*/*", ...headers },
+    headers: { "User-Agent": UA, Accept: "*/*", ...headers },
     redirect: "follow"
   });
   if (!r.ok) throw new Error(`HTTP ${r.status} ${url}`);
   return await r.text();
 }
 
-async function postText(url, body, headers = {}, timeoutMs = 45000) {
-  const ctrl = new AbortController();
-  const t = setTimeout(() => ctrl.abort(), Math.max(5000, timeoutMs));
-
-  try {
-    const r = await fetch(url, {
-      method: "POST",
-      headers: {
-        "User-Agent": UA,
-        "Accept": "*/*",
-        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-        ...headers
-      },
-      body,
-      signal: ctrl.signal
-    });
-    if (!r.ok) throw new Error(`HTTP ${r.status} POST ${url}`);
-    return await r.text();
-  } finally {
-    clearTimeout(t);
-  }
+async function postText(url, body, headers = {}) {
+  const r = await fetch(url, {
+    method: "POST",
+    headers: {
+      "User-Agent": UA,
+      Accept: "*/*",
+      "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+      ...headers
+    },
+    body
+  });
+  if (!r.ok) throw new Error(`HTTP ${r.status} POST ${url}`);
+  return await r.text();
 }
 
-/**
- * Overpass POST with:
- * - endpoints fallback (try each)
- * - retries for transient errors
- */
-async function postOverpassWithFallback(endpoints, body, timeoutMs) {
-  const eps = (Array.isArray(endpoints) && endpoints.length ? endpoints : DEFAULT_OVERPASS_ENDPOINTS)
-    .map(String).filter(Boolean);
-
-  let lastErr = null;
-
-  for (const ep of eps) {
-    // retry a couple times per endpoint
-    for (let attempt = 1; attempt <= 2; attempt++) {
-      try {
-        const txt = await postText(ep, body, {}, timeoutMs);
-        return txt;
-      } catch (e) {
-        lastErr = e;
-        const msg = String(e?.message || e);
-        console.error(`Overpass endpoint failed (attempt ${attempt}/2): ${ep} → ${msg}`);
-
-        // backoff
-        const wait = 800 * attempt + Math.floor(Math.random() * 600);
-        await sleep(wait);
-
-        // if it's a hard error (like 400 query), no point retrying
-        if (/HTTP 400/.test(msg)) break;
-      }
-    }
-  }
-
-  throw lastErr || new Error("All Overpass endpoints failed");
+function isRetryableHttp(msg) {
+  // Overpass often yields 429/504/502/503 timeouts
+  return /HTTP (429|502|503|504)\b/.test(String(msg || ""));
 }
 
-/* -------------------- Geocoding (Nominatim) cache + 1req/s (solo per RSS/ICS) -------------------- */
+/* -------------------- Geocoding (Nominatim) cache + 1req/s (only RSS/ICS) -------------------- */
 async function geocodePlace(q, cache) {
   const key = norm(q);
   if (!key) return null;
@@ -208,8 +192,15 @@ function parseIcs(text) {
 
   for (const ln0 of lines) {
     const ln = String(ln0 || "").trimEnd();
-    if (ln.startsWith("BEGIN:VEVENT")) { cur = {}; continue; }
-    if (ln.startsWith("END:VEVENT")) { if (cur) events.push(cur); cur = null; continue; }
+    if (ln.startsWith("BEGIN:VEVENT")) {
+      cur = {};
+      continue;
+    }
+    if (ln.startsWith("END:VEVENT")) {
+      if (cur) events.push(cur);
+      cur = null;
+      continue;
+    }
     if (!cur) continue;
 
     const [k0, ...rest] = ln.split(":");
@@ -228,14 +219,21 @@ function parseIcs(text) {
 function parseIcsDate(s) {
   const x = String(s || "").trim();
   if (!x) return null;
+
   if (/^\d{8}$/.test(x)) {
-    const y = x.slice(0,4), m = x.slice(4,6), d = x.slice(6,8);
+    const y = x.slice(0, 4),
+      m = x.slice(4, 6),
+      d = x.slice(6, 8);
     const dt = new Date(`${y}-${m}-${d}T12:00:00Z`);
     return Number.isFinite(dt.getTime()) ? dt : null;
   }
   if (/^\d{8}T\d{6}Z?$/.test(x)) {
-    const y = x.slice(0,4), mo = x.slice(4,6), d = x.slice(6,8);
-    const hh = x.slice(9,11), mm = x.slice(11,13), ss = x.slice(13,15);
+    const y = x.slice(0, 4),
+      mo = x.slice(4, 6),
+      d = x.slice(6, 8);
+    const hh = x.slice(9, 11),
+      mm = x.slice(11, 13),
+      ss = x.slice(13, 15);
     const z = x.endsWith("Z") ? "Z" : "";
     const dt = new Date(`${y}-${mo}-${d}T${hh}:${mm}:${ss}${z}`);
     return Number.isFinite(dt.getTime()) ? dt : null;
@@ -252,9 +250,7 @@ async function fetchRssSource(src, now, daysAhead, geocache) {
   for (const it of items) {
     const title = stripHtml(stripCdata(extractTag(it, "title"))) || "Evento";
     const link = stripCdata(extractTag(it, "link")) || "";
-    const pubDateRaw =
-      stripCdata(extractTag(it, "pubDate")) ||
-      stripCdata(extractTag(it, "dc:date"));
+    const pubDateRaw = stripCdata(extractTag(it, "pubDate")) || stripCdata(extractTag(it, "dc:date"));
     const desc = stripHtml(stripCdata(extractTag(it, "description")));
     const d = parseDateMaybe(pubDateRaw);
     if (!d || !withinWindow(d, now, daysAhead)) continue;
@@ -267,7 +263,11 @@ async function fetchRssSource(src, now, daysAhead, geocache) {
       const q = place || title;
       if (q) {
         const g = await geocodePlace(q, geocache);
-        if (g) { lat = g.lat; lon = g.lon; place = place || g.display; }
+        if (g) {
+          lat = g.lat;
+          lon = g.lon;
+          place = place || g.display;
+        }
       }
     }
     if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
@@ -276,7 +276,8 @@ async function fetchRssSource(src, now, daysAhead, geocache) {
       title,
       start: iso(d),
       end: null,
-      lat, lon,
+      lat,
+      lon,
       city: "",
       country_code: String(src.country_code || "").toUpperCase(),
       place,
@@ -311,7 +312,10 @@ async function fetchIcsSource(src, now, daysAhead, geocache) {
     if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
       if (place) {
         const g = await geocodePlace(place, geocache);
-        if (g) { lat = g.lat; lon = g.lon; }
+        if (g) {
+          lat = g.lat;
+          lon = g.lon;
+        }
       }
     }
     if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
@@ -320,7 +324,8 @@ async function fetchIcsSource(src, now, daysAhead, geocache) {
       title,
       start: iso(sd),
       end: ed ? iso(ed) : null,
-      lat, lon,
+      lat,
+      lon,
       city: "",
       country_code: String(src.country_code || "").toUpperCase(),
       place: place || "",
@@ -335,33 +340,29 @@ async function fetchIcsSource(src, now, daysAhead, geocache) {
 
 /* -------------------- OSM Overpass (NO API KEY) -------------------- */
 /**
- * Parsing date formats commonly found in OSM tags:
+ * Parse date formats commonly found in OSM tags:
  * - YYYY-MM-DD
  * - YYYY-MM
  * - YYYY
- * - YYYY-MM-DDTHH:MM (rare)
+ * - ISO-ish
  */
 function parseOsmDate(x) {
   const s = String(x || "").trim();
   if (!s) return null;
 
-  // full ISO-ish
   const d1 = new Date(s);
   if (Number.isFinite(d1.getTime())) return d1;
 
-  // YYYY-MM-DD
   if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
     const d = new Date(`${s}T12:00:00Z`);
     return Number.isFinite(d.getTime()) ? d : null;
   }
 
-  // YYYY-MM
   if (/^\d{4}-\d{2}$/.test(s)) {
     const d = new Date(`${s}-15T12:00:00Z`);
     return Number.isFinite(d.getTime()) ? d : null;
   }
 
-  // YYYY
   if (/^\d{4}$/.test(s)) {
     const d = new Date(`${s}-07-01T12:00:00Z`);
     return Number.isFinite(d.getTime()) ? d : null;
@@ -372,13 +373,7 @@ function parseOsmDate(x) {
 
 function osmPickUrl(tags) {
   const t = tags || {};
-  return (
-    t.website ||
-    t["contact:website"] ||
-    t.url ||
-    t["contact:url"] ||
-    ""
-  ).trim();
+  return (t.website || t["contact:website"] || t.url || t["contact:url"] || "").trim();
 }
 
 function osmPlaceString(tags, fallbackCity) {
@@ -395,33 +390,74 @@ function osmPlaceString(tags, fallbackCity) {
 
 function osmCategoryFromTags(title, tags) {
   const t = tags || {};
-  const blob = `${title} ${Object.entries(t).map(([k,v]) => `${k}:${v}`).join(" ")}`;
+  const blob = `${title} ${Object.entries(t)
+    .map(([k, v]) => `${k}:${v}`)
+    .join(" ")}`;
   return guessCategory(title, blob);
 }
 
-async function fetchOverpassForCity({ name, lat, lon, radius_km }, now, daysAhead, timeoutMs, endpoints) {
-  const radius = Math.max(8, Math.round(Number(radius_km || 40) * 1000));
-
-  // Query: only objects that likely represent events AND have some date tag
-  // We can’t filter by date inside Overpass reliably -> we filter in JS.
-  const q = `
-[out:json][timeout:${Math.max(15, Math.round((timeoutMs || 45000) / 1000))}];
+function buildOverpassQuery({ lat, lon, radiusMeters, timeoutSeconds }) {
+  // NOTE: Overpass cannot reliably filter by date in query, so we filter in JS.
+  // We only take items that have likely date tags.
+  return `
+[out:json][timeout:${timeoutSeconds}];
 (
-  nwr(around:${radius},${lat},${lon})["event"]["start_date"];
-  nwr(around:${radius},${lat},${lon})["event"]["date"];
-  nwr(around:${radius},${lat},${lon})["event"]["opening_date"];
+  nwr(around:${radiusMeters},${lat},${lon})["event"]["start_date"];
+  nwr(around:${radiusMeters},${lat},${lon})["event"]["date"];
+  nwr(around:${radiusMeters},${lat},${lon})["event"]["opening_date"];
 
-  nwr(around:${radius},${lat},${lon})["festival"]["start_date"];
-  nwr(around:${radius},${lat},${lon})["festival"]["date"];
+  nwr(around:${radiusMeters},${lat},${lon})["festival"]["start_date"];
+  nwr(around:${radiusMeters},${lat},${lon})["festival"]["date"];
 
-  nwr(around:${radius},${lat},${lon})["start_date"]["name"];
-  nwr(around:${radius},${lat},${lon})["date"]["name"];
+  nwr(around:${radiusMeters},${lat},${lon})["start_date"]["name"];
+  nwr(around:${radiusMeters},${lat},${lon})["date"]["name"];
 );
 out center tags;
   `.trim();
+}
 
+// POST with fallback + retry
+async function overpassPostWithFallback(endpoints, body, { maxAttempts = 2 } = {}) {
+  const eps = (Array.isArray(endpoints) && endpoints.length ? endpoints : DEFAULT_OVERPASS_ENDPOINTS).filter(Boolean);
+
+  let lastErr = null;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    for (const ep of eps) {
+      try {
+        return await postText(ep, body);
+      } catch (e) {
+        lastErr = e;
+        const msg = String(e?.message || e);
+        console.error(`Overpass failed (attempt ${attempt}/${maxAttempts}) ${ep} → ${msg}`);
+
+        // backoff on retryable
+        if (isRetryableHttp(msg)) {
+          await sleep(900 + attempt * 700);
+        } else {
+          await sleep(400);
+        }
+      }
+    }
+  }
+  throw lastErr || new Error("All Overpass endpoints failed");
+}
+
+async function fetchOverpassForCity(city, now, daysAhead, timeoutMs, endpoints) {
+  const name = String(city?.name || "").trim();
+  const lat = Number(city?.lat);
+  const lon = Number(city?.lon);
+  const radius_km = Number(city?.radius_km || 40);
+
+  if (!name || !Number.isFinite(lat) || !Number.isFinite(lon)) return [];
+
+  const radiusMeters = Math.max(5000, Math.round(radius_km * 1000));
+  const timeoutSeconds = Math.max(10, Math.round((timeoutMs || 30000) / 1000));
+
+  const q = buildOverpassQuery({ lat, lon, radiusMeters, timeoutSeconds });
   const body = `data=${encodeURIComponent(q)}`;
-  const txt = await postOverpassWithFallback(endpoints, body, timeoutMs);
+
+  const txt = await overpassPostWithFallback(endpoints, body, { maxAttempts: 2 });
   const j = JSON.parse(txt);
 
   const elements = Array.isArray(j?.elements) ? j.elements : [];
@@ -436,7 +472,8 @@ out center tags;
     const endRaw = tags.end_date || tags["end_date:date"] || "";
 
     const sd = parseOsmDate(startRaw);
-    if (!sd) continue; // senza data non lo considero "evento"
+    if (!sd) continue;
+
     if (!withinWindow(sd, now, daysAhead)) continue;
 
     const ed = parseOsmDate(endRaw);
@@ -447,6 +484,7 @@ out center tags;
 
     const url = osmPickUrl(tags);
     const place = osmPlaceString(tags, name);
+    const cat = osmCategoryFromTags(title, tags);
 
     out.push({
       title,
@@ -454,12 +492,12 @@ out center tags;
       end: ed ? iso(ed) : null,
       lat: lat2,
       lon: lon2,
-      city: name || "",
-      country_code: "", // set later
+      city: name,
+      country_code: String(city?.cc || "").toUpperCase(),
       place,
       region: "",
       url,
-      category: osmCategoryFromTags(title, tags),
+      category: cat,
       source: "osm_overpass"
     });
   }
@@ -469,9 +507,13 @@ out center tags;
 
 /* -------------------- MAIN -------------------- */
 async function main() {
-  const cfg = readJSON(SOURCES_PATH, null);
+  // pick sources
+  const cfg = fs.existsSync(SOURCES_PATH_GEN)
+    ? readJSON(SOURCES_PATH_GEN, null)
+    : readJSON(SOURCES_PATH, null);
+
   if (!cfg) {
-    console.error("events_sources.json mancante.");
+    console.error("❌ events_sources.generated.json o events_sources.json mancante.");
     process.exit(2);
   }
 
@@ -486,67 +528,65 @@ async function main() {
   const out = [];
   const seen = new Set();
 
-  // Overpass config
   const osmEnabled = !!cfg?.providers?.osm_overpass?.enabled;
-  const osmTimeout = Number(cfg?.providers?.osm_overpass?.timeout_ms || 45000);
-  const overpassEndpoints = Array.isArray(cfg?.providers?.osm_overpass?.endpoints) && cfg.providers.osm_overpass.endpoints.length
-    ? cfg.providers.osm_overpass.endpoints
-    : DEFAULT_OVERPASS_ENDPOINTS;
+  const osmTimeout = Number(cfg?.providers?.osm_overpass?.timeout_ms || 30000);
 
-  // -------- OSM Overpass provider (no key) --------
+  const overpassEndpoints =
+    (cfg?.providers?.osm_overpass?.endpoints || DEFAULT_OVERPASS_ENDPOINTS)
+      .map(String)
+      .filter(Boolean);
+
+  // ----- OSM Overpass -----
   if (osmEnabled) {
     const itEnabled = !!cfg?.coverage?.italy?.enabled;
     const euEnabled = !!cfg?.coverage?.europe?.enabled;
 
+    const itCities = Array.isArray(cfg?.coverage?.italy?.cities) ? cfg.coverage.italy.cities : [];
+    const euCities = Array.isArray(cfg?.coverage?.europe?.cities) ? cfg.coverage.europe.cities : [];
+
+    console.log(`► Overpass: endpoints=${overpassEndpoints.length} IT_cities=${itCities.length} EU_cities=${euCities.length}`);
+
+    // IMPORTANT: throttling to reduce 504
+    const perCityDelay = 650;
+
     if (itEnabled) {
-      const cities = Array.isArray(cfg.coverage.italy.cities) ? cfg.coverage.italy.cities : [];
-      for (const c of cities) {
+      for (const c of itCities) {
         try {
-          const evs = await fetchOverpassForCity(c, now, daysAhead, osmTimeout, overpassEndpoints);
-          for (const e of evs) {
-            if (!e.country_code) e.country_code = "IT";
-            out.push(e);
-          }
+          const evs = await fetchOverpassForCity({ ...c, cc: "IT" }, now, daysAhead, osmTimeout, overpassEndpoints);
+          for (const e of evs) out.push(e);
         } catch (e) {
           console.error(`Overpass IT city failed (${c?.name || "?"}):`, e?.message || e);
         }
-        await sleep(450);
+        await sleep(perCityDelay);
         if (out.length >= maxEvents) break;
       }
     }
 
     if (euEnabled && out.length < maxEvents) {
-      const cities = Array.isArray(cfg.coverage.europe.cities) ? cfg.coverage.europe.cities : [];
-      for (const c of cities) {
+      for (const c of euCities) {
         try {
           const evs = await fetchOverpassForCity(c, now, daysAhead, osmTimeout, overpassEndpoints);
-          const cc = String(c?.cc || "").toUpperCase();
-          for (const e of evs) {
-            if (cc && !e.country_code) e.country_code = cc;
-            out.push(e);
-          }
+          for (const e of evs) out.push(e);
         } catch (e) {
           console.error(`Overpass EU city failed (${c?.name || "?"}):`, e?.message || e);
         }
-        await sleep(450);
+        await sleep(perCityDelay);
         if (out.length >= maxEvents) break;
       }
     }
   }
 
-  // -------- RSS/ICS extra sources --------
-  console.log(`► Building RSS/ICS sources... sources: ${(cfg.rss_ics_sources || []).length}`);
-  for (const src of (cfg.rss_ics_sources || [])) {
+  // ----- RSS/ICS -----
+  const localSources = cfg.rss_ics_sources || cfg.sources || [];
+  console.log(`► RSS/ICS sources: ${localSources.length}`);
+
+  for (const src of localSources) {
     const type = String(src.type || "").toLowerCase();
     const url = String(src.url || "").trim();
-    if (!url) {
-      console.log(`- skip source ${src.id} (missing url)`);
-      continue;
-    }
-    if (url.includes("INCOLLA_QUI")) {
-      console.log(`- skip source ${src.id} (placeholder url)`);
-      continue;
-    }
+
+    if (!url) continue;
+    if (url.includes("INCOLLA_QUI")) continue;
+
     try {
       const evs =
         type === "rss"
@@ -554,14 +594,17 @@ async function main() {
           : type === "ics"
           ? await fetchIcsSource(src, now, daysAhead, geocache)
           : [];
+
       for (const e of evs) out.push(e);
     } catch (e) {
       console.error(`Source failed ${src?.id}:`, e?.message || e);
     }
+
+    // Soft cap
     if (out.length >= maxEvents) break;
   }
 
-  // -------- Normalize IDs + dedupe + limit --------
+  // ----- Normalize + dedupe -----
   const normalized = [];
   for (const e of out) {
     const title = String(e.title || "Evento").trim();
@@ -575,6 +618,7 @@ async function main() {
 
     const source = String(e.source || "unknown");
     const startIso = iso(start);
+
     const id = makeId(source, title, startIso, lat, lon);
     if (seen.has(id)) continue;
     seen.add(id);
