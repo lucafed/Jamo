@@ -5,18 +5,12 @@
   "providers": {
     "osm_overpass": {
       "enabled": true,
-      "timeout_ms": 45000
-    },
-    "ticketmaster": {
-      "enabled": false,
-      "apikey_env": "TICKETMASTER_API_KEY"
-    },
-    "openagenda": {
-      "enabled": false,
-      "apikey_env": "OPENAGENDA_API_KEY"
-    },
-    "parks_it": {
-      "enabled": false
+      "timeout_ms": 90000,
+      "endpoints": [
+        "https://overpass.kumi.systems/api/interpreter",
+        "https://overpass-api.de/api/interpreter",
+        "https://overpass.openstreetmap.ru/api/interpreter"
+      ]
     }
   },
 
@@ -24,91 +18,46 @@
     "italy": {
       "enabled": true,
       "cities": [
-        { "name": "Roma", "lat": 41.9028, "lon": 12.4964, "radius_km": 55 },
-        { "name": "Milano", "lat": 45.4642, "lon": 9.1900, "radius_km": 45 },
-        { "name": "Napoli", "lat": 40.8518, "lon": 14.2681, "radius_km": 45 },
-        { "name": "Torino", "lat": 45.0703, "lon": 7.6869, "radius_km": 45 },
-        { "name": "Bologna", "lat": 44.4949, "lon": 11.3426, "radius_km": 40 },
-        { "name": "Firenze", "lat": 43.7696, "lon": 11.2558, "radius_km": 40 },
-        { "name": "Venezia", "lat": 45.4408, "lon": 12.3155, "radius_km": 35 },
-        { "name": "Verona", "lat": 45.4384, "lon": 10.9916, "radius_km": 35 },
-        { "name": "Genova", "lat": 44.4056, "lon": 8.9463, "radius_km": 35 },
-        { "name": "Bari", "lat": 41.1171, "lon": 16.8719, "radius_km": 35 },
-        { "name": "Palermo", "lat": 38.1157, "lon": 13.3615, "radius_km": 40 },
-        { "name": "Catania", "lat": 37.5079, "lon": 15.0830, "radius_km": 35 },
-        { "name": "L'Aquila", "lat": 42.3498, "lon": 13.3995, "radius_km": 45 }
+        { "name": "Roma", "lat": 41.9028, "lon": 12.4964, "radius_km": 75 },
+        { "name": "Milano", "lat": 45.4642, "lon": 9.19, "radius_km": 65 },
+        { "name": "Napoli", "lat": 40.8518, "lon": 14.2681, "radius_km": 65 },
+        { "name": "Torino", "lat": 45.0703, "lon": 7.6869, "radius_km": 65 },
+        { "name": "Bologna", "lat": 44.4949, "lon": 11.3426, "radius_km": 55 },
+        { "name": "Firenze", "lat": 43.7696, "lon": 11.2558, "radius_km": 55 },
+        { "name": "Venezia", "lat": 45.4408, "lon": 12.3155, "radius_km": 55 },
+        { "name": "Verona", "lat": 45.4384, "lon": 10.9916, "radius_km": 55 },
+        { "name": "Genova", "lat": 44.4056, "lon": 8.9463, "radius_km": 55 },
+        { "name": "Bari", "lat": 41.1171, "lon": 16.8719, "radius_km": 55 },
+        { "name": "Palermo", "lat": 38.1157, "lon": 13.3615, "radius_km": 65 },
+        { "name": "Catania", "lat": 37.5079, "lon": 15.083, "radius_km": 55 },
+        { "name": "L'Aquila", "lat": 42.3498, "lon": 13.3995, "radius_km": 65 }
       ]
     },
 
     "europe": {
       "enabled": true,
       "cities": [
-        { "name": "Paris", "cc": "FR", "lat": 48.8566, "lon": 2.3522, "radius_km": 55 },
-        { "name": "London", "cc": "GB", "lat": 51.5074, "lon": -0.1278, "radius_km": 60 },
-        { "name": "Berlin", "cc": "DE", "lat": 52.5200, "lon": 13.4050, "radius_km": 55 },
-        { "name": "Madrid", "cc": "ES", "lat": 40.4168, "lon": -3.7038, "radius_km": 55 },
-        { "name": "Barcelona", "cc": "ES", "lat": 41.3851, "lon": 2.1734, "radius_km": 50 },
-        { "name": "Amsterdam", "cc": "NL", "lat": 52.3676, "lon": 4.9041, "radius_km": 45 },
-        { "name": "Brussels", "cc": "BE", "lat": 50.8503, "lon": 4.3517, "radius_km": 45 },
-        { "name": "Vienna", "cc": "AT", "lat": 48.2082, "lon": 16.3738, "radius_km": 45 },
-        { "name": "Prague", "cc": "CZ", "lat": 50.0755, "lon": 14.4378, "radius_km": 45 },
-        { "name": "Zurich", "cc": "CH", "lat": 47.3769, "lon": 8.5417, "radius_km": 40 },
-        { "name": "Lisbon", "cc": "PT", "lat": 38.7223, "lon": -9.1393, "radius_km": 45 },
-        { "name": "Dublin", "cc": "IE", "lat": 53.3498, "lon": -6.2603, "radius_km": 45 },
-        { "name": "Copenhagen", "cc": "DK", "lat": 55.6761, "lon": 12.5683, "radius_km": 45 },
-        { "name": "Stockholm", "cc": "SE", "lat": 59.3293, "lon": 18.0686, "radius_km": 55 },
-        { "name": "Oslo", "cc": "NO", "lat": 59.9139, "lon": 10.7522, "radius_km": 45 },
-        { "name": "Helsinki", "cc": "FI", "lat": 60.1699, "lon": 24.9384, "radius_km": 45 },
-        { "name": "Warsaw", "cc": "PL", "lat": 52.2297, "lon": 21.0122, "radius_km": 50 },
-        { "name": "Athens", "cc": "GR", "lat": 37.9838, "lon": 23.7275, "radius_km": 50 }
+        { "name": "Paris", "cc": "FR", "lat": 48.8566, "lon": 2.3522, "radius_km": 85 },
+        { "name": "London", "cc": "GB", "lat": 51.5074, "lon": -0.1278, "radius_km": 90 },
+        { "name": "Berlin", "cc": "DE", "lat": 52.52, "lon": 13.405, "radius_km": 85 },
+        { "name": "Madrid", "cc": "ES", "lat": 40.4168, "lon": -3.7038, "radius_km": 85 },
+        { "name": "Barcelona", "cc": "ES", "lat": 41.3851, "lon": 2.1734, "radius_km": 85 },
+        { "name": "Amsterdam", "cc": "NL", "lat": 52.3676, "lon": 4.9041, "radius_km": 75 },
+        { "name": "Brussels", "cc": "BE", "lat": 50.8503, "lon": 4.3517, "radius_km": 75 },
+        { "name": "Vienna", "cc": "AT", "lat": 48.2082, "lon": 16.3738, "radius_km": 75 },
+        { "name": "Prague", "cc": "CZ", "lat": 50.0755, "lon": 14.4378, "radius_km": 75 },
+        { "name": "Zurich", "cc": "CH", "lat": 47.3769, "lon": 8.5417, "radius_km": 70 },
+        { "name": "Lisbon", "cc": "PT", "lat": 38.7223, "lon": -9.1393, "radius_km": 75 },
+        { "name": "Dublin", "cc": "IE", "lat": 53.3498, "lon": -6.2603, "radius_km": 75 },
+        { "name": "Copenhagen", "cc": "DK", "lat": 55.6761, "lon": 12.5683, "radius_km": 75 },
+        { "name": "Stockholm", "cc": "SE", "lat": 59.3293, "lon": 18.0686, "radius_km": 85 },
+        { "name": "Oslo", "cc": "NO", "lat": 59.9139, "lon": 10.7522, "radius_km": 75 },
+        { "name": "Helsinki", "cc": "FI", "lat": 60.1699, "lon": 24.9384, "radius_km": 75 },
+        { "name": "Warsaw", "cc": "PL", "lat": 52.2297, "lon": 21.0122, "radius_km": 85 },
+        { "name": "Athens", "cc": "GR", "lat": 37.9838, "lon": 23.7275, "radius_km": 85 }
       ]
     }
   },
 
-  "rss_ics_sources": [
-    {
-      "id": "it_rome_family_rss",
-      "type": "rss",
-      "url": "https://www.eventbrite.com/d/italy--rome/family--events/rss/",
-      "default_region": "Lazio",
-      "default_place": "Roma, Italia",
-      "country_code": "IT",
-      "category": "family",
-      "fixed_lat": 41.9028,
-      "fixed_lon": 12.4964
-    },
-    {
-      "id": "it_milan_sport_rss",
-      "type": "rss",
-      "url": "https://www.eventbrite.com/d/italy--milan/sports-and-fitness--events/rss/",
-      "default_region": "Lombardia",
-      "default_place": "Milano, Italia",
-      "country_code": "IT",
-      "category": "sport",
-      "fixed_lat": 45.4642,
-      "fixed_lon": 9.1900
-    },
-    {
-      "id": "eu_paris_culture_rss",
-      "type": "rss",
-      "url": "https://www.eventbrite.com/d/france--paris/arts--events/rss/",
-      "default_region": "EU",
-      "default_place": "Paris, France",
-      "country_code": "FR",
-      "category": "culture",
-      "fixed_lat": 48.8566,
-      "fixed_lon": 2.3522
-    },
-    {
-      "id": "eu_london_music_rss",
-      "type": "rss",
-      "url": "https://www.eventbrite.com/d/united-kingdom--london/music--events/rss/",
-      "default_region": "EU",
-      "default_place": "London, UK",
-      "country_code": "GB",
-      "category": "music",
-      "fixed_lat": 51.5074,
-      "fixed_lon": -0.1278
-    }
-  ]
+  "rss_ics_sources": []
 }
