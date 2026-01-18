@@ -1,9 +1,9 @@
 name: Build Events (daily)
 
 on:
-  workflow_dispatch:
+  workflow_dispatch: {}
   schedule:
-    # 03:15 UTC = 04:15 in Italia (in inverno). Se vuoi un altro orario dimmelo dopo.
+    # 03:15 UTC = 04:15 Italia inverno
     - cron: "15 3 * * *"
 
 permissions:
@@ -16,6 +16,7 @@ concurrency:
 jobs:
   build-events:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -29,8 +30,21 @@ jobs:
           cache: "npm"
 
       - name: Install
-        run: npm ci
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install --no-audit --no-fund
+          fi
 
+      # ✅ 1) genera sorgenti IT+EU (catalogo -> events_sources.generated.json)
+      - name: Generate events sources (IT+EU)
+        env:
+          JAMO_UA: "JamoEventsBot/1.0 (github-actions)"
+          NODE_OPTIONS: "--dns-result-order=ipv4first"
+        run: node scripts/generate_events_sources.mjs
+
+      # ✅ 2) build eventi (scrive public/data/events/events_all.json)
       - name: Build events
         env:
           JAMO_UA: "JamoEventsBot/1.0 (github-actions)"
@@ -39,7 +53,7 @@ jobs:
           # TICKETMASTER_API_KEY: ${{ secrets.TICKETMASTER_API_KEY }}
           # OPENAGENDA_API_KEY: ${{ secrets.OPENAGENDA_API_KEY }}
           # OA_ENDPOINT: ${{ secrets.OA_ENDPOINT }}
-        run: npm run build:events
+        run: node scripts/build_events_all.mjs
 
       - name: Show result stats
         run: |
@@ -52,6 +66,7 @@ jobs:
             count: j.count,
             days_ahead: j.days_ahead
           });
+          console.log("generated sources exists:", fs.existsSync("events_sources.generated.json"));
           NODE
 
       - name: Commit & push (events only)
@@ -59,8 +74,11 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          # ✅ SOLO file eventi + geocache
-          git add public/data/events/events_all.json cache/geocode-cache.json || true
+          # ✅ SOLO file eventi + sources generated + geocache
+          git add \
+            events_sources.generated.json \
+            public/data/events/events_all.json \
+            cache/geocode-cache.json || true
 
           if git diff --cached --quiet; then
             echo "No changes to commit."
