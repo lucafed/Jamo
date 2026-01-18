@@ -32,6 +32,7 @@ jobs:
       - name: Build events
         env:
           JAMO_UA: "JamoEventsBot/1.0 (github-actions)"
+          NODE_OPTIONS: "--dns-result-order=ipv4first"
         run: npm run build:events
 
       - name: Show result stats
