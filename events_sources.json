@@ -4,82 +4,270 @@
 
   "providers": {
     "osm_overpass": {
-      "enabled": true,
+      "enabled": false,
       "timeout_ms": 30000
     },
-
     "ticketmaster": {
       "enabled": false,
       "apikey_env": "TICKETMASTER_API_KEY"
     },
-
     "openagenda": {
       "enabled": false,
       "apikey_env": "OPENAGENDA_API_KEY"
+    },
+    "parks_it": {
+      "enabled": false
     }
   },
 
   "coverage": {
-    "italy": {
-      "enabled": true,
-      "cities": [
-        { "name": "Roma", "lat": 41.9028, "lon": 12.4964, "radius_km": 55 },
-        { "name": "Milano", "lat": 45.4642, "lon": 9.1900, "radius_km": 45 },
-        { "name": "Napoli", "lat": 40.8518, "lon": 14.2681, "radius_km": 45 },
-        { "name": "Torino", "lat": 45.0703, "lon": 7.6869, "radius_km": 45 },
-        { "name": "Bologna", "lat": 44.4949, "lon": 11.3426, "radius_km": 45 },
-        { "name": "Firenze", "lat": 43.7696, "lon": 11.2558, "radius_km": 40 },
-        { "name": "Venezia", "lat": 45.4408, "lon": 12.3155, "radius_km": 35 },
-        { "name": "Verona", "lat": 45.4384, "lon": 10.9916, "radius_km": 35 },
-        { "name": "Palermo", "lat": 38.1157, "lon": 13.3615, "radius_km": 45 },
-        { "name": "Catania", "lat": 37.5079, "lon": 15.0830, "radius_km": 45 },
-        { "name": "Bari", "lat": 41.1171, "lon": 16.8719, "radius_km": 45 },
-        { "name": "Genova", "lat": 44.4056, "lon": 8.9463, "radius_km": 40 },
-        { "name": "L'Aquila", "lat": 42.3498, "lon": 13.3995, "radius_km": 55 }
-      ]
-    },
-
-    "europe": {
-      "enabled": true,
-      "cities": [
-        { "name": "Paris", "lat": 48.8566, "lon": 2.3522, "radius_km": 55 },
-        { "name": "London", "lat": 51.5074, "lon": -0.1278, "radius_km": 55 },
-        { "name": "Berlin", "lat": 52.5200, "lon": 13.4050, "radius_km": 55 },
-        { "name": "Madrid", "lat": 40.4168, "lon": -3.7038, "radius_km": 55 },
-        { "name": "Barcelona", "lat": 41.3851, "lon": 2.1734, "radius_km": 45 },
-        { "name": "Amsterdam", "lat": 52.3676, "lon": 4.9041, "radius_km": 45 },
-        { "name": "Brussels", "lat": 50.8503, "lon": 4.3517, "radius_km": 45 },
-        { "name": "Vienna", "lat": 48.2082, "lon": 16.3738, "radius_km": 45 },
-        { "name": "Prague", "lat": 50.0755, "lon": 14.4378, "radius_km": 45 },
-        { "name": "Zurich", "lat": 47.3769, "lon": 8.5417, "radius_km": 35 },
-        { "name": "Lisbon", "lat": 38.7223, "lon": -9.1393, "radius_km": 45 },
-        { "name": "Dublin", "lat": 53.3498, "lon": -6.2603, "radius_km": 45 },
-        { "name": "Copenhagen", "lat": 55.6761, "lon": 12.5683, "radius_km": 45 },
-        { "name": "Stockholm", "lat": 59.3293, "lon": 18.0686, "radius_km": 55 },
-        { "name": "Oslo", "lat": 59.9139, "lon": 10.7522, "radius_km": 55 },
-        { "name": "Helsinki", "lat": 60.1699, "lon": 24.9384, "radius_km": 55 },
-        { "name": "Warsaw", "lat": 52.2297, "lon": 21.0122, "radius_km": 55 },
-        { "name": "Athens", "lat": 37.9838, "lon": 23.7275, "radius_km": 55 }
-      ]
-    }
+    "italy": { "enabled": true },
+    "europe": { "enabled": true }
   },
 
   "rss_ics_sources": [
+    /* =========================
+       ITALIA — FAMILY / KIDS
+       ========================= */
     {
-      "id": "ADD_ITALY_CITY_ICS_1",
-      "type": "ics",
-      "url": "",
-      "default_region": "Italia",
+      "id": "it_rome_family",
+      "type": "rss",
+      "url": "https://www.eventbrite.com/d/italy--rome/family--events/rss/",
+      "default_region": "Lazio",
       "default_place": "Roma, Italia",
-      "category": "culture"
+      "category": "family",
+      "fixed_lat": 41.9028,
+      "fixed_lon": 12.4964,
+      "country_code": "IT"
     },
     {
-      "id": "ADD_EU_CITY_RSS_1",
+      "id": "it_milan_family",
       "type": "rss",
-      "url": "",
+      "url": "https://www.eventbrite.com/d/italy--milan/family--events/rss/",
+      "default_region": "Lombardia",
+      "default_place": "Milano, Italia",
+      "category": "family",
+      "fixed_lat": 45.4642,
+      "fixed_lon": 9.1900,
+      "country_code": "IT"
+    },
+    {
+      "id": "it_naples_family",
+      "type": "rss",
+      "url": "https://www.eventbrite.com/d/italy--naples/family--events/rss/",
+      "default_region": "Campania",
+      "default_place": "Napoli, Italia",
+      "category": "family",
+      "fixed_lat": 40.8518,
+      "fixed_lon": 14.2681,
+      "country_code": "IT"
+    },
+
+    /* =========================
+       ITALIA — SPORT / OUTDOOR (bike / moto dentro keywords)
+       ========================= */
+    {
+      "id": "it_rome_sport",
+      "type": "rss",
+      "url": "https://www.eventbrite.com/d/italy--rome/sports-and-fitness--events/rss/",
+      "default_region": "Lazio",
+      "default_place": "Roma, Italia",
+      "category": "sport",
+      "fixed_lat": 41.9028,
+      "fixed_lon": 12.4964,
+      "country_code": "IT"
+    },
+    {
+      "id": "it_milan_sport",
+      "type": "rss",
+      "url": "https://www.eventbrite.com/d/italy--milan/sports-and-fitness--events/rss/",
+      "default_region": "Lombardia",
+      "default_place": "Milano, Italia",
+      "category": "sport",
+      "fixed_lat": 45.4642,
+      "fixed_lon": 9.1900,
+      "country_code": "IT"
+    },
+    {
+      "id": "it_turin_outdoor",
+      "type": "rss",
+      "url": "https://www.eventbrite.com/d/italy--turin/outdoors--events/rss/",
+      "default_region": "Piemonte",
+      "default_place": "Torino, Italia",
+      "category": "outdoor",
+      "fixed_lat": 45.0703,
+      "fixed_lon": 7.6869,
+      "country_code": "IT"
+    },
+
+    /* =========================
+       ITALIA — CULTURE / MUSIC / FOOD / MARKET
+       ========================= */
+    {
+      "id": "it_rome_culture",
+      "type": "rss",
+      "url": "https://www.eventbrite.com/d/italy--rome/arts--events/rss/",
+      "default_region": "Lazio",
+      "default_place": "Roma, Italia",
+      "category": "culture",
+      "fixed_lat": 41.9028,
+      "fixed_lon": 12.4964,
+      "country_code": "IT"
+    },
+    {
+      "id": "it_milan_music",
+      "type": "rss",
+      "url": "https://www.eventbrite.com/d/italy--milan/music--events/rss/",
+      "default_region": "Lombardia",
+      "default_place": "Milano, Italia",
+      "category": "music",
+      "fixed_lat": 45.4642,
+      "fixed_lon": 9.1900,
+      "country_code": "IT"
+    },
+    {
+      "id": "it_bologna_food",
+      "type": "rss",
+      "url": "https://www.eventbrite.com/d/italy--bologna/food-and-drink--events/rss/",
+      "default_region": "Emilia-Romagna",
+      "default_place": "Bologna, Italia",
+      "category": "food",
+      "fixed_lat": 44.4949,
+      "fixed_lon": 11.3426,
+      "country_code": "IT"
+    },
+    {
+      "id": "it_florence_market",
+      "type": "rss",
+      "url": "https://www.eventbrite.com/d/italy--florence/expo--events/rss/",
+      "default_region": "Toscana",
+      "default_place": "Firenze, Italia",
+      "category": "market",
+      "fixed_lat": 43.7696,
+      "fixed_lon": 11.2558,
+      "country_code": "IT"
+    },
+
+    /* =========================
+       EUROPA — FAMILY (kids)
+       ========================= */
+    {
+      "id": "eu_paris_family",
+      "type": "rss",
+      "url": "https://www.eventbrite.com/d/france--paris/family--events/rss/",
       "default_region": "EU",
       "default_place": "Paris, France",
-      "category": "culture"
+      "category": "family",
+      "fixed_lat": 48.8566,
+      "fixed_lon": 2.3522,
+      "country_code": "FR"
+    },
+    {
+      "id": "eu_london_family",
+      "type": "rss",
+      "url": "https://www.eventbrite.com/d/united-kingdom--london/family--events/rss/",
+      "default_region": "EU",
+      "default_place": "London, UK",
+      "category": "family",
+      "fixed_lat": 51.5074,
+      "fixed_lon": -0.1278,
+      "country_code": "GB"
+    },
+    {
+      "id": "eu_berlin_family",
+      "type": "rss",
+      "url": "https://www.eventbrite.com/d/germany--berlin/family--events/rss/",
+      "default_region": "EU",
+      "default_place": "Berlin, Germany",
+      "category": "family",
+      "fixed_lat": 52.5200,
+      "fixed_lon": 13.4050,
+      "country_code": "DE"
+    },
+
+    /* =========================
+       EUROPA — SPORT / OUTDOOR (bike/moto dentro sport)
+       ========================= */
+    {
+      "id": "eu_barcelona_sport",
+      "type": "rss",
+      "url": "https://www.eventbrite.com/d/spain--barcelona/sports-and-fitness--events/rss/",
+      "default_region": "EU",
+      "default_place": "Barcelona, Spain",
+      "category": "sport",
+      "fixed_lat": 41.3851,
+      "fixed_lon": 2.1734,
+      "country_code": "ES"
+    },
+    {
+      "id": "eu_amsterdam_outdoor",
+      "type": "rss",
+      "url": "https://www.eventbrite.com/d/netherlands--amsterdam/outdoors--events/rss/",
+      "default_region": "EU",
+      "default_place": "Amsterdam, Netherlands",
+      "category": "outdoor",
+      "fixed_lat": 52.3676,
+      "fixed_lon": 4.9041,
+      "country_code": "NL"
+    },
+    {
+      "id": "eu_vienna_sport",
+      "type": "rss",
+      "url": "https://www.eventbrite.com/d/austria--vienna/sports-and-fitness--events/rss/",
+      "default_region": "EU",
+      "default_place": "Vienna, Austria",
+      "category": "sport",
+      "fixed_lat": 48.2082,
+      "fixed_lon": 16.3738,
+      "country_code": "AT"
+    },
+
+    /* =========================
+       EUROPA — CULTURE / MUSIC / FOOD / MARKET
+       ========================= */
+    {
+      "id": "eu_madrid_culture",
+      "type": "rss",
+      "url": "https://www.eventbrite.com/d/spain--madrid/arts--events/rss/",
+      "default_region": "EU",
+      "default_place": "Madrid, Spain",
+      "category": "culture",
+      "fixed_lat": 40.4168,
+      "fixed_lon": -3.7038,
+      "country_code": "ES"
+    },
+    {
+      "id": "eu_berlin_music",
+      "type": "rss",
+      "url": "https://www.eventbrite.com/d/germany--berlin/music--events/rss/",
+      "default_region": "EU",
+      "default_place": "Berlin, Germany",
+      "category": "music",
+      "fixed_lat": 52.5200,
+      "fixed_lon": 13.4050,
+      "country_code": "DE"
+    },
+    {
+      "id": "eu_lisbon_food",
+      "type": "rss",
+      "url": "https://www.eventbrite.com/d/portugal--lisbon/food-and-drink--events/rss/",
+      "default_region": "EU",
+      "default_place": "Lisbon, Portugal",
+      "category": "food",
+      "fixed_lat": 38.7223,
+      "fixed_lon": -9.1393,
+      "country_code": "PT"
+    },
+    {
+      "id": "eu_brussels_market",
+      "type": "rss",
+      "url": "https://www.eventbrite.com/d/belgium--brussels/expo--events/rss/",
+      "default_region": "EU",
+      "default_place": "Brussels, Belgium",
+      "category": "market",
+      "fixed_lat": 50.8503,
+      "fixed_lon": 4.3517,
+      "country_code": "BE"
     }
   ]
 }
