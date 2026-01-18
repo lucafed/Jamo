@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Jamo datasets builder (regions, categories, offline POIs)",
+  "description": "Jamo datasets builder (regions, categories, offline POIs + offline events)",
   "engines": {
     "node": ">=20"
   },
@@ -12,8 +12,7 @@
     "build:region:category": "node scripts/build_region_category.mjs",
     "build:regions:index": "node scripts/build_it_regions_index.mjs",
 
-    "build:events": "node scripts/build-events.mjs",
-    "build:all": "npm run build:regions:index && npm run build:events"
+    "build:events": "node scripts/build_events_all.mjs"
   },
   "dependencies": {},
   "devDependencies": {}
