@@ -3,20 +3,16 @@ name: Build Italy Regions Datasets
 on:
   workflow_dispatch:
 
-  # Parte SOLO se tocchi codice/config/workflow (NON quando committa i JSON generati)
+  # Trigger solo su modifiche di codice/config/workflow (NO public/data)
   push:
     branches: [ "main" ]
     paths:
       - "scripts/**"
       - "configs/it/**"
       - ".github/workflows/build-it-regions.yml"
-    paths-ignore:
-      - "public/data/**"
-      - "cache/**"
 
   schedule:
     # 07:30 Italia (CET) = 06:30 UTC
-    # In estate (CEST) diventa 08:30 locali. Se vuoi fisso alle 07:30 anche d’estate te lo adatto.
     - cron: "30 6 * * *"
 
 concurrency:
