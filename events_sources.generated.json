@@ -3,119 +3,69 @@
   "max_events": 50000,
   "providers": {
     "osm_overpass": {
-      "enabled": false,
-      "timeout_ms": 45000,
-      "endpoints": [
-        "https://overpass.kumi.systems/api/interpreter",
-        "https://overpass-api.de/api/interpreter"
+      "enabled": true,
+      "timeout_ms": 45000
+    }
+  },
+  "coverage": {
+    "italy": {
+      "enabled": true,
+      "cities": [
+        {
+          "name": "Verona",
+          "lat": 45.4384,
+          "lon": 10.9916,
+          "radius_km": 28,
+          "cc": "IT"
+        },
+        {
+          "name": "Venezia",
+          "lat": 45.4408,
+          "lon": 12.3155,
+          "radius_km": 28,
+          "cc": "IT"
+        },
+        {
+          "name": "Padova",
+          "lat": 45.4064,
+          "lon": 11.8768,
+          "radius_km": 26,
+          "cc": "IT"
+        },
+        {
+          "name": "Vicenza",
+          "lat": 45.5455,
+          "lon": 11.5354,
+          "radius_km": 24,
+          "cc": "IT"
+        },
+        {
+          "name": "Treviso",
+          "lat": 45.6669,
+          "lon": 12.243,
+          "radius_km": 24,
+          "cc": "IT"
+        }
       ]
+    },
+    "europe": {
+      "enabled": false,
+      "cities": []
     }
   },
   "rss_ics_sources": [
     {
-      "id": "italia_eventi_cultura",
-      "type": "rss",
-      "url": "https://www.cultura.gov.it/rss/eventi.xml",
+      "id": "italy_it_verona_culture_ics",
+      "type": "ics",
+      "url": "https://archiviodistatoverona.cultura.gov.it/?eventDisplay=list&ical=1&post_type=tribe_events&tribe-bar-date=2025-03-01",
+      "default_region": "Veneto",
+      "default_place": "Verona",
       "category": "culture",
-      "country_code": "IT"
-    },
-    {
-      "id": "eventi_repubblica",
-      "type": "rss",
-      "url": "https://www.repubblica.it/rss/eventi/rss2.0.xml",
-      "category": "eventi",
-      "country_code": "IT"
-    },
-    {
-      "id": "roma_eventi",
-      "type": "ics",
-      "url": "https://www.comune.roma.it/web-resources/cms/documents/eventi.ics",
-      "fixed_lat": 41.9028,
-      "fixed_lon": 12.4964,
-      "country_code": "IT"
-    },
-    {
-      "id": "milano_eventi",
-      "type": "ics",
-      "url": "https://www.comune.milano.it/aree-tematiche/eventi/eventi.ics",
-      "fixed_lat": 45.4642,
-      "fixed_lon": 9.19,
-      "country_code": "IT"
-    },
-    {
-      "id": "torino_eventi",
-      "type": "rss",
-      "url": "https://www.turismotorino.org/rss/eventi",
-      "fixed_lat": 45.0703,
-      "fixed_lon": 7.6869,
-      "country_code": "IT"
-    },
-    {
-      "id": "bologna_eventi",
-      "type": "rss",
-      "url": "https://www.bolognawelcome.com/rss/eventi.xml",
-      "fixed_lat": 44.4949,
-      "fixed_lon": 11.3426,
-      "country_code": "IT"
-    },
-    {
-      "id": "venezia_eventi",
-      "type": "rss",
-      "url": "https://www.veneziaunica.it/rss/eventi",
-      "fixed_lat": 45.4408,
-      "fixed_lon": 12.3155,
-      "country_code": "IT"
-    },
-    {
-      "id": "verona_eventi",
-      "type": "rss",
-      "url": "https://www.turismoverona.eu/rss/eventi",
+      "country_code": "IT",
       "fixed_lat": 45.4384,
-      "fixed_lon": 10.9916,
-      "country_code": "IT"
-    },
-    {
-      "id": "napoli_eventi",
-      "type": "rss",
-      "url": "https://www.comune.napoli.it/rss_eventi",
-      "fixed_lat": 40.8518,
-      "fixed_lon": 14.2681,
-      "country_code": "IT"
-    },
-    {
-      "id": "paris_events",
-      "type": "ics",
-      "url": "https://www.paris.fr/events.ics",
-      "fixed_lat": 48.8566,
-      "fixed_lon": 2.3522,
-      "country_code": "FR"
-    },
-    {
-      "id": "berlin_events",
-      "type": "rss",
-      "url": "https://www.visitberlin.de/en/rss/events",
-      "fixed_lat": 52.52,
-      "fixed_lon": 13.405,
-      "country_code": "DE"
-    },
-    {
-      "id": "london_events",
-      "type": "ics",
-      "url": "https://www.london.gov.uk/events/calendar.ics",
-      "fixed_lat": 51.5072,
-      "fixed_lon": -0.1276,
-      "country_code": "GB"
-    },
-    {
-      "id": "barcelona_events",
-      "type": "rss",
-      "url": "https://ajuntament.barcelona.cat/rss/agenda.xml",
-      "fixed_lat": 41.3851,
-      "fixed_lon": 2.1734,
-      "country_code": "ES"
+      "fixed_lon": 10.9916
     }
   ],
-  "generated_at": "2026-01-19T15:02:20.698Z",
-  "catalog_path": null,
-  "note": "generated from events_sources.json fallback because feeds_catalog.json was missing"
+  "generated_at": "2026-01-19T15:24:59.567Z",
+  "catalog_path": "data/events/feeds_catalog.json"
 }
