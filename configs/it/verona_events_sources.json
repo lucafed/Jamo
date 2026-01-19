@@ -1,0 +1,42 @@
+{
+  "days_ahead": 120,
+  "max_events": 2000,
+
+  "rss_ics_sources": [
+    {
+      "id": "verona_cultura_ics",
+      "type": "ics",
+      "url": "https://archiviodistatoverona.cultura.gov.it/agenda.ics",
+      "fixed_lat": 45.4384,
+      "fixed_lon": 10.9916,
+      "country_code": "IT",
+      "category": "culture",
+      "default_place": "Verona",
+      "default_region": "Veneto"
+    },
+
+    {
+      "id": "verona_turismo_rss",
+      "type": "rss",
+      "url": "https://www.turismoverona.eu/feed/",
+      "fixed_lat": 45.4384,
+      "fixed_lon": 10.9916,
+      "country_code": "IT",
+      "category": "eventi",
+      "default_place": "Verona",
+      "default_region": "Veneto"
+    },
+
+    {
+      "id": "verona_eventbrite_rss",
+      "type": "rss",
+      "url": "https://www.eventbrite.it/d/italy--verona/events--this-weekend/?page=1&format=rss",
+      "fixed_lat": 45.4384,
+      "fixed_lon": 10.9916,
+      "country_code": "IT",
+      "category": "eventi",
+      "default_place": "Verona",
+      "default_region": "Veneto"
+    }
+  ]
+}
