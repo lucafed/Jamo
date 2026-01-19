@@ -1,52 +1,11 @@
 {
-  "updated_at": "2026-01-18T17:40:19.811Z",
-  "count": 3,
-  "days_ahead": 60,
-  "events": [
-    {
-      "id": "e_e8be6fe8",
-      "title": "Basko",
-      "start": "2026-01-22T00:00:00.000Z",
-      "end": null,
-      "lat": 44.3959639,
-      "lon": 8.9940059,
-      "place": "Via Angelo Carrara, Genova",
-      "city": "Genova",
-      "region": "",
-      "country_code": "IT",
-      "url": "",
-      "category": "market",
-      "source": "osm_overpass"
-    },
-    {
-      "id": "e_cc70c12d",
-      "title": "Delhaize",
-      "start": "2026-01-28T00:00:00.000Z",
-      "end": null,
-      "lat": 50.4845749,
-      "lon": 4.2029692,
-      "place": "Rue de la Franco-Belge 228, 7100, La Louvière",
-      "city": "Brussels",
-      "region": "",
-      "country_code": "BE",
-      "url": "",
-      "category": "market",
-      "source": "osm_overpass"
-    },
-    {
-      "id": "e_85b32439",
-      "title": "The Durum",
-      "start": "2026-01-31T00:00:00.000Z",
-      "end": null,
-      "lat": 55.603598,
-      "lon": 12.5867043,
-      "place": "Copenhagen",
-      "city": "Copenhagen",
-      "region": "",
-      "country_code": "DK",
-      "url": "https://thedurumpizza.dk/",
-      "category": "food",
-      "source": "osm_overpass"
-    }
-  ]
+  "updated_at": "2026-01-19T15:02:36.339Z",
+  "count": 0,
+  "days_ahead": 90,
+  "events": [],
+  "stats": {
+    "sources_ok": 0,
+    "sources_fail": 13,
+    "kept": 0
+  }
 }
