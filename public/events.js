@@ -1,8 +1,8 @@
-/* Jamo — events.js v1.2 (SAFE + OFFLINE FIRST)
+/* Jamo — events.js v1.3 (SAFE + OFFLINE FIRST + MANY RESULTS + LOAD MORE)
  * - Legge: /data/events/events_all.json
- * - Filtra: tipo (tutti/sagre/concerti/mostre/fiere/family/sport) + quando (oggi/weekend/7giorni)
- * - Ordina: distanza + data
- * - Render in #resultArea
+ * - Filtra: tipo + quando (oggi/weekend/7giorni/30giorni)
+ * - Ordina: distanza + data (eventi senza data vanno in fondo, ma in dataset ci saranno quasi sempre date)
+ * - Render in #resultArea con paginazione: 12 + "Carica altri"
  * - Espone: window.JAMO_EVENTS.run(...)
  */
 
@@ -38,12 +38,10 @@
     const sunday = new Date(d);
 
     if (day === 6) {
-      // sabato -> sab+dom
       sunday.setDate(sunday.getDate() + 1);
       return { from: saturday, to: endOfDay(sunday) };
     }
     if (day === 0) {
-      // domenica -> solo oggi
       return { from: d, to: endOfDay(d) };
     }
     const deltaToSat = 6 - day;
@@ -107,6 +105,11 @@
       const to = endOfDay(new Date(today0.getTime() + 7 * 24 * 3600 * 1000));
       return withinRange(evDate, today0, to);
     }
+    if (whenKey === "30giorni") {
+      if (!evDate) return false;
+      const to = endOfDay(new Date(today0.getTime() + 30 * 24 * 3600 * 1000));
+      return withinRange(evDate, today0, to);
+    }
     if (whenKey === "weekend") {
       if (!evDate) return false;
       const { from, to } = nextWeekendRange(now);
@@ -154,7 +157,7 @@
     return await r.json();
   }
 
-  function render(origin, rows, meta, helpers) {
+  function render(origin, rows, meta, helpers, state) {
     const area = $("resultArea");
     if (!area) return;
 
@@ -180,7 +183,9 @@
 
     const head = rows[0];
 
-    const cards = rows.slice(0, 25).map((x) => {
+    const shown = rows.slice(0, state.shown);
+
+    const cards = shown.map((x) => {
       const title = escapeHtml(x.title);
       const areaLabel = escapeHtml(x.area || x.country || "—");
       const when = escapeHtml(fmtWhen(x.date));
@@ -220,6 +225,8 @@
       `;
     }).join("");
 
+    const canMore = state.shown < rows.length;
+
     area.innerHTML = `
       <div class="card clickSafe" style="box-shadow:none; border-color:rgba(0,224,255,.25); background:rgba(0,224,255,.06);">
         <div style="font-weight:950; font-size:18px;">Eventi trovati (${rows.length})</div>
@@ -227,14 +234,23 @@
           Primo: <b>${escapeHtml(head.title)}</b> • ~${head.driveMin} min<br>
           Dataset: updated <b>${escapeHtml(updated)}</b> • totale <b>${escapeHtml(totalCount)}</b>
         </div>
+        <div class="small muted" style="margin-top:6px;">
+          Mostrati: <b>${shown.length}</b> / <b>${rows.length}</b>
+        </div>
       </div>
 
       <div style="margin-top:12px; display:flex; flex-direction:column; gap:10px;">
         ${cards}
       </div>
+
+      ${canMore ? `
+        <div style="margin-top:12px;">
+          <button class="moreBtn clickSafe" id="btnMoreEvents" type="button">⬇️ Carica altri</button>
+        </div>
+      ` : ""}
     `;
 
-    // delegation click (UNA volta sola per render)
+    // delegation click
     const handler = (e) => {
       const btn = e.target.closest("button[data-open]");
       if (!btn) return;
@@ -254,10 +270,18 @@
       }
     };
 
-    // rimuovi eventuale listener precedente
     area.__jamoEventsHandler && area.removeEventListener("click", area.__jamoEventsHandler);
     area.__jamoEventsHandler = handler;
     area.addEventListener("click", handler);
+
+    const moreBtn = $("btnMoreEvents");
+    if (moreBtn) {
+      moreBtn.addEventListener("click", () => {
+        state.shown = Math.min(rows.length, state.shown + state.page);
+        render(origin, rows, meta, helpers, state);
+        setTimeout(() => moreBtn.scrollIntoView({ behavior: "smooth", block: "center" }), 20);
+      }, { once: true });
+    }
   }
 
   async function run(args) {
@@ -271,6 +295,8 @@
     const escapeHtml = args?.escapeHtml || ((x) => String(x || ""));
     const showStatus = args?.showStatus;
     const scrollToId = args?.scrollToId;
+
+    const pageSize = clamp(Number(args?.pageSize) || 12, 6, 30);
 
     const area = $("resultArea");
     if (area) {
@@ -298,7 +324,7 @@
     let payload;
     try {
       payload = await fetchJsonNoStore(EVENTS_URL);
-    } catch (e) {
+    } catch {
       showStatus?.("err", `Eventi: impossibile caricare ${EVENTS_URL}`);
       if (area) {
         area.innerHTML = `
@@ -352,7 +378,9 @@
       return (a.driveMin - b.driveMin) || (da - db);
     });
 
-    render(origin, rows, payload, { escapeHtml });
+    const state = { shown: pageSize, page: pageSize };
+    render(origin, rows, payload, { escapeHtml }, state);
+
     showStatus?.("ok", `Eventi: trovati ${rows.length} ✅`);
     scrollToId?.("resultCard");
   }
