@@ -245,7 +245,6 @@
           <button id="btnFindPlace" class="btnGhost" type="button" style="flex:1; min-width:160px;">🔎 Usa questo luogo</button>
         </div>
 
-        <!-- ✅ reset rapido partenza (gestito da app.js) -->
         <div class="row wraprow" style="margin-top:10px;">
           <button id="btnResetOrigin" class="btnGhost" type="button" style="width:100%;">🧽 Cambia partenza (reset)</button>
         </div>
@@ -303,7 +302,6 @@
         <div class="chip" data-cat="eventi">🎉 Eventi</div>
       </div>
 
-      <!-- ✅ Subfiltri Eventi (app.js li mostra/nasconde) -->
       <div id="eventsSubfilters">
         <div class="hr"></div>
         <div class="small">Eventi (sottocategoria)</div>
@@ -356,11 +354,9 @@
     <div class="footer">Jamo • PWA • Auto-only • Offline-first</div>
   </div>
 
-  <!-- ✅ events.js (DEVE stare prima di app.js) -->
-  <script src="/events.js?v=1" defer></script>
-
-  <!-- ✅ app.js -->
-  <script src="/app.js?v=22.2" defer></script>
+  <!-- ✅ Ordine GARANTITO: prima events.js poi app.js -->
+  <script src="/events.js?v=1.2"></script>
+  <script src="/app.js?v=22.2"></script>
 
   <script>
     // PWA install prompt
