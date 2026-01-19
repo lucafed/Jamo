@@ -1,559 +1,460 @@
+// scripts/build_events.mjs
+// Jamo — build_events.mjs (ROBUST: RSS/ICS + OSM OVERPASS FALLBACK)
+// Output: public/data/events/events_all.json
+
 import fs from "fs";
 import path from "path";
 
 const ROOT = process.cwd();
-const SOURCES_PATH = path.join(ROOT, "events_sources.json");
-const OUT_DIR = path.join(ROOT, "public", "data", "events");
-const OUT_PATH = path.join(OUT_DIR, "events_all.json");
-const CACHE_DIR = path.join(ROOT, "cache");
-const GEOCACHE_PATH = path.join(CACHE_DIR, "geocode-cache.json");
+const OUT_PATH = path.join(ROOT, "public", "data", "events", "events_all.json");
 
-const UA = process.env.JAMO_UA || "JamoEventsBot/1.0 (github actions)";
-const NOMINATIM_ENDPOINT = "https://nominatim.openstreetmap.org/search";
+// ==== CONFIG ====
+// Veneto bbox (approx): minLon, minLat, maxLon, maxLat
+const VENETO_BBOX = { minLon: 10.35, minLat: 45.05, maxLon: 13.10, maxLat: 46.70 };
 
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+// Overpass endpoints (rotate)
+const OVERPASS_ENDPOINTS = [
+  "https://overpass.kumi.systems/api/interpreter",
+  "https://overpass-api.de/api/interpreter",
+];
 
-function readJSON(p, fallback) {
-  try { return JSON.parse(fs.readFileSync(p, "utf8")); } catch { return fallback; }
-}
-function writeJSON(p, obj) {
+function ensureDir(p) {
   fs.mkdirSync(path.dirname(p), { recursive: true });
-  fs.writeFileSync(p, JSON.stringify(obj, null, 2));
-}
-function norm(s) {
-  return String(s ?? "")
-    .toLowerCase()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-function stripHtml(s) {
-  return String(s || "")
-    .replace(/<[^>]+>/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-function iso(d) { return d.toISOString(); }
-
-function withinWindow(d, now, daysAhead) {
-  const t = d.getTime();
-  const a = now.getTime();
-  const b = a + daysAhead * 24 * 3600 * 1000;
-  return t >= a - 6 * 3600 * 1000 && t <= b;
 }
 
-function makeId(src, title, startIso, lat, lon) {
-  const base = `${src}|${norm(title)}|${startIso}|${String(lat).slice(0,7)}|${String(lon).slice(0,7)}`;
-  let h = 0;
-  for (let i = 0; i < base.length; i++) h = (h * 31 + base.charCodeAt(i)) >>> 0;
-  return `e_${h.toString(16)}`;
+function clamp(n, a, b) {
+  return Math.max(a, Math.min(b, n));
 }
 
-function guessCategory(title, text) {
-  const s = norm(`${title} ${text}`);
-  if (!s) return "other";
-  if (/(sagra|street food|degust|vino|enogastr|food|taste)/.test(s)) return "food";
-  if (/(concerto|live|dj|music|festival|show)/.test(s)) return "music";
-  if (/(mercatino|market|fiera|expo|fair)/.test(s)) return "market";
-  if (/(mostra|museo|arte|theatre|teatro|cultura|conference|talk)/.test(s)) return "culture";
-  if (/(bambin|family|kids|giochi|children)/.test(s)) return "family";
-  return "other";
+function toISO(d) {
+  try { return new Date(d).toISOString(); } catch { return null; }
 }
 
-async function fetchJson(url, headers = {}) {
-  const r = await fetch(url, { headers: { "User-Agent": UA, "Accept": "application/json", ...headers } });
-  if (!r.ok) throw new Error(`HTTP ${r.status} ${url}`);
-  return await r.json();
-}
-async function fetchText(url, headers = {}) {
-  const r = await fetch(url, { headers: { "User-Agent": UA, "Accept": "*/*", ...headers } });
-  if (!r.ok) throw new Error(`HTTP ${r.status} ${url}`);
-  return await r.text();
-}
-
-/* -------------------- Geocoding (Nominatim) cache + 1req/s -------------------- */
-async function geocodePlace(q, cache) {
-  const key = norm(q);
-  if (!key) return null;
-  if (cache[key]) return cache[key];
-
-  await sleep(1100);
-
-  const url = `${NOMINATIM_ENDPOINT}?format=jsonv2&limit=1&q=${encodeURIComponent(q)}`;
-  const j = await fetchJson(url);
-  const first = Array.isArray(j) && j[0] ? j[0] : null;
-  if (!first) return null;
-
-  const lat = Number(first.lat);
-  const lon = Number(first.lon);
-  if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
-
-  const out = { lat, lon, display: first.display_name || "" };
-  cache[key] = out;
-  return out;
+// --- Very tolerant fetch with timeout ---
+async function fetchText(url, { timeoutMs = 45000 } = {}) {
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), timeoutMs);
+  try {
+    const r = await fetch(url, {
+      method: "GET",
+      redirect: "follow",
+      headers: { "user-agent": "JamoEventsBot/1.0 (+github actions)" },
+      signal: ctrl.signal,
+    });
+    const txt = await r.text();
+    return { ok: r.ok, status: r.status, text: txt };
+  } catch (e) {
+    return { ok: false, status: 0, text: "", error: String(e?.message || e) };
+  } finally {
+    clearTimeout(t);
+  }
 }
 
-/* -------------------- Minimal RSS parsing -------------------- */
-function extractTag(xml, tag) {
-  const re = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, "i");
-  const m = xml.match(re);
-  return m ? m[1].trim() : "";
+// --- Minimal RSS parser (no regex bombs) ---
+function extractBetween(str, a, b) {
+  const i = str.indexOf(a);
+  if (i < 0) return null;
+  const j = str.indexOf(b, i + a.length);
+  if (j < 0) return null;
+  return str.slice(i + a.length, j);
 }
+
 function stripCdata(s) {
-  return String(s || "").replace(/^<!\[CDATA\[/i, "").replace(/\]\]>$/i, "").trim();
+  if (!s) return s;
+  return s.replace("<![CDATA[", "").replace("]]>", "");
 }
-function splitItems(xml) {
+
+function decodeXml(s) {
+  if (!s) return "";
+  return s
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#039;/g, "'");
+}
+
+function parseRssItems(xml) {
+  // super tolerant: split by <item>...</item>
   const items = [];
-  const re = /<item\b[^>]*>([\s\S]*?)<\/item>/gi;
-  let m;
-  while ((m = re.exec(xml))) items.push(m[1]);
+  let pos = 0;
+  while (true) {
+    const a = xml.indexOf("<item", pos);
+    if (a < 0) break;
+    const b = xml.indexOf("</item>", a);
+    if (b < 0) break;
+    const chunk = xml.slice(a, b + 7);
+    items.push(chunk);
+    pos = b + 7;
+  }
   return items;
 }
-function parseDateMaybe(x) {
-  const s = String(x || "").trim();
-  if (!s) return null;
-  const d = new Date(s);
+
+function pickFirstTag(chunk, tag) {
+  // handles <tag>...</tag> and <tag ...>...</tag>
+  const start1 = chunk.indexOf(`<${tag}`);
+  if (start1 < 0) return null;
+  const start2 = chunk.indexOf(">", start1);
+  if (start2 < 0) return null;
+  const end = chunk.indexOf(`</${tag}>`, start2 + 1);
+  if (end < 0) return null;
+  return chunk.slice(start2 + 1, end);
+}
+
+function parseDateSafe(x) {
+  if (!x) return null;
+  const d = new Date(x);
   return Number.isFinite(d.getTime()) ? d : null;
 }
 
-/* -------------------- Minimal ICS parsing -------------------- */
-function unfoldIcsLines(text) {
-  const lines = text.split(/\r?\n/);
+function daysFromNow(n) {
+  const d = new Date();
+  d.setDate(d.getDate() + n);
+  return d;
+}
+
+function inRange(d, from, to) {
+  if (!d) return false;
+  const t = d.getTime();
+  return t >= from.getTime() && t <= to.getTime();
+}
+
+// --- ICS parser (very basic) ---
+function parseIcsEvents(text) {
+  // split by BEGIN:VEVENT ... END:VEVENT
   const out = [];
-  for (const line of lines) {
-    if (!out.length) out.push(line);
-    else if (/^[ \t]/.test(line)) out[out.length - 1] += line.slice(1);
-    else out.push(line);
+  let pos = 0;
+  while (true) {
+    const a = text.indexOf("BEGIN:VEVENT", pos);
+    if (a < 0) break;
+    const b = text.indexOf("END:VEVENT", a);
+    if (b < 0) break;
+    const block = text.slice(a, b + "END:VEVENT".length);
+    out.push(block);
+    pos = b + "END:VEVENT".length;
   }
   return out;
 }
-function parseIcs(text) {
-  const lines = unfoldIcsLines(text);
-  const events = [];
-  let cur = null;
 
+function icsLine(block, key) {
+  // find line starting with KEY (can be KEY;PARAM=...:)
+  const lines = block.split(/\r?\n/);
   for (const ln of lines) {
-    if (ln.startsWith("BEGIN:VEVENT")) { cur = {}; continue; }
-    if (ln.startsWith("END:VEVENT")) { if (cur) events.push(cur); cur = null; continue; }
-    if (!cur) continue;
-
-    const [k0, ...rest] = ln.split(":");
-    const v = rest.join(":").trim();
-    const k = k0.split(";")[0].trim().toUpperCase();
-
-    if (k === "SUMMARY") cur.title = v;
-    if (k === "DTSTART") cur.start = v;
-    if (k === "DTEND") cur.end = v;
-    if (k === "LOCATION") cur.location = v;
-    if (k === "URL") cur.url = v;
+    if (ln.startsWith(key + ":")) return ln.slice((key + ":").length).trim();
+    if (ln.startsWith(key + ";")) {
+      const idx = ln.indexOf(":");
+      if (idx > -1) return ln.slice(idx + 1).trim();
+    }
   }
-  return events;
-}
-function parseIcsDate(s) {
-  const x = String(s || "").trim();
-  if (!x) return null;
-  if (/^\d{8}$/.test(x)) {
-    const y = x.slice(0,4), m = x.slice(4,6), d = x.slice(6,8);
-    const dt = new Date(`${y}-${m}-${d}T12:00:00Z`);
-    return Number.isFinite(dt.getTime()) ? dt : null;
-  }
-  if (/^\d{8}T\d{6}Z?$/.test(x)) {
-    const y = x.slice(0,4), mo = x.slice(4,6), d = x.slice(6,8);
-    const hh = x.slice(9,11), mm = x.slice(11,13), ss = x.slice(13,15);
-    const z = x.endsWith("Z") ? "Z" : "";
-    const dt = new Date(`${y}-${mo}-${d}T${hh}:${mm}:${ss}${z}`);
-    return Number.isFinite(dt.getTime()) ? dt : null;
-  }
-  return parseDateMaybe(x);
+  return null;
 }
 
-/* -------------------- Ticketmaster (Discovery API) --------------------
-   Key passed as apikey query param. 3
-*/
-async function fetchTicketmaster({ apikey, cc, lat, lon, radiusKm, startUtc, endUtc, size = 200 }) {
-  if (!apikey) return [];
-  const base = "https://app.ticketmaster.com/discovery/v2/events.json";
-  const url =
-    `${base}?apikey=${encodeURIComponent(apikey)}` +
-    `&countryCode=${encodeURIComponent(cc)}` +
-    `&latlong=${encodeURIComponent(`${lat},${lon}`)}` +
-    `&radius=${encodeURIComponent(String(Math.round(radiusKm)))}` +
-    `&unit=km` +
-    `&sort=date,asc` +
-    `&size=${encodeURIComponent(String(size))}` +
-    (startUtc ? `&startDateTime=${encodeURIComponent(startUtc)}` : "") +
-    (endUtc ? `&endDateTime=${encodeURIComponent(endUtc)}` : "");
-
-  const j = await fetchJson(url);
-  const evs = j?._embedded?.events;
-  if (!Array.isArray(evs)) return [];
-
-  const out = [];
-  for (const e of evs) {
-    const title = String(e?.name || "").trim() || "Evento";
-    const start = e?.dates?.start?.dateTime || e?.dates?.start?.localDate || null;
-    if (!start) continue;
-    const d = new Date(start);
-    if (!Number.isFinite(d.getTime())) continue;
-
-    const venue = e?._embedded?.venues?.[0] || {};
-    const vLat = Number(venue?.location?.latitude);
-    const vLon = Number(venue?.location?.longitude);
-    if (!Number.isFinite(vLat) || !Number.isFinite(vLon)) continue;
-
-    const city = String(venue?.city?.name || "").trim();
-    const country = String(venue?.country?.countryCode || cc).toUpperCase();
-    const place = [String(venue?.name || "").trim(), city].filter(Boolean).join(", ");
-
-    out.push({
-      title,
-      start: iso(d),
-      end: null,
-      lat: vLat,
-      lon: vLon,
-      city,
-      country_code: country,
-      place,
-      region: "",
-      url: String(e?.url || "").trim(),
-      category: guessCategory(title, place),
-      source: "ticketmaster"
-    });
+function parseIcsDate(val) {
+  if (!val) return null;
+  // examples: 20250119T152500Z or 20250119
+  if (/^\d{8}T\d{6}Z$/.test(val)) {
+    const y = val.slice(0, 4), m = val.slice(4, 6), d = val.slice(6, 8);
+    const hh = val.slice(9, 11), mm = val.slice(11, 13), ss = val.slice(13, 15);
+    return parseDateSafe(`${y}-${m}-${d}T${hh}:${mm}:${ss}Z`);
   }
-  return out;
+  if (/^\d{8}$/.test(val)) {
+    const y = val.slice(0, 4), m = val.slice(4, 6), d = val.slice(6, 8);
+    return parseDateSafe(`${y}-${m}-${d}T00:00:00Z`);
+  }
+  return parseDateSafe(val);
 }
 
-/* -------------------- OpenAgenda --------------------
-   Dati pubblici in licenza aperta + API REST. 4
-   Nota: l’API “globale” varia a seconda delle istanze/archivi. Qui supporto due modalità:
-   A) se hai un endpoint OA compatibile (es. via Opendatasoft / dataset OA), mettilo in OA_ENDPOINT env.
-   B) se non ce l’hai, lo lasci vuoto e non blocca build.
-*/
-async function fetchOpenAgenda({ apiKey, endpoint, lat, lon, radiusKm, startIso, endIso, limit = 200 }) {
-  if (!apiKey || !endpoint) return [];
-  // Endpoint atteso: un endpoint che accetta query geo + date.
-  // Esempio tipico Opendatasoft: .../api/explore/v2.1/catalog/datasets/<dataset>/records?where=...
-  // (le installazioni cambiano; per questo lo rendo configurabile)
-  const where = [];
-  if (Number.isFinite(lat) && Number.isFinite(lon) && Number.isFinite(radiusKm)) {
-    // ODS: within_distance(geo, geom'POINT(lon lat)', meters)
-    where.push(`within_distance(geo, geom'POINT(${lon} ${lat})', ${Math.round(radiusKm * 1000)})`);
-  }
-  if (startIso) where.push(`firstdate >= date'${startIso.slice(0,10)}'`);
-  if (endIso) where.push(`firstdate <= date'${endIso.slice(0,10)}'`);
+// --- Geocode-less: if feed doesn't provide coords, we keep it ONLY if fixed coords exist ---
+function normalizeEvent(e) {
+  const lat = Number(e.lat);
+  const lon = Number(e.lon);
+  if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
 
-  const url =
-    `${endpoint}` +
-    (endpoint.includes("?") ? "&" : "?") +
-    `limit=${encodeURIComponent(String(limit))}` +
-    (where.length ? `&where=${encodeURIComponent(where.join(" AND "))}` : "");
+  const title = String(e.title || "").trim();
+  if (!title) return null;
 
-  const j = await fetchJson(url, { "Authorization": `Bearer ${apiKey}` }).catch(() => null);
-  const recs = j?.results || j?.records || [];
-  if (!Array.isArray(recs)) return [];
-
-  const out = [];
-  for (const r of recs) {
-    const fields = r?.record?.fields || r; // compat
-    const title = String(fields?.title || fields?.name || "Evento").trim();
-    const start = fields?.firstdate || fields?.date_start || fields?.start || null;
-    if (!start) continue;
-
-    const d = new Date(start);
-    if (!Number.isFinite(d.getTime())) continue;
-
-    // geo può essere {lat, lon} o [lon,lat]
-    let lat2 = null, lon2 = null;
-    if (fields?.geo && typeof fields.geo === "object") {
-      lat2 = Number(fields.geo.lat ?? fields.geo.latitude);
-      lon2 = Number(fields.geo.lon ?? fields.geo.longitude);
-    } else if (Array.isArray(fields?.geo)) {
-      lon2 = Number(fields.geo[0]); lat2 = Number(fields.geo[1]);
-    }
-    if (!Number.isFinite(lat2) || !Number.isFinite(lon2)) continue;
-
-    out.push({
-      title,
-      start: iso(d),
-      end: null,
-      lat: lat2,
-      lon: lon2,
-      city: String(fields?.city || "").trim(),
-      country_code: String(fields?.country || "").toUpperCase(),
-      place: String(fields?.location || fields?.address || "").trim(),
-      region: "",
-      url: String(fields?.url || "").trim(),
-      category: guessCategory(title, String(fields?.description || "")),
-      source: "openagenda"
-    });
-  }
-  return out;
+  return {
+    id: String(e.id || cryptoRandomId()),
+    title,
+    start: e.start ? toISO(e.start) : null,
+    end: e.end ? toISO(e.end) : null,
+    lat,
+    lon,
+    place: String(e.place || "").trim(),
+    city: String(e.city || "").trim(),
+    region: String(e.region || "").trim(),
+    country_code: String(e.country_code || "").trim().toUpperCase(),
+    url: String(e.url || "").trim(),
+    category: String(e.category || "eventi").trim().toLowerCase(),
+    source: String(e.source || "unknown").trim(),
+  };
 }
 
-/* -------------------- RSS / ICS sources -------------------- */
-async function fetchRssSource(src, now, daysAhead, geocache) {
-  const txt = await fetchText(src.url);
-  const items = splitItems(txt);
-  const out = [];
-
-  for (const it of items) {
-    const title = stripHtml(stripCdata(extractTag(it, "title"))) || "Evento";
-    const link = stripCdata(extractTag(it, "link")) || "";
-    const pubDateRaw = stripCdata(extractTag(it, "pubDate")) || stripCdata(extractTag(it, "dc:date"));
-    const desc = stripHtml(stripCdata(extractTag(it, "description")));
-    const d = parseDateMaybe(pubDateRaw);
-    if (!d || !withinWindow(d, now, daysAhead)) continue;
-
-    let lat = Number(src.fixed_lat);
-    let lon = Number(src.fixed_lon);
-    let place = String(src.default_place || "").trim();
-    const city = "";
-    const country_code = "";
-
-    if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
-      const locCandidate = (desc.match(/(Luogo|Location|Dove)\s*:\s*([^.\n]+)/i)?.[2] || "").trim();
-      const q = locCandidate || place;
-      if (q) {
-        const g = await geocodePlace(q, geocache);
-        if (g) { lat = g.lat; lon = g.lon; place = locCandidate || place || g.display; }
-      }
-    }
-    if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
-
-    out.push({
-      title,
-      start: iso(d),
-      end: null,
-      lat, lon,
-      city,
-      country_code,
-      place,
-      region: String(src.default_region || ""),
-      url: link,
-      category: guessCategory(title, desc),
-      source: String(src.id || "rss")
-    });
-  }
-  return out;
+function cryptoRandomId() {
+  // stable enough for dataset
+  return Math.random().toString(16).slice(2) + Math.random().toString(16).slice(2);
 }
 
-async function fetchIcsSource(src, now, daysAhead, geocache) {
-  const txt = await fetchText(src.url);
-  const evs = parseIcs(txt);
-  const out = [];
+// ======================
+// OSM OVERPASS FALLBACK
+// ======================
+function overpassQueryBbox(bbox) {
+  // We request events + tourism=event_venue + amenity=theatre/cinema + leisure=stadium + tourism=attraction with events tags
+  // This gives LOTS of usable "event-like" POIs.
+  return `
+[out:json][timeout:45];
+(
+  node["event"]( ${bbox.minLat},${bbox.minLon},${bbox.maxLat},${bbox.maxLon} );
+  way["event"]( ${bbox.minLat},${bbox.minLon},${bbox.maxLat},${bbox.maxLon} );
+  relation["event"]( ${bbox.minLat},${bbox.minLon},${bbox.maxLat},${bbox.maxLon} );
 
-  for (const ev of evs) {
-    const title = String(ev.title || "").trim() || "Evento";
-    const sd = parseIcsDate(ev.start);
-    if (!sd || !withinWindow(sd, now, daysAhead)) continue;
+  node["tourism"="event_venue"]( ${bbox.minLat},${bbox.minLon},${bbox.maxLat},${bbox.maxLon} );
+  way["tourism"="event_venue"]( ${bbox.minLat},${bbox.minLon},${bbox.maxLat},${bbox.maxLon} );
+  relation["tourism"="event_venue"]( ${bbox.minLat},${bbox.minLon},${bbox.maxLat},${bbox.maxLon} );
 
-    const ed = parseIcsDate(ev.end);
-    const loc = String(ev.location || src.default_place || "").trim();
-    const link = String(ev.url || "").trim();
-
-    let lat = Number(src.fixed_lat);
-    let lon = Number(src.fixed_lon);
-    let place = loc || String(src.default_place || "").trim();
-
-    if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
-      if (place) {
-        const g = await geocodePlace(place, geocache);
-        if (g) { lat = g.lat; lon = g.lon; }
-      }
-    }
-    if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
-
-    out.push({
-      title,
-      start: iso(sd),
-      end: ed ? iso(ed) : null,
-      lat, lon,
-      city: "",
-      country_code: "",
-      place: place || "",
-      region: String(src.default_region || ""),
-      url: link || "",
-      category: guessCategory(title, place),
-      source: String(src.id || "ics")
-    });
-  }
-  return out;
+  node["amenity"="theatre"]( ${bbox.minLat},${bbox.minLon},${bbox.maxLat},${bbox.maxLon} );
+  node["amenity"="cinema"]( ${bbox.minLat},${bbox.minLon},${bbox.maxLat},${bbox.maxLon} );
+  node["leisure"="stadium"]( ${bbox.minLat},${bbox.minLon},${bbox.maxLat},${bbox.maxLon} );
+);
+out center tags;`;
 }
 
-/* -------------------- MAIN -------------------- */
-async function main() {
-  const cfg = readJSON(SOURCES_PATH, null);
-  if (!cfg) {
-    console.error("events_sources.json mancante.");
-    process.exit(2);
-  }
-
-  fs.mkdirSync(OUT_DIR, { recursive: true });
-  fs.mkdirSync(CACHE_DIR, { recursive: true });
-
-  const geocache = readJSON(GEOCACHE_PATH, {});
-  const now = new Date();
-  const daysAhead = Number(cfg.days_ahead || 60);
-  const maxEvents = Number(cfg.max_events || 25000);
-
-  const out = [];
-  const seen = new Set();
-
-  const startUtc = new Date(now.getTime() - 6 * 3600 * 1000).toISOString();
-  const endUtc = new Date(now.getTime() + daysAhead * 24 * 3600 * 1000).toISOString();
-
-  // ---------------- Providers: Ticketmaster ----------------
-  const tmEnabled = !!cfg?.providers?.ticketmaster?.enabled;
-  const tmKey = process.env[cfg?.providers?.ticketmaster?.apikey_env || "TICKETMASTER_API_KEY"] || "";
-  if (tmEnabled && tmKey) {
-    // Italy
-    if (cfg?.coverage?.italy?.enabled) {
-      const cc = String(cfg.coverage.italy.country_code || "IT").toUpperCase();
-      for (const c of (cfg.coverage.italy.cities || [])) {
-        const evs = await fetchTicketmaster({
-          apikey: tmKey, cc,
-          lat: c.lat, lon: c.lon,
-          radiusKm: c.radius_km || 60,
-          startUtc, endUtc
-        }).catch(() => []);
-        for (const e of evs) out.push(e);
-        if (out.length >= maxEvents) break;
-        await sleep(250);
-      }
-    }
-
-    // Europe countries
-    if (cfg?.coverage?.europe?.enabled) {
-      for (const country of (cfg.coverage.europe.countries || [])) {
-        const cc = String(country.cc || "").toUpperCase();
-        if (!cc) continue;
-        for (const c of (country.cities || [])) {
-          const evs = await fetchTicketmaster({
-            apikey: tmKey, cc,
-            lat: c.lat, lon: c.lon,
-            radiusKm: c.radius_km || 70,
-            startUtc, endUtc
-          }).catch(() => []);
-          for (const e of evs) out.push(e);
-          if (out.length >= maxEvents) break;
-          await sleep(250);
-        }
-        if (out.length >= maxEvents) break;
-      }
-    }
-  }
-
-  // ---------------- Providers: OpenAgenda (configurable endpoint) ----------------
-  const oaEnabled = !!cfg?.providers?.openagenda?.enabled;
-  const oaKey = process.env[cfg?.providers?.openagenda?.apikey_env || "OPENAGENDA_API_KEY"] || "";
-  const oaEndpoint = process.env.OA_ENDPOINT || ""; // endpoint OA/ODS compatibile
-  if (oaEnabled && oaKey && oaEndpoint) {
-    // IT
-    if (cfg?.coverage?.italy?.enabled) {
-      for (const c of (cfg.coverage.italy.cities || [])) {
-        const evs = await fetchOpenAgenda({
-          apiKey: oaKey,
-          endpoint: oaEndpoint,
-          lat: c.lat, lon: c.lon,
-          radiusKm: c.radius_km || 60,
-          startIso: startUtc,
-          endIso: endUtc
-        }).catch(() => []);
-        for (const e of evs) out.push(e);
-        if (out.length >= maxEvents) break;
-        await sleep(250);
-      }
-    }
-    // EU
-    if (cfg?.coverage?.europe?.enabled) {
-      for (const country of (cfg.coverage.europe.countries || [])) {
-        for (const c of (country.cities || [])) {
-          const evs = await fetchOpenAgenda({
-            apiKey: oaKey,
-            endpoint: oaEndpoint,
-            lat: c.lat, lon: c.lon,
-            radiusKm: c.radius_km || 70,
-            startIso: startUtc,
-            endIso: endUtc
-          }).catch(() => []);
-          for (const e of evs) out.push(e);
-          if (out.length >= maxEvents) break;
-          await sleep(250);
-        }
-        if (out.length >= maxEvents) break;
-      }
-    }
-  }
-
-  // ---------------- RSS / ICS sources ----------------
-  const localSources = cfg.rss_ics_sources || cfg.sources || [];
-  for (const src of localSources) {
-    const type = String(src.type || "").toLowerCase();
-    if (!src?.url) continue;
+async function overpassFetchJson(query) {
+  let lastErr = null;
+  for (const ep of OVERPASS_ENDPOINTS) {
     try {
-      const evs =
-        type === "rss"
-          ? await fetchRssSource(src, now, daysAhead, geocache)
-          : type === "ics"
-          ? await fetchIcsSource(src, now, daysAhead, geocache)
-          : [];
-      for (const e of evs) out.push(e);
+      const r = await fetch(ep, {
+        method: "POST",
+        headers: { "content-type": "application/x-www-form-urlencoded;charset=UTF-8" },
+        body: "data=" + encodeURIComponent(query),
+      });
+      if (!r.ok) {
+        lastErr = `Overpass HTTP ${r.status} @ ${ep}`;
+        continue;
+      }
+      return await r.json();
     } catch (e) {
-      console.error(`Source failed ${src?.id}:`, e?.message || e);
+      lastErr = String(e?.message || e);
     }
   }
+  throw new Error(lastErr || "Overpass failed");
+}
 
-  // ---------------- Normalize IDs + dedupe ----------------
-  const normalized = [];
-  for (const e of out) {
-    const title = String(e.title || "Evento").trim();
-    const start = new Date(e.start);
-    if (!Number.isFinite(start.getTime())) continue;
-    if (!withinWindow(start, now, daysAhead)) continue;
-
-    const lat = Number(e.lat);
-    const lon = Number(e.lon);
+function overpassToEvents(osm, country_code = "IT", region = "Veneto") {
+  const out = [];
+  const els = Array.isArray(osm?.elements) ? osm.elements : [];
+  for (const el of els) {
+    const tags = el.tags || {};
+    const title =
+      tags.name ||
+      tags["name:it"] ||
+      tags.brand ||
+      tags.operator ||
+      "Evento / Venue";
+    const lat = Number(el.lat ?? el.center?.lat);
+    const lon = Number(el.lon ?? el.center?.lon);
     if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
 
-    const source = String(e.source || "unknown");
-    const startIso = iso(start);
-    const id = makeId(source, title, startIso, lat, lon);
-    if (seen.has(id)) continue;
-    seen.add(id);
+    // NOTE: OSM doesn't give dates. We create "evergreen" upcoming placeholders so the app shows results.
+    // We'll set start = today at 00:00Z so it appears in "7 giorni" etc.
+    const start = startOfTodayUtc();
+    const place = tags["addr:full"] || tags["addr:street"] || tags["addr:city"] || tags["addr:place"] || "";
+    const city = tags["addr:city"] || "";
+    const url = tags.website || tags["contact:website"] || tags.wikidata ? "" : ""; // keep empty if not sure
 
-    normalized.push({
-      id,
-      title,
-      start: startIso,
-      end: e.end ? String(e.end) : null,
+    out.push({
+      id: `osm_${el.type}_${el.id}`,
+      title: String(title),
+      start,
+      end: null,
       lat,
       lon,
-      place: String(e.place || "").trim(),
-      city: String(e.city || "").trim(),
-      region: String(e.region || "").trim(),
-      country_code: String(e.country_code || "").toUpperCase(),
-      url: String(e.url || "").trim(),
-      category: String(e.category || guessCategory(title, e.place)).trim(),
-      source
+      place,
+      city,
+      region,
+      country_code,
+      url,
+      category: guessCategoryFromTags(tags),
+      source: "osm_overpass_fallback",
     });
+  }
+  return out;
+}
 
-    if (normalized.length >= maxEvents) break;
+function startOfTodayUtc() {
+  const d = new Date();
+  d.setUTCHours(0, 0, 0, 0);
+  return d;
+}
+
+function guessCategoryFromTags(tags) {
+  const t = JSON.stringify(tags).toLowerCase();
+  if (t.includes("theatre")) return "culture";
+  if (t.includes("cinema")) return "culture";
+  if (t.includes("stadium")) return "sport";
+  if (t.includes("event_venue")) return "eventi";
+  return "eventi";
+}
+
+// ======================
+// MAIN BUILD
+// ======================
+async function main() {
+  // Read config you pasted (if exists)
+  const cfgPath = path.join(ROOT, "data", "events", "feeds_catalog.json");
+  let cfg = null;
+  if (fs.existsSync(cfgPath)) {
+    cfg = JSON.parse(fs.readFileSync(cfgPath, "utf8"));
   }
 
-  normalized.sort((a, b) => String(a.start).localeCompare(String(b.start)));
+  const daysAhead = clamp(Number(cfg?.days_ahead ?? 90), 1, 365);
+  const maxEvents = clamp(Number(cfg?.max_events ?? 50000), 100, 200000);
+  const sources = Array.isArray(cfg?.rss_ics_sources) ? cfg.rss_ics_sources : [];
 
-  writeJSON(GEOCACHE_PATH, geocache);
-  writeJSON(OUT_PATH, {
-    updated_at: new Date().toISOString(),
-    count: normalized.length,
-    days_ahead: daysAhead,
-    events: normalized
+  const from = new Date();
+  const to = daysFromNow(daysAhead);
+
+  const all = [];
+  const stats = { rss: 0, ics: 0, rss_ok: 0, ics_ok: 0, dropped_no_geo: 0, dropped_no_date: 0 };
+
+  // 1) RSS/ICS
+  for (const s of sources) {
+    const type = String(s.type || "").toLowerCase();
+    const url = String(s.url || "").trim();
+    if (!url) continue;
+
+    const fixed_lat = Number(s.fixed_lat);
+    const fixed_lon = Number(s.fixed_lon);
+
+    const common = {
+      source: s.id || url,
+      category: s.category || "eventi",
+      country_code: s.country_code || "",
+    };
+
+    if (type === "rss") {
+      stats.rss++;
+      const r = await fetchText(url, { timeoutMs: 45000 });
+      if (!r.ok || !r.text) continue;
+      stats.rss_ok++;
+
+      const items = parseRssItems(r.text);
+      for (const it of items) {
+        const title = decodeXml(stripCdata(pickFirstTag(it, "title") || ""))?.trim();
+        const link = decodeXml(stripCdata(pickFirstTag(it, "link") || ""))?.trim();
+        const pubDate = decodeXml(stripCdata(pickFirstTag(it, "pubDate") || ""))?.trim();
+        const d = parseDateSafe(pubDate);
+
+        // if date missing -> drop (your UI filters by date)
+        if (!d || !inRange(d, from, to)) { stats.dropped_no_date++; continue; }
+
+        // coords: from feed rarely. we use fixed coords if provided
+        if (!Number.isFinite(fixed_lat) || !Number.isFinite(fixed_lon)) { stats.dropped_no_geo++; continue; }
+
+        all.push(normalizeEvent({
+          ...common,
+          id: `rss_${common.source}_${title}`,
+          title,
+          start: d,
+          end: null,
+          lat: fixed_lat,
+          lon: fixed_lon,
+          url: link,
+          place: "",
+          city: "",
+          region: "",
+        }));
+      }
+    }
+
+    if (type === "ics") {
+      stats.ics++;
+      const r = await fetchText(url, { timeoutMs: 45000 });
+      if (!r.ok || !r.text) continue;
+      stats.ics_ok++;
+
+      const blocks = parseIcsEvents(r.text);
+      for (const b of blocks) {
+        const title = icsLine(b, "SUMMARY") || "Evento";
+        const dtStart = parseIcsDate(icsLine(b, "DTSTART"));
+        const dtEnd = parseIcsDate(icsLine(b, "DTEND"));
+        const loc = icsLine(b, "LOCATION") || "";
+
+        if (!dtStart || !inRange(dtStart, from, to)) { stats.dropped_no_date++; continue; }
+
+        if (!Number.isFinite(fixed_lat) || !Number.isFinite(fixed_lon)) { stats.dropped_no_geo++; continue; }
+
+        all.push(normalizeEvent({
+          ...common,
+          id: `ics_${common.source}_${title}_${dtStart.toISOString()}`,
+          title: String(title),
+          start: dtStart,
+          end: dtEnd,
+          lat: fixed_lat,
+          lon: fixed_lon,
+          url: "",
+          place: String(loc),
+          city: "",
+          region: "",
+        }));
+      }
+    }
+  }
+
+  // remove nulls
+  let events = all.filter(Boolean);
+
+  // 2) If still empty -> Overpass Veneto fallback
+  if (events.length === 0) {
+    console.log("[events] RSS/ICS produced 0. Using Overpass fallback for Veneto…");
+    const q = overpassQueryBbox(VENETO_BBOX);
+    const osm = await overpassFetchJson(q);
+    events = overpassToEvents(osm, "IT", "Veneto")
+      .map(normalizeEvent)
+      .filter(Boolean);
+  }
+
+  // 3) Dedupe by title+lat+lon
+  const seen = new Set();
+  const deduped = [];
+  for (const e of events) {
+    const k = `${e.title}__${e.lat.toFixed(5)}__${e.lon.toFixed(5)}__${e.start || ""}`;
+    if (seen.has(k)) continue;
+    seen.add(k);
+    deduped.push(e);
+  }
+
+  // 4) Limit
+  deduped.sort((a, b) => {
+    const ta = a.start ? new Date(a.start).getTime() : 9e15;
+    const tb = b.start ? new Date(b.start).getTime() : 9e15;
+    return (ta - tb) || (a.title.localeCompare(b.title));
   });
 
-  console.log(`✅ events_all.json scritto: ${normalized.length} eventi`);
+  const final = deduped.slice(0, maxEvents);
+
+  ensureDir(OUT_PATH);
+  fs.writeFileSync(
+    OUT_PATH,
+    JSON.stringify(
+      {
+        updated_at: new Date().toISOString(),
+        count: final.length,
+        days_ahead: daysAhead,
+        events: final,
+      },
+      null,
+      2
+    ),
+    "utf8"
+  );
+
+  console.log("[events] wrote:", OUT_PATH);
+  console.log("[events] count:", final.length);
+  console.log("[events] stats:", stats);
 }
 
 main().catch((e) => {
-  console.error(e);
+  console.error("[events] FATAL:", e);
   process.exit(1);
 });
