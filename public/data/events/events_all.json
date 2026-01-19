@@ -1,5 +1,17 @@
 {
-  "updated_at": "2026-01-19T18:21:31.182Z",
+  "updated_at": "2026-01-19T18:27:48.420Z",
   "count": 0,
-  "events": []
+  "days_ahead": 180,
+  "events": [],
+  "stats": {
+    "sources_total": 1,
+    "sources_ok": 0,
+    "sources_fail": 1,
+    "raw": 0,
+    "deduped": 0,
+    "geocoded": 0,
+    "dropped_no_coords": 0,
+    "dropped_out_of_range": 0,
+    "kept": 0
+  }
 }
