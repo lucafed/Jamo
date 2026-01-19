@@ -1,0 +1,42 @@
+{
+  "days_ahead": 90,
+  "max_events": 50000,
+
+  "providers": {
+    "osm_overpass": {
+      "enabled": true,
+      "timeout_ms": 45000
+    }
+  },
+
+  "coverage": {
+    "italy": {
+      "enabled": true,
+      "cities": [
+        { "name": "Verona",  "lat": 45.4384, "lon": 10.9916, "radius_km": 28, "cc": "IT" },
+        { "name": "Venezia", "lat": 45.4408, "lon": 12.3155, "radius_km": 28, "cc": "IT" },
+        { "name": "Padova",  "lat": 45.4064, "lon": 11.8768, "radius_km": 26, "cc": "IT" },
+        { "name": "Vicenza", "lat": 45.5455, "lon": 11.5354, "radius_km": 24, "cc": "IT" },
+        { "name": "Treviso", "lat": 45.6669, "lon": 12.2430, "radius_km": 24, "cc": "IT" }
+      ]
+    },
+    "europe": {
+      "enabled": false,
+      "cities": []
+    }
+  },
+
+  "sources": [
+    {
+      "scope": "italy",
+      "cc": "IT",
+      "type": "ics",
+      "url": "https://archiviodistatoverona.cultura.gov.it/?eventDisplay=list&ical=1&post_type=tribe_events&tribe-bar-date=2025-03-01",
+      "category": "culture",
+      "default_place": "Verona",
+      "default_region": "Veneto",
+      "fixed_lat": 45.4384,
+      "fixed_lon": 10.9916
+    }
+  ]
+}
