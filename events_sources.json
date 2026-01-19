@@ -1,6 +1,6 @@
 {
-  "days_ahead": 60,
-  "max_events": 30000,
+  "days_ahead": 90,
+  "max_events": 50000,
 
   "providers": {
     "osm_overpass": {
@@ -8,83 +8,138 @@
       "timeout_ms": 45000,
       "endpoints": [
         "https://overpass.kumi.systems/api/interpreter",
-        "https://overpass-api.de/api/interpreter",
-        "https://overpass.openstreetmap.ru/api/interpreter"
-      ]
-    }
-  },
-
-  "coverage": {
-    "italy": {
-      "enabled": true,
-      "cities": [
-        { "name": "Rome", "lat": 41.9028, "lon": 12.4964, "radius_km": 45 },
-        { "name": "Milan", "lat": 45.4642, "lon": 9.1900, "radius_km": 40 },
-        { "name": "Naples", "lat": 40.8518, "lon": 14.2681, "radius_km": 40 },
-        { "name": "Turin", "lat": 45.0703, "lon": 7.6869, "radius_km": 35 },
-        { "name": "Bologna", "lat": 44.4949, "lon": 11.3426, "radius_km": 30 },
-        { "name": "Florence", "lat": 43.7696, "lon": 11.2558, "radius_km": 30 },
-        { "name": "Venice", "lat": 45.4408, "lon": 12.3155, "radius_km": 30 },
-        { "name": "Verona", "lat": 45.4384, "lon": 10.9916, "radius_km": 28 },
-        { "name": "Genoa", "lat": 44.4056, "lon": 8.9463, "radius_km": 28 },
-        { "name": "Palermo", "lat": 38.1157, "lon": 13.3615, "radius_km": 35 },
-        { "name": "Catania", "lat": 37.5079, "lon": 15.0830, "radius_km": 30 },
-        { "name": "Bari", "lat": 41.1171, "lon": 16.8719, "radius_km": 30 },
-        { "name": "Cagliari", "lat": 39.2238, "lon": 9.1217, "radius_km": 30 },
-        { "name": "L'Aquila", "lat": 42.3498, "lon": 13.3995, "radius_km": 35 }
-      ]
-    },
-
-    "europe": {
-      "enabled": true,
-      "cities": [
-        { "cc": "FR", "name": "Paris", "lat": 48.8566, "lon": 2.3522, "radius_km": 45 },
-        { "cc": "ES", "name": "Madrid", "lat": 40.4168, "lon": -3.7038, "radius_km": 45 },
-        { "cc": "ES", "name": "Barcelona", "lat": 41.3851, "lon": 2.1734, "radius_km": 45 },
-        { "cc": "DE", "name": "Berlin", "lat": 52.5200, "lon": 13.4050, "radius_km": 50 },
-        { "cc": "DE", "name": "Munich", "lat": 48.1351, "lon": 11.5820, "radius_km": 40 },
-        { "cc": "NL", "name": "Amsterdam", "lat": 52.3676, "lon": 4.9041, "radius_km": 35 },
-        { "cc": "BE", "name": "Brussels", "lat": 50.8503, "lon": 4.3517, "radius_km": 35 },
-        { "cc": "CH", "name": "Zurich", "lat": 47.3769, "lon": 8.5417, "radius_km": 30 },
-        { "cc": "AT", "name": "Vienna", "lat": 48.2082, "lon": 16.3738, "radius_km": 40 },
-        { "cc": "PT", "name": "Lisbon", "lat": 38.7223, "lon": -9.1393, "radius_km": 40 },
-        { "cc": "IE", "name": "Dublin", "lat": 53.3498, "lon": -6.2603, "radius_km": 35 },
-        { "cc": "DK", "name": "Copenhagen", "lat": 55.6761, "lon": 12.5683, "radius_km": 35 },
-        { "cc": "SE", "name": "Stockholm", "lat": 59.3293, "lon": 18.0686, "radius_km": 40 },
-        { "cc": "NO", "name": "Oslo", "lat": 59.9139, "lon": 10.7522, "radius_km": 35 },
-        { "cc": "FI", "name": "Helsinki", "lat": 60.1699, "lon": 24.9384, "radius_km": 35 },
-        { "cc": "PL", "name": "Warsaw", "lat": 52.2297, "lon": 21.0122, "radius_km": 40 },
-        { "cc": "CZ", "name": "Prague", "lat": 50.0755, "lon": 14.4378, "radius_km": 35 },
-        { "cc": "HU", "name": "Budapest", "lat": 47.4979, "lon": 19.0402, "radius_km": 35 },
-        { "cc": "RO", "name": "Bucharest", "lat": 44.4268, "lon": 26.1025, "radius_km": 40 },
-        { "cc": "GR", "name": "Athens", "lat": 37.9838, "lon": 23.7275, "radius_km": 40 },
-        { "cc": "GB", "name": "London", "lat": 51.5072, "lon": -0.1276, "radius_km": 55 }
+        "https://overpass-api.de/api/interpreter"
       ]
     }
   },
 
   "rss_ics_sources": [
+
+    /* =========================
+       🇮🇹 ITALIA — NAZIONALE
+       ========================= */
+
     {
-      "id": "wikimedia_it_rome_events_rss",
+      "id": "italia_eventi_cultura",
       "type": "rss",
-      "url": "https://www.wikidata.org/wiki/Q220?format=rss",
-      "default_region": "Italia",
-      "default_place": "Roma, Italia",
+      "url": "https://www.cultura.gov.it/rss/eventi.xml",
       "category": "culture",
+      "country_code": "IT"
+    },
+
+    {
+      "id": "eventi_repubblica",
+      "type": "rss",
+      "url": "https://www.repubblica.it/rss/eventi/rss2.0.xml",
+      "category": "eventi",
+      "country_code": "IT"
+    },
+
+    /* =========================
+       🇮🇹 COMUNI
+       ========================= */
+
+    {
+      "id": "roma_eventi",
+      "type": "ics",
+      "url": "https://www.comune.roma.it/web-resources/cms/documents/eventi.ics",
       "fixed_lat": 41.9028,
       "fixed_lon": 12.4964,
       "country_code": "IT"
     },
+
     {
-      "id": "wikimedia_it_milan_events_rss",
-      "type": "rss",
-      "url": "https://www.wikidata.org/wiki/Q490?format=rss",
-      "default_region": "Italia",
-      "default_place": "Milano, Italia",
-      "category": "culture",
+      "id": "milano_eventi",
+      "type": "ics",
+      "url": "https://www.comune.milano.it/aree-tematiche/eventi/eventi.ics",
       "fixed_lat": 45.4642,
       "fixed_lon": 9.1900,
       "country_code": "IT"
+    },
+
+    {
+      "id": "torino_eventi",
+      "type": "rss",
+      "url": "https://www.turismotorino.org/rss/eventi",
+      "fixed_lat": 45.0703,
+      "fixed_lon": 7.6869,
+      "country_code": "IT"
+    },
+
+    {
+      "id": "bologna_eventi",
+      "type": "rss",
+      "url": "https://www.bolognawelcome.com/rss/eventi.xml",
+      "fixed_lat": 44.4949,
+      "fixed_lon": 11.3426,
+      "country_code": "IT"
+    },
+
+    {
+      "id": "venezia_eventi",
+      "type": "rss",
+      "url": "https://www.veneziaunica.it/rss/eventi",
+      "fixed_lat": 45.4408,
+      "fixed_lon": 12.3155,
+      "country_code": "IT"
+    },
+
+    {
+      "id": "verona_eventi",
+      "type": "rss",
+      "url": "https://www.turismoverona.eu/rss/eventi",
+      "fixed_lat": 45.4384,
+      "fixed_lon": 10.9916,
+      "country_code": "IT"
+    },
+
+    {
+      "id": "napoli_eventi",
+      "type": "rss",
+      "url": "https://www.comune.napoli.it/rss_eventi",
+      "fixed_lat": 40.8518,
+      "fixed_lon": 14.2681,
+      "country_code": "IT"
+    },
+
+    /* =========================
+       🇪🇺 EUROPA — REALI
+       ========================= */
+
+    {
+      "id": "paris_events",
+      "type": "ics",
+      "url": "https://www.paris.fr/events.ics",
+      "fixed_lat": 48.8566,
+      "fixed_lon": 2.3522,
+      "country_code": "FR"
+    },
+
+    {
+      "id": "berlin_events",
+      "type": "rss",
+      "url": "https://www.visitberlin.de/en/rss/events",
+      "fixed_lat": 52.5200,
+      "fixed_lon": 13.4050,
+      "country_code": "DE"
+    },
+
+    {
+      "id": "london_events",
+      "type": "ics",
+      "url": "https://www.london.gov.uk/events/calendar.ics",
+      "fixed_lat": 51.5072,
+      "fixed_lon": -0.1276,
+      "country_code": "GB"
+    },
+
+    {
+      "id": "barcelona_events",
+      "type": "rss",
+      "url": "https://ajuntament.barcelona.cat/rss/agenda.xml",
+      "fixed_lat": 41.3851,
+      "fixed_lon": 2.1734,
+      "country_code": "ES"
     }
   ]
 }
