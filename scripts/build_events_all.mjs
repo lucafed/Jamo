@@ -1,11 +1,22 @@
 #!/usr/bin/env node
 /**
- * Jamo — build_events_all.mjs (v2.1 FIXED)
- * - Config:
+ * Jamo — build_events_all.mjs (v2.3 STABLE + NO-WIPE)
+ * - Config (tollerante):
  *    1) events_sources.generated.json (preferred)
  *    2) events_sources.json (fallback)
- * - Output: public/data/events/events_all.json
- * - Sources: RSS + ICS (Overpass gestito via config, ma qui lo lasciamo spento di default)
+ *
+ * - Output:
+ *    public/data/events/events_all.json
+ *
+ * - Sources:
+ *    RSS + ICS (Overpass non implementato qui; lo gestisci altrove)
+ *
+ * - FIX:
+ *    ✅ Non sovrascrive il dataset buono se la nuova run produce count=0
+ *    ✅ Supporta config keys: rss_ics_sources / sources / items
+ *    ✅ include_past_days opzionale (default 0) per test/debug
+ *    ✅ parse numeri con virgola
+ *    ✅ geocoding fallback (Nominatim) con cache cache/geocode-cache.json
  */
 
 import fs from "fs";
@@ -16,28 +27,27 @@ const ROOT = process.cwd();
 
 const CONFIG_GEN = path.join(ROOT, "events_sources.generated.json");
 const CONFIG_FALLBACK = path.join(ROOT, "events_sources.json");
-const OUT_PATH = path.join(ROOT, "public", "data", "events", "events_all.json");
 
-const UA = process.env.JAMO_UA || "JamoEventsBuilder/2.1 (+https://jamo-seven.vercel.app)";
+const OUT_PATH = path.join(ROOT, "public", "data", "events", "events_all.json");
+const CACHE_DIR = path.join(ROOT, "cache");
+const GEOCACHE_PATH = path.join(CACHE_DIR, "geocode-cache.json");
+
+const UA = process.env.JAMO_UA || "JamoEventsBuilder/2.3 (+https://jamo-seven.vercel.app)";
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 function ensureDir(p) {
   fs.mkdirSync(p, { recursive: true });
 }
-
 function clamp(n, a, b) {
   return Math.max(a, Math.min(b, n));
 }
-
 function nowISO() {
   return new Date().toISOString();
 }
-
 function safeText(s) {
   return String(s ?? "").replace(/\s+/g, " ").trim();
 }
-
-function toISODateOnly(d) {
+function toISO(d) {
   try {
     const x = new Date(d);
     if (!Number.isFinite(x.getTime())) return null;
@@ -46,18 +56,22 @@ function toISODateOnly(d) {
     return null;
   }
 }
-
 function sha1(s) {
-  return crypto.createHash("sha1").update(String(s)).digest("hex").slice(0, 8);
+  return crypto.createHash("sha1").update(String(s)).digest("hex").slice(0, 10);
+}
+function toNum(x) {
+  if (x === null || x === undefined) return NaN;
+  if (typeof x === "number") return x;
+  const s = String(x).trim();
+  if (!s) return NaN;
+  const norm = s.replace(",", ".");
+  const v = Number(norm);
+  return Number.isFinite(v) ? v : NaN;
 }
 
 function readConfig() {
-  if (fs.existsSync(CONFIG_GEN)) {
-    return JSON.parse(fs.readFileSync(CONFIG_GEN, "utf8"));
-  }
-  if (fs.existsSync(CONFIG_FALLBACK)) {
-    return JSON.parse(fs.readFileSync(CONFIG_FALLBACK, "utf8"));
-  }
+  if (fs.existsSync(CONFIG_GEN)) return JSON.parse(fs.readFileSync(CONFIG_GEN, "utf8"));
+  if (fs.existsSync(CONFIG_FALLBACK)) return JSON.parse(fs.readFileSync(CONFIG_FALLBACK, "utf8"));
   throw new Error(`Missing config. Expected ${CONFIG_GEN} or ${CONFIG_FALLBACK}`);
 }
 
@@ -69,7 +83,8 @@ async function fetchText(url, { timeoutMs = 45000 } = {}) {
     const r = await fetch(url, {
       headers: {
         "user-agent": UA,
-        "accept": "text/calendar, application/xml, text/xml, application/rss+xml, application/atom+xml, */*",
+        accept:
+          "text/calendar, application/xml, text/xml, application/rss+xml, application/atom+xml, */*",
       },
       signal: ctrl.signal,
       cache: "no-store",
@@ -82,7 +97,7 @@ async function fetchText(url, { timeoutMs = 45000 } = {}) {
   }
 }
 
-/* ---------------- RSS parser (light, safe) ---------------- */
+/* ---------------- RSS (light) ---------------- */
 
 function extractXmlBlocks(xml, tag) {
   const re = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, "gi");
@@ -96,8 +111,6 @@ function extractFirst(block, tag) {
   const re = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, "i");
   const m = re.exec(block);
   if (!m) return "";
-
-  // ✅ FIX: regex CDATA corretta (NO doppio escaping)
   const txt = String(m[1]).replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1");
   return safeText(txt);
 }
@@ -117,10 +130,10 @@ function parseRss(xml) {
   });
 }
 
-/* ---------------- ICS parser (minimal VEVENT) ---------------- */
+/* ---------------- ICS (VEVENT minimal) ---------------- */
 
 function unfoldIcsLines(s) {
-  // RFC5545 unfold: lines that start with space/tab are continuations
+  // RFC5545 unfold: linee continuate iniziano con space/tab
   return s.replace(/\r?\n[ \t]/g, "");
 }
 
@@ -128,12 +141,12 @@ function parseIcsDate(val) {
   if (!val) return null;
   const v = String(val).trim();
 
-  // DATE only: 20260122
+  // DATE: 20260122
   if (/^\d{8}$/.test(v)) {
     const yyyy = v.slice(0, 4);
     const mm = v.slice(4, 6);
     const dd = v.slice(6, 8);
-    return toISODateOnly(`${yyyy}-${mm}-${dd}T00:00:00Z`);
+    return toISO(`${yyyy}-${mm}-${dd}T00:00:00Z`);
   }
 
   // DATE-TIME: 20260122T010000Z or 20260122T010000
@@ -147,11 +160,12 @@ function parseIcsDate(val) {
     mi = m[5],
     ss = m[6] || "00";
   // trattiamo come UTC per semplicità
-  return toISODateOnly(`${yyyy}-${mm}-${dd}T${hh}:${mi}:${ss}Z`);
+  return toISO(`${yyyy}-${mm}-${dd}T${hh}:${mi}:${ss}Z`);
 }
 
 function parseIcs(text) {
   const s = unfoldIcsLines(text);
+
   const blocks = s
     .split("BEGIN:VEVENT")
     .slice(1)
@@ -189,18 +203,18 @@ function parseIcs(text) {
   return events;
 }
 
-/* ---------------- Normalize + filters ---------------- */
+/* ---------------- Normalize + dedupe ---------------- */
 
 function normalizeEvent(
   e,
   { source, ccFallback, fixedLat, fixedLon, fixedCity, fixedRegion, categoryFallback } = {}
 ) {
   const title = safeText(e.title || e.name || "Evento");
-  const start = e.start ? toISODateOnly(e.start) : null;
-  const end = e.end ? toISODateOnly(e.end) : null;
+  const start = e.start ? toISO(e.start) : null;
+  const end = e.end ? toISO(e.end) : null;
 
-  const lat = Number(e.lat ?? fixedLat);
-  const lon = Number(e.lon ?? e.lng ?? fixedLon);
+  const lat = toNum(e.lat ?? fixedLat);
+  const lon = toNum(e.lon ?? e.lng ?? fixedLon);
   const hasLL = Number.isFinite(lat) && Number.isFinite(lon);
 
   const place = safeText(e.place || e.location || fixedCity || "");
@@ -211,7 +225,9 @@ function normalizeEvent(
   const url = safeText(e.url || e.link || "");
   const category = safeText(e.category || e.type || e.kind || categoryFallback || "other");
 
-  const base = `${title}|${start || ""}|${lat || ""}|${lon || ""}|${place}|${country_code}|${source || ""}`;
+  const base = `${title}|${start || ""}|${hasLL ? lat : ""}|${hasLL ? lon : ""}|${place}|${country_code}|${
+    source || ""
+  }`;
   const id = `e_${sha1(base)}`;
 
   return {
@@ -243,11 +259,6 @@ function dedupe(events) {
   return out;
 }
 
-function dropNoCoords(events) {
-  // events.js richiede lat/lon per distanza
-  return events.filter((e) => Number.isFinite(e.lat) && Number.isFinite(e.lon));
-}
-
 function sortEvents(rows) {
   rows.sort((a, b) => {
     const ta = a.start ? new Date(a.start).getTime() : 9e15;
@@ -258,41 +269,130 @@ function sortEvents(rows) {
   return rows;
 }
 
+/* ---------------- Geocoding fallback (cache) ---------------- */
+
+function loadGeoCache() {
+  try {
+    if (!fs.existsSync(GEOCACHE_PATH)) return {};
+    const j = JSON.parse(fs.readFileSync(GEOCACHE_PATH, "utf8"));
+    return j && typeof j === "object" ? j : {};
+  } catch {
+    return {};
+  }
+}
+
+function saveGeoCache(cache) {
+  ensureDir(CACHE_DIR);
+  fs.writeFileSync(GEOCACHE_PATH, JSON.stringify(cache, null, 2), "utf8");
+}
+
+function geoKey(q) {
+  return safeText(q).toLowerCase();
+}
+
+async function geocodeNominatim(q, { timeoutMs = 45000 } = {}) {
+  const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q=${encodeURIComponent(
+    q
+  )}`;
+  const txt = await fetchText(url, { timeoutMs });
+  let arr = [];
+  try {
+    arr = JSON.parse(txt);
+  } catch {
+    return null;
+  }
+  if (!Array.isArray(arr) || !arr.length) return null;
+  const it = arr[0];
+  const lat = toNum(it.lat);
+  const lon = toNum(it.lon);
+  if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
+  return { lat, lon };
+}
+
+async function geocodeIfMissingCoords(e, { timeoutMs, cache }) {
+  if (Number.isFinite(e.lat) && Number.isFinite(e.lon)) return false;
+
+  const qParts = [e.place, e.city, e.region, e.country_code || "", "Italia"]
+    .map(safeText)
+    .filter(Boolean);
+
+  const q = qParts.join(", ");
+  if (!q) return false;
+
+  const k = geoKey(q);
+  if (cache[k] && Number.isFinite(cache[k].lat) && Number.isFinite(cache[k].lon)) {
+    e.lat = cache[k].lat;
+    e.lon = cache[k].lon;
+    return true;
+  }
+
+  const res = await geocodeNominatim(q, { timeoutMs });
+  if (!res) return false;
+
+  cache[k] = { lat: res.lat, lon: res.lon, ts: nowISO() };
+  e.lat = res.lat;
+  e.lon = res.lon;
+  return true;
+}
+
+/* ---------------- Read previous OUT (for NO-WIPE) ---------------- */
+
+function readPrevOut() {
+  try {
+    if (!fs.existsSync(OUT_PATH)) return null;
+    const j = JSON.parse(fs.readFileSync(OUT_PATH, "utf8"));
+    if (!j || typeof j !== "object") return null;
+    return j;
+  } catch {
+    return null;
+  }
+}
+
 /* ---------------- MAIN ---------------- */
 
 async function main() {
   const cfg = readConfig();
 
   const daysAhead = clamp(Number(cfg.days_ahead) || 90, 1, 365);
+  const includePastDays = clamp(Number(cfg.include_past_days) || 0, 0, 3650); // 0 = solo futuri
   const maxEvents = clamp(Number(cfg.max_events) || 50000, 100, 50000);
 
   const timeoutMs = clamp(Number(cfg?.providers?.osm_overpass?.timeout_ms) || 45000, 5000, 120000);
 
-  const rssIcs = Array.isArray(cfg?.rss_ics_sources) ? cfg.rss_ics_sources : [];
+  const sources =
+    (Array.isArray(cfg?.rss_ics_sources) && cfg.rss_ics_sources) ||
+    (Array.isArray(cfg?.sources) && cfg.sources) ||
+    (Array.isArray(cfg?.items) && cfg.items) ||
+    [];
 
   const stats = {
-    sources_total: rssIcs.length,
+    sources_total: sources.length,
     sources_ok: 0,
     sources_fail: 0,
+    raw: 0,
+    deduped: 0,
+    geocoded: 0,
+    dropped_no_coords: 0,
+    dropped_out_of_range: 0,
     kept: 0,
   };
 
   let all = [];
 
-  for (const src of rssIcs) {
+  for (const src of sources) {
     try {
       if (!src?.url) continue;
 
       const type = String(src.type || "").toLowerCase().trim();
       const url = String(src.url).trim();
 
-      const fixed_lat = Number(src.fixed_lat);
-      const fixed_lon = Number(src.fixed_lon);
+      const fixed_lat = toNum(src.fixed_lat ?? src.fixedLat ?? src.lat);
+      const fixed_lon = toNum(src.fixed_lon ?? src.fixedLon ?? src.lon);
 
-      const fixedCity = src.default_place || "";
-      const fixedRegion = src.default_region || "";
-      const cc = src.country_code || "";
-      const catFallback = src.category || "other";
+      const fixedCity = src.default_place || src.city || "";
+      const fixedRegion = src.default_region || src.region || "";
+      const cc = src.country_code || src.cc || "";
+      const catFallback = src.category || src.cat || "other";
 
       const txt = await fetchText(url, { timeoutMs });
 
@@ -305,10 +405,10 @@ async function main() {
                 title: r.title,
                 start: r.start,
                 end: r.end,
-                place: r.place,
+                place: r.place || fixedCity,
                 url: r.url,
-                lat: fixed_lat,
-                lon: fixed_lon,
+                lat: Number.isFinite(fixed_lat) ? fixed_lat : null,
+                lon: Number.isFinite(fixed_lon) ? fixed_lon : null,
                 category: catFallback,
                 country_code: cc,
               },
@@ -330,8 +430,8 @@ async function main() {
         let added = 0;
 
         for (const it of items) {
-          const start = toISODateOnly(it.pubDate);
-          if (!start) continue; // RSS senza data => scarto (per evitare rumore)
+          const start = toISO(it.pubDate);
+          if (!start) continue;
           all.push(
             normalizeEvent(
               {
@@ -340,8 +440,8 @@ async function main() {
                 end: null,
                 place: fixedCity,
                 url: it.link,
-                lat: fixed_lat,
-                lon: fixed_lon,
+                lat: Number.isFinite(fixed_lat) ? fixed_lat : null,
+                lon: Number.isFinite(fixed_lon) ? fixed_lon : null,
                 category: catFallback,
                 country_code: cc,
               },
@@ -362,37 +462,84 @@ async function main() {
         if (added > 0) stats.sources_ok++;
         else stats.sources_fail++;
       } else {
-        // ignore unknown type
+        // unknown type
+        stats.sources_fail++;
       }
 
-      await sleep(120);
+      await sleep(140);
     } catch (e) {
       stats.sources_fail++;
-      console.warn(`⚠️ Source fail: ${src?.id || src?.url} → ${e.message || e}`);
+      console.warn(`⚠️ Source fail: ${src?.id || src?.url} → ${e?.message || e}`);
+      await sleep(220);
     }
   }
 
+  stats.raw = all.length;
+
   all = dedupe(all);
-  all = dropNoCoords(all);
+  stats.deduped = all.length;
 
+  // time window: [now - includePastDays .. now + daysAhead]
   const now = new Date();
-  const maxT = now.getTime() + daysAhead * 24 * 3600 * 1000;
+  const nowT = now.getTime();
+  const minT = nowT - includePastDays * 24 * 3600 * 1000;
+  const maxT = nowT + daysAhead * 24 * 3600 * 1000;
 
-  // Keep only in range (start required here)
   all = all.filter((e) => {
     if (!e.start) return false;
     const t = new Date(e.start).getTime();
-    return Number.isFinite(t) && t <= maxT;
+    const ok = Number.isFinite(t) && t >= minT && t <= maxT;
+    if (!ok) stats.dropped_out_of_range++;
+    return ok;
+  });
+
+  // geocode missing coords
+  const cache = loadGeoCache();
+  let geocoded = 0;
+
+  for (const e of all) {
+    if (Number.isFinite(e.lat) && Number.isFinite(e.lon)) continue;
+
+    const did = await geocodeIfMissingCoords(e, { timeoutMs, cache });
+    if (did) {
+      geocoded++;
+      await sleep(160);
+    } else {
+      await sleep(40);
+    }
+  }
+
+  stats.geocoded = geocoded;
+  saveGeoCache(cache);
+
+  // drop without coords (client needs distance)
+  all = all.filter((e) => {
+    const ok = Number.isFinite(e.lat) && Number.isFinite(e.lon);
+    if (!ok) stats.dropped_no_coords++;
+    return ok;
   });
 
   all = sortEvents(all).slice(0, maxEvents);
   stats.kept = all.length;
+
+  // ✅ NO-WIPE: se count==0 e il file precedente era buono, NON sovrascrivere
+  const prev = readPrevOut();
+  const prevCount = Number(prev?.count ?? 0);
+
+  if (all.length === 0 && prevCount > 0) {
+    console.log(
+      `⚠️ NO-WIPE: new count=0 but previous count=${prevCount}. Keeping previous events_all.json (not overwriting).`
+    );
+    // scriviamo solo cache, ma NON il file eventi
+    process.exit(0);
+  }
 
   ensureDir(path.dirname(OUT_PATH));
   const out = {
     updated_at: nowISO(),
     count: all.length,
     days_ahead: daysAhead,
+    include_past_days: includePastDays,
     events: all,
     stats,
   };
