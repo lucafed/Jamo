@@ -1603,11 +1603,12 @@
       const categoryUI = getActiveCategory();
       const cat = canonicalCategory(categoryUI);
 
-      // Eventi: per ora solo placeholder (dataset nel prossimo step)
+            // ✅ Eventi: delega a events.js (senza toccare il flusso POI)
       if (cat === "eventi") {
-        renderEventiPlaceholder();
+        await runEventsSearchBridge({ origin, maxMinutesInput, categoryUI });
         return;
       }
+
 
       const styles = getActiveStyles();
 
