@@ -3,7 +3,6 @@ name: Build Events (daily)
 on:
   workflow_dispatch: {}
   schedule:
-    # 03:15 UTC = 04:15 Italia inverno (05:15 estate)
     - cron: "15 3 * * *"
 
 permissions:
@@ -21,8 +20,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Setup Node 20
         uses: actions/setup-node@v4
@@ -38,14 +35,12 @@ jobs:
             npm install --no-audit --no-fund
           fi
 
-      # 1) genera sorgenti (se lo usi)
-      - name: Generate events sources (IT+EU)
+      - name: Generate events sources (TODAY)
         env:
           JAMO_UA: "JamoEventsBot/1.0 (github-actions)"
           NODE_OPTIONS: "--dns-result-order=ipv4first"
-        run: node scripts/generate_events_sources.mjs
+        run: npm run generate:events:sources
 
-      # 2) build eventi (SCRIVE public/data/events/events_all.json)
       - name: Build events
         env:
           JAMO_UA: "JamoEventsBot/1.0 (github-actions)"
@@ -62,9 +57,7 @@ jobs:
             updated_at: j.updated_at,
             count: j.count,
             days_ahead: j.days_ahead,
-            sources_total: j.stats?.sources_total,
-            sources_ok: j.stats?.sources_ok,
-            sources_fail: j.stats?.sources_fail
+            stats: j.stats
           });
           console.log("events_sources.generated.json exists:", fs.existsSync("events_sources.generated.json"));
           NODE
