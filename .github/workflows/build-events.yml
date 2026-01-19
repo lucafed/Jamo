@@ -38,52 +38,19 @@ jobs:
             npm install --no-audit --no-fund
           fi
 
-      # ✅ 1) genera sorgenti IT+EU (catalogo -> events_sources.generated.json)
+      # 1) genera sorgenti (se lo usi)
       - name: Generate events sources (IT+EU)
         env:
           JAMO_UA: "JamoEventsBot/1.0 (github-actions)"
           NODE_OPTIONS: "--dns-result-order=ipv4first"
         run: node scripts/generate_events_sources.mjs
 
-      # ✅ 2) build eventi (scrive public/data/events/events_all.json)
-      - name: Build events (primary)
+      # 2) build eventi (SCRIVE public/data/events/events_all.json)
+      - name: Build events
         env:
           JAMO_UA: "JamoEventsBot/1.0 (github-actions)"
           NODE_OPTIONS: "--dns-result-order=ipv4first"
-          # Se un domani attivi provider con API key, le metti qui come secrets:
-          # TICKETMASTER_API_KEY: ${{ secrets.TICKETMASTER_API_KEY }}
-          # OPENAGENDA_API_KEY: ${{ secrets.OPENAGENDA_API_KEY }}
-          # OA_ENDPOINT: ${{ secrets.OA_ENDPOINT }}
         run: npm run build:events
-
-      # ✅ 3) se esce vuoto, fallback: Overpass Veneto (mai più count 0)
-      - name: Fallback if empty (Overpass Veneto)
-        env:
-          JAMO_UA: "JamoEventsBot/1.0 (github-actions)"
-          NODE_OPTIONS: "--dns-result-order=ipv4first"
-        run: |
-          node - <<'NODE'
-          import fs from "fs";
-
-          const p = "public/data/events/events_all.json";
-          let j = null;
-          try {
-            j = JSON.parse(fs.readFileSync(p, "utf8"));
-          } catch (e) {
-            console.log("events_all.json missing or invalid -> forcing fallback");
-          }
-
-          const count = Number(j?.count ?? 0);
-          if (count > 0) {
-            console.log("OK: events_all.json count =", count, "-> skip fallback");
-            process.exit(0);
-          }
-
-          console.log("EMPTY: events_all.json count =", count, "-> running Overpass Veneto fallback…");
-          // Qui devi avere lo script che ti ho dato: scripts/build_events.mjs
-          // (quello che scrive SEMPRE public/data/events/events_all.json e usa Overpass se RSS/ICS danno 0)
-          await import(process.cwd() + "/scripts/build_events.mjs");
-          NODE
 
       - name: Show result stats
         run: |
@@ -94,7 +61,10 @@ jobs:
           console.log("events_all.json stats:", {
             updated_at: j.updated_at,
             count: j.count,
-            days_ahead: j.days_ahead
+            days_ahead: j.days_ahead,
+            sources_total: j.stats?.sources_total,
+            sources_ok: j.stats?.sources_ok,
+            sources_fail: j.stats?.sources_fail
           });
           console.log("events_sources.generated.json exists:", fs.existsSync("events_sources.generated.json"));
           NODE
@@ -104,7 +74,6 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          # ✅ SOLO file eventi + sources generated + geocache
           git add \
             events_sources.generated.json \
             public/data/events/events_all.json \
