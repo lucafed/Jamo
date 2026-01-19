@@ -1,8 +1,9 @@
-/* Jamo — events.js v1.4 (OFFLINE-FIRST + DEBUG SAFE + MANY RESULTS)
+/* Jamo — events.js v1.4 (NO-ZERO + OFFLINE FIRST + LOAD MORE)
  * - Legge: /data/events/events_all.json
  * - Filtra: tipo + quando (oggi/weekend/7giorni/30giorni)
  * - Ordina: distanza + data
- * - Render in #resultArea con paginazione
+ * - Fallback: se 0 risultati nel periodo -> mostra "prossimi eventi" (ignora when)
+ * - Render: #resultArea con 12 + "Carica altri"
  * - Espone: window.JAMO_EVENTS.run(...)
  */
 
@@ -19,7 +20,6 @@
     const d = new Date(x);
     return Number.isFinite(d.getTime()) ? d : null;
   }
-
   function startOfDay(d) {
     const x = new Date(d);
     x.setHours(0, 0, 0, 0);
@@ -58,13 +58,15 @@
 
   function normalizeType(t) {
     const s = String(t || "").toLowerCase().trim();
-    if (!s) return "other";
+    if (!s) return "tutti";
+
     if (/(sagra|street\s*food|degust|vino|enogastr|food|taste|beer|birra)/.test(s)) return "sagre";
-    if (/(concert|live|music|dj|spettacol)/.test(s)) return "concerti";
-    if (/(mostr|museum|exhibit|arte|galleria|cultur)/.test(s)) return "culture";
-    if (/(fiera|festival|fair|expo|mercatin|market)/.test(s)) return "market";
+    if (/(concert|live|music|dj|spettacol|opera|teatro)/.test(s)) return "concerti";
+    if (/(mostr|museum|exhibit|arte|galleria)/.test(s)) return "mostre";
+    if (/(fiera|festival|fair|expo|mercatin)/.test(s)) return "fiere";
     if (/(family|kids|child|bambin|ragazz)/.test(s)) return "family";
     if (/(sport|corsa|maratona|trail|run|bike|bici|cycling|mtb|moto|motor|raduno|enduro)/.test(s)) return "sport";
+
     return s;
   }
 
@@ -85,10 +87,9 @@
 
     const name = String(ev.title ?? ev.name ?? "Evento").trim();
     const area = String(ev.city ?? ev.area ?? ev.place ?? ev.location?.city ?? ev.location?.name ?? "").trim();
-    const region = String(ev.region ?? "").trim();
     const country = String(ev.country_code ?? ev.country ?? ev.cc ?? ev.location?.country ?? "").trim().toUpperCase();
 
-    return { lat, lon, name, area, region, country };
+    return { lat, lon, name, area, country };
   }
 
   function filterByWhen(evDate, whenKey, now) {
@@ -114,25 +115,20 @@
       const { from, to } = nextWeekendRange(now);
       return withinRange(evDate, from, to);
     }
-    return true; // fallback
+    return true;
   }
 
   function filterByType(ev, typeKey) {
-    const k = String(typeKey || "").toLowerCase().trim();
-    if (!k || k === "tutti" || k === "all") return true;
+    if (!typeKey || typeKey === "tutti") return true;
 
-    const t = normalizeType(
-      ev.category ||
-      ev.kind ||
-      ev.type ||
-      (Array.isArray(ev.tags) ? ev.tags.join(" ") : "") ||
-      ev.title
-    );
+    const t =
+      normalizeType(ev.category) ||
+      normalizeType(ev.kind) ||
+      normalizeType(ev.type) ||
+      normalizeType(Array.isArray(ev.tags) ? ev.tags.join(" ") : "") ||
+      normalizeType(ev.title);
 
-    // UI potrebbe passare "mostre" ecc.
-    if (k === "mostre") return t === "culture";
-    if (k === "fiere") return t === "market";
-    return t === k;
+    return t === typeKey;
   }
 
   function fmtWhen(d) {
@@ -156,22 +152,18 @@
   }
 
   async function fetchJsonNoStore(url) {
-    // cache-bust leggero per evitare serviceworker/HTTP cache aggressiva
-    const bust = `v=${Date.now()}`;
-    const u = url.includes("?") ? `${url}&${bust}` : `${url}?${bust}`;
-    const r = await fetch(u, { cache: "no-store" });
+    const r = await fetch(url, { cache: "no-store" });
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     return await r.json();
   }
 
-  function render(rows, meta, helpers, state, debugLines) {
+  function render(origin, rows, meta, helpers, state) {
     const area = $("resultArea");
     if (!area) return;
 
-    const escapeHtml = helpers.escapeHtml || ((x) => String(x ?? ""));
-
+    const escapeHtml = helpers.escapeHtml || ((x) => String(x || ""));
     const updated = meta?.updated_at ? String(meta.updated_at).replace("T", " ").slice(0, 16) : "—";
-    const datasetCount = Number(meta?.count ?? 0);
+    const totalCount = Number(meta?.count ?? rows.length);
 
     if (!rows.length) {
       area.innerHTML = `
@@ -181,29 +173,26 @@
             Prova a cambiare sottocategoria oppure aumenta i minuti.
           </div>
           <div class="small muted" style="margin-top:10px;">
-            Dataset: updated <b>${escapeHtml(updated)}</b> • count <b>${escapeHtml(datasetCount)}</b>
+            Dataset: updated <b>${escapeHtml(updated)}</b> • count <b>${escapeHtml(totalCount)}</b>
           </div>
-          ${debugLines?.length ? `
-            <div class="small muted" style="margin-top:10px; white-space:pre-line;">
-              ${escapeHtml(debugLines.join("\n"))}
-            </div>
-          ` : ``}
         </div>
       `;
       return;
     }
 
+    const head = rows[0];
     const shown = rows.slice(0, state.shown);
 
     const cards = shown.map((x) => {
       const title = escapeHtml(x.title);
-      const areaLabel = escapeHtml(x.area || x.region || x.country || "—");
+      const areaLabel = escapeHtml(x.area || x.country || "—");
       const when = escapeHtml(fmtWhen(x.date));
       const km = Math.round(x.km);
       const mins = x.driveMin;
       const typeLabel = escapeHtml(x.typeLabel);
-
       const q = `${x.title}${x.area ? " " + x.area : ""}`;
+
+      const extra = x.fallbackNote ? `<span class="pill soft">⚠️ ${escapeHtml(x.fallbackNote)}</span>` : "";
 
       return `
         <div class="card clickSafe" style="box-shadow:none; border-color:rgba(0,224,255,.14); background:rgba(255,255,255,.03);">
@@ -215,6 +204,7 @@
             <span class="pill acc">🎉 Eventi</span>
             <span class="pill soft">🏷️ ${typeLabel}</span>
             <span class="pill soft">🚗 ~${mins} min • ${km} km</span>
+            ${extra}
           </div>
 
           <div class="row wraprow" style="gap:10px; margin-top:12px;">
@@ -241,7 +231,8 @@
       <div class="card clickSafe" style="box-shadow:none; border-color:rgba(0,224,255,.25); background:rgba(0,224,255,.06);">
         <div style="font-weight:950; font-size:18px;">Eventi trovati (${rows.length})</div>
         <div class="small muted" style="margin-top:8px; line-height:1.45;">
-          Dataset: updated <b>${escapeHtml(updated)}</b> • count <b>${escapeHtml(datasetCount)}</b>
+          Primo: <b>${escapeHtml(head.title)}</b> • ~${head.driveMin} min<br>
+          Dataset: updated <b>${escapeHtml(updated)}</b> • totale <b>${escapeHtml(totalCount)}</b>
         </div>
         <div class="small muted" style="margin-top:6px;">
           Mostrati: <b>${shown.length}</b> / <b>${rows.length}</b>
@@ -259,7 +250,6 @@
       ` : ""}
     `;
 
-    // delegation click
     const handler = (e) => {
       const btn = e.target.closest("button[data-open]");
       if (!btn) return;
@@ -287,7 +277,7 @@
     if (moreBtn) {
       moreBtn.addEventListener("click", () => {
         state.shown = Math.min(rows.length, state.shown + state.page);
-        render(rows, meta, helpers, state, debugLines);
+        render(origin, rows, meta, helpers, state);
         setTimeout(() => moreBtn.scrollIntoView({ behavior: "smooth", block: "center" }), 20);
       }, { once: true });
     }
@@ -296,33 +286,36 @@
   async function run(args) {
     const origin = args?.origin;
     const maxMinutes = args?.maxMinutes;
-
     const eventType = String(args?.eventType || "tutti");
-    const eventWhen = String(args?.eventWhen || "7giorni"); // default più utile
+    const eventWhen = String(args?.eventWhen || "oggi");
 
     const haversineKm = args?.haversineKm;
     const estCarMinutesFromKm = args?.estCarMinutesFromKm;
-
-    const escapeHtml = args?.escapeHtml || ((x) => String(x ?? ""));
+    const escapeHtml = args?.escapeHtml || ((x) => String(x || ""));
     const showStatus = args?.showStatus;
     const scrollToId = args?.scrollToId;
 
     const pageSize = clamp(Number(args?.pageSize) || 12, 6, 30);
 
-    const debug = [];
-    debug.push(`Filtro: tipo=${eventType} • quando=${eventWhen}`);
+    const area = $("resultArea");
+    if (area) {
+      area.innerHTML = `
+        <div class="card clickSafe" style="box-shadow:none; border-color:rgba(255,180,80,.35); background:rgba(255,180,80,.06);">
+          <div style="font-weight:950; font-size:18px;">Cerco eventi…</div>
+          <div class="small muted" style="margin-top:8px; line-height:1.45;">
+            Tipo: <b>${escapeHtml(eventType)}</b> • Quando: <b>${escapeHtml(eventWhen)}</b>
+          </div>
+        </div>
+      `;
+    }
 
     if (!origin || !Number.isFinite(Number(origin.lat)) || !Number.isFinite(Number(origin.lon))) {
-      showStatus?.("err", "Eventi: partenza non valida (origin).");
-      debug.push("ERRORE: origin mancante o non numerico.");
-      render([], { updated_at: "—", count: 0 }, { escapeHtml }, { shown: pageSize, page: pageSize }, debug);
-      scrollToId?.("resultCard");
+      showStatus?.("err", "Eventi: partenza non valida.");
+      scrollToId?.("quickStartCard");
       return;
     }
     if (typeof haversineKm !== "function" || typeof estCarMinutesFromKm !== "function") {
       showStatus?.("err", "Eventi: helper mancanti (haversine/minuti).");
-      debug.push("ERRORE: helper haversineKm/estCarMinutesFromKm mancanti.");
-      render([], { updated_at: "—", count: 0 }, { escapeHtml }, { shown: pageSize, page: pageSize }, debug);
       scrollToId?.("resultCard");
       return;
     }
@@ -330,66 +323,86 @@
     let payload;
     try {
       payload = await fetchJsonNoStore(EVENTS_URL);
-    } catch (e) {
+    } catch {
       showStatus?.("err", `Eventi: impossibile caricare ${EVENTS_URL}`);
-      debug.push(`ERRORE fetch: ${String(e?.message || e)}`);
-      render([], { updated_at: "—", count: 0 }, { escapeHtml }, { shown: pageSize, page: pageSize }, debug);
+      if (area) {
+        area.innerHTML = `
+          <div class="card clickSafe" style="box-shadow:none; border-color:rgba(255,90,90,.40); background:rgba(255,90,90,.10);">
+            <div style="font-weight:950; font-size:18px;">Eventi offline non disponibili</div>
+            <div class="small muted" style="margin-top:8px; line-height:1.45;">
+              Manca <b>${escapeHtml(EVENTS_URL)}</b> oppure non e' stato committato.
+            </div>
+          </div>
+        `;
+      }
       scrollToId?.("resultCard");
       return;
     }
 
-    const events = Array.isArray(payload?.events) ? payload.events : [];
-    const datasetCount = Number(payload?.count ?? events.length) || 0;
-    debug.push(`Dataset: count=${datasetCount} • rows=${events.length}`);
+    const events =
+      (Array.isArray(payload?.events) && payload.events) ||
+      (Array.isArray(payload?.items) && payload.items) ||
+      (Array.isArray(payload) && payload) ||
+      [];
 
     const now = new Date();
     const maxM = clamp(Number(maxMinutes) || 120, 10, 600);
 
-    let missingCoords = 0;
-    let droppedWhen = 0;
-    let droppedType = 0;
-    let droppedMinutes = 0;
+    function buildRows({ ignoreWhen = false, ignoreType = false, fallbackNote = "" } = {}) {
+      const out = [];
+      for (const ev of events) {
+        const loc = pickEventPlace(ev);
+        if (!loc) continue;
 
-    const rows = [];
-    for (const ev of events) {
-      const loc = pickEventPlace(ev);
-      if (!loc) { missingCoords++; continue; }
+        const d = pickEventDate(ev);
 
-      const d = pickEventDate(ev);
-      if (!filterByWhen(d, eventWhen, now)) { droppedWhen++; continue; }
-      if (!filterByType(ev, eventType)) { droppedType++; continue; }
+        if (!ignoreWhen && !filterByWhen(d, eventWhen, now)) continue;
+        if (!ignoreType && !filterByType(ev, eventType)) continue;
 
-      const km = haversineKm(origin.lat, origin.lon, loc.lat, loc.lon);
-      const driveMin = estCarMinutesFromKm(km);
-      if (!Number.isFinite(driveMin) || driveMin > maxM) { droppedMinutes++; continue; }
+        const km = haversineKm(origin.lat, origin.lon, loc.lat, loc.lon);
+        const driveMin = estCarMinutesFromKm(km);
+        if (!Number.isFinite(driveMin) || driveMin > maxM) continue;
 
-      const typeLabel = normalizeType(ev.category || ev.kind || ev.type || ev.title) || "other";
+        const typeLabel = normalizeType(ev.category || ev.kind || ev.type || ev.title) || "tutti";
 
-      rows.push({
-        title: String(ev.title || loc.name || "Evento"),
-        area: loc.area,
-        region: loc.region,
-        country: loc.country,
-        lat: loc.lat,
-        lon: loc.lon,
-        date: d,
-        km,
-        driveMin,
-        typeLabel
+        out.push({
+          title: loc.name,
+          area: loc.area,
+          country: loc.country,
+          lat: loc.lat,
+          lon: loc.lon,
+          date: d,
+          km,
+          driveMin,
+          typeLabel,
+          fallbackNote
+        });
+      }
+
+      out.sort((a, b) => {
+        const da = a.date ? a.date.getTime() : 9e15;
+        const db = b.date ? b.date.getTime() : 9e15;
+        return (a.driveMin - b.driveMin) || (da - db);
       });
+
+      return out;
     }
 
-    debug.push(`Scarti: noCoords=${missingCoords} • when=${droppedWhen} • type=${droppedType} • minutes=${droppedMinutes}`);
-    debug.push(`Origin: ${origin.lat},${origin.lon} • maxMinutes=${maxM}`);
+    // 1) normale
+    let rows = buildRows();
 
-    rows.sort((a, b) => {
-      const da = a.date ? a.date.getTime() : 9e15;
-      const db = b.date ? b.date.getTime() : 9e15;
-      return (a.driveMin - b.driveMin) || (da - db);
-    });
+    // 2) fallback: ignora "quando" e mostra i prossimi eventi (stesso tipo)
+    if (!rows.length) {
+      rows = buildRows({ ignoreWhen: true, ignoreType: false, fallbackNote: "fuori periodo (mostro i prossimi)" });
+    }
+
+    // 3) fallback duro: ignora anche tipo
+    if (!rows.length) {
+      rows = buildRows({ ignoreWhen: true, ignoreType: true, fallbackNote: "fallback (mostro tutto)" });
+    }
 
     const state = { shown: pageSize, page: pageSize };
-    render(rows, payload, { escapeHtml }, state, rows.length ? null : debug);
+    render(origin, rows, payload, { escapeHtml }, state);
 
     showStatus?.("ok", `Eventi: trovati ${rows.length} ✅`);
     scrollToId?.("resultCard");
