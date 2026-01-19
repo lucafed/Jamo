@@ -509,6 +509,45 @@
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     return await r.json();
   }
+    // -------------------- EVENTI (bridge) --------------------
+  // events.js espone window.JAMO_EVENTS.run(...)
+  async function runEventsSearchBridge({ origin, maxMinutesInput, categoryUI }) {
+    const runner = window?.JAMO_EVENTS?.run;
+    if (typeof runner !== "function") {
+      showStatus("err", "Eventi non disponibili: manca events.js oppure non è stato caricato.");
+      const area = $("resultArea");
+      if (area) {
+        area.innerHTML = `
+          <div class="card clickSafe" style="box-shadow:none; border-color:rgba(255,90,90,.40); background:rgba(255,90,90,.10);">
+            <div style="font-weight:950; font-size:18px;">❌ Eventi non disponibili</div>
+            <div class="small muted" style="margin-top:8px; line-height:1.45;">
+              Controlla che in <b>index.html</b> ci sia <b>/events.js</b> prima di <b>/app.js</b>.
+            </div>
+          </div>
+        `;
+      }
+      scrollToId("resultCard");
+      return;
+    }
+
+    // passa anche i subfiltri già presenti in app.js
+    const et = getEventType();
+    const ew = getEventWhen();
+
+    await runner({
+      origin,
+      maxMinutes: maxMinutesInput,
+      eventType: et,
+      eventWhen: ew,
+      // helper utili dal tuo app.js (così events.js resta leggero)
+      haversineKm,
+      estCarMinutesFromKm,
+      escapeHtml,
+      showStatus,
+      scrollToId
+    });
+  }
+
 
   // -------------------- DATA NORMALIZATION --------------------
   function normalizeVisibility(v) {
