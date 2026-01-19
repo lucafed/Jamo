@@ -1,7 +1,8 @@
-/* Jamo — events.js v1.3 (SAFE + OFFLINE FIRST + MANY RESULTS + LOAD MORE)
+/* Jamo — events.js v1.4 (ROBUST + OFFLINE FIRST + MANY RESULTS + CHIP-COMPAT)
  * - Legge: /data/events/events_all.json
- * - Filtra: tipo + quando (oggi/weekend/7giorni/30giorni)
- * - Ordina: distanza + data (eventi senza data vanno in fondo, ma in dataset ci saranno quasi sempre date)
+ * - Filtra: tipo + quando (oggi/weekend/7giorni/30giorni) con mapping robusto
+ * - Fallback auto se 0 risultati: relax filtri (tipo -> quando -> entrambi)
+ * - Ordina: minuti poi data
  * - Render in #resultArea con paginazione: 12 + "Carica altri"
  * - Espone: window.JAMO_EVENTS.run(...)
  */
@@ -11,15 +12,14 @@
 
   const EVENTS_URL = "/data/events/events_all.json";
   const $ = (id) => document.getElementById(id);
-
   const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
 
+  // ---------- date helpers ----------
   function parseDateSafe(x) {
     if (!x) return null;
     const d = new Date(x);
     return Number.isFinite(d.getTime()) ? d : null;
   }
-
   function startOfDay(d) {
     const x = new Date(d);
     x.setHours(0, 0, 0, 0);
@@ -30,7 +30,6 @@
     x.setHours(23, 59, 59, 999);
     return x;
   }
-
   function nextWeekendRange(now) {
     const d = startOfDay(now);
     const day = d.getDay(); // 0 dom, 6 sab
@@ -49,25 +48,72 @@
     sunday.setDate(sunday.getDate() + deltaToSat + 1);
     return { from: saturday, to: endOfDay(sunday) };
   }
-
   function withinRange(dateObj, from, to) {
     if (!dateObj) return false;
     const t = dateObj.getTime();
     return t >= from.getTime() && t <= to.getTime();
   }
 
-  function normalizeType(t) {
-    const s = String(t || "").toLowerCase().trim();
-    if (!s) return "tutti";
+  // ---------- normalization ----------
+  function normKey(s) {
+    return String(s || "")
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, "")
+      .replace(/[_-]+/g, "");
+  }
 
+  function normalizeWhenKey(k) {
+    const s = normKey(k);
+    if (!s) return "oggi";
+    if (s === "oggi" || s === "today") return "oggi";
+    if (s === "weekend" || s === "fine" || s === "finesettimana") return "weekend";
+    if (s === "7giorni" || s === "7days" || s === "7" || s === "settimana") return "7giorni";
+    if (s === "30giorni" || s === "30days" || s === "30" || s === "mese") return "30giorni";
+    return "oggi";
+  }
+
+  function normalizeTypeKey(k) {
+    const s = normKey(k);
+    if (!s || s === "tutti" || s === "all") return "tutti";
+
+    // accetta tante varianti
+    if (/(sport|sports|run|trail|bike|cycling|mtb|moto|maratona|corsa|gara|match)/.test(s)) return "sport";
+    if (/(concert|music|live|dj|spettacol|show)/.test(s)) return "concerti";
+    if (/(mostr|museum|exhibit|arte|gallery|galleria)/.test(s)) return "mostre";
+    if (/(fiera|festival|fair|expo|mercatin|market)/.test(s)) return "fiere";
+    if (/(family|kids|child|bambin|ragazz)/.test(s)) return "family";
+    if (/(sagra|streetfood|degust|vino|enogastr|food|taste|beer|birra)/.test(s)) return "sagre";
+
+    // se arriva "cultura/culture" lo trattiamo come "mostre" (per non tagliare via tutto)
+    if (/(cultura|culture|cultural)/.test(s)) return "mostre";
+
+    return s; // fallback
+  }
+
+  function normalizeEventTypeFromEvent(ev) {
+    // prova su più campi, e fallback sul titolo
+    const raw =
+      ev.category ||
+      ev.kind ||
+      ev.type ||
+      (Array.isArray(ev.tags) ? ev.tags.join(" ") : "") ||
+      ev.title ||
+      "";
+    const s = String(raw || "").toLowerCase().trim();
+
+    // mapping semantico (stesso di normalizeTypeKey ma su testo libero)
     if (/(sagra|street\s*food|degust|vino|enogastr|food|taste|beer|birra)/.test(s)) return "sagre";
     if (/(concert|live|music|dj|spettacol)/.test(s)) return "concerti";
-    if (/(mostr|museum|exhibit|arte|galleria)/.test(s)) return "mostre";
-    if (/(fiera|festival|fair|expo|mercatin)/.test(s)) return "fiere";
+    if (/(mostr|museum|exhibit|arte|galleria|gallery)/.test(s)) return "mostre";
+    if (/(fiera|festival|fair|expo|mercatin|market)/.test(s)) return "fiere";
     if (/(family|kids|child|bambin|ragazz)/.test(s)) return "family";
     if (/(sport|corsa|maratona|trail|run|bike|bici|cycling|mtb|moto|motor|raduno|enduro)/.test(s)) return "sport";
 
-    return s;
+    // se nel dataset c'è "culture", non vogliamo buttare via tutto
+    if (/(culture|cultura)/.test(s)) return "mostre";
+
+    return "other";
   }
 
   function pickEventDate(ev) {
@@ -76,7 +122,8 @@
       parseDateSafe(ev.start_date) ||
       parseDateSafe(ev.date) ||
       parseDateSafe(ev.dt_start) ||
-      parseDateSafe(ev.when)
+      parseDateSafe(ev.when) ||
+      null
     );
   }
 
@@ -93,24 +140,26 @@
   }
 
   function filterByWhen(evDate, whenKey, now) {
+    const wk = normalizeWhenKey(whenKey);
+
     const today0 = startOfDay(now);
     const todayEnd = endOfDay(now);
 
-    if (whenKey === "oggi") {
+    if (wk === "oggi") {
       if (!evDate) return false;
       return withinRange(evDate, today0, todayEnd);
     }
-    if (whenKey === "7giorni") {
+    if (wk === "7giorni") {
       if (!evDate) return false;
       const to = endOfDay(new Date(today0.getTime() + 7 * 24 * 3600 * 1000));
       return withinRange(evDate, today0, to);
     }
-    if (whenKey === "30giorni") {
+    if (wk === "30giorni") {
       if (!evDate) return false;
       const to = endOfDay(new Date(today0.getTime() + 30 * 24 * 3600 * 1000));
       return withinRange(evDate, today0, to);
     }
-    if (whenKey === "weekend") {
+    if (wk === "weekend") {
       if (!evDate) return false;
       const { from, to } = nextWeekendRange(now);
       return withinRange(evDate, from, to);
@@ -119,16 +168,20 @@
   }
 
   function filterByType(ev, typeKey) {
-    if (!typeKey || typeKey === "tutti") return true;
+    const tk = normalizeTypeKey(typeKey);
+    if (tk === "tutti") return true;
 
-    const t =
-      normalizeType(ev.category) ||
-      normalizeType(ev.kind) ||
-      normalizeType(ev.type) ||
-      normalizeType(Array.isArray(ev.tags) ? ev.tags.join(" ") : "") ||
-      normalizeType(ev.title);
+    const t = normalizeEventTypeFromEvent(ev);
+    // match diretto
+    if (t === tk) return true;
 
-    return t === typeKey;
+    // tolleranza: se tk è "mostre" e evento è "other" ma ha culture/cultura nel testo
+    if (tk === "mostre") {
+      const s = String(ev.category || ev.title || "").toLowerCase();
+      if (s.includes("culture") || s.includes("cultura") || s.includes("mostra") || s.includes("museo")) return true;
+    }
+
+    return false;
   }
 
   function fmtWhen(d) {
@@ -157,7 +210,19 @@
     return await r.json();
   }
 
-  function render(origin, rows, meta, helpers, state) {
+  function setEventsCounter(n) {
+    // prova più id possibili (per la tua UI)
+    const ids = ["eventsCount", "eventsCounter", "eventsFound"];
+    for (const id of ids) {
+      const el = $(id);
+      if (el) {
+        el.textContent = `Eventi: trovati ${Number(n) || 0} ✅`;
+        return;
+      }
+    }
+  }
+
+  function render(origin, rows, meta, helpers, state, debugNote = "") {
     const area = $("resultArea");
     if (!area) return;
 
@@ -165,6 +230,8 @@
 
     const updated = meta?.updated_at ? String(meta.updated_at).replace("T", " ").slice(0, 16) : "—";
     const totalCount = Number(meta?.count ?? rows.length);
+
+    setEventsCounter(rows.length);
 
     if (!rows.length) {
       area.innerHTML = `
@@ -175,6 +242,7 @@
           </div>
           <div class="small muted" style="margin-top:10px;">
             Dataset: updated <b>${escapeHtml(updated)}</b> • count <b>${escapeHtml(totalCount)}</b>
+            ${debugNote ? `<br><span class="small muted">${escapeHtml(debugNote)}</span>` : ""}
           </div>
         </div>
       `;
@@ -182,7 +250,6 @@
     }
 
     const head = rows[0];
-
     const shown = rows.slice(0, state.shown);
 
     const cards = shown.map((x) => {
@@ -233,6 +300,7 @@
         <div class="small muted" style="margin-top:8px; line-height:1.45;">
           Primo: <b>${escapeHtml(head.title)}</b> • ~${head.driveMin} min<br>
           Dataset: updated <b>${escapeHtml(updated)}</b> • totale <b>${escapeHtml(totalCount)}</b>
+          ${debugNote ? `<br><span class="small muted">${escapeHtml(debugNote)}</span>` : ""}
         </div>
         <div class="small muted" style="margin-top:6px;">
           Mostrati: <b>${shown.length}</b> / <b>${rows.length}</b>
@@ -276,25 +344,72 @@
 
     const moreBtn = $("btnMoreEvents");
     if (moreBtn) {
-      moreBtn.addEventListener("click", () => {
-        state.shown = Math.min(rows.length, state.shown + state.page);
-        render(origin, rows, meta, helpers, state);
-        setTimeout(() => moreBtn.scrollIntoView({ behavior: "smooth", block: "center" }), 20);
-      }, { once: true });
+      moreBtn.addEventListener(
+        "click",
+        () => {
+          state.shown = Math.min(rows.length, state.shown + state.page);
+          render(origin, rows, meta, helpers, state, debugNote);
+          setTimeout(() => moreBtn.scrollIntoView({ behavior: "smooth", block: "center" }), 20);
+        },
+        { once: true }
+      );
     }
+  }
+
+  function buildRows({ events, origin, maxM, eventType, eventWhen, haversineKm, estCarMinutesFromKm }) {
+    const now = new Date();
+    const rows = [];
+
+    for (const ev of events) {
+      const loc = pickEventPlace(ev);
+      if (!loc) continue;
+
+      const d = pickEventDate(ev);
+      if (!filterByWhen(d, eventWhen, now)) continue;
+      if (!filterByType(ev, eventType)) continue;
+
+      const km = haversineKm(origin.lat, origin.lon, loc.lat, loc.lon);
+      const driveMin = estCarMinutesFromKm(km);
+      if (!Number.isFinite(driveMin) || driveMin > maxM) continue;
+
+      const typeLabel = normalizeEventTypeFromEvent(ev) || "other";
+
+      rows.push({
+        title: loc.name,
+        area: loc.area,
+        country: loc.country,
+        lat: loc.lat,
+        lon: loc.lon,
+        date: d,
+        km,
+        driveMin,
+        typeLabel
+      });
+    }
+
+    rows.sort((a, b) => {
+      const da = a.date ? a.date.getTime() : 9e15;
+      const db = b.date ? b.date.getTime() : 9e15;
+      return (a.driveMin - b.driveMin) || (da - db);
+    });
+
+    return rows;
   }
 
   async function run(args) {
     const origin = args?.origin;
     const maxMinutes = args?.maxMinutes;
-    const eventType = String(args?.eventType || "tutti");
-    const eventWhen = String(args?.eventWhen || "oggi");
+    const eventTypeRaw = String(args?.eventType || "tutti");
+    const eventWhenRaw = String(args?.eventWhen || "oggi");
 
     const haversineKm = args?.haversineKm;
     const estCarMinutesFromKm = args?.estCarMinutesFromKm;
     const escapeHtml = args?.escapeHtml || ((x) => String(x || ""));
     const showStatus = args?.showStatus;
     const scrollToId = args?.scrollToId;
+
+    const eventType = normalizeTypeKey(eventTypeRaw);
+    const eventWhen = normalizeWhenKey(eventWhenRaw);
 
     const pageSize = clamp(Number(args?.pageSize) || 12, 6, 30);
 
@@ -336,50 +451,55 @@
           </div>
         `;
       }
+      setEventsCounter(0);
       scrollToId?.("resultCard");
       return;
     }
 
     const events = Array.isArray(payload?.events) ? payload.events : [];
-    const now = new Date();
     const maxM = clamp(Number(maxMinutes) || 120, 10, 600);
 
-    const rows = [];
-    for (const ev of events) {
-      const loc = pickEventPlace(ev);
-      if (!loc) continue;
+    // --- 3-step fallback per "MANY RESULTS"
+    // step0: filtri richiesti
+    let rows = buildRows({
+      events, origin, maxM,
+      eventType, eventWhen,
+      haversineKm, estCarMinutesFromKm
+    });
+    let note = "";
 
-      const d = pickEventDate(ev);
-      if (!filterByWhen(d, eventWhen, now)) continue;
-      if (!filterByType(ev, eventType)) continue;
-
-      const km = haversineKm(origin.lat, origin.lon, loc.lat, loc.lon);
-      const driveMin = estCarMinutesFromKm(km);
-      if (!Number.isFinite(driveMin) || driveMin > maxM) continue;
-
-      const typeLabel = normalizeType(ev.category || ev.kind || ev.type || ev.title) || "tutti";
-
-      rows.push({
-        title: loc.name,
-        area: loc.area,
-        country: loc.country,
-        lat: loc.lat,
-        lon: loc.lon,
-        date: d,
-        km,
-        driveMin,
-        typeLabel
+    // step1: se 0 e tipo non è tutti -> togli tipo
+    if (!rows.length && eventType !== "tutti") {
+      rows = buildRows({
+        events, origin, maxM,
+        eventType: "tutti", eventWhen,
+        haversineKm, estCarMinutesFromKm
       });
+      note = "Fallback: ho tolto il filtro tipo per trovare più eventi.";
     }
 
-    rows.sort((a, b) => {
-      const da = a.date ? a.date.getTime() : 9e15;
-      const db = b.date ? b.date.getTime() : 9e15;
-      return (a.driveMin - b.driveMin) || (da - db);
-    });
+    // step2: se ancora 0 -> allarga a 30 giorni
+    if (!rows.length && eventWhen !== "30giorni") {
+      rows = buildRows({
+        events, origin, maxM,
+        eventType: "tutti", eventWhen: "30giorni",
+        haversineKm, estCarMinutesFromKm
+      });
+      note = "Fallback: ho allargato a 30 giorni per trovare più eventi.";
+    }
+
+    // step3: se ancora 0 -> togli anche filtro quando (ma sempre minuti)
+    if (!rows.length) {
+      rows = buildRows({
+        events, origin, maxM,
+        eventType: "tutti", eventWhen: "tutti",
+        haversineKm, estCarMinutesFromKm
+      });
+      note = "Fallback: ho tolto anche il filtro quando (resta il limite minuti).";
+    }
 
     const state = { shown: pageSize, page: pageSize };
-    render(origin, rows, payload, { escapeHtml }, state);
+    render(origin, rows, payload, { escapeHtml }, state, note);
 
     showStatus?.("ok", `Eventi: trovati ${rows.length} ✅`);
     scrollToId?.("resultCard");
