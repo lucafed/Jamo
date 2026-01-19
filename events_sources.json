@@ -4,7 +4,7 @@
 
   "providers": {
     "osm_overpass": {
-      "enabled": true,
+      "enabled": false,
       "timeout_ms": 45000,
       "endpoints": [
         "https://overpass.kumi.systems/api/interpreter",
@@ -14,11 +14,6 @@
   },
 
   "rss_ics_sources": [
-
-    /* =========================
-       🇮🇹 ITALIA — NAZIONALE
-       ========================= */
-
     {
       "id": "italia_eventi_cultura",
       "type": "rss",
@@ -26,7 +21,6 @@
       "category": "culture",
       "country_code": "IT"
     },
-
     {
       "id": "eventi_repubblica",
       "type": "rss",
@@ -34,10 +28,6 @@
       "category": "eventi",
       "country_code": "IT"
     },
-
-    /* =========================
-       🇮🇹 COMUNI
-       ========================= */
 
     {
       "id": "roma_eventi",
@@ -47,7 +37,6 @@
       "fixed_lon": 12.4964,
       "country_code": "IT"
     },
-
     {
       "id": "milano_eventi",
       "type": "ics",
@@ -56,7 +45,6 @@
       "fixed_lon": 9.1900,
       "country_code": "IT"
     },
-
     {
       "id": "torino_eventi",
       "type": "rss",
@@ -65,7 +53,6 @@
       "fixed_lon": 7.6869,
       "country_code": "IT"
     },
-
     {
       "id": "bologna_eventi",
       "type": "rss",
@@ -74,7 +61,6 @@
       "fixed_lon": 11.3426,
       "country_code": "IT"
     },
-
     {
       "id": "venezia_eventi",
       "type": "rss",
@@ -83,7 +69,6 @@
       "fixed_lon": 12.3155,
       "country_code": "IT"
     },
-
     {
       "id": "verona_eventi",
       "type": "rss",
@@ -92,7 +77,6 @@
       "fixed_lon": 10.9916,
       "country_code": "IT"
     },
-
     {
       "id": "napoli_eventi",
       "type": "rss",
@@ -102,10 +86,6 @@
       "country_code": "IT"
     },
 
-    /* =========================
-       🇪🇺 EUROPA — REALI
-       ========================= */
-
     {
       "id": "paris_events",
       "type": "ics",
@@ -114,16 +94,14 @@
       "fixed_lon": 2.3522,
       "country_code": "FR"
     },
-
     {
       "id": "berlin_events",
       "type": "rss",
       "url": "https://www.visitberlin.de/en/rss/events",
-      "fixed_lat": 52.5200,
-      "fixed_lon": 13.4050,
+      "fixed_lat": 52.52,
+      "fixed_lon": 13.405,
       "country_code": "DE"
     },
-
     {
       "id": "london_events",
       "type": "ics",
@@ -132,7 +110,6 @@
       "fixed_lon": -0.1276,
       "country_code": "GB"
     },
-
     {
       "id": "barcelona_events",
       "type": "rss",
