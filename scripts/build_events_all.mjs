@@ -1,15 +1,11 @@
 #!/usr/bin/env node
 /**
  * Jamo — build_events_all.mjs (v2)
- * Legge config da:
- *  - ./events_sources.generated.json (se esiste)
- *  - altrimenti ./events_sources.json
- *
- * Genera: public/data/events/events_all.json
- *
- * Fonti:
- *  - RSS / ICS (prioritarie)
- *  - Overpass DISABILITATO di default (non genera eventi veri)
+ * Preferisce config GENERATED:
+ *   1) ./events_sources.generated.json
+ *   2) ./events_sources.json
+ * Output:
+ *   public/data/events/events_all.json
  */
 
 import fs from "fs";
@@ -17,11 +13,13 @@ import path from "path";
 import crypto from "crypto";
 
 const ROOT = process.cwd();
-const GEN_PATH = path.join(ROOT, "events_sources.generated.json");
-const CONFIG_FALLBACK_PATH = path.join(ROOT, "events_sources.json");
+
+const CONFIG_GEN = path.join(ROOT, "events_sources.generated.json");
+const CONFIG_FALLBACK = path.join(ROOT, "events_sources.json");
+
 const OUT_PATH = path.join(ROOT, "public", "data", "events", "events_all.json");
 
-const UA = process.env.JAMO_UA || "JamoEventsBuilder/2.0";
+const UA = process.env.JAMO_UA || "JamoEventsBuilder/1.0 (+https://jamo-seven.vercel.app)";
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 function sha1(s) {
@@ -30,7 +28,6 @@ function sha1(s) {
 function ensureDir(p) { fs.mkdirSync(p, { recursive: true }); }
 function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
 function nowISO() { return new Date().toISOString(); }
-
 function toISODateOnly(d) {
   try {
     const x = new Date(d);
@@ -38,9 +35,17 @@ function toISODateOnly(d) {
     return x.toISOString();
   } catch { return null; }
 }
+function safeText(s) { return String(s ?? "").replace(/\s+/g, " ").trim(); }
 
-function safeText(s) {
-  return String(s ?? "").replace(/\s+/g, " ").trim();
+function readConfig() {
+  if (fs.existsSync(CONFIG_GEN)) {
+    return JSON.parse(fs.readFileSync(CONFIG_GEN, "utf8"));
+  }
+  if (fs.existsSync(CONFIG_FALLBACK)) {
+    return JSON.parse(fs.readFileSync(CONFIG_FALLBACK, "utf8"));
+  }
+  console.error(`❌ Missing config. Expected one of:\n- ${CONFIG_GEN}\n- ${CONFIG_FALLBACK}`);
+  process.exit(1);
 }
 
 async function fetchText(url, { timeoutMs = 45000 } = {}) {
@@ -48,7 +53,10 @@ async function fetchText(url, { timeoutMs = 45000 } = {}) {
   const t = setTimeout(() => ctrl.abort(), timeoutMs);
   try {
     const r = await fetch(url, {
-      headers: { "user-agent": UA, "accept": "*/*" },
+      headers: {
+        "user-agent": UA,
+        "accept": "text/calendar, application/xml, text/xml, application/rss+xml, application/atom+xml, */*"
+      },
       signal: ctrl.signal,
       cache: "no-store",
       redirect: "follow"
@@ -60,16 +68,6 @@ async function fetchText(url, { timeoutMs = 45000 } = {}) {
   }
 }
 
-function readConfig() {
-  const p = fs.existsSync(GEN_PATH) ? GEN_PATH : CONFIG_FALLBACK_PATH;
-  if (!fs.existsSync(p)) {
-    console.error(`❌ Missing config: ${p}`);
-    process.exit(1);
-  }
-  return JSON.parse(fs.readFileSync(p, "utf8"));
-}
-
-/** ------------------ RSS PARSER (light) ------------------ **/
 function extractXmlBlocks(xml, tag) {
   const re = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, "gi");
   const out = [];
@@ -77,13 +75,11 @@ function extractXmlBlocks(xml, tag) {
   while ((m = re.exec(xml))) out.push(m[1]);
   return out;
 }
-
 function extractFirst(xml, tag) {
   const re = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, "i");
   const m = re.exec(xml);
-  return m ? safeText(m[1].replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1")) : "";
+  return m ? safeText(m[1].replace(/<!\\[CDATA\\[([\\s\\S]*?)\\]\\]>/g, "$1")) : "";
 }
-
 function parseRss(xml) {
   const items = extractXmlBlocks(xml, "item").length
     ? extractXmlBlocks(xml, "item")
@@ -98,7 +94,6 @@ function parseRss(xml) {
   });
 }
 
-/** ------------------ ICS PARSER (minimal VEVENT) ------------------ **/
 function unfoldIcsLines(s) { return s.replace(/\r?\n[ \t]/g, ""); }
 
 function parseIcsDate(val) {
@@ -106,9 +101,7 @@ function parseIcsDate(val) {
   const v = String(val).trim();
 
   if (/^\d{8}$/.test(v)) {
-    const yyyy = v.slice(0, 4);
-    const mm = v.slice(4, 6);
-    const dd = v.slice(6, 8);
+    const yyyy = v.slice(0, 4), mm = v.slice(4, 6), dd = v.slice(6, 8);
     return toISODateOnly(`${yyyy}-${mm}-${dd}T00:00:00Z`);
   }
 
@@ -135,10 +128,10 @@ function parseIcs(text) {
     const location = get("LOCATION");
     const dtStartRaw = get("DTSTART");
     const dtEndRaw = get("DTEND");
+
     const dtStart = parseIcsDate(dtStartRaw);
     const dtEnd = parseIcsDate(dtEndRaw);
 
-    // ICS senza DTSTART non ha senso
     if (!dtStart) continue;
 
     events.push({
@@ -152,10 +145,8 @@ function parseIcs(text) {
   return events;
 }
 
-/** ------------------ NORMALIZE ------------------ **/
 function normalizeEvent(e, { source, ccFallback, fixedLat, fixedLon, fixedCity, fixedRegion } = {}) {
   const title = safeText(e.title || e.name || "Evento");
-
   const start = e.start ? toISODateOnly(e.start) : null;
   const end = e.end ? toISODateOnly(e.end) : null;
 
@@ -169,10 +160,10 @@ function normalizeEvent(e, { source, ccFallback, fixedLat, fixedLon, fixedCity, 
   const country_code = safeText(e.country_code || e.cc || ccFallback || "").toUpperCase();
 
   const url = safeText(e.url || e.link || "");
-  const category = safeText(e.category || e.type || e.kind || "other");
+  const category = safeText(e.category || e.type || e.kind || "");
 
   const base = `${title}|${start || ""}|${lat || ""}|${lon || ""}|${place}|${country_code}|${source || ""}`;
-  const id = `e_${sha1(base)}`;
+  const id = `e_${crypto.createHash("sha1").update(String(base)).digest("hex").slice(0, 8)}`;
 
   return {
     id,
@@ -186,8 +177,8 @@ function normalizeEvent(e, { source, ccFallback, fixedLat, fixedLon, fixedCity, 
     region,
     country_code,
     url,
-    category,
-    source: source || "unknown",
+    category: category || "other",
+    source: source || "unknown"
   };
 }
 
@@ -202,37 +193,35 @@ function dedupe(events) {
   }
   return out;
 }
-
-function keepOnlyCoords(events) {
+function dropNoCoords(events) {
   return events.filter(e => Number.isFinite(e.lat) && Number.isFinite(e.lon));
-}
-
-function sortEvents(rows) {
-  rows.sort((a, b) => {
-    const da = a.start ? new Date(a.start).getTime() : 9e15;
-    const db = b.start ? new Date(b.start).getTime() : 9e15;
-    if (da !== db) return da - db;
-    return String(a.title).localeCompare(String(b.title));
-  });
-  return rows;
 }
 
 async function main() {
   const cfg = readConfig();
 
-  const daysAhead = clamp(Number(cfg.days_ahead) || 90, 1, 365);
-  const maxEvents = clamp(Number(cfg.max_events) || 50000, 100, 50000);
+  const daysAhead = clamp(Number(cfg.days_ahead) || 60, 1, 365);
+  const maxEvents = clamp(Number(cfg.max_events) || 30000, 100, 50000);
 
-  const timeoutMs = clamp(Number(cfg?.providers?.osm_overpass?.timeout_ms) || 45000, 5000, 120000);
+  const overpassEnabled = !!cfg?.providers?.osm_overpass?.enabled;
+  const overpassTimeout = clamp(Number(cfg?.providers?.osm_overpass?.timeout_ms) || 45000, 5000, 120000);
 
   const rssIcs = Array.isArray(cfg?.rss_ics_sources) ? cfg.rss_ics_sources : [];
 
-  let all = [];
-  let ok = 0, fail = 0, kept = 0;
+  const stats = {
+    sources_total: rssIcs.length,
+    sources_ok: 0,
+    sources_fail: 0,
+    kept: 0
+  };
 
+  let all = [];
+
+  // 1) RSS / ICS
   for (const src of rssIcs) {
     try {
       if (!src?.url) continue;
+
       const type = String(src.type || "").toLowerCase().trim();
       const url = String(src.url).trim();
 
@@ -242,77 +231,83 @@ async function main() {
       const fixedRegion = src.default_region || "";
       const cc = src.country_code || "";
 
-      const txt = await fetchText(url, { timeoutMs });
+      const txt = await fetchText(url, { timeoutMs: overpassTimeout });
 
       if (type === "ics") {
         const rows = parseIcs(txt);
         for (const r of rows) {
-          const ev = normalizeEvent(
-            {
-              title: r.title,
-              start: r.start,
-              end: r.end,
-              place: r.place,
-              url: r.url,
-              lat: fixed_lat,
-              lon: fixed_lon,
-              category: src.category || "other",
-              country_code: cc
-            },
-            { source: src.id || "ics", ccFallback: cc, fixedLat: fixed_lat, fixedLon: fixed_lon, fixedCity, fixedRegion }
+          all.push(
+            normalizeEvent(
+              {
+                title: r.title,
+                start: r.start,
+                end: r.end,
+                place: r.place,
+                url: r.url,
+                lat: fixed_lat,
+                lon: fixed_lon,
+                category: src.category || "culture",
+                country_code: cc
+              },
+              { source: src.id || "ics", ccFallback: cc, fixedLat: fixed_lat, fixedLon: fixed_lon, fixedCity, fixedRegion }
+            )
           );
-          all.push(ev);
         }
+        stats.sources_ok++;
       } else {
         const items = parseRss(txt);
-
-        // IMPORTANT: pubDate è data del post, spesso OK come “quando pubblicato”.
-        // Se manca, NON buttiamo via: mettiamo start=null (andrà in fondo).
+        let added = 0;
         for (const it of items) {
-          const start = toISODateOnly(it.pubDate) || null;
+          const start = toISODateOnly(it.pubDate);
+          if (!start) continue;
 
-          const ev = normalizeEvent(
-            {
-              title: it.title,
-              start,
-              end: null,
-              place: fixedCity,
-              url: it.link,
-              lat: fixed_lat,
-              lon: fixed_lon,
-              category: src.category || "other",
-              country_code: cc
-            },
-            { source: src.id || "rss", ccFallback: cc, fixedLat: fixed_lat, fixedLon: fixed_lon, fixedCity, fixedRegion }
+          all.push(
+            normalizeEvent(
+              {
+                title: it.title,
+                start,
+                end: null,
+                place: fixedCity,
+                url: it.link,
+                lat: fixed_lat,
+                lon: fixed_lon,
+                category: src.category || "other",
+                country_code: cc
+              },
+              { source: src.id || "rss", ccFallback: cc, fixedLat: fixed_lat, fixedLon: fixed_lon, fixedCity, fixedRegion }
+            )
           );
-          all.push(ev);
+          added++;
         }
+        if (added > 0) stats.sources_ok++;
+        else stats.sources_fail++;
       }
-
-      ok++;
-      await sleep(120);
     } catch (e) {
-      fail++;
-      console.warn(`⚠️ RSS/ICS fail: ${src?.id || src?.url} → ${e.message || e}`);
+      stats.sources_fail++;
+      console.warn(`⚠️ Source fail: ${src?.id || src?.url} → ${e.message || e}`);
     }
   }
 
-  all = dedupe(all);
-  all = keepOnlyCoords(all);
+  // 2) Overpass fallback (solo se config ha coverage)
+  if (overpassEnabled) {
+    // Nota: qui puoi reinserire overpass in futuro.
+    // Per il test Veneto ci basta già ICS + (eventuale) fallback più avanti.
+  }
 
+  all = dedupe(all);
+  all = dropNoCoords(all);
+
+  // periodo
   const now = new Date();
   const maxT = now.getTime() + daysAhead * 24 * 3600 * 1000;
-
-  // keep: start in window OR start missing (in fondo)
   all = all.filter(e => {
-    if (!e.start) return true;
-    const t = new Date(e.start).getTime();
-    if (!Number.isFinite(t)) return false;
-    return t <= maxT;
+    const t = e.start ? new Date(e.start).getTime() : NaN;
+    return Number.isFinite(t) && t >= now.getTime() - 2 * 24 * 3600 * 1000 && t <= maxT;
   });
 
-  all = sortEvents(all).slice(0, maxEvents);
-  kept = all.length;
+  // cap
+  all = all.slice(0, maxEvents);
+  stats.kept = all.length;
 
   ensureDir(path.dirname(OUT_PATH));
   const out = {
@@ -320,12 +315,12 @@ async function main() {
     count: all.length,
     days_ahead: daysAhead,
     events: all,
-    stats: { sources_ok: ok, sources_fail: fail, kept }
+    stats
   };
 
   fs.writeFileSync(OUT_PATH, JSON.stringify(out, null, 2), "utf8");
   console.log(`✅ Wrote ${OUT_PATH} (${out.count} events)`);
-  console.log(`ℹ️ sources ok=${ok} fail=${fail} kept=${kept}`);
+  console.log("Stats:", out.stats);
 }
 
 main().catch((e) => {
