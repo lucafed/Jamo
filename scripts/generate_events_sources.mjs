@@ -1,13 +1,12 @@
-// scripts/generate_events_sources.mjs (v2 robust)
+// scripts/generate_events_sources.mjs
 // Generate events_sources.generated.json from data/events/feeds_catalog.json
-// - If catalog missing -> fallback to events_sources.json (never fail the workflow)
+// Node >= 20, type: module
 
 import fs from "fs";
 import path from "path";
 
 const ROOT = process.cwd();
 const CATALOG_PATH = path.join(ROOT, "data", "events", "feeds_catalog.json");
-const FALLBACK_PATH = path.join(ROOT, "events_sources.json");
 const OUT_PATH = path.join(ROOT, "events_sources.generated.json");
 
 function readJSON(p, fallback = null) {
@@ -20,7 +19,7 @@ function readJSON(p, fallback = null) {
 
 function writeJSON(p, obj) {
   fs.mkdirSync(path.dirname(p), { recursive: true });
-  fs.writeFileSync(p, JSON.stringify(obj, null, 2));
+  fs.writeFileSync(p, JSON.stringify(obj, null, 2), "utf8");
 }
 
 function norm(s) {
@@ -45,19 +44,18 @@ function pickCategory(cat) {
 }
 
 function buildSource(entry, { ccFallback, defaultRegionFallback }) {
-  const type = String(entry.type || "").toLowerCase();
+  const type = String(entry.type || "").toLowerCase().trim();
   if (type !== "rss" && type !== "ics") return null;
 
   const url = String(entry.url || "").trim();
-  if (!url) return null;
-  if (url.includes("INCOLLA_QUI")) return null;
+  if (!url || url.includes("INCOLLA_QUI")) return null;
 
   const idBase =
     entry.id ||
     [
       entry.scope || "src",
       entry.cc || ccFallback || "",
-      entry.city || entry.place || entry.region || "",
+      entry.city || entry.place || entry.region || entry.default_place || "",
       entry.category || "",
       type,
     ]
@@ -72,12 +70,10 @@ function buildSource(entry, { ccFallback, defaultRegionFallback }) {
     id: idBase || `src_${Math.random().toString(16).slice(2)}`,
     type,
     url,
-
     default_region: String(entry.default_region || defaultRegionFallback || "").trim(),
     default_place: String(entry.default_place || entry.city || entry.place || "").trim(),
     category: pickCategory(entry.category),
-
-    country_code: String(entry.cc || ccFallback || "").toUpperCase(),
+    country_code: String(entry.cc || ccFallback || "").toUpperCase()
   };
 
   if (fixed_lat != null) src.fixed_lat = fixed_lat;
@@ -87,24 +83,10 @@ function buildSource(entry, { ccFallback, defaultRegionFallback }) {
 }
 
 function main() {
-  let catalog = readJSON(CATALOG_PATH, null);
-
-  // Fallback: se manca catalogo, usa events_sources.json
+  const catalog = readJSON(CATALOG_PATH, null);
   if (!catalog) {
-    const fb = readJSON(FALLBACK_PATH, null);
-    if (!fb) {
-      console.error(`❌ Missing catalog (${CATALOG_PATH}) AND missing fallback (${FALLBACK_PATH})`);
-      process.exit(2);
-    }
-    writeJSON(OUT_PATH, {
-      ...fb,
-      generated_at: new Date().toISOString(),
-      catalog_path: null,
-      note: "generated from events_sources.json fallback because feeds_catalog.json was missing"
-    });
-    console.log(`ℹ️ Catalog missing → fallback used: ${path.relative(ROOT, FALLBACK_PATH)}`);
-    console.log(`✅ Generated: ${path.relative(ROOT, OUT_PATH)}`);
-    return;
+    console.error(`❌ Missing catalog: ${CATALOG_PATH}`);
+    process.exit(2);
   }
 
   const days_ahead = Number(catalog.days_ahead || 60);
@@ -112,20 +94,20 @@ function main() {
 
   const providers = {
     osm_overpass: {
-      enabled: !!(catalog.providers?.osm_overpass?.enabled ?? false),
-      timeout_ms: Number(catalog.providers?.osm_overpass?.timeout_ms || 30000),
-    },
+      enabled: !!(catalog.providers?.osm_overpass?.enabled ?? true),
+      timeout_ms: Number(catalog.providers?.osm_overpass?.timeout_ms || 45000)
+    }
   };
 
   const coverage = {
     italy: {
-      enabled: !!(catalog.coverage?.italy?.enabled ?? false),
-      cities: Array.isArray(catalog.coverage?.italy?.cities) ? catalog.coverage.italy.cities : [],
+      enabled: !!(catalog.coverage?.italy?.enabled ?? true),
+      cities: Array.isArray(catalog.coverage?.italy?.cities) ? catalog.coverage.italy.cities : []
     },
     europe: {
       enabled: !!(catalog.coverage?.europe?.enabled ?? false),
-      cities: Array.isArray(catalog.coverage?.europe?.cities) ? catalog.coverage.europe.cities : [],
-    },
+      cities: Array.isArray(catalog.coverage?.europe?.cities) ? catalog.coverage.europe.cities : []
+    }
   };
 
   const rss_ics_sources = [];
@@ -149,7 +131,7 @@ function main() {
     coverage,
     rss_ics_sources,
     generated_at: new Date().toISOString(),
-    catalog_path: "data/events/feeds_catalog.json",
+    catalog_path: "data/events/feeds_catalog.json"
   };
 
   writeJSON(OUT_PATH, out);
