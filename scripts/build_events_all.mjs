@@ -1,22 +1,14 @@
 #!/usr/bin/env node
 /**
- * Jamo — build_events_all.mjs (v2.3 STABLE + NO-WIPE)
- * - Config (tollerante):
+ * Jamo — build_events_all.mjs (v2.3 SAFE-NO-EMPTY + DEBUG)
+ * - Config:
  *    1) events_sources.generated.json (preferred)
  *    2) events_sources.json (fallback)
- *
- * - Output:
- *    public/data/events/events_all.json
- *
- * - Sources:
- *    RSS + ICS (Overpass non implementato qui; lo gestisci altrove)
- *
- * - FIX:
- *    ✅ Non sovrascrive il dataset buono se la nuova run produce count=0
- *    ✅ Supporta config keys: rss_ics_sources / sources / items
- *    ✅ include_past_days opzionale (default 0) per test/debug
- *    ✅ parse numeri con virgola
- *    ✅ geocoding fallback (Nominatim) con cache cache/geocode-cache.json
+ * - Output: public/data/events/events_all.json
+ * - Sources: RSS + ICS
+ * - IMPORTANT:
+ *    ✅ If new build returns 0 events, DO NOT overwrite existing dataset.
+ *    ✅ Prints per-source errors (HTTP/status/first chars) to debug.
  */
 
 import fs from "fs";
@@ -29,10 +21,15 @@ const CONFIG_GEN = path.join(ROOT, "events_sources.generated.json");
 const CONFIG_FALLBACK = path.join(ROOT, "events_sources.json");
 
 const OUT_PATH = path.join(ROOT, "public", "data", "events", "events_all.json");
+const OUT_DIR = path.dirname(OUT_PATH);
+
 const CACHE_DIR = path.join(ROOT, "cache");
 const GEOCACHE_PATH = path.join(CACHE_DIR, "geocode-cache.json");
 
-const UA = process.env.JAMO_UA || "JamoEventsBuilder/2.3 (+https://jamo-seven.vercel.app)";
+const UA =
+  process.env.JAMO_UA ||
+  "Mozilla/5.0 (compatible; JamoEventsBot/1.0; +https://jamo-seven.vercel.app)";
+
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 function ensureDir(p) {
@@ -57,15 +54,14 @@ function toISO(d) {
   }
 }
 function sha1(s) {
-  return crypto.createHash("sha1").update(String(s)).digest("hex").slice(0, 10);
+  return crypto.createHash("sha1").update(String(s)).digest("hex").slice(0, 8);
 }
 function toNum(x) {
   if (x === null || x === undefined) return NaN;
   if (typeof x === "number") return x;
   const s = String(x).trim();
   if (!s) return NaN;
-  const norm = s.replace(",", ".");
-  const v = Number(norm);
+  const v = Number(s.replace(",", "."));
   return Number.isFinite(v) ? v : NaN;
 }
 
@@ -90,14 +86,18 @@ async function fetchText(url, { timeoutMs = 45000 } = {}) {
       cache: "no-store",
       redirect: "follow",
     });
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    if (!r.ok) {
+      const body = await r.text().catch(() => "");
+      const snippet = body ? body.slice(0, 240) : "";
+      throw new Error(`HTTP ${r.status} ${r.statusText} | ${snippet}`);
+    }
     return await r.text();
   } finally {
     clearTimeout(t);
   }
 }
 
-/* ---------------- RSS (light) ---------------- */
+/* ---------------- RSS parser (light, safe) ---------------- */
 
 function extractXmlBlocks(xml, tag) {
   const re = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, "gi");
@@ -106,7 +106,6 @@ function extractXmlBlocks(xml, tag) {
   while ((m = re.exec(xml))) out.push(m[1]);
   return out;
 }
-
 function extractFirst(block, tag) {
   const re = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, "i");
   const m = re.exec(block);
@@ -114,34 +113,32 @@ function extractFirst(block, tag) {
   const txt = String(m[1]).replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1");
   return safeText(txt);
 }
-
 function parseRss(xml) {
   const items = extractXmlBlocks(xml, "item").length
     ? extractXmlBlocks(xml, "item")
-    : extractXmlBlocks(xml, "entry"); // atom-ish
+    : extractXmlBlocks(xml, "entry");
 
   return items.map((blk) => {
     const title = extractFirst(blk, "title");
     const link = extractFirst(blk, "link") || extractFirst(blk, "id");
     const pubDate =
-      extractFirst(blk, "pubDate") || extractFirst(blk, "published") || extractFirst(blk, "updated");
+      extractFirst(blk, "pubDate") ||
+      extractFirst(blk, "published") ||
+      extractFirst(blk, "updated");
     const description = extractFirst(blk, "description") || extractFirst(blk, "summary") || "";
     return { title, link, pubDate, description };
   });
 }
 
-/* ---------------- ICS (VEVENT minimal) ---------------- */
+/* ---------------- ICS parser (minimal VEVENT) ---------------- */
 
 function unfoldIcsLines(s) {
-  // RFC5545 unfold: linee continuate iniziano con space/tab
   return s.replace(/\r?\n[ \t]/g, "");
 }
-
 function parseIcsDate(val) {
   if (!val) return null;
   const v = String(val).trim();
 
-  // DATE: 20260122
   if (/^\d{8}$/.test(v)) {
     const yyyy = v.slice(0, 4);
     const mm = v.slice(4, 6);
@@ -149,7 +146,6 @@ function parseIcsDate(val) {
     return toISO(`${yyyy}-${mm}-${dd}T00:00:00Z`);
   }
 
-  // DATE-TIME: 20260122T010000Z or 20260122T010000
   const m = v.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})?(Z)?$/);
   if (!m) return null;
 
@@ -159,20 +155,16 @@ function parseIcsDate(val) {
     hh = m[4],
     mi = m[5],
     ss = m[6] || "00";
-  // trattiamo come UTC per semplicità
   return toISO(`${yyyy}-${mm}-${dd}T${hh}:${mi}:${ss}Z`);
 }
-
 function parseIcs(text) {
   const s = unfoldIcsLines(text);
-
   const blocks = s
     .split("BEGIN:VEVENT")
     .slice(1)
     .map((x) => x.split("END:VEVENT")[0] || "");
 
   const events = [];
-
   for (const b of blocks) {
     const get = (key) => {
       const re = new RegExp(`^${key}(?:;[^:]*)?:(.*)$`, "mi");
@@ -199,16 +191,22 @@ function parseIcs(text) {
       url: url || "",
     });
   }
-
   return events;
 }
 
 /* ---------------- Normalize + dedupe ---------------- */
 
-function normalizeEvent(
-  e,
-  { source, ccFallback, fixedLat, fixedLon, fixedCity, fixedRegion, categoryFallback } = {}
-) {
+function normalizeEvent(e, opt = {}) {
+  const {
+    source,
+    ccFallback,
+    fixedLat,
+    fixedLon,
+    fixedCity,
+    fixedRegion,
+    categoryFallback,
+  } = opt;
+
   const title = safeText(e.title || e.name || "Evento");
   const start = e.start ? toISO(e.start) : null;
   const end = e.end ? toISO(e.end) : null;
@@ -269,7 +267,7 @@ function sortEvents(rows) {
   return rows;
 }
 
-/* ---------------- Geocoding fallback (cache) ---------------- */
+/* ---------------- Geocoding cache (optional) ---------------- */
 
 function loadGeoCache() {
   try {
@@ -280,16 +278,13 @@ function loadGeoCache() {
     return {};
   }
 }
-
 function saveGeoCache(cache) {
   ensureDir(CACHE_DIR);
   fs.writeFileSync(GEOCACHE_PATH, JSON.stringify(cache, null, 2), "utf8");
 }
-
 function geoKey(q) {
   return safeText(q).toLowerCase();
 }
-
 async function geocodeNominatim(q, { timeoutMs = 45000 } = {}) {
   const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q=${encodeURIComponent(
     q
@@ -308,44 +303,41 @@ async function geocodeNominatim(q, { timeoutMs = 45000 } = {}) {
   if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
   return { lat, lon };
 }
-
 async function geocodeIfMissingCoords(e, { timeoutMs, cache }) {
-  if (Number.isFinite(e.lat) && Number.isFinite(e.lon)) return false;
+  if (Number.isFinite(e.lat) && Number.isFinite(e.lon)) return e;
 
-  const qParts = [e.place, e.city, e.region, e.country_code || "", "Italia"]
-    .map(safeText)
-    .filter(Boolean);
-
-  const q = qParts.join(", ");
-  if (!q) return false;
+  const q = [e.place, e.city, e.region, "Italia"].map(safeText).filter(Boolean).join(", ");
+  if (!q) return e;
 
   const k = geoKey(q);
   if (cache[k] && Number.isFinite(cache[k].lat) && Number.isFinite(cache[k].lon)) {
     e.lat = cache[k].lat;
     e.lon = cache[k].lon;
-    return true;
+    return e;
   }
 
   const res = await geocodeNominatim(q, { timeoutMs });
-  if (!res) return false;
+  if (!res) return e;
 
   cache[k] = { lat: res.lat, lon: res.lon, ts: nowISO() };
   e.lat = res.lat;
   e.lon = res.lon;
-  return true;
+  return e;
 }
 
-/* ---------------- Read previous OUT (for NO-WIPE) ---------------- */
+/* ---------------- SAFE WRITE ---------------- */
 
-function readPrevOut() {
+function readExistingOut() {
   try {
     if (!fs.existsSync(OUT_PATH)) return null;
-    const j = JSON.parse(fs.readFileSync(OUT_PATH, "utf8"));
-    if (!j || typeof j !== "object") return null;
-    return j;
+    return JSON.parse(fs.readFileSync(OUT_PATH, "utf8"));
   } catch {
     return null;
   }
+}
+function writeOut(out) {
+  ensureDir(OUT_DIR);
+  fs.writeFileSync(OUT_PATH, JSON.stringify(out, null, 2), "utf8");
 }
 
 /* ---------------- MAIN ---------------- */
@@ -354,19 +346,17 @@ async function main() {
   const cfg = readConfig();
 
   const daysAhead = clamp(Number(cfg.days_ahead) || 90, 1, 365);
-  const includePastDays = clamp(Number(cfg.include_past_days) || 0, 0, 3650); // 0 = solo futuri
   const maxEvents = clamp(Number(cfg.max_events) || 50000, 100, 50000);
-
   const timeoutMs = clamp(Number(cfg?.providers?.osm_overpass?.timeout_ms) || 45000, 5000, 120000);
 
-  const sources =
+  const rssIcs =
     (Array.isArray(cfg?.rss_ics_sources) && cfg.rss_ics_sources) ||
     (Array.isArray(cfg?.sources) && cfg.sources) ||
     (Array.isArray(cfg?.items) && cfg.items) ||
     [];
 
   const stats = {
-    sources_total: sources.length,
+    sources_total: rssIcs.length,
     sources_ok: 0,
     sources_fail: 0,
     raw: 0,
@@ -375,11 +365,12 @@ async function main() {
     dropped_no_coords: 0,
     dropped_out_of_range: 0,
     kept: 0,
+    errors: [],
   };
 
   let all = [];
 
-  for (const src of sources) {
+  for (const src of rssIcs) {
     try {
       if (!src?.url) continue;
 
@@ -405,7 +396,7 @@ async function main() {
                 title: r.title,
                 start: r.start,
                 end: r.end,
-                place: r.place || fixedCity,
+                place: r.place,
                 url: r.url,
                 lat: Number.isFinite(fixed_lat) ? fixed_lat : null,
                 lon: Number.isFinite(fixed_lon) ? fixed_lon : null,
@@ -413,7 +404,7 @@ async function main() {
                 country_code: cc,
               },
               {
-                source: src.id || "ics",
+                source: src.id || src.url || "ics",
                 ccFallback: cc,
                 fixedLat: fixed_lat,
                 fixedLon: fixed_lon,
@@ -432,6 +423,7 @@ async function main() {
         for (const it of items) {
           const start = toISO(it.pubDate);
           if (!start) continue;
+
           all.push(
             normalizeEvent(
               {
@@ -446,7 +438,7 @@ async function main() {
                 country_code: cc,
               },
               {
-                source: src.id || "rss",
+                source: src.id || src.url || "rss",
                 ccFallback: cc,
                 fixedLat: fixed_lat,
                 fixedLon: fixed_lon,
@@ -462,48 +454,49 @@ async function main() {
         if (added > 0) stats.sources_ok++;
         else stats.sources_fail++;
       } else {
-        // unknown type
-        stats.sources_fail++;
+        // ignore unknown type
       }
 
       await sleep(140);
     } catch (e) {
       stats.sources_fail++;
-      console.warn(`⚠️ Source fail: ${src?.id || src?.url} → ${e?.message || e}`);
-      await sleep(220);
+      const msg = String(e?.message || e);
+      stats.errors.push({ id: src?.id || "", url: src?.url || "", err: msg.slice(0, 500) });
+      console.warn(`⚠️ Source FAIL: ${src?.id || src?.url} → ${msg}`);
+      await sleep(200);
     }
   }
 
   stats.raw = all.length;
-
   all = dedupe(all);
   stats.deduped = all.length;
 
-  // time window: [now - includePastDays .. now + daysAhead]
+  // time window [now .. now+daysAhead]
   const now = new Date();
   const nowT = now.getTime();
-  const minT = nowT - includePastDays * 24 * 3600 * 1000;
   const maxT = nowT + daysAhead * 24 * 3600 * 1000;
 
   all = all.filter((e) => {
     if (!e.start) return false;
     const t = new Date(e.start).getTime();
-    const ok = Number.isFinite(t) && t >= minT && t <= maxT;
+    const ok = Number.isFinite(t) && t >= nowT && t <= maxT;
     if (!ok) stats.dropped_out_of_range++;
     return ok;
   });
 
-  // geocode missing coords
+  // geocode if missing
   const cache = loadGeoCache();
   let geocoded = 0;
 
   for (const e of all) {
-    if (Number.isFinite(e.lat) && Number.isFinite(e.lon)) continue;
+    const has = Number.isFinite(e.lat) && Number.isFinite(e.lon);
+    if (has) continue;
 
-    const did = await geocodeIfMissingCoords(e, { timeoutMs, cache });
-    if (did) {
+    await geocodeIfMissingCoords(e, { timeoutMs, cache });
+    const after = Number.isFinite(e.lat) && Number.isFinite(e.lon);
+    if (after) {
       geocoded++;
-      await sleep(160);
+      await sleep(120);
     } else {
       await sleep(40);
     }
@@ -512,7 +505,7 @@ async function main() {
   stats.geocoded = geocoded;
   saveGeoCache(cache);
 
-  // drop without coords (client needs distance)
+  // drop without coords
   all = all.filter((e) => {
     const ok = Number.isFinite(e.lat) && Number.isFinite(e.lon);
     if (!ok) stats.dropped_no_coords++;
@@ -522,29 +515,36 @@ async function main() {
   all = sortEvents(all).slice(0, maxEvents);
   stats.kept = all.length;
 
-  // ✅ NO-WIPE: se count==0 e il file precedente era buono, NON sovrascrivere
-  const prev = readPrevOut();
-  const prevCount = Number(prev?.count ?? 0);
-
-  if (all.length === 0 && prevCount > 0) {
-    console.log(
-      `⚠️ NO-WIPE: new count=0 but previous count=${prevCount}. Keeping previous events_all.json (not overwriting).`
-    );
-    // scriviamo solo cache, ma NON il file eventi
-    process.exit(0);
-  }
-
-  ensureDir(path.dirname(OUT_PATH));
   const out = {
     updated_at: nowISO(),
     count: all.length,
     days_ahead: daysAhead,
-    include_past_days: includePastDays,
     events: all,
     stats,
   };
 
-  fs.writeFileSync(OUT_PATH, JSON.stringify(out, null, 2), "utf8");
+  // ✅ SAFE: do not overwrite old dataset with empty
+  if (out.count === 0) {
+    const prev = readExistingOut();
+    const prevCount = Number(prev?.count || 0);
+
+    console.error("❌ Build produced 0 events.");
+    if (stats.errors?.length) {
+      console.error("Source errors:", JSON.stringify(stats.errors, null, 2));
+    }
+
+    if (prev && prevCount > 0) {
+      console.error(`✅ Keeping previous dataset (${prevCount} events). NOT overwriting.`);
+      // still update stats in log, but do not write file
+      process.exit(0);
+    } else {
+      console.error("⚠️ No previous dataset to keep. Writing empty output.");
+      writeOut(out);
+      process.exit(0);
+    }
+  }
+
+  writeOut(out);
   console.log(`✅ Wrote ${OUT_PATH} (${out.count} events)`);
   console.log("Stats:", out.stats);
 }
