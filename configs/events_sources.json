@@ -1,0 +1,75 @@
+{
+  "days_ahead": 120,
+  "max_events": 50000,
+
+  "rss_ics_sources": [
+
+    /* =========================
+       🇮🇹 ITALIA — NAZIONALE
+       ========================= */
+
+    {
+      "id": "cultura_gov_it",
+      "type": "rss",
+      "url": "https://www.cultura.gov.it/rss/eventi.xml",
+      "category": "culture",
+      "country_code": "IT"
+    },
+
+    {
+      "id": "turismo_italia",
+      "type": "rss",
+      "url": "https://www.italia.it/rss/eventi.xml",
+      "category": "culture",
+      "country_code": "IT"
+    },
+
+    /* =========================
+       🇮🇹 VENETO (TEST FORTE)
+       ========================= */
+
+    {
+      "id": "verona_turismo",
+      "type": "rss",
+      "url": "https://www.turismoverona.eu/rss/eventi",
+      "fixed_lat": 45.4384,
+      "fixed_lon": 10.9916,
+      "category": "culture",
+      "country_code": "IT"
+    },
+
+    {
+      "id": "venezia_unica",
+      "type": "rss",
+      "url": "https://www.veneziaunica.it/rss/eventi",
+      "fixed_lat": 45.4408,
+      "fixed_lon": 12.3155,
+      "category": "culture",
+      "country_code": "IT"
+    },
+
+    /* =========================
+       🇪🇺 EUROPA — CAPITALI
+       ========================= */
+
+    {
+      "id": "paris_events",
+      "type": "ics",
+      "url": "https://www.paris.fr/events.ics",
+      "fixed_lat": 48.8566,
+      "fixed_lon": 2.3522,
+      "category": "culture",
+      "country_code": "FR"
+    },
+
+    {
+      "id": "berlin_events",
+      "type": "rss",
+      "url": "https://www.visitberlin.de/en/rss/events",
+      "fixed_lat": 52.5200,
+      "fixed_lon": 13.4050,
+      "category": "culture",
+      "country_code": "DE"
+    }
+  ]
+}
