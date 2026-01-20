@@ -1,34 +1,63 @@
 {
-  "days_ahead": 90,
-  "max_events": 120000,
+  "days_ahead": 120,
+  "max_events": 150000,
 
-  "geocode": {
-    "enabled": true,
-    "provider": "nominatim",
-    "user_agent": "JamoEventsBot/1.0 (github-actions)",
-    "rate_limit_ms": 1100
+  "providers": {
+    "osm_overpass": {
+      "enabled": true,
+      "timeout_ms": 45000
+    },
+    "ics": {
+      "enabled": true,
+      "timeout_ms": 45000
+    }
   },
 
   "coverage": {
     "italy": {
       "enabled": true,
-      "cities_file": "data/cities/it_capoluoghi_provincia.json",
-      "radius_km": 22,
-      "cc": "IT"
+      "cities": [
+        { "name": "Torino", "lat": 45.0703, "lon": 7.6869, "radius_km": 30, "cc": "IT" },
+        { "name": "Milano", "lat": 45.4642, "lon": 9.1900, "radius_km": 35, "cc": "IT" },
+        { "name": "Venezia", "lat": 45.4408, "lon": 12.3155, "radius_km": 30, "cc": "IT" },
+        { "name": "Verona", "lat": 45.4384, "lon": 10.9916, "radius_km": 30, "cc": "IT" },
+        { "name": "Bologna", "lat": 44.4949, "lon": 11.3426, "radius_km": 30, "cc": "IT" },
+        { "name": "Firenze", "lat": 43.7696, "lon": 11.2558, "radius_km": 30, "cc": "IT" },
+        { "name": "Roma", "lat": 41.9028, "lon": 12.4964, "radius_km": 35, "cc": "IT" },
+        { "name": "Napoli", "lat": 40.8518, "lon": 14.2681, "radius_km": 30, "cc": "IT" },
+        { "name": "Bari", "lat": 41.1171, "lon": 16.8719, "radius_km": 28, "cc": "IT" },
+        { "name": "Palermo", "lat": 38.1157, "lon": 13.3615, "radius_km": 28, "cc": "IT" },
+        { "name": "Cagliari", "lat": 39.2238, "lon": 9.1217, "radius_km": 28, "cc": "IT" }
+      ]
     },
     "europe": {
       "enabled": true,
-      "cities_file": "data/cities/eu_capitals.json",
-      "radius_km": 24
+      "cities": [
+        { "name": "Paris", "lat": 48.8566, "lon": 2.3522, "radius_km": 35, "cc": "FR" },
+        { "name": "London", "lat": 51.5074, "lon": -0.1278, "radius_km": 40, "cc": "GB" },
+        { "name": "Berlin", "lat": 52.5200, "lon": 13.4050, "radius_km": 35, "cc": "DE" },
+        { "name": "Madrid", "lat": 40.4168, "lon": -3.7038, "radius_km": 35, "cc": "ES" },
+        { "name": "Barcelona", "lat": 41.3851, "lon": 2.1734, "radius_km": 35, "cc": "ES" },
+        { "name": "Amsterdam", "lat": 52.3676, "lon": 4.9041, "radius_km": 30, "cc": "NL" },
+        { "name": "Lisbon", "lat": 38.7223, "lon": -9.1393, "radius_km": 30, "cc": "PT" },
+        { "name": "Vienna", "lat": 48.2082, "lon": 16.3738, "radius_km": 30, "cc": "AT" },
+        { "name": "Prague", "lat": 50.0755, "lon": 14.4378, "radius_km": 30, "cc": "CZ" },
+        { "name": "Budapest", "lat": 47.4979, "lon": 19.0402, "radius_km": 30, "cc": "HU" }
+      ]
     }
   },
 
   "sources": [
     {
-      "type": "seed_massive",
       "scope": "italy",
-      "category": "mix",
-      "note": "TEMP fallback. Replace with real sources."
+      "cc": "IT",
+      "type": "ics",
+      "url": "https://archiviodistatoverona.cultura.gov.it/?eventDisplay=list&ical=1&post_type=tribe_events",
+      "category": "culture",
+      "default_place": "Verona",
+      "default_region": "Veneto",
+      "fixed_lat": 45.4384,
+      "fixed_lon": 10.9916
     }
   ]
 }
