@@ -1,7 +1,7 @@
 name: Build Events Dataset
 
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
   schedule:
     - cron: "15 3 * * *"
 
@@ -15,60 +15,58 @@ concurrency:
 jobs:
   build-events:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 25
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Setup Node 20
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "npm"
 
-      - name: Install
+      - name: Install dependencies (none)
         run: |
-          if [ -f package-lock.json ]; then
-            npm ci
-          else
-            npm install --no-audit --no-fund
-          fi
+          echo "No dependencies to install"
 
-      - name: Build events
+      - name: Build events dataset
         env:
-          JAMO_UA: "JamoEventsBot/1.0 (github-actions)"
           NODE_OPTIONS: "--dns-result-order=ipv4first"
-          JAMO_EVENTS_CONFIG: "configs/events.config.json"
-        run: npm run build:events
+        run: |
+          node scripts/build_events_all.mjs
 
-      - name: Guard: do not commit empty dataset
+      - name: Guard – prevent empty dataset
         run: |
           node - <<'NODE'
           import fs from "fs";
           const p = "public/data/events/events_all.json";
+          if (!fs.existsSync(p)) {
+            console.error("❌ events_all.json not found");
+            process.exit(1);
+          }
           const j = JSON.parse(fs.readFileSync(p, "utf8"));
           const count = Number(j.count || 0);
-          console.log("events_all.json:", { updated_at: j.updated_at, count });
+          console.log("events_all.json count =", count);
           if (!count) {
-            console.error("❌ Guard triggered: count=0. Not committing empty dataset.");
+            console.error("❌ Dataset is empty, aborting commit");
             process.exit(1);
           }
           NODE
 
-      - name: Commit & push (events only)
+      - name: Commit & push dataset
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git add public/data/events/events_all.json cache/geocode-cache.json configs/events.config.json || true
+          git add public/data/events/events_all.json
 
           if git diff --cached --quiet; then
-            echo "No changes to commit."
+            echo "No changes to commit"
             exit 0
           fi
 
-          git commit -m "chore(events): update"
+          git commit -m "chore(events): rebuild events dataset"
           git push
