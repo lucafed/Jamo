@@ -1,22 +1,12 @@
 {
-  "version": 1,
+  "updated_at": "2026-01-20T00:00:00.000Z",
   "cities": [
-    { "name": "Verona", "region": "Veneto", "country_code": "IT", "lat": 45.4386, "lon": 10.9944 },
-    { "name": "Milano", "region": "Lombardia", "country_code": "IT", "lat": 45.4642, "lon": 9.1900 },
-    { "name": "Roma", "region": "Lazio", "country_code": "IT", "lat": 41.9028, "lon": 12.4964 },
-    { "name": "Napoli", "region": "Campania", "country_code": "IT", "lat": 40.8518, "lon": 14.2681 },
-    { "name": "Torino", "region": "Piemonte", "country_code": "IT", "lat": 45.0703, "lon": 7.6869 },
-    { "name": "Venezia", "region": "Veneto", "country_code": "IT", "lat": 45.4408, "lon": 12.3155 },
-    { "name": "Bologna", "region": "Emilia-Romagna", "country_code": "IT", "lat": 44.4949, "lon": 11.3426 },
-    { "name": "Firenze", "region": "Toscana", "country_code": "IT", "lat": 43.7696, "lon": 11.2558 },
+    { "name": "Verona", "lat": 45.4384, "lon": 10.9916, "region": "Veneto", "country_code": "IT" },
+    { "name": "Milano", "lat": 45.4642, "lon": 9.1900, "region": "Lombardia", "country_code": "IT" },
+    { "name": "Roma", "lat": 41.9028, "lon": 12.4964, "region": "Lazio", "country_code": "IT" },
 
-    { "name": "Paris", "region": "Ile-de-France", "country_code": "FR", "lat": 48.8566, "lon": 2.3522 },
-    { "name": "London", "region": "England", "country_code": "GB", "lat": 51.5074, "lon": -0.1278 },
-    { "name": "Berlin", "region": "Berlin", "country_code": "DE", "lat": 52.5200, "lon": 13.4050 },
-    { "name": "Madrid", "region": "Comunidad de Madrid", "country_code": "ES", "lat": 40.4168, "lon": -3.7038 },
-    { "name": "Barcelona", "region": "Catalunya", "country_code": "ES", "lat": 41.3851, "lon": 2.1734 },
-    { "name": "Amsterdam", "region": "Noord-Holland", "country_code": "NL", "lat": 52.3676, "lon": 4.9041 },
-    { "name": "Vienna", "region": "Vienna", "country_code": "AT", "lat": 48.2082, "lon": 16.3738 },
-    { "name": "Prague", "region": "Prague", "country_code": "CZ", "lat": 50.0755, "lon": 14.4378 }
+    { "name": "Paris", "lat": 48.8566, "lon": 2.3522, "region": "Ile-de-France", "country_code": "FR" },
+    { "name": "Berlin", "lat": 52.5200, "lon": 13.4050, "region": "Berlin", "country_code": "DE" },
+    { "name": "Madrid", "lat": 40.4168, "lon": -3.7038, "region": "Community of Madrid", "country_code": "ES" }
   ]
 }
