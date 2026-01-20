@@ -1,62 +1,40 @@
-name: Build Events (daily)
+name: Build Events Dataset
 
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
   schedule:
     - cron: "15 3 * * *"
 
 permissions:
   contents: write
 
-concurrency:
-  group: jamo-events
-  cancel-in-progress: true
-
 jobs:
   build-events:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
-      - name: Setup Node 20
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
 
-      - name: Install
-        run: |
-          if [ -f package-lock.json ]; then
-            npm ci
-          else
-            npm install --no-audit --no-fund
-          fi
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
 
-      - name: Build events
-        env:
-          JAMO_UA: "JamoEventsBot/1.0 (github-actions)"
-          NODE_OPTIONS: "--dns-result-order=ipv4first"
+      - name: Build events dataset
         run: npm run build:events
 
-      - name: Guard: do not commit empty dataset
+      - name: Guard – prevent empty dataset
         run: |
-          node -e "const fs=require('fs'); const p='public/data/events/events_all.json'; const j=JSON.parse(fs.readFileSync(p,'utf8')); const c=Number(j.count||0); console.log('events_all.json count=',c); if(!c) process.exit(1);"
+          node -e "const fs=require('fs');const j=JSON.parse(fs.readFileSync('public/data/events/events_all.json','utf8'));if(!j.count||j.count===0){console.error('EMPTY EVENTS');process.exit(1)}"
 
-      - name: Commit & push (events only)
+      - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-
-          git add public/data/events/events_all.json public/data/events/cities_it_eu_min.json || true
-
-          if git diff --cached --quiet; then
-            echo "No changes to commit."
-            exit 0
-          fi
-
-          git commit -m "chore(events): daily update"
+          git add public/data/events/events_all.json
+          git commit -m "chore(events): update events dataset" || exit 0
           git push
