@@ -3,7 +3,7 @@
   "country": "IT",
   "area": "Veneto",
   "label_it": "Veneto • Borghi (pulito)",
-  "generated_at": "2026-01-13T04:01:51.749Z",
+  "generated_at": "2026-01-20T04:06:22.458Z",
   "places": [
     {
       "id": "node:66503077",
@@ -2018,6 +2018,7 @@
         "gfoss_id=2731",
         "name=Rivarolo Mantovano",
         "name:egl=Riaröl",
+        "name:ru=Ривароло-Мантовано",
         "place=village",
         "population=2792",
         "source=geodati.gfoss.it",
@@ -29321,6 +29322,7 @@
       "tags": [
         "gfoss_id=2683",
         "name=Asola",
+        "name:ru=Азола",
         "place=town",
         "population=10059",
         "source=geodati.gfoss.it",
@@ -49332,6 +49334,21 @@
       "score": 65
     },
     {
+      "id": "node:13452496313",
+      "name": "Sankt Florian - San Floriano",
+      "lat": 46.2845864,
+      "lon": 11.2414557,
+      "type": "borgo",
+      "borgo_type": "classico",
+      "visibility": "classica",
+      "tags": [
+        "name=Sankt Florian - San Floriano",
+        "place=hamlet",
+        "wikidata=Q135907001"
+      ],
+      "score": 65
+    },
+    {
       "id": "way:40193340",
       "name": "Zona industriale di Storo",
       "lat": 45.8412782,
@@ -51757,6 +51774,7 @@
         "gfoss_id=2688",
         "name=Bozzolo",
         "name:egl=Bòsul",
+        "name:ru=Боццоло",
         "place=village",
         "population=4086",
         "source=geodati.gfoss.it"
@@ -51843,6 +51861,7 @@
       "tags": [
         "gfoss_id=2712",
         "name=Marcaria",
+        "name:ru=Маркария",
         "place=village",
         "population=6974",
         "source=geodati.gfoss.it"
@@ -52036,6 +52055,7 @@
       "tags": [
         "gfoss_id=2689",
         "name=Canneto sull'Oglio",
+        "name:ru=Каннето-суль-Ольо",
         "place=village",
         "population=4543",
         "source=geodati.gfoss.it"
@@ -62346,14 +62366,14 @@
     },
     {
       "id": "node:443033483",
-      "name": "Pantianicco",
+      "name": "Pantianicco / Pantianins",
       "lat": 46.0223689,
       "lon": 13.0342227,
       "type": "borgo",
       "borgo_type": "chicca",
       "visibility": "chicca",
       "tags": [
-        "name=Pantianicco",
+        "name=Pantianicco / Pantianins",
         "name:fur=Pantianins",
         "place=village"
       ],
@@ -180871,6 +180891,7 @@
         "admin_level=8",
         "boundary=administrative",
         "name=Marcaria",
+        "name:ru=Маркария",
         "postal_code=46010",
         "ref:ISTAT=020031",
         "ref:catasto=E922",
@@ -181092,6 +181113,7 @@
         "boundary=administrative",
         "name=Rivarolo Mantovano",
         "name:egl=Riaröl",
+        "name:ru=Ривароло-Мантовано",
         "postal_code=46017",
         "ref:ISTAT=020050",
         "ref:catasto=H342",
@@ -181310,6 +181332,7 @@
         "boundary=administrative",
         "name=Bozzolo",
         "name:egl=Bòsul",
+        "name:ru=Боццоло",
         "postal_code=46012",
         "ref:ISTAT=020007",
         "ref:catasto=B110",
@@ -181889,6 +181912,7 @@
         "admin_level=8",
         "boundary=administrative",
         "name=Canneto sull'Oglio",
+        "name:ru=Каннето-суль-Ольо",
         "postal_code=46013",
         "ref:ISTAT=020008",
         "ref:catasto=B612",
@@ -182486,6 +182510,7 @@
         "admin_level=8",
         "boundary=administrative",
         "name=Asola",
+        "name:ru=Азола",
         "postal_code=46041",
         "ref:ISTAT=020002",
         "ref:catasto=A470",
@@ -194366,7 +194391,7 @@
     {
       "id": "relation:46785",
       "name": "Stenico",
-      "lat": 46.1133211,
+      "lat": 46.1133742,
       "lon": 10.8448067,
       "type": "borgo",
       "borgo_type": "classico",
@@ -196227,27 +196252,6 @@
         "type=boundary",
         "wikidata=Q297133",
         "wikipedia=it:Ossana"
-      ],
-      "score": 25
-    },
-    {
-      "id": "relation:47057",
-      "name": "Rivamonte Agordino",
-      "lat": 46.242379,
-      "lon": 12.0403786,
-      "type": "borgo",
-      "borgo_type": "classico",
-      "visibility": "classica",
-      "tags": [
-        "admin_level=8",
-        "boundary=administrative",
-        "name=Rivamonte Agordino",
-        "postal_code=32020",
-        "ref:ISTAT=025043",
-        "ref:catasto=H327",
-        "type=boundary",
-        "wikidata=Q39876",
-        "wikipedia=it:Rivamonte Agordino"
       ],
       "score": 25
     }
