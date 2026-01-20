@@ -1,7 +1,7 @@
-name: Build Events Dataset
+name: Build Events Dataset (daily)
 
 on:
-  workflow_dispatch:
+  workflow_dispatch: {}
   schedule:
     - cron: "15 3 * * *"
 
@@ -18,55 +18,56 @@ jobs:
     timeout-minutes: 25
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Setup Node.js
+      - name: Setup Node 20
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+          cache: "npm"
 
-      - name: Install dependencies (none)
+      - name: Install
         run: |
-          echo "No dependencies to install"
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install --no-audit --no-fund
+          fi
 
-      - name: Build events dataset
+      - name: Build events
         env:
+          JAMO_UA: "JamoEventsBot/1.0 (github-actions)"
           NODE_OPTIONS: "--dns-result-order=ipv4first"
-        run: |
-          node scripts/build_events_all.mjs
+        run: npm run build:events
 
-      - name: Guard – prevent empty dataset
+      - name: Guard: do not commit empty dataset
         run: |
           node - <<'NODE'
           import fs from "fs";
           const p = "public/data/events/events_all.json";
-          if (!fs.existsSync(p)) {
-            console.error("❌ events_all.json not found");
-            process.exit(1);
-          }
           const j = JSON.parse(fs.readFileSync(p, "utf8"));
           const count = Number(j.count || 0);
-          console.log("events_all.json count =", count);
+          console.log("events_all.json:", { updated_at: j.updated_at, count });
           if (!count) {
-            console.error("❌ Dataset is empty, aborting commit");
+            console.error("❌ Guard triggered: count=0. Not committing empty dataset.");
             process.exit(1);
           }
           NODE
 
-      - name: Commit & push dataset
+      - name: Commit & push (events only)
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git add public/data/events/events_all.json
+          git add public/data/events/events_all.json public/data/events/cities_it_eu_min.json || true
 
           if git diff --cached --quiet; then
-            echo "No changes to commit"
+            echo "No changes to commit."
             exit 0
           fi
 
-          git commit -m "chore(events): rebuild events dataset"
+          git commit -m "chore(events): daily update"
           git push
