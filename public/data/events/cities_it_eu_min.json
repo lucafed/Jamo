@@ -1,12 +1,62 @@
 {
-  "updated_at": "2026-01-20T00:00:00.000Z",
   "cities": [
-    { "name": "Verona", "lat": 45.4384, "lon": 10.9916, "region": "Veneto", "country_code": "IT" },
-    { "name": "Milano", "lat": 45.4642, "lon": 9.1900, "region": "Lombardia", "country_code": "IT" },
     { "name": "Roma", "lat": 41.9028, "lon": 12.4964, "region": "Lazio", "country_code": "IT" },
+    { "name": "Milano", "lat": 45.4642, "lon": 9.1900, "region": "Lombardia", "country_code": "IT" },
+    { "name": "Napoli", "lat": 40.8518, "lon": 14.2681, "region": "Campania", "country_code": "IT" },
+    { "name": "Torino", "lat": 45.0703, "lon": 7.6869, "region": "Piemonte", "country_code": "IT" },
+    { "name": "Palermo", "lat": 38.1157, "lon": 13.3615, "region": "Sicilia", "country_code": "IT" },
+    { "name": "Genova", "lat": 44.4056, "lon": 8.9463, "region": "Liguria", "country_code": "IT" },
+    { "name": "Bologna", "lat": 44.4949, "lon": 11.3426, "region": "Emilia-Romagna", "country_code": "IT" },
+    { "name": "Firenze", "lat": 43.7696, "lon": 11.2558, "region": "Toscana", "country_code": "IT" },
+    { "name": "Venezia", "lat": 45.4408, "lon": 12.3155, "region": "Veneto", "country_code": "IT" },
+    { "name": "Verona", "lat": 45.4384, "lon": 10.9916, "region": "Veneto", "country_code": "IT" },
+    { "name": "Padova", "lat": 45.4064, "lon": 11.8768, "region": "Veneto", "country_code": "IT" },
+    { "name": "Vicenza", "lat": 45.5455, "lon": 11.5354, "region": "Veneto", "country_code": "IT" },
+    { "name": "Treviso", "lat": 45.6669, "lon": 12.2430, "region": "Veneto", "country_code": "IT" },
+    { "name": "Trieste", "lat": 45.6495, "lon": 13.7768, "region": "Friuli-Venezia Giulia", "country_code": "IT" },
+    { "name": "Bari", "lat": 41.1171, "lon": 16.8719, "region": "Puglia", "country_code": "IT" },
+    { "name": "Catania", "lat": 37.5079, "lon": 15.0830, "region": "Sicilia", "country_code": "IT" },
+    { "name": "Cagliari", "lat": 39.2238, "lon": 9.1217, "region": "Sardegna", "country_code": "IT" },
+    { "name": "Perugia", "lat": 43.1107, "lon": 12.3908, "region": "Umbria", "country_code": "IT" },
+    { "name": "Pescara", "lat": 42.4618, "lon": 14.2161, "region": "Abruzzo", "country_code": "IT" },
+    { "name": "L'Aquila", "lat": 42.3506, "lon": 13.3995, "region": "Abruzzo", "country_code": "IT" },
 
-    { "name": "Paris", "lat": 48.8566, "lon": 2.3522, "region": "Ile-de-France", "country_code": "FR" },
+    { "name": "Paris", "lat": 48.8566, "lon": 2.3522, "region": "Île-de-France", "country_code": "FR" },
+    { "name": "Lyon", "lat": 45.7640, "lon": 4.8357, "region": "Auvergne-Rhône-Alpes", "country_code": "FR" },
+    { "name": "Marseille", "lat": 43.2965, "lon": 5.3698, "region": "Provence-Alpes-Côte d’Azur", "country_code": "FR" },
+
+    { "name": "Barcelona", "lat": 41.3851, "lon": 2.1734, "region": "Catalunya", "country_code": "ES" },
+    { "name": "Madrid", "lat": 40.4168, "lon": -3.7038, "region": "Comunidad de Madrid", "country_code": "ES" },
+    { "name": "Valencia", "lat": 39.4699, "lon": -0.3763, "region": "Comunitat Valenciana", "country_code": "ES" },
+
+    { "name": "Lisbon", "lat": 38.7223, "lon": -9.1393, "region": "Lisboa", "country_code": "PT" },
+    { "name": "Porto", "lat": 41.1579, "lon": -8.6291, "region": "Norte", "country_code": "PT" },
+
     { "name": "Berlin", "lat": 52.5200, "lon": 13.4050, "region": "Berlin", "country_code": "DE" },
-    { "name": "Madrid", "lat": 40.4168, "lon": -3.7038, "region": "Community of Madrid", "country_code": "ES" }
+    { "name": "Munich", "lat": 48.1351, "lon": 11.5820, "region": "Bayern", "country_code": "DE" },
+    { "name": "Hamburg", "lat": 53.5511, "lon": 9.9937, "region": "Hamburg", "country_code": "DE" },
+
+    { "name": "Vienna", "lat": 48.2082, "lon": 16.3738, "region": "Wien", "country_code": "AT" },
+    { "name": "Salzburg", "lat": 47.8095, "lon": 13.0550, "region": "Salzburg", "country_code": "AT" },
+
+    { "name": "Zurich", "lat": 47.3769, "lon": 8.5417, "region": "Zürich", "country_code": "CH" },
+    { "name": "Geneva", "lat": 46.2044, "lon": 6.1432, "region": "Genève", "country_code": "CH" },
+
+    { "name": "Amsterdam", "lat": 52.3676, "lon": 4.9041, "region": "Noord-Holland", "country_code": "NL" },
+    { "name": "Brussels", "lat": 50.8503, "lon": 4.3517, "region": "Bruxelles", "country_code": "BE" },
+
+    { "name": "Prague", "lat": 50.0755, "lon": 14.4378, "region": "Praha", "country_code": "CZ" },
+    { "name": "Budapest", "lat": 47.4979, "lon": 19.0402, "region": "Budapest", "country_code": "HU" },
+    { "name": "Warsaw", "lat": 52.2297, "lon": 21.0122, "region": "Mazowieckie", "country_code": "PL" },
+
+    { "name": "Copenhagen", "lat": 55.6761, "lon": 12.5683, "region": "Hovedstaden", "country_code": "DK" },
+    { "name": "Stockholm", "lat": 59.3293, "lon": 18.0686, "region": "Stockholm", "country_code": "SE" },
+    { "name": "Oslo", "lat": 59.9139, "lon": 10.7522, "region": "Oslo", "country_code": "NO" },
+
+    { "name": "Dublin", "lat": 53.3498, "lon": -6.2603, "region": "Leinster", "country_code": "IE" },
+    { "name": "London", "lat": 51.5072, "lon": -0.1276, "region": "England", "country_code": "GB" },
+
+    { "name": "Athens", "lat": 37.9838, "lon": 23.7275, "region": "Attica", "country_code": "GR" },
+    { "name": "Istanbul", "lat": 41.0082, "lon": 28.9784, "region": "İstanbul", "country_code": "TR" }
   ]
 }
