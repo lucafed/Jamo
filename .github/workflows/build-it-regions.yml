@@ -2,17 +2,8 @@ name: Build Italy Regions Datasets
 
 on:
   workflow_dispatch: {}
-  # opzionale: ogni notte
   schedule:
     - cron: "10 2 * * *"
-  # opzionale: quando tocchi scripts o config
-  push:
-    paths:
-      - "scripts/**"
-      - "package.json"
-      - "package-lock.json"
-      - "public/data/**"
-      - ".github/workflows/build-it-regions.yml"
 
 permissions:
   contents: write
@@ -24,10 +15,10 @@ concurrency:
 jobs:
   build-it-regions:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 90
 
     steps:
-      - name: Checkout (full history)
+      - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -38,7 +29,7 @@ jobs:
           node-version: "20"
           cache: "npm"
 
-      - name: Install
+      - name: Install deps
         run: |
           if [ -f package-lock.json ]; then
             npm ci
@@ -46,41 +37,35 @@ jobs:
             npm install --no-audit --no-fund
           fi
 
-      # ✅ (consigliato) pulisce SOLO output generati per evitare roba “vecchia”
-      - name: Clean generated outputs (safe)
+      # 🧹 pulizia sicura output
+      - name: Clean generated outputs
         run: |
-          # Se questi path sono diversi nel tuo repo, cambiali qui:
           rm -rf public/data/pois/regions || true
           mkdir -p public/data/pois/regions
 
+      # 🇮🇹 BUILD ITALIA — usa i TUOI script reali
       - name: Build IT regions datasets
         env:
-          JAMO_UA: "JamoDatasetsBot/1.0 (github-actions)"
-          NODE_OPTIONS: "--dns-result-order=ipv4first"
+          JAMO_UA: "JamoDatasetsBot/1.0"
         run: |
-          npm run build:region:core
-          npm run build:region:category
-          npm run build:regions:index
+          node scripts/build_pois_it_region_all.yml
+          node scripts/build-places-index.yml
 
-      # ✅ Commit & push SENZA rebase (mai più conflitti automatici)
-      - name: Commit & push (ff-only, no rebase)
+      # ✅ commit SENZA rebase (zero conflitti)
+      - name: Commit & push (ff-only)
         run: |
-          git config user.name  "github-actions[bot]"
+          git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          # Aggiungi qui SOLO i file generati da questa pipeline
-          git add public/data/pois/regions || true
+          git add public/data/pois/regions public/data/places || true
 
           if git diff --cached --quiet; then
-            echo "No changes to commit."
+            echo "No changes"
             exit 0
           fi
 
           git commit -m "chore(data): update italy regions datasets"
 
-          # 🔒 Importantissimo: niente rebase.
-          # Se origin/main è avanzato, fallisce qui (niente conflitti)
           git fetch origin main
           git pull --ff-only origin main
-
           git push origin HEAD:main
