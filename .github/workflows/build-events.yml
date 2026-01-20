@@ -1,7 +1,7 @@
-name: Build Events (daily)
+name: Build Events Dataset
 
 on:
-  workflow_dispatch:
+  workflow_dispatch: {}
   schedule:
     - cron: "15 3 * * *"
 
@@ -15,7 +15,7 @@ concurrency:
 jobs:
   build-events:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 20
 
     steps:
       - name: Checkout
@@ -28,7 +28,7 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Install dependencies
+      - name: Install deps
         run: |
           if [ -f package-lock.json ]; then
             npm ci
@@ -36,24 +36,33 @@ jobs:
             npm install --no-audit --no-fund
           fi
 
+      # 🔴 QUI È IL PUNTO CRITICO
+      # Node esegue SOLO un file .mjs
       - name: Build events dataset
-        run: npm run build:events
+        env:
+          JAMO_UA: "JamoEventsBot/1.0"
+        run: |
+          node scripts/build_events_all.mjs
 
+      # 🛡️ non rompere mai l’app se dataset vuoto
       - name: Guard empty dataset
         run: |
-          node scripts/guard_events.mjs
+          if [ ! -s public/data/events/events_all.json ]; then
+            echo '{"updated_at":null,"count":0,"events":[]}' > public/data/events/events_all.json
+          fi
 
       - name: Commit & push events
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git add public/data/events/events_all.json
+          git add public/data/events/events_all.json || true
 
           if git diff --cached --quiet; then
-            echo "No changes to commit"
+            echo "No changes"
             exit 0
           fi
 
-          git commit -m "chore(events): daily update"
-          git push
+          git commit -m "chore(events): update events dataset"
+          git pull --ff-only origin main
+          git push origin HEAD:main
