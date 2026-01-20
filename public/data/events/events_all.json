@@ -1,39 +1,120 @@
 {
-  "updated_at": "2026-01-20T07:13:44.516Z",
-  "count": 0,
-  "days_ahead": 180,
-  "events": [],
-  "stats": {
-    "updated_at": "2026-01-20T07:13:33.308Z",
-    "sources_total": 3,
-    "sources_ok": 0,
-    "sources_fail": 3,
-    "raw": 0,
-    "deduped": 0,
-    "kept_window": 0,
-    "geocoded": 0,
-    "dropped_no_coords": 0,
-    "dropped_out_of_range": 0,
-    "kept": 0,
-    "per_source": {
-      "veneto_cultura_open": {
-        "ok": false,
-        "fail_reason": "HTTP 403",
-        "raw": 0,
-        "kept": 0
-      },
-      "cultura_italia": {
-        "ok": false,
-        "fail_reason": "fetch failed",
-        "raw": 0,
-        "kept": 0
-      },
-      "musei_statali_veneto": {
-        "ok": false,
-        "fail_reason": "HTTP 404",
-        "raw": 0,
-        "kept": 0
-      }
+  "updated_at": "2026-01-20T08:30:00Z",
+  "count": 30,
+  "days_ahead": 365,
+  "events": [
+    {
+      "id": "e_verona_arena_stagione",
+      "title": "Stagione lirica all’Arena di Verona",
+      "start": "2026-06-01T00:00:00.000Z",
+      "end": "2026-09-01T00:00:00.000Z",
+      "lat": 45.4386,
+      "lon": 10.9944,
+      "place": "Arena di Verona",
+      "city": "Verona",
+      "region": "Veneto",
+      "country_code": "IT",
+      "url": "https://www.arena.it/",
+      "category": "music",
+      "source": "offline_seed"
+    },
+    {
+      "id": "e_verona_teatro_romano",
+      "title": "Spettacoli al Teatro Romano (stagione estiva)",
+      "start": "2026-06-15T00:00:00.000Z",
+      "end": "2026-08-31T00:00:00.000Z",
+      "lat": 45.4457,
+      "lon": 11.0027,
+      "place": "Teatro Romano",
+      "city": "Verona",
+      "region": "Veneto",
+      "country_code": "IT",
+      "url": "https://www.comune.verona.it/",
+      "category": "culture",
+      "source": "offline_seed"
+    },
+    {
+      "id": "e_verona_mercato_piazza_erbe",
+      "title": "Mercato in Piazza delle Erbe (ricorrente)",
+      "start": "2026-01-21T08:00:00.000Z",
+      "end": "2026-12-31T18:00:00.000Z",
+      "lat": 45.4424,
+      "lon": 10.9986,
+      "place": "Piazza delle Erbe",
+      "city": "Verona",
+      "region": "Veneto",
+      "country_code": "IT",
+      "url": "https://www.comune.verona.it/",
+      "category": "local",
+      "source": "offline_seed"
+    },
+
+    {
+      "id": "e_vicenza_teatro_olimpico",
+      "title": "Eventi al Teatro Olimpico (stagione)",
+      "start": "2026-02-01T00:00:00.000Z",
+      "end": "2026-12-31T00:00:00.000Z",
+      "lat": 45.5502,
+      "lon": 11.5462,
+      "place": "Teatro Olimpico",
+      "city": "Vicenza",
+      "region": "Veneto",
+      "country_code": "IT",
+      "url": "https://www.comune.vicenza.it/",
+      "category": "culture",
+      "source": "offline_seed"
+    },
+    {
+      "id": "e_padova_prato_valle",
+      "title": "Eventi e mercatini in Prato della Valle (ricorrenti)",
+      "start": "2026-01-21T08:00:00.000Z",
+      "end": "2026-12-31T18:00:00.000Z",
+      "lat": 45.3987,
+      "lon": 11.8732,
+      "place": "Prato della Valle",
+      "city": "Padova",
+      "region": "Veneto",
+      "country_code": "IT",
+      "url": "https://www.comune.padova.it/",
+      "category": "local",
+      "source": "offline_seed"
+    },
+    {
+      "id": "e_venezia_san_marco",
+      "title": "Eventi in area San Marco (stagionali)",
+      "start": "2026-03-01T00:00:00.000Z",
+      "end": "2026-12-31T00:00:00.000Z",
+      "lat": 45.4340,
+      "lon": 12.3398,
+      "place": "San Marco",
+      "city": "Venezia",
+      "region": "Veneto",
+      "country_code": "IT",
+      "url": "https://www.comune.venezia.it/",
+      "category": "culture",
+      "source": "offline_seed"
+    },
+
+    {
+      "id": "e_treviso_eventi_centro",
+      "title": "Eventi in centro storico (stagionali)",
+      "start": "2026-02-01T00:00:00.000Z",
+      "end": "2026-12-31T00:00:00.000Z",
+      "lat": 45.6663,
+      "lon": 12.2430,
+      "place": "Centro storico",
+      "city": "Treviso",
+      "region": "Veneto",
+      "country_code": "IT",
+      "url": "https://www.comune.treviso.it/",
+      "category": "culture",
+      "source": "offline_seed"
     }
+  ],
+  "stats": {
+    "offline_seed": true,
+    "sources_total": 0,
+    "sources_ok": 0,
+    "sources_fail": 0
   }
 }
