@@ -1,14 +1,16 @@
 #!/usr/bin/env node
 /**
- * Jamo — build_events_all.mjs (v2.3 SAFE-NO-EMPTY + DEBUG)
+ * Jamo — build_events_all.mjs (v2.3 VERONA-STABLE)
  * - Config:
  *    1) events_sources.generated.json (preferred)
  *    2) events_sources.json (fallback)
  * - Output: public/data/events/events_all.json
  * - Sources: RSS + ICS
- * - IMPORTANT:
- *    ✅ If new build returns 0 events, DO NOT overwrite existing dataset.
- *    ✅ Prints per-source errors (HTTP/status/first chars) to debug.
+ * - FIXES:
+ *    ✅ readConfig tolerant (rss_ics_sources / sources / items)
+ *    ✅ parse numbers with comma (45,123 -> 45.123)
+ *    ✅ geocoding fallback with cache if no coords (Nominatim)
+ *    ✅ KEEP events only within <= now+daysAhead (non elimina retrodatati dei feed)
  */
 
 import fs from "fs";
@@ -21,29 +23,17 @@ const CONFIG_GEN = path.join(ROOT, "events_sources.generated.json");
 const CONFIG_FALLBACK = path.join(ROOT, "events_sources.json");
 
 const OUT_PATH = path.join(ROOT, "public", "data", "events", "events_all.json");
-const OUT_DIR = path.dirname(OUT_PATH);
-
 const CACHE_DIR = path.join(ROOT, "cache");
 const GEOCACHE_PATH = path.join(CACHE_DIR, "geocode-cache.json");
 
-const UA =
-  process.env.JAMO_UA ||
-  "Mozilla/5.0 (compatible; JamoEventsBot/1.0; +https://jamo-seven.vercel.app)";
-
+const UA = process.env.JAMO_UA || "JamoEventsBuilder/2.3 (+https://jamo-seven.vercel.app)";
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-function ensureDir(p) {
-  fs.mkdirSync(p, { recursive: true });
-}
-function clamp(n, a, b) {
-  return Math.max(a, Math.min(b, n));
-}
-function nowISO() {
-  return new Date().toISOString();
-}
-function safeText(s) {
-  return String(s ?? "").replace(/\s+/g, " ").trim();
-}
+function ensureDir(p) { fs.mkdirSync(p, { recursive: true }); }
+function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
+function nowISO() { return new Date().toISOString(); }
+function safeText(s) { return String(s ?? "").replace(/\s+/g, " ").trim(); }
+
 function toISO(d) {
   try {
     const x = new Date(d);
@@ -53,9 +43,11 @@ function toISO(d) {
     return null;
   }
 }
+
 function sha1(s) {
   return crypto.createHash("sha1").update(String(s)).digest("hex").slice(0, 8);
 }
+
 function toNum(x) {
   if (x === null || x === undefined) return NaN;
   if (typeof x === "number") return x;
@@ -79,25 +71,20 @@ async function fetchText(url, { timeoutMs = 45000 } = {}) {
     const r = await fetch(url, {
       headers: {
         "user-agent": UA,
-        accept:
-          "text/calendar, application/xml, text/xml, application/rss+xml, application/atom+xml, */*",
+        "accept": "text/calendar, application/xml, text/xml, application/rss+xml, application/atom+xml, */*",
       },
       signal: ctrl.signal,
       cache: "no-store",
       redirect: "follow",
     });
-    if (!r.ok) {
-      const body = await r.text().catch(() => "");
-      const snippet = body ? body.slice(0, 240) : "";
-      throw new Error(`HTTP ${r.status} ${r.statusText} | ${snippet}`);
-    }
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
     return await r.text();
   } finally {
     clearTimeout(t);
   }
 }
 
-/* ---------------- RSS parser (light, safe) ---------------- */
+/* ---------------- RSS parser (light) ---------------- */
 
 function extractXmlBlocks(xml, tag) {
   const re = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, "gi");
@@ -106,6 +93,7 @@ function extractXmlBlocks(xml, tag) {
   while ((m = re.exec(xml))) out.push(m[1]);
   return out;
 }
+
 function extractFirst(block, tag) {
   const re = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, "i");
   const m = re.exec(block);
@@ -113,6 +101,7 @@ function extractFirst(block, tag) {
   const txt = String(m[1]).replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1");
   return safeText(txt);
 }
+
 function parseRss(xml) {
   const items = extractXmlBlocks(xml, "item").length
     ? extractXmlBlocks(xml, "item")
@@ -122,9 +111,7 @@ function parseRss(xml) {
     const title = extractFirst(blk, "title");
     const link = extractFirst(blk, "link") || extractFirst(blk, "id");
     const pubDate =
-      extractFirst(blk, "pubDate") ||
-      extractFirst(blk, "published") ||
-      extractFirst(blk, "updated");
+      extractFirst(blk, "pubDate") || extractFirst(blk, "published") || extractFirst(blk, "updated");
     const description = extractFirst(blk, "description") || extractFirst(blk, "summary") || "";
     return { title, link, pubDate, description };
   });
@@ -135,6 +122,7 @@ function parseRss(xml) {
 function unfoldIcsLines(s) {
   return s.replace(/\r?\n[ \t]/g, "");
 }
+
 function parseIcsDate(val) {
   if (!val) return null;
   const v = String(val).trim();
@@ -149,22 +137,15 @@ function parseIcsDate(val) {
   const m = v.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})?(Z)?$/);
   if (!m) return null;
 
-  const yyyy = m[1],
-    mm = m[2],
-    dd = m[3],
-    hh = m[4],
-    mi = m[5],
-    ss = m[6] || "00";
+  const yyyy = m[1], mm = m[2], dd = m[3], hh = m[4], mi = m[5], ss = m[6] || "00";
   return toISO(`${yyyy}-${mm}-${dd}T${hh}:${mi}:${ss}Z`);
 }
+
 function parseIcs(text) {
   const s = unfoldIcsLines(text);
-  const blocks = s
-    .split("BEGIN:VEVENT")
-    .slice(1)
-    .map((x) => x.split("END:VEVENT")[0] || "");
-
+  const blocks = s.split("BEGIN:VEVENT").slice(1).map((x) => x.split("END:VEVENT")[0] || "");
   const events = [];
+
   for (const b of blocks) {
     const get = (key) => {
       const re = new RegExp(`^${key}(?:;[^:]*)?:(.*)$`, "mi");
@@ -175,11 +156,8 @@ function parseIcs(text) {
     const summary = get("SUMMARY");
     const url = get("URL");
     const location = get("LOCATION");
-    const dtStartRaw = get("DTSTART");
-    const dtEndRaw = get("DTEND");
-
-    const dtStart = parseIcsDate(dtStartRaw);
-    const dtEnd = parseIcsDate(dtEndRaw);
+    const dtStart = parseIcsDate(get("DTSTART"));
+    const dtEnd = parseIcsDate(get("DTEND"));
 
     if (!dtStart) continue;
 
@@ -191,21 +169,22 @@ function parseIcs(text) {
       url: url || "",
     });
   }
+
   return events;
 }
 
 /* ---------------- Normalize + dedupe ---------------- */
 
-function normalizeEvent(e, opt = {}) {
+function normalizeEvent(e, meta = {}) {
   const {
-    source,
-    ccFallback,
+    source = "unknown",
+    ccFallback = "",
     fixedLat,
     fixedLon,
-    fixedCity,
-    fixedRegion,
-    categoryFallback,
-  } = opt;
+    fixedCity = "",
+    fixedRegion = "",
+    categoryFallback = "other",
+  } = meta;
 
   const title = safeText(e.title || e.name || "Evento");
   const start = e.start ? toISO(e.start) : null;
@@ -223,9 +202,7 @@ function normalizeEvent(e, opt = {}) {
   const url = safeText(e.url || e.link || "");
   const category = safeText(e.category || e.type || e.kind || categoryFallback || "other");
 
-  const base = `${title}|${start || ""}|${hasLL ? lat : ""}|${hasLL ? lon : ""}|${place}|${country_code}|${
-    source || ""
-  }`;
+  const base = `${title}|${start || ""}|${hasLL ? lat : ""}|${hasLL ? lon : ""}|${place}|${country_code}|${source}`;
   const id = `e_${sha1(base)}`;
 
   return {
@@ -241,7 +218,7 @@ function normalizeEvent(e, opt = {}) {
     country_code,
     url,
     category,
-    source: source || "unknown",
+    source,
   };
 }
 
@@ -267,7 +244,7 @@ function sortEvents(rows) {
   return rows;
 }
 
-/* ---------------- Geocoding cache (optional) ---------------- */
+/* ---------------- Geocoding fallback ---------------- */
 
 function loadGeoCache() {
   try {
@@ -278,24 +255,19 @@ function loadGeoCache() {
     return {};
   }
 }
+
 function saveGeoCache(cache) {
   ensureDir(CACHE_DIR);
   fs.writeFileSync(GEOCACHE_PATH, JSON.stringify(cache, null, 2), "utf8");
 }
-function geoKey(q) {
-  return safeText(q).toLowerCase();
-}
+
+function geoKey(q) { return safeText(q).toLowerCase(); }
+
 async function geocodeNominatim(q, { timeoutMs = 45000 } = {}) {
-  const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q=${encodeURIComponent(
-    q
-  )}`;
+  const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q=${encodeURIComponent(q)}`;
   const txt = await fetchText(url, { timeoutMs });
   let arr = [];
-  try {
-    arr = JSON.parse(txt);
-  } catch {
-    return null;
-  }
+  try { arr = JSON.parse(txt); } catch { return null; }
   if (!Array.isArray(arr) || !arr.length) return null;
   const it = arr[0];
   const lat = toNum(it.lat);
@@ -303,6 +275,7 @@ async function geocodeNominatim(q, { timeoutMs = 45000 } = {}) {
   if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
   return { lat, lon };
 }
+
 async function geocodeIfMissingCoords(e, { timeoutMs, cache }) {
   if (Number.isFinite(e.lat) && Number.isFinite(e.lon)) return e;
 
@@ -325,27 +298,12 @@ async function geocodeIfMissingCoords(e, { timeoutMs, cache }) {
   return e;
 }
 
-/* ---------------- SAFE WRITE ---------------- */
-
-function readExistingOut() {
-  try {
-    if (!fs.existsSync(OUT_PATH)) return null;
-    return JSON.parse(fs.readFileSync(OUT_PATH, "utf8"));
-  } catch {
-    return null;
-  }
-}
-function writeOut(out) {
-  ensureDir(OUT_DIR);
-  fs.writeFileSync(OUT_PATH, JSON.stringify(out, null, 2), "utf8");
-}
-
 /* ---------------- MAIN ---------------- */
 
 async function main() {
   const cfg = readConfig();
 
-  const daysAhead = clamp(Number(cfg.days_ahead) || 90, 1, 365);
+  const daysAhead = clamp(Number(cfg.days_ahead) || 180, 1, 365);
   const maxEvents = clamp(Number(cfg.max_events) || 50000, 100, 50000);
   const timeoutMs = clamp(Number(cfg?.providers?.osm_overpass?.timeout_ms) || 45000, 5000, 120000);
 
@@ -365,7 +323,6 @@ async function main() {
     dropped_no_coords: 0,
     dropped_out_of_range: 0,
     kept: 0,
-    errors: [],
   };
 
   let all = [];
@@ -392,26 +349,8 @@ async function main() {
         for (const r of rows) {
           all.push(
             normalizeEvent(
-              {
-                title: r.title,
-                start: r.start,
-                end: r.end,
-                place: r.place,
-                url: r.url,
-                lat: Number.isFinite(fixed_lat) ? fixed_lat : null,
-                lon: Number.isFinite(fixed_lon) ? fixed_lon : null,
-                category: catFallback,
-                country_code: cc,
-              },
-              {
-                source: src.id || src.url || "ics",
-                ccFallback: cc,
-                fixedLat: fixed_lat,
-                fixedLon: fixed_lon,
-                fixedCity,
-                fixedRegion,
-                categoryFallback: catFallback,
-              }
+              { title: r.title, start: r.start, end: r.end, place: r.place, url: r.url, lat: fixed_lat, lon: fixed_lon, category: catFallback, country_code: cc },
+              { source: src.id || "ics", ccFallback: cc, fixedLat: fixed_lat, fixedLon: fixed_lon, fixedCity, fixedRegion, categoryFallback: catFallback }
             )
           );
         }
@@ -423,29 +362,10 @@ async function main() {
         for (const it of items) {
           const start = toISO(it.pubDate);
           if (!start) continue;
-
           all.push(
             normalizeEvent(
-              {
-                title: it.title,
-                start,
-                end: null,
-                place: fixedCity,
-                url: it.link,
-                lat: Number.isFinite(fixed_lat) ? fixed_lat : null,
-                lon: Number.isFinite(fixed_lon) ? fixed_lon : null,
-                category: catFallback,
-                country_code: cc,
-              },
-              {
-                source: src.id || src.url || "rss",
-                ccFallback: cc,
-                fixedLat: fixed_lat,
-                fixedLon: fixed_lon,
-                fixedCity,
-                fixedRegion,
-                categoryFallback: catFallback,
-              }
+              { title: it.title, start, end: null, place: fixedCity, url: it.link, lat: fixed_lat, lon: fixed_lon, category: catFallback, country_code: cc },
+              { source: src.id || "rss", ccFallback: cc, fixedLat: fixed_lat, fixedLon: fixed_lon, fixedCity, fixedRegion, categoryFallback: catFallback }
             )
           );
           added++;
@@ -454,58 +374,54 @@ async function main() {
         if (added > 0) stats.sources_ok++;
         else stats.sources_fail++;
       } else {
-        // ignore unknown type
+        // ignore
       }
 
-      await sleep(140);
+      await sleep(150);
     } catch (e) {
       stats.sources_fail++;
-      const msg = String(e?.message || e);
-      stats.errors.push({ id: src?.id || "", url: src?.url || "", err: msg.slice(0, 500) });
-      console.warn(`⚠️ Source FAIL: ${src?.id || src?.url} → ${msg}`);
-      await sleep(200);
+      console.warn(`⚠️ Source fail: ${src?.id || src?.url} → ${e.message || e}`);
+      await sleep(250);
     }
   }
 
   stats.raw = all.length;
+
   all = dedupe(all);
   stats.deduped = all.length;
 
-  // time window [now .. now+daysAhead]
+  // ✅ keep only <= now+daysAhead (NON eliminiamo quelli “retrodatati” dei feed)
   const now = new Date();
-  const nowT = now.getTime();
-  const maxT = nowT + daysAhead * 24 * 3600 * 1000;
+  const maxT = now.getTime() + daysAhead * 24 * 3600 * 1000;
 
   all = all.filter((e) => {
     if (!e.start) return false;
     const t = new Date(e.start).getTime();
-    const ok = Number.isFinite(t) && t >= nowT && t <= maxT;
+    const ok = Number.isFinite(t) && t <= maxT;
     if (!ok) stats.dropped_out_of_range++;
     return ok;
   });
 
-  // geocode if missing
+  // ✅ geocode for missing coords
   const cache = loadGeoCache();
   let geocoded = 0;
 
   for (const e of all) {
-    const has = Number.isFinite(e.lat) && Number.isFinite(e.lon);
-    if (has) continue;
+    const before = Number.isFinite(e.lat) && Number.isFinite(e.lon);
+    if (before) continue;
 
     await geocodeIfMissingCoords(e, { timeoutMs, cache });
     const after = Number.isFinite(e.lat) && Number.isFinite(e.lon);
     if (after) {
       geocoded++;
-      await sleep(120);
-    } else {
-      await sleep(40);
+      await sleep(160);
     }
   }
 
   stats.geocoded = geocoded;
   saveGeoCache(cache);
 
-  // drop without coords
+  // drop without coords (needed for distance)
   all = all.filter((e) => {
     const ok = Number.isFinite(e.lat) && Number.isFinite(e.lon);
     if (!ok) stats.dropped_no_coords++;
@@ -515,6 +431,8 @@ async function main() {
   all = sortEvents(all).slice(0, maxEvents);
   stats.kept = all.length;
 
+  ensureDir(path.dirname(OUT_PATH));
+
   const out = {
     updated_at: nowISO(),
     count: all.length,
@@ -523,28 +441,7 @@ async function main() {
     stats,
   };
 
-  // ✅ SAFE: do not overwrite old dataset with empty
-  if (out.count === 0) {
-    const prev = readExistingOut();
-    const prevCount = Number(prev?.count || 0);
-
-    console.error("❌ Build produced 0 events.");
-    if (stats.errors?.length) {
-      console.error("Source errors:", JSON.stringify(stats.errors, null, 2));
-    }
-
-    if (prev && prevCount > 0) {
-      console.error(`✅ Keeping previous dataset (${prevCount} events). NOT overwriting.`);
-      // still update stats in log, but do not write file
-      process.exit(0);
-    } else {
-      console.error("⚠️ No previous dataset to keep. Writing empty output.");
-      writeOut(out);
-      process.exit(0);
-    }
-  }
-
-  writeOut(out);
+  fs.writeFileSync(OUT_PATH, JSON.stringify(out, null, 2), "utf8");
   console.log(`✅ Wrote ${OUT_PATH} (${out.count} events)`);
   console.log("Stats:", out.stats);
 }
