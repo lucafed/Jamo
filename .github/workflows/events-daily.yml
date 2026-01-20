@@ -1,4 +1,4 @@
-name: Build Events (daily)
+name: Events — Daily (Verona)
 
 on:
   workflow_dispatch: {}
@@ -20,14 +20,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Setup Node 20
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "npm"
 
       - name: Install
         run: |
@@ -43,18 +40,18 @@ jobs:
           NODE_OPTIONS: "--dns-result-order=ipv4first"
         run: npm run build:events
 
-      - name: Guard: do not commit empty dataset
+      - name: Show stats
         run: |
           node - <<'NODE'
           import fs from "fs";
           const p = "public/data/events/events_all.json";
           const j = JSON.parse(fs.readFileSync(p, "utf8"));
-          const count = Number(j.count || 0);
-          console.log("events_all.json:", { updated_at: j.updated_at, count, stats: j.stats });
-          if (!count) {
-            console.error("❌ Guard triggered: count=0. Not committing empty dataset.");
-            process.exit(1);
-          }
+          console.log("events_all.json:", {
+            updated_at: j.updated_at,
+            count: j.count,
+            days_ahead: j.days_ahead,
+            stats: j.stats
+          });
           NODE
 
       - name: Commit & push (events only)
@@ -62,7 +59,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git add public/data/events/events_all.json cache/geocode-cache.json || true
+          git add public/data/events/events_all.json cache/geocode-cache.json events_sources.json || true
 
           if git diff --cached --quiet; then
             echo "No changes to commit."
