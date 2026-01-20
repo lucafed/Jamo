@@ -1,55 +1,49 @@
-/* Jamo — events.js v1.0 (OFFLINE-FIRST + ONLINE-OPTIONAL)
- * - Carica SEMPRE /data/events/events_all.json (offline seed)
- * - Se online, può provare a caricare un endpoint live (se lo aggiungeremo)
- * - Non rompe mai l'app: se online fail -> resta offline
- */
-
-export async function loadEventsAll({ signal } = {}) {
-  const offlineUrl = "/data/events/events_all.json";
-
-  // 1) OFFLINE base
-  let base = { updated_at: null, count: 0, events: [] };
-  try {
-    const r = await fetch(offlineUrl, { cache: "no-store", signal });
-    if (r.ok) base = await r.json();
-  } catch (_) {}
-
-  // 2) ONLINE optional (lo aggiungiamo dopo se vuoi)
-  //    Per ora: nessun live, quindi ritorna solo offline.
-  //    In futuro potrai fare:
-  //    const liveUrl = "/api/events?city=Verona&days=7";
-  //    fetch liveUrl ...
-  const out = normalizeDataset(base);
-
-  return out;
-}
-
-function normalizeDataset(j) {
-  const events = Array.isArray(j?.events) ? j.events : [];
-  const cleaned = events
-    .map((e) => ({
-      id: String(e.id || ""),
-      title: String(e.title || "Evento"),
-      start: e.start || null,
-      end: e.end || null,
-      lat: Number.isFinite(Number(e.lat)) ? Number(e.lat) : null,
-      lon: Number.isFinite(Number(e.lon)) ? Number(e.lon) : null,
-      place: String(e.place || ""),
-      city: String(e.city || ""),
-      region: String(e.region || ""),
-      country_code: String(e.country_code || "IT"),
-      url: String(e.url || ""),
-      category: String(e.category || "other"),
-      source: String(e.source || "unknown"),
-    }))
-    .filter((e) => e.id && e.start && Number.isFinite(e.lat) && Number.isFinite(e.lon));
-
-  cleaned.sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
-
-  return {
-    updated_at: j?.updated_at || null,
-    count: cleaned.length,
-    events: cleaned,
-    stats: j?.stats || {},
-  };
+{
+  "updated_at": "2026-01-20T08:30:00Z",
+  "count": 3,
+  "days_ahead": 365,
+  "events": [
+    {
+      "id": "verona_arena",
+      "title": "Arena di Verona – Stagione lirica",
+      "start": "2026-06-01T21:00:00Z",
+      "end": "2026-06-01T23:30:00Z",
+      "lat": 45.4386,
+      "lon": 10.9944,
+      "place": "Arena di Verona",
+      "city": "Verona",
+      "region": "Veneto",
+      "country_code": "IT",
+      "category": "music",
+      "source": "seed"
+    },
+    {
+      "id": "teatro_romano",
+      "title": "Spettacoli estivi al Teatro Romano",
+      "start": "2026-07-10T21:00:00Z",
+      "end": "2026-07-10T23:00:00Z",
+      "lat": 45.4457,
+      "lon": 11.0027,
+      "place": "Teatro Romano",
+      "city": "Verona",
+      "region": "Veneto",
+      "country_code": "IT",
+      "category": "culture",
+      "source": "seed"
+    },
+    {
+      "id": "piazza_erbe",
+      "title": "Mercato di Piazza delle Erbe",
+      "start": "2026-01-25T08:00:00Z",
+      "end": "2026-01-25T18:00:00Z",
+      "lat": 45.4424,
+      "lon": 10.9986,
+      "place": "Piazza delle Erbe",
+      "city": "Verona",
+      "region": "Veneto",
+      "country_code": "IT",
+      "category": "local",
+      "source": "seed"
+    }
+  ]
 }
