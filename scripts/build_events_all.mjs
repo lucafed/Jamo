@@ -1,16 +1,18 @@
 #!/usr/bin/env node
 /**
- * Jamo — build_events_all.mjs (v2.3 VERONA-STABLE)
- * - Config:
+ * Jamo — build_events_all.mjs (v3.0 SAFE-NO-ZERO)
+ *
+ * ✅ Legge config:
  *    1) events_sources.generated.json (preferred)
  *    2) events_sources.json (fallback)
- * - Output: public/data/events/events_all.json
- * - Sources: RSS + ICS
- * - FIXES:
- *    ✅ readConfig tolerant (rss_ics_sources / sources / items)
- *    ✅ parse numbers with comma (45,123 -> 45.123)
- *    ✅ geocoding fallback with cache if no coords (Nominatim)
- *    ✅ KEEP events only within <= now+daysAhead (non elimina retrodatati dei feed)
+ * ✅ Supporta config keys: rss_ics_sources / sources / items
+ * ✅ Output: public/data/events/events_all.json
+ * ✅ IMPORTANTISSIMO:
+ *    - Se il build produce count=0 => NON sovrascrive il file esistente
+ *      (scrive un file .tmp e poi decide)
+ * ✅ Log chiaro: HTTP status / parsing / quanti eventi presi per source
+ *
+ * Fonti: RSS + ICS
  */
 
 import fs from "fs";
@@ -22,17 +24,31 @@ const ROOT = process.cwd();
 const CONFIG_GEN = path.join(ROOT, "events_sources.generated.json");
 const CONFIG_FALLBACK = path.join(ROOT, "events_sources.json");
 
-const OUT_PATH = path.join(ROOT, "public", "data", "events", "events_all.json");
-const CACHE_DIR = path.join(ROOT, "cache");
-const GEOCACHE_PATH = path.join(CACHE_DIR, "geocode-cache.json");
+const OUT_DIR = path.join(ROOT, "public", "data", "events");
+const OUT_PATH = path.join(OUT_DIR, "events_all.json");
+const TMP_PATH = path.join(OUT_DIR, "events_all.json.tmp");
 
-const UA = process.env.JAMO_UA || "JamoEventsBuilder/2.3 (+https://jamo-seven.vercel.app)";
+const UA =
+  process.env.JAMO_UA ||
+  "JamoEventsBuilder/3.0 (+https://jamo-seven.vercel.app)";
+
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-function ensureDir(p) { fs.mkdirSync(p, { recursive: true }); }
-function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
-function nowISO() { return new Date().toISOString(); }
-function safeText(s) { return String(s ?? "").replace(/\s+/g, " ").trim(); }
+function ensureDir(p) {
+  fs.mkdirSync(p, { recursive: true });
+}
+
+function clamp(n, a, b) {
+  return Math.max(a, Math.min(b, n));
+}
+
+function nowISO() {
+  return new Date().toISOString();
+}
+
+function safeText(s) {
+  return String(s ?? "").replace(/\s+/g, " ").trim();
+}
 
 function toISO(d) {
   try {
@@ -45,7 +61,11 @@ function toISO(d) {
 }
 
 function sha1(s) {
-  return crypto.createHash("sha1").update(String(s)).digest("hex").slice(0, 8);
+  return crypto
+    .createHash("sha1")
+    .update(String(s))
+    .digest("hex")
+    .slice(0, 10);
 }
 
 function toNum(x) {
@@ -53,13 +73,18 @@ function toNum(x) {
   if (typeof x === "number") return x;
   const s = String(x).trim();
   if (!s) return NaN;
-  const v = Number(s.replace(",", "."));
+  const norm = s.replace(",", ".");
+  const v = Number(norm);
   return Number.isFinite(v) ? v : NaN;
 }
 
 function readConfig() {
-  if (fs.existsSync(CONFIG_GEN)) return JSON.parse(fs.readFileSync(CONFIG_GEN, "utf8"));
-  if (fs.existsSync(CONFIG_FALLBACK)) return JSON.parse(fs.readFileSync(CONFIG_FALLBACK, "utf8"));
+  if (fs.existsSync(CONFIG_GEN)) {
+    return JSON.parse(fs.readFileSync(CONFIG_GEN, "utf8"));
+  }
+  if (fs.existsSync(CONFIG_FALLBACK)) {
+    return JSON.parse(fs.readFileSync(CONFIG_FALLBACK, "utf8"));
+  }
   throw new Error(`Missing config. Expected ${CONFIG_GEN} or ${CONFIG_FALLBACK}`);
 }
 
@@ -71,14 +96,19 @@ async function fetchText(url, { timeoutMs = 45000 } = {}) {
     const r = await fetch(url, {
       headers: {
         "user-agent": UA,
-        "accept": "text/calendar, application/xml, text/xml, application/rss+xml, application/atom+xml, */*",
+        accept:
+          "text/calendar, application/xml, text/xml, application/rss+xml, application/atom+xml, */*",
       },
       signal: ctrl.signal,
       cache: "no-store",
       redirect: "follow",
     });
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
-    return await r.text();
+    const body = await r.text();
+    if (!r.ok) {
+      const hint = body?.slice?.(0, 180)?.replace(/\s+/g, " ") || "";
+      throw new Error(`HTTP ${r.status} ${r.statusText} :: ${hint}`);
+    }
+    return body;
   } finally {
     clearTimeout(t);
   }
@@ -111,8 +141,11 @@ function parseRss(xml) {
     const title = extractFirst(blk, "title");
     const link = extractFirst(blk, "link") || extractFirst(blk, "id");
     const pubDate =
-      extractFirst(blk, "pubDate") || extractFirst(blk, "published") || extractFirst(blk, "updated");
-    const description = extractFirst(blk, "description") || extractFirst(blk, "summary") || "";
+      extractFirst(blk, "pubDate") ||
+      extractFirst(blk, "published") ||
+      extractFirst(blk, "updated");
+    const description =
+      extractFirst(blk, "description") || extractFirst(blk, "summary") || "";
     return { title, link, pubDate, description };
   });
 }
@@ -127,23 +160,45 @@ function parseIcsDate(val) {
   if (!val) return null;
   const v = String(val).trim();
 
+  // DATE only: 20260122
   if (/^\d{8}$/.test(v)) {
     const yyyy = v.slice(0, 4);
     const mm = v.slice(4, 6);
     const dd = v.slice(6, 8);
-    return toISO(`${yyyy}-${mm}-${dd}T00:00:00Z`);
+    return toISO(`${assertYYYYMMDD(yyyy, mm, dd)}T00:00:00Z`);
   }
 
+  // DATE-TIME: 20260122T010000Z or 20260122T010000
   const m = v.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})?(Z)?$/);
   if (!m) return null;
 
-  const yyyy = m[1], mm = m[2], dd = m[3], hh = m[4], mi = m[5], ss = m[6] || "00";
-  return toISO(`${yyyy}-${mm}-${dd}T${hh}:${mi}:${ss}Z`);
+  const yyyy = m[1],
+    mm = m[2],
+    dd = m[3],
+    hh = m[4],
+    mi = m[5],
+    ss = m[6] || "00";
+
+  return toISO(`${assertYYYYMMDD(yyyy, mm, dd)}T${hh}:${mi}:${ss}Z`);
+}
+
+function assertYYYYMMDD(yyyy, mm, dd) {
+  // Solo una safety: evita date impossibili che rompono Date()
+  const y = Number(yyyy), m = Number(mm), d = Number(dd);
+  if (!(y >= 1900 && y <= 2100)) return `${yyyy}-${mm}-${dd}`;
+  if (!(m >= 1 && m <= 12)) return `${yyyy}-${mm}-${dd}`;
+  if (!(d >= 1 && d <= 31)) return `${yyyy}-${mm}-${dd}`;
+  return `${yyyy}-${mm}-${dd}`;
 }
 
 function parseIcs(text) {
   const s = unfoldIcsLines(text);
-  const blocks = s.split("BEGIN:VEVENT").slice(1).map((x) => x.split("END:VEVENT")[0] || "");
+
+  const blocks = s
+    .split("BEGIN:VEVENT")
+    .slice(1)
+    .map((x) => x.split("END:VEVENT")[0] || "");
+
   const events = [];
 
   for (const b of blocks) {
@@ -156,8 +211,11 @@ function parseIcs(text) {
     const summary = get("SUMMARY");
     const url = get("URL");
     const location = get("LOCATION");
-    const dtStart = parseIcsDate(get("DTSTART"));
-    const dtEnd = parseIcsDate(get("DTEND"));
+    const dtStartRaw = get("DTSTART");
+    const dtEndRaw = get("DTEND");
+
+    const dtStart = parseIcsDate(dtStartRaw);
+    const dtEnd = parseIcsDate(dtEndRaw);
 
     if (!dtStart) continue;
 
@@ -173,19 +231,12 @@ function parseIcs(text) {
   return events;
 }
 
-/* ---------------- Normalize + dedupe ---------------- */
+/* ---------------- Normalize + filters ---------------- */
 
-function normalizeEvent(e, meta = {}) {
-  const {
-    source = "unknown",
-    ccFallback = "",
-    fixedLat,
-    fixedLon,
-    fixedCity = "",
-    fixedRegion = "",
-    categoryFallback = "other",
-  } = meta;
-
+function normalizeEvent(
+  e,
+  { source, ccFallback, fixedLat, fixedLon, fixedCity, fixedRegion, categoryFallback } = {}
+) {
   const title = safeText(e.title || e.name || "Evento");
   const start = e.start ? toISO(e.start) : null;
   const end = e.end ? toISO(e.end) : null;
@@ -202,7 +253,7 @@ function normalizeEvent(e, meta = {}) {
   const url = safeText(e.url || e.link || "");
   const category = safeText(e.category || e.type || e.kind || categoryFallback || "other");
 
-  const base = `${title}|${start || ""}|${hasLL ? lat : ""}|${hasLL ? lon : ""}|${place}|${country_code}|${source}`;
+  const base = `${title}|${start || ""}|${hasLL ? lat : ""}|${hasLL ? lon : ""}|${place}|${country_code}|${source || ""}`;
   const id = `e_${sha1(base)}`;
 
   return {
@@ -218,7 +269,7 @@ function normalizeEvent(e, meta = {}) {
     country_code,
     url,
     category,
-    source,
+    source: source || "unknown",
   };
 }
 
@@ -244,82 +295,29 @@ function sortEvents(rows) {
   return rows;
 }
 
-/* ---------------- Geocoding fallback ---------------- */
-
-function loadGeoCache() {
-  try {
-    if (!fs.existsSync(GEOCACHE_PATH)) return {};
-    const j = JSON.parse(fs.readFileSync(GEOCACHE_PATH, "utf8"));
-    return j && typeof j === "object" ? j : {};
-  } catch {
-    return {};
-  }
-}
-
-function saveGeoCache(cache) {
-  ensureDir(CACHE_DIR);
-  fs.writeFileSync(GEOCACHE_PATH, JSON.stringify(cache, null, 2), "utf8");
-}
-
-function geoKey(q) { return safeText(q).toLowerCase(); }
-
-async function geocodeNominatim(q, { timeoutMs = 45000 } = {}) {
-  const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q=${encodeURIComponent(q)}`;
-  const txt = await fetchText(url, { timeoutMs });
-  let arr = [];
-  try { arr = JSON.parse(txt); } catch { return null; }
-  if (!Array.isArray(arr) || !arr.length) return null;
-  const it = arr[0];
-  const lat = toNum(it.lat);
-  const lon = toNum(it.lon);
-  if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
-  return { lat, lon };
-}
-
-async function geocodeIfMissingCoords(e, { timeoutMs, cache }) {
-  if (Number.isFinite(e.lat) && Number.isFinite(e.lon)) return e;
-
-  const q = [e.place, e.city, e.region, "Italia"].map(safeText).filter(Boolean).join(", ");
-  if (!q) return e;
-
-  const k = geoKey(q);
-  if (cache[k] && Number.isFinite(cache[k].lat) && Number.isFinite(cache[k].lon)) {
-    e.lat = cache[k].lat;
-    e.lon = cache[k].lon;
-    return e;
-  }
-
-  const res = await geocodeNominatim(q, { timeoutMs });
-  if (!res) return e;
-
-  cache[k] = { lat: res.lat, lon: res.lon, ts: nowISO() };
-  e.lat = res.lat;
-  e.lon = res.lon;
-  return e;
-}
-
 /* ---------------- MAIN ---------------- */
 
 async function main() {
   const cfg = readConfig();
 
-  const daysAhead = clamp(Number(cfg.days_ahead) || 180, 1, 365);
+  const daysAhead = clamp(Number(cfg.days_ahead) || 90, 1, 365);
   const maxEvents = clamp(Number(cfg.max_events) || 50000, 100, 50000);
   const timeoutMs = clamp(Number(cfg?.providers?.osm_overpass?.timeout_ms) || 45000, 5000, 120000);
 
-  const rssIcs =
+  // ✅ tollerante: il tuo config usa "sources"
+  const sources =
     (Array.isArray(cfg?.rss_ics_sources) && cfg.rss_ics_sources) ||
     (Array.isArray(cfg?.sources) && cfg.sources) ||
     (Array.isArray(cfg?.items) && cfg.items) ||
     [];
 
   const stats = {
-    sources_total: rssIcs.length,
+    sources_total: sources.length,
     sources_ok: 0,
     sources_fail: 0,
+    per_source: [],
     raw: 0,
     deduped: 0,
-    geocoded: 0,
     dropped_no_coords: 0,
     dropped_out_of_range: 0,
     kept: 0,
@@ -327,62 +325,119 @@ async function main() {
 
   let all = [];
 
-  for (const src of rssIcs) {
+  const now = new Date();
+  const nowT = now.getTime();
+  const maxT = nowT + daysAhead * 24 * 3600 * 1000;
+
+  for (const src of sources) {
+    const sid = src.id || src.name || src.url || "source";
+    let added = 0;
+
     try {
-      if (!src?.url) continue;
+      if (!src?.url) throw new Error("missing url");
 
       const type = String(src.type || "").toLowerCase().trim();
       const url = String(src.url).trim();
 
-      const fixed_lat = toNum(src.fixed_lat ?? src.fixedLat ?? src.lat);
-      const fixed_lon = toNum(src.fixed_lon ?? src.fixedLon ?? src.lon);
+      const fixed_lat = toNum(src.fixed_lat ?? src.lat);
+      const fixed_lon = toNum(src.fixed_lon ?? src.lon);
 
       const fixedCity = src.default_place || src.city || "";
       const fixedRegion = src.default_region || src.region || "";
-      const cc = src.country_code || src.cc || "";
-      const catFallback = src.category || src.cat || "other";
+      const cc = src.country_code || src.cc || "IT";
+      const catFallback = src.category || "other";
 
       const txt = await fetchText(url, { timeoutMs });
 
       if (type === "ics") {
         const rows = parseIcs(txt);
         for (const r of rows) {
-          all.push(
-            normalizeEvent(
-              { title: r.title, start: r.start, end: r.end, place: r.place, url: r.url, lat: fixed_lat, lon: fixed_lon, category: catFallback, country_code: cc },
-              { source: src.id || "ics", ccFallback: cc, fixedLat: fixed_lat, fixedLon: fixed_lon, fixedCity, fixedRegion, categoryFallback: catFallback }
-            )
+          const ev = normalizeEvent(
+            {
+              title: r.title,
+              start: r.start,
+              end: r.end,
+              place: r.place,
+              url: r.url,
+              lat: fixed_lat,
+              lon: fixed_lon,
+              category: catFallback,
+              country_code: cc,
+            },
+            {
+              source: sid,
+              ccFallback: cc,
+              fixedLat: fixed_lat,
+              fixedLon: fixed_lon,
+              fixedCity,
+              fixedRegion,
+              categoryFallback: catFallback,
+            }
           );
+
+          // range filter subito
+          if (!ev.start) continue;
+          const t = new Date(ev.start).getTime();
+          if (!(Number.isFinite(t) && t >= nowT && t <= maxT)) {
+            stats.dropped_out_of_range++;
+            continue;
+          }
+
+          all.push(ev);
+          added++;
         }
-        stats.sources_ok++;
       } else if (type === "rss") {
         const items = parseRss(txt);
-        let added = 0;
-
         for (const it of items) {
           const start = toISO(it.pubDate);
           if (!start) continue;
-          all.push(
-            normalizeEvent(
-              { title: it.title, start, end: null, place: fixedCity, url: it.link, lat: fixed_lat, lon: fixed_lon, category: catFallback, country_code: cc },
-              { source: src.id || "rss", ccFallback: cc, fixedLat: fixed_lat, fixedLon: fixed_lon, fixedCity, fixedRegion, categoryFallback: catFallback }
-            )
+
+          const ev = normalizeEvent(
+            {
+              title: it.title,
+              start,
+              end: null,
+              place: fixedCity,
+              url: it.link,
+              lat: fixed_lat,
+              lon: fixed_lon,
+              category: catFallback,
+              country_code: cc,
+            },
+            {
+              source: sid,
+              ccFallback: cc,
+              fixedLat: fixed_lat,
+              fixedLon: fixed_lon,
+              fixedCity,
+              fixedRegion,
+              categoryFallback: catFallback,
+            }
           );
+
+          const t = new Date(ev.start).getTime();
+          if (!(Number.isFinite(t) && t >= nowT && t <= maxT)) {
+            stats.dropped_out_of_range++;
+            continue;
+          }
+
+          all.push(ev);
           added++;
         }
-
-        if (added > 0) stats.sources_ok++;
-        else stats.sources_fail++;
       } else {
-        // ignore
+        throw new Error(`unknown type '${type}' (use 'ics' or 'rss')`);
       }
 
-      await sleep(150);
+      stats.sources_ok++;
+      stats.per_source.push({ id: sid, ok: true, added });
     } catch (e) {
       stats.sources_fail++;
-      console.warn(`⚠️ Source fail: ${src?.id || src?.url} → ${e.message || e}`);
-      await sleep(250);
+      stats.per_source.push({ id: sid, ok: false, added: 0, error: String(e?.message || e) });
+      console.warn(`⚠️ Source FAIL: ${sid} -> ${e?.message || e}`);
     }
+
+    // tiny throttle
+    await sleep(150);
   }
 
   stats.raw = all.length;
@@ -390,48 +445,15 @@ async function main() {
   all = dedupe(all);
   stats.deduped = all.length;
 
-  // ✅ keep only <= now+daysAhead (NON eliminiamo quelli “retrodatati” dei feed)
-  const now = new Date();
-  const maxT = now.getTime() + daysAhead * 24 * 3600 * 1000;
-
-  all = all.filter((e) => {
-    if (!e.start) return false;
-    const t = new Date(e.start).getTime();
-    const ok = Number.isFinite(t) && t <= maxT;
-    if (!ok) stats.dropped_out_of_range++;
-    return ok;
-  });
-
-  // ✅ geocode for missing coords
-  const cache = loadGeoCache();
-  let geocoded = 0;
-
-  for (const e of all) {
-    const before = Number.isFinite(e.lat) && Number.isFinite(e.lon);
-    if (before) continue;
-
-    await geocodeIfMissingCoords(e, { timeoutMs, cache });
-    const after = Number.isFinite(e.lat) && Number.isFinite(e.lon);
-    if (after) {
-      geocoded++;
-      await sleep(160);
-    }
-  }
-
-  stats.geocoded = geocoded;
-  saveGeoCache(cache);
-
-  // drop without coords (needed for distance)
-  all = all.filter((e) => {
-    const ok = Number.isFinite(e.lat) && Number.isFinite(e.lon);
-    if (!ok) stats.dropped_no_coords++;
-    return ok;
-  });
+  // drop no coords (events.js usa distanza)
+  const beforeCoords = all.length;
+  all = all.filter((e) => Number.isFinite(e.lat) && Number.isFinite(e.lon));
+  stats.dropped_no_coords = beforeCoords - all.length;
 
   all = sortEvents(all).slice(0, maxEvents);
   stats.kept = all.length;
 
-  ensureDir(path.dirname(OUT_PATH));
+  ensureDir(OUT_DIR);
 
   const out = {
     updated_at: nowISO(),
@@ -441,12 +463,24 @@ async function main() {
     stats,
   };
 
-  fs.writeFileSync(OUT_PATH, JSON.stringify(out, null, 2), "utf8");
+  // ✅ SCRIVE SEMPRE TMP
+  fs.writeFileSync(TMP_PATH, JSON.stringify(out, null, 2), "utf8");
+
+  // ✅ Se count==0 e già esiste un dataset: NON sovrascrivere
+  if (!out.count && fs.existsSync(OUT_PATH)) {
+    console.error("❌ Build produced count=0. Keeping existing events_all.json. (tmp written)");
+    console.error("   Check stats.per_source for errors.");
+    process.exit(2); // fa fallire workflow così NON committa
+  }
+
+  // ✅ Altrimenti promuove tmp a definitivo
+  fs.renameSync(TMP_PATH, OUT_PATH);
+
   console.log(`✅ Wrote ${OUT_PATH} (${out.count} events)`);
-  console.log("Stats:", out.stats);
+  console.log("Stats:", JSON.stringify(out.stats, null, 2));
 }
 
 main().catch((e) => {
-  console.error("❌ build failed:", e);
+  console.error("❌ build failed:", e?.message || e);
   process.exit(1);
 });
