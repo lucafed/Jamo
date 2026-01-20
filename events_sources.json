@@ -1,26 +1,32 @@
 {
-  "days_ahead": 120,
+  "days_ahead": 180,
   "max_events": 50000,
+
   "providers": {
-    "osm_overpass": { "enabled": false, "timeout_ms": 45000 }
+    "osm_overpass": {
+      "enabled": false,
+      "timeout_ms": 45000
+    }
   },
-  "coverage": {
-    "italy": {
-      "enabled": true,
-      "cities": [
-        { "name": "Verona", "lat": 45.4384, "lon": 10.9916, "radius_km": 35, "cc": "IT" }
-      ]
-    },
-    "europe": { "enabled": false, "cities": [] }
-  },
+
   "rss_ics_sources": [
     {
-      "id": "italy_it_verona_cultura_ics",
-      "scope": "italy",
+      "id": "verona_eventbrite",
+      "type": "rss",
+      "url": "https://www.eventbrite.it/d/italy--verona/all-events/rss/",
+      "category": "events",
       "country_code": "IT",
-      "type": "ics",
-      "url": "https://archiviodistatoverona.cultura.gov.it/?eventDisplay=list&ical=1&post_type=tribe_events&tribe-bar-date={TODAY}",
-      "category": "culture",
+      "default_place": "Verona",
+      "default_region": "Veneto",
+      "fixed_lat": 45.4384,
+      "fixed_lon": 10.9916
+    },
+    {
+      "id": "verona_meetup",
+      "type": "rss",
+      "url": "https://www.meetup.com/find/events/?location=it--Verona&format=rss",
+      "category": "meetup",
+      "country_code": "IT",
       "default_place": "Verona",
       "default_region": "Veneto",
       "fixed_lat": 45.4384,
