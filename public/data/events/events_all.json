@@ -1,13 +1,13 @@
 {
-  "updated_at": "2026-01-20T08:30:00Z",
+  "updated_at": "2026-01-20T11:01:00.296Z",
   "count": 3,
   "days_ahead": 365,
   "events": [
     {
-      "id": "verona_arena",
+      "id": "verona_arena_lirica",
       "title": "Arena di Verona – Stagione lirica",
-      "start": "2026-06-01T21:00:00Z",
-      "end": "2026-06-01T23:30:00Z",
+      "start": "2026-06-01T21:00:00.000Z",
+      "end": "2026-06-01T23:30:00.000Z",
       "lat": 45.4386,
       "lon": 10.9944,
       "place": "Arena di Verona",
@@ -18,10 +18,10 @@
       "source": "seed"
     },
     {
-      "id": "teatro_romano",
+      "id": "verona_teatro_romano",
       "title": "Spettacoli estivi al Teatro Romano",
-      "start": "2026-07-10T21:00:00Z",
-      "end": "2026-07-10T23:00:00Z",
+      "start": "2026-07-01T21:00:00.000Z",
+      "end": "2026-07-01T23:00:00.000Z",
       "lat": 45.4457,
       "lon": 11.0027,
       "place": "Teatro Romano",
@@ -32,10 +32,10 @@
       "source": "seed"
     },
     {
-      "id": "piazza_erbe",
+      "id": "verona_piazza_erbe",
       "title": "Mercato di Piazza delle Erbe",
-      "start": "2026-01-25T08:00:00Z",
-      "end": "2026-01-25T18:00:00Z",
+      "start": "2026-01-25T08:00:00.000Z",
+      "end": "2026-01-25T18:00:00.000Z",
       "lat": 45.4424,
       "lon": 10.9986,
       "place": "Piazza delle Erbe",
