@@ -1,10 +1,13 @@
 {
-  "updated_at": "2026-01-20T12:02:56.900Z",
+  "updated_at": "2026-01-20T12:13:17.854Z",
   "count": 192,
-  "days_ahead": 90,
+  "days_ahead": 120,
+  "events_per_city": 12,
+  "cities_count": 16,
+  "synthetic": true,
   "events": [
     {
-      "id": "IT_verona_music_01",
+      "id": "IT_verona_veneto_music_01",
       "title": "Concerto live – Verona",
       "start": "2026-01-20T09:00:00.000Z",
       "end": "2026-01-20T11:00:00.000Z",
@@ -15,10 +18,12 @@
       "region": "Veneto",
       "country_code": "IT",
       "category": "music",
+      "url": "https://www.google.com/search?q=Concerto%20live%20%E2%80%93%20Verona%20Verona%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_verona_culture_02",
+      "id": "IT_verona_veneto_culture_02",
       "title": "Mostra temporanea – Verona",
       "start": "2026-01-23T11:00:00.000Z",
       "end": "2026-01-23T14:00:00.000Z",
@@ -29,10 +34,12 @@
       "region": "Veneto",
       "country_code": "IT",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Mostra%20temporanea%20%E2%80%93%20Verona%20Verona%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_verona_culture_03",
+      "id": "IT_verona_veneto_culture_03",
       "title": "Teatro / Spettacolo – Verona",
       "start": "2026-01-26T18:00:00.000Z",
       "end": "2026-01-26T22:00:00.000Z",
@@ -43,10 +50,12 @@
       "region": "Veneto",
       "country_code": "IT",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Teatro%20%2F%20Spettacolo%20%E2%80%93%20Verona%20Verona%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_verona_local_04",
+      "id": "IT_verona_veneto_local_04",
       "title": "Mercatino & sapori locali – Verona",
       "start": "2026-01-29T21:00:00.000Z",
       "end": "2026-01-30T03:00:00.000Z",
@@ -57,10 +66,12 @@
       "region": "Veneto",
       "country_code": "IT",
       "category": "local",
+      "url": "https://www.google.com/search?q=Mercatino%20%26%20sapori%20locali%20%E2%80%93%20Verona%20Verona%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_verona_local_05",
+      "id": "IT_verona_veneto_local_05",
       "title": "Sagra / Festa di quartiere – Verona",
       "start": "2026-02-01T09:00:00.000Z",
       "end": "2026-02-01T11:00:00.000Z",
@@ -71,10 +82,12 @@
       "region": "Veneto",
       "country_code": "IT",
       "category": "local",
+      "url": "https://www.google.com/search?q=Sagra%20%2F%20Festa%20di%20quartiere%20%E2%80%93%20Verona%20Verona%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_verona_family_06",
+      "id": "IT_verona_veneto_family_06",
       "title": "Evento per famiglie – Verona",
       "start": "2026-02-04T11:00:00.000Z",
       "end": "2026-02-04T14:00:00.000Z",
@@ -85,10 +98,12 @@
       "region": "Veneto",
       "country_code": "IT",
       "category": "family",
+      "url": "https://www.google.com/search?q=Evento%20per%20famiglie%20%E2%80%93%20Verona%20Verona%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_verona_sport_07",
+      "id": "IT_verona_veneto_sport_07",
       "title": "Evento sportivo – Verona",
       "start": "2026-02-07T18:00:00.000Z",
       "end": "2026-02-07T22:00:00.000Z",
@@ -99,10 +114,12 @@
       "region": "Veneto",
       "country_code": "IT",
       "category": "sport",
+      "url": "https://www.google.com/search?q=Evento%20sportivo%20%E2%80%93%20Verona%20Verona%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_verona_night_08",
+      "id": "IT_verona_veneto_night_08",
       "title": "Serata / Club – Verona",
       "start": "2026-02-10T21:00:00.000Z",
       "end": "2026-02-11T03:00:00.000Z",
@@ -113,10 +130,12 @@
       "region": "Veneto",
       "country_code": "IT",
       "category": "night",
+      "url": "https://www.google.com/search?q=Serata%20%2F%20Club%20%E2%80%93%20Verona%20Verona%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_verona_music_09",
+      "id": "IT_verona_veneto_music_09",
       "title": "Concerto live – Verona",
       "start": "2026-02-13T09:00:00.000Z",
       "end": "2026-02-13T11:00:00.000Z",
@@ -127,10 +146,12 @@
       "region": "Veneto",
       "country_code": "IT",
       "category": "music",
+      "url": "https://www.google.com/search?q=Concerto%20live%20%E2%80%93%20Verona%20Verona%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_verona_culture_10",
+      "id": "IT_verona_veneto_culture_10",
       "title": "Mostra temporanea – Verona",
       "start": "2026-02-16T11:00:00.000Z",
       "end": "2026-02-16T14:00:00.000Z",
@@ -141,10 +162,12 @@
       "region": "Veneto",
       "country_code": "IT",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Mostra%20temporanea%20%E2%80%93%20Verona%20Verona%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_verona_culture_11",
+      "id": "IT_verona_veneto_culture_11",
       "title": "Teatro / Spettacolo – Verona",
       "start": "2026-02-19T18:00:00.000Z",
       "end": "2026-02-19T22:00:00.000Z",
@@ -155,10 +178,12 @@
       "region": "Veneto",
       "country_code": "IT",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Teatro%20%2F%20Spettacolo%20%E2%80%93%20Verona%20Verona%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_verona_local_12",
+      "id": "IT_verona_veneto_local_12",
       "title": "Mercatino & sapori locali – Verona",
       "start": "2026-02-22T21:00:00.000Z",
       "end": "2026-02-23T03:00:00.000Z",
@@ -169,10 +194,12 @@
       "region": "Veneto",
       "country_code": "IT",
       "category": "local",
+      "url": "https://www.google.com/search?q=Mercatino%20%26%20sapori%20locali%20%E2%80%93%20Verona%20Verona%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_milano_music_01",
+      "id": "IT_milano_lombardia_music_01",
       "title": "Concerto live – Milano",
       "start": "2026-01-20T09:00:00.000Z",
       "end": "2026-01-20T11:00:00.000Z",
@@ -183,10 +210,12 @@
       "region": "Lombardia",
       "country_code": "IT",
       "category": "music",
+      "url": "https://www.google.com/search?q=Concerto%20live%20%E2%80%93%20Milano%20Milano%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_milano_culture_02",
+      "id": "IT_milano_lombardia_culture_02",
       "title": "Mostra temporanea – Milano",
       "start": "2026-01-23T11:00:00.000Z",
       "end": "2026-01-23T14:00:00.000Z",
@@ -197,10 +226,12 @@
       "region": "Lombardia",
       "country_code": "IT",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Mostra%20temporanea%20%E2%80%93%20Milano%20Milano%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_milano_culture_03",
+      "id": "IT_milano_lombardia_culture_03",
       "title": "Teatro / Spettacolo – Milano",
       "start": "2026-01-26T18:00:00.000Z",
       "end": "2026-01-26T22:00:00.000Z",
@@ -211,10 +242,12 @@
       "region": "Lombardia",
       "country_code": "IT",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Teatro%20%2F%20Spettacolo%20%E2%80%93%20Milano%20Milano%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_milano_local_04",
+      "id": "IT_milano_lombardia_local_04",
       "title": "Mercatino & sapori locali – Milano",
       "start": "2026-01-29T21:00:00.000Z",
       "end": "2026-01-30T03:00:00.000Z",
@@ -225,10 +258,12 @@
       "region": "Lombardia",
       "country_code": "IT",
       "category": "local",
+      "url": "https://www.google.com/search?q=Mercatino%20%26%20sapori%20locali%20%E2%80%93%20Milano%20Milano%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_milano_local_05",
+      "id": "IT_milano_lombardia_local_05",
       "title": "Sagra / Festa di quartiere – Milano",
       "start": "2026-02-01T09:00:00.000Z",
       "end": "2026-02-01T11:00:00.000Z",
@@ -239,10 +274,12 @@
       "region": "Lombardia",
       "country_code": "IT",
       "category": "local",
+      "url": "https://www.google.com/search?q=Sagra%20%2F%20Festa%20di%20quartiere%20%E2%80%93%20Milano%20Milano%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_milano_family_06",
+      "id": "IT_milano_lombardia_family_06",
       "title": "Evento per famiglie – Milano",
       "start": "2026-02-04T11:00:00.000Z",
       "end": "2026-02-04T14:00:00.000Z",
@@ -253,10 +290,12 @@
       "region": "Lombardia",
       "country_code": "IT",
       "category": "family",
+      "url": "https://www.google.com/search?q=Evento%20per%20famiglie%20%E2%80%93%20Milano%20Milano%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_milano_sport_07",
+      "id": "IT_milano_lombardia_sport_07",
       "title": "Evento sportivo – Milano",
       "start": "2026-02-07T18:00:00.000Z",
       "end": "2026-02-07T22:00:00.000Z",
@@ -267,10 +306,12 @@
       "region": "Lombardia",
       "country_code": "IT",
       "category": "sport",
+      "url": "https://www.google.com/search?q=Evento%20sportivo%20%E2%80%93%20Milano%20Milano%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_milano_night_08",
+      "id": "IT_milano_lombardia_night_08",
       "title": "Serata / Club – Milano",
       "start": "2026-02-10T21:00:00.000Z",
       "end": "2026-02-11T03:00:00.000Z",
@@ -281,10 +322,12 @@
       "region": "Lombardia",
       "country_code": "IT",
       "category": "night",
+      "url": "https://www.google.com/search?q=Serata%20%2F%20Club%20%E2%80%93%20Milano%20Milano%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_milano_music_09",
+      "id": "IT_milano_lombardia_music_09",
       "title": "Concerto live – Milano",
       "start": "2026-02-13T09:00:00.000Z",
       "end": "2026-02-13T11:00:00.000Z",
@@ -295,10 +338,12 @@
       "region": "Lombardia",
       "country_code": "IT",
       "category": "music",
+      "url": "https://www.google.com/search?q=Concerto%20live%20%E2%80%93%20Milano%20Milano%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_milano_culture_10",
+      "id": "IT_milano_lombardia_culture_10",
       "title": "Mostra temporanea – Milano",
       "start": "2026-02-16T11:00:00.000Z",
       "end": "2026-02-16T14:00:00.000Z",
@@ -309,10 +354,12 @@
       "region": "Lombardia",
       "country_code": "IT",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Mostra%20temporanea%20%E2%80%93%20Milano%20Milano%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_milano_culture_11",
+      "id": "IT_milano_lombardia_culture_11",
       "title": "Teatro / Spettacolo – Milano",
       "start": "2026-02-19T18:00:00.000Z",
       "end": "2026-02-19T22:00:00.000Z",
@@ -323,10 +370,12 @@
       "region": "Lombardia",
       "country_code": "IT",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Teatro%20%2F%20Spettacolo%20%E2%80%93%20Milano%20Milano%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_milano_local_12",
+      "id": "IT_milano_lombardia_local_12",
       "title": "Mercatino & sapori locali – Milano",
       "start": "2026-02-22T21:00:00.000Z",
       "end": "2026-02-23T03:00:00.000Z",
@@ -337,10 +386,12 @@
       "region": "Lombardia",
       "country_code": "IT",
       "category": "local",
+      "url": "https://www.google.com/search?q=Mercatino%20%26%20sapori%20locali%20%E2%80%93%20Milano%20Milano%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_roma_music_01",
+      "id": "IT_roma_lazio_music_01",
       "title": "Concerto live – Roma",
       "start": "2026-01-20T09:00:00.000Z",
       "end": "2026-01-20T11:00:00.000Z",
@@ -351,10 +402,12 @@
       "region": "Lazio",
       "country_code": "IT",
       "category": "music",
+      "url": "https://www.google.com/search?q=Concerto%20live%20%E2%80%93%20Roma%20Roma%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_roma_culture_02",
+      "id": "IT_roma_lazio_culture_02",
       "title": "Mostra temporanea – Roma",
       "start": "2026-01-23T11:00:00.000Z",
       "end": "2026-01-23T14:00:00.000Z",
@@ -365,10 +418,12 @@
       "region": "Lazio",
       "country_code": "IT",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Mostra%20temporanea%20%E2%80%93%20Roma%20Roma%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_roma_culture_03",
+      "id": "IT_roma_lazio_culture_03",
       "title": "Teatro / Spettacolo – Roma",
       "start": "2026-01-26T18:00:00.000Z",
       "end": "2026-01-26T22:00:00.000Z",
@@ -379,10 +434,12 @@
       "region": "Lazio",
       "country_code": "IT",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Teatro%20%2F%20Spettacolo%20%E2%80%93%20Roma%20Roma%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_roma_local_04",
+      "id": "IT_roma_lazio_local_04",
       "title": "Mercatino & sapori locali – Roma",
       "start": "2026-01-29T21:00:00.000Z",
       "end": "2026-01-30T03:00:00.000Z",
@@ -393,10 +450,12 @@
       "region": "Lazio",
       "country_code": "IT",
       "category": "local",
+      "url": "https://www.google.com/search?q=Mercatino%20%26%20sapori%20locali%20%E2%80%93%20Roma%20Roma%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_roma_local_05",
+      "id": "IT_roma_lazio_local_05",
       "title": "Sagra / Festa di quartiere – Roma",
       "start": "2026-02-01T09:00:00.000Z",
       "end": "2026-02-01T11:00:00.000Z",
@@ -407,10 +466,12 @@
       "region": "Lazio",
       "country_code": "IT",
       "category": "local",
+      "url": "https://www.google.com/search?q=Sagra%20%2F%20Festa%20di%20quartiere%20%E2%80%93%20Roma%20Roma%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_roma_family_06",
+      "id": "IT_roma_lazio_family_06",
       "title": "Evento per famiglie – Roma",
       "start": "2026-02-04T11:00:00.000Z",
       "end": "2026-02-04T14:00:00.000Z",
@@ -421,10 +482,12 @@
       "region": "Lazio",
       "country_code": "IT",
       "category": "family",
+      "url": "https://www.google.com/search?q=Evento%20per%20famiglie%20%E2%80%93%20Roma%20Roma%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_roma_sport_07",
+      "id": "IT_roma_lazio_sport_07",
       "title": "Evento sportivo – Roma",
       "start": "2026-02-07T18:00:00.000Z",
       "end": "2026-02-07T22:00:00.000Z",
@@ -435,10 +498,12 @@
       "region": "Lazio",
       "country_code": "IT",
       "category": "sport",
+      "url": "https://www.google.com/search?q=Evento%20sportivo%20%E2%80%93%20Roma%20Roma%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_roma_night_08",
+      "id": "IT_roma_lazio_night_08",
       "title": "Serata / Club – Roma",
       "start": "2026-02-10T21:00:00.000Z",
       "end": "2026-02-11T03:00:00.000Z",
@@ -449,10 +514,12 @@
       "region": "Lazio",
       "country_code": "IT",
       "category": "night",
+      "url": "https://www.google.com/search?q=Serata%20%2F%20Club%20%E2%80%93%20Roma%20Roma%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_roma_music_09",
+      "id": "IT_roma_lazio_music_09",
       "title": "Concerto live – Roma",
       "start": "2026-02-13T09:00:00.000Z",
       "end": "2026-02-13T11:00:00.000Z",
@@ -463,10 +530,12 @@
       "region": "Lazio",
       "country_code": "IT",
       "category": "music",
+      "url": "https://www.google.com/search?q=Concerto%20live%20%E2%80%93%20Roma%20Roma%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_roma_culture_10",
+      "id": "IT_roma_lazio_culture_10",
       "title": "Mostra temporanea – Roma",
       "start": "2026-02-16T11:00:00.000Z",
       "end": "2026-02-16T14:00:00.000Z",
@@ -477,10 +546,12 @@
       "region": "Lazio",
       "country_code": "IT",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Mostra%20temporanea%20%E2%80%93%20Roma%20Roma%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_roma_culture_11",
+      "id": "IT_roma_lazio_culture_11",
       "title": "Teatro / Spettacolo – Roma",
       "start": "2026-02-19T18:00:00.000Z",
       "end": "2026-02-19T22:00:00.000Z",
@@ -491,10 +562,12 @@
       "region": "Lazio",
       "country_code": "IT",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Teatro%20%2F%20Spettacolo%20%E2%80%93%20Roma%20Roma%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_roma_local_12",
+      "id": "IT_roma_lazio_local_12",
       "title": "Mercatino & sapori locali – Roma",
       "start": "2026-02-22T21:00:00.000Z",
       "end": "2026-02-23T03:00:00.000Z",
@@ -505,10 +578,12 @@
       "region": "Lazio",
       "country_code": "IT",
       "category": "local",
+      "url": "https://www.google.com/search?q=Mercatino%20%26%20sapori%20locali%20%E2%80%93%20Roma%20Roma%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_napoli_music_01",
+      "id": "IT_napoli_campania_music_01",
       "title": "Concerto live – Napoli",
       "start": "2026-01-20T09:00:00.000Z",
       "end": "2026-01-20T11:00:00.000Z",
@@ -519,10 +594,12 @@
       "region": "Campania",
       "country_code": "IT",
       "category": "music",
+      "url": "https://www.google.com/search?q=Concerto%20live%20%E2%80%93%20Napoli%20Napoli%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_napoli_culture_02",
+      "id": "IT_napoli_campania_culture_02",
       "title": "Mostra temporanea – Napoli",
       "start": "2026-01-23T11:00:00.000Z",
       "end": "2026-01-23T14:00:00.000Z",
@@ -533,10 +610,12 @@
       "region": "Campania",
       "country_code": "IT",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Mostra%20temporanea%20%E2%80%93%20Napoli%20Napoli%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_napoli_culture_03",
+      "id": "IT_napoli_campania_culture_03",
       "title": "Teatro / Spettacolo – Napoli",
       "start": "2026-01-26T18:00:00.000Z",
       "end": "2026-01-26T22:00:00.000Z",
@@ -547,10 +626,12 @@
       "region": "Campania",
       "country_code": "IT",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Teatro%20%2F%20Spettacolo%20%E2%80%93%20Napoli%20Napoli%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_napoli_local_04",
+      "id": "IT_napoli_campania_local_04",
       "title": "Mercatino & sapori locali – Napoli",
       "start": "2026-01-29T21:00:00.000Z",
       "end": "2026-01-30T03:00:00.000Z",
@@ -561,10 +642,12 @@
       "region": "Campania",
       "country_code": "IT",
       "category": "local",
+      "url": "https://www.google.com/search?q=Mercatino%20%26%20sapori%20locali%20%E2%80%93%20Napoli%20Napoli%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_napoli_local_05",
+      "id": "IT_napoli_campania_local_05",
       "title": "Sagra / Festa di quartiere – Napoli",
       "start": "2026-02-01T09:00:00.000Z",
       "end": "2026-02-01T11:00:00.000Z",
@@ -575,10 +658,12 @@
       "region": "Campania",
       "country_code": "IT",
       "category": "local",
+      "url": "https://www.google.com/search?q=Sagra%20%2F%20Festa%20di%20quartiere%20%E2%80%93%20Napoli%20Napoli%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_napoli_family_06",
+      "id": "IT_napoli_campania_family_06",
       "title": "Evento per famiglie – Napoli",
       "start": "2026-02-04T11:00:00.000Z",
       "end": "2026-02-04T14:00:00.000Z",
@@ -589,10 +674,12 @@
       "region": "Campania",
       "country_code": "IT",
       "category": "family",
+      "url": "https://www.google.com/search?q=Evento%20per%20famiglie%20%E2%80%93%20Napoli%20Napoli%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_napoli_sport_07",
+      "id": "IT_napoli_campania_sport_07",
       "title": "Evento sportivo – Napoli",
       "start": "2026-02-07T18:00:00.000Z",
       "end": "2026-02-07T22:00:00.000Z",
@@ -603,10 +690,12 @@
       "region": "Campania",
       "country_code": "IT",
       "category": "sport",
+      "url": "https://www.google.com/search?q=Evento%20sportivo%20%E2%80%93%20Napoli%20Napoli%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_napoli_night_08",
+      "id": "IT_napoli_campania_night_08",
       "title": "Serata / Club – Napoli",
       "start": "2026-02-10T21:00:00.000Z",
       "end": "2026-02-11T03:00:00.000Z",
@@ -617,10 +706,12 @@
       "region": "Campania",
       "country_code": "IT",
       "category": "night",
+      "url": "https://www.google.com/search?q=Serata%20%2F%20Club%20%E2%80%93%20Napoli%20Napoli%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_napoli_music_09",
+      "id": "IT_napoli_campania_music_09",
       "title": "Concerto live – Napoli",
       "start": "2026-02-13T09:00:00.000Z",
       "end": "2026-02-13T11:00:00.000Z",
@@ -631,10 +722,12 @@
       "region": "Campania",
       "country_code": "IT",
       "category": "music",
+      "url": "https://www.google.com/search?q=Concerto%20live%20%E2%80%93%20Napoli%20Napoli%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_napoli_culture_10",
+      "id": "IT_napoli_campania_culture_10",
       "title": "Mostra temporanea – Napoli",
       "start": "2026-02-16T11:00:00.000Z",
       "end": "2026-02-16T14:00:00.000Z",
@@ -645,10 +738,12 @@
       "region": "Campania",
       "country_code": "IT",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Mostra%20temporanea%20%E2%80%93%20Napoli%20Napoli%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_napoli_culture_11",
+      "id": "IT_napoli_campania_culture_11",
       "title": "Teatro / Spettacolo – Napoli",
       "start": "2026-02-19T18:00:00.000Z",
       "end": "2026-02-19T22:00:00.000Z",
@@ -659,10 +754,12 @@
       "region": "Campania",
       "country_code": "IT",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Teatro%20%2F%20Spettacolo%20%E2%80%93%20Napoli%20Napoli%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_napoli_local_12",
+      "id": "IT_napoli_campania_local_12",
       "title": "Mercatino & sapori locali – Napoli",
       "start": "2026-02-22T21:00:00.000Z",
       "end": "2026-02-23T03:00:00.000Z",
@@ -673,10 +770,12 @@
       "region": "Campania",
       "country_code": "IT",
       "category": "local",
+      "url": "https://www.google.com/search?q=Mercatino%20%26%20sapori%20locali%20%E2%80%93%20Napoli%20Napoli%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_torino_music_01",
+      "id": "IT_torino_piemonte_music_01",
       "title": "Concerto live – Torino",
       "start": "2026-01-20T09:00:00.000Z",
       "end": "2026-01-20T11:00:00.000Z",
@@ -687,10 +786,12 @@
       "region": "Piemonte",
       "country_code": "IT",
       "category": "music",
+      "url": "https://www.google.com/search?q=Concerto%20live%20%E2%80%93%20Torino%20Torino%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_torino_culture_02",
+      "id": "IT_torino_piemonte_culture_02",
       "title": "Mostra temporanea – Torino",
       "start": "2026-01-23T11:00:00.000Z",
       "end": "2026-01-23T14:00:00.000Z",
@@ -701,10 +802,12 @@
       "region": "Piemonte",
       "country_code": "IT",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Mostra%20temporanea%20%E2%80%93%20Torino%20Torino%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_torino_culture_03",
+      "id": "IT_torino_piemonte_culture_03",
       "title": "Teatro / Spettacolo – Torino",
       "start": "2026-01-26T18:00:00.000Z",
       "end": "2026-01-26T22:00:00.000Z",
@@ -715,10 +818,12 @@
       "region": "Piemonte",
       "country_code": "IT",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Teatro%20%2F%20Spettacolo%20%E2%80%93%20Torino%20Torino%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_torino_local_04",
+      "id": "IT_torino_piemonte_local_04",
       "title": "Mercatino & sapori locali – Torino",
       "start": "2026-01-29T21:00:00.000Z",
       "end": "2026-01-30T03:00:00.000Z",
@@ -729,10 +834,12 @@
       "region": "Piemonte",
       "country_code": "IT",
       "category": "local",
+      "url": "https://www.google.com/search?q=Mercatino%20%26%20sapori%20locali%20%E2%80%93%20Torino%20Torino%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_torino_local_05",
+      "id": "IT_torino_piemonte_local_05",
       "title": "Sagra / Festa di quartiere – Torino",
       "start": "2026-02-01T09:00:00.000Z",
       "end": "2026-02-01T11:00:00.000Z",
@@ -743,10 +850,12 @@
       "region": "Piemonte",
       "country_code": "IT",
       "category": "local",
+      "url": "https://www.google.com/search?q=Sagra%20%2F%20Festa%20di%20quartiere%20%E2%80%93%20Torino%20Torino%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_torino_family_06",
+      "id": "IT_torino_piemonte_family_06",
       "title": "Evento per famiglie – Torino",
       "start": "2026-02-04T11:00:00.000Z",
       "end": "2026-02-04T14:00:00.000Z",
@@ -757,10 +866,12 @@
       "region": "Piemonte",
       "country_code": "IT",
       "category": "family",
+      "url": "https://www.google.com/search?q=Evento%20per%20famiglie%20%E2%80%93%20Torino%20Torino%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_torino_sport_07",
+      "id": "IT_torino_piemonte_sport_07",
       "title": "Evento sportivo – Torino",
       "start": "2026-02-07T18:00:00.000Z",
       "end": "2026-02-07T22:00:00.000Z",
@@ -771,10 +882,12 @@
       "region": "Piemonte",
       "country_code": "IT",
       "category": "sport",
+      "url": "https://www.google.com/search?q=Evento%20sportivo%20%E2%80%93%20Torino%20Torino%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_torino_night_08",
+      "id": "IT_torino_piemonte_night_08",
       "title": "Serata / Club – Torino",
       "start": "2026-02-10T21:00:00.000Z",
       "end": "2026-02-11T03:00:00.000Z",
@@ -785,10 +898,12 @@
       "region": "Piemonte",
       "country_code": "IT",
       "category": "night",
+      "url": "https://www.google.com/search?q=Serata%20%2F%20Club%20%E2%80%93%20Torino%20Torino%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_torino_music_09",
+      "id": "IT_torino_piemonte_music_09",
       "title": "Concerto live – Torino",
       "start": "2026-02-13T09:00:00.000Z",
       "end": "2026-02-13T11:00:00.000Z",
@@ -799,10 +914,12 @@
       "region": "Piemonte",
       "country_code": "IT",
       "category": "music",
+      "url": "https://www.google.com/search?q=Concerto%20live%20%E2%80%93%20Torino%20Torino%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_torino_culture_10",
+      "id": "IT_torino_piemonte_culture_10",
       "title": "Mostra temporanea – Torino",
       "start": "2026-02-16T11:00:00.000Z",
       "end": "2026-02-16T14:00:00.000Z",
@@ -813,10 +930,12 @@
       "region": "Piemonte",
       "country_code": "IT",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Mostra%20temporanea%20%E2%80%93%20Torino%20Torino%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_torino_culture_11",
+      "id": "IT_torino_piemonte_culture_11",
       "title": "Teatro / Spettacolo – Torino",
       "start": "2026-02-19T18:00:00.000Z",
       "end": "2026-02-19T22:00:00.000Z",
@@ -827,10 +946,12 @@
       "region": "Piemonte",
       "country_code": "IT",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Teatro%20%2F%20Spettacolo%20%E2%80%93%20Torino%20Torino%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_torino_local_12",
+      "id": "IT_torino_piemonte_local_12",
       "title": "Mercatino & sapori locali – Torino",
       "start": "2026-02-22T21:00:00.000Z",
       "end": "2026-02-23T03:00:00.000Z",
@@ -841,10 +962,12 @@
       "region": "Piemonte",
       "country_code": "IT",
       "category": "local",
+      "url": "https://www.google.com/search?q=Mercatino%20%26%20sapori%20locali%20%E2%80%93%20Torino%20Torino%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_venezia_music_01",
+      "id": "IT_venezia_veneto_music_01",
       "title": "Concerto live – Venezia",
       "start": "2026-01-20T09:00:00.000Z",
       "end": "2026-01-20T11:00:00.000Z",
@@ -855,10 +978,12 @@
       "region": "Veneto",
       "country_code": "IT",
       "category": "music",
+      "url": "https://www.google.com/search?q=Concerto%20live%20%E2%80%93%20Venezia%20Venezia%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_venezia_culture_02",
+      "id": "IT_venezia_veneto_culture_02",
       "title": "Mostra temporanea – Venezia",
       "start": "2026-01-23T11:00:00.000Z",
       "end": "2026-01-23T14:00:00.000Z",
@@ -869,10 +994,12 @@
       "region": "Veneto",
       "country_code": "IT",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Mostra%20temporanea%20%E2%80%93%20Venezia%20Venezia%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_venezia_culture_03",
+      "id": "IT_venezia_veneto_culture_03",
       "title": "Teatro / Spettacolo – Venezia",
       "start": "2026-01-26T18:00:00.000Z",
       "end": "2026-01-26T22:00:00.000Z",
@@ -883,10 +1010,12 @@
       "region": "Veneto",
       "country_code": "IT",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Teatro%20%2F%20Spettacolo%20%E2%80%93%20Venezia%20Venezia%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_venezia_local_04",
+      "id": "IT_venezia_veneto_local_04",
       "title": "Mercatino & sapori locali – Venezia",
       "start": "2026-01-29T21:00:00.000Z",
       "end": "2026-01-30T03:00:00.000Z",
@@ -897,10 +1026,12 @@
       "region": "Veneto",
       "country_code": "IT",
       "category": "local",
+      "url": "https://www.google.com/search?q=Mercatino%20%26%20sapori%20locali%20%E2%80%93%20Venezia%20Venezia%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_venezia_local_05",
+      "id": "IT_venezia_veneto_local_05",
       "title": "Sagra / Festa di quartiere – Venezia",
       "start": "2026-02-01T09:00:00.000Z",
       "end": "2026-02-01T11:00:00.000Z",
@@ -911,10 +1042,12 @@
       "region": "Veneto",
       "country_code": "IT",
       "category": "local",
+      "url": "https://www.google.com/search?q=Sagra%20%2F%20Festa%20di%20quartiere%20%E2%80%93%20Venezia%20Venezia%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_venezia_family_06",
+      "id": "IT_venezia_veneto_family_06",
       "title": "Evento per famiglie – Venezia",
       "start": "2026-02-04T11:00:00.000Z",
       "end": "2026-02-04T14:00:00.000Z",
@@ -925,10 +1058,12 @@
       "region": "Veneto",
       "country_code": "IT",
       "category": "family",
+      "url": "https://www.google.com/search?q=Evento%20per%20famiglie%20%E2%80%93%20Venezia%20Venezia%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_venezia_sport_07",
+      "id": "IT_venezia_veneto_sport_07",
       "title": "Evento sportivo – Venezia",
       "start": "2026-02-07T18:00:00.000Z",
       "end": "2026-02-07T22:00:00.000Z",
@@ -939,10 +1074,12 @@
       "region": "Veneto",
       "country_code": "IT",
       "category": "sport",
+      "url": "https://www.google.com/search?q=Evento%20sportivo%20%E2%80%93%20Venezia%20Venezia%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_venezia_night_08",
+      "id": "IT_venezia_veneto_night_08",
       "title": "Serata / Club – Venezia",
       "start": "2026-02-10T21:00:00.000Z",
       "end": "2026-02-11T03:00:00.000Z",
@@ -953,10 +1090,12 @@
       "region": "Veneto",
       "country_code": "IT",
       "category": "night",
+      "url": "https://www.google.com/search?q=Serata%20%2F%20Club%20%E2%80%93%20Venezia%20Venezia%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_venezia_music_09",
+      "id": "IT_venezia_veneto_music_09",
       "title": "Concerto live – Venezia",
       "start": "2026-02-13T09:00:00.000Z",
       "end": "2026-02-13T11:00:00.000Z",
@@ -967,10 +1106,12 @@
       "region": "Veneto",
       "country_code": "IT",
       "category": "music",
+      "url": "https://www.google.com/search?q=Concerto%20live%20%E2%80%93%20Venezia%20Venezia%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_venezia_culture_10",
+      "id": "IT_venezia_veneto_culture_10",
       "title": "Mostra temporanea – Venezia",
       "start": "2026-02-16T11:00:00.000Z",
       "end": "2026-02-16T14:00:00.000Z",
@@ -981,10 +1122,12 @@
       "region": "Veneto",
       "country_code": "IT",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Mostra%20temporanea%20%E2%80%93%20Venezia%20Venezia%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_venezia_culture_11",
+      "id": "IT_venezia_veneto_culture_11",
       "title": "Teatro / Spettacolo – Venezia",
       "start": "2026-02-19T18:00:00.000Z",
       "end": "2026-02-19T22:00:00.000Z",
@@ -995,10 +1138,12 @@
       "region": "Veneto",
       "country_code": "IT",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Teatro%20%2F%20Spettacolo%20%E2%80%93%20Venezia%20Venezia%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_venezia_local_12",
+      "id": "IT_venezia_veneto_local_12",
       "title": "Mercatino & sapori locali – Venezia",
       "start": "2026-02-22T21:00:00.000Z",
       "end": "2026-02-23T03:00:00.000Z",
@@ -1009,10 +1154,12 @@
       "region": "Veneto",
       "country_code": "IT",
       "category": "local",
+      "url": "https://www.google.com/search?q=Mercatino%20%26%20sapori%20locali%20%E2%80%93%20Venezia%20Venezia%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_bologna_music_01",
+      "id": "IT_bologna_emilia_romagna_music_01",
       "title": "Concerto live – Bologna",
       "start": "2026-01-20T09:00:00.000Z",
       "end": "2026-01-20T11:00:00.000Z",
@@ -1023,10 +1170,12 @@
       "region": "Emilia-Romagna",
       "country_code": "IT",
       "category": "music",
+      "url": "https://www.google.com/search?q=Concerto%20live%20%E2%80%93%20Bologna%20Bologna%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_bologna_culture_02",
+      "id": "IT_bologna_emilia_romagna_culture_02",
       "title": "Mostra temporanea – Bologna",
       "start": "2026-01-23T11:00:00.000Z",
       "end": "2026-01-23T14:00:00.000Z",
@@ -1037,10 +1186,12 @@
       "region": "Emilia-Romagna",
       "country_code": "IT",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Mostra%20temporanea%20%E2%80%93%20Bologna%20Bologna%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_bologna_culture_03",
+      "id": "IT_bologna_emilia_romagna_culture_03",
       "title": "Teatro / Spettacolo – Bologna",
       "start": "2026-01-26T18:00:00.000Z",
       "end": "2026-01-26T22:00:00.000Z",
@@ -1051,10 +1202,12 @@
       "region": "Emilia-Romagna",
       "country_code": "IT",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Teatro%20%2F%20Spettacolo%20%E2%80%93%20Bologna%20Bologna%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_bologna_local_04",
+      "id": "IT_bologna_emilia_romagna_local_04",
       "title": "Mercatino & sapori locali – Bologna",
       "start": "2026-01-29T21:00:00.000Z",
       "end": "2026-01-30T03:00:00.000Z",
@@ -1065,10 +1218,12 @@
       "region": "Emilia-Romagna",
       "country_code": "IT",
       "category": "local",
+      "url": "https://www.google.com/search?q=Mercatino%20%26%20sapori%20locali%20%E2%80%93%20Bologna%20Bologna%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_bologna_local_05",
+      "id": "IT_bologna_emilia_romagna_local_05",
       "title": "Sagra / Festa di quartiere – Bologna",
       "start": "2026-02-01T09:00:00.000Z",
       "end": "2026-02-01T11:00:00.000Z",
@@ -1079,10 +1234,12 @@
       "region": "Emilia-Romagna",
       "country_code": "IT",
       "category": "local",
+      "url": "https://www.google.com/search?q=Sagra%20%2F%20Festa%20di%20quartiere%20%E2%80%93%20Bologna%20Bologna%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_bologna_family_06",
+      "id": "IT_bologna_emilia_romagna_family_06",
       "title": "Evento per famiglie – Bologna",
       "start": "2026-02-04T11:00:00.000Z",
       "end": "2026-02-04T14:00:00.000Z",
@@ -1093,10 +1250,12 @@
       "region": "Emilia-Romagna",
       "country_code": "IT",
       "category": "family",
+      "url": "https://www.google.com/search?q=Evento%20per%20famiglie%20%E2%80%93%20Bologna%20Bologna%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_bologna_sport_07",
+      "id": "IT_bologna_emilia_romagna_sport_07",
       "title": "Evento sportivo – Bologna",
       "start": "2026-02-07T18:00:00.000Z",
       "end": "2026-02-07T22:00:00.000Z",
@@ -1107,10 +1266,12 @@
       "region": "Emilia-Romagna",
       "country_code": "IT",
       "category": "sport",
+      "url": "https://www.google.com/search?q=Evento%20sportivo%20%E2%80%93%20Bologna%20Bologna%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_bologna_night_08",
+      "id": "IT_bologna_emilia_romagna_night_08",
       "title": "Serata / Club – Bologna",
       "start": "2026-02-10T21:00:00.000Z",
       "end": "2026-02-11T03:00:00.000Z",
@@ -1121,10 +1282,12 @@
       "region": "Emilia-Romagna",
       "country_code": "IT",
       "category": "night",
+      "url": "https://www.google.com/search?q=Serata%20%2F%20Club%20%E2%80%93%20Bologna%20Bologna%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_bologna_music_09",
+      "id": "IT_bologna_emilia_romagna_music_09",
       "title": "Concerto live – Bologna",
       "start": "2026-02-13T09:00:00.000Z",
       "end": "2026-02-13T11:00:00.000Z",
@@ -1135,10 +1298,12 @@
       "region": "Emilia-Romagna",
       "country_code": "IT",
       "category": "music",
+      "url": "https://www.google.com/search?q=Concerto%20live%20%E2%80%93%20Bologna%20Bologna%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_bologna_culture_10",
+      "id": "IT_bologna_emilia_romagna_culture_10",
       "title": "Mostra temporanea – Bologna",
       "start": "2026-02-16T11:00:00.000Z",
       "end": "2026-02-16T14:00:00.000Z",
@@ -1149,10 +1314,12 @@
       "region": "Emilia-Romagna",
       "country_code": "IT",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Mostra%20temporanea%20%E2%80%93%20Bologna%20Bologna%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_bologna_culture_11",
+      "id": "IT_bologna_emilia_romagna_culture_11",
       "title": "Teatro / Spettacolo – Bologna",
       "start": "2026-02-19T18:00:00.000Z",
       "end": "2026-02-19T22:00:00.000Z",
@@ -1163,10 +1330,12 @@
       "region": "Emilia-Romagna",
       "country_code": "IT",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Teatro%20%2F%20Spettacolo%20%E2%80%93%20Bologna%20Bologna%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_bologna_local_12",
+      "id": "IT_bologna_emilia_romagna_local_12",
       "title": "Mercatino & sapori locali – Bologna",
       "start": "2026-02-22T21:00:00.000Z",
       "end": "2026-02-23T03:00:00.000Z",
@@ -1177,10 +1346,12 @@
       "region": "Emilia-Romagna",
       "country_code": "IT",
       "category": "local",
+      "url": "https://www.google.com/search?q=Mercatino%20%26%20sapori%20locali%20%E2%80%93%20Bologna%20Bologna%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_firenze_music_01",
+      "id": "IT_firenze_toscana_music_01",
       "title": "Concerto live – Firenze",
       "start": "2026-01-20T09:00:00.000Z",
       "end": "2026-01-20T11:00:00.000Z",
@@ -1191,10 +1362,12 @@
       "region": "Toscana",
       "country_code": "IT",
       "category": "music",
+      "url": "https://www.google.com/search?q=Concerto%20live%20%E2%80%93%20Firenze%20Firenze%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_firenze_culture_02",
+      "id": "IT_firenze_toscana_culture_02",
       "title": "Mostra temporanea – Firenze",
       "start": "2026-01-23T11:00:00.000Z",
       "end": "2026-01-23T14:00:00.000Z",
@@ -1205,10 +1378,12 @@
       "region": "Toscana",
       "country_code": "IT",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Mostra%20temporanea%20%E2%80%93%20Firenze%20Firenze%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_firenze_culture_03",
+      "id": "IT_firenze_toscana_culture_03",
       "title": "Teatro / Spettacolo – Firenze",
       "start": "2026-01-26T18:00:00.000Z",
       "end": "2026-01-26T22:00:00.000Z",
@@ -1219,10 +1394,12 @@
       "region": "Toscana",
       "country_code": "IT",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Teatro%20%2F%20Spettacolo%20%E2%80%93%20Firenze%20Firenze%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_firenze_local_04",
+      "id": "IT_firenze_toscana_local_04",
       "title": "Mercatino & sapori locali – Firenze",
       "start": "2026-01-29T21:00:00.000Z",
       "end": "2026-01-30T03:00:00.000Z",
@@ -1233,10 +1410,12 @@
       "region": "Toscana",
       "country_code": "IT",
       "category": "local",
+      "url": "https://www.google.com/search?q=Mercatino%20%26%20sapori%20locali%20%E2%80%93%20Firenze%20Firenze%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_firenze_local_05",
+      "id": "IT_firenze_toscana_local_05",
       "title": "Sagra / Festa di quartiere – Firenze",
       "start": "2026-02-01T09:00:00.000Z",
       "end": "2026-02-01T11:00:00.000Z",
@@ -1247,10 +1426,12 @@
       "region": "Toscana",
       "country_code": "IT",
       "category": "local",
+      "url": "https://www.google.com/search?q=Sagra%20%2F%20Festa%20di%20quartiere%20%E2%80%93%20Firenze%20Firenze%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_firenze_family_06",
+      "id": "IT_firenze_toscana_family_06",
       "title": "Evento per famiglie – Firenze",
       "start": "2026-02-04T11:00:00.000Z",
       "end": "2026-02-04T14:00:00.000Z",
@@ -1261,10 +1442,12 @@
       "region": "Toscana",
       "country_code": "IT",
       "category": "family",
+      "url": "https://www.google.com/search?q=Evento%20per%20famiglie%20%E2%80%93%20Firenze%20Firenze%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_firenze_sport_07",
+      "id": "IT_firenze_toscana_sport_07",
       "title": "Evento sportivo – Firenze",
       "start": "2026-02-07T18:00:00.000Z",
       "end": "2026-02-07T22:00:00.000Z",
@@ -1275,10 +1458,12 @@
       "region": "Toscana",
       "country_code": "IT",
       "category": "sport",
+      "url": "https://www.google.com/search?q=Evento%20sportivo%20%E2%80%93%20Firenze%20Firenze%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_firenze_night_08",
+      "id": "IT_firenze_toscana_night_08",
       "title": "Serata / Club – Firenze",
       "start": "2026-02-10T21:00:00.000Z",
       "end": "2026-02-11T03:00:00.000Z",
@@ -1289,10 +1474,12 @@
       "region": "Toscana",
       "country_code": "IT",
       "category": "night",
+      "url": "https://www.google.com/search?q=Serata%20%2F%20Club%20%E2%80%93%20Firenze%20Firenze%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_firenze_music_09",
+      "id": "IT_firenze_toscana_music_09",
       "title": "Concerto live – Firenze",
       "start": "2026-02-13T09:00:00.000Z",
       "end": "2026-02-13T11:00:00.000Z",
@@ -1303,10 +1490,12 @@
       "region": "Toscana",
       "country_code": "IT",
       "category": "music",
+      "url": "https://www.google.com/search?q=Concerto%20live%20%E2%80%93%20Firenze%20Firenze%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_firenze_culture_10",
+      "id": "IT_firenze_toscana_culture_10",
       "title": "Mostra temporanea – Firenze",
       "start": "2026-02-16T11:00:00.000Z",
       "end": "2026-02-16T14:00:00.000Z",
@@ -1317,10 +1506,12 @@
       "region": "Toscana",
       "country_code": "IT",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Mostra%20temporanea%20%E2%80%93%20Firenze%20Firenze%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_firenze_culture_11",
+      "id": "IT_firenze_toscana_culture_11",
       "title": "Teatro / Spettacolo – Firenze",
       "start": "2026-02-19T18:00:00.000Z",
       "end": "2026-02-19T22:00:00.000Z",
@@ -1331,10 +1522,12 @@
       "region": "Toscana",
       "country_code": "IT",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Teatro%20%2F%20Spettacolo%20%E2%80%93%20Firenze%20Firenze%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "IT_firenze_local_12",
+      "id": "IT_firenze_toscana_local_12",
       "title": "Mercatino & sapori locali – Firenze",
       "start": "2026-02-22T21:00:00.000Z",
       "end": "2026-02-23T03:00:00.000Z",
@@ -1345,10 +1538,12 @@
       "region": "Toscana",
       "country_code": "IT",
       "category": "local",
+      "url": "https://www.google.com/search?q=Mercatino%20%26%20sapori%20locali%20%E2%80%93%20Firenze%20Firenze%20IT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "FR_paris_music_01",
+      "id": "FR_paris_ile_de_france_music_01",
       "title": "Concerto live – Paris",
       "start": "2026-01-20T09:00:00.000Z",
       "end": "2026-01-20T11:00:00.000Z",
@@ -1359,10 +1554,12 @@
       "region": "Ile-de-France",
       "country_code": "FR",
       "category": "music",
+      "url": "https://www.google.com/search?q=Concerto%20live%20%E2%80%93%20Paris%20Paris%20FR",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "FR_paris_culture_02",
+      "id": "FR_paris_ile_de_france_culture_02",
       "title": "Mostra temporanea – Paris",
       "start": "2026-01-23T11:00:00.000Z",
       "end": "2026-01-23T14:00:00.000Z",
@@ -1373,10 +1570,12 @@
       "region": "Ile-de-France",
       "country_code": "FR",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Mostra%20temporanea%20%E2%80%93%20Paris%20Paris%20FR",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "FR_paris_culture_03",
+      "id": "FR_paris_ile_de_france_culture_03",
       "title": "Teatro / Spettacolo – Paris",
       "start": "2026-01-26T18:00:00.000Z",
       "end": "2026-01-26T22:00:00.000Z",
@@ -1387,10 +1586,12 @@
       "region": "Ile-de-France",
       "country_code": "FR",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Teatro%20%2F%20Spettacolo%20%E2%80%93%20Paris%20Paris%20FR",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "FR_paris_local_04",
+      "id": "FR_paris_ile_de_france_local_04",
       "title": "Mercatino & sapori locali – Paris",
       "start": "2026-01-29T21:00:00.000Z",
       "end": "2026-01-30T03:00:00.000Z",
@@ -1401,10 +1602,12 @@
       "region": "Ile-de-France",
       "country_code": "FR",
       "category": "local",
+      "url": "https://www.google.com/search?q=Mercatino%20%26%20sapori%20locali%20%E2%80%93%20Paris%20Paris%20FR",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "FR_paris_local_05",
+      "id": "FR_paris_ile_de_france_local_05",
       "title": "Sagra / Festa di quartiere – Paris",
       "start": "2026-02-01T09:00:00.000Z",
       "end": "2026-02-01T11:00:00.000Z",
@@ -1415,10 +1618,12 @@
       "region": "Ile-de-France",
       "country_code": "FR",
       "category": "local",
+      "url": "https://www.google.com/search?q=Sagra%20%2F%20Festa%20di%20quartiere%20%E2%80%93%20Paris%20Paris%20FR",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "FR_paris_family_06",
+      "id": "FR_paris_ile_de_france_family_06",
       "title": "Evento per famiglie – Paris",
       "start": "2026-02-04T11:00:00.000Z",
       "end": "2026-02-04T14:00:00.000Z",
@@ -1429,10 +1634,12 @@
       "region": "Ile-de-France",
       "country_code": "FR",
       "category": "family",
+      "url": "https://www.google.com/search?q=Evento%20per%20famiglie%20%E2%80%93%20Paris%20Paris%20FR",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "FR_paris_sport_07",
+      "id": "FR_paris_ile_de_france_sport_07",
       "title": "Evento sportivo – Paris",
       "start": "2026-02-07T18:00:00.000Z",
       "end": "2026-02-07T22:00:00.000Z",
@@ -1443,10 +1650,12 @@
       "region": "Ile-de-France",
       "country_code": "FR",
       "category": "sport",
+      "url": "https://www.google.com/search?q=Evento%20sportivo%20%E2%80%93%20Paris%20Paris%20FR",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "FR_paris_night_08",
+      "id": "FR_paris_ile_de_france_night_08",
       "title": "Serata / Club – Paris",
       "start": "2026-02-10T21:00:00.000Z",
       "end": "2026-02-11T03:00:00.000Z",
@@ -1457,10 +1666,12 @@
       "region": "Ile-de-France",
       "country_code": "FR",
       "category": "night",
+      "url": "https://www.google.com/search?q=Serata%20%2F%20Club%20%E2%80%93%20Paris%20Paris%20FR",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "FR_paris_music_09",
+      "id": "FR_paris_ile_de_france_music_09",
       "title": "Concerto live – Paris",
       "start": "2026-02-13T09:00:00.000Z",
       "end": "2026-02-13T11:00:00.000Z",
@@ -1471,10 +1682,12 @@
       "region": "Ile-de-France",
       "country_code": "FR",
       "category": "music",
+      "url": "https://www.google.com/search?q=Concerto%20live%20%E2%80%93%20Paris%20Paris%20FR",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "FR_paris_culture_10",
+      "id": "FR_paris_ile_de_france_culture_10",
       "title": "Mostra temporanea – Paris",
       "start": "2026-02-16T11:00:00.000Z",
       "end": "2026-02-16T14:00:00.000Z",
@@ -1485,10 +1698,12 @@
       "region": "Ile-de-France",
       "country_code": "FR",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Mostra%20temporanea%20%E2%80%93%20Paris%20Paris%20FR",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "FR_paris_culture_11",
+      "id": "FR_paris_ile_de_france_culture_11",
       "title": "Teatro / Spettacolo – Paris",
       "start": "2026-02-19T18:00:00.000Z",
       "end": "2026-02-19T22:00:00.000Z",
@@ -1499,10 +1714,12 @@
       "region": "Ile-de-France",
       "country_code": "FR",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Teatro%20%2F%20Spettacolo%20%E2%80%93%20Paris%20Paris%20FR",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "FR_paris_local_12",
+      "id": "FR_paris_ile_de_france_local_12",
       "title": "Mercatino & sapori locali – Paris",
       "start": "2026-02-22T21:00:00.000Z",
       "end": "2026-02-23T03:00:00.000Z",
@@ -1513,10 +1730,12 @@
       "region": "Ile-de-France",
       "country_code": "FR",
       "category": "local",
+      "url": "https://www.google.com/search?q=Mercatino%20%26%20sapori%20locali%20%E2%80%93%20Paris%20Paris%20FR",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "GB_london_music_01",
+      "id": "GB_london_england_music_01",
       "title": "Concerto live – London",
       "start": "2026-01-20T09:00:00.000Z",
       "end": "2026-01-20T11:00:00.000Z",
@@ -1527,10 +1746,12 @@
       "region": "England",
       "country_code": "GB",
       "category": "music",
+      "url": "https://www.google.com/search?q=Concerto%20live%20%E2%80%93%20London%20London%20GB",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "GB_london_culture_02",
+      "id": "GB_london_england_culture_02",
       "title": "Mostra temporanea – London",
       "start": "2026-01-23T11:00:00.000Z",
       "end": "2026-01-23T14:00:00.000Z",
@@ -1541,10 +1762,12 @@
       "region": "England",
       "country_code": "GB",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Mostra%20temporanea%20%E2%80%93%20London%20London%20GB",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "GB_london_culture_03",
+      "id": "GB_london_england_culture_03",
       "title": "Teatro / Spettacolo – London",
       "start": "2026-01-26T18:00:00.000Z",
       "end": "2026-01-26T22:00:00.000Z",
@@ -1555,10 +1778,12 @@
       "region": "England",
       "country_code": "GB",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Teatro%20%2F%20Spettacolo%20%E2%80%93%20London%20London%20GB",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "GB_london_local_04",
+      "id": "GB_london_england_local_04",
       "title": "Mercatino & sapori locali – London",
       "start": "2026-01-29T21:00:00.000Z",
       "end": "2026-01-30T03:00:00.000Z",
@@ -1569,10 +1794,12 @@
       "region": "England",
       "country_code": "GB",
       "category": "local",
+      "url": "https://www.google.com/search?q=Mercatino%20%26%20sapori%20locali%20%E2%80%93%20London%20London%20GB",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "GB_london_local_05",
+      "id": "GB_london_england_local_05",
       "title": "Sagra / Festa di quartiere – London",
       "start": "2026-02-01T09:00:00.000Z",
       "end": "2026-02-01T11:00:00.000Z",
@@ -1583,10 +1810,12 @@
       "region": "England",
       "country_code": "GB",
       "category": "local",
+      "url": "https://www.google.com/search?q=Sagra%20%2F%20Festa%20di%20quartiere%20%E2%80%93%20London%20London%20GB",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "GB_london_family_06",
+      "id": "GB_london_england_family_06",
       "title": "Evento per famiglie – London",
       "start": "2026-02-04T11:00:00.000Z",
       "end": "2026-02-04T14:00:00.000Z",
@@ -1597,10 +1826,12 @@
       "region": "England",
       "country_code": "GB",
       "category": "family",
+      "url": "https://www.google.com/search?q=Evento%20per%20famiglie%20%E2%80%93%20London%20London%20GB",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "GB_london_sport_07",
+      "id": "GB_london_england_sport_07",
       "title": "Evento sportivo – London",
       "start": "2026-02-07T18:00:00.000Z",
       "end": "2026-02-07T22:00:00.000Z",
@@ -1611,10 +1842,12 @@
       "region": "England",
       "country_code": "GB",
       "category": "sport",
+      "url": "https://www.google.com/search?q=Evento%20sportivo%20%E2%80%93%20London%20London%20GB",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "GB_london_night_08",
+      "id": "GB_london_england_night_08",
       "title": "Serata / Club – London",
       "start": "2026-02-10T21:00:00.000Z",
       "end": "2026-02-11T03:00:00.000Z",
@@ -1625,10 +1858,12 @@
       "region": "England",
       "country_code": "GB",
       "category": "night",
+      "url": "https://www.google.com/search?q=Serata%20%2F%20Club%20%E2%80%93%20London%20London%20GB",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "GB_london_music_09",
+      "id": "GB_london_england_music_09",
       "title": "Concerto live – London",
       "start": "2026-02-13T09:00:00.000Z",
       "end": "2026-02-13T11:00:00.000Z",
@@ -1639,10 +1874,12 @@
       "region": "England",
       "country_code": "GB",
       "category": "music",
+      "url": "https://www.google.com/search?q=Concerto%20live%20%E2%80%93%20London%20London%20GB",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "GB_london_culture_10",
+      "id": "GB_london_england_culture_10",
       "title": "Mostra temporanea – London",
       "start": "2026-02-16T11:00:00.000Z",
       "end": "2026-02-16T14:00:00.000Z",
@@ -1653,10 +1890,12 @@
       "region": "England",
       "country_code": "GB",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Mostra%20temporanea%20%E2%80%93%20London%20London%20GB",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "GB_london_culture_11",
+      "id": "GB_london_england_culture_11",
       "title": "Teatro / Spettacolo – London",
       "start": "2026-02-19T18:00:00.000Z",
       "end": "2026-02-19T22:00:00.000Z",
@@ -1667,10 +1906,12 @@
       "region": "England",
       "country_code": "GB",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Teatro%20%2F%20Spettacolo%20%E2%80%93%20London%20London%20GB",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "GB_london_local_12",
+      "id": "GB_london_england_local_12",
       "title": "Mercatino & sapori locali – London",
       "start": "2026-02-22T21:00:00.000Z",
       "end": "2026-02-23T03:00:00.000Z",
@@ -1681,10 +1922,12 @@
       "region": "England",
       "country_code": "GB",
       "category": "local",
+      "url": "https://www.google.com/search?q=Mercatino%20%26%20sapori%20locali%20%E2%80%93%20London%20London%20GB",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "DE_berlin_music_01",
+      "id": "DE_berlin_berlin_music_01",
       "title": "Concerto live – Berlin",
       "start": "2026-01-20T09:00:00.000Z",
       "end": "2026-01-20T11:00:00.000Z",
@@ -1695,10 +1938,12 @@
       "region": "Berlin",
       "country_code": "DE",
       "category": "music",
+      "url": "https://www.google.com/search?q=Concerto%20live%20%E2%80%93%20Berlin%20Berlin%20DE",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "DE_berlin_culture_02",
+      "id": "DE_berlin_berlin_culture_02",
       "title": "Mostra temporanea – Berlin",
       "start": "2026-01-23T11:00:00.000Z",
       "end": "2026-01-23T14:00:00.000Z",
@@ -1709,10 +1954,12 @@
       "region": "Berlin",
       "country_code": "DE",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Mostra%20temporanea%20%E2%80%93%20Berlin%20Berlin%20DE",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "DE_berlin_culture_03",
+      "id": "DE_berlin_berlin_culture_03",
       "title": "Teatro / Spettacolo – Berlin",
       "start": "2026-01-26T18:00:00.000Z",
       "end": "2026-01-26T22:00:00.000Z",
@@ -1723,10 +1970,12 @@
       "region": "Berlin",
       "country_code": "DE",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Teatro%20%2F%20Spettacolo%20%E2%80%93%20Berlin%20Berlin%20DE",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "DE_berlin_local_04",
+      "id": "DE_berlin_berlin_local_04",
       "title": "Mercatino & sapori locali – Berlin",
       "start": "2026-01-29T21:00:00.000Z",
       "end": "2026-01-30T03:00:00.000Z",
@@ -1737,10 +1986,12 @@
       "region": "Berlin",
       "country_code": "DE",
       "category": "local",
+      "url": "https://www.google.com/search?q=Mercatino%20%26%20sapori%20locali%20%E2%80%93%20Berlin%20Berlin%20DE",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "DE_berlin_local_05",
+      "id": "DE_berlin_berlin_local_05",
       "title": "Sagra / Festa di quartiere – Berlin",
       "start": "2026-02-01T09:00:00.000Z",
       "end": "2026-02-01T11:00:00.000Z",
@@ -1751,10 +2002,12 @@
       "region": "Berlin",
       "country_code": "DE",
       "category": "local",
+      "url": "https://www.google.com/search?q=Sagra%20%2F%20Festa%20di%20quartiere%20%E2%80%93%20Berlin%20Berlin%20DE",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "DE_berlin_family_06",
+      "id": "DE_berlin_berlin_family_06",
       "title": "Evento per famiglie – Berlin",
       "start": "2026-02-04T11:00:00.000Z",
       "end": "2026-02-04T14:00:00.000Z",
@@ -1765,10 +2018,12 @@
       "region": "Berlin",
       "country_code": "DE",
       "category": "family",
+      "url": "https://www.google.com/search?q=Evento%20per%20famiglie%20%E2%80%93%20Berlin%20Berlin%20DE",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "DE_berlin_sport_07",
+      "id": "DE_berlin_berlin_sport_07",
       "title": "Evento sportivo – Berlin",
       "start": "2026-02-07T18:00:00.000Z",
       "end": "2026-02-07T22:00:00.000Z",
@@ -1779,10 +2034,12 @@
       "region": "Berlin",
       "country_code": "DE",
       "category": "sport",
+      "url": "https://www.google.com/search?q=Evento%20sportivo%20%E2%80%93%20Berlin%20Berlin%20DE",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "DE_berlin_night_08",
+      "id": "DE_berlin_berlin_night_08",
       "title": "Serata / Club – Berlin",
       "start": "2026-02-10T21:00:00.000Z",
       "end": "2026-02-11T03:00:00.000Z",
@@ -1793,10 +2050,12 @@
       "region": "Berlin",
       "country_code": "DE",
       "category": "night",
+      "url": "https://www.google.com/search?q=Serata%20%2F%20Club%20%E2%80%93%20Berlin%20Berlin%20DE",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "DE_berlin_music_09",
+      "id": "DE_berlin_berlin_music_09",
       "title": "Concerto live – Berlin",
       "start": "2026-02-13T09:00:00.000Z",
       "end": "2026-02-13T11:00:00.000Z",
@@ -1807,10 +2066,12 @@
       "region": "Berlin",
       "country_code": "DE",
       "category": "music",
+      "url": "https://www.google.com/search?q=Concerto%20live%20%E2%80%93%20Berlin%20Berlin%20DE",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "DE_berlin_culture_10",
+      "id": "DE_berlin_berlin_culture_10",
       "title": "Mostra temporanea – Berlin",
       "start": "2026-02-16T11:00:00.000Z",
       "end": "2026-02-16T14:00:00.000Z",
@@ -1821,10 +2082,12 @@
       "region": "Berlin",
       "country_code": "DE",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Mostra%20temporanea%20%E2%80%93%20Berlin%20Berlin%20DE",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "DE_berlin_culture_11",
+      "id": "DE_berlin_berlin_culture_11",
       "title": "Teatro / Spettacolo – Berlin",
       "start": "2026-02-19T18:00:00.000Z",
       "end": "2026-02-19T22:00:00.000Z",
@@ -1835,10 +2098,12 @@
       "region": "Berlin",
       "country_code": "DE",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Teatro%20%2F%20Spettacolo%20%E2%80%93%20Berlin%20Berlin%20DE",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "DE_berlin_local_12",
+      "id": "DE_berlin_berlin_local_12",
       "title": "Mercatino & sapori locali – Berlin",
       "start": "2026-02-22T21:00:00.000Z",
       "end": "2026-02-23T03:00:00.000Z",
@@ -1849,10 +2114,12 @@
       "region": "Berlin",
       "country_code": "DE",
       "category": "local",
+      "url": "https://www.google.com/search?q=Mercatino%20%26%20sapori%20locali%20%E2%80%93%20Berlin%20Berlin%20DE",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "ES_madrid_music_01",
+      "id": "ES_madrid_comunidad_de_madrid_music_01",
       "title": "Concerto live – Madrid",
       "start": "2026-01-20T09:00:00.000Z",
       "end": "2026-01-20T11:00:00.000Z",
@@ -1863,10 +2130,12 @@
       "region": "Comunidad de Madrid",
       "country_code": "ES",
       "category": "music",
+      "url": "https://www.google.com/search?q=Concerto%20live%20%E2%80%93%20Madrid%20Madrid%20ES",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "ES_madrid_culture_02",
+      "id": "ES_madrid_comunidad_de_madrid_culture_02",
       "title": "Mostra temporanea – Madrid",
       "start": "2026-01-23T11:00:00.000Z",
       "end": "2026-01-23T14:00:00.000Z",
@@ -1877,10 +2146,12 @@
       "region": "Comunidad de Madrid",
       "country_code": "ES",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Mostra%20temporanea%20%E2%80%93%20Madrid%20Madrid%20ES",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "ES_madrid_culture_03",
+      "id": "ES_madrid_comunidad_de_madrid_culture_03",
       "title": "Teatro / Spettacolo – Madrid",
       "start": "2026-01-26T18:00:00.000Z",
       "end": "2026-01-26T22:00:00.000Z",
@@ -1891,10 +2162,12 @@
       "region": "Comunidad de Madrid",
       "country_code": "ES",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Teatro%20%2F%20Spettacolo%20%E2%80%93%20Madrid%20Madrid%20ES",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "ES_madrid_local_04",
+      "id": "ES_madrid_comunidad_de_madrid_local_04",
       "title": "Mercatino & sapori locali – Madrid",
       "start": "2026-01-29T21:00:00.000Z",
       "end": "2026-01-30T03:00:00.000Z",
@@ -1905,10 +2178,12 @@
       "region": "Comunidad de Madrid",
       "country_code": "ES",
       "category": "local",
+      "url": "https://www.google.com/search?q=Mercatino%20%26%20sapori%20locali%20%E2%80%93%20Madrid%20Madrid%20ES",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "ES_madrid_local_05",
+      "id": "ES_madrid_comunidad_de_madrid_local_05",
       "title": "Sagra / Festa di quartiere – Madrid",
       "start": "2026-02-01T09:00:00.000Z",
       "end": "2026-02-01T11:00:00.000Z",
@@ -1919,10 +2194,12 @@
       "region": "Comunidad de Madrid",
       "country_code": "ES",
       "category": "local",
+      "url": "https://www.google.com/search?q=Sagra%20%2F%20Festa%20di%20quartiere%20%E2%80%93%20Madrid%20Madrid%20ES",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "ES_madrid_family_06",
+      "id": "ES_madrid_comunidad_de_madrid_family_06",
       "title": "Evento per famiglie – Madrid",
       "start": "2026-02-04T11:00:00.000Z",
       "end": "2026-02-04T14:00:00.000Z",
@@ -1933,10 +2210,12 @@
       "region": "Comunidad de Madrid",
       "country_code": "ES",
       "category": "family",
+      "url": "https://www.google.com/search?q=Evento%20per%20famiglie%20%E2%80%93%20Madrid%20Madrid%20ES",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "ES_madrid_sport_07",
+      "id": "ES_madrid_comunidad_de_madrid_sport_07",
       "title": "Evento sportivo – Madrid",
       "start": "2026-02-07T18:00:00.000Z",
       "end": "2026-02-07T22:00:00.000Z",
@@ -1947,10 +2226,12 @@
       "region": "Comunidad de Madrid",
       "country_code": "ES",
       "category": "sport",
+      "url": "https://www.google.com/search?q=Evento%20sportivo%20%E2%80%93%20Madrid%20Madrid%20ES",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "ES_madrid_night_08",
+      "id": "ES_madrid_comunidad_de_madrid_night_08",
       "title": "Serata / Club – Madrid",
       "start": "2026-02-10T21:00:00.000Z",
       "end": "2026-02-11T03:00:00.000Z",
@@ -1961,10 +2242,12 @@
       "region": "Comunidad de Madrid",
       "country_code": "ES",
       "category": "night",
+      "url": "https://www.google.com/search?q=Serata%20%2F%20Club%20%E2%80%93%20Madrid%20Madrid%20ES",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "ES_madrid_music_09",
+      "id": "ES_madrid_comunidad_de_madrid_music_09",
       "title": "Concerto live – Madrid",
       "start": "2026-02-13T09:00:00.000Z",
       "end": "2026-02-13T11:00:00.000Z",
@@ -1975,10 +2258,12 @@
       "region": "Comunidad de Madrid",
       "country_code": "ES",
       "category": "music",
+      "url": "https://www.google.com/search?q=Concerto%20live%20%E2%80%93%20Madrid%20Madrid%20ES",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "ES_madrid_culture_10",
+      "id": "ES_madrid_comunidad_de_madrid_culture_10",
       "title": "Mostra temporanea – Madrid",
       "start": "2026-02-16T11:00:00.000Z",
       "end": "2026-02-16T14:00:00.000Z",
@@ -1989,10 +2274,12 @@
       "region": "Comunidad de Madrid",
       "country_code": "ES",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Mostra%20temporanea%20%E2%80%93%20Madrid%20Madrid%20ES",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "ES_madrid_culture_11",
+      "id": "ES_madrid_comunidad_de_madrid_culture_11",
       "title": "Teatro / Spettacolo – Madrid",
       "start": "2026-02-19T18:00:00.000Z",
       "end": "2026-02-19T22:00:00.000Z",
@@ -2003,10 +2290,12 @@
       "region": "Comunidad de Madrid",
       "country_code": "ES",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Teatro%20%2F%20Spettacolo%20%E2%80%93%20Madrid%20Madrid%20ES",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "ES_madrid_local_12",
+      "id": "ES_madrid_comunidad_de_madrid_local_12",
       "title": "Mercatino & sapori locali – Madrid",
       "start": "2026-02-22T21:00:00.000Z",
       "end": "2026-02-23T03:00:00.000Z",
@@ -2017,10 +2306,12 @@
       "region": "Comunidad de Madrid",
       "country_code": "ES",
       "category": "local",
+      "url": "https://www.google.com/search?q=Mercatino%20%26%20sapori%20locali%20%E2%80%93%20Madrid%20Madrid%20ES",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "ES_barcelona_music_01",
+      "id": "ES_barcelona_catalunya_music_01",
       "title": "Concerto live – Barcelona",
       "start": "2026-01-20T09:00:00.000Z",
       "end": "2026-01-20T11:00:00.000Z",
@@ -2031,10 +2322,12 @@
       "region": "Catalunya",
       "country_code": "ES",
       "category": "music",
+      "url": "https://www.google.com/search?q=Concerto%20live%20%E2%80%93%20Barcelona%20Barcelona%20ES",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "ES_barcelona_culture_02",
+      "id": "ES_barcelona_catalunya_culture_02",
       "title": "Mostra temporanea – Barcelona",
       "start": "2026-01-23T11:00:00.000Z",
       "end": "2026-01-23T14:00:00.000Z",
@@ -2045,10 +2338,12 @@
       "region": "Catalunya",
       "country_code": "ES",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Mostra%20temporanea%20%E2%80%93%20Barcelona%20Barcelona%20ES",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "ES_barcelona_culture_03",
+      "id": "ES_barcelona_catalunya_culture_03",
       "title": "Teatro / Spettacolo – Barcelona",
       "start": "2026-01-26T18:00:00.000Z",
       "end": "2026-01-26T22:00:00.000Z",
@@ -2059,10 +2354,12 @@
       "region": "Catalunya",
       "country_code": "ES",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Teatro%20%2F%20Spettacolo%20%E2%80%93%20Barcelona%20Barcelona%20ES",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "ES_barcelona_local_04",
+      "id": "ES_barcelona_catalunya_local_04",
       "title": "Mercatino & sapori locali – Barcelona",
       "start": "2026-01-29T21:00:00.000Z",
       "end": "2026-01-30T03:00:00.000Z",
@@ -2073,10 +2370,12 @@
       "region": "Catalunya",
       "country_code": "ES",
       "category": "local",
+      "url": "https://www.google.com/search?q=Mercatino%20%26%20sapori%20locali%20%E2%80%93%20Barcelona%20Barcelona%20ES",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "ES_barcelona_local_05",
+      "id": "ES_barcelona_catalunya_local_05",
       "title": "Sagra / Festa di quartiere – Barcelona",
       "start": "2026-02-01T09:00:00.000Z",
       "end": "2026-02-01T11:00:00.000Z",
@@ -2087,10 +2386,12 @@
       "region": "Catalunya",
       "country_code": "ES",
       "category": "local",
+      "url": "https://www.google.com/search?q=Sagra%20%2F%20Festa%20di%20quartiere%20%E2%80%93%20Barcelona%20Barcelona%20ES",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "ES_barcelona_family_06",
+      "id": "ES_barcelona_catalunya_family_06",
       "title": "Evento per famiglie – Barcelona",
       "start": "2026-02-04T11:00:00.000Z",
       "end": "2026-02-04T14:00:00.000Z",
@@ -2101,10 +2402,12 @@
       "region": "Catalunya",
       "country_code": "ES",
       "category": "family",
+      "url": "https://www.google.com/search?q=Evento%20per%20famiglie%20%E2%80%93%20Barcelona%20Barcelona%20ES",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "ES_barcelona_sport_07",
+      "id": "ES_barcelona_catalunya_sport_07",
       "title": "Evento sportivo – Barcelona",
       "start": "2026-02-07T18:00:00.000Z",
       "end": "2026-02-07T22:00:00.000Z",
@@ -2115,10 +2418,12 @@
       "region": "Catalunya",
       "country_code": "ES",
       "category": "sport",
+      "url": "https://www.google.com/search?q=Evento%20sportivo%20%E2%80%93%20Barcelona%20Barcelona%20ES",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "ES_barcelona_night_08",
+      "id": "ES_barcelona_catalunya_night_08",
       "title": "Serata / Club – Barcelona",
       "start": "2026-02-10T21:00:00.000Z",
       "end": "2026-02-11T03:00:00.000Z",
@@ -2129,10 +2434,12 @@
       "region": "Catalunya",
       "country_code": "ES",
       "category": "night",
+      "url": "https://www.google.com/search?q=Serata%20%2F%20Club%20%E2%80%93%20Barcelona%20Barcelona%20ES",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "ES_barcelona_music_09",
+      "id": "ES_barcelona_catalunya_music_09",
       "title": "Concerto live – Barcelona",
       "start": "2026-02-13T09:00:00.000Z",
       "end": "2026-02-13T11:00:00.000Z",
@@ -2143,10 +2450,12 @@
       "region": "Catalunya",
       "country_code": "ES",
       "category": "music",
+      "url": "https://www.google.com/search?q=Concerto%20live%20%E2%80%93%20Barcelona%20Barcelona%20ES",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "ES_barcelona_culture_10",
+      "id": "ES_barcelona_catalunya_culture_10",
       "title": "Mostra temporanea – Barcelona",
       "start": "2026-02-16T11:00:00.000Z",
       "end": "2026-02-16T14:00:00.000Z",
@@ -2157,10 +2466,12 @@
       "region": "Catalunya",
       "country_code": "ES",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Mostra%20temporanea%20%E2%80%93%20Barcelona%20Barcelona%20ES",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "ES_barcelona_culture_11",
+      "id": "ES_barcelona_catalunya_culture_11",
       "title": "Teatro / Spettacolo – Barcelona",
       "start": "2026-02-19T18:00:00.000Z",
       "end": "2026-02-19T22:00:00.000Z",
@@ -2171,10 +2482,12 @@
       "region": "Catalunya",
       "country_code": "ES",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Teatro%20%2F%20Spettacolo%20%E2%80%93%20Barcelona%20Barcelona%20ES",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "ES_barcelona_local_12",
+      "id": "ES_barcelona_catalunya_local_12",
       "title": "Mercatino & sapori locali – Barcelona",
       "start": "2026-02-22T21:00:00.000Z",
       "end": "2026-02-23T03:00:00.000Z",
@@ -2185,10 +2498,12 @@
       "region": "Catalunya",
       "country_code": "ES",
       "category": "local",
+      "url": "https://www.google.com/search?q=Mercatino%20%26%20sapori%20locali%20%E2%80%93%20Barcelona%20Barcelona%20ES",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "NL_amsterdam_music_01",
+      "id": "NL_amsterdam_noord_holland_music_01",
       "title": "Concerto live – Amsterdam",
       "start": "2026-01-20T09:00:00.000Z",
       "end": "2026-01-20T11:00:00.000Z",
@@ -2199,10 +2514,12 @@
       "region": "Noord-Holland",
       "country_code": "NL",
       "category": "music",
+      "url": "https://www.google.com/search?q=Concerto%20live%20%E2%80%93%20Amsterdam%20Amsterdam%20NL",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "NL_amsterdam_culture_02",
+      "id": "NL_amsterdam_noord_holland_culture_02",
       "title": "Mostra temporanea – Amsterdam",
       "start": "2026-01-23T11:00:00.000Z",
       "end": "2026-01-23T14:00:00.000Z",
@@ -2213,10 +2530,12 @@
       "region": "Noord-Holland",
       "country_code": "NL",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Mostra%20temporanea%20%E2%80%93%20Amsterdam%20Amsterdam%20NL",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "NL_amsterdam_culture_03",
+      "id": "NL_amsterdam_noord_holland_culture_03",
       "title": "Teatro / Spettacolo – Amsterdam",
       "start": "2026-01-26T18:00:00.000Z",
       "end": "2026-01-26T22:00:00.000Z",
@@ -2227,10 +2546,12 @@
       "region": "Noord-Holland",
       "country_code": "NL",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Teatro%20%2F%20Spettacolo%20%E2%80%93%20Amsterdam%20Amsterdam%20NL",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "NL_amsterdam_local_04",
+      "id": "NL_amsterdam_noord_holland_local_04",
       "title": "Mercatino & sapori locali – Amsterdam",
       "start": "2026-01-29T21:00:00.000Z",
       "end": "2026-01-30T03:00:00.000Z",
@@ -2241,10 +2562,12 @@
       "region": "Noord-Holland",
       "country_code": "NL",
       "category": "local",
+      "url": "https://www.google.com/search?q=Mercatino%20%26%20sapori%20locali%20%E2%80%93%20Amsterdam%20Amsterdam%20NL",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "NL_amsterdam_local_05",
+      "id": "NL_amsterdam_noord_holland_local_05",
       "title": "Sagra / Festa di quartiere – Amsterdam",
       "start": "2026-02-01T09:00:00.000Z",
       "end": "2026-02-01T11:00:00.000Z",
@@ -2255,10 +2578,12 @@
       "region": "Noord-Holland",
       "country_code": "NL",
       "category": "local",
+      "url": "https://www.google.com/search?q=Sagra%20%2F%20Festa%20di%20quartiere%20%E2%80%93%20Amsterdam%20Amsterdam%20NL",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "NL_amsterdam_family_06",
+      "id": "NL_amsterdam_noord_holland_family_06",
       "title": "Evento per famiglie – Amsterdam",
       "start": "2026-02-04T11:00:00.000Z",
       "end": "2026-02-04T14:00:00.000Z",
@@ -2269,10 +2594,12 @@
       "region": "Noord-Holland",
       "country_code": "NL",
       "category": "family",
+      "url": "https://www.google.com/search?q=Evento%20per%20famiglie%20%E2%80%93%20Amsterdam%20Amsterdam%20NL",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "NL_amsterdam_sport_07",
+      "id": "NL_amsterdam_noord_holland_sport_07",
       "title": "Evento sportivo – Amsterdam",
       "start": "2026-02-07T18:00:00.000Z",
       "end": "2026-02-07T22:00:00.000Z",
@@ -2283,10 +2610,12 @@
       "region": "Noord-Holland",
       "country_code": "NL",
       "category": "sport",
+      "url": "https://www.google.com/search?q=Evento%20sportivo%20%E2%80%93%20Amsterdam%20Amsterdam%20NL",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "NL_amsterdam_night_08",
+      "id": "NL_amsterdam_noord_holland_night_08",
       "title": "Serata / Club – Amsterdam",
       "start": "2026-02-10T21:00:00.000Z",
       "end": "2026-02-11T03:00:00.000Z",
@@ -2297,10 +2626,12 @@
       "region": "Noord-Holland",
       "country_code": "NL",
       "category": "night",
+      "url": "https://www.google.com/search?q=Serata%20%2F%20Club%20%E2%80%93%20Amsterdam%20Amsterdam%20NL",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "NL_amsterdam_music_09",
+      "id": "NL_amsterdam_noord_holland_music_09",
       "title": "Concerto live – Amsterdam",
       "start": "2026-02-13T09:00:00.000Z",
       "end": "2026-02-13T11:00:00.000Z",
@@ -2311,10 +2642,12 @@
       "region": "Noord-Holland",
       "country_code": "NL",
       "category": "music",
+      "url": "https://www.google.com/search?q=Concerto%20live%20%E2%80%93%20Amsterdam%20Amsterdam%20NL",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "NL_amsterdam_culture_10",
+      "id": "NL_amsterdam_noord_holland_culture_10",
       "title": "Mostra temporanea – Amsterdam",
       "start": "2026-02-16T11:00:00.000Z",
       "end": "2026-02-16T14:00:00.000Z",
@@ -2325,10 +2658,12 @@
       "region": "Noord-Holland",
       "country_code": "NL",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Mostra%20temporanea%20%E2%80%93%20Amsterdam%20Amsterdam%20NL",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "NL_amsterdam_culture_11",
+      "id": "NL_amsterdam_noord_holland_culture_11",
       "title": "Teatro / Spettacolo – Amsterdam",
       "start": "2026-02-19T18:00:00.000Z",
       "end": "2026-02-19T22:00:00.000Z",
@@ -2339,10 +2674,12 @@
       "region": "Noord-Holland",
       "country_code": "NL",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Teatro%20%2F%20Spettacolo%20%E2%80%93%20Amsterdam%20Amsterdam%20NL",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "NL_amsterdam_local_12",
+      "id": "NL_amsterdam_noord_holland_local_12",
       "title": "Mercatino & sapori locali – Amsterdam",
       "start": "2026-02-22T21:00:00.000Z",
       "end": "2026-02-23T03:00:00.000Z",
@@ -2353,10 +2690,12 @@
       "region": "Noord-Holland",
       "country_code": "NL",
       "category": "local",
+      "url": "https://www.google.com/search?q=Mercatino%20%26%20sapori%20locali%20%E2%80%93%20Amsterdam%20Amsterdam%20NL",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "AT_vienna_music_01",
+      "id": "AT_vienna_vienna_music_01",
       "title": "Concerto live – Vienna",
       "start": "2026-01-20T09:00:00.000Z",
       "end": "2026-01-20T11:00:00.000Z",
@@ -2367,10 +2706,12 @@
       "region": "Vienna",
       "country_code": "AT",
       "category": "music",
+      "url": "https://www.google.com/search?q=Concerto%20live%20%E2%80%93%20Vienna%20Vienna%20AT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "AT_vienna_culture_02",
+      "id": "AT_vienna_vienna_culture_02",
       "title": "Mostra temporanea – Vienna",
       "start": "2026-01-23T11:00:00.000Z",
       "end": "2026-01-23T14:00:00.000Z",
@@ -2381,10 +2722,12 @@
       "region": "Vienna",
       "country_code": "AT",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Mostra%20temporanea%20%E2%80%93%20Vienna%20Vienna%20AT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "AT_vienna_culture_03",
+      "id": "AT_vienna_vienna_culture_03",
       "title": "Teatro / Spettacolo – Vienna",
       "start": "2026-01-26T18:00:00.000Z",
       "end": "2026-01-26T22:00:00.000Z",
@@ -2395,10 +2738,12 @@
       "region": "Vienna",
       "country_code": "AT",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Teatro%20%2F%20Spettacolo%20%E2%80%93%20Vienna%20Vienna%20AT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "AT_vienna_local_04",
+      "id": "AT_vienna_vienna_local_04",
       "title": "Mercatino & sapori locali – Vienna",
       "start": "2026-01-29T21:00:00.000Z",
       "end": "2026-01-30T03:00:00.000Z",
@@ -2409,10 +2754,12 @@
       "region": "Vienna",
       "country_code": "AT",
       "category": "local",
+      "url": "https://www.google.com/search?q=Mercatino%20%26%20sapori%20locali%20%E2%80%93%20Vienna%20Vienna%20AT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "AT_vienna_local_05",
+      "id": "AT_vienna_vienna_local_05",
       "title": "Sagra / Festa di quartiere – Vienna",
       "start": "2026-02-01T09:00:00.000Z",
       "end": "2026-02-01T11:00:00.000Z",
@@ -2423,10 +2770,12 @@
       "region": "Vienna",
       "country_code": "AT",
       "category": "local",
+      "url": "https://www.google.com/search?q=Sagra%20%2F%20Festa%20di%20quartiere%20%E2%80%93%20Vienna%20Vienna%20AT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "AT_vienna_family_06",
+      "id": "AT_vienna_vienna_family_06",
       "title": "Evento per famiglie – Vienna",
       "start": "2026-02-04T11:00:00.000Z",
       "end": "2026-02-04T14:00:00.000Z",
@@ -2437,10 +2786,12 @@
       "region": "Vienna",
       "country_code": "AT",
       "category": "family",
+      "url": "https://www.google.com/search?q=Evento%20per%20famiglie%20%E2%80%93%20Vienna%20Vienna%20AT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "AT_vienna_sport_07",
+      "id": "AT_vienna_vienna_sport_07",
       "title": "Evento sportivo – Vienna",
       "start": "2026-02-07T18:00:00.000Z",
       "end": "2026-02-07T22:00:00.000Z",
@@ -2451,10 +2802,12 @@
       "region": "Vienna",
       "country_code": "AT",
       "category": "sport",
+      "url": "https://www.google.com/search?q=Evento%20sportivo%20%E2%80%93%20Vienna%20Vienna%20AT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "AT_vienna_night_08",
+      "id": "AT_vienna_vienna_night_08",
       "title": "Serata / Club – Vienna",
       "start": "2026-02-10T21:00:00.000Z",
       "end": "2026-02-11T03:00:00.000Z",
@@ -2465,10 +2818,12 @@
       "region": "Vienna",
       "country_code": "AT",
       "category": "night",
+      "url": "https://www.google.com/search?q=Serata%20%2F%20Club%20%E2%80%93%20Vienna%20Vienna%20AT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "AT_vienna_music_09",
+      "id": "AT_vienna_vienna_music_09",
       "title": "Concerto live – Vienna",
       "start": "2026-02-13T09:00:00.000Z",
       "end": "2026-02-13T11:00:00.000Z",
@@ -2479,10 +2834,12 @@
       "region": "Vienna",
       "country_code": "AT",
       "category": "music",
+      "url": "https://www.google.com/search?q=Concerto%20live%20%E2%80%93%20Vienna%20Vienna%20AT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "AT_vienna_culture_10",
+      "id": "AT_vienna_vienna_culture_10",
       "title": "Mostra temporanea – Vienna",
       "start": "2026-02-16T11:00:00.000Z",
       "end": "2026-02-16T14:00:00.000Z",
@@ -2493,10 +2850,12 @@
       "region": "Vienna",
       "country_code": "AT",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Mostra%20temporanea%20%E2%80%93%20Vienna%20Vienna%20AT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "AT_vienna_culture_11",
+      "id": "AT_vienna_vienna_culture_11",
       "title": "Teatro / Spettacolo – Vienna",
       "start": "2026-02-19T18:00:00.000Z",
       "end": "2026-02-19T22:00:00.000Z",
@@ -2507,10 +2866,12 @@
       "region": "Vienna",
       "country_code": "AT",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Teatro%20%2F%20Spettacolo%20%E2%80%93%20Vienna%20Vienna%20AT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "AT_vienna_local_12",
+      "id": "AT_vienna_vienna_local_12",
       "title": "Mercatino & sapori locali – Vienna",
       "start": "2026-02-22T21:00:00.000Z",
       "end": "2026-02-23T03:00:00.000Z",
@@ -2521,10 +2882,12 @@
       "region": "Vienna",
       "country_code": "AT",
       "category": "local",
+      "url": "https://www.google.com/search?q=Mercatino%20%26%20sapori%20locali%20%E2%80%93%20Vienna%20Vienna%20AT",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "CZ_prague_music_01",
+      "id": "CZ_prague_prague_music_01",
       "title": "Concerto live – Prague",
       "start": "2026-01-20T09:00:00.000Z",
       "end": "2026-01-20T11:00:00.000Z",
@@ -2535,10 +2898,12 @@
       "region": "Prague",
       "country_code": "CZ",
       "category": "music",
+      "url": "https://www.google.com/search?q=Concerto%20live%20%E2%80%93%20Prague%20Prague%20CZ",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "CZ_prague_culture_02",
+      "id": "CZ_prague_prague_culture_02",
       "title": "Mostra temporanea – Prague",
       "start": "2026-01-23T11:00:00.000Z",
       "end": "2026-01-23T14:00:00.000Z",
@@ -2549,10 +2914,12 @@
       "region": "Prague",
       "country_code": "CZ",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Mostra%20temporanea%20%E2%80%93%20Prague%20Prague%20CZ",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "CZ_prague_culture_03",
+      "id": "CZ_prague_prague_culture_03",
       "title": "Teatro / Spettacolo – Prague",
       "start": "2026-01-26T18:00:00.000Z",
       "end": "2026-01-26T22:00:00.000Z",
@@ -2563,10 +2930,12 @@
       "region": "Prague",
       "country_code": "CZ",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Teatro%20%2F%20Spettacolo%20%E2%80%93%20Prague%20Prague%20CZ",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "CZ_prague_local_04",
+      "id": "CZ_prague_prague_local_04",
       "title": "Mercatino & sapori locali – Prague",
       "start": "2026-01-29T21:00:00.000Z",
       "end": "2026-01-30T03:00:00.000Z",
@@ -2577,10 +2946,12 @@
       "region": "Prague",
       "country_code": "CZ",
       "category": "local",
+      "url": "https://www.google.com/search?q=Mercatino%20%26%20sapori%20locali%20%E2%80%93%20Prague%20Prague%20CZ",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "CZ_prague_local_05",
+      "id": "CZ_prague_prague_local_05",
       "title": "Sagra / Festa di quartiere – Prague",
       "start": "2026-02-01T09:00:00.000Z",
       "end": "2026-02-01T11:00:00.000Z",
@@ -2591,10 +2962,12 @@
       "region": "Prague",
       "country_code": "CZ",
       "category": "local",
+      "url": "https://www.google.com/search?q=Sagra%20%2F%20Festa%20di%20quartiere%20%E2%80%93%20Prague%20Prague%20CZ",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "CZ_prague_family_06",
+      "id": "CZ_prague_prague_family_06",
       "title": "Evento per famiglie – Prague",
       "start": "2026-02-04T11:00:00.000Z",
       "end": "2026-02-04T14:00:00.000Z",
@@ -2605,10 +2978,12 @@
       "region": "Prague",
       "country_code": "CZ",
       "category": "family",
+      "url": "https://www.google.com/search?q=Evento%20per%20famiglie%20%E2%80%93%20Prague%20Prague%20CZ",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "CZ_prague_sport_07",
+      "id": "CZ_prague_prague_sport_07",
       "title": "Evento sportivo – Prague",
       "start": "2026-02-07T18:00:00.000Z",
       "end": "2026-02-07T22:00:00.000Z",
@@ -2619,10 +2994,12 @@
       "region": "Prague",
       "country_code": "CZ",
       "category": "sport",
+      "url": "https://www.google.com/search?q=Evento%20sportivo%20%E2%80%93%20Prague%20Prague%20CZ",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "CZ_prague_night_08",
+      "id": "CZ_prague_prague_night_08",
       "title": "Serata / Club – Prague",
       "start": "2026-02-10T21:00:00.000Z",
       "end": "2026-02-11T03:00:00.000Z",
@@ -2633,10 +3010,12 @@
       "region": "Prague",
       "country_code": "CZ",
       "category": "night",
+      "url": "https://www.google.com/search?q=Serata%20%2F%20Club%20%E2%80%93%20Prague%20Prague%20CZ",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "CZ_prague_music_09",
+      "id": "CZ_prague_prague_music_09",
       "title": "Concerto live – Prague",
       "start": "2026-02-13T09:00:00.000Z",
       "end": "2026-02-13T11:00:00.000Z",
@@ -2647,10 +3026,12 @@
       "region": "Prague",
       "country_code": "CZ",
       "category": "music",
+      "url": "https://www.google.com/search?q=Concerto%20live%20%E2%80%93%20Prague%20Prague%20CZ",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "CZ_prague_culture_10",
+      "id": "CZ_prague_prague_culture_10",
       "title": "Mostra temporanea – Prague",
       "start": "2026-02-16T11:00:00.000Z",
       "end": "2026-02-16T14:00:00.000Z",
@@ -2661,10 +3042,12 @@
       "region": "Prague",
       "country_code": "CZ",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Mostra%20temporanea%20%E2%80%93%20Prague%20Prague%20CZ",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "CZ_prague_culture_11",
+      "id": "CZ_prague_prague_culture_11",
       "title": "Teatro / Spettacolo – Prague",
       "start": "2026-02-19T18:00:00.000Z",
       "end": "2026-02-19T22:00:00.000Z",
@@ -2675,10 +3058,12 @@
       "region": "Prague",
       "country_code": "CZ",
       "category": "culture",
+      "url": "https://www.google.com/search?q=Teatro%20%2F%20Spettacolo%20%E2%80%93%20Prague%20Prague%20CZ",
+      "synthetic": true,
       "source": "seed_massive"
     },
     {
-      "id": "CZ_prague_local_12",
+      "id": "CZ_prague_prague_local_12",
       "title": "Mercatino & sapori locali – Prague",
       "start": "2026-02-22T21:00:00.000Z",
       "end": "2026-02-23T03:00:00.000Z",
@@ -2689,6 +3074,8 @@
       "region": "Prague",
       "country_code": "CZ",
       "category": "local",
+      "url": "https://www.google.com/search?q=Mercatino%20%26%20sapori%20locali%20%E2%80%93%20Prague%20Prague%20CZ",
+      "synthetic": true,
       "source": "seed_massive"
     }
   ]
