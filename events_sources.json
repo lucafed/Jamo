@@ -1,32 +1,15 @@
 {
-  "days_ahead": 180,
-  "max_events": 5000,
+  "days_ahead": 365,
+  "max_events": 50000,
 
-  "rss_ics_sources": [
-    {
-      "id": "veneto_cultura_open",
-      "type": "json",
-      "url": "https://www.dati.gov.it/api/3/action/package_show?id=eventi-culturali-veneto",
-      "country_code": "IT",
-      "region": "Veneto",
-      "category": "culture"
-    },
+  "providers": {
+    "seed": { "enabled": true }
+  },
 
-    {
-      "id": "cultura_italia",
-      "type": "json",
-      "url": "https://api.cultura.gov.it/eventi",
-      "country_code": "IT",
-      "category": "culture"
-    },
+  "coverage": {
+    "italy": { "enabled": true },
+    "europe": { "enabled": true }
+  },
 
-    {
-      "id": "musei_statali_veneto",
-      "type": "ics",
-      "url": "https://www.museiitaliani.it/it/agenda.ics",
-      "country_code": "IT",
-      "region": "Veneto",
-      "category": "museum"
-    }
-  ]
+  "sources": []
 }
