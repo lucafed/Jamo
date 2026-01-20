@@ -1,13 +1,13 @@
 {
-  "updated_at": "2026-01-20T07:09:01.996Z",
+  "updated_at": "2026-01-20T07:11:33.768Z",
   "count": 0,
-  "days_ahead": 120,
+  "days_ahead": 180,
   "events": [],
   "stats": {
-    "updated_at": "2026-01-20T07:08:56.282Z",
-    "sources_total": 1,
+    "updated_at": "2026-01-20T07:11:28.423Z",
+    "sources_total": 3,
     "sources_ok": 0,
-    "sources_fail": 1,
+    "sources_fail": 3,
     "raw": 0,
     "deduped": 0,
     "kept_window": 0,
@@ -16,9 +16,21 @@
     "dropped_out_of_range": 0,
     "kept": 0,
     "per_source": {
-      "verona_comune_ics": {
+      "eventbrite_verona": {
         "ok": false,
-        "fail_reason": "HTTP 410",
+        "fail_reason": "HTTP 405 (blocked)",
+        "raw": 0,
+        "kept": 0
+      },
+      "meetup_verona": {
+        "ok": false,
+        "fail_reason": "RSS parsed but no dated items",
+        "raw": 0,
+        "kept": 0
+      },
+      "songkick_verona": {
+        "ok": false,
+        "fail_reason": "HTTP 404 (blocked)",
         "raw": 0,
         "kept": 0
       }
