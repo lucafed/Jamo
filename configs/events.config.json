@@ -1,0 +1,34 @@
+{
+  "days_ahead": 90,
+  "max_events": 120000,
+
+  "geocode": {
+    "enabled": true,
+    "provider": "nominatim",
+    "user_agent": "JamoEventsBot/1.0 (github-actions)",
+    "rate_limit_ms": 1100
+  },
+
+  "coverage": {
+    "italy": {
+      "enabled": true,
+      "cities_file": "data/cities/it_capoluoghi_provincia.json",
+      "radius_km": 22,
+      "cc": "IT"
+    },
+    "europe": {
+      "enabled": true,
+      "cities_file": "data/cities/eu_capitals.json",
+      "radius_km": 24
+    }
+  },
+
+  "sources": [
+    {
+      "type": "seed_massive",
+      "scope": "italy",
+      "category": "mix",
+      "note": "TEMP fallback. Replace with real sources."
+    }
+  ]
+}
