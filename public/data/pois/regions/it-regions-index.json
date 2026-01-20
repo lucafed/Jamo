@@ -1,6 +1,6 @@
 {
   "country": "IT",
-  "generated_at": "2026-01-19T21:18:56.976Z",
+  "generated_at": "2026-01-20T06:52:27.539Z",
   "summary": {
     "regions": 20,
     "categories_canon": [
@@ -130,7 +130,7 @@
         "borghi": 3061,
         "cantine": 160
       },
-      "generated_at": "2026-01-19T21:08:14.808Z"
+      "generated_at": "2026-01-20T06:42:55.655Z"
     },
     {
       "id": "it-veneto",
@@ -142,7 +142,7 @@
         "maxLat": 46.6784817,
         "maxLon": 13.1009244
       },
-      "total_places": 27900,
+      "total_places": 27957,
       "paths": {
         "core": "/data/pois/regions/it-veneto.json",
         "relax": "/data/pois/regions/it-veneto-relax.json",
@@ -151,11 +151,11 @@
       },
       "counts": {
         "core": 15599,
-        "relax": 12,
+        "relax": 69,
         "borghi": 12000,
         "cantine": 289
       },
-      "generated_at": "2026-01-14T18:16:25.438Z"
+      "generated_at": "2026-01-20T04:15:51.255Z"
     },
     {
       "id": "it-friuli-venezia-giulia",
