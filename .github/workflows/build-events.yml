@@ -1,7 +1,7 @@
 name: Build Events (daily)
 
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
   schedule:
     - cron: "15 3 * * *"
 
@@ -29,7 +29,7 @@ jobs:
           node-version: "20"
           cache: "npm"
 
-      - name: Install
+      - name: Install deps
         run: |
           if [ -f package-lock.json ]; then
             npm ci
@@ -37,29 +37,32 @@ jobs:
             npm install --no-audit --no-fund
           fi
 
-      # ✅ build eventi (scrive public/data/events/events_all.json)
+      # ▶️ BUILD EVENTI
       - name: Build events
         env:
           JAMO_UA: "JamoEventsBot/1.0 (github-actions)"
           NODE_OPTIONS: "--dns-result-order=ipv4first"
         run: npm run build:events
 
-      # ✅ FAIL se count=0 (così NON committa JSON vuoto)
-      - name: Guard: do not commit empty dataset
+      # 🛑 GUARD: evita commit se vuoto
+      - name: Guard empty dataset
         run: |
-          node - <<'NODE'
-          import fs from "fs";
-          const p = "public/data/events/events_all.json";
-          const j = JSON.parse(fs.readFileSync(p, "utf8"));
-          const count = Number(j.count || 0);
-          console.log("events_all.json:", { updated_at: j.updated_at, count });
-          if (!count) {
-            console.error("❌ Guard triggered: count=0. Not committing empty dataset.");
+          node -e "
+          const fs = require('fs');
+          const p = 'public/data/events/events_all.json';
+          if (!fs.existsSync(p)) {
+            console.error('❌ events_all.json missing');
             process.exit(1);
           }
-          NODE
+          const j = JSON.parse(fs.readFileSync(p,'utf8'));
+          console.log('events_all:', j.updated_at, 'count=', j.count);
+          if (!j.count || j.count === 0) {
+            console.error('❌ count=0 → stop');
+            process.exit(1);
+          }
+          "
 
-      - name: Commit & push (events only)
+      - name: Commit & push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
