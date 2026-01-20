@@ -1,69 +1,18 @@
 {
-  "days_ahead": 180,
-  "max_events": 50000,
-
-  "providers": {
-    "osm_overpass": {
-      "enabled": true,
-      "timeout_ms": 45000
-    }
-  },
-
-  "coverage": {
-    "italy": {
-      "enabled": true,
-      "cities": [
-        {
-          "name": "Verona",
-          "lat": 45.4384,
-          "lon": 10.9916,
-          "radius_km": 30,
-          "cc": "IT"
-        }
-      ]
-    },
-    "europe": {
-      "enabled": false,
-      "cities": []
-    }
-  },
+  "days_ahead": 120,
+  "max_events": 2000,
 
   "sources": [
     {
-      "id": "verona_comune_rss",
-      "scope": "italy",
-      "cc": "IT",
-      "type": "rss",
-      "url": "https://www.comune.verona.it/nqcontent.cfm?a_id=46001&rss=1",
+      "id": "verona_comune_ics",
+      "type": "ics",
+      "url": "https://www.comune.verona.it/nqcontent.cfm?a_id=74548&ical=1",
       "category": "culture",
       "default_place": "Verona",
       "default_region": "Veneto",
+      "country_code": "IT",
       "fixed_lat": 45.4384,
       "fixed_lon": 10.9916
-    },
-    {
-      "id": "eventbrite_verona",
-      "scope": "italy",
-      "cc": "IT",
-      "type": "rss",
-      "url": "https://www.eventbrite.it/d/italy--verona/events--this-week/rss/",
-      "category": "events",
-      "default_place": "Verona",
-      "default_region": "Veneto",
-      "fixed_lat": 45.4384,
-      "fixed_lon": 10.9916
-    },
-    {
-      "id": "univr_events",
-      "scope": "italy",
-      "cc": "IT",
-      "type": "rss",
-      "url": "https://www.univr.it/it/rss/eventi",
-      "category": "culture",
-      "default_place": "Verona",
-      "default_region": "Veneto",
-      "fixed_lat": 45.4036,
-      "fixed_lon": 10.9972
     }
   ]
 }
