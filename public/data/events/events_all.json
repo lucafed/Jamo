@@ -1,12 +1,27 @@
 {
-  "updated_at": "2026-01-19T18:50:36.387Z",
+  "updated_at": "2026-01-20T07:09:01.996Z",
   "count": 0,
-  "days_ahead": 180,
+  "days_ahead": 120,
   "events": [],
   "stats": {
+    "updated_at": "2026-01-20T07:08:56.282Z",
     "sources_total": 1,
     "sources_ok": 0,
     "sources_fail": 1,
-    "kept": 0
+    "raw": 0,
+    "deduped": 0,
+    "kept_window": 0,
+    "geocoded": 0,
+    "dropped_no_coords": 0,
+    "dropped_out_of_range": 0,
+    "kept": 0,
+    "per_source": {
+      "verona_comune_ics": {
+        "ok": false,
+        "fail_reason": "HTTP 410",
+        "raw": 0,
+        "kept": 0
+      }
+    }
   }
 }
