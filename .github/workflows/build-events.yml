@@ -15,7 +15,6 @@ concurrency:
 jobs:
   build-events:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
 
     steps:
       - name: Checkout
@@ -36,27 +35,15 @@ jobs:
             npm install --no-audit --no-fund
           fi
 
-      # 🔴 QUI È IL PUNTO CRITICO
-      # Node esegue SOLO un file .mjs
-      - name: Build events dataset
-        env:
-          JAMO_UA: "JamoEventsBot/1.0"
-        run: |
-          node scripts/build_events_all.mjs
+      - name: Build events
+        run: npm run build:events
 
-      # 🛡️ non rompere mai l’app se dataset vuoto
-      - name: Guard empty dataset
-        run: |
-          if [ ! -s public/data/events/events_all.json ]; then
-            echo '{"updated_at":null,"count":0,"events":[]}' > public/data/events/events_all.json
-          fi
-
-      - name: Commit & push events
+      - name: Commit & push (ff-only)
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git add public/data/events/events_all.json || true
+          git add public/data/events/events_all.json cache/geocode-cache.json || true
 
           if git diff --cached --quiet; then
             echo "No changes"
