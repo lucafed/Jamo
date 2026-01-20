@@ -1,4 +1,4 @@
-name: Build Events Dataset
+name: Build Events Dataset (daily)
 
 on:
   workflow_dispatch: {}
@@ -15,6 +15,7 @@ concurrency:
 jobs:
   build-events:
     runs-on: ubuntu-latest
+    timeout-minutes: 25
 
     steps:
       - name: Checkout
@@ -26,6 +27,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+          cache: "npm"
 
       - name: Install deps
         run: |
@@ -35,21 +37,38 @@ jobs:
             npm install --no-audit --no-fund
           fi
 
-      - name: Build events
+      - name: Build events (writes public/data/events/events_all.json)
+        env:
+          JAMO_UA: "JamoEventsBot/1.0 (github-actions)"
+          NODE_OPTIONS: "--dns-result-order=ipv4first"
         run: npm run build:events
+
+      - name: Guard: do not commit empty dataset
+        run: |
+          node - <<'NODE'
+          import fs from "fs";
+          const p = "public/data/events/events_all.json";
+          const j = JSON.parse(fs.readFileSync(p, "utf8"));
+          const count = Number(j.count || 0);
+          console.log("events_all.json:", { updated_at: j.updated_at, count });
+          if (!count) {
+            console.error("❌ count=0 -> not committing empty dataset.");
+            process.exit(1);
+          }
+          NODE
 
       - name: Commit & push (ff-only)
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git add public/data/events/events_all.json cache/geocode-cache.json || true
+          git add public/data/events/events_all.json cache/geocode-cache.json configs/events.config.json data/cities/*.json || true
 
           if git diff --cached --quiet; then
-            echo "No changes"
+            echo "No changes to commit."
             exit 0
           fi
 
-          git commit -m "chore(events): update events dataset"
-          git pull --ff-only origin main
-          git push origin HEAD:main
+          git commit -m "chore(events): daily update"
+          git pull --ff-only
+          git push
