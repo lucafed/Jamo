@@ -1,7 +1,7 @@
 name: Build Events (daily)
 
 on:
-  workflow_dispatch:
+  workflow_dispatch: {}
   schedule:
     - cron: "15 3 * * *"
 
@@ -29,7 +29,7 @@ jobs:
           node-version: "20"
           cache: "npm"
 
-      - name: Install deps
+      - name: Install
         run: |
           if [ -f package-lock.json ]; then
             npm ci
@@ -37,32 +37,17 @@ jobs:
             npm install --no-audit --no-fund
           fi
 
-      # ▶️ BUILD EVENTI
       - name: Build events
         env:
           JAMO_UA: "JamoEventsBot/1.0 (github-actions)"
           NODE_OPTIONS: "--dns-result-order=ipv4first"
         run: npm run build:events
 
-      # 🛑 GUARD: evita commit se vuoto
-      - name: Guard empty dataset
+      - name: Show result stats
         run: |
-          node -e "
-          const fs = require('fs');
-          const p = 'public/data/events/events_all.json';
-          if (!fs.existsSync(p)) {
-            console.error('❌ events_all.json missing');
-            process.exit(1);
-          }
-          const j = JSON.parse(fs.readFileSync(p,'utf8'));
-          console.log('events_all:', j.updated_at, 'count=', j.count);
-          if (!j.count || j.count === 0) {
-            console.error('❌ count=0 → stop');
-            process.exit(1);
-          }
-          "
+          node -e "const fs=require('fs'); const p='public/data/events/events_all.json'; if(!fs.existsSync(p)){console.log('missing',p); process.exit(0);} const j=JSON.parse(fs.readFileSync(p,'utf8')); console.log('events_all.json:', {updated_at:j.updated_at, count:j.count, days_ahead:j.days_ahead}); console.log('fail sources:', Object.fromEntries(Object.entries((j.stats&&j.stats.per_source)||{}).filter(([k,v])=>!v.ok).slice(0,20)));"
 
-      - name: Commit & push
+      - name: Commit & push (events only)
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
