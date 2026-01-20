@@ -1,7 +1,7 @@
 name: Build Events (daily)
 
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
   schedule:
     - cron: "15 3 * * *"
 
@@ -27,9 +27,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "npm"
 
-      - name: Install deps
+      - name: Install dependencies
         run: |
           if [ -f package-lock.json ]; then
             npm ci
@@ -37,24 +36,14 @@ jobs:
             npm install --no-audit --no-fund
           fi
 
-      - name: Build events (offline seed)
-        env:
-          JAMO_UA: "JamoEventsBot/1.0 (github-actions)"
-          NODE_OPTIONS: "--dns-result-order=ipv4first"
+      - name: Build events dataset
         run: npm run build:events
 
-      - name: Guard: do not commit empty dataset
+      - name: Guard empty dataset
         run: |
-          node - <<'NODE'
-          import fs from "fs";
-          const p = "public/data/events/events_all.json";
-          const j = JSON.parse(fs.readFileSync(p, "utf8"));
-          const count = Number(j.count || 0);
-          console.log("events_all.json:", { updated_at: j.updated_at, count });
-          if (!count) process.exit(1);
-          NODE
+          node scripts/guard_events.mjs
 
-      - name: Commit & push (events only)
+      - name: Commit & push events
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -62,7 +51,7 @@ jobs:
           git add public/data/events/events_all.json
 
           if git diff --cached --quiet; then
-            echo "No changes to commit."
+            echo "No changes to commit"
             exit 0
           fi
 
