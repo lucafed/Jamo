@@ -4,39 +4,29 @@
 
   "rss_ics_sources": [
     {
-      "id": "eventbrite_verona",
-      "type": "rss",
-      "url": "https://www.eventbrite.it/d/italy--verona/events/rss/",
+      "id": "veneto_cultura_open",
+      "type": "json",
+      "url": "https://www.dati.gov.it/api/3/action/package_show?id=eventi-culturali-veneto",
       "country_code": "IT",
-      "city": "Verona",
       "region": "Veneto",
-      "fixed_lat": 45.4384,
-      "fixed_lon": 10.9916,
-      "category": "events"
+      "category": "culture"
     },
 
     {
-      "id": "meetup_verona",
-      "type": "rss",
-      "url": "https://www.meetup.com/find/events/?allMeetups=true&radius=25&userFreeform=Verona%2C+Italy&mcId=c1029878&mcName=Verona%2C+IT&format=rss",
+      "id": "cultura_italia",
+      "type": "json",
+      "url": "https://api.cultura.gov.it/eventi",
       "country_code": "IT",
-      "city": "Verona",
-      "region": "Veneto",
-      "fixed_lat": 45.4384,
-      "fixed_lon": 10.9916,
-      "category": "meetup"
+      "category": "culture"
     },
 
     {
-      "id": "songkick_verona",
-      "type": "rss",
-      "url": "https://www.songkick.com/metro-areas/30306-italy-verona/calendar.rss",
+      "id": "musei_statali_veneto",
+      "type": "ics",
+      "url": "https://www.museiitaliani.it/it/agenda.ics",
       "country_code": "IT",
-      "city": "Verona",
       "region": "Veneto",
-      "fixed_lat": 45.4384,
-      "fixed_lon": 10.9916,
-      "category": "music"
+      "category": "museum"
     }
   ]
 }
