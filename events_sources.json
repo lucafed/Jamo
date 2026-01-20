@@ -1,18 +1,42 @@
 {
-  "days_ahead": 120,
-  "max_events": 2000,
+  "days_ahead": 180,
+  "max_events": 5000,
 
-  "sources": [
+  "rss_ics_sources": [
     {
-      "id": "verona_comune_ics",
-      "type": "ics",
-      "url": "https://www.comune.verona.it/nqcontent.cfm?a_id=74548&ical=1",
-      "category": "culture",
-      "default_place": "Verona",
-      "default_region": "Veneto",
+      "id": "eventbrite_verona",
+      "type": "rss",
+      "url": "https://www.eventbrite.it/d/italy--verona/events/rss/",
       "country_code": "IT",
+      "city": "Verona",
+      "region": "Veneto",
       "fixed_lat": 45.4384,
-      "fixed_lon": 10.9916
+      "fixed_lon": 10.9916,
+      "category": "events"
+    },
+
+    {
+      "id": "meetup_verona",
+      "type": "rss",
+      "url": "https://www.meetup.com/find/events/?allMeetups=true&radius=25&userFreeform=Verona%2C+Italy&mcId=c1029878&mcName=Verona%2C+IT&format=rss",
+      "country_code": "IT",
+      "city": "Verona",
+      "region": "Veneto",
+      "fixed_lat": 45.4384,
+      "fixed_lon": 10.9916,
+      "category": "meetup"
+    },
+
+    {
+      "id": "songkick_verona",
+      "type": "rss",
+      "url": "https://www.songkick.com/metro-areas/30306-italy-verona/calendar.rss",
+      "country_code": "IT",
+      "city": "Verona",
+      "region": "Veneto",
+      "fixed_lat": 45.4384,
+      "fixed_lon": 10.9916,
+      "category": "music"
     }
   ]
 }
