@@ -1,10 +1,10 @@
 {
-  "updated_at": "2026-01-20T07:11:33.768Z",
+  "updated_at": "2026-01-20T07:13:44.516Z",
   "count": 0,
   "days_ahead": 180,
   "events": [],
   "stats": {
-    "updated_at": "2026-01-20T07:11:28.423Z",
+    "updated_at": "2026-01-20T07:13:33.308Z",
     "sources_total": 3,
     "sources_ok": 0,
     "sources_fail": 3,
@@ -16,21 +16,21 @@
     "dropped_out_of_range": 0,
     "kept": 0,
     "per_source": {
-      "eventbrite_verona": {
+      "veneto_cultura_open": {
         "ok": false,
-        "fail_reason": "HTTP 405 (blocked)",
+        "fail_reason": "HTTP 403",
         "raw": 0,
         "kept": 0
       },
-      "meetup_verona": {
+      "cultura_italia": {
         "ok": false,
-        "fail_reason": "RSS parsed but no dated items",
+        "fail_reason": "fetch failed",
         "raw": 0,
         "kept": 0
       },
-      "songkick_verona": {
+      "musei_statali_veneto": {
         "ok": false,
-        "fail_reason": "HTTP 404 (blocked)",
+        "fail_reason": "HTTP 404",
         "raw": 0,
         "kept": 0
       }
