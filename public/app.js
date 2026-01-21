@@ -1564,11 +1564,27 @@
       const categoryUI = getActiveCategory();
       const cat = canonicalCategory(categoryUI);
 
-      // Eventi: per ora solo placeholder (dataset nel prossimo step)
-      if (cat === "eventi") {
-        renderEventiPlaceholder();
-        return;
-      }
+      // MAI FATTO / COSE DA FARE (usa events.js)
+if (cat === "eventi") {
+  if (!window.JAMO_EVENTS || typeof window.JAMO_EVENTS.run !== "function") {
+    showStatus("err", "Modulo 'Mai fatto' non disponibile.");
+    return;
+  }
+
+  window.JAMO_EVENTS.run({
+    origin,
+    maxMinutes: maxMinutesInput,
+    eventType: getEventType(),   // sagre / concerti / family / ecc
+    eventWhen: getEventWhen(),   // oggi / weekend / 7giorni
+    haversineKm,
+    estCarMinutesFromKm,
+    escapeHtml,
+    showStatus,
+    scrollToId,
+  });
+
+  return;
+}
 
       const styles = getActiveStyles();
 
