@@ -8,7 +8,7 @@
  *   count: 123,
  *   events: [
  *     { title, start, end, lat, lon, place, city, region, country_code,
- *       category, kind, why, how[], duration_min, url, source }
+ *       category, kind, why, how[], duration_min, url, source, tags[] }
  *   ]
  * }
  */
@@ -26,6 +26,19 @@
       .replaceAll(">", "&gt;")
       .replaceAll('"', "&quot;")
       .replaceAll("'", "&#039;");
+
+  const norm = (s) =>
+    String(s ?? "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]+/g, " ")
+      .trim();
+
+  const hasAny = (hay, arr) => {
+    for (const k of arr) if (hay.includes(k)) return true;
+    return false;
+  };
 
   function fmtDate(iso) {
     if (!iso) return "";
@@ -55,36 +68,36 @@
     return place || region || "";
   }
 
-  function categoryLabel(cat) {
-    const m = {
-      relax: "relax",
-      pioggia: "pioggia",
-      family: "family",
-      sagre: "sagre",
-      concerti: "concerti",
-      mostre: "mostre",
-      fiere: "fiere",
-      culture: "cultura",
-      music: "musica",
-      sport: "sport",
-      night: "sera",
-      cantine: "cantine",
-      borghi: "borghi",
-      trekking: "trekking",
-      mare: "mare",
-      montagna: "montagna",
-      storia: "storia",
-      moto: "moto",
-      bici: "bici",
-      natura: "natura",
-      eventi: "eventi",
+  function prettyCategoryLabel(cat) {
+    // ✅ mai "eventi"
+    const k = norm(cat);
+    if (!k) return "Idea";
+    const map = {
+      relax: "Relax",
+      family: "Famiglia",
+      bici: "Bici",
+      moto: "Moto",
+      natura: "Natura",
+      pioggia: "Pioggia",
+      tramonto: "Tramonto",
+      mangiare: "Mangiare",
+      "1ora": "1 ora",
+      "2ore": "2 ore",
+      // compat vecchie
+      sagre: "Mangiare",
+      concerti: "Tramonto",
+      mostre: "Natura",
+      fiere: "Mangiare",
+      sport: "Bici",
+      culture: "Natura",
+      music: "Tramonto",
+      night: "Tramonto",
+      market: "Mangiare",
     };
-    const k = (cat || "").toLowerCase().trim();
-    return m[k] || (k || "idea");
+    return map[k] || (k.length <= 18 ? k : "Idea");
   }
 
   function badge(label) {
-    // usa la classe .pill del tuo app.js (mini css)
     return `<span class="pill soft">${esc(label)}</span>`;
   }
 
@@ -106,46 +119,112 @@
 
   // ---------- selection ----------
   function approxMinutesFromKm(km, estCarMinutesFromKm) {
-    // Se app.js passa estCarMinutesFromKm, usiamolo (più coerente)
     if (typeof estCarMinutesFromKm === "function") return estCarMinutesFromKm(km);
-    // fallback semplice
     return Math.round((km / 60) * 60 + 8);
   }
 
-  function pickSuggestions({ all, origin, maxMinutes, eventType, eventWhen, haversineKm, estCarMinutesFromKm }) {
-    let list = Array.isArray(all) ? all.slice() : [];
+  function eventTextBlob(e) {
+    const title = norm(e.title);
+    const why = norm(e.why);
+    const how = Array.isArray(e.how) ? norm(e.how.join(" ")) : "";
+    const place = norm(e.place);
+    const city = norm(e.city);
+    const region = norm(e.region);
+    const cat = norm(e.category);
+    const kind = norm(e.kind);
+    const tags = Array.isArray(e.tags) ? norm(e.tags.join(" ")) : "";
+    return `${title} ${why} ${how} ${place} ${city} ${region} ${cat} ${kind} ${tags}`.trim();
+  }
 
-    // 1) filtro "tipo" (sottocategoria UI)
-    // Mappiamo eventType -> categorie del dataset (che tu stai usando: sagre/music/culture/sport/family ecc.)
-    const et = String(eventType || "tutti").toLowerCase();
-    if (et && et !== "tutti") {
-      const map = {
-        sagre: ["sagre", "food", "local"],
-        concerti: ["music"],
-        mostre: ["culture"],
-        fiere: ["festival", "fiere", "market"],
-        family: ["family"],
-        sport: ["sport"],
-      };
-      const allowed = map[et] || [et];
-      list = list.filter((e) => allowed.includes(String(e.category || "").toLowerCase()));
+  function normalizeEventCategory(e) {
+    // categoria "reale" per filtrare meglio, anche se dataset è sporco
+    const blob = eventTextBlob(e);
+    const cat = norm(e.category);
+
+    // se già è una delle nuove, ok
+    if (["relax","family","bici","moto","natura","pioggia","tramonto","mangiare"].includes(cat)) return cat;
+
+    // sinonimi / dataset vecchio
+    if (hasAny(blob, ["spa","terme","wellness","sauna","hammam","hamam","benessere","termale"])) return "relax";
+    if (hasAny(blob, ["bambin","kids","family","parco giochi","zoo","acquario","fattoria","agriturismo"])) return "family";
+    if (hasAny(blob, ["bici","bike","ciclab","cycle","mtb","gravel","pedala","pedal"])) return "bici";
+    if (hasAny(blob, ["moto","motor","sella","curve","passo","giro in moto"])) return "moto";
+    if (hasAny(blob, ["pioggia","rain","coperto","al coperto","vetrata","cioccolata calda","biblioteca"])) return "pioggia";
+    if (hasAny(blob, ["tramonto","sunset","golden hour","belvedere","panorama","vista","alba"])) return "tramonto";
+    if (hasAny(blob, ["osteria","trattoria","ristorante","mangiare","cibo","degusta","cantina","enoteca","wine","food","sagra","market","fiera"])) return "mangiare";
+    if (hasAny(blob, ["bosco","sentier","parco","riserva","oasi","lago","cascat","natura","valle"])) return "natura";
+
+    // fallback: prova a mappare alcune categorie dataset
+    if (["market","sagre","food","local","fiera","fiere"].includes(cat)) return "mangiare";
+    if (["concert","concerti","music","musica","night","sera"].includes(cat)) return "tramonto";
+    if (["culture","cultura","mostre","mostra","museum","museo"].includes(cat)) return "pioggia";
+    if (["sport"].includes(cat)) return "bici";
+
+    return "natura";
+  }
+
+  function filterByEventType(list, eventType) {
+    const et = norm(eventType || "tutti");
+    if (!et || et === "tutti") return list;
+
+    // ✅ supporta nuove sottocategorie + compat vecchie
+    const newCats = {
+      relax: "relax",
+      famiglia: "family",
+      family: "family",
+      bici: "bici",
+      moto: "moto",
+      natura: "natura",
+      pioggia: "pioggia",
+      tramonto: "tramonto",
+      mangiare: "mangiare",
+      "1ora": "1ora",
+      "2ore": "2ore",
+
+      // vecchie (se l’HTML ancora le manda)
+      sagre: "mangiare",
+      concerti: "tramonto",
+      mostre: "pioggia",
+      fiere: "mangiare",
+      sport: "bici",
+    };
+
+    const key = newCats[et] || et;
+
+    // filtri durata (1 ora / 2 ore)
+    if (key === "1ora") {
+      return list.filter((e) => {
+        const d = Number(e.duration_min);
+        return Number.isFinite(d) ? d <= 90 : true; // se manca durata, non bloccare
+      });
+    }
+    if (key === "2ore") {
+      return list.filter((e) => {
+        const d = Number(e.duration_min);
+        return Number.isFinite(d) ? d <= 150 : true;
+      });
     }
 
-    // 2) filtro "quando" (oggi / weekend / 7 giorni) — SOLO se l’evento ha start reale
-    // Se sono “idee” senza data, le lasciamo comunque (ma nel tuo dataset ora c’è start)
-    const ew = String(eventWhen || "oggi").toLowerCase();
+    return list.filter((e) => normalizeEventCategory(e) === key);
+  }
+
+  function filterByWhen(list, eventWhen) {
+    // ✅ compat: se l’HTML manda ancora oggi/weekend/7giorni, li supportiamo
+    const ew = norm(eventWhen || "");
+    if (!ew) return list;
+
     const now = new Date();
     const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
     const endOfDay = startOfDay + 24 * 60 * 60 * 1000 - 1;
 
     function isWeekend(ts) {
       const d = new Date(ts);
-      const day = d.getDay(); // 0 dom, 6 sab
+      const day = d.getDay();
       return day === 0 || day === 6;
     }
 
     if (ew === "oggi" || ew === "weekend" || ew === "7giorni") {
-      list = list.filter((e) => {
+      return list.filter((e) => {
         const ts = e.start ? new Date(e.start).getTime() : NaN;
         if (!Number.isFinite(ts)) return true; // se manca data, non bloccare
         if (ew === "oggi") return ts >= startOfDay && ts <= endOfDay;
@@ -155,7 +234,20 @@
       });
     }
 
-    // 3) filtro distanza/tempo (entro maxMinutes) + ordinamento
+    // se eventWhen è roba nuova tipo "1 ora / 2 ore", non facciamo nulla qui
+    return list;
+  }
+
+  function pickSuggestions({ all, origin, maxMinutes, eventType, eventWhen, haversineKm, estCarMinutesFromKm }) {
+    let list = Array.isArray(all) ? all.slice() : [];
+
+    // 1) sottocategoria (nuova + compat vecchia)
+    list = filterByEventType(list, eventType);
+
+    // 2) quando (compat vecchia)
+    list = filterByWhen(list, eventWhen);
+
+    // 3) distanza/tempo + ordinamento
     const mm = Number(maxMinutes) || 180;
 
     if (origin && typeof origin.lat === "number" && typeof origin.lon === "number") {
@@ -171,11 +263,11 @@
         .filter(Boolean)
         .filter((x) => (x.mins == null ? true : x.mins <= mm))
         .sort((a, b) => {
-          // prima i più vicini, poi quelli con data più prossima
           const am = a.mins ?? 9999;
           const bm = b.mins ?? 9999;
           if (am !== bm) return am - bm;
 
+          // se hanno data, più vicino nel tempo
           const at = a.e.start ? new Date(a.e.start).getTime() : 9e15;
           const bt = b.e.start ? new Date(b.e.start).getTime() : 9e15;
           return at - bt;
@@ -222,16 +314,11 @@
             </ul>`
           : "";
 
-      const kind = e.kind === "mai_fatto" ? "Mai fatto" : "Suggerimento";
-      const cat = categoryLabel(e.category);
+      // ✅ sempre "Mai fatto", niente "eventi"
+      const kind = "Mai fatto";
+      const cat = prettyCategoryLabel(normalizeEventCategory(e));
 
-      let distKm = "";
-      if (origin && typeof e.lat === "number" && typeof e.lon === "number") {
-        // distanza approssimata (non ripassiamo km qui, ok)
-        distKm = "";
-      }
-
-      const dur = e.duration_min ? `• ~${esc(e.duration_min)} min` : "";
+      const dur = Number.isFinite(Number(e.duration_min)) ? `• ~${esc(e.duration_min)} min` : "";
       const urlInfo = e.url ? String(e.url) : "";
 
       const lat = e.lat;
@@ -248,7 +335,7 @@
           <div class="small muted" style="margin-top:6px; line-height:1.35;">
             ${where ? `📍 ${esc(where)}` : ""}
             ${when ? ` • 🗓️ ${esc(when)}` : ""}
-            ${dur} ${distKm}
+            ${dur}
           </div>
 
           <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">
@@ -259,7 +346,7 @@
           ${
             why
               ? `<div class="small muted" style="margin-top:10px; line-height:1.45;">
-                   <b style="color:#fff;">Perché vale:</b> ${esc(why)}
+                   <b style="color:#fff;">Perché è speciale:</b> ${esc(why)}
                  </div>`
               : ""
           }
@@ -269,7 +356,7 @@
           <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
             ${
               mapsAuto
-                ? `<a class="btn btnPrimary" href="${esc(mapsAuto)}" target="_blank" rel="noopener">🧭 Vai (auto)</a>`
+                ? `<a class="btn btnPrimary" href="${esc(mapsAuto)}" target="_blank" rel="noopener">🧭 Vai</a>`
                 : ""
             }
             ${
@@ -298,7 +385,7 @@
 
     area.innerHTML = `
       <div class="card clickSafe" style="box-shadow:none; border-color:rgba(0,224,255,.20); background:rgba(0,224,255,.05);">
-        <div style="font-weight:950; font-size:18px;">✨ Mai fatto — proposte</div>
+        <div style="font-weight:950; font-size:18px;">✨ MAI FATTO — idee vicine</div>
         <div class="small muted" style="margin-top:6px;">
           ${updated ? `Dataset aggiornato ${esc(updated)}` : "Dataset offline"} • totale ${esc(total)}
         </div>
@@ -318,7 +405,7 @@
     eventWhen,
     haversineKm,
     estCarMinutesFromKm,
-    escapeHtml, // (non necessario, ma app.js lo passa)
+    escapeHtml, // unused (ok)
     showStatus,
     scrollToId
   }) {
