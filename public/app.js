@@ -1084,3 +1084,321 @@
   }
 
   document.addEventListener("DOMContentLoaded", initAppUI);
+// ===============================
+  // PARTE 3 — OFFLINE SEARCH (MACROS) + RENDER
+  // ===============================
+
+  // --- Dataset offline (metti quello che hai sicuramente)
+  const DATASET_URLS = [
+    "/data/macros/euuk_country_it.json",
+    "/data/macros/euuk_macro_all.json",
+  ];
+
+  let __PLACES_CACHE = null;
+  let __LAST_RESULTS = [];
+  let __LAST_INDEX = 0;
+
+  async function fetchJsonSafe(url) {
+    const r = await fetch(url, { cache: "no-store" });
+    if (!r.ok) throw new Error(`HTTP ${r.status} su ${url}`);
+    return await r.json();
+  }
+
+  function normalizePlaceLite(p) {
+    if (!p) return null;
+    const lat = Number(p.lat);
+    const lon = Number(p.lon ?? p.lng);
+    const name = String(p.name || "").trim();
+    if (!Number.isFinite(lat) || !Number.isFinite(lon) || !name) return null;
+
+    const tags = Array.isArray(p.tags) ? p.tags.map(x => String(x).toLowerCase()) : [];
+    return {
+      id: p.id ? String(p.id) : null,
+      name,
+      lat,
+      lon,
+      area: String(p.area || p.region || p.country || "").trim(),
+      country: String(p.country || "").toUpperCase(),
+      tags,
+      raw: p
+    };
+  }
+
+  async function loadOfflinePlacesOnce() {
+    if (__PLACES_CACHE) return __PLACES_CACHE;
+
+    for (const url of DATASET_URLS) {
+      try {
+        const j = await fetchJsonSafe(url);
+        const arr = Array.isArray(j?.places) ? j.places : [];
+        const places = arr.map(normalizePlaceLite).filter(Boolean);
+        if (places.length) {
+          __PLACES_CACHE = { url, places };
+          return __PLACES_CACHE;
+        }
+      } catch (e) {
+        // prova il prossimo
+      }
+    }
+
+    throw new Error("Nessun dataset offline caricato (controlla /public/data/macros/...).");
+  }
+
+  // --- Helpers categoria (semplici ma efficaci)
+  const _hasAny = (s, arr) => arr.some(x => s.includes(x));
+  function tagsStrLite(p) { return (p.tags || []).join(" "); }
+  function nameNormLite(s) {
+    return String(s||"").toLowerCase()
+      .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+      .replace(/[^a-z0-9]+/g," ").trim();
+  }
+
+  function matchCategoryLite(place, cat) {
+    const t = tagsStrLite(place);
+    const n = nameNormLite(place.name);
+
+    if (cat === "relax") {
+      return (
+        _hasAny(n, ["terme","spa","wellness","benessere","sauna","hammam","hamam","termale","thermal"]) ||
+        t.includes("amenity=spa") || t.includes("leisure=spa") || t.includes("tourism=spa") ||
+        t.includes("natural=hot_spring") || t.includes("amenity=sauna") || t.includes("amenity=public_bath")
+      );
+    }
+
+    if (cat === "borghi") {
+      return (
+        t.includes("place=village") || t.includes("place=hamlet") || t.includes("place=town") ||
+        _hasAny(n, ["borgo","centro storico","frazione","contrada"])
+      );
+    }
+
+    if (cat === "mare") {
+      return (
+        t.includes("natural=beach") || t.includes("leisure=marina") ||
+        _hasAny(n, ["spiaggia","lido","baia","cala","mare","beach"])
+      );
+    }
+
+    if (cat === "hiking" || cat === "trekking") {
+      return (
+        t.includes("route=hiking") || t.includes("highway=path") || t.includes("highway=footway") ||
+        t.includes("tourism=alpine_hut") || _hasAny(n, ["sentier","cai","trail","anello","trek","ferrata"])
+      );
+    }
+
+    if (cat === "montagna") {
+      return (
+        t.includes("natural=peak") || t.includes("tourism=alpine_hut") || t.includes("aerialway=") ||
+        _hasAny(n, ["monte","cima","passo","rifugio","malga","alpe"])
+      );
+    }
+
+    if (cat === "storia") {
+      return (
+        t.includes("historic=") || t.includes("tourism=museum") || t.includes("tourism=attraction") ||
+        _hasAny(n, ["castel","rocca","forte","abbazia","duomo","cattedrale","museo","rovine","archeologic"])
+      );
+    }
+
+    if (cat === "family") {
+      return (
+        t.includes("tourism=theme_park") || t.includes("leisure=water_park") || t.includes("tourism=zoo") ||
+        _hasAny(n, ["parco avventura","zoo","acquario","planetario","museo dei bambini","children"])
+      );
+    }
+
+    // natura (default) + fallback: roba “visitabile”
+    if (cat === "natura") {
+      return (
+        t.includes("natural=") || t.includes("water=lake") || t.includes("leisure=park") ||
+        _hasAny(n, ["cascat","gola","lago","parco","riserva","oasi","grotta","sorgente","belvedere"])
+      );
+    }
+
+    // se categoria sconosciuta: accetta
+    return true;
+  }
+
+  function scoreLite(driveMin, targetMin) {
+    const diff = Math.abs(driveMin - targetMin);
+    // più vicino al target = meglio
+    return 1 / (1 + diff);
+  }
+
+  function osmStaticImg(lat, lon, z = 11) {
+    const size = "720x360";
+    const marker = `${lat},${lon},lightblue1`;
+    return `https://staticmap.openstreetmap.de/staticmap.php?center=${encodeURIComponent(
+      lat + "," + lon
+    )}&zoom=${encodeURIComponent(z)}&size=${encodeURIComponent(
+      size
+    )}&maptype=mapnik&markers=${encodeURIComponent(marker)}`;
+  }
+
+  function renderPlaceCard(origin, place, driveMin, km, datasetUrl) {
+    const area = $("resultArea");
+    if (!area) return;
+
+    const lat = place.lat;
+    const lon = place.lon;
+    const zoom = km < 20 ? 12 : km < 60 ? 10 : 8;
+
+    area.innerHTML = `
+      <div class="clickSafe" style="border-radius:18px; overflow:hidden; border:1px solid rgba(0,224,255,.18);">
+        <div style="position:relative; width:100%; aspect-ratio: 2 / 1; border-bottom:1px solid rgba(255,255,255,.10);">
+          <img src="${osmStaticImg(lat, lon, zoom)}" alt="" loading="lazy" decoding="async"
+               style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; opacity:.95;" />
+          <div style="position:absolute; left:12px; top:12px; display:flex; gap:8px; flex-wrap:wrap; max-width: calc(100% - 24px);">
+            <div class="pill acc">🚗 ~${driveMin} min • ${Math.round(km)} km</div>
+            <div class="pill soft">📍 ${(place.area || place.country || "—")}</div>
+          </div>
+        </div>
+
+        <div style="padding:14px;">
+          <div style="font-weight:1000; font-size:30px; line-height:1.08;">
+            ${escapeHtml(place.name)}
+          </div>
+
+          <div class="small muted" style="margin-top:6px;">
+            ${lat.toFixed(5)}, ${lon.toFixed(5)}
+          </div>
+
+          <div class="small muted" style="margin-top:8px;">
+            Dataset: ${escapeHtml((datasetUrl||"").split("/").pop() || "offline")}
+          </div>
+
+          <div class="actionGrid" style="margin-top:12px;">
+            <button class="btn btnPrimary" id="btnGo" type="button">🧭 Vai</button>
+            <button class="btnGhost" id="btnPhotos" type="button">📸 Foto</button>
+            <button class="btnGhost" id="btnWiki" type="button">📚 Wiki</button>
+            <button class="btn" id="btnChangePlace" type="button">🔁 Cambia meta</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    $("btnGo")?.addEventListener("click", () => {
+      window.open(mapsDirUrl(origin.lat, origin.lon, lat, lon), "_blank", "noopener");
+    });
+
+    $("btnPhotos")?.addEventListener("click", () => {
+      window.open(googleImagesUrl(place.name, place.area || place.country || ""), "_blank", "noopener");
+    });
+
+    $("btnWiki")?.addEventListener("click", () => {
+      window.open(wikiUrl(place.name, place.area || place.country || ""), "_blank", "noopener");
+    });
+
+    $("btnChangePlace")?.addEventListener("click", () => {
+      showAnotherFromLast(origin);
+    });
+
+    scrollToId("resultCard");
+  }
+
+  function showAnotherFromLast(origin) {
+    if (!__LAST_RESULTS.length) {
+      showStatus("warn", "Non ho altre opzioni in memoria. Premi CERCA.");
+      return;
+    }
+    __LAST_INDEX = (__LAST_INDEX + 1) % __LAST_RESULTS.length;
+    const x = __LAST_RESULTS[__LAST_INDEX];
+    renderPlaceCard(origin, x.place, x.driveMin, x.km, x.datasetUrl);
+  }
+
+  // --- OVERRIDE della onSearch della PARTE 2 (ora ricerca vera)
+  async function onSearch() {
+    const origin = getOrigin();
+    if (!origin) {
+      showStatus("err", "Imposta prima una partenza.");
+      scrollToId("quickStartCard");
+      return;
+    }
+
+    const maxMin = Number(UI_STATE.maxMinutes) || Number($("maxMinutes")?.value) || 120;
+    const cat = String(UI_STATE.category || "natura").toLowerCase();
+
+    hideStatus();
+
+    const area = $("resultArea");
+    if (area) {
+      area.innerHTML = `
+        <div class="card clickSafe" style="box-shadow:none; border-color:rgba(255,180,80,.35); background:rgba(255,180,80,.06);">
+          <div style="font-weight:950; font-size:18px;">🔎 Sto cercando offline…</div>
+          <div class="small muted" style="margin-top:8px;">Categoria: <b>${escapeHtml(cat)}</b> • Max: <b>${maxMin} min</b></div>
+        </div>
+      `;
+    }
+
+    try {
+      const { url: datasetUrl, places } = await loadOfflinePlacesOnce();
+
+      const oLat = Number(origin.lat), oLon = Number(origin.lon);
+      const candidates = [];
+
+      for (const p of places) {
+        if (!matchCategoryLite(p, cat)) continue;
+
+        const km = haversineKm(oLat, oLon, p.lat, p.lon);
+        const driveMin = estCarMinutesFromKm(km);
+
+        if (!Number.isFinite(driveMin) || driveMin > maxMin) continue;
+
+        candidates.push({
+          place: p,
+          km,
+          driveMin,
+          s: scoreLite(driveMin, maxMin),
+          datasetUrl
+        });
+      }
+
+      candidates.sort((a,b) => (b.s - a.s) || (a.driveMin - b.driveMin));
+
+      if (!candidates.length) {
+        if (area) {
+          area.innerHTML = `
+            <div class="card clickSafe" style="box-shadow:none; border-color:rgba(255,90,90,.40); background:rgba(255,90,90,.10);">
+              <div style="font-weight:950; font-size:18px;">❌ Nessun risultato</div>
+              <div class="small muted" style="margin-top:8px;">
+                Prova ad aumentare i minuti o cambiare categoria.
+              </div>
+              <div class="small muted" style="margin-top:10px;">
+                Dataset: ${escapeHtml((datasetUrl||"").split("/").pop() || "offline")}
+              </div>
+            </div>
+          `;
+        }
+        showStatus("warn", "Nessuna meta trovata con questi filtri.");
+        return;
+      }
+
+      // salva lista per "Cambia meta"
+      __LAST_RESULTS = candidates.slice(0, 30);
+      __LAST_INDEX = 0;
+
+      const best = __LAST_RESULTS[0];
+      renderPlaceCard(origin, best.place, best.driveMin, best.km, best.datasetUrl);
+
+      showStatus("ok", `Trovate ${__LAST_RESULTS.length} opzioni ✅ (offline)`);
+
+    } catch (e) {
+      console.error(e);
+      showStatus("err", `Errore: ${String(e.message || e)}`);
+      if (area) {
+        area.innerHTML = `
+          <div class="card clickSafe" style="box-shadow:none; border-color:rgba(255,90,90,.40); background:rgba(255,90,90,.10);">
+            <div style="font-weight:950; font-size:18px;">❌ Errore dataset</div>
+            <div class="small muted" style="margin-top:8px; line-height:1.45;">
+              ${escapeHtml(String(e.message || e))}
+            </div>
+            <div class="small muted" style="margin-top:10px;">
+              Controlla che esista almeno uno tra:<br>
+              <b>/data/macros/euuk_country_it.json</b><br>
+              <b>/data/macros/euuk_macro_all.json</b>
+            </div>
+          </div>
+        `;
+      }
+    }
+  }
