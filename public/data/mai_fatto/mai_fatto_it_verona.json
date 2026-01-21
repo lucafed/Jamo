@@ -1,0 +1,787 @@
+{
+  "updated_at": "2026-01-21T00:00:00.000Z",
+  "count": 36,
+  "area": "Verona • Bussolengo • Valpolicella • Lago di Garda (zona sud-est)",
+  "ideas": [
+    {
+      "id": "mf_vr_001",
+      "title": "Una collina dove Bussolengo sparisce",
+      "place": "Sommacampagna (colline)",
+      "city": "Sommacampagna",
+      "region": "Veneto",
+      "country_code": "IT",
+      "lat": 45.4075,
+      "lon": 10.8443,
+      "category": "relax",
+      "duration_bucket": "1h",
+      "duration_min": 75,
+      "why": "È vicina, ma non è “una meta famosa”. Proprio per questo ti svuota la testa.",
+      "how": [
+        "Parcheggia vicino al centro e sali verso i punti alti.",
+        "Cammina lenta tra le stradine e i filari.",
+        "Fermati 10 minuti senza telefono: solo aria e silenzio."
+      ],
+      "repeatable": true,
+      "source": "curated_mai_fatto"
+    },
+    {
+      "id": "mf_vr_002",
+      "title": "Un giro lento sul Lungadige senza attraversare ponti",
+      "place": "Lungadige (tratto centrale)",
+      "city": "Verona",
+      "region": "Veneto",
+      "country_code": "IT",
+      "lat": 45.4386,
+      "lon": 10.9996,
+      "category": "relax",
+      "duration_bucket": "1h",
+      "duration_min": 60,
+      "why": "È Verona, ma fatta come fosse un’altra città: senza obiettivi, senza “devo vedere”.",
+      "how": [
+        "Scegli un tratto e resta su UNA sola sponda.",
+        "Cammina finché non ti viene voglia di fermarti.",
+        "Seduta 5 minuti a guardare l’acqua: basta così."
+      ],
+      "repeatable": true,
+      "source": "curated_mai_fatto"
+    },
+    {
+      "id": "mf_vr_003",
+      "title": "Una pausa vera in un parco dove non vai mai",
+      "place": "Parco San Giacomo",
+      "city": "Bussolengo",
+      "region": "Veneto",
+      "country_code": "IT",
+      "lat": 45.4680,
+      "lon": 10.8599,
+      "category": "relax",
+      "duration_bucket": "1h",
+      "duration_min": 55,
+      "why": "È il classico posto “troppo normale” per diventare una meta. Ma è perfetto proprio per quello.",
+      "how": [
+        "Entra senza musica nelle cuffie.",
+        "Fai un giro completo e poi scegli una panchina.",
+        "Resta 10 minuti: non serve di più per cambiare ritmo."
+      ],
+      "repeatable": true,
+      "source": "curated_mai_fatto"
+    },
+
+    {
+      "id": "mf_vr_004",
+      "title": "Un posto dove i bambini non chiedono niente",
+      "place": "Parco Sigurtà (area esterna e percorsi)",
+      "city": "Valeggio sul Mincio",
+      "region": "Veneto",
+      "country_code": "IT",
+      "lat": 45.3536,
+      "lon": 10.7336,
+      "category": "famiglia",
+      "duration_bucket": "2h",
+      "duration_min": 120,
+      "why": "Spazio e aria: quando il posto è grande, i bambini si “regolano” da soli.",
+      "how": [
+        "Entrate senza programma: solo camminata e scoperta.",
+        "Fate una sosta breve e poi ripartite.",
+        "Uscite prima di stancarvi: così resta bello."
+      ],
+      "repeatable": true,
+      "source": "curated_mai_fatto"
+    },
+    {
+      "id": "mf_vr_005",
+      "title": "Un pomeriggio in cui il “family” è solo natura facile",
+      "place": "Lago di Garda (lungolago)",
+      "city": "Lazise",
+      "region": "Veneto",
+      "country_code": "IT",
+      "lat": 45.5056,
+      "lon": 10.7321,
+      "category": "famiglia",
+      "duration_bucket": "2h",
+      "duration_min": 130,
+      "why": "È semplice, lineare, senza complicazioni: perfetto se vuoi far felici tutti senza stress.",
+      "how": [
+        "Passeggiata breve sul lungolago.",
+        "Gelato e panchina (senza “fare tutto”).",
+        "Rientro prima del caos: ti resta energia."
+      ],
+      "repeatable": true,
+      "source": "curated_mai_fatto"
+    },
+
+    {
+      "id": "mf_vr_006",
+      "title": "La ciclabile che pochi fanno fino in fondo",
+      "place": "Argine Adige (Bussolengo → Parona)",
+      "city": "Bussolengo",
+      "region": "Veneto",
+      "country_code": "IT",
+      "lat": 45.4742,
+      "lon": 10.8648,
+      "category": "bici",
+      "duration_bucket": "1h",
+      "duration_min": 70,
+      "why": "Tutti partono. Quasi nessuno continua. E proprio “più avanti” cambia tutto.",
+      "how": [
+        "Vai senza obiettivo: solo avanti 25–35 minuti.",
+        "Fermati quando il fiume si apre e respira.",
+        "Torna indietro piano: è metà dell’esperienza."
+      ],
+      "repeatable": true,
+      "source": "curated_mai_fatto"
+    },
+    {
+      "id": "mf_vr_007",
+      "title": "Bici + 10 minuti di silenzio vista acqua",
+      "place": "Lungadige / argine (zona sud)",
+      "city": "Verona",
+      "region": "Veneto",
+      "country_code": "IT",
+      "lat": 45.4259,
+      "lon": 10.9966,
+      "category": "bici",
+      "duration_bucket": "1h",
+      "duration_min": 60,
+      "why": "Non è una performance. È una mini-vacanza mentale in mezzo alla settimana.",
+      "how": [
+        "Pedala tranquillo fino a un punto comodo.",
+        "Scendi e resta fermo 10 minuti.",
+        "Riparti solo quando ti viene voglia, non prima."
+      ],
+      "repeatable": true,
+      "source": "curated_mai_fatto"
+    },
+
+    {
+      "id": "mf_vr_008",
+      "title": "Curve brevi che valgono il viaggio",
+      "place": "Rivoli Veronese (strade collinari)",
+      "city": "Rivoli Veronese",
+      "region": "Veneto",
+      "country_code": "IT",
+      "lat": 45.5736,
+      "lon": 10.8126,
+      "category": "moto",
+      "duration_bucket": "1h",
+      "duration_min": 90,
+      "why": "Non è un giro famoso. Ma è pulito, corto, e ti rimette a posto la testa.",
+      "how": [
+        "Sali senza fretta: guida “rotonda”.",
+        "Fermati dove la valle si apre (anche 5 minuti).",
+        "Rientra da una strada diversa: cambia la percezione."
+      ],
+      "repeatable": true,
+      "source": "curated_mai_fatto"
+    },
+    {
+      "id": "mf_vr_009",
+      "title": "Moto + sosta vista lago senza entrare in confusione",
+      "place": "Panorama (zona Garda orientale)",
+      "city": "Bardolino",
+      "region": "Veneto",
+      "country_code": "IT",
+      "lat": 45.5486,
+      "lon": 10.7237,
+      "category": "moto",
+      "duration_bucket": "2h",
+      "duration_min": 120,
+      "why": "Non è “fare Garda”. È solo una sosta che ti fa dire: ok, ne valeva la pena.",
+      "how": [
+        "Scegli un orario tranquillo (non pieno).",
+        "Fermati 10 minuti: niente foto infinite, solo guardare.",
+        "Riparti prima che arrivi la folla: resta tuo."
+      ],
+      "repeatable": true,
+      "source": "curated_mai_fatto"
+    },
+
+    {
+      "id": "mf_vr_010",
+      "title": "Un bar dove la pioggia fa atmosfera",
+      "place": "Piazza Erbe (portici / zone riparate)",
+      "city": "Verona",
+      "region": "Veneto",
+      "country_code": "IT",
+      "lat": 45.4421,
+      "lon": 10.9997,
+      "category": "pioggia",
+      "duration_bucket": "1h",
+      "duration_min": 50,
+      "why": "Con la pioggia la città si svuota e il tempo rallenta davvero.",
+      "how": [
+        "Prendi una cosa calda.",
+        "Mettiti riparato con vista strada.",
+        "Guarda la città “bagnata”: è un’altra cosa."
+      ],
+      "repeatable": true,
+      "source": "curated_mai_fatto"
+    },
+    {
+      "id": "mf_vr_011",
+      "title": "Una vista bagnata che non avevi mai notato",
+      "place": "Castel San Pietro (area belvedere)",
+      "city": "Verona",
+      "region": "Veneto",
+      "country_code": "IT",
+      "lat": 45.4447,
+      "lon": 11.0047,
+      "category": "pioggia",
+      "duration_bucket": "1h",
+      "duration_min": 60,
+      "why": "Pioggia leggera = tetti che brillano e pochissima gente. Verona cambia colore.",
+      "how": [
+        "Sali con calma (anche solo fino ai punti coperti).",
+        "Resta 3 minuti a guardare senza fare nulla.",
+        "Scendi piano: la città sotto è diversa."
+      ],
+      "repeatable": true,
+      "source": "curated_mai_fatto"
+    },
+    {
+      "id": "mf_vr_012",
+      "title": "Un posto al coperto che non sembra un museo",
+      "place": "Biblioteca Civica (centro)",
+      "city": "Verona",
+      "region": "Veneto",
+      "country_code": "IT",
+      "lat": 45.4382,
+      "lon": 10.9957,
+      "category": "pioggia",
+      "duration_bucket": "1h",
+      "duration_min": 55,
+      "why": "Quando fuori piove, entrare in un posto silenzioso ti resetta la giornata.",
+      "how": [
+        "Entra anche solo per mezz’ora.",
+        "Scegli un tavolo e fai 2 pagine (non di più).",
+        "Esci e senti subito la differenza."
+      ],
+      "repeatable": true,
+      "source": "curated_mai_fatto"
+    },
+
+    {
+      "id": "mf_vr_013",
+      "title": "Bosco vicino ma sorprendente (senza fare trekking)",
+      "place": "Parco delle Cascate",
+      "city": "Molina (Fumane)",
+      "region": "Veneto",
+      "country_code": "IT",
+      "lat": 45.5672,
+      "lon": 10.8918,
+      "category": "natura",
+      "duration_bucket": "2h",
+      "duration_min": 120,
+      "why": "È un posto che “fa scena” senza chiederti fatica. Perfetto per ricaricare.",
+      "how": [
+        "Entra con calma, senza correre a vedere tutto.",
+        "Fai un giro corto e ripeti il tratto che ti piace.",
+        "Foto sì, ma poche: l’idea è starci."
+      ],
+      "repeatable": true,
+      "source": "curated_mai_fatto"
+    },
+    {
+      "id": "mf_vr_014",
+      "title": "Una passeggiata facile con vista lago",
+      "place": "Lungolago",
+      "city": "Garda",
+      "region": "Veneto",
+      "country_code": "IT",
+      "lat": 45.5788,
+      "lon": 10.7167,
+      "category": "natura",
+      "duration_bucket": "2h",
+      "duration_min": 120,
+      "why": "Non è “fare Garda”. È una micro-fuga dove respiri meglio.",
+      "how": [
+        "Passeggia 25 minuti e poi gira senza sentirti in colpa.",
+        "Siediti 10 minuti a guardare l’acqua.",
+        "Riparti prima che diventi caos."
+      ],
+      "repeatable": true,
+      "source": "curated_mai_fatto"
+    },
+
+    {
+      "id": "mf_vr_015",
+      "title": "Tramonto che non sembra Verona",
+      "place": "Castel San Pietro (zona meno affollata)",
+      "city": "Verona",
+      "region": "Veneto",
+      "country_code": "IT",
+      "lat": 45.4447,
+      "lon": 11.0047,
+      "category": "tramonto",
+      "duration_bucket": "1h",
+      "duration_min": 70,
+      "why": "Se arrivi 30 minuti prima e stai zitto, te lo ricordi per settimane.",
+      "how": [
+        "Arriva con anticipo e scegli un punto comodo.",
+        "Guarda la luce che cambia (non il telefono).",
+        "Scendi quando è già un po’ buio: cambia l’umore."
+      ],
+      "repeatable": true,
+      "source": "curated_mai_fatto"
+    },
+    {
+      "id": "mf_vr_016",
+      "title": "Un tramonto “largo” senza folla",
+      "place": "Colline (zona Valpolicella)",
+      "city": "San Pietro in Cariano",
+      "region": "Veneto",
+      "country_code": "IT",
+      "lat": 45.5208,
+      "lon": 10.8879,
+      "category": "tramonto",
+      "duration_bucket": "1h",
+      "duration_min": 80,
+      "why": "Non è un belvedere famoso. Ma la luce sulle colline fa il lavoro.",
+      "how": [
+        "Trova una stradina alta e un punto sicuro per fermarti.",
+        "Resta 10 minuti: fine.",
+        "Riparti prima di “rovinare” il momento."
+      ],
+      "repeatable": true,
+      "source": "curated_mai_fatto"
+    },
+
+    {
+      "id": "mf_vr_017",
+      "title": "Mangiare senza fretta in una zona che ‘profuma’ di Verona",
+      "place": "Quartiere Sottoriva (zona osterie)",
+      "city": "Verona",
+      "region": "Veneto",
+      "country_code": "IT",
+      "lat": 45.4444,
+      "lon": 11.0018,
+      "category": "mangiare",
+      "duration_bucket": "2h",
+      "duration_min": 110,
+      "why": "È una mini-serata vera: posti piccoli, luci basse, ritmo lento.",
+      "how": [
+        "Scegli un posto semplice (non ‘instagrammabile’).",
+        "Ordina 2 cose e basta, senza esagerare.",
+        "Fai una passeggiata di 10 minuti dopo: chiude il cerchio."
+      ],
+      "repeatable": true,
+      "source": "curated_mai_fatto"
+    },
+    {
+      "id": "mf_vr_018",
+      "title": "Un aperitivo che diventa “storia da raccontare”",
+      "place": "Bardolino (centro / lungolago)",
+      "city": "Bardolino",
+      "region": "Veneto",
+      "country_code": "IT",
+      "lat": 45.5493,
+      "lon": 10.7242,
+      "category": "mangiare",
+      "duration_bucket": "1h",
+      "duration_min": 80,
+      "why": "Non è ‘andare a bere’. È scegliere un posto e restare davvero lì.",
+      "how": [
+        "Siediti dove vedi passare la gente.",
+        "Prendi una cosa locale (anche semplice).",
+        "Esci prima che diventi confusione: resta ‘pulito’."
+      ],
+      "repeatable": true,
+      "source": "curated_mai_fatto"
+    },
+
+    {
+      "id": "mf_vr_019",
+      "title": "Due ore ‘fuori dal mondo’ senza fare chilometri",
+      "place": "Borghetto sul Mincio (passeggiata lenta)",
+      "city": "Valeggio sul Mincio",
+      "region": "Veneto",
+      "country_code": "IT",
+      "lat": 45.3530,
+      "lon": 10.7374,
+      "category": "2h",
+      "duration_bucket": "2h",
+      "duration_min": 120,
+      "why": "È il posto perfetto per staccare: acqua, pietra, ritmo lento.",
+      "how": [
+        "Passeggiata senza ‘vedere tutto’.",
+        "Siediti 10 minuti a guardare il fiume.",
+        "Rientra con calma, senza aggiungere altro."
+      ],
+      "repeatable": true,
+      "source": "curated_mai_fatto"
+    },
+    {
+      "id": "mf_vr_020",
+      "title": "Un’ora di reset totale (zero sforzo)",
+      "place": "Peschiera del Garda (passeggiata mura/acqua)",
+      "city": "Peschiera del Garda",
+      "region": "Veneto",
+      "country_code": "IT",
+      "lat": 45.4398,
+      "lon": 10.6920,
+      "category": "1h",
+      "duration_bucket": "1h",
+      "duration_min": 65,
+      "why": "Cammini vicino all’acqua e ti sembra di aver fatto una mini-vacanza.",
+      "how": [
+        "Giro corto vicino ai canali.",
+        "Panchina 10 minuti.",
+        "Rientro senza ‘aggiungere tappe’."
+      ],
+      "repeatable": true,
+      "source": "curated_mai_fatto"
+    },
+
+    {
+      "id": "mf_vr_021",
+      "title": "Relax vero: una camminata tra vigne senza ‘trekking’",
+      "place": "Valpolicella (stradine tra vigne)",
+      "city": "Negrar di Valpolicella",
+      "region": "Veneto",
+      "country_code": "IT",
+      "lat": 45.5309,
+      "lon": 10.9398,
+      "category": "relax",
+      "duration_bucket": "1h",
+      "duration_min": 80,
+      "why": "Non devi ‘fare sport’. Devi solo camminare e far scendere il rumore.",
+      "how": [
+        "Parcheggia in un punto tranquillo.",
+        "Cammina 20 minuti, poi gira.",
+        "Fai una foto sola: quella giusta."
+      ],
+      "repeatable": true,
+      "source": "curated_mai_fatto"
+    },
+
+    {
+      "id": "mf_vr_022",
+      "title": "Famiglia senza ‘parco giochi’: solo spazi larghi",
+      "place": "Lago (lungolago)",
+      "city": "Sirmione",
+      "region": "Lombardia",
+      "country_code": "IT",
+      "lat": 45.4929,
+      "lon": 10.6066,
+      "category": "famiglia",
+      "duration_bucket": "2h",
+      "duration_min": 140,
+      "why": "Quando c’è spazio e acqua davanti, i bambini si inventano cose da soli.",
+      "how": [
+        "Passeggiate 20–30 minuti.",
+        "Sosta breve con snack.",
+        "Rientro prima che diventi troppo pieno."
+      ],
+      "repeatable": true,
+      "source": "curated_mai_fatto"
+    },
+
+    {
+      "id": "mf_vr_023",
+      "title": "Pioggia + vetrine ‘lente’ (senza comprare nulla)",
+      "place": "Via Mazzini (passaggio coperto / negozi)",
+      "city": "Verona",
+      "region": "Veneto",
+      "country_code": "IT",
+      "lat": 45.4414,
+      "lon": 11.0022,
+      "category": "pioggia",
+      "duration_bucket": "1h",
+      "duration_min": 50,
+      "why": "La pioggia ti dà una scusa per fare cose senza dover ‘concludere’ nulla.",
+      "how": [
+        "Cammina piano guardando le luci riflettersi.",
+        "Entra in un posto solo per 2 minuti e poi esci.",
+        "Chiudi con una cosa calda: fine."
+      ],
+      "repeatable": true,
+      "source": "curated_mai_fatto"
+    },
+
+    {
+      "id": "mf_vr_024",
+      "title": "Tramonto + ponte: 7 minuti e basta",
+      "place": "Ponte Pietra (zona)",
+      "city": "Verona",
+      "region": "Veneto",
+      "country_code": "IT",
+      "lat": 45.4461,
+      "lon": 11.0026,
+      "category": "tramonto",
+      "duration_bucket": "1h",
+      "duration_min": 55,
+      "why": "È un momento breve che ti raddrizza la giornata. Non serve fare altro.",
+      "how": [
+        "Arriva quando la luce sta cambiando.",
+        "Resta fermo 7 minuti (cronometro).",
+        "Vai via subito dopo: così resta perfetto."
+      ],
+      "repeatable": true,
+      "source": "curated_mai_fatto"
+    },
+
+    {
+      "id": "mf_vr_025",
+      "title": "Mangiare ‘piccolo’: una cosa sola fatta bene",
+      "place": "Centro (zona Piazza Bra / vie laterali)",
+      "city": "Verona",
+      "region": "Veneto",
+      "country_code": "IT",
+      "lat": 45.4380,
+      "lon": 10.9947,
+      "category": "mangiare",
+      "duration_bucket": "1h",
+      "duration_min": 70,
+      "why": "Non è ‘uscire a cena’. È darti una micro-gioia concreta senza trasformarla in evento.",
+      "how": [
+        "Scegli una cosa sola (non un menù).",
+        "Mangiala con calma, seduto.",
+        "Chiudi con una passeggiata breve: stop."
+      ],
+      "repeatable": true,
+      "source": "curated_mai_fatto"
+    },
+
+    {
+      "id": "mf_vr_026",
+      "title": "Natura vicino casa: una ‘passeggiata da bosco’ senza bosco vero",
+      "place": "Parona (zona verde / argine)",
+      "city": "Verona",
+      "region": "Veneto",
+      "country_code": "IT",
+      "lat": 45.4781,
+      "lon": 10.9808,
+      "category": "natura",
+      "duration_bucket": "1h",
+      "duration_min": 60,
+      "why": "È vicino e semplice, ma ti cambia l’aria addosso.",
+      "how": [
+        "Cammina senza cercare nulla.",
+        "Stai lontano dalle strade principali.",
+        "Torna quando ti senti più leggero: quello è il segnale."
+      ],
+      "repeatable": true,
+      "source": "curated_mai_fatto"
+    },
+
+    {
+      "id": "mf_vr_027",
+      "title": "Bici: fai la stessa strada… ma al contrario",
+      "place": "Ciclabile Adige (tratto a scelta)",
+      "city": "Bussolengo",
+      "region": "Veneto",
+      "country_code": "IT",
+      "lat": 45.4742,
+      "lon": 10.8648,
+      "category": "bici",
+      "duration_bucket": "1h",
+      "duration_min": 65,
+      "why": "Fare una strada al contrario la rende nuova. È un trucco stupido ma funziona.",
+      "how": [
+        "Scegli un tratto che ‘conosci’ e inverti.",
+        "Fermati dove di solito non ti fermi.",
+        "Una foto sola: quella che non avresti fatto mai."
+      ],
+      "repeatable": true,
+      "source": "curated_mai_fatto"
+    },
+
+    {
+      "id": "mf_vr_028",
+      "title": "Moto: giretto corto + rientro senza fermarti al solito posto",
+      "place": "Colline (zona Garda/Valpolicella)",
+      "city": "Cavaion Veronese",
+      "region": "Veneto",
+      "country_code": "IT",
+      "lat": 45.5406,
+      "lon": 10.7755,
+      "category": "moto",
+      "duration_bucket": "1h",
+      "duration_min": 95,
+      "why": "Cambiare UNA sola abitudine nel giro lo rende ‘nuovo’ davvero.",
+      "how": [
+        "Fai il giro corto che ti piace.",
+        "Non fermarti dove ti fermi sempre.",
+        "Fermati 5 minuti in un punto qualsiasi ‘non famoso’."
+      ],
+      "repeatable": true,
+      "source": "curated_mai_fatto"
+    },
+
+    {
+      "id": "mf_vr_029",
+      "title": "Pioggia: entra in un posto caldo e resta 20 minuti",
+      "place": "Stazione / zone centrali (interni riparati)",
+      "city": "Verona",
+      "region": "Veneto",
+      "country_code": "IT",
+      "lat": 45.4298,
+      "lon": 10.9823,
+      "category": "pioggia",
+      "duration_bucket": "1h",
+      "duration_min": 45,
+      "why": "È un ‘riparo’ che diventa rituale: quando piove non devi scappare a casa.",
+      "how": [
+        "Scegli un posto con sedute comode.",
+        "Bevi qualcosa di caldo.",
+        "Guarda fuori 2 minuti e poi riprendi la giornata."
+      ],
+      "repeatable": true,
+      "source": "curated_mai_fatto"
+    },
+
+    {
+      "id": "mf_vr_030",
+      "title": "Tramonto: fai solo ‘mezzo giro’ e basta",
+      "place": "San Giorgio di Valpolicella (zona alta)",
+      "city": "Sant'Ambrogio di Valpolicella",
+      "region": "Veneto",
+      "country_code": "IT",
+      "lat": 45.5408,
+      "lon": 10.8419,
+      "category": "tramonto",
+      "duration_bucket": "1h",
+      "duration_min": 80,
+      "why": "È la classica cosa che rimandi perché ‘tanto è vicino’. E invece ti resta addosso.",
+      "how": [
+        "Arriva 30 minuti prima del tramonto.",
+        "Resta in silenzio 5 minuti.",
+        "Torna via senza aggiungere niente: non rovinare l’effetto."
+      ],
+      "repeatable": true,
+      "source": "curated_mai_fatto"
+    },
+
+    {
+      "id": "mf_vr_031",
+      "title": "Un’ora: spegni il mondo e fai ‘solo una cosa’",
+      "place": "Centro storico (passeggiata breve)",
+      "city": "Verona",
+      "region": "Veneto",
+      "country_code": "IT",
+      "lat": 45.4397,
+      "lon": 10.9954,
+      "category": "1h",
+      "duration_bucket": "1h",
+      "duration_min": 60,
+      "why": "Quando fai una cosa sola, ti senti subito ‘in controllo’ di nuovo.",
+      "how": [
+        "Scegli una via e percorri solo quella.",
+        "Fermati 5 minuti a guardare un dettaglio (una porta, una pietra, una luce).",
+        "Torna a casa senza fare altre tappe."
+      ],
+      "repeatable": true,
+      "source": "curated_mai_fatto"
+    },
+
+    {
+      "id": "mf_vr_032",
+      "title": "Due ore: acqua + camminata + stop (niente altro)",
+      "place": "Lungolago",
+      "city": "Lazise",
+      "region": "Veneto",
+      "country_code": "IT",
+      "lat": 45.5056,
+      "lon": 10.7321,
+      "category": "2h",
+      "duration_bucket": "2h",
+      "duration_min": 120,
+      "why": "È la formula più semplice per sentirti ‘in vacanza’ senza organizzare nulla.",
+      "how": [
+        "Passeggiata 30 minuti.",
+        "Sosta 15 minuti.",
+        "Rientro senza deviazioni: lascia che resti pulito."
+      ],
+      "repeatable": true,
+      "source": "curated_mai_fatto"
+    },
+
+    {
+      "id": "mf_vr_033",
+      "title": "Natura: cerca un ‘punto d’aria’ e non dire a nessuno dov’è",
+      "place": "Colline (zona Garda orientale)",
+      "city": "Affi",
+      "region": "Veneto",
+      "country_code": "IT",
+      "lat": 45.5499,
+      "lon": 10.7757,
+      "category": "natura",
+      "duration_bucket": "1h",
+      "duration_min": 75,
+      "why": "Avere un posto ‘solo tuo’ cambia il modo in cui vivi le giornate pesanti.",
+      "how": [
+        "Sali in un punto alto e sicuro.",
+        "Fai 2 minuti di respiro lento.",
+        "Torna via senza foto: resta tuo."
+      ],
+      "repeatable": true,
+      "source": "curated_mai_fatto"
+    },
+
+    {
+      "id": "mf_vr_034",
+      "title": "Mangiare: una cosa tipica… ma in versione ‘semplice’",
+      "place": "Bussolengo (centro / vie laterali)",
+      "city": "Bussolengo",
+      "region": "Veneto",
+      "country_code": "IT",
+      "lat": 45.4719,
+      "lon": 10.8592,
+      "category": "mangiare",
+      "duration_bucket": "1h",
+      "duration_min": 75,
+      "why": "Se lo fai semplice, non diventa un ‘evento’. Diventa un’abitudine bella.",
+      "how": [
+        "Scegli un posto tranquillo (non il più famoso).",
+        "Prendi una cosa sola e mangiala con calma.",
+        "Chiudi con 10 minuti a camminare: così ti resta addosso."
+      ],
+      "repeatable": true,
+      "source": "curated_mai_fatto"
+    },
+
+    {
+      "id": "mf_vr_035",
+      "title": "Pioggia: fai un giro ‘asciutto’ sotto i portici e basta",
+      "place": "Centro (portici/zone riparate)",
+      "city": "Verona",
+      "region": "Veneto",
+      "country_code": "IT",
+      "lat": 45.4420,
+      "lon": 10.9978,
+      "category": "pioggia",
+      "duration_bucket": "1h",
+      "duration_min": 55,
+      "why": "La pioggia non ti blocca: ti cambia solo il ritmo. Ed è il bello.",
+      "how": [
+        "Cammina piano e guarda i riflessi a terra.",
+        "Fermati 2 minuti sotto un portico e ascolta l’acqua.",
+        "Fine: non serve ‘fare di più’."
+      ],
+      "repeatable": true,
+      "source": "curated_mai_fatto"
+    },
+
+    {
+      "id": "mf_vr_036",
+      "title": "Tramonto: resta finché cala davvero (anche solo 5 minuti)",
+      "place": "Ponte / Lungadige (punto a scelta)",
+      "city": "Verona",
+      "region": "Veneto",
+      "country_code": "IT",
+      "lat": 45.4436,
+      "lon": 10.9989,
+      "category": "tramonto",
+      "duration_bucket": "1h",
+      "duration_min": 60,
+      "why": "Il trucco non è vederlo. È restare quel poco che basta perché ‘scatti’ dentro.",
+      "how": [
+        "Arriva quando è ancora chiaro.",
+        "Resta 5 minuti dopo il momento ‘bello’.",
+        "Poi vai via: sentirai che hai fatto qualcosa di vero."
+      ],
+      "repeatable": true,
+      "source": "curated_mai_fatto"
+    }
+  ]
+}
