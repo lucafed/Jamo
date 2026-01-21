@@ -1200,7 +1200,7 @@
       relax:    { emoji:"🧖", label:"Relax" },
       family:   { emoji:"👨‍👩‍👧‍👦", label:"Family" },
       cantine:  { emoji:"🍷", label:"Cantine" },
-      eventi:   { emoji:"🎉", label:"Eventi" },
+      eventi:   { emoji:"✨", label:"Mai fatto" },
     };
     return map[category] || { emoji:"📍", label:"Meta" };
   }
