@@ -620,10 +620,13 @@
 
   // ✅ categoria canonica: no ovunque/citta/panorami
   function canonicalCategory(cat) {
-    const c = String(cat || "").toLowerCase().trim();
-    if (c === "trekking" || c === "hiking") return "hiking";
-    if (c === "eventi") return "eventi";
-    return c || "natura";
+  const c = String(cat || "").toLowerCase().trim();
+  if (c === "trekking" || c === "hiking") return "hiking";
+
+  // ✅ alias: Eventi = Mai fatto (UI può dire "mai_fatto" o "maifatto")
+  if (c === "eventi" || c === "mai_fatto" || c === "maifatto" || c === "mai fatto") return "eventi";
+
+  return c || "natura";
   }
 
   function datasetInfoLabel(kind, src, poolLen) {
