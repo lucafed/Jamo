@@ -20,7 +20,6 @@
   const PRIMARY_URL = "/data/mai_fatto/mai_fatto_it_verona.json";
   const FALLBACK_URL = "/data/events/events_all.json";
 
-  // Quante idee mostrare (aumenta pure: 18 / 24)
   const SHOW_LIMIT = 12;
 
   // ---------- helpers ----------
@@ -70,16 +69,15 @@
 
   function approxMinutesFromKm(km, estCarMinutesFromKm) {
     if (typeof estCarMinutesFromKm === "function") return estCarMinutesFromKm(km);
-    // fallback semplice: 60km/h + overhead
     return Math.round((km / 60) * 60 + 8);
   }
 
   function normalizeCategory(c) {
     const k = String(c || "").toLowerCase().trim();
     if (!k) return "";
-    // ammettiamo 1h/2h come chiavi
     if (k === "1 ora" || k === "1h" || k === "1_ora" || k === "1ora") return "1h";
     if (k === "2 ore" || k === "2h" || k === "2_ore" || k === "2ore") return "2h";
+    if (k === "family") return "famiglia";
     return k;
   }
 
@@ -87,7 +85,6 @@
     const m = {
       relax: "Relax",
       famiglia: "Famiglia",
-      family: "Famiglia",
       bici: "Bici",
       moto: "Moto",
       natura: "Natura",
@@ -100,20 +97,17 @@
     return m[k] || (k ? k.charAt(0).toUpperCase() + k.slice(1) : "Idea");
   }
 
-  // ---------- UI patch: rinomina Eventi in MAI FATTO + sottocategorie ----------
+  // ---------- UI patch ----------
   function patchUI() {
-    // chip principale "eventi"
     const catChip = document.querySelector('#categoryChips .chip[data-cat="eventi"]');
     if (catChip) catChip.textContent = "✨ Mai fatto";
 
-    // titolo sezione
     const box = document.getElementById("eventsSubfilters");
     if (box) {
       const smalls = box.querySelectorAll(".small");
       if (smalls && smalls[0]) smalls[0].textContent = "Mai fatto (categoria)";
     }
 
-    // rimpiazza i chip sottocategoria
     const row = document.getElementById("eventTypeChips");
     if (row) {
       row.innerHTML = `
@@ -131,19 +125,16 @@
       `;
     }
 
-    // nascondi "Quando" (non serve per Mai fatto)
     const whenRow = document.getElementById("eventWhenChips");
     if (whenRow) {
       const parent = whenRow.closest("div");
-      // parent contiene anche label "Quando"
       if (parent) parent.style.display = "none";
     }
-    // aggiorna la riga descrittiva
+
     const info = document.querySelector("#eventsSubfilters .small.muted");
     if (info) info.textContent = "Offline: idee reali curate. (Niente date, niente confusione).";
   }
 
-  // prova a patchare subito e dopo un attimo (per sicurezza)
   patchUI();
   setTimeout(patchUI, 50);
 
@@ -158,21 +149,18 @@
   }
 
   async function loadDataset() {
-    // 1) PRIMARY
     try {
       const j = await fetchJson(PRIMARY_URL);
       const ideas = Array.isArray(j?.ideas) ? j.ideas : [];
       DATASET_META = {
         updated_at: j?.updated_at || "",
         count: j?.count ?? ideas.length,
-        source: "mai_fatto_curated",
+        source: "curated_mai_fatto",
       };
       return ideas;
     } catch (_) {
-      // 2) FALLBACK
       const j2 = await fetchJson(FALLBACK_URL);
       const ev = Array.isArray(j2?.events) ? j2.events : [];
-      // normalizziamo in "ideas"
       const ideas = ev.map((e) => ({
         id: e.id,
         title: e.title,
@@ -205,15 +193,10 @@
     const mm = Number(maxMinutes) || 120;
     const et = normalizeCategory(eventType || "tutti");
 
-    // 1) filtro categoria ESATTO (tranne "tutti")
     if (et && et !== "tutti") {
       list = list.filter((e) => normalizeCategory(e.category) === et);
     }
 
-    // 2) filtro per durata bucket 1h/2h (se l'idea ha duration_bucket o category 1h/2h già ok)
-    // (qui già filtrato via category, quindi nulla di extra)
-
-    // 3) distanza/tempo (entro maxMinutes) + ordinamento per vicinanza
     if (origin && typeof origin.lat === "number" && typeof origin.lon === "number") {
       list = list
         .map((e) => {
@@ -222,7 +205,7 @@
             ? haversineKm(origin.lat, origin.lon, e.lat, e.lon)
             : null;
           const mins = km == null ? null : approxMinutesFromKm(km, estCarMinutesFromKm);
-          return { e, km, mins };
+          return { e, mins };
         })
         .filter(Boolean)
         .filter((x) => (x.mins == null ? true : x.mins <= mm))
@@ -272,7 +255,7 @@
         const catKey = normalizeCategory(e.category);
         const catLabel = labelCategory(catKey);
 
-        const dur = e.duration_min ? ` • ~${esc(e.duration_min)} min` : "";
+        const durLine = e.duration_min ? `⏱️ ~${esc(e.duration_min)} min` : "";
 
         const lat = e.lat;
         const lon = e.lon;
@@ -283,14 +266,23 @@
 
         const infoUrl = e.url ? String(e.url) : "";
 
+        // ✅ LUOGO IN EVIDENZA: subito sotto il titolo
+        const placeBlock = where
+          ? `<div style="margin-top:10px; font-weight:950; font-size:15px; letter-spacing:.2px;">
+               📍 ${esc(where)}
+             </div>`
+          : "";
+
+        const durBlock = durLine
+          ? `<div class="small muted" style="margin-top:6px;">${esc(durLine)}</div>`
+          : "";
+
         return `
           <div class="card clickSafe" style="margin-top:12px; border-color:rgba(0,224,255,.14);">
             <div style="font-weight:950; font-size:20px; line-height:1.12;">${esc(title)}</div>
 
-            <div class="small muted" style="margin-top:8px; line-height:1.35;">
-              ${where ? `📍 ${esc(where)}` : ""}
-              ${dur}
-            </div>
+            ${placeBlock}
+            ${durBlock}
 
             <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;">
               ${pill("Mai fatto")}
@@ -336,12 +328,11 @@
     `;
   }
 
-  // ---------- public API expected by app.js ----------
+  // ---------- public API ----------
   async function run({
     origin,
     maxMinutes,
     eventType,
-    eventWhen, // ignorato per mai-fatto
     haversineKm,
     estCarMinutesFromKm,
     showStatus,
@@ -351,8 +342,8 @@
       patchUI();
 
       if (!DATASET) DATASET = await loadDataset();
-
       const all = Array.isArray(DATASET) ? DATASET : [];
+
       if (!all.length) {
         showStatus?.("warn", "Dataset MAI FATTO vuoto.");
         renderIntoResultArea({ items: [], maxMinutes });
@@ -370,7 +361,6 @@
       });
 
       renderIntoResultArea({ items, maxMinutes });
-
       showStatus?.("ok", `Mai fatto: trovate ${items.length} proposte ✅`);
       scrollToId?.("resultCard");
     } catch (err) {
@@ -391,6 +381,5 @@
     }
   }
 
-  // ✅ ciò che app.js cerca
   window.JAMO_EVENTS = { run };
 })();
