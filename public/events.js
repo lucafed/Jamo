@@ -1,449 +1,349 @@
-/* Jamo — public/events.js v1.6 (ROBUST + OFFLINE FIRST + NO-ZERO FALLBACK)
- * - Input:  /data/events/events_all.json
- * - Output UI: #resultArea
- * - API: window.JAMO_EVENTS.run({ origin, maxMinutes, eventType, eventWhen, ...helpers })
- *
- * FIX:
- *  ✅ Supporta schema eventi builder:s (start/end/lat/lon/title/place/city/region/country_code/category/url)
- *  ✅ Filtri quando: oggi/weekend/7giorni/30giorni
- *  ✅ Tipo: usa category + fallback su title/place
- *  ✅ Se 0 risultati col filtro quando -> fallback "prossimi eventi" (resta limite minuti)
- *  ✅ Carica altri (12 a pagina)
+/* public/events.js — MAI FATTO (offline suggestions UI)
+ * Atteso dataset: /data/events/events_all.json
+ * Campi usati:
+ *  - title, start, end, lat, lon, place, city, region, country_code
+ *  - category, kind ("mai_fatto"), why, how[], duration_min, url
  */
 
 (() => {
   "use strict";
 
-  const EVENTS_URL = "/data/events/events_all.json";
   const $ = (id) => document.getElementById(id);
 
-  const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
+  const EVENTS_URL = "/data/events/events_all.json";
 
-  function safeText(x) {
-    return String(x ?? "").replace(/\s+/g, " ").trim();
-  }
+  // ---------- helpers ----------
+  const esc = (s) =>
+    String(s ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
 
-  function parseDateSafe(x) {
-    if (!x) return null;
-    const d = new Date(x);
-    return Number.isFinite(d.getTime()) ? d : null;
-  }
-
-  function startOfDay(d) {
-    const x = new Date(d);
-    x.setHours(0, 0, 0, 0);
-    return x;
-  }
-  function endOfDay(d) {
-    const x = new Date(d);
-    x.setHours(23, 59, 59, 999);
-    return x;
-  }
-
-  function nextWeekendRange(now) {
-    const d = startOfDay(now);
-    const day = d.getDay(); // 0 dom, 6 sab
-    const saturday = new Date(d);
-    const sunday = new Date(d);
-
-    if (day === 6) {
-      sunday.setDate(sunday.getDate() + 1);
-      return { from: saturday, to: endOfDay(sunday) };
-    }
-    if (day === 0) {
-      return { from: d, to: endOfDay(d) };
-    }
-    const deltaToSat = 6 - day;
-    saturday.setDate(saturday.getDate() + deltaToSat);
-    sunday.setDate(sunday.getDate() + deltaToSat + 1);
-    return { from: saturday, to: endOfDay(sunday) };
-  }
-
-  function withinRange(dateObj, from, to) {
-    if (!dateObj) return false;
-    const t = dateObj.getTime();
-    return t >= from.getTime() && t <= to.getTime();
-  }
-
-  // Normalizza tipo (UI -> dataset)
-  function normalizeTypeUI(x) {
-    const s = safeText(x).toLowerCase();
-    if (!s) return "tutti";
-    // la UI potrebbe mandare: "tutti" / "sport" / "cultura" ecc.
-    // teniamo valori "base"
-    if (s === "tutti") return "tutti";
-    if (/(cultura|culture|mostre|musei|arte)/.test(s)) return "culture";
-    if (/(sport|corsa|run|trail|bike|bici|cycling|maratona|mtb)/.test(s)) return "sport";
-    if (/(sagre|vino|food|street\s*food|degust|beer|birra)/.test(s)) return "sagre";
-    if (/(concerti|concert|music|live|dj)/.test(s)) return "concerti";
-    if (/(fiere|fiera|festival|expo|mercatini|market)/.test(s)) return "fiere";
-    if (/(family|bimbi|kids|bambini)/.test(s)) return "family";
-    return s;
-  }
-
-  function inferTypeFromEvent(ev) {
-    const cat = safeText(ev.category).toLowerCase();
-    const blob = (cat + " " + safeText(ev.title) + " " + safeText(ev.place) + " " + safeText(ev.url)).toLowerCase();
-
-    // mappa “larga” (serve a far trovare MOLTO)
-    if (/(sport|trail|run|corsa|maratona|bike|bici|cycling|mtb|gara|raduno)/.test(blob)) return "sport";
-    if (/(concert|music|live|dj|spettacol|teatro)/.test(blob)) return "concerti";
-    if (/(mostra|museum|museo|arte|galleria|exhibit|cultura|culture)/.test(blob)) return "culture";
-    if (/(sagra|street\s*food|degust|vino|enogastr|food|beer|birra)/.test(blob)) return "sagre";
-    if (/(fiera|festival|expo|mercatin|market|fair)/.test(blob)) return "fiere";
-    if (/(family|kids|bambin|ragazz)/.test(blob)) return "family";
-
-    // se category già “pulita”
-    if (["sport", "culture", "sagre", "concerti", "fiere", "family"].includes(cat)) return cat;
-
-    // fallback generico
-    return cat || "other";
-  }
-
-  function pickEventDate(ev) {
-    // builder usa start/end
-    return (
-      parseDateSafe(ev.start) ||
-      parseDateSafe(ev.start_date) ||
-      parseDateSafe(ev.date) ||
-      parseDateSafe(ev.dt_start) ||
-      parseDateSafe(ev.when)
-    );
-  }
-
-  function pickCoords(ev) {
-    const lat = Number(ev.lat ?? ev.location?.lat ?? ev.venue?.lat);
-    const lon = Number(ev.lon ?? ev.lng ?? ev.location?.lon ?? ev.location?.lng ?? ev.venue?.lon ?? ev.venue?.lng);
-    if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
-    return { lat, lon };
-  }
-
-  function pickTitle(ev) {
-    return safeText(ev.title ?? ev.name ?? "Evento");
-  }
-
-  function pickAreaLabel(ev) {
-    const city = safeText(ev.city);
-    const place = safeText(ev.place);
-    const region = safeText(ev.region);
-    const cc = safeText(ev.country_code || ev.cc || "").toUpperCase();
-    // preferenza: city -> place -> region -> cc
-    return city || place || region || cc || "—";
-  }
-
-  function fmtWhen(d) {
-    if (!d) return "Data da confermare";
+  function fmtDate(iso) {
+    if (!iso) return "";
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return "";
+    // formato IT semplice
     const dd = String(d.getDate()).padStart(2, "0");
     const mm = String(d.getMonth() + 1).padStart(2, "0");
     const yyyy = d.getFullYear();
     const hh = String(d.getHours()).padStart(2, "0");
     const mi = String(d.getMinutes()).padStart(2, "0");
-    if (hh === "00" && mi === "00") return `${dd}/${mm}/${yyyy}`;
     return `${dd}/${mm}/${yyyy} ${hh}:${mi}`;
   }
 
-  function mapsSearchUrl(q, lat, lon) {
-    const s = safeText(q);
-    if (!s) return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(lat + "," + lon)}`;
-    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s)}&center=${encodeURIComponent(lat + "," + lon)}`;
-  }
-  function googleUrl(q) {
-    return `https://www.google.com/search?q=${encodeURIComponent(safeText(q))}`;
+  function kmBetween(aLat, aLon, bLat, bLon) {
+    // Haversine
+    const R = 6371;
+    const toRad = (x) => (x * Math.PI) / 180;
+    const dLat = toRad(bLat - aLat);
+    const dLon = toRad(bLon - aLon);
+    const lat1 = toRad(aLat);
+    const lat2 = toRad(bLat);
+
+    const s =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2;
+
+    return 2 * R * Math.asin(Math.sqrt(s));
   }
 
-  async function fetchJsonNoStore(url) {
-    const r = await fetch(url, { cache: "no-store" });
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
-    return await r.json();
+  function mapsDirUrl(lat, lon, mode) {
+    // mode: driving | walking | bicycling | transit
+    const m = mode || "driving";
+    return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
+      `${lat},${lon}`
+    )}&travelmode=${encodeURIComponent(m)}`;
   }
 
-  function filterByWhen(evDate, whenKey, now) {
-    const today0 = startOfDay(now);
-    const todayEnd = endOfDay(now);
+  function nicePlaceLine(e) {
+    const city = (e.city || "").trim();
+    const place = (e.place || "").trim();
+    const region = (e.region || "").trim();
 
-    if (whenKey === "oggi") {
-      if (!evDate) return false;
-      return withinRange(evDate, today0, todayEnd);
+    // se city è vuota, almeno place/region
+    if (city) {
+      // se place diverso da city, mostra entrambi
+      if (place && place.toLowerCase() !== city.toLowerCase()) {
+        return `${place} • ${city}${region ? " • " + region : ""}`;
+      }
+      return `${city}${region ? " • " + region : ""}`;
     }
-    if (whenKey === "7giorni") {
-      if (!evDate) return false;
-      const to = endOfDay(new Date(today0.getTime() + 7 * 24 * 3600 * 1000));
-      return withinRange(evDate, today0, to);
-    }
-    if (whenKey === "30giorni") {
-      if (!evDate) return false;
-      const to = endOfDay(new Date(today0.getTime() + 30 * 24 * 3600 * 1000));
-      return withinRange(evDate, today0, to);
-    }
-    if (whenKey === "weekend") {
-      if (!evDate) return false;
-      const { from, to } = nextWeekendRange(now);
-      return withinRange(evDate, from, to);
-    }
-    // "tutti" o sconosciuto
-    return true;
+
+    // no city
+    if (place && region) return `${place} • ${region}`;
+    return place || region || "";
   }
 
-  function filterByType(ev, typeKeyUI) {
-    const key = normalizeTypeUI(typeKeyUI);
-    if (!key || key === "tutti") return true;
-
-    const t = inferTypeFromEvent(ev);
-    // match diretto
-    if (t === key) return true;
-
-    // match “vicino” (culture include mostre ecc.)
-    if (key === "culture" && /culture|mostre|arte|museum|museo/.test(t)) return true;
-
-    return false;
+  function categoryLabel(cat) {
+    const m = {
+      relax: "relax",
+      pioggia: "pioggia",
+      family: "family",
+      sagre: "sagre",
+      culture: "cultura",
+      music: "musica",
+      sport: "sport",
+      night: "sera",
+      cantine: "cantine",
+      borghi: "borghi",
+      trekking: "trekking",
+      mare: "mare",
+      montagna: "montagna",
+      storia: "storia",
+      moto: "moto",
+      bici: "bici",
+    };
+    const k = (cat || "").toLowerCase().trim();
+    return m[k] || (k || "idea");
   }
 
-  function render(rows, meta, helpers, state) {
-    const area = $("resultArea");
-    if (!area) return;
+  function badge(label) {
+    return `<span class="chip">${esc(label)}</span>`;
+  }
 
-    const escapeHtml = helpers.escapeHtml || ((x) => String(x ?? ""));
-    const updated = meta?.updated_at ? String(meta.updated_at).replace("T", " ").slice(0, 16) : "—";
-    const totalCount = Number(meta?.count ?? rows.length);
+  // ---------- state ----------
+  let DATASET = null;
 
-    if (!rows.length) {
-      area.innerHTML = `
-        <div class="card clickSafe" style="box-shadow:none; border-color:rgba(255,90,90,.40); background:rgba(255,90,90,.10);">
-          <div style="font-weight:950; font-size:18px;">Nessun evento trovato</div>
-          <div class="small muted" style="margin-top:8px; line-height:1.45;">
-            Prova a cambiare sottocategoria oppure aumenta i minuti.
-          </div>
-          <div class="small muted" style="margin-top:10px;">
-            Dataset: updated <b>${escapeHtml(updated)}</b> • count <b>${escapeHtml(totalCount)}</b>
-          </div>
+  async function loadDataset() {
+    const r = await fetch(`${EVENTS_URL}?v=${Date.now()}`, { cache: "no-store" });
+    if (!r.ok) throw new Error(`HTTP ${r.status} loading ${EVENTS_URL}`);
+    const json = await r.json();
+    return json;
+  }
+
+  // ---------- render ----------
+  function renderHeader(meta) {
+    const el = $("eventsMeta");
+    if (!el) return;
+
+    const updated = meta?.updated_at ? fmtDate(meta.updated_at) : "";
+    const total = meta?.count ?? 0;
+
+    el.innerHTML = `
+      <div class="events-meta">
+        <div class="events-title">Mai fatto</div>
+        <div class="events-sub">
+          Dataset: ${updated ? `aggiornato ${esc(updated)}` : "offline"} • totale ${esc(total)}
         </div>
-      `;
-      return;
-    }
+      </div>
+    `;
+  }
 
-    const shown = rows.slice(0, state.shown);
-    const canMore = state.shown < rows.length;
+  function renderEmpty(msg) {
+    const box = $("eventsResults");
+    if (!box) return;
+    box.innerHTML = `
+      <div class="card soft">
+        <div class="card-title">Nessuna proposta</div>
+        <div class="card-sub">${esc(msg || "Prova ad allargare tempo/distanza o cambia categoria.")}</div>
+      </div>
+    `;
+  }
 
-    const cards = shown.map((x) => {
-      const title = escapeHtml(x.title);
-      const areaLabel = escapeHtml(x.areaLabel || "—");
-      const when = escapeHtml(fmtWhen(x.date));
-      const km = Math.round(x.km);
-      const mins = x.driveMin;
-      const typeLabel = escapeHtml(x.typeLabel);
+  function renderList(items, origin) {
+    const box = $("eventsResults");
+    if (!box) return;
 
-      const q = `${x.title}${x.areaLabel ? " " + x.areaLabel : ""}`;
+    const rows = items.map((e) => {
+      const title = e.title || "Idea";
+      const when = e.start ? fmtDate(e.start) : "";
+      const where = nicePlaceLine(e);
+      const why = e.why || "";
+      const howArr = Array.isArray(e.how) ? e.how : [];
+      const howHtml =
+        howArr.length > 0
+          ? `<ul class="how">${howArr
+              .slice(0, 4)
+              .map((x) => `<li>${esc(x)}</li>`)
+              .join("")}</ul>`
+          : "";
+
+      const cat = categoryLabel(e.category);
+      const kind = e.kind === "mai_fatto" ? "Mai fatto" : "Idea";
+
+      let distKm = "";
+      if (origin && typeof e.lat === "number" && typeof e.lon === "number") {
+        const km = kmBetween(origin.lat, origin.lon, e.lat, e.lon);
+        distKm = `• ~${Math.round(km)} km`;
+      }
+
+      const dur = e.duration_min ? `• ~${esc(e.duration_min)} min` : "";
+
+      const urlInfo = e.url ? String(e.url) : "";
+      const lat = e.lat;
+      const lon = e.lon;
+
+      const mapsAuto = typeof lat === "number" && typeof lon === "number" ? mapsDirUrl(lat, lon, "driving") : "";
+      const mapsWalk = typeof lat === "number" && typeof lon === "number" ? mapsDirUrl(lat, lon, "walking") : "";
+      const mapsBike = typeof lat === "number" && typeof lon === "number" ? mapsDirUrl(lat, lon, "bicycling") : "";
 
       return `
-        <div class="card clickSafe" style="box-shadow:none; border-color:rgba(0,224,255,.14); background:rgba(255,255,255,.03);">
-          <div style="font-weight:950; font-size:18px; line-height:1.2;">${title}</div>
-          <div class="small muted" style="margin-top:6px;">
-            📍 ${areaLabel} • 🗓️ ${when}
-          </div>
-          <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
-            <span class="pill acc">🎉 Eventi</span>
-            <span class="pill soft">🏷️ ${typeLabel}</span>
-            <span class="pill soft">🚗 ~${mins} min • ${km} km</span>
-          </div>
-
-          <div class="row wraprow" style="gap:10px; margin-top:12px;">
-            <button class="btn btnPrimary" type="button"
-              data-open="maps"
-              data-q="${escapeHtml(q)}"
-              data-lat="${x.lat}"
-              data-lon="${x.lon}"
-              style="flex:1; min-width:180px;"
-            >🧭 Vai / Mappa</button>
-
-            <button class="btnGhost" type="button"
-              data-open="google"
-              data-q="${escapeHtml(q)}"
-            >🔎 Info</button>
-          </div>
-        </div>
-      `;
-    }).join("");
-
-    area.innerHTML = `
-      <div class="card clickSafe" style="box-shadow:none; border-color:rgba(0,224,255,.25); background:rgba(0,224,255,.06);">
-        <div style="font-weight:950; font-size:18px;">Eventi trovati (${rows.length})</div>
-        <div class="small muted" style="margin-top:8px; line-height:1.45;">
-          Dataset: updated <b>${escapeHtml(updated)}</b> • totale dataset <b>${escapeHtml(totalCount)}</b><br>
-          Mostrati: <b>${shown.length}</b> / <b>${rows.length}</b>
-        </div>
-      </div>
-
-      <div style="margin-top:12px; display:flex; flex-direction:column; gap:10px;">
-        ${cards}
-      </div>
-
-      ${canMore ? `
-        <div style="margin-top:12px;">
-          <button class="moreBtn clickSafe" id="btnMoreEvents" type="button">⬇️ Carica altri</button>
-        </div>
-      ` : ""}
-    `;
-
-    // delegation click
-    const handler = (e) => {
-      const btn = e.target.closest("button[data-open]");
-      if (!btn) return;
-
-      const kind = btn.getAttribute("data-open");
-      const q = btn.getAttribute("data-q") || "";
-      const lat = Number(btn.getAttribute("data-lat"));
-      const lon = Number(btn.getAttribute("data-lon"));
-
-      if (kind === "maps" && Number.isFinite(lat) && Number.isFinite(lon)) {
-        window.open(mapsSearchUrl(q, lat, lon), "_blank", "noopener");
-        return;
-      }
-      if (kind === "google") {
-        window.open(googleUrl(q), "_blank", "noopener");
-        return;
-      }
-    };
-
-    area.__jamoEventsHandler && area.removeEventListener("click", area.__jamoEventsHandler);
-    area.__jamoEventsHandler = handler;
-    area.addEventListener("click", handler);
-
-    const moreBtn = $("btnMoreEvents");
-    if (moreBtn) {
-      moreBtn.addEventListener(
-        "click",
-        () => {
-          state.shown = Math.min(rows.length, state.shown + state.page);
-          render(rows, meta, helpers, state);
-          setTimeout(() => moreBtn.scrollIntoView({ behavior: "smooth", block: "center" }), 20);
-        },
-        { once: true }
-      );
-    }
-  }
-
-  async function run(args) {
-    const origin = args?.origin;
-    const maxMinutes = args?.maxMinutes;
-
-    // UI keys
-    const eventType = safeText(args?.eventType || "tutti");     // es: "sport" / "culture" / "tutti"
-    const eventWhen = safeText(args?.eventWhen || "oggi");      // "oggi" | "weekend" | "7giorni" | "30giorni"
-
-    // helpers from app.js
-    const haversineKm = args?.haversineKm;
-    const estCarMinutesFromKm = args?.estCarMinutesFromKm;
-    const escapeHtml = args?.escapeHtml || ((x) => String(x ?? ""));
-    const showStatus = args?.showStatus;
-    const scrollToId = args?.scrollToId;
-
-    const pageSize = clamp(Number(args?.pageSize) || 12, 6, 30);
-
-    const area = $("resultArea");
-    if (area) {
-      area.innerHTML = `
-        <div class="card clickSafe" style="box-shadow:none; border-color:rgba(255,180,80,.35); background:rgba(255,180,80,.06);">
-          <div style="font-weight:950; font-size:18px;">Cerco eventi…</div>
-          <div class="small muted" style="margin-top:8px; line-height:1.45;">
-            Tipo: <b>${escapeHtml(eventType)}</b> • Quando: <b>${escapeHtml(eventWhen)}</b>
-          </div>
-        </div>
-      `;
-    }
-
-    if (!origin || !Number.isFinite(Number(origin.lat)) || !Number.isFinite(Number(origin.lon))) {
-      showStatus?.("err", "Eventi: partenza non valida.");
-      scrollToId?.("quickStartCard");
-      return;
-    }
-    if (typeof haversineKm !== "function" || typeof estCarMinutesFromKm !== "function") {
-      showStatus?.("err", "Eventi: helper mancanti (haversine/minuti).");
-      scrollToId?.("resultCard");
-      return;
-    }
-
-    let payload;
-    try {
-      payload = await fetchJsonNoStore(EVENTS_URL);
-    } catch {
-      showStatus?.("err", `Eventi: impossibile caricare ${EVENTS_URL}`);
-      if (area) {
-        area.innerHTML = `
-          <div class="card clickSafe" style="box-shadow:none; border-color:rgba(255,90,90,.40); background:rgba(255,90,90,.10);">
-            <div style="font-weight:950; font-size:18px;">Eventi offline non disponibili</div>
-            <div class="small muted" style="margin-top:8px; line-height:1.45;">
-              Manca <b>${escapeHtml(EVENTS_URL)}</b> oppure non e' stato committato.
+        <div class="card result">
+          <div class="card-head">
+            <div class="card-title">${esc(title)}</div>
+            <div class="card-sub">
+              ${where ? `📍 ${esc(where)}` : ""}
+              ${when ? ` • 🗓️ ${esc(when)}` : ""}
+              ${dur} ${distKm}
+            </div>
+            <div class="chips">
+              ${badge(kind)}
+              ${badge(cat)}
             </div>
           </div>
-        `;
-      }
-      scrollToId?.("resultCard");
-      return;
-    }
 
-    const events = Array.isArray(payload?.events) ? payload.events : [];
-    const now = new Date();
-    const maxM = clamp(Number(maxMinutes) || 120, 10, 600);
+          ${
+            why
+              ? `<div class="why"><strong>Perché vale:</strong> ${esc(why)}</div>`
+              : ""
+          }
 
-    function buildRows({ ignoreWhen = false } = {}) {
-      const rows = [];
-      for (const ev of events) {
-        const coords = pickCoords(ev);
-        if (!coords) continue;
+          ${howHtml}
 
-        const d = pickEventDate(ev);
-        if (!ignoreWhen && !filterByWhen(d, eventWhen, now)) continue;
-        if (!filterByType(ev, eventType)) continue;
+          <div class="actions">
+            ${
+              mapsAuto
+                ? `<a class="btn primary" href="${esc(mapsAuto)}" target="_blank" rel="noopener">🚗 Auto</a>`
+                : ""
+            }
+            ${
+              mapsWalk
+                ? `<a class="btn" href="${esc(mapsWalk)}" target="_blank" rel="noopener">🚶 A piedi</a>`
+                : ""
+            }
+            ${
+              mapsBike
+                ? `<a class="btn" href="${esc(mapsBike)}" target="_blank" rel="noopener">🚴 Bici</a>`
+                : ""
+            }
+            ${
+              urlInfo
+                ? `<a class="btn ghost" href="${esc(urlInfo)}" target="_blank" rel="noopener">🔎 Info</a>`
+                : ""
+            }
+          </div>
 
-        const km = haversineKm(origin.lat, origin.lon, coords.lat, coords.lon);
-        const driveMin = estCarMinutesFromKm(km);
-        if (!Number.isFinite(driveMin) || driveMin > maxM) continue;
+          <div class="tiny">
+            ${e.source ? `Fonte: ${esc(e.source)}` : ""}
+          </div>
+        </div>
+      `;
+    });
 
-        const typeLabel = inferTypeFromEvent(ev) || "other";
-
-        rows.push({
-          title: pickTitle(ev),
-          areaLabel: pickAreaLabel(ev),
-          lat: coords.lat,
-          lon: coords.lon,
-          date: d,
-          km,
-          driveMin,
-          typeLabel,
-        });
-      }
-
-      rows.sort((a, b) => {
-        const da = a.date ? a.date.getTime() : 9e15;
-        const db = b.date ? b.date.getTime() : 9e15;
-        // distanza prima, poi data
-        return (a.driveMin - b.driveMin) || (da - db);
-      });
-
-      return rows;
-    }
-
-    // 1) prova con quando
-    let rows = buildRows({ ignoreWhen: false });
-
-    // 2) fallback: se 0, togli filtro quando e mostra “prossimi”
-    let usedFallback = false;
-    if (!rows.length) {
-      rows = buildRows({ ignoreWhen: true }).slice(0, 80);
-      usedFallback = true;
-    }
-
-    // render
-    const state = { shown: pageSize, page: pageSize };
-    render(rows, payload, { escapeHtml }, state);
-
-    if (usedFallback) {
-      showStatus?.("ok", `Eventi: 0 con filtro quando → mostro prossimi (${rows.length}) ✅`);
-    } else {
-      showStatus?.("ok", `Eventi: trovati ${rows.length} ✅`);
-    }
-    scrollToId?.("resultCard");
+    box.innerHTML = rows.join("");
   }
 
-  window.JAMO_EVENTS = { run };
+  // ---------- selection logic ----------
+  function getOriginFromUI() {
+    // Se nella tua app c’è già una origin globale, usala.
+    // Proviamo alcune variabili comuni senza rompere nulla.
+    const w = window;
+
+    // 1) window.JAMO_ORIGIN = {lat,lon} (se esiste)
+    if (w.JAMO_ORIGIN && typeof w.JAMO_ORIGIN.lat === "number" && typeof w.JAMO_ORIGIN.lon === "number") {
+      return { lat: w.JAMO_ORIGIN.lat, lon: w.JAMO_ORIGIN.lon };
+    }
+
+    // 2) window.__origin = {lat,lon}
+    if (w.__origin && typeof w.__origin.lat === "number" && typeof w.__origin.lon === "number") {
+      return { lat: w.__origin.lat, lon: w.__origin.lon };
+    }
+
+    // 3) input hidden/field (se li hai)
+    const latEl = $("originLat");
+    const lonEl = $("originLon");
+    if (latEl && lonEl) {
+      const lat = Number(latEl.value);
+      const lon = Number(lonEl.value);
+      if (!Number.isNaN(lat) && !Number.isNaN(lon)) return { lat, lon };
+    }
+
+    return null;
+  }
+
+  function currentCategoryFromUI() {
+    // Prova a leggere una select/id standard.
+    const sel = $("eventCategory") || $("eventsCategory") || $("category");
+    if (sel && sel.value) return String(sel.value).toLowerCase().trim();
+    // fallback: se hai una variabile globale
+    if (window.__eventsCategory) return String(window.__eventsCategory).toLowerCase().trim();
+    return "";
+  }
+
+  function maxMinutesFromUI() {
+    const el = $("maxMinutes") || $("rangeMinutes") || $("minutes");
+    if (el && el.value) {
+      const n = Number(el.value);
+      return Number.isFinite(n) ? n : 180;
+    }
+    if (window.__maxMinutes) return Number(window.__maxMinutes) || 180;
+    return 180;
+  }
+
+  // Stima veloce minuti basata su distanza (senza routing vero)
+  function approxMinutes(km) {
+    // media 60 km/h + overhead
+    return Math.round((km / 60) * 60 + 8);
+  }
+
+  function pickSuggestions(all, origin, category, maxMin) {
+    // filtro categoria
+    let list = all;
+    if (category) {
+      list = list.filter((e) => String(e.category || "").toLowerCase() === category);
+    }
+
+    // filtra raggio/tempo se origin presente
+    if (origin) {
+      list = list
+        .map((e) => {
+          if (typeof e.lat !== "number" || typeof e.lon !== "number") return null;
+          const km = kmBetween(origin.lat, origin.lon, e.lat, e.lon);
+          const mins = approxMinutes(km);
+          return { e, km, mins };
+        })
+        .filter(Boolean)
+        .filter((x) => x.mins <= (maxMin || 180))
+        .sort((a, b) => a.mins - b.mins) // più vicino prima
+        .map((x) => x.e);
+    }
+
+    // al massimo 6 (puoi aumentare)
+    return list.slice(0, 6);
+  }
+
+  // ---------- public API ----------
+  async function refreshMaiFatto() {
+    try {
+      if (!DATASET) DATASET = await loadDataset();
+      renderHeader(DATASET);
+
+      const origin = getOriginFromUI();
+      const category = currentCategoryFromUI();
+      const maxMin = maxMinutesFromUI();
+
+      const all = Array.isArray(DATASET.events) ? DATASET.events : [];
+      if (all.length === 0) return renderEmpty("Dataset vuoto.");
+
+      const items = pickSuggestions(all, origin, category, maxMin);
+      if (!items.length) {
+        return renderEmpty("Niente di coerente entro il tempo scelto. Prova ad aumentare i minuti o cambia categoria.");
+      }
+
+      renderList(items, origin);
+    } catch (err) {
+      console.error(err);
+      renderEmpty("Errore nel caricare ‘Mai fatto’. Controlla che esista /data/events/events_all.json.");
+    }
+  }
+
+  // espongo una funzione globale che puoi chiamare dal bottone "CERCA"
+  window.refreshMaiFatto = refreshMaiFatto;
+
+  // auto-run se vuoi (se hai già un pannello aperto)
+  // refreshMaiFatto();
+
 })();
