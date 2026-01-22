@@ -1,0 +1,43 @@
+name: Build MaiFatto IT Tiles (weekly)
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: "0 3 * * 1"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Build dataset (Italy tiles)
+        env:
+          OVERPASS_ENDPOINT: https://overpass-api.de/api/interpreter
+          SLEEP_MS: "900"
+          GRID_COLS: "10"
+          GRID_ROWS: "10"
+          PER_TILE_MAX: "350"
+        run: |
+          node scripts/build_maifatto_it_tiles.mjs
+
+      - name: Commit & push if changed
+        run: |
+          git config user.name "jamo-bot"
+          git config user.email "jamo-bot@users.noreply.github.com"
+          git add public/data/mai_fatto/tiles/it
+          if git diff --cached --quiet; then
+            echo "No changes."
+            exit 0
+          fi
+          git commit -m "chore(data): weekly refresh mai_fatto_it_tiles"
+          git push
