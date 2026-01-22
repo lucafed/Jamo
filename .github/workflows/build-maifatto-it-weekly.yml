@@ -1,4 +1,4 @@
-name: Build MaiFatto IT (weekly)
+name: Build MaiFatto Abruzzo (weekly)
 
 on:
   workflow_dispatch: {}
@@ -7,10 +7,6 @@ on:
 
 permissions:
   contents: write
-
-concurrency:
-  group: build-maifatto-it-weekly
-  cancel-in-progress: true
 
 jobs:
   build:
@@ -30,60 +26,26 @@ jobs:
         run: |
           if [ -f package-lock.json ]; then npm ci; else echo "no lock"; fi
 
-      - name: Ensure output folder exists
-        run: |
-          mkdir -p public/data/mai_fatto
-
-      # ✅ Tentativo 1 — overpass-api.de
-      - name: Build dataset (Italy) — endpoint 1
-        id: build1
-        continue-on-error: true
+      - name: Build dataset (Abruzzo)
         env:
           OVERPASS_ENDPOINT: https://overpass-api.de/api/interpreter
-          SLEEP_MS: "1200"
-          TARGET_IDEAS: "12000"
-          MIN_IDEAS_OK: "800"
+          SLEEP_MS: "1800"
+          GRID_COLS: "5"
+          GRID_ROWS: "5"
+          TARGET_IDEAS: "2500"
         run: |
-          node scripts/build_maifatto_it_all.mjs
-
-      # ✅ Tentativo 2 — kumi (fallback)
-      - name: Build dataset (Italy) — endpoint 2 (fallback)
-        if: steps.build1.outcome != 'success'
-        id: build2
-        continue-on-error: true
-        env:
-          OVERPASS_ENDPOINT: https://overpass.kumi.systems/api/interpreter
-          SLEEP_MS: "1400"
-          TARGET_IDEAS: "12000"
-          MIN_IDEAS_OK: "800"
-        run: |
-          node scripts/build_maifatto_it_all.mjs
-
-      # ✅ Tentativo 3 — r-fx (fallback)
-      - name: Build dataset (Italy) — endpoint 3 (fallback)
-        if: steps.build1.outcome != 'success' && steps.build2.outcome != 'success'
-        id: build3
-        env:
-          OVERPASS_ENDPOINT: https://overpass.openstreetmap.ru/api/interpreter
-          SLEEP_MS: "1500"
-          TARGET_IDEAS: "12000"
-          MIN_IDEAS_OK: "800"
-        run: |
-          node scripts/build_maifatto_it_all.mjs
-
-      - name: Verify output exists
-        run: |
-          test -f public/data/mai_fatto/mai_fatto_it_all.json
-          echo "✅ Found output file."
+          node scripts/build_maifatto_it_abruzzo.mjs
+          ls -lah public/data/mai_fatto || true
+          ls -lah public/data/mai_fatto/mai_fatto_it_abruzzo.json || true
 
       - name: Commit & push if changed
         run: |
           git config user.name "jamo-bot"
           git config user.email "jamo-bot@users.noreply.github.com"
-          git add public/data/mai_fatto/mai_fatto_it_all.json
+          git add public/data/mai_fatto/mai_fatto_it_abruzzo.json
           if git diff --cached --quiet; then
             echo "No changes."
             exit 0
           fi
-          git commit -m "chore(data): weekly refresh mai_fatto_it_all"
+          git commit -m "chore(data): weekly refresh mai_fatto_it_abruzzo"
           git push
