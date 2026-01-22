@@ -3,10 +3,14 @@ name: Build MaiFatto IT (weekly)
 on:
   workflow_dispatch: {}
   schedule:
-    - cron: "0 3 * * 1" # ogni lunedì 03:00 UTC (≈ 04:00/05:00 Italia)
+    - cron: "0 3 * * 1" # lunedì 03:00 UTC
 
 permissions:
   contents: write
+
+concurrency:
+  group: build-maifatto-it
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -26,12 +30,23 @@ jobs:
         run: |
           if [ -f package-lock.json ]; then npm ci; else echo "no lock"; fi
 
+      - name: Ensure output folder exists
+        run: |
+          mkdir -p public/data/mai_fatto
+          ls -lah public/data/mai_fatto || true
+
       - name: Build dataset (Italy)
         env:
           OVERPASS_ENDPOINT: https://overpass-api.de/api/interpreter
           SLEEP_MS: "1200"
+          # Se vuoi testare veloce la prima volta:
+          # MAX_TILES: "6"
         run: |
           node scripts/build_maifatto_it_all.mjs
+          echo "---- OUTPUT FILES ----"
+          ls -lah public/data/mai_fatto || true
+          echo "---- HEAD JSON ----"
+          head -n 30 public/data/mai_fatto/mai_fatto_it_all.json || true
 
       - name: Commit & push if changed
         run: |
