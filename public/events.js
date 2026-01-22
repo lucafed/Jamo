@@ -10,6 +10,7 @@
  *
  * Dataset preferiti:
  *  /data/mai_fatto/mai_fatto_it_all.json
+ *  /data/mai_fatto/mai_fatto_it_abruzzo.json
  *  /data/mai_fatto/mai_fatto_it_verona.json
  *
  * Fallback:
@@ -21,6 +22,7 @@
 
   const PRIMARY_URLS = [
     "/data/mai_fatto/mai_fatto_it_all.json",
+    "/data/mai_fatto/mai_fatto_it_abruzzo.json",
     "/data/mai_fatto/mai_fatto_it_verona.json",
   ];
   const FALLBACK_URL = "/data/events/events_all.json";
@@ -305,7 +307,7 @@
             ${updated ? `Dataset aggiornato ${esc(updated)}` : "Dataset offline"} • totale ${esc(total)}${areaName}
           </div>
           <div class="small muted" style="margin-top:6px;">
-            Nota: se vedi ancora “Verona”, significa che <b>mai_fatto_it_all.json</b> non è ancora online.
+            Nota: se vedi ancora “Verona”, significa che <b>mai_fatto_it_all.json</b> non è ancora online (o Abruzzo non è ancora online).
           </div>
         </div>
       `;
@@ -437,6 +439,7 @@
               Controlla che esista almeno uno tra:
               <br><b>${esc(PRIMARY_URLS[0])}</b>
               <br><b>${esc(PRIMARY_URLS[1])}</b>
+              <br><b>${esc(PRIMARY_URLS[2])}</b>
               <br>e che contenga <b>{ ideas: [...] }</b>.
             </div>
           </div>
