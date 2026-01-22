@@ -1,13 +1,23 @@
-/* public/events.js — JAMO_MAIFATTO bridge (offline, IDEE WOW + SCONOSCIUTE)
+/* public/events.js — JAMO_MAIFATTO bridge (offline, idee REALI + WOW)
  * Compatibile con app.js v22.2 (runEventsSearchBridge)
  *
  * ✅ UI: "Eventi" => "MAI FATTO"
- * ✅ Sottocategorie WOW: Relax/Famiglia/Bici/Moto/Natura/Pioggia/Tramonto/Mangiare/1h/2h
- * ✅ SOLO "Perché te lo propongo" (NO "cosa fare")
- * ✅ Link SEMPRE: "Vedi cosa c'è" (Google Maps place/search)
- * ✅ Anti-ovvio SEMPRE ON (niente fallback a Lazise/Sirmione ecc.)
- * ✅ Se pochi risultati: allarga minuti (fino a 240) MA mantiene anti-ovvio
- * ✅ Filtro qualità: scarta "perché" troppo generici
+ * ✅ Sottocategorie: Relax, Famiglia, Bici, Moto, Natura, Pioggia, Tramonto, Mangiare, 1h, 2h
+ * ✅ Match ESATTO categoria (niente mapping ambiguo)
+ * ✅ Niente "quando"
+ *
+ * ✅ FIX richiesti:
+ * - NO "cosa fare": mostra solo "Perché te lo propongo"
+ * - Link "👀 Cosa c’è" (Google Maps place)
+ * - Filtro WOW: penalizza posti troppo noti (Lazise/Sirmione ecc.)
+ * - Varietà: shuffle stabile per query + anti-duplicati recenti
+ *
+ * Dataset preferito:
+ *  /data/mai_fatto/mai_fatto_it_verona.json
+ *  { updated_at, count, ideas:[ { id,title,lat,lon,place,city,region,category,duration_min,why,url? } ] }
+ *
+ * Fallback (se esiste, per non rompere):
+ *  /data/events/events_all.json
  */
 
 (() => {
@@ -16,30 +26,12 @@
   const PRIMARY_URL = "/data/mai_fatto/mai_fatto_it_verona.json";
   const FALLBACK_URL = "/data/events/events_all.json";
 
-  // Quante card mostrare
+  // quante card mostrare
   const SHOW_LIMIT = 14;
 
-  // Quanto può “allargare” i minuti per trovare roba WOW (senza diventare ovvio)
-  const MAX_WIDEN_MINUTES = 240;
-
-  // Anti-ovvio: se contiene queste parole, è “troppo noto” per Mai fatto
-  // (personalizzabile: aggiungi TUTTO ciò che vuoi bannare)
-  const OVB_CITY_BLACKLIST = [
-    "lazise", "sirmione", "bardolino", "garda", "peschiera",
-    "verona", "arena", "piazza bra", "centro storico",
-  ];
-  const OVB_PLACE_BLACKLIST = [
-    "lungolago", "centro storico", "piazza", "duomo",
-    "gardaland", "movieland", "sigurtà", "parco sigurtà",
-  ];
-
-  // Filtro qualità sul "perché": se troppo “genericone”, scartiamo l’idea
-  const GENERIC_WHY_PHRASES = [
-    "è semplice", "lineare", "senza complicazioni", "senza stress",
-    "perfetto per", "ideale per", "la solita cosa", "niente di che",
-    "ti rilassi", "staccare la spina", "aria buona", "silenzio",
-  ];
-  const MIN_WHY_LEN = 38; // sotto questa lunghezza spesso è “piatto” (tarabile)
+  // memoria locale per evitare ripetizioni tra ricerche
+  const RECENT_KEY = "jamo_mai_fatto_recent_ids_v1";
+  const RECENT_MAX = 40;
 
   // ---------- helpers ----------
   const esc = (s) =>
@@ -86,23 +78,10 @@
     )}&travelmode=${encodeURIComponent(m)}`;
   }
 
-  // ✅ SEMPRE "Vedi cosa c'è": apre scheda/ricerca su Maps anche senza url
-  function mapsSearchUrl(e) {
-    const q = [
-      e.place || "",
-      e.city || "",
-      e.region || "",
-      e.country_code || "",
-    ].filter(Boolean).join(" ").trim();
-
-    if (q) {
-      return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
-    }
-
-    if (typeof e.lat === "number" && typeof e.lon === "number") {
-      return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${e.lat},${e.lon}`)}`;
-    }
-    return "";
+  // 👀 “Cosa c’è” → apre Maps sul posto (pin) invece della navigazione
+  function mapsPlaceUrl(lat, lon, q) {
+    const query = q ? String(q) : `${lat},${lon}`;
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
   }
 
   function approxMinutesFromKm(km, estCarMinutesFromKm) {
@@ -119,20 +98,96 @@
     return k;
   }
 
-  // NOMI WOW (chip + pill)
-  const WOW = {
-    relax:   "🧖 Stacca davvero",
-    famiglia:"👨‍👩‍👧‍👦 Posti che i bambini ricordano",
-    bici:    "🚴 Giro in bici che vale",
-    moto:    "🏍️ Due curve e sorridi",
-    natura:  "🌿 Natura wow vicino",
-    pioggia: "🌧️ Quando piove è meglio",
-    tramonto:"🌅 Tramonto da far foto",
-    mangiare:"🍝 Mangiare con gusto",
-    "1h":    "🕐 1 ora fatta bene",
-    "2h":    "🕑 2 ore memorabili",
-  };
-  const wowLabelForKey = (k) => WOW[k] || (k ? k : "Idea");
+  function labelCategory(k) {
+    const m = {
+      relax: "Relax",
+      famiglia: "Posti che i bambini ricordano",
+      bici: "Giro in bici (scoperta)",
+      moto: "Due curve e sorridi",
+      natura: "Natura wow",
+      pioggia: "Quando piove è meglio",
+      tramonto: "Tramonto da raccontare",
+      mangiare: "Mangiare (posto vero)",
+      "1h": "1 ora",
+      "2h": "2 ore",
+    };
+    return m[k] || (k ? k.charAt(0).toUpperCase() + k.slice(1) : "Idea");
+  }
+
+  // ---------- WOW filter (penalizza posti mainstream) ----------
+  // Non è “geografia inventata”: è solo un filtro per NON proporre mete ovvie.
+  function wowPenalty(e) {
+    const city = String(e.city || "").toLowerCase();
+    const place = String(e.place || "").toLowerCase();
+    const title = String(e.title || "").toLowerCase();
+
+    // parole/mete troppo mainstream per il tuo obiettivo
+    const tooFamous = [
+      "sirmione", "lazise", "bardolino", "peschiera", "garda",
+      "piazza erbe", "via mazzini", "ponte pietra",
+      "sigurt", "borghetto sul mincio"
+    ];
+
+    let p = 0;
+
+    // città turistiche “ovvie”
+    for (const t of tooFamous) {
+      if (city.includes(t) || place.includes(t) || title.includes(t)) p += 6;
+    }
+
+    // se mancano why/title “wow”, penalizza un po'
+    const why = String(e.why || "");
+    if (why.trim().length < 18) p += 2;
+
+    return p; // più alto = peggio
+  }
+
+  // ---------- shuffle deterministico ----------
+  function hashStr(s) {
+    let h = 2166136261;
+    for (let i = 0; i < s.length; i++) {
+      h ^= s.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
+    return h >>> 0;
+  }
+
+  function mulberry32(seed) {
+    let a = seed >>> 0;
+    return function () {
+      a |= 0;
+      a = (a + 0x6D2B79F5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  function shuffleInPlace(arr, seed) {
+    const rnd = mulberry32(seed);
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(rnd() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  // ---------- recent ids ----------
+  function loadRecent() {
+    try {
+      const raw = localStorage.getItem(RECENT_KEY);
+      const a = JSON.parse(raw || "[]");
+      return Array.isArray(a) ? a : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function saveRecent(list) {
+    try {
+      localStorage.setItem(RECENT_KEY, JSON.stringify(list.slice(0, RECENT_MAX)));
+    } catch {}
+  }
 
   // ---------- UI patch ----------
   function patchUI() {
@@ -149,16 +204,16 @@
     if (row) {
       row.innerHTML = `
         <div class="chip active" data-etype="tutti">⭐ Tutti</div>
-        <div class="chip" data-etype="relax">${esc(WOW.relax)}</div>
-        <div class="chip" data-etype="famiglia">${esc(WOW.famiglia)}</div>
-        <div class="chip" data-etype="bici">${esc(WOW.bici)}</div>
-        <div class="chip" data-etype="moto">${esc(WOW.moto)}</div>
-        <div class="chip" data-etype="natura">${esc(WOW.natura)}</div>
-        <div class="chip" data-etype="pioggia">${esc(WOW.pioggia)}</div>
-        <div class="chip" data-etype="tramonto">${esc(WOW.tramonto)}</div>
-        <div class="chip" data-etype="mangiare">${esc(WOW.mangiare)}</div>
-        <div class="chip" data-etype="1h">${esc(WOW["1h"])}</div>
-        <div class="chip" data-etype="2h">${esc(WOW["2h"])}</div>
+        <div class="chip" data-etype="relax">🧖 Relax</div>
+        <div class="chip" data-etype="famiglia">👨‍👩‍👧‍👦 Famiglia</div>
+        <div class="chip" data-etype="bici">🚴 Bici</div>
+        <div class="chip" data-etype="moto">🏍️ Moto</div>
+        <div class="chip" data-etype="natura">🌿 Natura</div>
+        <div class="chip" data-etype="pioggia">🌧️ Pioggia</div>
+        <div class="chip" data-etype="tramonto">🌅 Tramonto</div>
+        <div class="chip" data-etype="mangiare">🍝 Mangiare</div>
+        <div class="chip" data-etype="1h">🕐 1 ora</div>
+        <div class="chip" data-etype="2h">🕑 2 ore</div>
       `;
     }
 
@@ -169,7 +224,7 @@
     }
 
     const info = document.querySelector("#eventsSubfilters .small.muted");
-    if (info) info.textContent = "Solo idee WOW e poco ovvie. Se non ci sono vicino, te lo diciamo (non ti buttiamo Lazise).";
+    if (info) info.textContent = "Offline: idee reali curate (wow > ovvio).";
   }
 
   patchUI();
@@ -196,7 +251,6 @@
       };
       return ideas;
     } catch (_) {
-      // fallback: NON perfetto per "mai fatto", ma non deve rompere
       const j2 = await fetchJson(FALLBACK_URL);
       const ev = Array.isArray(j2?.events) ? j2.events : [];
       const ideas = ev.map((e) => ({
@@ -223,65 +277,21 @@
     }
   }
 
-  // ---------- quality + anti-obvious ----------
-  function normTxt(s) {
-    return String(s || "").toLowerCase().trim();
-  }
-
-  function isObvious(e) {
-    const city = normTxt(e.city);
-    const place = normTxt(e.place);
-    const title = normTxt(e.title);
-
-    const hitCity = OVB_CITY_BLACKLIST.some((x) => city.includes(x) || title.includes(x));
-    const hitPlace = OVB_PLACE_BLACKLIST.some((x) => place.includes(x) || title.includes(x));
-    return hitCity || hitPlace;
-  }
-
-  function isGenericWhy(why) {
-    const w = normTxt(why);
-    if (!w) return true;
-    if (w.length < MIN_WHY_LEN) return true;
-
-    // se contiene troppe frasi "piatte"
-    let hits = 0;
-    for (const p of GENERIC_WHY_PHRASES) {
-      if (w.includes(p)) hits++;
-      if (hits >= 2) return true;
-    }
-    return false;
-  }
-
   // ---------- selection ----------
   function pickIdeas({ all, origin, maxMinutes, eventType, haversineKm, estCarMinutesFromKm }) {
     let list = Array.isArray(all) ? all.slice() : [];
 
-    // 1) match ESATTO categoria
+    const mm = Number(maxMinutes) || 120;
     const et = normalizeCategory(eventType || "tutti");
+
+    // categoria esatta
     if (et && et !== "tutti") {
       list = list.filter((e) => normalizeCategory(e.category) === et);
     }
 
-    // 2) qualità: solo idee con "perché" buono
-    list = list.filter((e) => !isGenericWhy(e.why));
-
-    // 3) anti-ovvio SEMPRE
-    list = list.filter((e) => !isObvious(e));
-
-    // 4) distanza: se non basta, allarghiamo minuti (MAI togliere anti-ovvio)
-    const mmIn = Number(maxMinutes) || 120;
-    const widen = [];
-    if (mmIn <= 45) widen.push(mmIn, 60, 90, 120, 160, 200, 240);
-    else if (mmIn <= 60) widen.push(mmIn, 90, 120, 160, 200, 240);
-    else if (mmIn <= 120) widen.push(mmIn, 140, 160, 180, 200, 240);
-    else widen.push(mmIn, Math.min(MAX_WIDEN_MINUTES, mmIn + 30), Math.min(MAX_WIDEN_MINUTES, mmIn + 60), MAX_WIDEN_MINUTES);
-
-    const maxWiden = widen.filter((x) => x <= MAX_WIDEN_MINUTES);
-
-    let chosenMinutes = mmIn;
-
+    // entro minuti
     if (origin && typeof origin.lat === "number" && typeof origin.lon === "number") {
-      const enriched = list
+      list = list
         .map((e) => {
           if (typeof e.lat !== "number" || typeof e.lon !== "number") return null;
           const km = typeof haversineKm === "function"
@@ -291,28 +301,59 @@
           return { e, mins };
         })
         .filter(Boolean)
-        .sort((a, b) => (a.mins ?? 9999) - (b.mins ?? 9999));
-
-      let within = [];
-      for (const mm of maxWiden) {
-        chosenMinutes = mm;
-        within = enriched.filter((x) => (x.mins == null ? true : x.mins <= mm));
-        if (within.length >= Math.min(8, SHOW_LIMIT)) break; // obiettivo: tante idee
-      }
-
-      return {
-        items: within.map((x) => x.e).slice(0, SHOW_LIMIT),
-        usedMinutes: chosenMinutes,
-        widened: chosenMinutes !== mmIn
-      };
+        .filter((x) => (x.mins == null ? true : x.mins <= mm))
+        .sort((a, b) => (a.mins ?? 9999) - (b.mins ?? 9999))
+        .map((x) => x.e);
     }
 
-    // senza origin: almeno restituisci qualcosa
-    return { items: list.slice(0, SHOW_LIMIT), usedMinutes: mmIn, widened: false };
+    // WOW: preferisci non-ovvio
+    // 1) separa wow vs “ovvio”
+    const scored = list.map((e) => ({ e, p: wowPenalty(e) }));
+    const wow = scored.filter(x => x.p <= 3).map(x => x.e);
+    const meh = scored.filter(x => x.p > 3).map(x => x.e);
+
+    // 2) anti-duplicati: prova a evitare quelli già mostrati di recente
+    const recent = loadRecent();
+    const isRecent = (e) => recent.includes(String(e.id || `${e.title}|${e.lat}|${e.lon}`));
+
+    const wowFresh = wow.filter(e => !isRecent(e));
+    const mehFresh = meh.filter(e => !isRecent(e));
+
+    // 3) shuffle deterministico per variare ad ogni ricerca (dipende da origin/minuti/cat + tempo)
+    // cambia ogni ~6 ore
+    const slot = Math.floor(Date.now() / (6 * 60 * 60 * 1000));
+    const seedBase = `${origin?.lat ?? ""}|${origin?.lon ?? ""}|${mm}|${et}|${slot}`;
+    const seed = hashStr(seedBase);
+
+    shuffleInPlace(wowFresh, seed);
+    shuffleInPlace(mehFresh, seed ^ 0x9e3779b9);
+
+    // 4) compone: prima wow, poi eventualmente riempi con meh
+    const out = [];
+    for (const e of wowFresh) { out.push(e); if (out.length >= SHOW_LIMIT) break; }
+    if (out.length < SHOW_LIMIT) {
+      for (const e of mehFresh) { out.push(e); if (out.length >= SHOW_LIMIT) break; }
+    }
+
+    // se ancora poco, usa anche recenti ma sempre wow prima
+    if (out.length < SHOW_LIMIT) {
+      const wowAny = shuffleInPlace(wow.slice(), seed ^ 123);
+      for (const e of wowAny) { if (!out.includes(e)) out.push(e); if (out.length >= SHOW_LIMIT) break; }
+    }
+    if (out.length < SHOW_LIMIT) {
+      const mehAny = shuffleInPlace(meh.slice(), seed ^ 456);
+      for (const e of mehAny) { if (!out.includes(e)) out.push(e); if (out.length >= SHOW_LIMIT) break; }
+    }
+
+    // salva recent
+    const newIds = out.map(e => String(e.id || `${e.title}|${e.lat}|${e.lon}`));
+    saveRecent([...newIds, ...recent].slice(0, RECENT_MAX));
+
+    return out.slice(0, SHOW_LIMIT);
   }
 
   // ---------- render ----------
-  function renderIntoResultArea({ items, maxMinutes, usedMinutes, widened }) {
+  function renderIntoResultArea({ items, maxMinutes }) {
     const area = document.getElementById("resultArea");
     if (!area) return;
 
@@ -322,10 +363,9 @@
     if (!items || !items.length) {
       area.innerHTML = `
         <div class="card clickSafe" style="box-shadow:none; border-color:rgba(255,90,90,.40); background:rgba(255,90,90,.10);">
-          <div style="font-weight:950; font-size:18px;">😕 Zero WOW qui vicino</div>
+          <div style="font-weight:950; font-size:18px;">😕 Nessuna idea trovata</div>
           <div class="small muted" style="margin-top:8px; line-height:1.45;">
-            In “Mai fatto” mostriamo solo idee <b>poco ovvie</b> e con un “perché” forte.
-            <br/>Prova ad alzare i minuti (ora: <b>${esc(maxMinutes)}</b>) oppure cambia sottocategoria.
+            Aumenta i minuti (ora: <b>${esc(maxMinutes)}</b>) oppure cambia categoria Mai fatto.
           </div>
           <div class="small muted" style="margin-top:10px;">
             ${updated ? `Dataset aggiornato ${esc(updated)}` : "Dataset offline"} • totale ${esc(total)}
@@ -335,19 +375,15 @@
       return;
     }
 
-    const headerNote = widened
-      ? `<div class="small muted" style="margin-top:6px;">Ho allargato la ricerca: ${esc(maxMinutes)} → ${esc(usedMinutes)} min (sempre anti-ovvio).</div>`
-      : "";
-
     const cards = items.map((e) => {
       const title = e.title || "Idea";
       const where = nicePlaceLine(e);
-      const why = (e.why || "").trim();
 
       const catKey = normalizeCategory(e.category);
-      const catLabel = wowLabelForKey(catKey);
+      const catLabel = labelCategory(catKey);
 
       const durLine = e.duration_min ? `⏱️ ~${esc(e.duration_min)} min` : "";
+      const why = (e.why || "").trim();
 
       const lat = e.lat;
       const lon = e.lon;
@@ -355,9 +391,12 @@
       const mapsAuto = typeof lat === "number" && typeof lon === "number" ? mapsDirUrl(lat, lon, "driving") : "";
       const mapsWalk = typeof lat === "number" && typeof lon === "number" ? mapsDirUrl(lat, lon, "walking") : "";
       const mapsBike = typeof lat === "number" && typeof lon === "number" ? mapsDirUrl(lat, lon, "bicycling") : "";
+      const mapsSee = typeof lat === "number" && typeof lon === "number"
+        ? mapsPlaceUrl(lat, lon, where || `${lat},${lon}`)
+        : "";
 
-      // ✅ SEMPRE presente
-      const seeUrl = mapsSearchUrl(e) || e.url || "";
+      // se il dataset include un url "info", lo usiamo, altrimenti Maps search
+      const infoUrl = e.url ? String(e.url) : mapsSee;
 
       const placeBlock = where
         ? `<div style="margin-top:10px; font-weight:950; font-size:15px; letter-spacing:.2px;">
@@ -381,15 +420,19 @@
             ${pill(catLabel)}
           </div>
 
-          <div class="small muted" style="margin-top:12px; line-height:1.55;">
-            <b style="color:#fff;">Perché te lo propongo:</b> ${esc(why)}
-          </div>
+          ${
+            why
+              ? `<div class="small muted" style="margin-top:12px; line-height:1.55;">
+                   <b style="color:#fff;">Perché te lo propongo:</b> ${esc(why)}
+                 </div>`
+              : ""
+          }
 
           <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
             ${mapsAuto ? `<a class="btn btnPrimary" href="${esc(mapsAuto)}" target="_blank" rel="noopener">🧭 Vai</a>` : ""}
+            ${infoUrl ? `<a class="btnGhost" href="${esc(infoUrl)}" target="_blank" rel="noopener">👀 Cosa c’è</a>` : ""}
             ${mapsWalk ? `<a class="btn" href="${esc(mapsWalk)}" target="_blank" rel="noopener">🚶 A piedi</a>` : ""}
             ${mapsBike ? `<a class="btn" href="${esc(mapsBike)}" target="_blank" rel="noopener">🚴 Bici</a>` : ""}
-            ${seeUrl ? `<a class="btnGhost" href="${esc(seeUrl)}" target="_blank" rel="noopener">👀 Vedi cosa c’è</a>` : ""}
           </div>
 
           <div class="small muted" style="margin-top:10px; opacity:.70;">
@@ -401,14 +444,13 @@
 
     area.innerHTML = `
       <div class="card clickSafe" style="box-shadow:none; border-color:rgba(0,224,255,.20); background:rgba(0,224,255,.05);">
-        <div style="font-weight:950; font-size:18px;">✨ MAI FATTO — idee WOW (poco ovvie)</div>
+        <div style="font-weight:950; font-size:18px;">✨ MAI FATTO — idee vicine</div>
         <div class="small muted" style="margin-top:6px;">
           ${updated ? `Dataset aggiornato ${esc(updated)}` : "Dataset offline"} • totale ${esc(total)}
         </div>
         <div class="small muted" style="margin-top:6px;">
-          Mostrate: ${esc(items.length)} • entro ~${esc(usedMinutes || maxMinutes)} min
+          Mostrate: ${esc(items.length)} • entro ~${esc(maxMinutes)} min
         </div>
-        ${headerNote}
       </div>
       ${cards}
     `;
@@ -419,7 +461,6 @@
     origin,
     maxMinutes,
     eventType,
-    eventWhen, // ignored
     haversineKm,
     estCarMinutesFromKm,
     showStatus,
@@ -433,12 +474,12 @@
 
       if (!all.length) {
         showStatus?.("warn", "Dataset MAI FATTO vuoto.");
-        renderIntoResultArea({ items: [], maxMinutes, usedMinutes: maxMinutes, widened: false });
+        renderIntoResultArea({ items: [], maxMinutes });
         scrollToId?.("resultCard");
         return;
       }
 
-      const { items, usedMinutes, widened } = pickIdeas({
+      const items = pickIdeas({
         all,
         origin,
         maxMinutes,
@@ -447,13 +488,8 @@
         estCarMinutesFromKm
       });
 
-      renderIntoResultArea({ items, maxMinutes, usedMinutes, widened });
-
-      if (!items.length) {
-        showStatus?.("warn", "Mai fatto: zero WOW qui vicino. Alza minuti o cambia categoria.");
-      } else {
-        showStatus?.("ok", `Mai fatto: trovate ${items.length} idee WOW ✅`);
-      }
+      renderIntoResultArea({ items, maxMinutes });
+      showStatus?.("ok", `Mai fatto: trovate ${items.length} proposte ✅`);
       scrollToId?.("resultCard");
     } catch (err) {
       console.error(err);
