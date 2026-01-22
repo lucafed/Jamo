@@ -1,29 +1,26 @@
-/* public/events.js — JAMO_MAIFATTO bridge (offline, idee REALI + WOW)
+/* public/events.js — JAMO_MAIFATTO bridge (ITALIA-WIDE fallback + widen)
  * Compatibile con app.js v22.2 (runEventsSearchBridge)
  *
  * ✅ UI: "Eventi" => "✨ Mai fatto"
  * ✅ Sottocategorie: Tutti, Relax, Famiglia, Bici, Moto, Natura, Pioggia, Tramonto, Mangiare, 1h, 2h
- * ✅ Match ESATTO categoria (niente mapping ambiguo)
- * ✅ Card: LUOGO in evidenza sotto al titolo
- * ✅ Testo: SOLO "Perché te lo propongo" (niente lista "cosa fare")
- * ✅ Link: "🔎 Cosa c’è" (ricerca su Google Maps)
- * ✅ "Vai / A piedi / Bici": mantiene ORIGINE impostata in app (window.__JAMO_ORIGIN__)
- *
- * Dataset preferito:
- *  /data/mai_fatto/mai_fatto_it_verona.json
- *  { updated_at, count, ideas:[ { title, lat, lon, place, city, region, category, duration_min, why, url? } ] }
- *
- * Fallback (se esiste, per non rompere):
- *  /data/events/events_all.json
+ * ✅ Card: LUOGO sotto titolo + SOLO "Perché te lo propongo" (no lista cosa fare)
+ * ✅ Link: "🔎 Cosa c’è" (Google Maps search)
+ * ✅ Direzioni: mantiene ORIGINE impostata in app (origin=lat,lon)
+ * ✅ Dataset: Verona (se c'è) + fallback IT all + widen automatico se 0 risultati
  */
 
 (() => {
   "use strict";
 
+  // 1) Se vuoi tenere anche il file locale Verona:
   const PRIMARY_URL = "/data/mai_fatto/mai_fatto_it_verona.json";
-  const FALLBACK_URL = "/data/events/events_all.json";
 
-  // quante card mostrare
+  // 2) Fallback ITALIA INTERA (DA CREARE)
+  const IT_ALL_URL = "/data/mai_fatto/mai_fatto_it_all.json";
+
+  // 3) Fallback “non rompere” (vecchio events)
+  const FALLBACK_EVENTS_URL = "/data/events/events_all.json";
+
   const SHOW_LIMIT = 24;
 
   // ---------- helpers ----------
@@ -64,35 +61,6 @@
     return `<span class="pill ${soft ? "soft" : ""}">${esc(label)}</span>`;
   }
 
-  // Google Maps directions keeping origin from app
-  function mapsDirUrl(origin, lat, lon, mode) {
-    const m = mode || "driving";
-    const dest = `${lat},${lon}`;
-    const base =
-      `https://www.google.com/maps/dir/?api=1` +
-      `&destination=${encodeURIComponent(dest)}` +
-      `&travelmode=${encodeURIComponent(m)}`;
-
-    if (origin && typeof origin.lat === "number" && typeof origin.lon === "number") {
-      const o = `${origin.lat},${origin.lon}`;
-      return base + `&origin=${encodeURIComponent(o)}`;
-    }
-    return base;
-  }
-
-  // Google Maps search "what's there"
-  function mapsSearchUrl(e) {
-    const q = [e.title, e.place, e.city, e.region].filter(Boolean).join(" ");
-    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
-  }
-
-  // small estimator fallback if app doesn't provide one
-  function approxMinutesFromKm(km, estCarMinutesFromKm) {
-    if (typeof estCarMinutesFromKm === "function") return estCarMinutesFromKm(km);
-    // ~60km/h + overhead
-    return Math.round(km + 8);
-  }
-
   function normalizeCategory(c) {
     const k = String(c || "").toLowerCase().trim();
     if (!k) return "";
@@ -102,7 +70,6 @@
     return k;
   }
 
-  // label chips (UI)
   function labelCategory(k) {
     const m = {
       tutti: "Tutti",
@@ -120,20 +87,57 @@
     return m[k] || (k ? k.charAt(0).toUpperCase() + k.slice(1) : "Idea");
   }
 
+  // Google maps directions with origin pinned to app origin
+  function mapsDirUrl(origin, lat, lon, mode) {
+    const m = mode || "driving";
+    const dest = `${lat},${lon}`;
+    let url =
+      `https://www.google.com/maps/dir/?api=1` +
+      `&destination=${encodeURIComponent(dest)}` +
+      `&travelmode=${encodeURIComponent(m)}`;
+
+    if (origin && typeof origin.lat === "number" && typeof origin.lon === "number") {
+      url += `&origin=${encodeURIComponent(`${origin.lat},${origin.lon}`)}`;
+    }
+    return url;
+  }
+
+  function mapsSearchUrl(e) {
+    const q = [e.title, e.place, e.city, e.region].filter(Boolean).join(" ");
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
+  }
+
+  // fallback distance calc if app doesn't provide
+  function toRad(x) { return (x * Math.PI) / 180; }
+  function haversineKmFallback(aLat, aLon, bLat, bLon) {
+    const R = 6371;
+    const dLat = toRad(bLat - aLat);
+    const dLon = toRad(bLon - aLon);
+    const lat1 = toRad(aLat);
+    const lat2 = toRad(bLat);
+    const s =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2;
+    return 2 * R * Math.asin(Math.sqrt(s));
+  }
+
+  function approxMinutesFromKm(km, estCarMinutesFromKm) {
+    if (typeof estCarMinutesFromKm === "function") return estCarMinutesFromKm(km);
+    // 60km/h + overhead
+    return Math.round(km + 8);
+  }
+
   // ---------- UI patch ----------
   function patchUI() {
-    // top category chip "eventi" -> "Mai fatto" (if exists)
     const catChip = document.querySelector('#categoryChips .chip[data-cat="eventi"]');
     if (catChip) catChip.textContent = "✨ Mai fatto";
 
-    // subfilter label
     const box = document.getElementById("eventsSubfilters");
     if (box) {
       const smalls = box.querySelectorAll(".small");
       if (smalls && smalls[0]) smalls[0].textContent = "Mai fatto (categoria)";
     }
 
-    // replace eventType chips with Mai-fatto categories
     const row = document.getElementById("eventTypeChips");
     if (row) {
       row.innerHTML = `
@@ -151,7 +155,7 @@
       `;
     }
 
-    // hide "Quando" chips for Mai-fatto
+    // hide "Quando"
     const whenRow = document.getElementById("eventWhenChips");
     if (whenRow) {
       const parent = whenRow.closest("div");
@@ -175,88 +179,123 @@
     return await r.json();
   }
 
-  async function loadDataset() {
-    try {
-      const j = await fetchJson(PRIMARY_URL);
-      const ideas = Array.isArray(j?.ideas) ? j.ideas : [];
-      DATASET_META = {
+  function normalizeIdeasPayload(j) {
+    const ideas = Array.isArray(j?.ideas) ? j.ideas : [];
+    return {
+      ideas,
+      meta: {
         updated_at: j?.updated_at || "",
         count: j?.count ?? ideas.length,
         source: "curated_mai_fatto",
-      };
-      return ideas;
-    } catch (_) {
-      // fallback old events dataset
-      const j2 = await fetchJson(FALLBACK_URL);
-      const ev = Array.isArray(j2?.events) ? j2.events : [];
-      const ideas = ev.map((e) => ({
-        id: e.id,
-        title: e.title,
-        place: e.place,
-        city: e.city,
-        region: e.region,
-        country_code: e.country_code,
-        lat: e.lat,
-        lon: e.lon,
-        category: e.category,
-        duration_min: e.duration_min,
-        why: e.why,
-        url: e.url,
-        source: e.source || "events_fallback",
-      }));
-      DATASET_META = {
-        updated_at: j2?.updated_at || "",
-        count: j2?.count ?? ideas.length,
-        source: "events_fallback",
-      };
-      return ideas;
-    }
+      },
+    };
   }
 
-  // ---------- selection ----------
+  async function loadDataset() {
+    // 1) try local (Verona) — non deve rompere se manca
+    try {
+      const j = await fetchJson(PRIMARY_URL);
+      const p = normalizeIdeasPayload(j);
+      if (p.ideas.length) {
+        DATASET_META = { ...p.meta, source: "curated_mai_fatto_verona" };
+        return p.ideas;
+      }
+    } catch (_) {}
+
+    // 2) try Italia intera (fondamentale per funzionare ovunque)
+    try {
+      const j = await fetchJson(IT_ALL_URL);
+      const p = normalizeIdeasPayload(j);
+      DATASET_META = { ...p.meta, source: "curated_mai_fatto_it_all" };
+      return p.ideas;
+    } catch (_) {}
+
+    // 3) fallback events old
+    const j2 = await fetchJson(FALLBACK_EVENTS_URL);
+    const ev = Array.isArray(j2?.events) ? j2.events : [];
+    const ideas = ev.map((e) => ({
+      id: e.id,
+      title: e.title,
+      place: e.place,
+      city: e.city,
+      region: e.region,
+      country_code: e.country_code,
+      lat: e.lat,
+      lon: e.lon,
+      category: e.category,
+      duration_min: e.duration_min,
+      why: e.why,
+      url: e.url,
+      source: e.source || "events_fallback",
+    }));
+    DATASET_META = {
+      updated_at: j2?.updated_at || "",
+      count: j2?.count ?? ideas.length,
+      source: "events_fallback",
+    };
+    return ideas;
+  }
+
+  // ---------- selection with widen ----------
+  function scoreByDistance(all, origin, haversineKmFn, estCarMinutesFromKm) {
+    const hk = typeof haversineKmFn === "function" ? haversineKmFn : haversineKmFallback;
+    return all
+      .map((e) => {
+        if (typeof e.lat !== "number" || typeof e.lon !== "number") return null;
+        const km = hk(origin.lat, origin.lon, e.lat, e.lon);
+        const mins = approxMinutesFromKm(km, estCarMinutesFromKm);
+        return { e, mins };
+      })
+      .filter(Boolean)
+      .sort((a, b) => a.mins - b.mins);
+  }
+
   function pickIdeas({ all, origin, maxMinutes, eventType, haversineKm, estCarMinutesFromKm }) {
     let list = Array.isArray(all) ? all.slice() : [];
-
-    const mm = Number(maxMinutes) || 120;
     const et = normalizeCategory(eventType || "tutti");
 
-    // exact category match
     if (et && et !== "tutti") {
       list = list.filter((e) => normalizeCategory(e.category) === et);
     }
 
-    // time filter by origin
-    if (origin && typeof origin.lat === "number" && typeof origin.lon === "number") {
-      list = list
-        .map((e) => {
-          if (typeof e.lat !== "number" || typeof e.lon !== "number") return null;
-          const km = typeof haversineKm === "function"
-            ? haversineKm(origin.lat, origin.lon, e.lat, e.lon)
-            : null;
-          const mins = km == null ? null : approxMinutesFromKm(km, estCarMinutesFromKm);
-          return { e, mins };
-        })
-        .filter(Boolean)
-        .filter((x) => (x.mins == null ? true : x.mins <= mm))
-        .sort((a, b) => (a.mins ?? 9999) - (b.mins ?? 9999))
-        .map((x) => x.e);
+    // if no origin, just return
+    if (!origin || typeof origin.lat !== "number" || typeof origin.lon !== "number") {
+      return { items: list.slice(0, SHOW_LIMIT), note: "" };
     }
 
-    // if too few results, widen a bit (only for "tutti")
-    if ((list.length < 8) && et === "tutti") {
-      list = Array.isArray(all) ? all.slice(0, SHOW_LIMIT * 2) : list;
+    const mm = Math.max(5, Number(maxMinutes) || 120);
+    const scored = scoreByDistance(list, origin, haversineKm, estCarMinutesFromKm);
+
+    // pass 1: within minutes
+    let within = scored.filter((x) => x.mins <= mm).map((x) => x.e);
+    if (within.length >= 1) {
+      return { items: within.slice(0, SHOW_LIMIT), note: "" };
     }
 
-    return list.slice(0, SHOW_LIMIT);
+    // pass 2: widen (x2) capped 360
+    const widened = Math.min(360, Math.round(mm * 2));
+    within = scored.filter((x) => x.mins <= widened).map((x) => x.e);
+    if (within.length >= 1) {
+      return {
+        items: within.slice(0, SHOW_LIMIT),
+        note: `Nessuna entro ${mm} min: ho allargato a ~${widened} min per non lasciarti a secco.`,
+      };
+    }
+
+    // pass 3: nearest anyway
+    return {
+      items: scored.slice(0, SHOW_LIMIT).map((x) => x.e),
+      note: `In questa zona non ho idee sufficienti nel raggio tempo: ti mostro le più vicine disponibili.`,
+    };
   }
 
   // ---------- render ----------
-  function renderIntoResultArea({ items, maxMinutes, origin }) {
+  function renderIntoResultArea({ items, maxMinutes, origin, note }) {
     const area = document.getElementById("resultArea");
     if (!area) return;
 
     const updated = DATASET_META.updated_at ? fmtDateShort(DATASET_META.updated_at) : "";
-    const total = DATASET_META.count || (Array.isArray(items) ? items.length : 0);
+    const total = DATASET_META.count || 0;
 
     if (!items || !items.length) {
       area.innerHTML = `
@@ -277,15 +316,12 @@
       .map((e) => {
         const title = e.title || "Idea";
         const where = nicePlaceLine(e);
-
-        // SOLO "perché"
         const why = (e.why || "").trim();
 
         const catKey = normalizeCategory(e.category);
         const catLabel = labelCategory(catKey);
 
         const durLine = e.duration_min ? `⏱️ ~${esc(e.duration_min)} min` : "";
-
         const lat = e.lat;
         const lon = e.lon;
 
@@ -305,21 +341,17 @@
         const mapsInfo = mapsSearchUrl(e);
         const infoUrl = e.url ? String(e.url) : "";
 
-        // LUOGO IN EVIDENZA
         const placeBlock = where
           ? `<div style="margin-top:10px; font-weight:950; font-size:15px; letter-spacing:.2px;">
                📍 ${esc(where)}
              </div>`
           : "";
 
-        const durBlock = durLine
-          ? `<div class="small muted" style="margin-top:6px;">${esc(durLine)}</div>`
-          : "";
+        const durBlock = durLine ? `<div class="small muted" style="margin-top:6px;">${esc(durLine)}</div>` : "";
 
         return `
           <div class="card clickSafe" style="margin-top:12px; border-color:rgba(0,224,255,.14);">
             <div style="font-weight:950; font-size:20px; line-height:1.12;">${esc(title)}</div>
-
             ${placeBlock}
             ${durBlock}
 
@@ -361,12 +393,21 @@
         <div class="small muted" style="margin-top:6px;">
           Mostrate: ${esc(items.length)} • entro ~${esc(maxMinutes)} min
         </div>
+        ${
+          note
+            ? `<div class="small muted" style="margin-top:8px; line-height:1.35; opacity:.9;">
+                 ${esc(note)}
+               </div>`
+            : ""
+        }
       </div>
       ${cards}
     `;
   }
 
   // ---------- public API ----------
+  let DATASET_LOADED_FROM = "";
+
   async function run({
     origin,
     maxMinutes,
@@ -379,22 +420,24 @@
     try {
       patchUI();
 
-      // store origin globally so cards can reuse it even if called elsewhere
       if (origin && typeof origin.lat === "number" && typeof origin.lon === "number") {
         window.__JAMO_ORIGIN__ = origin;
       }
 
-      if (!DATASET) DATASET = await loadDataset();
-      const all = Array.isArray(DATASET) ? DATASET : [];
+      if (!DATASET) {
+        DATASET = await loadDataset();
+        DATASET_LOADED_FROM = DATASET_META.source || "";
+      }
 
+      const all = Array.isArray(DATASET) ? DATASET : [];
       if (!all.length) {
         showStatus?.("warn", "Dataset MAI FATTO vuoto.");
-        renderIntoResultArea({ items: [], maxMinutes, origin });
+        renderIntoResultArea({ items: [], maxMinutes, origin, note: "" });
         scrollToId?.("resultCard");
         return;
       }
 
-      const items = pickIdeas({
+      const picked = pickIdeas({
         all,
         origin,
         maxMinutes,
@@ -403,8 +446,9 @@
         estCarMinutesFromKm
       });
 
-      renderIntoResultArea({ items, maxMinutes, origin });
-      showStatus?.("ok", `Mai fatto: trovate ${items.length} proposte ✅`);
+      renderIntoResultArea({ items: picked.items, maxMinutes, origin, note: picked.note });
+
+      showStatus?.("ok", `Mai fatto: trovate ${picked.items.length} proposte ✅`);
       scrollToId?.("resultCard");
     } catch (err) {
       console.error(err);
@@ -415,7 +459,7 @@
           <div class="card clickSafe" style="box-shadow:none; border-color:rgba(255,90,90,.40); background:rgba(255,90,90,.10);">
             <div style="font-weight:950; font-size:18px;">❌ MAI FATTO non disponibile</div>
             <div class="small muted" style="margin-top:8px; line-height:1.45;">
-              Controlla che esista <b>${esc(PRIMARY_URL)}</b> e che contenga <b>{ ideas: [...] }</b>.
+              Serve almeno <b>${esc(IT_ALL_URL)}</b> con <b>{ ideas: [...] }</b>.
             </div>
           </div>
         `;
