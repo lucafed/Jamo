@@ -1,25 +1,21 @@
-/* public/events.js — JAMO_MAIFATTO bridge (ITALIA-WIDE fallback + widen)
+/* public/events.js — JAMO_MAIFATTO bridge (ITALIA-WIDE + ROTAZIONE su minuti + widen)
  * Compatibile con app.js v22.2 (runEventsSearchBridge)
  *
  * ✅ UI: "Eventi" => "✨ Mai fatto"
  * ✅ Sottocategorie: Tutti, Relax, Famiglia, Bici, Moto, Natura, Pioggia, Tramonto, Mangiare, 1h, 2h
- * ✅ Card: LUOGO sotto titolo + SOLO "Perché te lo propongo" (no lista cosa fare)
+ * ✅ Card: LUOGO sotto titolo + SOLO "Perché te lo propongo"
  * ✅ Link: "🔎 Cosa c’è" (Google Maps search)
  * ✅ Direzioni: mantiene ORIGINE impostata in app (origin=lat,lon)
- * ✅ Dataset: Verona (se c'è) + fallback IT all + widen automatico se 0 risultati
+ * ✅ Dataset: Verona (se c'è) + fallback IT all + widen automatico
+ * ✅ Se cambi minuti → cambiano anche i posti (rotazione deterministica)
  */
 
 (() => {
   "use strict";
 
-  // 1) Se vuoi tenere anche il file locale Verona:
-  const PRIMARY_URL = "/data/mai_fatto/mai_fatto_it_verona.json";
-
-  // 2) Fallback ITALIA INTERA (DA CREARE)
-  const IT_ALL_URL = "/data/mai_fatto/mai_fatto_it_all.json";
-
-  // 3) Fallback “non rompere” (vecchio events)
-  const FALLBACK_EVENTS_URL = "/data/events/events_all.json";
+  const PRIMARY_URL = "/data/mai_fatto/mai_fatto_it_verona.json"; // opzionale
+  const IT_ALL_URL = "/data/mai_fatto/mai_fatto_it_all.json";     // FONDAMENTALE per Italia intera
+  const FALLBACK_EVENTS_URL = "/data/events/events_all.json";     // non rompere
 
   const SHOW_LIMIT = 24;
 
@@ -123,8 +119,56 @@
 
   function approxMinutesFromKm(km, estCarMinutesFromKm) {
     if (typeof estCarMinutesFromKm === "function") return estCarMinutesFromKm(km);
-    // 60km/h + overhead
+    // 60 km/h + overhead
     return Math.round(km + 8);
+  }
+
+  // ---------- ROTAZIONE (PRNG deterministico) ----------
+  // hash string -> uint32
+  function hash32(str) {
+    let h = 2166136261 >>> 0;
+    for (let i = 0; i < str.length; i++) {
+      h ^= str.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
+    return h >>> 0;
+  }
+
+  function mulberry32(seed) {
+    let a = seed >>> 0;
+    return function () {
+      a |= 0;
+      a = (a + 0x6D2B79F5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  function shuffleInPlace(arr, rand) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(rand() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  function isoWeekKey(d = new Date()) {
+    // week-of-year (rough but stable enough)
+    const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    const day = t.getUTCDay() || 7;
+    t.setUTCDate(t.getUTCDate() + 4 - day);
+    const yearStart = new Date(Date.UTC(t.getUTCFullYear(), 0, 1));
+    const week = Math.ceil((((t - yearStart) / 86400000) + 1) / 7);
+    return `${t.getUTCFullYear()}-W${String(week).padStart(2, "0")}`;
+  }
+
+  function originCellKey(origin) {
+    // griglia ~5km (0.05 deg) per stabilizzare
+    if (!origin || typeof origin.lat !== "number" || typeof origin.lon !== "number") return "no-origin";
+    const latc = Math.round(origin.lat / 0.05) * 0.05;
+    const lonc = Math.round(origin.lon / 0.05) * 0.05;
+    return `${latc.toFixed(2)},${lonc.toFixed(2)}`;
   }
 
   // ---------- UI patch ----------
@@ -155,7 +199,7 @@
       `;
     }
 
-    // hide "Quando"
+    // hide "Quando" row (date-based)
     const whenRow = document.getElementById("eventWhenChips");
     if (whenRow) {
       const parent = whenRow.closest("div");
@@ -163,7 +207,7 @@
     }
 
     const info = document.querySelector("#eventsSubfilters .small.muted");
-    if (info) info.textContent = "Offline: idee curate (luoghi reali).";
+    if (info) info.textContent = "Offline: idee curate (luoghi reali). Cambia minuti = cambia proposte.";
   }
 
   patchUI();
@@ -192,7 +236,7 @@
   }
 
   async function loadDataset() {
-    // 1) try local (Verona) — non deve rompere se manca
+    // 1) try local Verona (non deve rompere se manca)
     try {
       const j = await fetchJson(PRIMARY_URL);
       const p = normalizeIdeasPayload(j);
@@ -202,7 +246,7 @@
       }
     } catch (_) {}
 
-    // 2) try Italia intera (fondamentale per funzionare ovunque)
+    // 2) Italia intera
     try {
       const j = await fetchJson(IT_ALL_URL);
       const p = normalizeIdeasPayload(j);
@@ -236,7 +280,7 @@
     return ideas;
   }
 
-  // ---------- selection with widen ----------
+  // ---------- selection (widen + rotazione + diversità) ----------
   function scoreByDistance(all, origin, haversineKmFn, estCarMinutesFromKm) {
     const hk = typeof haversineKmFn === "function" ? haversineKmFn : haversineKmFallback;
     return all
@@ -250,7 +294,34 @@
       .sort((a, b) => a.mins - b.mins);
   }
 
-  function pickIdeas({ all, origin, maxMinutes, eventType, haversineKm, estCarMinutesFromKm }) {
+  // pick diverse across distance bands
+  function pickDiverse(scored, limit, rand) {
+    // bande: 0-20%, 20-40%, 40-60%, 60-80%, 80-100% del max mins presente
+    const maxM = Math.max(1, scored[scored.length - 1]?.mins ?? 1);
+    const bands = [[], [], [], [], []];
+    for (const x of scored) {
+      const r = x.mins / maxM;
+      const idx = r < 0.2 ? 0 : r < 0.4 ? 1 : r < 0.6 ? 2 : r < 0.8 ? 3 : 4;
+      bands[idx].push(x.e);
+    }
+    for (const b of bands) shuffleInPlace(b, rand);
+
+    const out = [];
+    // round-robin: prende 1 per banda a giro
+    while (out.length < limit) {
+      let pushed = false;
+      for (const b of bands) {
+        if (b.length && out.length < limit) {
+          out.push(b.pop());
+          pushed = true;
+        }
+      }
+      if (!pushed) break;
+    }
+    return out;
+  }
+
+  function pickIdeas({ all, origin, maxMinutes, eventType, styleKey, haversineKm, estCarMinutesFromKm }) {
     let list = Array.isArray(all) ? all.slice() : [];
     const et = normalizeCategory(eventType || "tutti");
 
@@ -258,35 +329,40 @@
       list = list.filter((e) => normalizeCategory(e.category) === et);
     }
 
-    // if no origin, just return
     if (!origin || typeof origin.lat !== "number" || typeof origin.lon !== "number") {
+      // senza origine: ruota solo su minuti+settimana
+      const mm0 = Math.max(5, Number(maxMinutes) || 120);
+      const mmKey = Math.round(mm0 / 10) * 10; // cambia output al cambio minuti
+      const seed = hash32(`no-origin|${et}|${mmKey}|${isoWeekKey()}|${styleKey || ""}`);
+      const rand = mulberry32(seed);
+      shuffleInPlace(list, rand);
       return { items: list.slice(0, SHOW_LIMIT), note: "" };
     }
 
     const mm = Math.max(5, Number(maxMinutes) || 120);
-    const scored = scoreByDistance(list, origin, haversineKm, estCarMinutesFromKm);
+    const mmKey = Math.round(mm / 10) * 10; // cambia output al cambio minuti
+    const seed = hash32(`${originCellKey(origin)}|${et}|${mmKey}|${isoWeekKey()}|${styleKey || ""}`);
+    const rand = mulberry32(seed);
 
-    // pass 1: within minutes
-    let within = scored.filter((x) => x.mins <= mm).map((x) => x.e);
-    if (within.length >= 1) {
-      return { items: within.slice(0, SHOW_LIMIT), note: "" };
+    const scoredAll = scoreByDistance(list, origin, haversineKm, estCarMinutesFromKm);
+
+    // widen steps: se non trovi, allarghi automaticamente
+    const steps = [mm, Math.min(360, Math.round(mm * 1.6)), Math.min(420, Math.round(mm * 2.2)), Math.min(600, Math.round(mm * 3))];
+
+    for (let i = 0; i < steps.length; i++) {
+      const cap = steps[i];
+      const scored = scoredAll.filter((x) => x.mins <= cap);
+      if (scored.length) {
+        const items = pickDiverse(scored, SHOW_LIMIT, rand);
+        if (i === 0) return { items, note: "" };
+        return { items, note: `Non abbastanza entro ${mm} min: ho esteso a ~${cap} min.` };
+      }
     }
 
-    // pass 2: widen (x2) capped 360
-    const widened = Math.min(360, Math.round(mm * 2));
-    within = scored.filter((x) => x.mins <= widened).map((x) => x.e);
-    if (within.length >= 1) {
-      return {
-        items: within.slice(0, SHOW_LIMIT),
-        note: `Nessuna entro ${mm} min: ho allargato a ~${widened} min per non lasciarti a secco.`,
-      };
-    }
-
-    // pass 3: nearest anyway
-    return {
-      items: scored.slice(0, SHOW_LIMIT).map((x) => x.e),
-      note: `In questa zona non ho idee sufficienti nel raggio tempo: ti mostro le più vicine disponibili.`,
-    };
+    // ultima spiaggia: più vicini comunque (ma ruotati)
+    const nearest = scoredAll.slice(0, Math.max(1, SHOW_LIMIT * 2)).map((x) => x.e);
+    shuffleInPlace(nearest, rand);
+    return { items: nearest.slice(0, SHOW_LIMIT), note: `In zona ho poche idee: ti mostro le più vicine disponibili.` };
   }
 
   // ---------- render ----------
@@ -406,8 +482,6 @@
   }
 
   // ---------- public API ----------
-  let DATASET_LOADED_FROM = "";
-
   async function run({
     origin,
     maxMinutes,
@@ -420,16 +494,17 @@
     try {
       patchUI();
 
+      // salva origine per uso futuro
       if (origin && typeof origin.lat === "number" && typeof origin.lon === "number") {
         window.__JAMO_ORIGIN__ = origin;
       }
 
-      if (!DATASET) {
-        DATASET = await loadDataset();
-        DATASET_LOADED_FROM = DATASET_META.source || "";
-      }
+      // style: se vuoi usarlo per variare output (Chicche/Classici)
+      const styleKey = (document.querySelector(".chip.active[data-style]")?.getAttribute("data-style") || "").trim();
 
+      if (!DATASET) DATASET = await loadDataset();
       const all = Array.isArray(DATASET) ? DATASET : [];
+
       if (!all.length) {
         showStatus?.("warn", "Dataset MAI FATTO vuoto.");
         renderIntoResultArea({ items: [], maxMinutes, origin, note: "" });
@@ -442,12 +517,12 @@
         origin,
         maxMinutes,
         eventType,
+        styleKey,
         haversineKm,
         estCarMinutesFromKm
       });
 
       renderIntoResultArea({ items: picked.items, maxMinutes, origin, note: picked.note });
-
       showStatus?.("ok", `Mai fatto: trovate ${picked.items.length} proposte ✅`);
       scrollToId?.("resultCard");
     } catch (err) {
