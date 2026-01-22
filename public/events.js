@@ -1,19 +1,18 @@
-/* public/events.js — JAMO_MAIFATTO bridge (offline, idee REALI) v1.3
+/* public/events.js — JAMO_MAIFATTO bridge (offline, WOW, REALI)
  * Compatibile con app.js v22.2 (runEventsSearchBridge)
  *
- * ✅ UI: "Eventi" => "MAI FATTO"
- * ✅ Sottocategorie: Relax, Famiglia, Bici, Moto, Natura, Pioggia, Tramonto, Mangiare, 1h, 2h
- * ✅ Match ESATTO categoria (niente mapping ambiguo)
- * ✅ Niente "quando" (nascondo proprio il blocco)
- * ✅ Card: SOLO luogo + "Perché te lo propongo" (NO how/cosa fare)
- * ✅ Link "Cosa c’è" sempre
- * ✅ Google Maps: mantiene la PARTENZA impostata in app (origin=...)
+ * ✅ UI: "Eventi" => "✨ Mai fatto"
+ * ✅ Sottocategorie (WOW labels) ma filtri = data-etype originali:
+ *    relax, famiglia, bici, moto, natura, pioggia, tramonto, mangiare, 1h, 2h
+ * ✅ Card nuove: titolo + luogo in evidenza + solo "Perché te lo propongo"
+ * ✅ Link "Cosa c'è" (Google Maps search) + "Vai" mantiene partenza della app
+ * ✅ Più risultati: limit alto + widening automatico (mm +15/+30/+60 se poche idee)
  *
  * Dataset preferito:
  *  /data/mai_fatto/mai_fatto_it_verona.json
  *  { updated_at, count, ideas:[ { title, lat, lon, place, city, region, category, duration_min, why, url? } ] }
  *
- * Fallback (se esiste, per non rompere):
+ * Fallback: (solo se NON esiste il dataset curated)
  *  /data/events/events_all.json
  */
 
@@ -23,7 +22,12 @@
   const PRIMARY_URL = "/data/mai_fatto/mai_fatto_it_verona.json";
   const FALLBACK_URL = "/data/events/events_all.json";
 
-  const SHOW_LIMIT = 12;
+  // quante card mostrare
+  const SHOW_LIMIT = 24;
+
+  // se entro i minuti scelti trovi meno di questo, widen automatico
+  const MIN_GOOD = 10;
+  const WIDEN_STEPS = [0, 15, 30, 60]; // minuti extra
 
   // ---------- helpers ----------
   const esc = (s) =>
@@ -45,49 +49,20 @@
   }
 
   function nicePlaceLine(e) {
-    const city = (e.city || "").trim();
     const place = (e.place || "").trim();
+    const city = (e.city || "").trim();
     const region = (e.region || "").trim();
 
-    if (city) {
-      if (place && place.toLowerCase() !== city.toLowerCase()) {
-        return `${place} • ${city}${region ? " • " + region : ""}`;
-      }
-      return `${city}${region ? " • " + region : ""}`;
-    }
-    if (place && region) return `${place} • ${region}`;
-    return place || region || "";
+    // formato: "Place • City • Region"
+    const parts = [];
+    if (place) parts.push(place);
+    if (city) parts.push(city);
+    if (region) parts.push(region);
+    return parts.join(" • ");
   }
 
   function pill(label, soft = true) {
     return `<span class="pill ${soft ? "soft" : ""}">${esc(label)}</span>`;
-  }
-
-  // ✅ Google Maps: mantiene origin della app (coordinate o testo)
-  function mapsDirUrl(origin, destLat, destLon, mode) {
-    const m = mode || "driving";
-    const dest = `${destLat},${destLon}`;
-
-    let org = "";
-    if (origin && typeof origin.lat === "number" && typeof origin.lon === "number") {
-      org = `${origin.lat},${origin.lon}`;
-    } else {
-      const lbl = (document.getElementById("originLabel")?.value || "").trim();
-      if (lbl) org = lbl;
-    }
-
-    const base = `https://www.google.com/maps/dir/?api=1`;
-    const originPart = org ? `&origin=${encodeURIComponent(org)}` : "";
-    const destPart = `&destination=${encodeURIComponent(dest)}`;
-    return `${base}${originPart}${destPart}&travelmode=${encodeURIComponent(m)}`;
-  }
-
-  function googleWhatIsThereUrl(e) {
-    // Priorità: url del dataset, altrimenti ricerca.
-    if (e?.url) return String(e.url);
-    const q = [e.place, e.city, e.region].filter(Boolean).join(" ");
-    if (!q) return "";
-    return `https://www.google.com/search?q=${encodeURIComponent(q + " cosa vedere")}`;
   }
 
   function approxMinutesFromKm(km, estCarMinutesFromKm) {
@@ -104,70 +79,112 @@
     return k;
   }
 
-  function labelCategory(k) {
+  // LABEL WOW (solo UI)
+  function wowLabelForType(typeKey) {
     const m = {
-      relax: "Relax",
-      famiglia: "Famiglia",
-      bici: "Bici",
-      moto: "Moto",
-      natura: "Natura",
-      pioggia: "Pioggia",
-      tramonto: "Tramonto",
-      mangiare: "Mangiare",
-      "1h": "1 ora",
-      "2h": "2 ore",
+      tutti: "⭐ Tutti (wow)",
+      relax: "🧖 Reset totale",
+      famiglia: "👨‍👩‍👧‍👦 Posti che i bimbi ricordano",
+      bici: "🚴 Giro che cambia aria",
+      moto: "🏍️ Due curve e sorridi",
+      natura: "🌿 Natura che fa scena",
+      pioggia: "🌧️ Quando piove è meglio",
+      tramonto: "🌅 Tramonto che spacca",
+      mangiare: "🍝 Da raccontare dopo",
+      "1h": "🕐 1 ora: micro-fuga",
+      "2h": "🕑 2 ore: fuori dal mondo",
     };
-    return m[k] || (k ? k.charAt(0).toUpperCase() + k.slice(1) : "Idea");
+    return m[typeKey] || typeKey;
+  }
+
+  // Badge categoria (pill) nelle card
+  function wowPillForCategory(catKey) {
+    const m = {
+      relax: "Reset totale",
+      famiglia: "Posti che i bimbi ricordano",
+      bici: "Giro che cambia aria",
+      moto: "Due curve e sorridi",
+      natura: "Natura che fa scena",
+      pioggia: "Quando piove è meglio",
+      tramonto: "Tramonto che spacca",
+      mangiare: "Da raccontare dopo",
+      "1h": "1 ora: micro-fuga",
+      "2h": "2 ore: fuori dal mondo",
+    };
+    return m[catKey] || (catKey ? catKey : "Wow");
+  }
+
+  // Google Maps: preserva ORIGIN
+  function mapsDirUrlWithOrigin(origin, lat, lon, mode) {
+    const m = mode || "driving";
+    const dest = `${lat},${lon}`;
+    const base = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(dest)}&travelmode=${encodeURIComponent(m)}`;
+
+    if (origin && typeof origin.lat === "number" && typeof origin.lon === "number") {
+      const o = `${origin.lat},${origin.lon}`;
+      return `${base}&origin=${encodeURIComponent(o)}`;
+    }
+    return base;
+  }
+
+  // Link “Cosa c’è” (scheda / ricerca luogo su Maps)
+  function mapsSearchUrl(e) {
+    const q = [e.place, e.city, e.region].filter(Boolean).join(" ");
+    if (!q) return "";
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
   }
 
   // ---------- UI patch ----------
   function patchUI() {
-    // chip categoria "eventi" -> "mai fatto"
+    // chip categoria "eventi" -> "✨ Mai fatto"
     const catChip = document.querySelector('#categoryChips .chip[data-cat="eventi"]');
     if (catChip) catChip.textContent = "✨ Mai fatto";
 
-    // titolo blocco subfilters
+    // titolo box subfilters
     const box = document.getElementById("eventsSubfilters");
     if (box) {
+      box.classList.add("active"); // mostrato solo quando app.js attiva eventi; qui non forziamo oltre
       const smalls = box.querySelectorAll(".small");
       if (smalls && smalls[0]) smalls[0].textContent = "Mai fatto (categoria)";
     }
 
-    // sottocategorie (sempre le nostre)
+    // sostituisci i chip dentro eventTypeChips ma con LABEL WOW
     const row = document.getElementById("eventTypeChips");
     if (row) {
       row.innerHTML = `
-        <div class="chip active" data-etype="tutti">⭐ Tutti</div>
-        <div class="chip" data-etype="relax">🧖 Relax</div>
-        <div class="chip" data-etype="famiglia">👨‍👩‍👧‍👦 Famiglia</div>
-        <div class="chip" data-etype="bici">🚴 Bici</div>
-        <div class="chip" data-etype="moto">🏍️ Moto</div>
-        <div class="chip" data-etype="natura">🌿 Natura</div>
-        <div class="chip" data-etype="pioggia">🌧️ Pioggia</div>
-        <div class="chip" data-etype="tramonto">🌅 Tramonto</div>
-        <div class="chip" data-etype="mangiare">🍝 Mangiare</div>
-        <div class="chip" data-etype="1h">🕐 1 ora</div>
-        <div class="chip" data-etype="2h">🕑 2 ore</div>
+        <div class="chip active" data-etype="tutti">${wowLabelForType("tutti")}</div>
+        <div class="chip" data-etype="relax">${wowLabelForType("relax")}</div>
+        <div class="chip" data-etype="famiglia">${wowLabelForType("famiglia")}</div>
+        <div class="chip" data-etype="bici">${wowLabelForType("bici")}</div>
+        <div class="chip" data-etype="moto">${wowLabelForType("moto")}</div>
+        <div class="chip" data-etype="natura">${wowLabelForType("natura")}</div>
+        <div class="chip" data-etype="pioggia">${wowLabelForType("pioggia")}</div>
+        <div class="chip" data-etype="tramonto">${wowLabelForType("tramonto")}</div>
+        <div class="chip" data-etype="mangiare">${wowLabelForType("mangiare")}</div>
+        <div class="chip" data-etype="1h">${wowLabelForType("1h")}</div>
+        <div class="chip" data-etype="2h">${wowLabelForType("2h")}</div>
       `;
     }
 
-    // ✅ nascondi proprio tutto il blocco "Quando"
+    // NASCONDI "Quando" (eventWhenChips)
     const whenRow = document.getElementById("eventWhenChips");
-    if (whenRow && whenRow.parentElement) {
-      // parentElement è il wrapper che contiene label "Quando" + chips + tip
-      whenRow.parentElement.style.display = "none";
+    if (whenRow) {
+      const parent = whenRow.closest("div");
+      if (parent) parent.style.display = "none";
     }
 
+    // testo tip
     const info = document.querySelector("#eventsSubfilters .small.muted");
-    if (info) info.textContent = "Offline: idee curate (solo posti + perché).";
+    if (info) info.textContent = "Idee WOW curate (non eventi datati).";
   }
 
   patchUI();
   setTimeout(patchUI, 50);
+  setTimeout(patchUI, 250);
 
   // ---------- dataset cache ----------
   let DATASET = null;
-  let DATASET_META = { updated_at: "", count: 0, source: "", loadedFrom: "" };
+  let DATASET_META = { updated_at: "", count: 0, source: "" };
 
   async function fetchJson(url) {
     const r = await fetch(`${url}?v=${Date.now()}`, { cache: "no-store" });
@@ -176,7 +193,7 @@
   }
 
   async function loadDataset() {
-    // prova PRIMARY
+    // 1) prova curated
     try {
       const j = await fetchJson(PRIMARY_URL);
       const ideas = Array.isArray(j?.ideas) ? j.ideas : [];
@@ -184,11 +201,14 @@
         updated_at: j?.updated_at || "",
         count: j?.count ?? ideas.length,
         source: "curated_mai_fatto",
-        loadedFrom: PRIMARY_URL,
       };
-      return ideas;
-    } catch (e1) {
-      // fallback
+      return ideas.map((e) => ({
+        ...e,
+        category: normalizeCategory(e.category),
+        source: e.source || "curated_mai_fatto",
+      }));
+    } catch (_) {
+      // 2) fallback solo se manca curated
       const j2 = await fetchJson(FALLBACK_URL);
       const ev = Array.isArray(j2?.events) ? j2.events : [];
       const ideas = ev.map((e) => ({
@@ -200,7 +220,7 @@
         country_code: e.country_code,
         lat: e.lat,
         lon: e.lon,
-        category: e.category,
+        category: normalizeCategory(e.category),
         duration_min: e.duration_min,
         why: e.why,
         url: e.url,
@@ -210,35 +230,38 @@
         updated_at: j2?.updated_at || "",
         count: j2?.count ?? ideas.length,
         source: "events_fallback",
-        loadedFrom: FALLBACK_URL,
       };
       return ideas;
     }
   }
 
   // ---------- selection ----------
-  function pickIdeas({ all, origin, maxMinutes, eventType, haversineKm, estCarMinutesFromKm }) {
-    let list = Array.isArray(all) ? all.slice() : [];
+  function computeMins(origin, e, haversineKm, estCarMinutesFromKm) {
+    if (!origin || typeof origin.lat !== "number" || typeof origin.lon !== "number") return null;
+    if (typeof e.lat !== "number" || typeof e.lon !== "number") return null;
+    const km = typeof haversineKm === "function" ? haversineKm(origin.lat, origin.lon, e.lat, e.lon) : null;
+    if (km == null) return null;
+    return approxMinutesFromKm(km, estCarMinutesFromKm);
+  }
 
+  function pickIdeasOnce({ all, origin, maxMinutes, eventType, haversineKm, estCarMinutesFromKm }) {
+    let list = Array.isArray(all) ? all.slice() : [];
     const mm = Number(maxMinutes) || 120;
     const et = normalizeCategory(eventType || "tutti");
 
+    // filtro categoria (solo se specifica)
     if (et && et !== "tutti") {
       list = list.filter((e) => normalizeCategory(e.category) === et);
     }
 
+    // filtro tempo + sort
     if (origin && typeof origin.lat === "number" && typeof origin.lon === "number") {
       list = list
         .map((e) => {
-          if (typeof e.lat !== "number" || typeof e.lon !== "number") return null;
-          const km =
-            typeof haversineKm === "function"
-              ? haversineKm(origin.lat, origin.lon, e.lat, e.lon)
-              : null;
-          const mins = km == null ? null : approxMinutesFromKm(km, estCarMinutesFromKm);
+          const mins = computeMins(origin, e, haversineKm, estCarMinutesFromKm);
           return { e, mins };
         })
-        .filter(Boolean)
+        .filter((x) => x && x.e)
         .filter((x) => (x.mins == null ? true : x.mins <= mm))
         .sort((a, b) => (a.mins ?? 9999) - (b.mins ?? 9999))
         .map((x) => x.e);
@@ -247,19 +270,20 @@
     return list.slice(0, SHOW_LIMIT);
   }
 
-  // ---------- render ----------
-  function renderLoading() {
-    const area = document.getElementById("resultArea");
-    if (!area) return;
-    area.innerHTML = `
-      <div class="card clickSafe" style="box-shadow:none; border-color:rgba(0,224,255,.20); background:rgba(0,224,255,.05);">
-        <div style="font-weight:950; font-size:18px;">✨ MAI FATTO — sto cercando…</div>
-        <div class="small muted" style="margin-top:6px;">Cerco nel dataset offline…</div>
-      </div>
-    `;
+  function pickIdeasWidened(args) {
+    const baseMm = Number(args.maxMinutes) || 120;
+
+    for (const plus of WIDEN_STEPS) {
+      const items = pickIdeasOnce({ ...args, maxMinutes: baseMm + plus });
+      if (items.length >= MIN_GOOD || plus === WIDEN_STEPS[WIDEN_STEPS.length - 1]) {
+        return { items, usedMax: baseMm + plus };
+      }
+    }
+    return { items: [], usedMax: baseMm };
   }
 
-  function renderIntoResultArea({ items, origin, maxMinutes }) {
+  // ---------- render ----------
+  function renderIntoResultArea({ items, origin, maxMinutes, usedMax }) {
     const area = document.getElementById("resultArea");
     if (!area) return;
 
@@ -269,9 +293,9 @@
     if (!items || !items.length) {
       area.innerHTML = `
         <div class="card clickSafe" style="box-shadow:none; border-color:rgba(255,90,90,.40); background:rgba(255,90,90,.10);">
-          <div style="font-weight:950; font-size:18px;">😕 Nessuna idea trovata</div>
+          <div style="font-weight:950; font-size:18px;">😕 Nessuna idea WOW trovata</div>
           <div class="small muted" style="margin-top:8px; line-height:1.45;">
-            Aumenta i minuti (ora: <b>${esc(maxMinutes)}</b>) oppure cambia categoria Mai fatto.
+            Aumenta i minuti (ora: <b>${esc(maxMinutes)}</b>) oppure cambia categoria.
           </div>
           <div class="small muted" style="margin-top:10px;">
             ${updated ? `Dataset aggiornato ${esc(updated)}` : "Dataset offline"} • totale ${esc(total)}
@@ -283,44 +307,46 @@
 
     const cards = items
       .map((e) => {
-        const title = e.title || "Idea";
+        const title = e.title || "Idea WOW";
         const where = nicePlaceLine(e);
-        const why = e.why || "";
-
+        const why = (e.why || "").trim();
         const catKey = normalizeCategory(e.category);
-        const catLabel = labelCategory(catKey);
+        const catPill = wowPillForCategory(catKey);
 
+        const mins = computeMins(origin, e, window.haversineKm, window.estCarMinutesFromKm); // fallback se app non passa; ok se null
         const durLine = e.duration_min ? `⏱️ ~${esc(e.duration_min)} min` : "";
 
         const lat = e.lat;
         const lon = e.lon;
 
-        const mapsAuto =
-          typeof lat === "number" && typeof lon === "number"
-            ? mapsDirUrl(origin, lat, lon, "driving")
-            : "";
+        const mapsAuto = (typeof lat === "number" && typeof lon === "number")
+          ? mapsDirUrlWithOrigin(origin, lat, lon, "driving")
+          : "";
+        const mapsWalk = (typeof lat === "number" && typeof lon === "number")
+          ? mapsDirUrlWithOrigin(origin, lat, lon, "walking")
+          : "";
+        const mapsBike = (typeof lat === "number" && typeof lon === "number")
+          ? mapsDirUrlWithOrigin(origin, lat, lon, "bicycling")
+          : "";
 
-        const mapsWalk =
-          typeof lat === "number" && typeof lon === "number"
-            ? mapsDirUrl(origin, lat, lon, "walking")
-            : "";
+        const seeUrl = mapsSearchUrl(e); // “Cosa c’è”
+        const infoUrl = e.url ? String(e.url) : "";
 
-        const mapsBike =
-          typeof lat === "number" && typeof lon === "number"
-            ? mapsDirUrl(origin, lat, lon, "bicycling")
-            : "";
-
-        const whatUrl = googleWhatIsThereUrl(e);
-
-        // ✅ LUOGO IN EVIDENZA: subito sotto il titolo
         const placeBlock = where
           ? `<div style="margin-top:10px; font-weight:950; font-size:15px; letter-spacing:.2px;">
                📍 ${esc(where)}
              </div>`
           : "";
 
-        const durBlock = durLine
-          ? `<div class="small muted" style="margin-top:6px;">${esc(durLine)}</div>`
+        const metaLineParts = [];
+        if (durLine) metaLineParts.push(durLine);
+        // se vuoi mostrare anche stima “entro X min”, aggiungo solo se abbiamo mins
+        if (origin && typeof origin.lat === "number" && typeof origin.lon === "number" && typeof lat === "number" && typeof lon === "number") {
+          const mm = computeMins(origin, e, window.haversineKm, window.estCarMinutesFromKm);
+          if (Number.isFinite(mm)) metaLineParts.push(`🚗 ~${Math.round(mm)} min`);
+        }
+        const metaLine = metaLineParts.length
+          ? `<div class="small muted" style="margin-top:6px;">${esc(metaLineParts.join(" • "))}</div>`
           : "";
 
         return `
@@ -328,11 +354,11 @@
             <div style="font-weight:950; font-size:20px; line-height:1.12;">${esc(title)}</div>
 
             ${placeBlock}
-            ${durBlock}
+            ${metaLine}
 
             <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;">
               ${pill("Mai fatto")}
-              ${pill(catLabel)}
+              ${pill(catPill)}
             </div>
 
             ${
@@ -347,7 +373,8 @@
               ${mapsAuto ? `<a class="btn btnPrimary" href="${esc(mapsAuto)}" target="_blank" rel="noopener">🧭 Vai</a>` : ""}
               ${mapsWalk ? `<a class="btn" href="${esc(mapsWalk)}" target="_blank" rel="noopener">🚶 A piedi</a>` : ""}
               ${mapsBike ? `<a class="btn" href="${esc(mapsBike)}" target="_blank" rel="noopener">🚴 Bici</a>` : ""}
-              ${whatUrl ? `<a class="btnGhost" href="${esc(whatUrl)}" target="_blank" rel="noopener">🔎 Cosa c’è</a>` : ""}
+              ${seeUrl ? `<a class="btnGhost" href="${esc(seeUrl)}" target="_blank" rel="noopener">👀 Cosa c’è</a>` : ""}
+              ${infoUrl ? `<a class="btnGhost" href="${esc(infoUrl)}" target="_blank" rel="noopener">🔎 Info</a>` : ""}
             </div>
 
             <div class="small muted" style="margin-top:10px; opacity:.70;">
@@ -358,18 +385,23 @@
       })
       .join("");
 
+    const widenNote =
+      (usedMax && Number(usedMax) > Number(maxMinutes))
+        ? `<div class="small muted" style="margin-top:6px; opacity:.85;">
+             Nota: per riempire la lista ho considerato anche idee fino a ~${esc(usedMax)} min.
+           </div>`
+        : "";
+
     area.innerHTML = `
       <div class="card clickSafe" style="box-shadow:none; border-color:rgba(0,224,255,.20); background:rgba(0,224,255,.05);">
-        <div style="font-weight:950; font-size:18px;">✨ MAI FATTO — idee vicine</div>
+        <div style="font-weight:950; font-size:18px;">✨ MAI FATTO — idee WOW vicine</div>
         <div class="small muted" style="margin-top:6px;">
           ${updated ? `Dataset aggiornato ${esc(updated)}` : "Dataset offline"} • totale ${esc(total)}
         </div>
         <div class="small muted" style="margin-top:6px;">
-          Mostrate: ${esc(items.length)} • entro ~${esc(maxMinutes)} min
+          Mostrate: ${esc(items.length)} • impostato: ~${esc(maxMinutes)} min
         </div>
-        <div class="small muted" style="margin-top:6px; opacity:.7;">
-          Sorgente: ${esc(DATASET_META.loadedFrom || "offline")}
-        </div>
+        ${widenNote}
       </div>
       ${cards}
     `;
@@ -387,48 +419,40 @@
   }) {
     try {
       patchUI();
-      renderLoading(); // così sostituisce subito la card “sto cercando”
-
-      // salva origin (debug)
-      window.__JAMO_ORIGIN__ = origin || null;
 
       if (!DATASET) DATASET = await loadDataset();
       const all = Array.isArray(DATASET) ? DATASET : [];
 
       if (!all.length) {
         showStatus?.("warn", "Dataset MAI FATTO vuoto.");
-        renderIntoResultArea({ items: [], origin, maxMinutes });
+        renderIntoResultArea({ items: [], origin, maxMinutes, usedMax: maxMinutes });
         scrollToId?.("resultCard");
         return;
       }
 
-      const items = pickIdeas({
+      const { items, usedMax } = pickIdeasWidened({
         all,
         origin,
         maxMinutes,
         eventType,
         haversineKm,
-        estCarMinutesFromKm
+        estCarMinutesFromKm,
       });
 
-      renderIntoResultArea({ items, origin, maxMinutes });
-      showStatus?.("ok", `Mai fatto: trovate ${items.length} proposte ✅`);
+      renderIntoResultArea({ items, origin, maxMinutes, usedMax });
+
+      showStatus?.("ok", `Mai fatto: ${items.length} idee WOW ✅`);
       scrollToId?.("resultCard");
     } catch (err) {
       console.error(err);
-      showStatus?.(
-        "err",
-        "Modulo ‘Mai fatto’ non disponibile (dataset mancante o non valido)."
-      );
-
+      showStatus?.("err", "Errore MAI FATTO: manca dataset oppure non è valido.");
       const area = document.getElementById("resultArea");
       if (area) {
         area.innerHTML = `
           <div class="card clickSafe" style="box-shadow:none; border-color:rgba(255,90,90,.40); background:rgba(255,90,90,.10);">
             <div style="font-weight:950; font-size:18px;">❌ MAI FATTO non disponibile</div>
             <div class="small muted" style="margin-top:8px; line-height:1.45;">
-              Controlla che esista <b>${esc(PRIMARY_URL)}</b> (oppure <b>${esc(FALLBACK_URL)}</b>)
-              e che contenga <b>{ ideas: [...] }</b>.
+              Controlla che esista <b>${esc(PRIMARY_URL)}</b> e che contenga <b>{ ideas: [...] }</b>.
             </div>
           </div>
         `;
@@ -437,5 +461,6 @@
     }
   }
 
+  // ✅ hook richiesto da app.js
   window.JAMO_EVENTS = { run };
 })();
