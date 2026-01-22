@@ -1,15 +1,17 @@
-/* public/events.js — JAMO_MAIFATTO bridge (offline, idee REALI)
+/* public/events.js — JAMO_MAIFATTO bridge (offline, idee REALI) v1.3
  * Compatibile con app.js v22.2 (runEventsSearchBridge)
  *
  * ✅ UI: "Eventi" => "MAI FATTO"
  * ✅ Sottocategorie: Relax, Famiglia, Bici, Moto, Natura, Pioggia, Tramonto, Mangiare, 1h, 2h
  * ✅ Match ESATTO categoria (niente mapping ambiguo)
- * ✅ Niente "quando" (non serve per mai-fatto)
- * ✅ "Vai" su Google Maps mantiene la PARTENZA impostata in app (origin=...)
+ * ✅ Niente "quando" (nascondo proprio il blocco)
+ * ✅ Card: SOLO luogo + "Perché te lo propongo" (NO how/cosa fare)
+ * ✅ Link "Cosa c’è" sempre
+ * ✅ Google Maps: mantiene la PARTENZA impostata in app (origin=...)
  *
  * Dataset preferito:
  *  /data/mai_fatto/mai_fatto_it_verona.json
- *  { updated_at, count, ideas:[ { title, lat, lon, place, city, region, category, duration_min, why } ] }
+ *  { updated_at, count, ideas:[ { title, lat, lon, place, city, region, category, duration_min, why, url? } ] }
  *
  * Fallback (se esiste, per non rompere):
  *  /data/events/events_all.json
@@ -66,12 +68,10 @@
     const m = mode || "driving";
     const dest = `${destLat},${destLon}`;
 
-    // Origin preferito: lat/lon
     let org = "";
     if (origin && typeof origin.lat === "number" && typeof origin.lon === "number") {
       org = `${origin.lat},${origin.lon}`;
     } else {
-      // fallback: prova a usare label inserita dall'utente
       const lbl = (document.getElementById("originLabel")?.value || "").trim();
       if (lbl) org = lbl;
     }
@@ -80,6 +80,14 @@
     const originPart = org ? `&origin=${encodeURIComponent(org)}` : "";
     const destPart = `&destination=${encodeURIComponent(dest)}`;
     return `${base}${originPart}${destPart}&travelmode=${encodeURIComponent(m)}`;
+  }
+
+  function googleWhatIsThereUrl(e) {
+    // Priorità: url del dataset, altrimenti ricerca.
+    if (e?.url) return String(e.url);
+    const q = [e.place, e.city, e.region].filter(Boolean).join(" ");
+    if (!q) return "";
+    return `https://www.google.com/search?q=${encodeURIComponent(q + " cosa vedere")}`;
   }
 
   function approxMinutesFromKm(km, estCarMinutesFromKm) {
@@ -114,15 +122,18 @@
 
   // ---------- UI patch ----------
   function patchUI() {
+    // chip categoria "eventi" -> "mai fatto"
     const catChip = document.querySelector('#categoryChips .chip[data-cat="eventi"]');
     if (catChip) catChip.textContent = "✨ Mai fatto";
 
+    // titolo blocco subfilters
     const box = document.getElementById("eventsSubfilters");
     if (box) {
       const smalls = box.querySelectorAll(".small");
       if (smalls && smalls[0]) smalls[0].textContent = "Mai fatto (categoria)";
     }
 
+    // sottocategorie (sempre le nostre)
     const row = document.getElementById("eventTypeChips");
     if (row) {
       row.innerHTML = `
@@ -140,15 +151,15 @@
       `;
     }
 
-    // nascondi "quando"
+    // ✅ nascondi proprio tutto il blocco "Quando"
     const whenRow = document.getElementById("eventWhenChips");
-    if (whenRow) {
-      const parent = whenRow.closest("div");
-      if (parent) parent.style.display = "none";
+    if (whenRow && whenRow.parentElement) {
+      // parentElement è il wrapper che contiene label "Quando" + chips + tip
+      whenRow.parentElement.style.display = "none";
     }
 
     const info = document.querySelector("#eventsSubfilters .small.muted");
-    if (info) info.textContent = "Offline: idee reali curate. (Niente date, niente confusione).";
+    if (info) info.textContent = "Offline: idee curate (solo posti + perché).";
   }
 
   patchUI();
@@ -156,7 +167,7 @@
 
   // ---------- dataset cache ----------
   let DATASET = null;
-  let DATASET_META = { updated_at: "", count: 0, source: "" };
+  let DATASET_META = { updated_at: "", count: 0, source: "", loadedFrom: "" };
 
   async function fetchJson(url) {
     const r = await fetch(`${url}?v=${Date.now()}`, { cache: "no-store" });
@@ -165,6 +176,7 @@
   }
 
   async function loadDataset() {
+    // prova PRIMARY
     try {
       const j = await fetchJson(PRIMARY_URL);
       const ideas = Array.isArray(j?.ideas) ? j.ideas : [];
@@ -172,9 +184,11 @@
         updated_at: j?.updated_at || "",
         count: j?.count ?? ideas.length,
         source: "curated_mai_fatto",
+        loadedFrom: PRIMARY_URL,
       };
       return ideas;
-    } catch (_) {
+    } catch (e1) {
+      // fallback
       const j2 = await fetchJson(FALLBACK_URL);
       const ev = Array.isArray(j2?.events) ? j2.events : [];
       const ideas = ev.map((e) => ({
@@ -196,6 +210,7 @@
         updated_at: j2?.updated_at || "",
         count: j2?.count ?? ideas.length,
         source: "events_fallback",
+        loadedFrom: FALLBACK_URL,
       };
       return ideas;
     }
@@ -233,6 +248,17 @@
   }
 
   // ---------- render ----------
+  function renderLoading() {
+    const area = document.getElementById("resultArea");
+    if (!area) return;
+    area.innerHTML = `
+      <div class="card clickSafe" style="box-shadow:none; border-color:rgba(0,224,255,.20); background:rgba(0,224,255,.05);">
+        <div style="font-weight:950; font-size:18px;">✨ MAI FATTO — sto cercando…</div>
+        <div class="small muted" style="margin-top:6px;">Cerco nel dataset offline…</div>
+      </div>
+    `;
+  }
+
   function renderIntoResultArea({ items, origin, maxMinutes }) {
     const area = document.getElementById("resultArea");
     if (!area) return;
@@ -284,11 +310,7 @@
             ? mapsDirUrl(origin, lat, lon, "bicycling")
             : "";
 
-        const infoUrl = e.url ? String(e.url) : "";
-        const wiki =
-          where
-            ? `https://www.google.com/search?q=${encodeURIComponent(where + " cosa vedere")}`
-            : "";
+        const whatUrl = googleWhatIsThereUrl(e);
 
         // ✅ LUOGO IN EVIDENZA: subito sotto il titolo
         const placeBlock = where
@@ -325,8 +347,7 @@
               ${mapsAuto ? `<a class="btn btnPrimary" href="${esc(mapsAuto)}" target="_blank" rel="noopener">🧭 Vai</a>` : ""}
               ${mapsWalk ? `<a class="btn" href="${esc(mapsWalk)}" target="_blank" rel="noopener">🚶 A piedi</a>` : ""}
               ${mapsBike ? `<a class="btn" href="${esc(mapsBike)}" target="_blank" rel="noopener">🚴 Bici</a>` : ""}
-              ${infoUrl ? `<a class="btnGhost" href="${esc(infoUrl)}" target="_blank" rel="noopener">🔎 Cosa c’è</a>` : ""}
-              ${!infoUrl && wiki ? `<a class="btnGhost" href="${esc(wiki)}" target="_blank" rel="noopener">🔎 Cosa c’è</a>` : ""}
+              ${whatUrl ? `<a class="btnGhost" href="${esc(whatUrl)}" target="_blank" rel="noopener">🔎 Cosa c’è</a>` : ""}
             </div>
 
             <div class="small muted" style="margin-top:10px; opacity:.70;">
@@ -346,6 +367,9 @@
         <div class="small muted" style="margin-top:6px;">
           Mostrate: ${esc(items.length)} • entro ~${esc(maxMinutes)} min
         </div>
+        <div class="small muted" style="margin-top:6px; opacity:.7;">
+          Sorgente: ${esc(DATASET_META.loadedFrom || "offline")}
+        </div>
       </div>
       ${cards}
     `;
@@ -363,8 +387,9 @@
   }) {
     try {
       patchUI();
+      renderLoading(); // così sostituisce subito la card “sto cercando”
 
-      // salva origin per eventuali usi futuri (debug ecc.)
+      // salva origin (debug)
       window.__JAMO_ORIGIN__ = origin || null;
 
       if (!DATASET) DATASET = await loadDataset();
@@ -391,14 +416,19 @@
       scrollToId?.("resultCard");
     } catch (err) {
       console.error(err);
-      showStatus?.("err", "Errore MAI FATTO: manca dataset oppure non è valido.");
+      showStatus?.(
+        "err",
+        "Modulo ‘Mai fatto’ non disponibile (dataset mancante o non valido)."
+      );
+
       const area = document.getElementById("resultArea");
       if (area) {
         area.innerHTML = `
           <div class="card clickSafe" style="box-shadow:none; border-color:rgba(255,90,90,.40); background:rgba(255,90,90,.10);">
             <div style="font-weight:950; font-size:18px;">❌ MAI FATTO non disponibile</div>
             <div class="small muted" style="margin-top:8px; line-height:1.45;">
-              Controlla che esista <b>${esc(PRIMARY_URL)}</b> e che contenga <b>{ ideas: [...] }</b>.
+              Controlla che esista <b>${esc(PRIMARY_URL)}</b> (oppure <b>${esc(FALLBACK_URL)}</b>)
+              e che contenga <b>{ ideas: [...] }</b>.
             </div>
           </div>
         `;
@@ -409,4 +439,3 @@
 
   window.JAMO_EVENTS = { run };
 })();
-```0
