@@ -1,18 +1,7 @@
 /* public/events.js — JAMO_MAIFATTO bridge (offline, idee REALI + WOW)
- * Compatibile con app.js v22.2 (runEventsSearchBridge)
- *
- * ✅ UI: "Eventi" => "✨ Mai fatto"
- * ✅ Sottocategorie WOW (nomi = categorie)
- * ✅ Match ESATTO categoria (no mapping ambiguo)
- * ✅ "Quando" nascosto (non serve per Mai fatto)
- * ✅ Tante idee + "Altre idee" + rotazione settimanale
- *
- * Dataset preferito:
- *  /data/mai_fatto/mai_fatto_it_verona.json
- *  { updated_at, count, ideas:[ { id?, title, lat, lon, place, city, region, category, duration_min, why, how[] , url?, source? } ] }
- *
- * Fallback (se esiste, per non rompere):
- *  /data/events/events_all.json
+ * ✅ Solo "Perché te lo propongo" (NO "cosa fare")
+ * ✅ Anti-ovvio (blocca posti super noti) + fallback se restano pochi
+ * ✅ Rotazione + "Altre idee"
  */
 
 (() => {
@@ -21,10 +10,29 @@
   const PRIMARY_URL = "/data/mai_fatto/mai_fatto_it_verona.json";
   const FALLBACK_URL = "/data/events/events_all.json";
 
-  // quante ne mostriamo subito + step "altre"
   const SHOW_INITIAL = 10;
   const SHOW_STEP = 10;
   const SHOW_MAX = 60;
+
+  // ----- Anti-ovvio -----
+  // Parole/luoghi che NON vuoi vedere in "Mai fatto" (troppo noti).
+  // Aggiungi qui tutto quello che per te è “banale”.
+  const OVB_CITY_BLACKLIST = [
+    "sirmione", "lazise", "bardolino", "peschiera", "garda",
+    "verona centro", "arena", "piazza bra", "castelvecchio",
+  ];
+
+  const OVB_PLACE_BLACKLIST = [
+    "lungolago", "centro storico", "piazza", "duomo",
+    "parco sigurtà", "gardaland", "movieland",
+  ];
+
+  // soglia: quanto severo deve essere il filtro anti-ovvio
+  // 0 = OFF, 1 = leggero, 2 = medio, 3 = duro
+  const ANTI_OBVIOUS_LEVEL = 2;
+
+  // se dopo anti-ovvio restano meno di X idee, allentiamo automaticamente
+  const MIN_RESULTS_AFTER_FILTER = 6;
 
   // ---------- helpers ----------
   const esc = (s) =>
@@ -76,8 +84,6 @@
     return Math.round((km / 60) * 60 + 8);
   }
 
-  // ---------- categorie (NORMALIZZATE) ----------
-  // Nota: qui NON “invento” mapping strani: normalizzo solo formati equivalenti.
   function normalizeCategory(c) {
     const k = String(c || "").toLowerCase().trim();
     if (!k) return "";
@@ -87,8 +93,7 @@
     return k;
   }
 
-  // ✅ NOMI WOW = le categorie che vede l’utente (come hai chiesto)
-  // Se vuoi cambiare i testi WOW, li cambi QUI e basta.
+  // NOMI WOW
   const WOW = {
     relax:   "🧖 Stacca davvero",
     famiglia:"👨‍👩‍👧‍👦 Posti che i bambini ricordano",
@@ -101,25 +106,19 @@
     "1h":    "🕐 1 ora fatta bene",
     "2h":    "🕑 2 ore memorabili",
   };
+  const wowLabelForKey = (k) => WOW[k] || k || "Idea";
 
-  function wowLabelForKey(k) {
-    return WOW[k] || (k ? k : "Idea");
-  }
-
-  // ---------- UI patch (solo DOM, non rompe app.js) ----------
+  // ---------- UI patch ----------
   function patchUI() {
-    // chip categoria "eventi" -> "Mai fatto"
     const catChip = document.querySelector('#categoryChips .chip[data-cat="eventi"]');
     if (catChip) catChip.textContent = "✨ Mai fatto";
 
-    // titolo box subfiltri
     const box = document.getElementById("eventsSubfilters");
     if (box) {
       const smalls = box.querySelectorAll(".small");
       if (smalls && smalls[0]) smalls[0].textContent = "Mai fatto (categoria)";
     }
 
-    // sostituisce i chip sottocategoria (eventTypeChips) con le WOW
     const row = document.getElementById("eventTypeChips");
     if (row) {
       row.innerHTML = `
@@ -137,16 +136,14 @@
       `;
     }
 
-    // nasconde "quando"
     const whenRow = document.getElementById("eventWhenChips");
     if (whenRow) {
       const parent = whenRow.closest("div");
       if (parent) parent.style.display = "none";
     }
 
-    // testo info
     const info = document.querySelector("#eventsSubfilters .small.muted");
-    if (info) info.textContent = "Offline: idee reali curate. Cambiano nel tempo (rotazione automatica).";
+    if (info) info.textContent = "Offline: idee curate. Niente piani, solo perché vale davvero.";
   }
 
   patchUI();
@@ -187,7 +184,6 @@
         category: e.category,
         duration_min: e.duration_min,
         why: e.why,
-        how: e.how,
         url: e.url,
         source: e.source || "events_fallback",
       }));
@@ -200,21 +196,52 @@
     }
   }
 
-  // ---------- stable id (per rotazione / no-dup) ----------
-  function stableIdeaId(e) {
-    if (e?.id) return String(e.id);
-    const t = String(e?.title || "").toLowerCase().trim();
-    const p = String(e?.place || "").toLowerCase().trim();
-    const c = String(e?.city || "").toLowerCase().trim();
-    const la = Number(e?.lat);
-    const lo = Number(e?.lon);
-    const ll = Number.isFinite(la) && Number.isFinite(lo) ? `${la.toFixed(4)},${lo.toFixed(4)}` : "";
-    return `i_${t}|${p}|${c}|${ll}`.slice(0, 180);
+  // ---------- anti-ovvio + wow scoring ----------
+  function normTxt(s) {
+    return String(s || "").toLowerCase().trim();
   }
 
-  // ---------- seed / rotazione ----------
+  function isObvious(e, level) {
+    if (!level) return false;
+
+    const city = normTxt(e.city);
+    const place = normTxt(e.place);
+    const title = normTxt(e.title);
+
+    const hitCity = OVB_CITY_BLACKLIST.some((x) => city.includes(x) || title.includes(x));
+    const hitPlace = OVB_PLACE_BLACKLIST.some((x) => place.includes(x) || title.includes(x));
+
+    if (level === 1) return hitCity;                   // leggero: blocca solo città/ipernote
+    if (level === 2) return hitCity || hitPlace;       // medio: blocca anche place ovvi
+    return hitCity || hitPlace;                         // duro: uguale qui (puoi estendere)
+  }
+
+  function wowScore(e) {
+    // punteggio semplice: premia “specificità” e penalizza parole generiche/ovvie
+    const t = normTxt(e.title);
+    const p = normTxt(e.place);
+    const c = normTxt(e.city);
+
+    let s = 0;
+    if ((t.length + p.length) > 40) s += 1;
+    if (t.includes("vista") || t.includes("belvedere") || t.includes("cascata") || t.includes("forra")) s += 2;
+    if (t.includes("segreto") || t.includes("nascosto") || t.includes("sconosciuto")) s += 2;
+    if (p.includes("eremo") || p.includes("mulino") || p.includes("forra") || p.includes("sentiero")) s += 2;
+
+    // penalità obvious
+    if (isObvious(e, 2)) s -= 3;
+
+    // se manca why, scende (perché non stiamo “spiegando”)
+    if (!String(e.why || "").trim()) s -= 2;
+
+    // città molto famosa penalizza un po’
+    if (["verona", "sirmione", "garda", "lazise", "peschiera"].includes(c)) s -= 2;
+
+    return s;
+  }
+
+  // ---------- deterministic shuffle ----------
   function weekKey(d = new Date()) {
-    // chiave “anno-settimana ISO” semplificata (abbastanza stabile per ruotare)
     const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
     const dayNum = date.getUTCDay() || 7;
     date.setUTCDate(date.getUTCDate() + 4 - dayNum);
@@ -222,7 +249,14 @@
     const weekNo = Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
     return `${date.getUTCFullYear()}-W${String(weekNo).padStart(2, "0")}`;
   }
-
+  function hashStr(s) {
+    let h = 2166136261;
+    for (let i = 0; i < s.length; i++) {
+      h ^= s.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
+    return h >>> 0;
+  }
   function mulberry32(seed) {
     let t = seed >>> 0;
     return function () {
@@ -232,17 +266,6 @@
       return ((r ^ (r >>> 14)) >>> 0) / 4294967296;
     };
   }
-
-  function hashStr(s) {
-    // hash veloce deterministico
-    let h = 2166136261;
-    for (let i = 0; i < s.length; i++) {
-      h ^= s.charCodeAt(i);
-      h = Math.imul(h, 16777619);
-    }
-    return h >>> 0;
-  }
-
   function shuffleDeterministic(arr, seedStr) {
     const a = arr.slice();
     const rnd = mulberry32(hashStr(seedStr));
@@ -253,33 +276,7 @@
     return a;
   }
 
-  // ---------- “non ripetere sempre” (memoria leggera) ----------
-  function seenKey({ et, mm, origin }) {
-    const o = origin && Number.isFinite(origin.lat) && Number.isFinite(origin.lon)
-      ? `${origin.lat.toFixed(2)},${origin.lon.toFixed(2)}`
-      : "no_origin";
-    return `jamo_maifatto_seen:${o}:${et}:${mm}`;
-  }
-
-  function loadSeen(key) {
-    try {
-      const raw = localStorage.getItem(key);
-      const j = raw ? JSON.parse(raw) : null;
-      const list = Array.isArray(j?.list) ? j.list : [];
-      const ts = Number(j?.ts) || 0;
-      // scadenza: 10 giorni
-      if (!ts || (Date.now() - ts) > 10 * 24 * 60 * 60 * 1000) return [];
-      return list;
-    } catch { return []; }
-  }
-
-  function saveSeen(key, ids) {
-    try {
-      localStorage.setItem(key, JSON.stringify({ ts: Date.now(), list: ids.slice(0, 120) }));
-    } catch {}
-  }
-
-  // ---------- selection ----------
+  // ---------- selection + widen ----------
   function filterByCategoryExact(list, et) {
     const want = normalizeCategory(et || "tutti");
     if (!want || want === "tutti") return list;
@@ -302,24 +299,13 @@
       .filter(Boolean);
   }
 
-  function pickIdeas({
-    all,
-    origin,
-    maxMinutes,
-    eventType,
-    haversineKm,
-    estCarMinutesFromKm,
-  }) {
+  function pickIdeas({ all, origin, maxMinutes, eventType, haversineKm, estCarMinutesFromKm }) {
     const mmInput = Number(maxMinutes) || 120;
     const et = normalizeCategory(eventType || "tutti");
 
-    // 1) categoria esatta
     let list = filterByCategoryExact(all, et);
-
-    // 2) calcola mins e ordina per vicinanza (ma poi ruotiamo)
     const withMins = addMinutesInfo(list, origin, haversineKm, estCarMinutesFromKm);
 
-    // 3) se pochi entro mm, widen “gentile” (soprattutto per 30–60)
     const widenSteps =
       mmInput <= 45 ? [mmInput, 45, 60, 90] :
       mmInput <= 60 ? [mmInput, 75, 90, 120] :
@@ -337,37 +323,42 @@
       if (within.length >= 6) break;
     }
 
-    // 4) rotazione + anti-dup
+    // 1) anti-ovvio
+    const level = ANTI_OBVIOUS_LEVEL;
+    let filtered = level ? within.filter((x) => !isObvious(x.e, level)) : within.slice();
+
+    // 2) se troppo pochi, allenta automaticamente (non deve “morire”)
+    if (level && filtered.length < MIN_RESULTS_AFTER_FILTER) {
+      // allenta: prima riaggiunge quelli “place ovvi” ma non città iper-note
+      filtered = within.filter((x) => !isObvious(x.e, 1));
+      if (filtered.length < MIN_RESULTS_AFTER_FILTER) {
+        // ultimo fallback: nessun filtro (meglio qualche idea che zero)
+        filtered = within.slice();
+      }
+    }
+
+    // 3) wow scoring: mostra prima quelli più “wow”
+    filtered.sort((a, b) => wowScore(b.e) - wowScore(a.e));
+
+    // 4) rotazione settimanale, ma mantenendo il “wow-first”
     const wk = weekKey(new Date());
-    const day = new Date().getDay(); // 0..6
+    const day = new Date().getDay();
     const oKey = origin && Number.isFinite(origin.lat) && Number.isFinite(origin.lon)
       ? `${origin.lat.toFixed(2)},${origin.lon.toFixed(2)}`
       : "no_origin";
 
     const seed = `wk:${wk}|d:${day}|et:${et}|mm:${mmInput}|o:${oKey}|src:${DATASET_META.source}`;
-    let rotated = shuffleDeterministic(within, seed);
+    const head = filtered.slice(0, 18);         // top wow
+    const tail = shuffleDeterministic(filtered.slice(18), seed);
+    const out = head.concat(tail).slice(0, SHOW_MAX).map((x) => x.e);
 
-    // togli quelli visti di recente (per categoria+minuti+zona)
-    const sk = seenKey({ et, mm: mmInput, origin });
-    const seen = new Set(loadSeen(sk));
-    rotated = rotated.filter((x) => !seen.has(stableIdeaId(x.e)));
-
-    // se diventano troppo pochi, rimetti anche “visti” ma dopo
-    if (rotated.length < 6) {
-      const rest = within.filter((x) => !rotated.includes(x));
-      rotated = rotated.concat(rest);
-    }
-
-    // output finale (fino a SHOW_MAX)
-    const out = rotated.slice(0, SHOW_MAX).map((x) => x.e);
-
-    return { items: out, usedMinutes: usedMM, inputMinutes: mmInput, totalPool: within.length };
+    return { items: out, usedMinutes: usedMM, inputMinutes: mmInput, totalPool: filtered.length };
   }
 
-  // ---------- render (paginazione locale) ----------
+  // ---------- render (solo WHY, niente how[]) ----------
   let CURRENT_ALL = [];
   let CURRENT_VISIBLE = 0;
-  let CURRENT_META = { usedMinutes: null, inputMinutes: null, et: "tutti" };
+  let CURRENT_META = { usedMinutes: null, inputMinutes: null };
 
   function renderHeader(maxMinutes) {
     const updated = DATASET_META.updated_at ? fmtDateShort(DATASET_META.updated_at) : "";
@@ -394,80 +385,69 @@
   function renderCardsSlice(from, to) {
     const slice = CURRENT_ALL.slice(from, to);
 
-    return slice
-      .map((e) => {
-        const title = e.title || "Idea";
-        const where = nicePlaceLine(e);
-        const why = e.why || "";
-        const howArr = Array.isArray(e.how) ? e.how : [];
-        const howHtml =
-          howArr.length > 0
-            ? `<ul class="how" style="margin:10px 0 0; padding-left:18px; color:rgba(255,255,255,.82);">
-                ${howArr.slice(0, 4).map((x) => `<li style="margin:6px 0;">${esc(x)}</li>`).join("")}
-              </ul>`
-            : "";
+    return slice.map((e) => {
+      const title = e.title || "Idea";
+      const where = nicePlaceLine(e);
+      const why = (e.why || "").trim();
 
-        const catKey = normalizeCategory(e.category);
-        const catLabel = wowLabelForKey(catKey) || catKey;
+      const catKey = normalizeCategory(e.category);
+      const catLabel = wowLabelForKey(catKey);
 
-        const durLine = e.duration_min ? `⏱️ ~${esc(e.duration_min)} min` : "";
+      const durLine = e.duration_min ? `⏱️ ~${esc(e.duration_min)} min` : "";
 
-        const lat = e.lat;
-        const lon = e.lon;
+      const lat = e.lat;
+      const lon = e.lon;
 
-        const mapsAuto = typeof lat === "number" && typeof lon === "number" ? mapsDirUrl(lat, lon, "driving") : "";
-        const mapsWalk = typeof lat === "number" && typeof lon === "number" ? mapsDirUrl(lat, lon, "walking") : "";
-        const mapsBike = typeof lat === "number" && typeof lon === "number" ? mapsDirUrl(lat, lon, "bicycling") : "";
+      const mapsAuto = typeof lat === "number" && typeof lon === "number" ? mapsDirUrl(lat, lon, "driving") : "";
+      const mapsWalk = typeof lat === "number" && typeof lon === "number" ? mapsDirUrl(lat, lon, "walking") : "";
+      const mapsBike = typeof lat === "number" && typeof lon === "number" ? mapsDirUrl(lat, lon, "bicycling") : "";
+      const infoUrl = e.url ? String(e.url) : "";
 
-        const infoUrl = e.url ? String(e.url) : "";
+      const placeBlock = where
+        ? `<div style="margin-top:10px; font-weight:950; font-size:15px; letter-spacing:.2px;">
+             📍 ${esc(where)}
+           </div>`
+        : "";
 
-        // ✅ LUOGO IN EVIDENZA: subito sotto il titolo
-        const placeBlock = where
-          ? `<div style="margin-top:10px; font-weight:950; font-size:15px; letter-spacing:.2px;">
-               📍 ${esc(where)}
-             </div>`
-          : "";
+      const durBlock = durLine
+        ? `<div class="small muted" style="margin-top:6px;">${esc(durLine)}</div>`
+        : "";
 
-        const durBlock = durLine
-          ? `<div class="small muted" style="margin-top:6px;">${esc(durLine)}</div>`
-          : "";
+      const whyBlock = why
+        ? `<div class="small muted" style="margin-top:12px; line-height:1.55;">
+             <b style="color:#fff;">Perché te lo propongo:</b> ${esc(why)}
+           </div>`
+        : `<div class="small muted" style="margin-top:12px; line-height:1.55;">
+             <b style="color:#fff;">Perché te lo propongo:</b> È una scelta “fuori dal giro solito”, ma vicino e sensata.
+           </div>`;
 
-        return `
-          <div class="card clickSafe" style="margin-top:12px; border-color:rgba(0,224,255,.14);">
-            <div style="font-weight:950; font-size:20px; line-height:1.12;">${esc(title)}</div>
+      return `
+        <div class="card clickSafe" style="margin-top:12px; border-color:rgba(0,224,255,.14);">
+          <div style="font-weight:950; font-size:20px; line-height:1.12;">${esc(title)}</div>
 
-            ${placeBlock}
-            ${durBlock}
+          ${placeBlock}
+          ${durBlock}
 
-            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;">
-              ${pill("Mai fatto")}
-              ${pill(catLabel)}
-            </div>
-
-            ${
-              why
-                ? `<div class="small muted" style="margin-top:12px; line-height:1.55;">
-                     <b style="color:#fff;">Perché è speciale:</b> ${esc(why)}
-                   </div>`
-                : ""
-            }
-
-            ${howHtml}
-
-            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
-              ${mapsAuto ? `<a class="btn btnPrimary" href="${esc(mapsAuto)}" target="_blank" rel="noopener">🧭 Vai</a>` : ""}
-              ${mapsWalk ? `<a class="btn" href="${esc(mapsWalk)}" target="_blank" rel="noopener">🚶 A piedi</a>` : ""}
-              ${mapsBike ? `<a class="btn" href="${esc(mapsBike)}" target="_blank" rel="noopener">🚴 Bici</a>` : ""}
-              ${infoUrl ? `<a class="btnGhost" href="${esc(infoUrl)}" target="_blank" rel="noopener">🔎 Info</a>` : ""}
-            </div>
-
-            <div class="small muted" style="margin-top:10px; opacity:.70;">
-              Fonte: ${esc(e.source || DATASET_META.source || "mai_fatto")}
-            </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;">
+            ${pill("Mai fatto")}
+            ${pill(catLabel)}
           </div>
-        `;
-      })
-      .join("");
+
+          ${whyBlock}
+
+          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
+            ${mapsAuto ? `<a class="btn btnPrimary" href="${esc(mapsAuto)}" target="_blank" rel="noopener">🧭 Vai</a>` : ""}
+            ${mapsWalk ? `<a class="btn" href="${esc(mapsWalk)}" target="_blank" rel="noopener">🚶 A piedi</a>` : ""}
+            ${mapsBike ? `<a class="btn" href="${esc(mapsBike)}" target="_blank" rel="noopener">🚴 Bici</a>` : ""}
+            ${infoUrl ? `<a class="btnGhost" href="${esc(infoUrl)}" target="_blank" rel="noopener">🔎 Info</a>` : ""}
+          </div>
+
+          <div class="small muted" style="margin-top:10px; opacity:.70;">
+            Fonte: ${esc(e.source || DATASET_META.source || "mai_fatto")}
+          </div>
+        </div>
+      `;
+    }).join("");
   }
 
   function renderIntoResultArea({ maxMinutes }) {
@@ -492,7 +472,6 @@
     }
 
     const header = renderHeader(maxMinutes);
-
     const visible = Math.min(CURRENT_VISIBLE, CURRENT_ALL.length);
     const cards = renderCardsSlice(0, visible);
 
@@ -504,7 +483,8 @@
     area.innerHTML = `${header}${cards}${moreBtn}`;
   }
 
-  function bindResultAreaMoreButton() {
+  // bind button "altre idee"
+  function bindMoreButton() {
     const area = document.getElementById("resultArea");
     if (!area) return;
 
@@ -523,15 +503,14 @@
       }
     });
   }
-
-  bindResultAreaMoreButton();
+  bindMoreButton();
 
   // ---------- public API ----------
   async function run({
     origin,
     maxMinutes,
     eventType,
-    eventWhen, // ignorato (tenuto per compatibilità)
+    eventWhen, // ignored
     haversineKm,
     estCarMinutesFromKm,
     showStatus,
@@ -553,32 +532,14 @@
       }
 
       const { items, usedMinutes, inputMinutes } = pickIdeas({
-        all,
-        origin,
-        maxMinutes,
-        eventType,
-        haversineKm,
-        estCarMinutesFromKm
+        all, origin, maxMinutes, eventType, haversineKm, estCarMinutesFromKm
       });
 
       CURRENT_ALL = items;
       CURRENT_VISIBLE = Math.min(SHOW_INITIAL, CURRENT_ALL.length);
-      CURRENT_META = {
-        usedMinutes,
-        inputMinutes,
-        et: normalizeCategory(eventType || "tutti"),
-      };
+      CURRENT_META = { usedMinutes, inputMinutes };
 
       renderIntoResultArea({ maxMinutes: inputMinutes });
-
-      // salva “visti” (così la prossima volta ruota)
-      try {
-        const sk = seenKey({ et: CURRENT_META.et, mm: inputMinutes, origin });
-        const prev = loadSeen(sk);
-        const add = CURRENT_ALL.slice(0, Math.min(18, CURRENT_ALL.length)).map((e) => stableIdeaId(e));
-        const merged = Array.from(new Set(add.concat(prev)));
-        saveSeen(sk, merged);
-      } catch {}
 
       showStatus?.("ok", `Mai fatto: ${items.length} idee disponibili ✅`);
       scrollToId?.("resultCard");
