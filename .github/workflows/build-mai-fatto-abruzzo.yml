@@ -1,9 +1,9 @@
-name: Build MaiFatto Abruzzo
+name: Build Mai Fatto — Abruzzo (verona-style)
 
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
   schedule:
-    - cron: "0 3 * * 2" # ogni martedì
+    - cron: "17 3 * * *" # ogni giorno 03:17 UTC (regola se vuoi)
 
 permissions:
   contents: write
@@ -11,36 +11,37 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: "20"
 
-      - name: Install deps
-        run: |
-          if [ -f package-lock.json ]; then npm ci; else echo "no deps"; fi
-
-      - name: Build MaiFatto Abruzzo
+      - name: Build Abruzzo dataset
         env:
-          OVERPASS_ENDPOINT: https://overpass-api.de/api/interpreter
-          SLEEP_MS: "1200"
+          OVERPASS_ENDPOINT: ${{ secrets.OVERPASS_ENDPOINT }}
+          GRID_COLS: "5"
+          GRID_ROWS: "5"
+          SLEEP_MS: "900"
+          TARGET_TOTAL: "1200"
+          PER_MODE_MIN: "70"
         run: |
-          node scripts/build_maifatto_it_abruzzo.mjs
+          node scripts/build_maifatto_it_abruzzo_like_verona.mjs
 
-      - name: Commit generated file
+      - name: Commit generated file (if changed)
         run: |
-          git config user.name "jamo-bot"
-          git config user.email "jamo-bot@users.noreply.github.com"
-          git add public/data/mai_fatto/mai_fatto_it_abruzzo.json
-          if git diff --cached --quiet; then
-            echo "No changes to commit"
-            exit 0
+          git status --porcelain
+          if [ -n "$(git status --porcelain)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add public/data/mai_fatto/mai_fatto_it_abruzzo.json
+            git commit -m "chore(data): update mai_fatto Abruzzo (verona-style)"
+            git push
+          else
+            echo "No changes"
           fi
-          git commit -m "chore(data): update MaiFatto Abruzzo"
-          git push
