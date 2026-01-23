@@ -1,0 +1,50 @@
+name: Build MaiFatto Abruzzo
+
+on:
+  workflow_dispatch:
+  schedule:
+    # ogni notte (puoi cambiare)
+    - cron: "15 2 * * *"
+  push:
+    paths:
+      - "scripts/build_maifatto_it_abruzzo.mjs"
+      - ".github/workflows/build-maifatto-it-abruzzo.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Build Abruzzo dataset
+        env:
+          OVERPASS_ENDPOINT: ${{ secrets.OVERPASS_ENDPOINT }}
+          SLEEP_MS: "1200"
+          GRID_COLS: "5"
+          GRID_ROWS: "5"
+          MAX_TILES: "25"
+          TARGET_IDEAS: "3200"
+        run: node scripts/build_maifatto_it_abruzzo.mjs
+
+      - name: Commit generated file (if changed)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add public/data/mai_fatto/mai_fatto_it_abruzzo.json
+
+          if git diff --cached --quiet; then
+            echo "No changes"
+          else
+            git commit -m "chore(maifatto): update Abruzzo dataset"
+            git push
+          fi
