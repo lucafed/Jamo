@@ -1,0 +1,46 @@
+name: Build MaiFatto Abruzzo
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: "0 3 * * 2" # ogni martedì
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install deps
+        run: |
+          if [ -f package-lock.json ]; then npm ci; else echo "no deps"; fi
+
+      - name: Build MaiFatto Abruzzo
+        env:
+          OVERPASS_ENDPOINT: https://overpass-api.de/api/interpreter
+          SLEEP_MS: "1200"
+        run: |
+          node scripts/build_maifatto_it_abruzzo.mjs
+
+      - name: Commit generated file
+        run: |
+          git config user.name "jamo-bot"
+          git config user.email "jamo-bot@users.noreply.github.com"
+          git add public/data/mai_fatto/mai_fatto_it_abruzzo.json
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git commit -m "chore(data): update MaiFatto Abruzzo"
+          git push
