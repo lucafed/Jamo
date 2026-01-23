@@ -1,17 +1,17 @@
 /* public/events.js — JAMO_MAIFATTO bridge (offline, idee REALI, WOW-first)
- * Compatibile con app.js v22.2 (runEventsSearchBridge)
+ * Compatibile con app.js v22.2
  *
  * ✅ UI: "Eventi" => "✨ Mai fatto"
  * ✅ Sottocategorie (key): relax, famiglia, bici, moto, natura, pioggia, tramonto, mangiare, 1h, 2h
- * ✅ Cards: SOLO "Perché te lo propongo" (niente "cosa fare")
+ * ✅ Cards: SOLO "Perché te lo propongo"
  * ✅ Bottone "Cosa c'è" (info_url o Google Maps search)
  * ✅ Google Maps "Vai" mantiene la PARTENZA impostata in app (origin=lat,lon)
- * ✅ Anti-ovvio: filtra luoghi troppo noti (finché il dataset non è pulito)
+ * ✅ Fallback distanza: se 0 risultati entro minuti (es. Verona + dataset Abruzzo) mostra comunque idee WOW
  *
  * Dataset preferiti:
  *  /data/mai_fatto/mai_fatto_it_all.json
- *  /data/mai_fatto/mai_fatto_it_abruzzo.json
  *  /data/mai_fatto/mai_fatto_it_verona.json
+ *  /data/mai_fatto/mai_fatto_it_abruzzo.json
  *
  * Fallback:
  *  /data/events/events_all.json
@@ -22,15 +22,14 @@
 
   const PRIMARY_URLS = [
     "/data/mai_fatto/mai_fatto_it_all.json",
-    "/data/mai_fatto/mai_fatto_it_abruzzo.json",
     "/data/mai_fatto/mai_fatto_it_verona.json",
+    "/data/mai_fatto/mai_fatto_it_abruzzo.json",
   ];
   const FALLBACK_URL = "/data/events/events_all.json";
 
   const SHOW_LIMIT = 18;
 
-  // Anti-ovvio (temporaneo): finché non hai un dataset WOW davvero “sconosciuto”
-  // Puoi allargarlo o svuotarlo quando hai pulito bene i dati.
+  // Anti-ovvio (temporaneo)
   const TOO_FAMOUS_WORDS = [
     "lazise",
     "sirmione",
@@ -108,7 +107,6 @@
 
   function approxMinutesFromKm(km, estCarMinutesFromKm) {
     if (typeof estCarMinutesFromKm === "function") return estCarMinutesFromKm(km);
-    // fallback molto semplice
     return Math.round(km + 8);
   }
 
@@ -141,6 +139,11 @@
   function isTooFamous(e) {
     const hay = `${e.title || ""} ${e.place || ""} ${e.city || ""}`.toLowerCase();
     return TOO_FAMOUS_WORDS.some(w => hay.includes(w));
+  }
+
+  function toNum(x) {
+    const n = Number(x);
+    return Number.isFinite(n) ? n : null;
   }
 
   // ---------- UI patch ----------
@@ -210,9 +213,7 @@
           };
           return ideas;
         }
-      } catch (_) {
-        // continua al prossimo
-      }
+      } catch (_) {}
     }
 
     // fallback eventi (per non rompere)
@@ -233,6 +234,7 @@
       info_url: e.info_url || e.url || "",
       url: e.url,
       source: e.source || "events_fallback",
+      wow_score: typeof e.wow_score === "number" ? e.wow_score : 0,
     }));
     DATASET_META = {
       updated_at: j2?.updated_at || "",
@@ -258,43 +260,73 @@
     // anti-ovvio
     list = list.filter((e) => !isTooFamous(e));
 
-    // distanza + minuti
-    if (origin && typeof origin.lat === "number" && typeof origin.lon === "number") {
-      list = list
+    const hasOrigin =
+      origin && typeof origin.lat === "number" && typeof origin.lon === "number";
+
+    // helper wow
+    const wowOf = (e) => (typeof e.wow_score === "number" ? e.wow_score : 0);
+
+    // 1) tentativo: entro minuti (soft 1.3x)
+    if (hasOrigin) {
+      const oLat = origin.lat;
+      const oLon = origin.lon;
+
+      const within = list
         .map((e) => {
-          if (typeof e.lat !== "number" || typeof e.lon !== "number") return null;
+          const lat = toNum(e.lat);
+          const lon = toNum(e.lon);
+          if (lat == null || lon == null) return null;
+
           const km = typeof haversineKm === "function"
-            ? haversineKm(origin.lat, origin.lon, e.lat, e.lon)
+            ? haversineKm(oLat, oLon, lat, lon)
             : null;
+
           const mins = km == null ? null : approxMinutesFromKm(km, estCarMinutesFromKm);
-          const wow = typeof e.wow_score === "number" ? e.wow_score : 0;
-          return { e, mins, wow };
+          return { e, mins, wow: wowOf(e) };
         })
         .filter(Boolean)
-        // entro minuti: se pochi risultati, allarghiamo in automatico (+30% “soft”)
         .filter((x) => (x.mins == null ? true : x.mins <= Math.round(mm * 1.3)))
-        // ordina per: prima vicino, poi wow
         .sort((a, b) => (a.mins ?? 999999) - (b.mins ?? 999999) || (b.wow - a.wow))
         .map((x) => x.e);
-    } else {
-      // senza origin: prendiamo le più wow possibili
-      list = list
-        .map(e => ({ e, wow: typeof e.wow_score === "number" ? e.wow_score : 0 }))
-        .sort((a,b)=> b.wow - a.wow)
-        .map(x=>x.e);
+
+      if (within.length) {
+        return { items: within.slice(0, SHOW_LIMIT), usedDistanceFallback: false };
+      }
+
+      // 2) FALLBACK: se 0 entro minuti (es. Verona + dataset Abruzzo) → mostra TOP WOW del dataset
+      const topWow = list
+        .map((e) => ({ e, wow: wowOf(e) }))
+        .sort((a, b) => (b.wow - a.wow))
+        .map((x) => x.e);
+
+      return { items: topWow.slice(0, SHOW_LIMIT), usedDistanceFallback: true };
     }
 
-    return list.slice(0, SHOW_LIMIT);
+    // senza origin: top wow
+    const top = list
+      .map((e) => ({ e, wow: wowOf(e) }))
+      .sort((a, b) => (b.wow - a.wow))
+      .map((x) => x.e);
+
+    return { items: top.slice(0, SHOW_LIMIT), usedDistanceFallback: true };
   }
 
   // ---------- render ----------
-  function renderIntoResultArea({ items, maxMinutes, origin }) {
+  function renderIntoResultArea({ items, maxMinutes, origin, usedDistanceFallback }) {
     const area = document.getElementById("resultArea");
     if (!area) return;
 
     const updated = DATASET_META.updated_at ? fmtDateShort(DATASET_META.updated_at) : "";
     const total = DATASET_META.count || (Array.isArray(items) ? items.length : 0);
     const areaName = DATASET_META.area ? ` • ${esc(DATASET_META.area)}` : "";
+
+    const fallbackNote =
+      usedDistanceFallback
+        ? `<div class="small muted" style="margin-top:6px; line-height:1.45;">
+             ⚠️ Nessuna idea entro ~${esc(maxMinutes)} min dalla partenza.
+             Ti mostro comunque le proposte WOW migliori del dataset.
+           </div>`
+        : "";
 
     if (!items || !items.length) {
       area.innerHTML = `
@@ -305,9 +337,6 @@
           </div>
           <div class="small muted" style="margin-top:10px;">
             ${updated ? `Dataset aggiornato ${esc(updated)}` : "Dataset offline"} • totale ${esc(total)}${areaName}
-          </div>
-          <div class="small muted" style="margin-top:6px;">
-            Nota: se vedi ancora “Verona”, significa che <b>mai_fatto_it_all.json</b> non è ancora online (o Abruzzo non è ancora online).
           </div>
         </div>
       `;
@@ -323,8 +352,8 @@
 
       const durLine = e.duration_min ? `⏱️ ~${esc(e.duration_min)} min` : "";
 
-      const lat = e.lat;
-      const lon = e.lon;
+      const lat = toNum(e.lat);
+      const lon = toNum(e.lon);
 
       const oLat = origin?.lat;
       const oLon = origin?.lon;
@@ -385,8 +414,9 @@
           ${updated ? `Dataset aggiornato ${esc(updated)}` : "Dataset offline"} • totale ${esc(total)}${areaName}
         </div>
         <div class="small muted" style="margin-top:6px;">
-          Mostrate: ${esc(items.length)} • entro ~${esc(maxMinutes)} min (estensione soft inclusa)
+          Mostrate: ${esc(items.length)} • target ~${esc(maxMinutes)} min
         </div>
+        ${fallbackNote}
       </div>
       ${cards}
     `;
@@ -410,12 +440,12 @@
 
       if (!all.length) {
         showStatus?.("warn", "Dataset MAI FATTO vuoto o mancante.");
-        renderIntoResultArea({ items: [], maxMinutes, origin });
+        renderIntoResultArea({ items: [], maxMinutes, origin, usedDistanceFallback: false });
         scrollToId?.("resultCard");
         return;
       }
 
-      const items = pickIdeas({
+      const res = pickIdeas({
         all,
         origin,
         maxMinutes,
@@ -424,8 +454,14 @@
         estCarMinutesFromKm
       });
 
-      renderIntoResultArea({ items, maxMinutes, origin });
-      showStatus?.("ok", `Mai fatto: trovate ${items.length} proposte ✅`);
+      renderIntoResultArea({
+        items: res.items,
+        maxMinutes,
+        origin,
+        usedDistanceFallback: !!res.usedDistanceFallback
+      });
+
+      showStatus?.("ok", `Mai fatto: trovate ${res.items.length} proposte ✅`);
       scrollToId?.("resultCard");
     } catch (err) {
       console.error(err);
