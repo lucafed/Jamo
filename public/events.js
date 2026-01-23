@@ -1,11 +1,10 @@
 /* public/events.js — JAMO_MAIFATTO bridge (OFFLINE • region-first • widen-by-distance)
  * Compatibile con app.js v22.2 (runEventsSearchBridge)
  *
- * FIX:
- * - Dataset scelto in base alla PARTENZA (origin) → regione → regioni vicine → Italia → fallback events
- * - Niente salto “a Verona” se sei in Abruzzo (Verona solo se sei in Veneto o ultimissimo fallback filtrato)
- * - Anti-famoso SOFT (se poche idee, si allenta)
- * - Robust: accetta JSON grossi con {ideas, stats, ...}
+ * ✅ Regione dalla PARTENZA (origin) → dataset regione → regioni vicine → Italia → fallback events
+ * ✅ Anti-famoso SOFT (se rimane poco, si allenta)
+ * ✅ Robust: accetta JSON grossi con {ideas, stats, ...}
+ * ✅ Non deve MAI far apparire “Modulo non disponibile” (a meno che il file non venga caricato)
  */
 
 (() => {
@@ -14,21 +13,17 @@
   // ---------------- CONFIG ----------------
   const SHOW_LIMIT = 18;
 
-  // Dataset “Italia intera” (quando lo avrai davvero pronto)
-  const IT_ALL_URLS = [
-    "/data/mai_fatto/mai_fatto_it_all.json",
-  ];
+  // Italia intera (quando lo avrai davvero pronto)
+  const IT_ALL_URLS = ["/data/mai_fatto/mai_fatto_it_all.json"];
 
-  // Dataset regionali (se esistono nel repo li prende, altrimenti skip)
-  // Nomi attesi (coerenti col tuo build): mai_fatto_it_<slug>.json
+  // Dataset regionali attesi: /data/mai_fatto/mai_fatto_it_<slug>.json
   const REGION_DATASET_BY_SLUG = (slug) => `/data/mai_fatto/mai_fatto_it_${slug}.json`;
 
-  // Fallback “eventi” (non deve rompere nulla)
+  // fallback eventi
   const FALLBACK_EVENTS_URL = "/data/events/events_all.json";
 
-  // Anti-ovvio (remember: SOFT)
+  // Anti-ovvio (SOFT: se elimina troppo, lo disattiva da solo)
   const TOO_FAMOUS_WORDS = [
-    // Verona/Garda (esempio)
     "lazise",
     "sirmione",
     "gardaland",
@@ -40,7 +35,6 @@
     "giulietta",
     "casa di giulietta",
     "centro verona",
-    // “super noti” generici
     "colosseo",
     "fontana di trevi",
     "piazza san marco",
@@ -115,7 +109,6 @@
     return TOO_FAMOUS_WORDS.some((w) => hay.includes(w));
   }
 
-  // Google Maps directions (mantieni origin dall’app)
   function mapsDirUrl({ oLat, oLon, dLat, dLon, mode }) {
     const m = mode || "driving";
     const base = `https://www.google.com/maps/dir/?api=1`;
@@ -126,7 +119,6 @@
     return `${base}${originPart}&destination=${encodeURIComponent(`${dLat},${dLon}`)}&travelmode=${encodeURIComponent(m)}`;
   }
 
-  // Link “cosa c’è”: se c’è info_url lo usiamo, altrimenti ricerca su Maps
   function infoUrlFor(e) {
     const u = (e.info_url || e.url || "").trim();
     if (u) return u;
@@ -140,8 +132,7 @@
     return Math.round(km + 8);
   }
 
-  // ---------------- Region logic (Italia) ----------------
-  // BBox approssimativi (sufficienti per capire la regione di partenza)
+  // ---------------- IT Region logic ----------------
   const IT_REGIONS = [
     { name: "Abruzzo", slug: "abruzzo", w: 13.0, s: 41.6, e: 14.9, n: 43.0 },
     { name: "Molise", slug: "molise", w: 14.1, s: 41.4, e: 15.9, n: 42.1 },
@@ -165,7 +156,6 @@
     { name: "Sicilia", slug: "sicilia", w: 12.3, s: 36.6, e: 15.7, n: 38.4 },
   ];
 
-  // Vicinanze “ragionevoli” (basta per evitare salti assurdi)
   const NEIGHBORS = {
     abruzzo: ["lazio", "molise", "marche", "umbria"],
     molise: ["abruzzo", "campania", "puglia", "lazio"],
@@ -175,7 +165,6 @@
     veneto: ["lombardia", "trentino_alto_adige", "friuli_venezia_giulia", "emilia_romagna"],
     emilia_romagna: ["veneto", "lombardia", "toscana", "marche", "piemonte", "liguria"],
     lombardia: ["piemonte", "veneto", "trentino_alto_adige", "emilia_romagna"],
-    // fallback per regioni non elencate: nessuna
   };
 
   function regionFromOrigin(origin) {
@@ -218,7 +207,7 @@
       `;
     }
 
-    // nascondi "Quando" (non serve per Mai fatto)
+    // nascondi "Quando"
     const whenRow = document.getElementById("eventWhenChips");
     if (whenRow) {
       const parent = whenRow.closest("div");
@@ -278,32 +267,29 @@
     return { ideas, meta };
   }
 
-  // Costruisce lista URL da provare in base all’origin
   function buildUrlPlanForOrigin(origin) {
     const r = regionFromOrigin(origin);
     const plan = [];
 
-    // 1) Regione dell’origin
+    // 1) Regione origin
     if (r?.slug) plan.push(REGION_DATASET_BY_SLUG(r.slug));
 
     // 2) Regioni vicine
     const neigh = (r?.slug && NEIGHBORS[r.slug]) ? NEIGHBORS[r.slug] : [];
     for (const s of neigh) plan.push(REGION_DATASET_BY_SLUG(s));
 
-    // 3) Italia intera
+    // 3) Italia all
     for (const u of IT_ALL_URLS) plan.push(u);
 
-    // 4) SOLO se sei in Veneto: allow “verona” (file che tu hai)
-    //    (così non ci finisci da Abruzzo)
+    // 4) Solo se sei in Veneto, proviamo anche veneto/verona
     if (r?.slug === "veneto") {
-      plan.push("/data/mai_fatto/mai_fatto_it_verona.json");
       plan.push("/data/mai_fatto/mai_fatto_it_veneto.json");
+      plan.push("/data/mai_fatto/mai_fatto_it_verona.json");
     }
 
-    // 5) Ultimissimo fallback: verona (ma verrà filtrata per distanza, quindi non “ti ci porta” davvero)
+    // 5) Ultimissimo: verona (ma verrà filtrata per distanza)
     plan.push("/data/mai_fatto/mai_fatto_it_verona.json");
 
-    // dedupe
     return Array.from(new Set(plan));
   }
 
@@ -316,35 +302,29 @@
         const { ideas, meta } = extractIdeasFromMaiFattoJson(j);
         if (ideas.length) {
           DATASET_META = meta;
-          return { ideas, from: url, mode: "mai_fatto" };
+          return { ideas, mode: "mai_fatto", from: url };
         }
-      } catch (_) {
-        // next
-      }
+      } catch (_) {}
     }
 
-    // Fallback eventi
     const j2 = await fetchJson(FALLBACK_EVENTS_URL);
     const { ideas, meta } = mapEventsFallback(j2);
     DATASET_META = meta;
-    return { ideas, from: FALLBACK_EVENTS_URL, mode: "fallback_events" };
+    return { ideas, mode: "fallback_events", from: FALLBACK_EVENTS_URL };
   }
 
   // ---------------- selection ----------------
   function pickIdeas({ all, origin, maxMinutes, eventType, haversineKm, estCarMinutesFromKm }) {
     let list = Array.isArray(all) ? all.slice() : [];
-
     const mm = Math.max(15, Number(maxMinutes) || 120);
     const et = normalizeCategory(eventType || "tutti");
 
-    // filtro per categoria
     if (et && et !== "tutti") {
       list = list.filter((e) => normalizeCategory(e.category) === et);
     }
 
-    // distanza + minuti (se origin presente)
-    let withDist = list;
-
+    // distance projection
+    let withDist;
     if (origin && typeof origin.lat === "number" && typeof origin.lon === "number") {
       withDist = list
         .map((e) => {
@@ -361,27 +341,21 @@
       withDist = list.map((e) => ({ e, mins: null, wow: typeof e.wow_score === "number" ? e.wow_score : 0 }));
     }
 
-    // 1) Anti-famoso SOFT (prima prova a toglierli, se rimane poco → si allenta)
-    const softFiltered = withDist remindingAntiFamous(withDist);
+    // Anti-famoso SOFT
+    const anti = withDist.filter((x) => !isTooFamous(x.e));
+    const softFiltered = (anti.length >= Math.min(8, withDist.length)) ? anti : withDist;
 
-    function remindingAntiFamous(arr) {
-      const a = arr.filter((x) => !isTooFamous(x.e));
-      // se dopo il filtro restano troppo pochi, non filtrare
-      if (a.length >= Math.min(8, arr.length)) return a;
-      return arr;
-    }
-
-    // 2) entro minuti (soft widen +30%)
+    // entro minuti (soft +30%), se pochi risultati allarghiamo fino a 2.1x
     const maxSoft = Math.round(mm * 1.3);
     const inside = softFiltered.filter((x) => (x.mins == null ? true : x.mins <= maxSoft));
+    const widened = inside.length >= 6
+      ? inside
+      : softFiltered.filter((x) => (x.mins == null ? true : x.mins <= Math.round(mm * 2.1)));
 
-    // remind: se dentro rimane pochissimo, allenta ulteriormente fino a 2.1x (evita “0 risultati” assurdi)
-    const widened = inside.length >= 6 ? inside : softFiltered.filter((x) => (x.mins == null ? true : x.mins <= Math.round(mm * 2.1)));
-
-    // ordina: prima vicino, poi wow
+    // ordina: vicino poi wow
     widened.sort((a, b) => (a.mins ?? 999999) - (b.mins ?? 999999) || (b.wow - a.wow));
 
-    // dedupe by id/title
+    // dedupe
     const out = [];
     const seen = new Set();
     for (const x of widened) {
@@ -512,23 +486,16 @@
     try {
       patchUI();
 
-      // carica dataset in base all’origin (region-first)
-      if (!DATASET) {
-        const pack = await loadDatasetForOrigin(origin);
-        DATASET = pack.ideas;
+      // (ri)carica dataset sempre a runtime se origin cambia
+      // per evitare “cache sbagliata” tra Veneto/Abruzzo
+      const pack = await loadDatasetForOrigin(origin);
+      DATASET = pack.ideas;
 
-        // arricchisci meta per debug leggibile
-        const r = regionFromOrigin(origin);
-        const rName = r?.name ? `origin=${r.name}` : "origin=?";
-
-        const extra =
-          pack.mode === "fallback_events"
-            ? `fallback_events • widen-by-distance • ${rName}`
-            : `region-first • ${rName}`;
-
-        // metto una riga “extraLine” nel render (non rompe UI)
-        DATASET_META.area = DATASET_META.area ? `${DATASET_META.area} • ${extra}` : extra;
-      }
+      const r = regionFromOrigin(origin);
+      const rName = r?.name ? `origin=${r.name}` : "origin=?";
+      DATASET_META.area = DATASET_META.area
+        ? `${DATASET_META.area} • ${pack.mode} • ${rName}`
+        : `${pack.mode} • ${rName}`;
 
       const all = Array.isArray(DATASET) ? DATASET : [];
       if (!all.length) {
@@ -537,7 +504,7 @@
           items: [],
           maxMinutes,
           origin,
-          extraLine: "Controlla che esista almeno un file /data/mai_fatto/mai_fatto_it_<regione>.json con { ideas: [...] }."
+          extraLine: "Dataset vuoto: controlla /public/data/mai_fatto/ e la struttura { ideas: [...] }."
         });
         scrollToId?.("resultCard");
         return;
@@ -564,9 +531,10 @@
           <div class="card clickSafe" style="box-shadow:none; border-color:rgba(255,90,90,.40); background:rgba(255,90,90,.10);">
             <div style="font-weight:950; font-size:18px;">❌ MAI FATTO non disponibile</div>
             <div class="small muted" style="margin-top:8px; line-height:1.45;">
-              Controlla che esista almeno un file in <b>/public/data/mai_fatto/</b> con struttura:
-              <br><b>{ "ideas": [ ... ] }</b>
-              <br>e che i record abbiano <b>lat/lon</b>.
+              Errore: <b>${esc(err?.message || String(err))}</b>
+              <br><br>Controlla che esista:
+              <br><b>/public/events.js</b> (questo file)
+              <br>e almeno un JSON in <b>/public/data/mai_fatto/</b> con <b>{ "ideas": [...] }</b>.
             </div>
           </div>
         `;
