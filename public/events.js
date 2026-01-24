@@ -1,15 +1,15 @@
-/* public/events.js — JAMO_MAIFATTO bridge (OFFLINE • idee REALI • WOW-first)
- * Compatibile con app.js v22.2
+/* public/events.js — JAMO_MAIFATTO bridge (offline, idee REALI, WOW-first)
+ * Compatibile con app.js v22.2 (window.JAMO_EVENTS.run)
  *
  * ✅ UI: "Eventi" => "✨ Mai fatto"
- * ✅ Sottocategorie (key): relax, famiglia, bici, moto, natura, pioggia, tramonto, mangiare, 1h, 2h
+ * ✅ Sottocategorie: relax, famiglia, bici, moto, natura, pioggia, tramonto, mangiare, 1h, 2h
  * ✅ Cards: SOLO "Perché te lo propongo" (niente "cosa fare")
  * ✅ Bottone "Cosa c'è" (info_url o Google Maps search)
  * ✅ Google Maps "Vai" mantiene la PARTENZA impostata in app (origin=lat,lon)
- * ✅ Anti-ovvio soft (se rimane poco, si allenta)
+ * ✅ Anti-ovvio soft
  *
  * Dataset:
- *  /data/mai_fatto/mai_fatto_it_abruzzo.json
+ *  /data/mai_fatto/mai_fatto_it_abruzzo.json   (può essere enorme: {ideas, stats, grid, ...})
  *  /data/mai_fatto/mai_fatto_it_verona.json
  *  /data/mai_fatto/mai_fatto_it_all.json
  *
@@ -30,28 +30,13 @@
   const FALLBACK_URL = "/data/events/events_all.json";
   const SHOW_LIMIT = 18;
 
-  // ---------------- REGION BBOX (per scegliere dataset anche se origin.region non c'è) ----------------
-  // Abruzzo bbox approx: lon 13.0–14.9, lat 41.6–42.95 (simile al tuo JSON)
-  const BBOX_ABRUZZO = { w: 13.0, s: 41.60, e: 14.90, n: 42.95 };
-  // Verona+provincia+Lessinia+Garda est: bbox approx
-  const BBOX_VERONA  = { w: 10.35, s: 45.10, e: 11.35, n: 45.85 };
-
-  function inBBox(lat, lon, b) {
-    return (
-      Number.isFinite(lat) &&
-      Number.isFinite(lon) &&
-      lat >= b.s && lat <= b.n &&
-      lon >= b.w && lon <= b.e
-    );
-  }
-
-  // Anti-ovvio soft (puoi estendere/limitare)
+  // Anti-ovvio SOFT (non deve mai bloccare)
   const TOO_FAMOUS_WORDS = [
     "lazise","sirmione","gardaland","lungolago","piazza bra","via mazzini","piazza erbe",
     "arena di verona","juliet","giulietta","casa di giulietta","centro verona",
   ];
 
-  // ---------------- helpers ----------------
+  // ---------------- HELPERS ----------------
   const esc = (s) =>
     String(s ?? "")
       .replaceAll("&", "&amp;")
@@ -89,6 +74,7 @@
     return `<span class="pill ${soft ? "soft" : ""}">${esc(label)}</span>`;
   }
 
+  // Google Maps directions (mantieni origin dall’app)
   function mapsDirUrl({ oLat, oLon, dLat, dLon, mode }) {
     const m = mode || "driving";
     const base = `https://www.google.com/maps/dir/?api=1`;
@@ -99,6 +85,7 @@
     return `${base}${originPart}&destination=${encodeURIComponent(`${dLat},${dLon}`)}&travelmode=${encodeURIComponent(m)}`;
   }
 
+  // Link “cosa c’è”: se c’è info_url lo usiamo, altrimenti ricerca su Maps
   function infoUrlFor(e) {
     const u = (e.info_url || e.url || "").trim();
     if (u) return u;
@@ -112,16 +99,35 @@
     return Math.round(km + 8);
   }
 
+  // ✅ NORMALIZZAZIONE SUPER ROBUSTA (Abruzzo “enorme” spesso usa campi diversi)
   function normalizeCategory(c) {
     const k = String(c || "").toLowerCase().trim();
     if (!k) return "";
-    if (k === "1 ora" || k === "1h" || k === "1_ora" || k === "1ora") return "1h";
-    if (k === "2 ore" || k === "2h" || k === "2_ore" || k === "2ore") return "2h";
-    if (k === "family") return "famiglia";
-    if (k === "food") return "mangiare";
+
+    // tempo
+    if (["1 ora","1h","1_ora","1ora","60","60m","60min","1hour","onehour"].includes(k)) return "1h";
+    if (["2 ore","2h","2_ore","2ore","120","120m","120min","2hours","2hour","twohours"].includes(k)) return "2h";
+
+    // family
+    if (["family","famiglia","bimbi","bambini","kids","kid","children","child"].includes(k)) return "famiglia";
+
+    // food
+    if (["food","mangiare","cibo","eat","ristoro","pranzo","cena"].includes(k)) return "mangiare";
+
+    // bici/moto
+    if (["bike","bici","ciclismo","cycling","mtb","gravel"].includes(k)) return "bici";
+    if (["moto","motorbike","motorcycle","ride"].includes(k)) return "moto";
+
+    // altre
+    if (["rain","pioggia","wet","badweather","maltempo"].includes(k)) return "pioggia";
+    if (["sunset","tramonto","goldenhour","sun down"].includes(k)) return "tramonto";
+    if (["nature","natura","outdoor","bosco","montagna"].includes(k)) return "natura";
+    if (["relax","wellness","spa","terme","reset"].includes(k)) return "relax";
+
     return k;
   }
 
+  // ✅ Label WOW (solo per SOTTOCATEGORIE)
   function labelCategory(k) {
     const m = {
       relax: "Reset mentale",
@@ -143,7 +149,7 @@
     return TOO_FAMOUS_WORDS.some((w) => hay.includes(w));
   }
 
-  // ---------------- UI patch (safe) ----------------
+  // ---------------- UI PATCH (safe) ----------------
   function safePatchUI() {
     try {
       const catChip = document.querySelector('#categoryChips .chip[data-cat="eventi"]');
@@ -187,9 +193,9 @@
   }
 
   safePatchUI();
-  setTimeout(safePatchUI, 50);
+  setTimeout(safePatchUI, 60);
 
-  // ---------------- dataset cache ----------------
+  // ---------------- CACHE ----------------
   const CACHE = new Map(); // url -> { ideas, meta }
   let LAST_META = { updated_at: "", count: 0, source: "", area: "" };
 
@@ -199,16 +205,30 @@
     return await r.json();
   }
 
+  // prova a capire la regione dall’origin
+  function regionKeyFromOrigin(origin) {
+    const r = String(origin?.region || "").toLowerCase().trim();
+    if (!r) return "";
+    if (r.includes("abruzzo")) return "abruzzo";
+    if (r.includes("veneto") || r.includes("verona")) return "verona";
+    return "all";
+  }
+
   function datasetOrder(origin) {
-    const oLat = Number(origin?.lat);
-    const oLon = Number(origin?.lon);
-
-    // Preferisci bbox (robust) — non dipende da origin.region
-    if (inBBox(oLat, oLon, BBOX_ABRUZZO)) return [DS.abruzzo, DS.all, DS.verona];
-    if (inBBox(oLat, oLon, BBOX_VERONA))  return [DS.verona,  DS.all, DS.abruzzo];
-
-    // fallback: Italia generica
+    const k = regionKeyFromOrigin(origin);
+    if (k === "abruzzo") return [DS.abruzzo, DS.all, DS.verona];
+    if (k === "verona")  return [DS.verona, DS.all, DS.abruzzo];
     return [DS.all, DS.verona, DS.abruzzo];
+  }
+
+  // ✅ Estrae idee anche da JSON enormi (Abruzzo): {ideas} oppure {items} oppure fallback nullo
+  function extractIdeasFromDataset(j) {
+    if (!j) return [];
+    if (Array.isArray(j.ideas)) return j.ideas;
+    if (Array.isArray(j.items)) return j.items;
+    // alcuni builder mettono direttamente array in root
+    if (Array.isArray(j)) return j;
+    return [];
   }
 
   async function loadDatasetForOrigin(origin) {
@@ -223,13 +243,13 @@
         }
 
         const j = await fetchJson(url);
-        const ideas = Array.isArray(j?.ideas) ? j.ideas : [];
+        const ideas = extractIdeasFromDataset(j);
         if (ideas.length) {
           const meta = {
-            updated_at: j?.updated_at || "",
+            updated_at: j?.updated_at || j?.updatedAt || "",
             count: j?.count ?? ideas.length,
             source: ideas[0]?.source || "curated_mai_fatto",
-            area: j?.area || url.split("/").pop(),
+            area: j?.area || j?.title || url.split("/").pop(),
           };
           CACHE.set(url, { ideas, meta });
           LAST_META = meta;
@@ -253,10 +273,14 @@
       lat: e.lat,
       lon: e.lon,
       category: e.category,
+      duration_bucket: e.duration_bucket,
       duration_min: e.duration_min,
       why: e.why,
       info_url: e.info_url || e.url || "",
       url: e.url,
+      tags: e.tags,
+      topics: e.topics,
+      type: e.type,
       source: e.source || "events_fallback",
     }));
 
@@ -269,108 +293,78 @@
     return ideas;
   }
 
-  // ---------------- normalize idea (FIX: lat/lon robust) ----------------
-  function getLatLon(e) {
-    // accetta vari formati: lat/lon, lat/lng, latitude/longitude, geo/center, ecc.
-    const lat =
-      e?.lat ?? e?.latitude ?? e?.geo?.lat ?? e?.center?.lat ?? e?.location?.lat;
-    const lon =
-      e?.lon ?? e?.lng ?? e?.longitude ?? e?.geo?.lon ?? e?.geo?.lng ?? e?.center?.lon ?? e?.center?.lng ?? e?.location?.lon ?? e?.location?.lng;
+  // ---------------- FILTER KEYS (IL FIX) ----------------
+  // ✅ le categorie possono stare in: category, duration_bucket, tags/topics, type, duration_min
+  function ideaKeys(e) {
+    const keys = new Set();
 
-    const la = Number(lat);
-    const lo = Number(lon);
-    if (!Number.isFinite(la) || !Number.isFinite(lo)) return null;
-    return { lat: la, lon: lo };
-  }
+    keys.add(normalizeCategory(e?.category));
+    keys.add(normalizeCategory(e?.duration_bucket));
+    keys.add(normalizeCategory(e?.type));
 
-  function normalizeIdea(e) {
-    const ll = getLatLon(e);
-    const out = { ...e };
+    const tags = Array.isArray(e?.tags) ? e.tags : [];
+    const topics = Array.isArray(e?.topics) ? e.topics : [];
+    for (const t of tags) keys.add(normalizeCategory(t));
+    for (const t of topics) keys.add(normalizeCategory(t));
 
-    // normalizza category
-    out.category = normalizeCategory(out.category);
-
-    // normalizza lat/lon (anche se in input sono stringhe)
-    if (ll) {
-      out.lat = ll.lat;
-      out.lon = ll.lon;
-    } else {
-      // se non hai coordinate, le lasciamo vuote (ma non facciamo crash)
-      out.lat = null;
-      out.lon = null;
+    // bucket da duration_min (fallback)
+    const dm = Number(e?.duration_min);
+    if (Number.isFinite(dm)) {
+      if (dm <= 75) keys.add("1h");
+      else if (dm <= 150) keys.add("2h");
     }
 
-    // duration_min number
-    if (out.duration_min != null) {
-      const dm = Number(out.duration_min);
-      out.duration_min = Number.isFinite(dm) ? dm : null;
-    } else {
-      out.duration_min = null;
-    }
-
-    // wow_score
-    const ws = Number(out.wow_score);
-    out.wow_score = Number.isFinite(ws) ? ws : 0;
-
-    return out;
+    keys.delete("");
+    return keys;
   }
 
-  // ---------------- selection ----------------
+  // ---------------- SELECTION ----------------
   function pickIdeas({ all, origin, maxMinutes, eventType, haversineKm, estCarMinutesFromKm }) {
-    let list = Array.isArray(all) ? all.map(normalizeIdea) : [];
+    let list = Array.isArray(all) ? all.slice() : [];
     const mm = Math.max(15, Number(maxMinutes) || 120);
     const et = normalizeCategory(eventType || "tutti");
 
-    // filtro categoria
+    // filtro categoria (robusto)
     if (et && et !== "tutti") {
-      list = list.filter((e) => normalizeCategory(e.category) === et);
+      list = list.filter((e) => ideaKeys(e).has(et));
     }
 
-    // anti-famoso soft: se dopo il filtro rimane troppo poco, lo allentiamo
+    // anti-famoso soft (se troppo aggressivo, si allenta)
     const pre = list.length;
     const filtered = list.filter((e) => !isTooFamous(e));
     if (pre > 0 && filtered.length >= Math.min(8, Math.round(pre * 0.15))) {
       list = filtered;
     }
 
-    const oLat = Number(origin?.lat);
-    const oLon = Number(origin?.lon);
-    const hasOrigin = Number.isFinite(oLat) && Number.isFinite(oLon);
-
-    // 1) prova con filtro distanza
-    let withDistance = [];
-    if (hasOrigin) {
-      withDistance = list
+    // distanza + minuti
+    if (origin && typeof origin.lat === "number" && typeof origin.lon === "number") {
+      list = list
         .map((e) => {
-          const ll = getLatLon(e);
-          if (!ll) return null;
-          const km =
-            typeof haversineKm === "function" ? haversineKm(oLat, oLon, ll.lat, ll.lon) : null;
+          if (typeof e.lat !== "number" || typeof e.lon !== "number") return null;
+          const km = typeof haversineKm === "function"
+            ? haversineKm(origin.lat, origin.lon, e.lat, e.lon)
+            : null;
           const mins = km == null ? null : approxMinutesFromKm(km, estCarMinutesFromKm);
-          return { e, mins, wow: e.wow_score || 0 };
+          const wow = typeof e.wow_score === "number" ? e.wow_score : 0;
+          return { e, mins, wow };
         })
         .filter(Boolean)
-        // entro minuti: estensione soft
+        // entro minuti: estensione soft inclusa (mm * 1.35)
         .filter((x) => (x.mins == null ? true : x.mins <= Math.round(mm * 1.35)))
         // ordina: vicino, poi wow
         .sort((a, b) => (a.mins ?? 999999) - (b.mins ?? 999999) || (b.wow - a.wow))
         .map((x) => x.e);
+    } else {
+      list = list
+        .map((e) => ({ e, wow: typeof e.wow_score === "number" ? e.wow_score : 0 }))
+        .sort((a, b) => b.wow - a.wow)
+        .map((x) => x.e);
     }
 
-    // 2) se non trovi niente (caso tuo), NON buttare tutto:
-    //    ordina per wow_score e mostra comunque qualcosa (anche senza coordinate),
-    //    così non rimani mai a 0.
-    if (!withDistance.length) {
-      const fallback = list
-        .slice()
-        .sort((a, b) => (b.wow_score || 0) - (a.wow_score || 0));
-      return fallback.slice(0, SHOW_LIMIT);
-    }
-
-    return withDistance.slice(0, SHOW_LIMIT);
+    return list.slice(0, SHOW_LIMIT);
   }
 
-  // ---------------- render ----------------
+  // ---------------- RENDER ----------------
   function renderIntoResultArea({ items, maxMinutes, origin }) {
     const area = document.getElementById("resultArea");
     if (!area) return;
@@ -378,7 +372,7 @@
     const updated = LAST_META.updated_at ? fmtDateShort(LAST_META.updated_at) : "";
     const total = LAST_META.count || (Array.isArray(items) ? items.length : 0);
     const areaName = LAST_META.area ? ` • ${esc(LAST_META.area)}` : "";
-    const originLabel = origin?.label ? ` • da ${esc(origin.label)}` : "";
+    const originReg = origin?.region ? ` • origin=${esc(origin.region)}` : "";
 
     if (!items || !items.length) {
       area.innerHTML = `
@@ -388,31 +382,32 @@
             Aumenta i minuti (ora: <b>${esc(maxMinutes)}</b>) oppure cambia tipo di WOW.
           </div>
           <div class="small muted" style="margin-top:10px;">
-            ${updated ? `Dataset aggiornato ${esc(updated)}` : "Dataset offline"} • totale ${esc(total)}${areaName}${originLabel}
+            ${updated ? `Dataset aggiornato ${esc(updated)}` : "Dataset offline"} • totale ${esc(total)}${areaName}${originReg}
           </div>
         </div>
       `;
       return;
     }
 
-    const cards = items.map((raw) => {
-      const e = normalizeIdea(raw);
-
+    const cards = items.map((e) => {
       const title = e.title || "Idea WOW";
       const where = nicePlaceLine(e);
       const why = (e.why || "").trim();
-      const catKey = normalizeCategory(e.category);
+
+      // categoria label (preferisci category, ma se manca prova duration_bucket)
+      const catKey = normalizeCategory(e.category) || normalizeCategory(e.duration_bucket);
       const catLabel = labelCategory(catKey);
 
       const durLine = e.duration_min ? `⏱️ ~${esc(e.duration_min)} min` : "";
 
-      const ll = getLatLon(e);
-      const oLat = Number(origin?.lat);
-      const oLon = Number(origin?.lon);
+      const lat = e.lat;
+      const lon = e.lon;
+      const oLat = origin?.lat;
+      const oLon = origin?.lon;
 
       const mapsAuto =
-        ll && Number.isFinite(oLat) && Number.isFinite(oLon)
-          ? mapsDirUrl({ oLat, oLon, dLat: ll.lat, dLon: ll.lon, mode: "driving" })
+        (typeof lat === "number" && typeof lon === "number")
+          ? mapsDirUrl({ oLat, oLon, dLat: lat, dLon: lon, mode: "driving" })
           : "";
 
       const infoUrl = infoUrlFor(e);
@@ -426,13 +421,6 @@
       const durBlock = durLine
         ? `<div class="small muted" style="margin-top:6px;">${esc(durLine)}</div>`
         : "";
-
-      const coordHint =
-        !ll
-          ? `<div class="small muted" style="margin-top:10px; opacity:.70;">
-               ⚠️ Coordinate mancanti: “Vai” non disponibile (ma l’idea resta valida).
-             </div>`
-          : "";
 
       return `
         <div class="card clickSafe" style="margin-top:12px; border-color:rgba(0,224,255,.14);">
@@ -454,8 +442,6 @@
               : ""
           }
 
-          ${coordHint}
-
           <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
             ${mapsAuto ? `<a class="btn btnPrimary" href="${esc(mapsAuto)}" target="_blank" rel="noopener">🧭 Vai</a>` : ""}
             ${infoUrl ? `<a class="btn" href="${esc(infoUrl)}" target="_blank" rel="noopener">🧩 Cosa c’è</a>` : ""}
@@ -472,17 +458,17 @@
       <div class="card clickSafe" style="box-shadow:none; border-color:rgba(0,224,255,.20); background:rgba(0,224,255,.05);">
         <div style="font-weight:950; font-size:18px;">✨ MAI FATTO — WOW vicini</div>
         <div class="small muted" style="margin-top:6px;">
-          ${updated ? `Dataset aggiornato ${esc(updated)}` : "Dataset offline"} • totale ${esc(total)}${areaName}${originLabel}
+          ${updated ? `Dataset aggiornato ${esc(updated)}` : "Dataset offline"} • totale ${esc(total)}${areaName}${originReg}
         </div>
         <div class="small muted" style="margin-top:6px;">
-          Mostrate: ${esc(items.length)} • entro ~${esc(maxMinutes)} min (se possibile; fallback WOW se troppo restrittivo)
+          Mostrate: ${esc(items.length)} • entro ~${esc(maxMinutes)} min (estensione soft inclusa)
         </div>
       </div>
       ${cards}
     `;
   }
 
-  // ---------------- public API ----------------
+  // ---------------- PUBLIC API ----------------
   async function run({
     origin,
     maxMinutes,
