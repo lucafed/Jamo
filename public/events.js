@@ -1,12 +1,12 @@
-/* public/events.js — JAMO_MAIFATTO bridge (offline, idee REALI, WOW-first)
- * Compatibile con app.js v22.2 (JAMO_EVENTS.run)
+/* public/events.js — JAMO_MAIFATTO bridge (OFFLINE • idee REALI • WOW-first)
+ * Compatibile con app.js v22.2
  *
  * ✅ UI: "Eventi" => "✨ Mai fatto"
  * ✅ Sottocategorie (key): relax, famiglia, bici, moto, natura, pioggia, tramonto, mangiare, 1h, 2h
- * ✅ Cards: SOLO "Perché te lo propongo"
+ * ✅ Cards: SOLO "Perché te lo propongo" (niente "cosa fare")
  * ✅ Bottone "Cosa c'è" (info_url o Google Maps search)
- * ✅ Google Maps "Vai" mantiene origin=lat,lon
- * ✅ Anti-ovvio SOFT
+ * ✅ Google Maps "Vai" mantiene la PARTENZA impostata in app (origin=lat,lon)
+ * ✅ Anti-ovvio soft (se rimane poco, si allenta)
  *
  * Dataset:
  *  /data/mai_fatto/mai_fatto_it_abruzzo.json
@@ -20,6 +20,7 @@
 (() => {
   "use strict";
 
+  // ---------------- DATASETS ----------------
   const DS = {
     abruzzo: "/data/mai_fatto/mai_fatto_it_abruzzo.json",
     verona:  "/data/mai_fatto/mai_fatto_it_verona.json",
@@ -29,13 +30,28 @@
   const FALLBACK_URL = "/data/events/events_all.json";
   const SHOW_LIMIT = 18;
 
+  // ---------------- REGION BBOX (per scegliere dataset anche se origin.region non c'è) ----------------
+  // Abruzzo bbox approx: lon 13.0–14.9, lat 41.6–42.95 (simile al tuo JSON)
+  const BBOX_ABRUZZO = { w: 13.0, s: 41.60, e: 14.90, n: 42.95 };
+  // Verona+provincia+Lessinia+Garda est: bbox approx
+  const BBOX_VERONA  = { w: 10.35, s: 45.10, e: 11.35, n: 45.85 };
+
+  function inBBox(lat, lon, b) {
+    return (
+      Number.isFinite(lat) &&
+      Number.isFinite(lon) &&
+      lat >= b.s && lat <= b.n &&
+      lon >= b.w && lon <= b.e
+    );
+  }
+
+  // Anti-ovvio soft (puoi estendere/limitare)
   const TOO_FAMOUS_WORDS = [
-    "lazise","sirmione","gardaland","lungolago",
-    "piazza bra","via mazzini","piazza erbe",
+    "lazise","sirmione","gardaland","lungolago","piazza bra","via mazzini","piazza erbe",
     "arena di verona","juliet","giulietta","casa di giulietta","centro verona",
   ];
 
-  // ---------- helpers ----------
+  // ---------------- helpers ----------------
   const esc = (s) =>
     String(s ?? "")
       .replaceAll("&", "&amp;")
@@ -77,18 +93,16 @@
     const m = mode || "driving";
     const base = `https://www.google.com/maps/dir/?api=1`;
     const originPart =
-      (Number.isFinite(oLat) && Number.isFinite(oLon))
+      (typeof oLat === "number" && typeof oLon === "number")
         ? `&origin=${encodeURIComponent(`${oLat},${oLon}`)}`
         : "";
-    return `${base}${originPart}&destination=${encodeURIComponent(
-      `${dLat},${dLon}`
-    )}&travelmode=${encodeURIComponent(m)}`;
+    return `${base}${originPart}&destination=${encodeURIComponent(`${dLat},${dLon}`)}&travelmode=${encodeURIComponent(m)}`;
   }
 
   function infoUrlFor(e) {
     const u = (e.info_url || e.url || "").trim();
     if (u) return u;
-    const q = [e.title, e.place, e.city, e.region].filter(Boolean).join(" ");
+    const q = [e.title, e.place, e.city].filter(Boolean).join(" ");
     if (!q.trim()) return "";
     return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
   }
@@ -104,6 +118,7 @@
     if (k === "1 ora" || k === "1h" || k === "1_ora" || k === "1ora") return "1h";
     if (k === "2 ore" || k === "2h" || k === "2_ore" || k === "2ore") return "2h";
     if (k === "family") return "famiglia";
+    if (k === "food") return "mangiare";
     return k;
   }
 
@@ -124,48 +139,11 @@
   }
 
   function isTooFamous(e) {
-    const hay = `${e.title || ""} ${e.place || ""} ${e.city || ""} ${e.region || ""}`.toLowerCase();
+    const hay = `${e.title || ""} ${e.place || ""} ${e.city || ""}`.toLowerCase();
     return TOO_FAMOUS_WORDS.some((w) => hay.includes(w));
   }
 
-  // ✅ SUPER-ROBUST LAT/LON: accetta lat/latitude, lon/lng/long/longitude, stringhe, ecc.
-  function num(x) {
-    const n = Number(String(x ?? "").replace(",", "."));
-    return Number.isFinite(n) ? n : NaN;
-  }
-  function getLatLon(e) {
-    if (!e || typeof e !== "object") return { lat: NaN, lon: NaN };
-
-    // 1) top-level comuni
-    let lat = num(e.lat ?? e.latitude);
-    let lon = num(e.lon ?? e.lng ?? e.long ?? e.longitude);
-
-    // 2) nested comuni (location/coords/center)
-    if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
-      const cand = e.location || e.coords || e.center || e.point || null;
-      if (cand && typeof cand === "object") {
-        lat = Number.isFinite(lat) ? lat : num(cand.lat ?? cand.latitude);
-        lon = Number.isFinite(lon) ? lon : num(cand.lon ?? cand.lng ?? cand.long ?? cand.longitude);
-      }
-    }
-
-    // 3) array [lon, lat] (molto comune in geojson)
-    if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
-      const a = e.coordinates || e.coord || e.coords_array || null;
-      if (Array.isArray(a) && a.length >= 2) {
-        const lon2 = num(a[0]);
-        const lat2 = num(a[1]);
-        if (Number.isFinite(lat2) && Number.isFinite(lon2)) {
-          lat = lat2;
-          lon = lon2;
-        }
-      }
-    }
-
-    return { lat, lon };
-  }
-
-  // ---------- UI patch ----------
+  // ---------------- UI patch (safe) ----------------
   function safePatchUI() {
     try {
       const catChip = document.querySelector('#categoryChips .chip[data-cat="eventi"]');
@@ -194,6 +172,7 @@
         `;
       }
 
+      // nascondi "Quando" (non serve per Mai fatto)
       const whenRow = document.getElementById("eventWhenChips");
       if (whenRow) {
         const parent = whenRow.closest("div");
@@ -201,18 +180,18 @@
       }
 
       const info = document.querySelector("#eventsSubfilters .small.muted");
-      if (info) info.textContent = "Offline: regione → Italia • anti-famoso soft (non blocca).";
+      if (info) info.textContent = "Offline: idee WOW • regione → Italia • anti-famoso soft (non blocca).";
     } catch (e) {
-      console.warn("events.js patchUI warning:", e);
+      console.warn("patchUI warning:", e);
     }
   }
 
   safePatchUI();
   setTimeout(safePatchUI, 50);
 
-  // ---------- dataset cache ----------
+  // ---------------- dataset cache ----------------
   const CACHE = new Map(); // url -> { ideas, meta }
-  let LAST_META = { updated_at: "", count: 0, source: "", area: "", bbox: null };
+  let LAST_META = { updated_at: "", count: 0, source: "", area: "" };
 
   async function fetchJson(url) {
     const r = await fetch(`${url}?v=${Date.now()}`, { cache: "no-store" });
@@ -220,153 +199,178 @@
     return await r.json();
   }
 
-  function inBBox(lat, lon, bb) {
-    if (!bb) return false;
-    return lat >= bb.s && lat <= bb.n && lon >= bb.w && lon <= bb.e;
+  function datasetOrder(origin) {
+    const oLat = Number(origin?.lat);
+    const oLon = Number(origin?.lon);
+
+    // Preferisci bbox (robust) — non dipende da origin.region
+    if (inBBox(oLat, oLon, BBOX_ABRUZZO)) return [DS.abruzzo, DS.all, DS.verona];
+    if (inBBox(oLat, oLon, BBOX_VERONA))  return [DS.verona,  DS.all, DS.abruzzo];
+
+    // fallback: Italia generica
+    return [DS.all, DS.verona, DS.abruzzo];
   }
 
   async function loadDatasetForOrigin(origin) {
-    const oLat = num(origin?.lat);
-    const oLon = num(origin?.lon);
-
-    const urls = [DS.abruzzo, DS.verona, DS.all];
-    const loaded = [];
+    const urls = datasetOrder(origin);
 
     for (const url of urls) {
       try {
         if (CACHE.has(url)) {
-          const c = CACHE.get(url);
-          loaded.push({ url, ideas: c.ideas, meta: c.meta, bbox: c.meta?.bbox || null });
-          continue;
+          const cached = CACHE.get(url);
+          LAST_META = cached.meta;
+          return cached.ideas;
         }
 
         const j = await fetchJson(url);
         const ideas = Array.isArray(j?.ideas) ? j.ideas : [];
-        if (!ideas.length) continue;
-
-        const bbox = j?.stats?.bbox || null;
-
-        const meta = {
-          updated_at: j?.updated_at || "",
-          count: j?.count ?? ideas.length,
-          source: ideas[0]?.source || "curated_mai_fatto",
-          area: j?.area || url.split("/").pop(),
-          bbox,
-        };
-
-        CACHE.set(url, { ideas, meta });
-        loaded.push({ url, ideas, meta, bbox });
-      } catch (_) {}
-    }
-
-    if (Number.isFinite(oLat) && Number.isFinite(oLon)) {
-      const hit = loaded.find((d) => d.bbox && inBBox(oLat, oLon, d.bbox));
-      if (hit) {
-        LAST_META = hit.meta;
-        return hit.ideas;
+        if (ideas.length) {
+          const meta = {
+            updated_at: j?.updated_at || "",
+            count: j?.count ?? ideas.length,
+            source: ideas[0]?.source || "curated_mai_fatto",
+            area: j?.area || url.split("/").pop(),
+          };
+          CACHE.set(url, { ideas, meta });
+          LAST_META = meta;
+          return ideas;
+        }
+      } catch (_) {
+        // prova prossimo
       }
     }
 
-    const all = loaded.find((d) => d.url === DS.all);
-    if (all) {
-      LAST_META = all.meta;
-      return all.ideas;
-    }
-
-    loaded.sort((a, b) => (b.ideas?.length || 0) - (a.ideas?.length || 0));
-    if (loaded[0]) {
-      LAST_META = loaded[0].meta;
-      return loaded[0].ideas;
-    }
-
+    // fallback events (per non rompere)
     const j2 = await fetchJson(FALLBACK_URL);
     const ev = Array.isArray(j2?.events) ? j2.events : [];
-    const ideas = ev.map((e) => {
-      const ll = getLatLon(e);
-      return ({
-        id: e.id,
-        title: e.title,
-        place: e.place,
-        city: e.city,
-        region: e.region,
-        country_code: e.country_code,
-        lat: ll.lat,
-        lon: ll.lon,
-        category: e.category,
-        duration_min: e.duration_min,
-        why: e.why,
-        info_url: e.info_url || e.url || "",
-        url: e.url,
-        source: e.source || "events_fallback",
-      });
-    });
+    const ideas = ev.map((e) => ({
+      id: e.id,
+      title: e.title,
+      place: e.place,
+      city: e.city,
+      region: e.region,
+      country_code: e.country_code,
+      lat: e.lat,
+      lon: e.lon,
+      category: e.category,
+      duration_min: e.duration_min,
+      why: e.why,
+      info_url: e.info_url || e.url || "",
+      url: e.url,
+      source: e.source || "events_fallback",
+    }));
 
     LAST_META = {
       updated_at: j2?.updated_at || "",
       count: j2?.count ?? ideas.length,
       source: "fallback_events",
       area: "events_all.json",
-      bbox: null,
     };
     return ideas;
   }
 
-  // ---------- selection ----------
+  // ---------------- normalize idea (FIX: lat/lon robust) ----------------
+  function getLatLon(e) {
+    // accetta vari formati: lat/lon, lat/lng, latitude/longitude, geo/center, ecc.
+    const lat =
+      e?.lat ?? e?.latitude ?? e?.geo?.lat ?? e?.center?.lat ?? e?.location?.lat;
+    const lon =
+      e?.lon ?? e?.lng ?? e?.longitude ?? e?.geo?.lon ?? e?.geo?.lng ?? e?.center?.lon ?? e?.center?.lng ?? e?.location?.lon ?? e?.location?.lng;
+
+    const la = Number(lat);
+    const lo = Number(lon);
+    if (!Number.isFinite(la) || !Number.isFinite(lo)) return null;
+    return { lat: la, lon: lo };
+  }
+
+  function normalizeIdea(e) {
+    const ll = getLatLon(e);
+    const out = { ...e };
+
+    // normalizza category
+    out.category = normalizeCategory(out.category);
+
+    // normalizza lat/lon (anche se in input sono stringhe)
+    if (ll) {
+      out.lat = ll.lat;
+      out.lon = ll.lon;
+    } else {
+      // se non hai coordinate, le lasciamo vuote (ma non facciamo crash)
+      out.lat = null;
+      out.lon = null;
+    }
+
+    // duration_min number
+    if (out.duration_min != null) {
+      const dm = Number(out.duration_min);
+      out.duration_min = Number.isFinite(dm) ? dm : null;
+    } else {
+      out.duration_min = null;
+    }
+
+    // wow_score
+    const ws = Number(out.wow_score);
+    out.wow_score = Number.isFinite(ws) ? ws : 0;
+
+    return out;
+  }
+
+  // ---------------- selection ----------------
   function pickIdeas({ all, origin, maxMinutes, eventType, haversineKm, estCarMinutesFromKm }) {
-    let list = Array.isArray(all) ? all.slice() : [];
+    let list = Array.isArray(all) ? all.map(normalizeIdea) : [];
     const mm = Math.max(15, Number(maxMinutes) || 120);
     const et = normalizeCategory(eventType || "tutti");
 
+    // filtro categoria
     if (et && et !== "tutti") {
       list = list.filter((e) => normalizeCategory(e.category) === et);
     }
 
-    // anti-famoso soft (auto-disattiva se taglia troppo)
+    // anti-famoso soft: se dopo il filtro rimane troppo poco, lo allentiamo
     const pre = list.length;
-    const filteredAnti = list.filter((e) => !isTooFamous(e));
-    if (pre > 0 && filteredAnti.length >= Math.min(8, Math.round(pre * 0.20))) {
-      list = filteredAnti;
+    const filtered = list.filter((e) => !isTooFamous(e));
+    if (pre > 0 && filtered.length >= Math.min(8, Math.round(pre * 0.15))) {
+      list = filtered;
     }
 
-    const oLat = num(origin?.lat);
-    const oLon = num(origin?.lon);
+    const oLat = Number(origin?.lat);
+    const oLon = Number(origin?.lon);
+    const hasOrigin = Number.isFinite(oLat) && Number.isFinite(oLon);
 
-    if (Number.isFinite(oLat) && Number.isFinite(oLon)) {
-      list = list
+    // 1) prova con filtro distanza
+    let withDistance = [];
+    if (hasOrigin) {
+      withDistance = list
         .map((e) => {
-          const { lat, lon } = getLatLon(e);
-          if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
-
-          const km = typeof haversineKm === "function"
-            ? haversineKm(oLat, oLon, lat, lon)
-            : null;
-
+          const ll = getLatLon(e);
+          if (!ll) return null;
+          const km =
+            typeof haversineKm === "function" ? haversineKm(oLat, oLon, ll.lat, ll.lon) : null;
           const mins = km == null ? null : approxMinutesFromKm(km, estCarMinutesFromKm);
-          const wow = typeof e.wow_score === "number" ? e.wow_score : 0;
-
-          // scrivi normalizzato (così anche render/maps è coerente)
-          e.lat = lat;
-          e.lon = lon;
-
-          return { e, mins, wow };
+          return { e, mins, wow: e.wow_score || 0 };
         })
         .filter(Boolean)
-        // estensione soft fino a 1.35×
+        // entro minuti: estensione soft
         .filter((x) => (x.mins == null ? true : x.mins <= Math.round(mm * 1.35)))
         // ordina: vicino, poi wow
         .sort((a, b) => (a.mins ?? 999999) - (b.mins ?? 999999) || (b.wow - a.wow))
         .map((x) => x.e);
-    } else {
-      list = list
-        .map((e) => ({ e, wow: typeof e.wow_score === "number" ? e.wow_score : 0 }))
-        .sort((a, b) => b.wow - a.wow)
-        .map((x) => x.e);
     }
 
-    return list.slice(0, SHOW_LIMIT);
+    // 2) se non trovi niente (caso tuo), NON buttare tutto:
+    //    ordina per wow_score e mostra comunque qualcosa (anche senza coordinate),
+    //    così non rimani mai a 0.
+    if (!withDistance.length) {
+      const fallback = list
+        .slice()
+        .sort((a, b) => (b.wow_score || 0) - (a.wow_score || 0));
+      return fallback.slice(0, SHOW_LIMIT);
+    }
+
+    return withDistance.slice(0, SHOW_LIMIT);
   }
 
-  // ---------- render ----------
+  // ---------------- render ----------------
   function renderIntoResultArea({ items, maxMinutes, origin }) {
     const area = document.getElementById("resultArea");
     if (!area) return;
@@ -374,7 +378,7 @@
     const updated = LAST_META.updated_at ? fmtDateShort(LAST_META.updated_at) : "";
     const total = LAST_META.count || (Array.isArray(items) ? items.length : 0);
     const areaName = LAST_META.area ? ` • ${esc(LAST_META.area)}` : "";
-    const originLine = origin?.label ? ` • da ${esc(origin.label)}` : "";
+    const originLabel = origin?.label ? ` • da ${esc(origin.label)}` : "";
 
     if (!items || !items.length) {
       area.innerHTML = `
@@ -384,32 +388,31 @@
             Aumenta i minuti (ora: <b>${esc(maxMinutes)}</b>) oppure cambia tipo di WOW.
           </div>
           <div class="small muted" style="margin-top:10px;">
-            ${updated ? `Dataset aggiornato ${esc(updated)}` : "Dataset offline"} • totale ${esc(total)}${areaName}${originLine}
+            ${updated ? `Dataset aggiornato ${esc(updated)}` : "Dataset offline"} • totale ${esc(total)}${areaName}${originLabel}
           </div>
         </div>
       `;
       return;
     }
 
-    const cards = items.map((e) => {
+    const cards = items.map((raw) => {
+      const e = normalizeIdea(raw);
+
       const title = e.title || "Idea WOW";
       const where = nicePlaceLine(e);
       const why = (e.why || "").trim();
-
       const catKey = normalizeCategory(e.category);
       const catLabel = labelCategory(catKey);
 
       const durLine = e.duration_min ? `⏱️ ~${esc(e.duration_min)} min` : "";
 
-      const lat = num(e.lat);
-      const lon = num(e.lon ?? e.lng);
-
-      const oLat = num(origin?.lat);
-      const oLon = num(origin?.lon);
+      const ll = getLatLon(e);
+      const oLat = Number(origin?.lat);
+      const oLon = Number(origin?.lon);
 
       const mapsAuto =
-        (Number.isFinite(lat) && Number.isFinite(lon))
-          ? mapsDirUrl({ oLat, oLon, dLat: lat, dLon: lon, mode: "driving" })
+        ll && Number.isFinite(oLat) && Number.isFinite(oLon)
+          ? mapsDirUrl({ oLat, oLon, dLat: ll.lat, dLon: ll.lon, mode: "driving" })
           : "";
 
       const infoUrl = infoUrlFor(e);
@@ -424,9 +427,17 @@
         ? `<div class="small muted" style="margin-top:6px;">${esc(durLine)}</div>`
         : "";
 
+      const coordHint =
+        !ll
+          ? `<div class="small muted" style="margin-top:10px; opacity:.70;">
+               ⚠️ Coordinate mancanti: “Vai” non disponibile (ma l’idea resta valida).
+             </div>`
+          : "";
+
       return `
         <div class="card clickSafe" style="margin-top:12px; border-color:rgba(0,224,255,.14);">
           <div style="font-weight:950; font-size:20px; line-height:1.12;">${esc(title)}</div>
+
           ${placeBlock}
           ${durBlock}
 
@@ -442,6 +453,8 @@
                  </div>`
               : ""
           }
+
+          ${coordHint}
 
           <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
             ${mapsAuto ? `<a class="btn btnPrimary" href="${esc(mapsAuto)}" target="_blank" rel="noopener">🧭 Vai</a>` : ""}
@@ -459,17 +472,17 @@
       <div class="card clickSafe" style="box-shadow:none; border-color:rgba(0,224,255,.20); background:rgba(0,224,255,.05);">
         <div style="font-weight:950; font-size:18px;">✨ MAI FATTO — WOW vicini</div>
         <div class="small muted" style="margin-top:6px;">
-          ${updated ? `Dataset aggiornato ${esc(updated)}` : "Dataset offline"} • totale ${esc(total)}${areaName}${originLine}
+          ${updated ? `Dataset aggiornato ${esc(updated)}` : "Dataset offline"} • totale ${esc(total)}${areaName}${originLabel}
         </div>
         <div class="small muted" style="margin-top:6px;">
-          Mostrate: ${esc(items.length)} • entro ~${esc(maxMinutes)} min (estensione soft inclusa)
+          Mostrate: ${esc(items.length)} • entro ~${esc(maxMinutes)} min (se possibile; fallback WOW se troppo restrittivo)
         </div>
       </div>
       ${cards}
     `;
   }
 
-  // ---------- public API ----------
+  // ---------------- public API ----------------
   async function run({
     origin,
     maxMinutes,
@@ -497,7 +510,7 @@
         maxMinutes,
         eventType,
         haversineKm,
-        estCarMinutesFromKm,
+        estCarMinutesFromKm
       });
 
       renderIntoResultArea({ items, maxMinutes, origin });
@@ -526,5 +539,6 @@
     }
   }
 
+  // IMPORTANTISSIMO: esporta SEMPRE il modulo
   window.JAMO_EVENTS = { run };
 })();
