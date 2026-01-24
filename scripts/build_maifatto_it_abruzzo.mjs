@@ -1,9 +1,11 @@
 // scripts/build_maifatto_it_abruzzo.mjs
 // Output: public/data/mai_fatto/mai_fatto_it_abruzzo.json
-// ROBUST • Verona-style • categorie complete • sempre commit (build_id)
+// ROBUST • categorie complete • bilanciamento anti-food-only • sempre commit (build_id)
 
 import fs from "fs";
 import path from "path";
+
+// Node 18+ ha fetch globale. Se non c'è, aggiungi: import fetch from "node-fetch";
 
 const ENDPOINTS = [
   process.env.OVERPASS_ENDPOINT,
@@ -12,7 +14,7 @@ const ENDPOINTS = [
   "https://overpass.openstreetmap.ru/api/interpreter",
 ].filter(Boolean);
 
-const SLEEP_MS_BASE = Number(process.env.SLEEP_MS || 1200);
+const SLEEP_MS_BASE = Number(process.env.SLEEP_MS || 1100);
 const MAX_TILES = process.env.MAX_TILES ? Number(process.env.MAX_TILES) : null;
 
 const GRID = {
@@ -23,7 +25,20 @@ const GRID = {
 // Abruzzo bbox approx (W,S,E,N)
 const ABRUZZO_BBOX = { w: 13.0, s: 41.65, e: 14.85, n: 42.95 };
 
+// totale massimo (alto ok, ma poi bilanciamo)
 const TARGET_IDEAS = Number(process.env.TARGET_IDEAS || 2600);
+
+// quote minime “per non rimanere vuoto”
+const MIN_QUOTA = {
+  relax: Number(process.env.MIN_RELAX || 160),
+  famiglia: Number(process.env.MIN_FAMIGLIA || 200),
+  bici: Number(process.env.MIN_BICI || 160),
+  moto: Number(process.env.MIN_MOTO || 140),
+  pioggia: Number(process.env.MIN_PIOGGIA || 160),
+  natura: Number(process.env.MIN_NATURA || 220),
+  tramonto: Number(process.env.MIN_TRAMONTO || 220),
+  mangiare: Number(process.env.MIN_MANGIARE || 260),
+};
 
 // blacklist base (evita roba da “spesa” o brand)
 const BAD_WORDS = [
@@ -75,7 +90,7 @@ function isBadElement(el){
   return false;
 }
 
-// --- FOOD (più ricco)
+// ---------------- FOOD / MANGIARE ----------------
 function isFood(tags){
   const t = tags || {};
   const amen = String(t.amenity || "");
@@ -103,7 +118,7 @@ function isFood(tags){
   return false;
 }
 
-// --- Classificazione “Mai fatto” (categorie UI)
+// --- Classificazione “Mai fatto” (CHIAVI UI)
 function classify(tags){
   const t = tags || {};
   const amen = String(t.amenity || "");
@@ -111,71 +126,72 @@ function classify(tags){
   const tourism = String(t.tourism || "");
   const natural = String(t.natural || "");
   const waterway = String(t.waterway || "");
-  const historic = String(t.historic || "");
-  const man_made = String(t.man_made || "");
+  const highway = String(t.highway || "");
 
-  // FOOD
-  if (isFood(t)) return "food";
+  // MANGIARE
+  if (isFood(t)) return "mangiare";
 
   // TRAMONTO / viewpoint / peaks / cliffs
   if (tourism === "viewpoint") return "tramonto";
   if (["peak","cliff","ridge","saddle"].includes(natural)) return "tramonto";
 
   // PIOGGIA (indoor-ish)
-  if (amen === "cinema" || amen === "theatre") return "pioggia";
-  if (tourism === "museum" || tourism === "gallery") return "pioggia";
-  if (amen === "arts_centre") return "pioggia";
+  if (amen === "cinema" || amen === "theatre" || amen === "library" || amen === "arts_centre") return "pioggia";
+  if (tourism === "museum" || tourism === "gallery" || tourism === "aquarium") return "pioggia";
+  if (amen === "planetarium") return "pioggia";
 
-  // FAMILY
-  if (tourism === "zoo" || tourism === "theme_park") return "family";
-  if (leisure === "park" && t.name) return "family";
-  if (amen === "community_centre" && t.name) return "family";
+  // FAMIGLIA
+  if (tourism === "zoo" || tourism === "theme_park" || tourism === "aquarium") return "famiglia";
+  if (leisure === "water_park" || leisure === "playground") return "famiglia";
+  if (leisure === "park" && t.name) return "famiglia";
+  if (amen === "community_centre" && t.name) return "famiglia";
+  if (tourism === "attraction" && t.name) return "famiglia";
 
   // RELAX
   if (natural === "spring") return "relax";
   if (amen === "spa" || leisure === "sauna") return "relax";
+  if (leisure === "garden" || leisure === "nature_reserve") return "relax";
 
   // NATURA
   if (waterway === "waterfall" || natural === "waterfall") return "natura";
   if (natural === "cave_entrance" || natural === "cave") return "natura";
   if (t.boundary === "protected_area" || leisure === "nature_reserve") return "natura";
   if (natural === "beach" || natural === "coastline") return "natura";
+  if (natural === "wood" || natural === "heath" || natural === "scrub") return "natura";
 
-  // BICI / MOTO (OSM è scarso su questo: mettiamo euristiche utili)
-  // bici: cycleway / route=bicycle / highway=cycleway
-  if (t.highway === "cycleway" || t.route === "bicycle" || t.network === "rcn") return "bici";
-  // moto: scenic roads / passes spesso non sono taggati → usiamo mountain_pass
-  if (t.mountain_pass === "yes" || t.highway === "mountain_pass") return "moto";
+  // BICI (OSM: spesso relations route=bicycle)
+  if (t.route === "bicycle") return "bici";
+  if (highway === "cycleway") return "bici";
+  if (t.cycleway || t["cycleway:left"] || t["cycleway:right"]) return "bici";
+  if (t.bicycle === "designated" || t.bicycle === "yes" || t.bicycle_road === "yes") return "bici";
+  if (t.network && ["lcn","rcn","ncn"].includes(String(t.network))) return "bici";
 
-  // fallback: NATURA
-  if (historic) return "natura";
-  if (man_made) return "natura";
+  // MOTO (proxy “giro bello”: passi + scenic)
+  if (t.mountain_pass === "yes") return "moto";
+  if (t.scenic === "yes" && highway) return "moto";
 
+  // fallback
   return "natura";
 }
 
-// bucket tempo coerente
+// bucket tempo coerente (serve alla UI 1h/2h)
 function durationBucketFor(cat){
-  // 1h: pioggia/tramonto/food spesso fattibili
-  if (["pioggia","tramonto"].includes(cat)) return "1h";
-  // relax/family/natura/bici/moto più spesso 2h
-  if (["relax","family","natura","bici","moto"].includes(cat)) return "2h";
-  if (cat === "food") return "1h";
+  if (["pioggia","tramonto","mangiare"].includes(cat)) return "1h";
   return "2h";
 }
 
 function durationMinFor(cat){
   const r = Math.random();
   const ranges = {
-    "1h":[45,85], "2h":[95,160],
-    "relax":[55,110],
-    "family":[80,160],
-    "bici":[70,150],
-    "moto":[75,165],
-    "natura":[85,170],
-    "pioggia":[45,90],
-    "tramonto":[55,110],
-    "food":[55,120],
+    "1h":[45,90], "2h":[95,170],
+    "relax":[55,120],
+    "famiglia":[80,165],
+    "bici":[70,155],
+    "moto":[75,170],
+    "natura":[85,175],
+    "pioggia":[45,95],
+    "tramonto":[55,115],
+    "mangiare":[55,130],
   };
   const b = durationBucketFor(cat);
   const [a,c] = ranges[cat] || ranges[b] || [60,120];
@@ -184,7 +200,7 @@ function durationMinFor(cat){
 
 function buildWhy(tags, cat){
   const t = tags || {};
-  if (cat === "food"){
+  if (cat === "mangiare"){
     const cue = [];
     if (t.tourism === "winery" || t.shop === "wine") cue.push("vino locale");
     if (t.craft === "brewery") cue.push("birra artigianale");
@@ -193,14 +209,14 @@ function buildWhy(tags, cat){
     if (t.amenity === "ice_cream") cue.push("gelato artigianale");
     if (t.amenity === "marketplace") cue.push("mercato");
     const extra = cue.length ? ` (${cue.slice(0,2).join(" • ")})` : "";
-    return `Sosta “vera” e locale${extra}: spesso è più autentica dei posti standard e ti fa sentire in gita anche se sei vicino.`;
+    return `Sosta “vera” e locale${extra}: più autentica dei posti standard e ti fa sentire in gita anche se sei vicino.`;
   }
   if (cat === "tramonto") return "Punto luce: al tramonto cambia faccia e diventa una scena. Perfetto se vuoi wow senza organizzare nulla.";
   if (cat === "pioggia") return "Ottimo piano B: al coperto, interessante, e ti salva la giornata quando fuori non invoglia.";
-  if (cat === "family") return "Family nel senso giusto: spazio e stimoli reali, senza stress. I bimbi si divertono davvero.";
+  if (cat === "famiglia") return "Family nel senso giusto: spazio e stimoli reali, senza stress. I bimbi si divertono davvero.";
   if (cat === "relax") return "Stacca la testa: atmosfera tranquilla e pulita, senza turismo di massa.";
-  if (cat === "bici") return "Giro semplice ma soddisfacente: ti dà la sensazione di mini-viaggio senza farti distruggere.";
-  if (cat === "moto") return "Strada/spot da moto: panorama e guida piacevole, roba che ti rimane addosso.";
+  if (cat === "bici") return "Giro in bici semplice ma soddisfacente: ti dà la sensazione di mini-viaggio senza farti distruggere.";
+  if (cat === "moto") return "Giro da moto: guida piacevole + panorama. Roba che ti rimane addosso.";
   return "È una micro-meta poco ovvia: abbastanza speciale da valere l’uscita, abbastanza vicina da farla anche al volo.";
 }
 
@@ -215,11 +231,17 @@ function scoreWow(el){
   if (t.natural === "peak" || t.natural === "cliff") s += 22;
 
   // family/relax/indoor
-  if (t.tourism === "theme_park" || t.tourism === "zoo") s += 22;
-  if (t.tourism === "museum" || t.tourism === "gallery") s += 18;
+  if (t.tourism === "theme_park" || t.tourism === "zoo" || t.leisure === "water_park") s += 22;
+  if (t.leisure === "playground") s += 18;
+  if (t.tourism === "museum" || t.tourism === "gallery" || t.amenity === "library") s += 16;
   if (t.amenity === "spa") s += 18;
+  if (t.natural === "spring") s += 14;
 
-  // food
+  // bici/moto
+  if (t.route === "bicycle" || t.highway === "cycleway") s += 14;
+  if (t.mountain_pass === "yes" || t.scenic === "yes") s += 16;
+
+  // mangiare
   if (isFood(t)){
     s += 28;
     if (t.tourism === "winery") s += 12;
@@ -242,12 +264,14 @@ function scoreWow(el){
   return s;
 }
 
-// --- Query: 2 passate (WOW+FAMILY+INDOOR) + (FOOD)
+// ---------------- Overpass Queries ----------------
+
+// 1) WOW + NATURA + RELAX + TRAMONTO + BASE FAMILY/PIOGGIA
 function overpassQueryWowFamilyIndoor(b){
   return `
 [out:json][timeout:180];
 (
-  // WOW / natura
+  // NATURA / WOW
   nwr["tourism"="viewpoint"](${b.s},${b.w},${b.n},${b.e});
   nwr["waterway"="waterfall"](${b.s},${b.w},${b.n},${b.e});
   nwr["natural"="waterfall"](${b.s},${b.w},${b.n},${b.e});
@@ -258,13 +282,14 @@ function overpassQueryWowFamilyIndoor(b){
   nwr["natural"="cliff"](${b.s},${b.w},${b.n},${b.e});
   nwr["boundary"="protected_area"](${b.s},${b.w},${b.n},${b.e});
   nwr["leisure"="nature_reserve"](${b.s},${b.w},${b.n},${b.e});
+  nwr["natural"="wood"](${b.s},${b.w},${b.n},${b.e});
 
-  // FAMILY
+  // FAMILY base
   nwr["tourism"="zoo"](${b.s},${b.w},${b.n},${b.e});
   nwr["tourism"="theme_park"](${b.s},${b.w},${b.n},${b.e});
   nwr["leisure"="park"]["name"](${b.s},${b.w},${b.n},${b.e});
 
-  // PIOGGIA (indoor)
+  // PIOGGIA base (indoor)
   nwr["tourism"="museum"]["name"](${b.s},${b.w},${b.n},${b.e});
   nwr["tourism"="gallery"]["name"](${b.s},${b.w},${b.n},${b.e});
   nwr["amenity"="cinema"]["name"](${b.s},${b.w},${b.n},${b.e});
@@ -272,11 +297,13 @@ function overpassQueryWowFamilyIndoor(b){
 
   // RELAX
   nwr["amenity"="spa"]["name"](${b.s},${b.w},${b.n},${b.e});
+  nwr["leisure"="garden"]["name"](${b.s},${b.w},${b.n},${b.e});
 );
 out center tags;
 `;
 }
 
+// 2) FOOD / MANGIARE
 function overpassQueryFood(b){
   return `
 [out:json][timeout:180];
@@ -301,6 +328,63 @@ function overpassQueryFood(b){
   nwr["shop"="confectionery"]["name"](${b.s},${b.w},${b.n},${b.e});
   nwr["shop"="wine"]["name"](${b.s},${b.w},${b.n},${b.e});
   nwr["shop"="beverages"]["name"](${b.s},${b.w},${b.n},${b.e});
+);
+out center tags;
+`;
+}
+
+// 3) FAMILY EXTRA (per riempire davvero)
+function overpassQueryFamilyExtra(b){
+  return `
+[out:json][timeout:180];
+(
+  nwr["leisure"="playground"]["name"](${b.s},${b.w},${b.n},${b.e});
+  nwr["leisure"="water_park"]["name"](${b.s},${b.w},${b.n},${b.e});
+  nwr["amenity"="community_centre"]["name"](${b.s},${b.w},${b.n},${b.e});
+  nwr["tourism"="aquarium"]["name"](${b.s},${b.w},${b.n},${b.e});
+  nwr["tourism"="attraction"]["name"](${b.s},${b.w},${b.n},${b.e});
+);
+out center tags;
+`;
+}
+
+// 4) PIOGGIA EXTRA
+function overpassQueryRainExtra(b){
+  return `
+[out:json][timeout:180];
+(
+  nwr["amenity"="library"]["name"](${b.s},${b.w},${b.n},${b.e});
+  nwr["amenity"="arts_centre"]["name"](${b.s},${b.w},${b.n},${b.e});
+  nwr["amenity"="planetarium"]["name"](${b.s},${b.w},${b.n},${b.e});
+  nwr["tourism"="museum"]["name"](${b.s},${b.w},${b.n},${b.e});
+  nwr["tourism"="gallery"]["name"](${b.s},${b.w},${b.n},${b.e});
+);
+out center tags;
+`;
+}
+
+// 5) BICI EXTRA (relations route=bicycle + cycleways)
+function overpassQueryBikeExtra(b){
+  return `
+[out:json][timeout:180];
+(
+  relation["route"="bicycle"](${b.s},${b.w},${b.n},${b.e});
+  way["highway"="cycleway"](${b.s},${b.w},${b.n},${b.e});
+  way["bicycle"="designated"](${b.s},${b.w},${b.n},${b.e});
+  way["bicycle_road"="yes"](${b.s},${b.w},${b.n},${b.e});
+  way["cycleway"](${b.s},${b.w},${b.n},${b.e});
+);
+out center tags;
+`;
+}
+
+// 6) MOTO EXTRA (passi + scenic=yes su roads)
+function overpassQueryMotoExtra(b){
+  return `
+[out:json][timeout:180];
+(
+  nwr["mountain_pass"="yes"](${b.s},${b.w},${b.n},${b.e});
+  way["scenic"="yes"]["highway"](${b.s},${b.w},${b.n},${b.e});
 );
 out center tags;
 `;
@@ -401,7 +485,7 @@ function buildIdea(el){
     country_code: "IT",
     lat: Number(center.lat),
     lon: Number(center.lon),
-    category: cat,             // <-- IMPORTANT: deve essere uno dei bottoni (food/tramonto/pioggia/bici/moto/family/natura/relax)
+    category: cat,             // <-- CHIAVI UI: relax/famiglia/bici/moto/natura/pioggia/tramonto/mangiare
     duration_bucket: bucket,   // "1h" o "2h"
     duration_min: durationMinFor(cat),
     why,
@@ -411,10 +495,84 @@ function buildIdea(el){
   };
 }
 
-function sampleTop(elements, max){
-  const scored = elements.map(el => ({ el, s: scoreWow(el) }));
-  scored.sort((a,b)=>b.s-a.s);
-  return scored.slice(0, max).map(x=>x.el);
+function scoreIdea(idea){
+  // punteggio stabile basato su durata + category (wow implicito)
+  let s = 0;
+  if (idea.category === "tramonto") s += 18;
+  if (idea.category === "natura") s += 16;
+  if (idea.category === "famiglia") s += 15;
+  if (idea.category === "pioggia") s += 14;
+  if (idea.category === "relax") s += 13;
+  if (idea.category === "moto") s += 12;
+  if (idea.category === "bici") s += 12;
+  if (idea.category === "mangiare") s += 10;
+
+  if (idea.duration_bucket === "1h") s += 2;
+  s += Math.random() * 8;
+  return s;
+}
+
+function pickBalanced(ideas, target){
+  const byCat = new Map();
+  for (const it of ideas){
+    const c = it.category || "natura";
+    if (!byCat.has(c)) byCat.set(c, []);
+    byCat.get(c).push(it);
+  }
+
+  // ordina ogni categoria
+  for (const [c, arr] of byCat.entries()){
+    arr.sort((a,b)=> scoreIdea(b) - scoreIdea(a));
+    byCat.set(c, arr);
+  }
+
+  const out = [];
+  const used = new Set();
+
+  function take(cat, n){
+    const arr = byCat.get(cat) || [];
+    let taken = 0;
+    for (const x of arr){
+      if (taken >= n) break;
+      if (used.has(x.id)) continue;
+      used.add(x.id);
+      out.push(x);
+      taken++;
+    }
+  }
+
+  // 1) quote minime
+  for (const [cat, min] of Object.entries(MIN_QUOTA)){
+    take(cat, min);
+  }
+
+  // 2) riempi fino a target con mix globale
+  const allSorted = ideas.slice().sort((a,b)=> scoreIdea(b) - scoreIdea(a));
+  for (const x of allSorted){
+    if (out.length >= target) break;
+    if (used.has(x.id)) continue;
+    used.add(x.id);
+    out.push(x);
+  }
+
+  return out.slice(0, target);
+}
+
+async function runQueryIntoMap(map, queryFn, tile, label){
+  try{
+    const json = await overpassFetch(queryFn(tile));
+    const els = Array.isArray(json?.elements) ? json.elements : [];
+    for (const el of els){
+      if (!el?.tags?.name) continue;
+      if (isBadElement(el)) continue;
+      const k = dedupeKey(el);
+      if (!map.has(k)) map.set(k, el);
+    }
+    return { ok: true, count: els.length };
+  } catch(e){
+    console.warn(`⚠️ Tile ${label} failed:`, e.message);
+    return { ok: false, count: 0 };
+  }
 }
 
 async function main(){
@@ -434,39 +592,33 @@ async function main(){
     idx++;
     console.log(`Tile ${idx}/${tilesToRun.length}...`);
 
-    // A) WOW+FAMILY+INDOOR
-    try{
-      const jsonA = await overpassFetch(overpassQueryWowFamilyIndoor(tile));
-      const elsA = Array.isArray(jsonA?.elements) ? jsonA.elements : [];
-      for (const el of elsA){
-        if (!el?.tags?.name) continue;
-        if (isBadElement(el)) continue;
-        const k = dedupeKey(el);
-        if (!map.has(k)) map.set(k, el);
-      }
-      okTiles++;
-    } catch(e){
-      failTiles++;
-      console.warn("⚠️ Tile WOW/FAMILY/INDOOR failed:", e.message);
+    // A) WOW + family/pioggia base + relax
+    {
+      const r = await runQueryIntoMap(map, overpassQueryWowFamilyIndoor, tile, "WOW/FAMILY/INDOOR/RELAX");
+      if (r.ok) okTiles++; else failTiles++;
+      await sleep(SLEEP_MS_BASE);
     }
 
-    await sleep(SLEEP_MS_BASE);
-
-    // B) FOOD
-    try{
-      const jsonB = await overpassFetch(overpassQueryFood(tile));
-      const elsB = Array.isArray(jsonB?.elements) ? jsonB.elements : [];
-      for (const el of elsB){
-        if (!el?.tags?.name) continue;
-        if (isBadElement(el)) continue;
-        const k = dedupeKey(el);
-        if (!map.has(k)) map.set(k, el);
-      }
-    } catch(e){
-      console.warn("⚠️ Tile FOOD failed:", e.message);
+    // B) FOOD (mangiare)
+    {
+      await runQueryIntoMap(map, overpassQueryFood, tile, "FOOD");
+      await sleep(SLEEP_MS_BASE);
     }
 
-    await sleep(SLEEP_MS_BASE);
+    // C) EXTRA: family/pioggia/bici/moto (per evitare “manca proprio”)
+    {
+      await runQueryIntoMap(map, overpassQueryFamilyExtra, tile, "FAMILY_EXTRA");
+      await sleep(Math.round(SLEEP_MS_BASE * 0.7));
+
+      await runQueryIntoMap(map, overpassQueryRainExtra, tile, "RAIN_EXTRA");
+      await sleep(Math.round(SLEEP_MS_BASE * 0.7));
+
+      await runQueryIntoMap(map, overpassQueryBikeExtra, tile, "BIKE_EXTRA");
+      await sleep(Math.round(SLEEP_MS_BASE * 0.7));
+
+      await runQueryIntoMap(map, overpassQueryMotoExtra, tile, "MOTO_EXTRA");
+      await sleep(Math.round(SLEEP_MS_BASE * 0.7));
+    }
   }
 
   const all = Array.from(map.values());
@@ -481,12 +633,15 @@ async function main(){
     filtered = all;
   }
 
-  const selected = sampleTop(filtered, Math.min(TARGET_IDEAS, filtered.length));
-
+  // build ideas (dedupe per nome)
   const ideas = [];
   const seenName = new Set();
 
-  for (const el of selected){
+  // ordina per wow raw (su elementi) per scegliere meglio
+  const scoredEls = filtered.map(el => ({ el, s: scoreWow(el) }));
+  scoredEls.sort((a,b)=> b.s - a.s);
+
+  for (const { el } of scoredEls){
     const idea = buildIdea(el);
     if (!idea) continue;
 
@@ -496,13 +651,32 @@ async function main(){
 
     if (idea.title.length < 5) continue;
     ideas.push(idea);
+
+    if (ideas.length >= Math.min(TARGET_IDEAS, filtered.length)) break;
   }
 
+  // report distribuzione PRE
+  const preCounts = ideas.reduce((acc,x)=>{
+    acc[x.category] = (acc[x.category]||0)+1;
+    return acc;
+  }, {});
+  console.log("PRE counts:", preCounts);
+
+  // bilanciamento finale
+  const finalIdeas = pickBalanced(ideas, Math.min(TARGET_IDEAS, ideas.length));
+
+  // report distribuzione POST
+  const postCounts = finalIdeas.reduce((acc,x)=>{
+    acc[x.category] = (acc[x.category]||0)+1;
+    return acc;
+  }, {});
+  console.log("POST counts:", postCounts);
+
   const out = {
-    _build_id: "abruzzo_" + Date.now(), // <-- cambia sempre, forza commit
+    _build_id: "abruzzo_" + Date.now(), // forza commit / bust cache
     updated_at: new Date().toISOString(),
-    count: ideas.length,
-    area: "Abruzzo — Mai fatto (WOW + Food + Family + Indoor) — robust build",
+    count: finalIdeas.length,
+    area: "Abruzzo — Mai fatto (WOW bilanciato: Natura+Tramonto+Mangiare+Family+Bici+Moto+Pioggia+Relax) — robust build",
     stats: {
       region: "Abruzzo",
       bbox: ABRUZZO_BBOX,
@@ -511,15 +685,17 @@ async function main(){
       tiles_ok: okTiles,
       tiles_failed: failTiles,
       endpoints: ENDPOINTS,
+      pre_counts: preCounts,
+      post_counts: postCounts,
     },
-    ideas
+    ideas: finalIdeas
   };
 
   const outPath = path.join(process.cwd(), "public/data/mai_fatto/mai_fatto_it_abruzzo.json");
   writeJSON(outPath, out);
 
   console.log("✅ Wrote:", outPath);
-  console.log("Ideas:", ideas.length);
+  console.log("Ideas:", finalIdeas.length);
 }
 
 main().catch((e)=>{
