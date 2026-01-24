@@ -1,12 +1,12 @@
 /* public/events.js — JAMO_MAIFATTO bridge (offline, idee REALI, WOW-first)
- * Compatibile con app.js v22.2 (runEventsSearchBridge)
+ * Compatibile con app.js v22.2 (JAMO_EVENTS.run)
  *
  * ✅ UI: "Eventi" => "✨ Mai fatto"
  * ✅ Sottocategorie (key): relax, famiglia, bici, moto, natura, pioggia, tramonto, mangiare, 1h, 2h
- * ✅ Cards: SOLO "Perché te lo propongo" (niente "cosa fare")
+ * ✅ Cards: SOLO "Perché te lo propongo"
  * ✅ Bottone "Cosa c'è" (info_url o Google Maps search)
  * ✅ Google Maps "Vai" mantiene la PARTENZA impostata in app (origin=lat,lon)
- * ✅ Anti-ovvio: filtra luoghi troppo noti (soft)
+ * ✅ Anti-ovvio: filtra luoghi troppo noti (SOFT, auto-disattiva se taglia troppo)
  *
  * Dataset:
  *  /data/mai_fatto/mai_fatto_it_abruzzo.json
@@ -20,7 +20,7 @@
 (() => {
   "use strict";
 
-  // --- DATASETS (non in ordine fisso: scegliamo in base alla regione origin) ---
+  // --- DATASETS ---
   const DS = {
     abruzzo: "/data/mai_fatto/mai_fatto_it_abruzzo.json",
     verona:  "/data/mai_fatto/mai_fatto_it_verona.json",
@@ -30,9 +30,10 @@
   const FALLBACK_URL = "/data/events/events_all.json";
   const SHOW_LIMIT = 18;
 
-  // Anti-ovvio soft (puoi estendere/limitare)
+  // Anti-ovvio soft (solo parole super-note, e solo se non taglia troppo)
   const TOO_FAMOUS_WORDS = [
-    "lazise","sirmione","gardaland","lungolago","piazza bra","via mazzini","piazza erbe",
+    "lazise","sirmione","gardaland","lungolago",
+    "piazza bra","via mazzini","piazza erbe",
     "arena di verona","juliet","giulietta","casa di giulietta","centro verona",
   ];
 
@@ -82,14 +83,16 @@
       (typeof oLat === "number" && typeof oLon === "number")
         ? `&origin=${encodeURIComponent(`${oLat},${oLon}`)}`
         : "";
-    return `${base}${originPart}&destination=${encodeURIComponent(`${dLat},${dLon}`)}&travelmode=${encodeURIComponent(m)}`;
+    return `${base}${originPart}&destination=${encodeURIComponent(
+      `${dLat},${dLon}`
+    )}&travelmode=${encodeURIComponent(m)}`;
   }
 
-  // Link “cosa c’è”: se c’è info_url lo usiamo, altrimenti facciamo una ricerca su Maps
+  // Link “cosa c’è”: se c’è info_url lo usiamo, altrimenti ricerca su Maps
   function infoUrlFor(e) {
     const u = (e.info_url || e.url || "").trim();
     if (u) return u;
-    const q = [e.title, e.place, e.city].filter(Boolean).join(" ");
+    const q = [e.title, e.place, e.city, e.region].filter(Boolean).join(" ");
     if (!q.trim()) return "";
     return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
   }
@@ -126,10 +129,11 @@
   }
 
   function isTooFamous(e) {
-    const hay = `${e.title || ""} ${e.place || ""} ${e.city || ""}`.toLowerCase();
-    return TOO_FAMOUS_WORDS.some(w => hay.includes(w));
+    const hay = `${e.title || ""} ${e.place || ""} ${e.city || ""} ${e.region || ""}`.toLowerCase();
+    return TOO_FAMOUS_WORDS.some((w) => hay.includes(w));
   }
 
+  // ---------- UI patch (SAFE: non deve mai rompere) ----------
   function safePatchUI() {
     try {
       const catChip = document.querySelector('#categoryChips .chip[data-cat="eventi"]');
@@ -166,21 +170,18 @@
       }
 
       const info = document.querySelector("#eventsSubfilters .small.muted");
-      if (info) info.textContent = "Offline: idee WOW • regione → regioni vicine → Italia • anti-famoso soft.";
+      if (info) info.textContent = "Offline: regione → Italia • anti-famoso soft (non blocca).";
     } catch (e) {
-      // IMPORTANTISSIMO: non bloccare il modulo!
-      console.warn("patchUI warning:", e);
+      console.warn("events.js patchUI warning:", e);
     }
   }
 
-  // patch UI subito, ma in modo safe
   safePatchUI();
   setTimeout(safePatchUI, 50);
 
   // ---------- dataset cache ----------
-  // cache per URL (così non refetch ogni volta)
   const CACHE = new Map(); // url -> { ideas, meta }
-  let LAST_META = { updated_at: "", count: 0, source: "", area: "" };
+  let LAST_META = { updated_at: "", count: 0, source: "", area: "", bbox: null };
 
   async function fetchJson(url) {
     const r = await fetch(`${url}?v=${Date.now()}`, { cache: "no-store" });
@@ -188,54 +189,73 @@
     return await r.json();
   }
 
-  function regionKeyFromOrigin(origin) {
-    const r = String(origin?.region || "").toLowerCase().trim();
-    if (!r) return "";
-    if (r.includes("abruzzo")) return "abruzzo";
-    // Veneto (per ora: dataset verona come proxy)
-    if (r.includes("veneto") || r.includes("verona")) return "verona";
-    return "all";
+  // bbox helper (nel JSON: stats.bbox {w,s,e,n})
+  function inBBox(lat, lon, bb) {
+    if (!bb) return false;
+    return lat >= bb.s && lat <= bb.n && lon >= bb.w && lon <= bb.e;
   }
 
-  function datasetOrder(origin) {
-    const k = regionKeyFromOrigin(origin);
-
-    // ordine intelligente: prima regione, poi it_all, poi altri piccoli
-    if (k === "abruzzo") return [DS.abruzzo, DS.all, DS.verona];
-    if (k === "verona")  return [DS.verona, DS.all, DS.abruzzo];
-    return [DS.all, DS.verona, DS.abruzzo];
-  }
-
+  // Carica tutti i dataset disponibili, poi sceglie in base alla bbox dell’origin
   async function loadDatasetForOrigin(origin) {
-    const urls = datasetOrder(origin);
+    const oLat = Number(origin?.lat);
+    const oLon = Number(origin?.lon);
+
+    const urls = [DS.abruzzo, DS.verona, DS.all];
+    const loaded = [];
 
     for (const url of urls) {
       try {
         if (CACHE.has(url)) {
-          const cached = CACHE.get(url);
-          LAST_META = cached.meta;
-          return cached.ideas;
+          const c = CACHE.get(url);
+          loaded.push({ url, ideas: c.ideas, meta: c.meta, bbox: c.meta?.bbox || null });
+          continue;
         }
 
         const j = await fetchJson(url);
         const ideas = Array.isArray(j?.ideas) ? j.ideas : [];
-        if (ideas.length) {
-          const meta = {
-            updated_at: j?.updated_at || "",
-            count: j?.count ?? ideas.length,
-            source: ideas[0]?.source || "curated_mai_fatto",
-            area: j?.area || url.split("/").pop(),
-          };
-          CACHE.set(url, { ideas, meta });
-          LAST_META = meta;
-          return ideas;
-        }
+        if (!ideas.length) continue;
+
+        const bbox = j?.stats?.bbox || null;
+
+        const meta = {
+          updated_at: j?.updated_at || "",
+          count: j?.count ?? ideas.length,
+          source: ideas[0]?.source || "curated_mai_fatto",
+          area: j?.area || url.split("/").pop(),
+          bbox,
+        };
+
+        CACHE.set(url, { ideas, meta });
+        loaded.push({ url, ideas, meta, bbox });
       } catch (_) {
         // prova prossimo
       }
     }
 
-    // fallback events (per non rompere)
+    // 1) bbox match
+    if (Number.isFinite(oLat) && Number.isFinite(oLon)) {
+      const hit = loaded.find((d) => d.bbox && inBBox(oLat, oLon, d.bbox));
+      if (hit) {
+        LAST_META = hit.meta;
+        return hit.ideas;
+      }
+    }
+
+    // 2) preferisci it_all se c'è
+    const all = loaded.find((d) => d.url === DS.all);
+    if (all) {
+      LAST_META = all.meta;
+      return all.ideas;
+    }
+
+    // 3) altrimenti dataset più grande
+    loaded.sort((a, b) => (b.ideas?.length || 0) - (a.ideas?.length || 0));
+    if (loaded[0]) {
+      LAST_META = loaded[0].meta;
+      return loaded[0].ideas;
+    }
+
+    // 4) fallback events_all.json
     const j2 = await fetchJson(FALLBACK_URL);
     const ev = Array.isArray(j2?.events) ? j2.events : [];
     const ideas = ev.map((e) => ({
@@ -260,6 +280,7 @@
       count: j2?.count ?? ideas.length,
       source: "fallback_events",
       area: "events_all.json",
+      bbox: null,
     };
     return ideas;
   }
@@ -270,43 +291,54 @@
     const mm = Math.max(15, Number(maxMinutes) || 120);
     const et = normalizeCategory(eventType || "tutti");
 
-    // filtro categoria
+    // filtro per categoria
     if (et && et !== "tutti") {
       list = list.filter((e) => normalizeCategory(e.category) === et);
     }
 
-    // anti-famoso soft: se dopo il filtro rimane troppo poco, lo disattiviamo automaticamente
+    // anti-famoso soft: se taglia troppo, si disattiva
     const pre = list.length;
-    list = list.filter((e) => !isTooFamous(e));
-    if (pre > 0 && list.length < Math.min(8, Math.round(pre * 0.15))) {
-      // troppo aggressivo: ripristina
-      list = Array.isArray(all) ? all.slice() : [];
-      if (et && et !== "tutti") list = list.filter((e) => normalizeCategory(e.category) === et);
-    }
+    const filteredAnti = list.filter((e) => !isTooFamous(e));
+    if (pre > 0 && filteredAnti.length >= Math.min(8, Math.round(pre * 0.20))) {
+      list = filteredAnti;
+    } // altrimenti mantieni list originale
 
-    // distanza + minuti
-    if (origin && typeof origin.lat === "number" && typeof origin.lon === "number") {
+    // distanza + minuti (IMPORTANTE: lat/lon possono essere stringhe => Number())
+    if (origin && Number.isFinite(Number(origin.lat)) && Number.isFinite(Number(origin.lon))) {
+      const oLat = Number(origin.lat);
+      const oLon = Number(origin.lon);
+
       list = list
         .map((e) => {
-          if (typeof e.lat !== "number" || typeof e.lon !== "number") return null;
+          const lat = Number(e.lat);
+          const lon = Number(e.lon ?? e.lng);
+          if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
+
           const km = typeof haversineKm === "function"
-            ? haversineKm(origin.lat, origin.lon, e.lat, e.lon)
+            ? haversineKm(oLat, oLon, lat, lon)
             : null;
+
           const mins = km == null ? null : approxMinutesFromKm(km, estCarMinutesFromKm);
           const wow = typeof e.wow_score === "number" ? e.wow_score : 0;
+
+          // normalizza dentro l'oggetto così maps usa numeri
+          e.lat = lat;
+          e.lon = lon;
+
           return { e, mins, wow };
         })
         .filter(Boolean)
-        // entro minuti: se pochi risultati, estensione soft
+        // entro minuti: estensione soft
         .filter((x) => (x.mins == null ? true : x.mins <= Math.round(mm * 1.35)))
         // ordina: vicino, poi wow
         .sort((a, b) => (a.mins ?? 999999) - (b.mins ?? 999999) || (b.wow - a.wow))
         .map((x) => x.e);
     } else {
+      // senza origin: wow first
       list = list
-        .map(e => ({ e, wow: typeof e.wow_score === "number" ? e.wow_score : 0 }))
-        .sort((a,b)=> b.wow - a.wow)
-        .map(x=>x.e);
+        .map((e) => ({ e, wow: typeof e.wow_score === "number" ? e.wow_score : 0 }))
+        .sort((a, b) => b.wow - a.wow)
+        .map((x) => x.e);
     }
 
     return list.slice(0, SHOW_LIMIT);
@@ -320,7 +352,7 @@
     const updated = LAST_META.updated_at ? fmtDateShort(LAST_META.updated_at) : "";
     const total = LAST_META.count || (Array.isArray(items) ? items.length : 0);
     const areaName = LAST_META.area ? ` • ${esc(LAST_META.area)}` : "";
-    const originReg = origin?.region ? ` • origin=${esc(origin.region)}` : "";
+    const originLine = origin?.label ? ` • da ${esc(origin.label)}` : "";
 
     if (!items || !items.length) {
       area.innerHTML = `
@@ -330,82 +362,84 @@
             Aumenta i minuti (ora: <b>${esc(maxMinutes)}</b>) oppure cambia tipo di WOW.
           </div>
           <div class="small muted" style="margin-top:10px;">
-            ${updated ? `Dataset aggiornato ${esc(updated)}` : "Dataset offline"} • totale ${esc(total)}${areaName}${originReg}
+            ${updated ? `Dataset aggiornato ${esc(updated)}` : "Dataset offline"} • totale ${esc(total)}${areaName}${originLine}
           </div>
         </div>
       `;
       return;
     }
 
-    const cards = items.map((e) => {
-      const title = e.title || "Idea WOW";
-      const where = nicePlaceLine(e);
-      const why = (e.why || "").trim();
-      const catKey = normalizeCategory(e.category);
-      const catLabel = labelCategory(catKey);
+    const cards = items
+      .map((e) => {
+        const title = e.title || "Idea WOW";
+        const where = nicePlaceLine(e);
+        const why = (e.why || "").trim();
+        const catKey = normalizeCategory(e.category);
+        const catLabel = labelCategory(catKey);
 
-      const durLine = e.duration_min ? `⏱️ ~${esc(e.duration_min)} min` : "";
+        const durLine = e.duration_min ? `⏱️ ~${esc(e.duration_min)} min` : "";
 
-      const lat = e.lat;
-      const lon = e.lon;
+        const lat = Number(e.lat);
+        const lon = Number(e.lon);
 
-      const oLat = origin?.lat;
-      const oLon = origin?.lon;
+        const oLat = Number(origin?.lat);
+        const oLon = Number(origin?.lon);
 
-      const mapsAuto =
-        (typeof lat === "number" && typeof lon === "number")
-          ? mapsDirUrl({ oLat, oLon, dLat: lat, dLon: lon, mode: "driving" })
+        const mapsAuto =
+          (Number.isFinite(lat) && Number.isFinite(lon))
+            ? mapsDirUrl({ oLat, oLon, dLat: lat, dLon: lon, mode: "driving" })
+            : "";
+
+        const infoUrl = infoUrlFor(e);
+
+        const placeBlock = where
+          ? `<div style="margin-top:10px; font-weight:950; font-size:15px; letter-spacing:.2px;">
+               📍 ${esc(where)}
+             </div>`
           : "";
 
-      const infoUrl = infoUrlFor(e);
+        const durBlock = durLine
+          ? `<div class="small muted" style="margin-top:6px;">${esc(durLine)}</div>`
+          : "";
 
-      const placeBlock = where
-        ? `<div style="margin-top:10px; font-weight:950; font-size:15px; letter-spacing:.2px;">
-             📍 ${esc(where)}
-           </div>`
-        : "";
+        return `
+          <div class="card clickSafe" style="margin-top:12px; border-color:rgba(0,224,255,.14);">
+            <div style="font-weight:950; font-size:20px; line-height:1.12;">${esc(title)}</div>
 
-      const durBlock = durLine
-        ? `<div class="small muted" style="margin-top:6px;">${esc(durLine)}</div>`
-        : "";
+            ${placeBlock}
+            ${durBlock}
 
-      return `
-        <div class="card clickSafe" style="margin-top:12px; border-color:rgba(0,224,255,.14);">
-          <div style="font-weight:950; font-size:20px; line-height:1.12;">${esc(title)}</div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;">
+              ${pill("Mai fatto")}
+              ${pill(catLabel)}
+            </div>
 
-          ${placeBlock}
-          ${durBlock}
+            ${
+              why
+                ? `<div class="small muted" style="margin-top:12px; line-height:1.55;">
+                     <b style="color:#fff;">Perché te lo propongo:</b> ${esc(why)}
+                   </div>`
+                : ""
+            }
 
-          <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;">
-            ${pill("Mai fatto")}
-            ${pill(catLabel)}
+            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
+              ${mapsAuto ? `<a class="btn btnPrimary" href="${esc(mapsAuto)}" target="_blank" rel="noopener">🧭 Vai</a>` : ""}
+              ${infoUrl ? `<a class="btn" href="${esc(infoUrl)}" target="_blank" rel="noopener">🧩 Cosa c’è</a>` : ""}
+            </div>
+
+            <div class="small muted" style="margin-top:10px; opacity:.70;">
+              Fonte: ${esc(e.source || LAST_META.source || "mai_fatto")}
+            </div>
           </div>
-
-          ${
-            why
-              ? `<div class="small muted" style="margin-top:12px; line-height:1.55;">
-                   <b style="color:#fff;">Perché te lo propongo:</b> ${esc(why)}
-                 </div>`
-              : ""
-          }
-
-          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
-            ${mapsAuto ? `<a class="btn btnPrimary" href="${esc(mapsAuto)}" target="_blank" rel="noopener">🧭 Vai</a>` : ""}
-            ${infoUrl ? `<a class="btn" href="${esc(infoUrl)}" target="_blank" rel="noopener">🧩 Cosa c’è</a>` : ""}
-          </div>
-
-          <div class="small muted" style="margin-top:10px; opacity:.70;">
-            Fonte: ${esc(e.source || LAST_META.source || "mai_fatto")}
-          </div>
-        </div>
-      `;
-    }).join("");
+        `;
+      })
+      .join("");
 
     area.innerHTML = `
       <div class="card clickSafe" style="box-shadow:none; border-color:rgba(0,224,255,.20); background:rgba(0,224,255,.05);">
         <div style="font-weight:950; font-size:18px;">✨ MAI FATTO — WOW vicini</div>
         <div class="small muted" style="margin-top:6px;">
-          ${updated ? `Dataset aggiornato ${esc(updated)}` : "Dataset offline"} • totale ${esc(total)}${areaName}${originReg}
+          ${updated ? `Dataset aggiornato ${esc(updated)}` : "Dataset offline"} • totale ${esc(total)}${areaName}${originLine}
         </div>
         <div class="small muted" style="margin-top:6px;">
           Mostrate: ${esc(items.length)} • entro ~${esc(maxMinutes)} min (estensione soft inclusa)
@@ -443,7 +477,7 @@
         maxMinutes,
         eventType,
         haversineKm,
-        estCarMinutesFromKm
+        estCarMinutesFromKm,
       });
 
       renderIntoResultArea({ items, maxMinutes, origin });
@@ -472,6 +506,6 @@
     }
   }
 
-  // IMPORTANTISSIMO: esporta SEMPRE il modulo
+  // IMPORTANTISSIMO: esporta SEMPRE
   window.JAMO_EVENTS = { run };
 })();
