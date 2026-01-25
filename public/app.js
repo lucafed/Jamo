@@ -708,6 +708,296 @@ async function geocodeLabel(label) {
   }
   return j.result;
 }
+  // -------------------- RENDER --------------------
+function showResultProgress(msg = "Cerco nel dataset offline…") {
+  const area = $("resultArea");
+  if (!area) return;
+  area.innerHTML = `
+    <div class="card clickSafe" style="box-shadow:none; border-color:rgba(255,180,80,.35); background:rgba(255,180,80,.06);">
+      <div style="font-weight:950; font-size:18px;">🔎 Sto cercando…</div>
+      <div class="small muted" style="margin-top:8px; line-height:1.4;">${escapeHtml(msg)}</div>
+    </div>
+  `;
+}
+
+function renderNoResult(maxMinutesShown, categoryUI, datasetInfo) {
+  const area = $("resultArea");
+  if (!area) return;
+
+  area.innerHTML = `
+    <div class="card clickSafe" style="box-shadow:none; border-color:rgba(255,90,90,.40); background:rgba(255,90,90,.10);">
+      <div class="small">❌ Nessuna meta trovata entro <b>${maxMinutesShown} min</b> per <b>${escapeHtml(categoryUI)}</b>.</div>
+      <div class="small muted" style="margin-top:6px;">Tip: aumenta i minuti oppure prova un’altra categoria.</div>
+      <div class="small muted" style="margin-top:10px;">Dataset: ${escapeHtml(datasetInfo || "offline")}</div>
+      <div class="row wraprow" style="gap:10px; margin-top:12px;">
+        <button class="btnGhost" id="btnResetRotation" type="button">🧽 Reset “oggi”</button>
+        <button class="btn btnPrimary" id="btnTryAgain" type="button">🎯 Riprova</button>
+      </div>
+    </div>
+  `;
+
+  $("btnResetRotation")?.addEventListener("click", () => {
+    resetRotation();
+    showStatus("ok", "Reset fatto ✅");
+  });
+
+  $("btnTryAgain")?.addEventListener("click", () => runSearch({ silent: true }));
+
+  CURRENT_CHOSEN = null;
+  scrollToId("resultCard");
+}
+
+// Badge categoria (minimo indispensabile)
+function typeBadge(categoryUI) {
+  const category = canonicalCategory(categoryUI);
+  const map = {
+    natura:   { emoji:"🌿", label:"Natura" },
+    hiking:   { emoji:"🥾", label:"Trekking" },
+    borghi:   { emoji:"🏘️", label:"Borghi" },
+    storia:   { emoji:"🏛️", label:"Storia" },
+    montagna: { emoji:"🏔️", label:"Montagna" },
+    mare:     { emoji:"🌊", label:"Mare" },
+    relax:    { emoji:"🧖", label:"Relax" },
+    family:   { emoji:"👨‍👩‍👧‍👦", label:"Family" },
+    cantine:  { emoji:"🍷", label:"Cantine" },
+    eventi:   { emoji:"✨", label:"Mai fatto" },
+  };
+  return map[category] || { emoji:"📍", label:"Meta" };
+}
+
+// Label visibilità (se manca visibility => ok)
+function visibilityLabel(place) {
+  const v = normalizeVisibility(place?.visibility);
+  if (v === "chicca") return "✨ Chicca";
+  if (v === "classica") return "✅ Classica";
+  return "⭐ Selezione";
+}
+
+// Descrizione rapida
+function shortWhatIs(place, categoryUI) {
+  const category = canonicalCategory(categoryUI);
+  if (category === "cantine") return "Cantina/Enoteca • degustazioni e visite (prenotazione consigliata).";
+  if (category === "relax") return "Relax • terme/spa/sauna (spesso su prenotazione).";
+  if (category === "mare") return "Mare • spiaggia/baia/scogliera (stagione consigliata).";
+  if (category === "hiking") return "Trekking • controlla meteo e percorso (scarpe ok).";
+  if (category === "montagna") return "Montagna • picchi/rifugi/passi/impianti (controlla meteo).";
+  if (category === "storia") return "Storia • castelli/musei/attrazioni (verifica orari).";
+  if (category === "borghi") return "Borgo • passeggiata nel centro, scorci e foto.";
+  if (category === "natura") return "Spot natura • perfetto per uscita veloce.";
+  return "Meta selezionata in base a tempo e filtri.";
+}
+
+function renderOptionsListHTML() {
+  const chosen = CURRENT_CHOSEN;
+  if (!chosen) return "";
+
+  const alts = ALL_OPTIONS.filter(x => x.pid !== chosen.pid);
+  if (!alts.length) return "";
+
+  const visible = alts.slice(0, VISIBLE_ALTS);
+  const chosenCat = canonicalCategory(getActiveCategory());
+  const tb = typeBadge(chosenCat);
+
+  const items = visible.map((x) => {
+    const p = x.place;
+    const name = escapeHtml(p.name || "");
+    const time = `~${x.driveMin} min`;
+    const areaLabel = escapeHtml((p.area || p.country || "—").trim());
+    const vis = escapeHtml(visibilityLabel(p));
+
+    return `
+      <button class="optBtn clickSafe" data-pid="${escapeHtml(x.pid)}" type="button">
+        <div class="optTop">
+          <div class="optName">${name}</div>
+          <div class="small muted" style="font-weight:950;">${time}</div>
+        </div>
+        <div class="optMeta">
+          <span class="pill acc">${tb.emoji} ${tb.label}</span>
+          <span class="pill soft">${vis}</span>
+          <span class="pill soft">📍 ${areaLabel}</span>
+        </div>
+      </button>
+    `;
+  }).join("");
+
+  const canMore = VISIBLE_ALTS < alts.length;
+
+  return `
+    <div style="margin-top:14px;">
+      <div style="font-weight:950; font-size:18px; margin: 6px 0 10px;">Altre destinazioni</div>
+      <div class="optList">${items}</div>
+      ${canMore ? `<button class="moreBtn clickSafe" id="btnMoreAlts" type="button">⬇️ Altre ${CFG.ALTS_PAGE}</button>` : ""}
+      <div class="small muted" style="margin-top:10px;">Tocca un’opzione per aprire la scheda (senza rifare ricerca).</div>
+    </div>
+  `;
+}
+
+function updateAltsUI() {
+  const altsArea = $("altsArea");
+  if (!altsArea) return;
+  altsArea.innerHTML = renderOptionsListHTML();
+}
+
+function renderChosenCard(origin, chosen, categoryUI, datasetInfo, usedMinutes, maxMinutesInput) {
+  const area = $("resultArea");
+  if (!area) return;
+
+  const p = chosen.place;
+  const pid = chosen.pid;
+
+  const tb = typeBadge(canonicalCategory(categoryUI));
+  const areaLabel = (p.area || p.country || "").trim() || "—";
+  const name = p.name || "";
+
+  const lat = Number(p.lat);
+  const lon = Number(p.lon);
+  const zoom = chosen.km < 20 ? 12 : chosen.km < 60 ? 10 : 8;
+  const img1 = osmStaticImgPrimary(lat, lon, zoom);
+  const img2 = osmStaticImgFallback(lat, lon, zoom);
+
+  const what = shortWhatIs(p, categoryUI);
+  const vis = visibilityLabel(p);
+  const widenText = usedMinutes && usedMinutes !== maxMinutesInput ? ` • widen: ${usedMinutes} min` : "";
+
+  area.innerHTML = `
+    <div class="clickSafe" style="border-radius:18px; overflow:hidden; border:1px solid rgba(0,224,255,.18);">
+      <div style="position:relative; width:100%; aspect-ratio: 2 / 1; border-bottom:1px solid rgba(255,255,255,.10);">
+        <img src="${img1}" alt="" loading="lazy" decoding="async"
+             style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; opacity:.95;"
+             onerror="(function(img){
+               if(!img.dataset.fallbackTried){ img.dataset.fallbackTried='1'; img.src='${img2}'; return; }
+               img.style.display='none';
+             })(this)"
+        />
+        <div style="position:absolute; left:12px; top:12px; display:flex; gap:8px; flex-wrap:wrap; max-width: calc(100% - 24px);">
+          <div class="pill acc">${tb.emoji} ${tb.label}</div>
+          <div class="pill">🚗 ~${chosen.driveMin} min • ${fmtKm(chosen.km)}</div>
+          <div class="pill soft">${escapeHtml(vis)}</div>
+        </div>
+      </div>
+
+      <div style="padding:14px;">
+        <div style="font-weight:1000; font-size:30px; line-height:1.08;">
+          ${escapeHtml(name)}
+        </div>
+
+        <div class="small muted" style="margin-top:6px;">
+          📍 ${escapeHtml(areaLabel)} • ${lat.toFixed(5)}, ${lon.toFixed(5)}
+        </div>
+
+        <div class="small muted" style="margin-top:8px;">
+          Dataset: ${escapeHtml(datasetInfo || "offline")} • score: ${chosen.score}${escapeHtml(widenText)}
+        </div>
+
+        <div style="margin-top:12px; font-weight:950;">Cos’è (subito chiaro)</div>
+        <div class="small muted" style="margin-top:6px; line-height:1.45;">
+          ${escapeHtml(what)}
+        </div>
+
+        <div class="actionGrid">
+          <button class="btn btnPrimary" id="btnGo" type="button">🧭 Vai</button>
+          <button class="btn" id="btnBook" type="button">🎟️ Prenota</button>
+          <button class="btnGhost" id="btnEat" type="button">🍝 Mangia</button>
+          <button class="btnGhost" id="btnPhotos" type="button">📸 Foto</button>
+          <button class="btnGhost" id="btnWiki" type="button">📚 Wiki</button>
+          <button class="btnGhost" id="btnVisited" type="button">✅ Visitato</button>
+        </div>
+
+        <div class="row wraprow" style="gap:10px; margin-top:12px;">
+          <button class="btn" id="btnChange" type="button">🔁 Cambia meta</button>
+          <button class="btnGhost" id="btnSearchAgain" type="button">🎯 Nuova ricerca</button>
+        </div>
+
+        <div id="altsArea">${renderOptionsListHTML()}</div>
+      </div>
+    </div>
+  `;
+
+  $("btnGo")?.addEventListener("click", () => {
+    window.open(mapsDirUrl(origin.lat, origin.lon, lat, lon), "_blank", "noopener");
+  });
+
+  $("btnBook")?.addEventListener("click", () => {
+    const cat = canonicalCategory(categoryUI);
+    const url =
+      (cat === "family" || cat === "storia" || cat === "montagna" || cat === "hiking")
+        ? gygSearchUrl(name, areaLabel)
+        : bookingSearchUrl(name, areaLabel);
+    window.open(url, "_blank", "noopener");
+  });
+
+  $("btnEat")?.addEventListener("click", () => {
+    window.open(theforkSearchUrl(name, areaLabel, lat, lon), "_blank", "noopener");
+  });
+
+  $("btnPhotos")?.addEventListener("click", () => {
+    window.open(googleImagesUrl(name, areaLabel), "_blank", "noopener");
+  });
+
+  $("btnWiki")?.addEventListener("click", () => {
+    window.open(wikiUrl(name, areaLabel), "_blank", "noopener");
+  });
+
+  $("btnVisited")?.addEventListener("click", () => {
+    markVisited(pid);
+    showStatus("ok", "Segnato come visitato ✅");
+  });
+
+  $("btnChange")?.addEventListener("click", () => {
+    runSearch({ silent: true, forbidPid: pid });
+  });
+
+  $("btnSearchAgain")?.addEventListener("click", () => {
+    scrollToId("searchCard");
+  });
+
+  LAST_SHOWN_PID = pid;
+  SESSION_SEEN.add(pid);
+  addRecent(pid);
+}
+
+// -------------------- EVENT DELEGATION (opzioni + more) --------------------
+function bindResultAreaDelegation() {
+  const area = $("resultArea");
+  if (!area) return;
+
+  area.addEventListener("click", (e) => {
+    const moreBtn = e.target.closest("#btnMoreAlts");
+    if (moreBtn) {
+      const before = VISIBLE_ALTS;
+      VISIBLE_ALTS = Math.min(Math.max(0, ALL_OPTIONS.length - 1), VISIBLE_ALTS + CFG.ALTS_PAGE);
+      if (VISIBLE_ALTS !== before) {
+        updateAltsUI();
+        setTimeout(() => {
+          const mb = $("btnMoreAlts") || moreBtn;
+          mb?.scrollIntoView({ behavior: "smooth", block: "center" });
+        }, 20);
+      }
+      return;
+    }
+
+    const opt = e.target.closest(".optBtn");
+    if (opt) {
+      const pid2 = opt.getAttribute("data-pid");
+      const found = ALL_OPTIONS.find((x) => x.pid === pid2);
+      if (!found) return;
+
+      CURRENT_CHOSEN = found;
+      const origin = getOrigin();
+      const catUI = getActiveCategory();
+
+      const usedMinutes = Number(LAST_USED_MINUTES ?? $("maxMinutes")?.value ?? 120);
+      const maxMinutesInput = Number(LAST_MAX_MINUTES_INPUT ?? $("maxMinutes")?.value ?? 120);
+
+      renderChosenCard(origin, found, catUI, LAST_DATASET_INFO, usedMinutes, maxMinutesInput);
+
+      setTimeout(() => {
+        $("resultCard")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 20);
+      return;
+    }
+  });
+}
   // -------------------- SEARCH --------------------
   function widenMinutesSteps(m, categoryUI) {
     const category = canonicalCategory(categoryUI);
