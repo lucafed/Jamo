@@ -7,18 +7,19 @@ on:
       - "scripts/build_maifatto_it_abruzzo.mjs"
       - ".github/workflows/build-maifatto-it-abruzzo.yml"
 
+permissions:
+  contents: write
+
 concurrency:
-  group: build-maifatto-it-abruzzo
-  cancel-in-progress: true
+  group: maifatto-abruzzo-main
+  cancel-in-progress: false
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
 
     steps:
-      - name: Checkout (full history for rebase)
+      - name: Checkout (full history)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -35,48 +36,26 @@ jobs:
           GRID_COLS: "5"
           GRID_ROWS: "5"
           TARGET_IDEAS: "2600"
+          # lascia vuoto per "tutte le tile"
           MAX_TILES: ""
         run: node scripts/build_maifatto_it_abruzzo.mjs
 
-      - name: Commit & Push generated file (robust)
-        shell: bash
+      - name: Commit & Push (safe rebase)
         run: |
-          set -euo pipefail
-
-          FILE="public/data/mai_fatto/mai_fatto_it_abruzzo.json"
+          set -e
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          # assicurati di stare su main e di avere origin/main aggiornato
-          git checkout main
-          git fetch origin main
+          git add public/data/mai_fatto/mai_fatto_it_abruzzo.json
 
-          # stage
-          git add "$FILE" || true
-
-          # se non ci sono differenze, stop
-          if git diff --cached --quiet; then
-            echo "No changes to commit."
-            exit 0
-          fi
+          # Se non ci sono differenze, esci pulito
+          git diff --cached --quiet && echo "No changes" && exit 0
 
           git commit -m "Update MaiFatto Abruzzo"
 
-          # rebase su origin/main prima di pushare (evita fetch-first)
+          # Allinea al remote (evita 'fetch first')
           git pull --rebase origin main
 
-          # push con retry (in caso di gara con altri push)
-          for i in 1 2 3; do
-            if git push origin HEAD:main; then
-              echo "Pushed successfully."
-              exit 0
-            fi
-            echo "Push failed (attempt $i). Re-trying after rebase..."
-            git fetch origin main
-            git pull --rebase origin main
-            sleep $((i*2))
-          done
-
-          echo "Push failed after retries."
-          exit 1
+          # Push
+          git push origin HEAD:main
