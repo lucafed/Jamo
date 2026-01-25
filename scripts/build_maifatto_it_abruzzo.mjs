@@ -1,6 +1,6 @@
 // scripts/build_maifatto_it_abruzzo.mjs
 // Output: public/data/mai_fatto/mai_fatto_it_abruzzo.json
-// ROBUST (Node20/undici) • categorie complete • quota anti-food • sempre commit (build_id)
+// ROBUST (Node20/undici) • categorie “raggiungibili/non stressanti” • quota anti-food • sempre commit (build_id)
 
 import fs from "fs";
 import path from "path";
@@ -24,17 +24,15 @@ const GRID = {
 // Abruzzo bbox approx (W,S,E,N)
 const ABRUZZO_BBOX = { w: 13.0, s: 41.65, e: 14.85, n: 42.95 };
 
-// totale obiettivo (non per forza viene raggiunto se pool scarso)
 const TARGET_IDEAS = Number(process.env.TARGET_IDEAS || 2400);
 
 // quota per categoria (anti “mangiare infinito”)
-// puoi ritoccare come vuoi (somma ~ TARGET_IDEAS)
 const QUOTAS = {
-  tramonto: Number(process.env.Q_TRAMONTO || 260),
+  tramonto: Number(process.env.Q_TRAMONTO || 280),
   natura: Number(process.env.Q_NATURA || 520),
-  relax: Number(process.env.Q_RELAX || 280),
-  famiglia: Number(process.env.Q_FAMIGLIA || 360),
-  pioggia: Number(process.env.Q_PIOGGIA || 280),
+  relax: Number(process.env.Q_RELAX || 320),
+  famiglia: Number(process.env.Q_FAMIGLIA || 380),
+  pioggia: Number(process.env.Q_PIOGGIA || 300),
   bici: Number(process.env.Q_BICI || 220),
   moto: Number(process.env.Q_MOTO || 220),
   mangiare: Number(process.env.Q_MANGIARE || 260),
@@ -58,35 +56,30 @@ function writeJSON(filePath, obj){
 }
 function norm(s){ return String(s || "").trim(); }
 function low(s){ return norm(s).toLowerCase(); }
-
 function hasBadWords(name){
   const n = low(name);
   if (!n) return false;
   return BAD_WORDS.some(w => n.includes(w));
 }
-
 function hasWiki(tags){ return Boolean(tags?.wikipedia || tags?.wikidata); }
-
 function getCenter(el){
   if (typeof el.lat === "number" && typeof el.lon === "number") return { lat: el.lat, lon: el.lon };
   if (el.center && typeof el.center.lat === "number" && typeof el.center.lon === "number") return { lat: el.center.lat, lon: el.center.lon };
   return null;
 }
 
+// --- “non meta” / brand / servizi
 function isBadElement(el){
   const t = el.tags || {};
   const name = norm(t.name);
   if (!name) return true;
   if (hasBadWords(name)) return true;
 
-  // taglia brand/chain
   if (t.brand || t["brand:wikidata"] || t["brand:wikipedia"]) return true;
 
-  // roba non “meta”
   const amen = String(t.amenity || "");
   if (["fuel","bank","atm","pharmacy","clinic","hospital","police","post_office"].includes(amen)) return true;
 
-  // lodging puro
   if (t.tourism === "hotel" || t.tourism === "motel" || t.tourism === "hostel") return true;
 
   return false;
@@ -120,6 +113,8 @@ function isFood(tags){
 }
 
 // -------------------- Category classify (UI keys) --------------------
+// Obiettivo: posti “raggiungibili / non stressanti”.
+// Nota: FAMILY NON deve essere “playground ovunque”.
 function classify(tags){
   const t = tags || {};
   const amen = String(t.amenity || "");
@@ -129,51 +124,68 @@ function classify(tags){
   const waterway = String(t.waterway || "");
   const highway = String(t.highway || "");
   const route = String(t.route || "");
-  const historic = String(t.historic || "");
-  const man_made = String(t.man_made || "");
   const sport = String(t.sport || "");
+  const man_made = String(t.man_made || "");
+  const historic = String(t.historic || "");
   const name = low(t.name);
 
   // 1) MANGIARE
   if (isFood(t)) return "mangiare";
 
-  // 2) TRAMONTO / viewpoint / peaks / cliffs
+  // 2) TRAMONTO (easy): viewpoint / belvedere / torri panoramiche / terrazze
   if (tourism === "viewpoint") return "tramonto";
-  if (["peak","cliff","ridge","saddle"].includes(natural)) return "tramonto";
+  if (man_made === "tower" && (name.includes("belvedere") || name.includes("panoram") || name.includes("torre") || name.includes("terraz"))) return "tramonto";
+  // peak/cliff SOLO se “belvedere/panoramico” (evita cime stressanti)
+  if (["peak","cliff","ridge","saddle"].includes(natural) && (name.includes("belvedere") || name.includes("panoram") || name.includes("vista") || name.includes("terraz"))) {
+    return "tramonto";
+  }
 
-  // 3) PIOGGIA (indoor)
+  // 3) PIOGGIA (indoor “chiaro”)
   if (tourism === "museum" || tourism === "gallery") return "pioggia";
   if (amen === "cinema" || amen === "theatre" || amen === "arts_centre") return "pioggia";
   if (amen === "library") return "pioggia";
-  if (amen === "community_centre" && name) return "pioggia";
+  // centri culturali / sale civiche: ok pioggia (ma non “tutti”)
+  if (amen === "community_centre" && name && (name.includes("cultur") || name.includes("muse") || name.includes("bibli") || name.includes("teatr"))) return "pioggia";
 
-  // 4) FAMIGLIA
+  // 4) FAMIGLIA (posti belli per bimbi, non “giochini”)
   if (tourism === "zoo" || tourism === "theme_park") return "famiglia";
+  if (tourism === "attraction") return "famiglia"; // spesso: grotte visitabili, castelli visitabili, parchi tematici “soft”
+  // fattorie didattiche / petting zoo / animal farm (OSM spesso così)
+  if (tourism === "zoo" || t.zoo === "petting_zoo") return "famiglia";
+  if (t.attraction && String(t.attraction).includes("animal")) return "famiglia";
+  // parchi veri / aree verdi grandi (non playground)
   if (leisure === "park" && t.name) return "famiglia";
-  if (leisure === "playground") return "famiglia";
-  if (amen === "community_centre" && name) return "famiglia"; // (può diventare pioggia, ma ok)
+  // picnic site: family-friendly
+  if (tourism === "picnic_site") return "famiglia";
+  // sport “family-friendly” (solo alcuni)
   if (sport && ["swimming","climbing","ice_skating"].includes(sport)) return "famiglia";
 
-  // 5) RELAX
-  if (natural === "spring") return "relax";
+  // 5) RELAX (tranquillo, facile)
   if (amen === "spa" || leisure === "sauna") return "relax";
   if (leisure === "garden") return "relax";
-  if (leisure === "picnic_table") return "relax";
+  if (leisure === "park" && t.name) return "relax"; // sì: relax può includere parchi (poi QUOTA decide)
+  if (tourism === "picnic_site") return "relax";
+  // acqua “relax” solo se non è roba “da impresa”
+  if (natural === "spring" && (name.includes("font") || name.includes("sorg") || name.includes("acqua") || name.includes("fonte"))) return "relax";
 
-  // 6) NATURA
+  // 6) NATURA (wow naturale, ma non per forza “hard”)
   if (waterway === "waterfall" || natural === "waterfall") return "natura";
   if (natural === "cave_entrance" || natural === "cave") return "natura";
   if (t.boundary === "protected_area" || leisure === "nature_reserve") return "natura";
-  if (natural === "beach" || natural === "coastline" || natural === "wood") return "natura";
-  if (historic || man_made) return "natura";
+  if (natural === "wood" || natural === "valley" || natural === "gorge") return "natura";
+  // spiagge/coste in Abruzzo ok natura
+  if (natural === "beach" || natural === "coastline") return "natura";
+  // storico / man_made: SOLO se “visitabile/attraction” (altrimenti è rumore)
+  if (historic && (name.includes("eremo") || name.includes("abbaz") || name.includes("castell") || name.includes("forte") || name.includes("santuar"))) return "natura";
+  if (man_made && (name.includes("ponte") || name.includes("gola") || name.includes("canyon"))) return "natura";
 
-  // 7) BICI (euristiche realistiche per OSM)
+  // 7) BICI (OSM è scarso: prendiamo SOLO segnali chiari)
   if (highway === "cycleway") return "bici";
-  if (route === "bicycle") return "bici";
+  if (route === "bicycle" || route === "mtb") return "bici";
   if (t.network && ["icn","ncn","rcn","lcn"].includes(String(t.network))) return "bici";
   if (t.bicycle === "designated") return "bici";
 
-  // 8) MOTO (euristiche)
+  // 8) MOTO (passi/valichi/forche: “giro bello”)
   if (t.mountain_pass === "yes") return "moto";
   if (name.includes("passo ")) return "moto";
   if (name.includes("valico")) return "moto";
@@ -187,7 +199,6 @@ function durationBucketFor(cat){
   if (["pioggia","tramonto","mangiare"].includes(cat)) return "1h";
   return "2h";
 }
-
 function durationMinFor(cat){
   const r = Math.random();
   const ranges = {
@@ -219,28 +230,36 @@ function buildWhy(tags, cat){
     const extra = cue.length ? ` (${cue.slice(0,2).join(" • ")})` : "";
     return `Sosta “vera” e locale${extra}: spesso è più autentica dei posti standard e ti fa sentire in gita anche se sei vicino.`;
   }
-  if (cat === "tramonto") return "Punto luce: al tramonto cambia faccia e diventa una scena. Perfetto se vuoi wow senza organizzare nulla.";
-  if (cat === "pioggia") return "Ottimo piano B: al coperto, interessante, e ti salva la giornata quando fuori non invoglia.";
-  if (cat === "famiglia") return "Family nel senso giusto: spazio e stimoli reali, senza stress. I bimbi si divertono davvero.";
-  if (cat === "relax") return "Stacca la testa: atmosfera tranquilla e pulita, senza turismo di massa.";
-  if (cat === "bici") return "Giro semplice ma soddisfacente: ti dà la sensazione di mini-viaggio senza farti distruggere.";
-  if (cat === "moto") return "Strada/spot da moto: panorama e guida piacevole, roba che ti rimane addosso.";
-  return "È una micro-meta poco ovvia: abbastanza speciale da valere l’uscita, abbastanza vicina da farla anche al volo.";
+  if (cat === "tramonto") return "Punto luce easy: belvedere/vista/terrazza dove arrivi senza impresa e la luce fa il resto.";
+  if (cat === "pioggia") return "Piano B che sembra piano A: al coperto, interessante, e ti salva la giornata quando fuori non invoglia.";
+  if (cat === "famiglia") return "Family nel senso giusto: posto bello e facile dove i bimbi si divertono davvero (non ‘giochini’ a caso).";
+  if (cat === "relax") return "Reset mentale: posto tranquillo e semplice, perfetto per staccare senza stress o logistica complicata.";
+  if (cat === "bici") return "Giro semplice ma soddisfacente: mini-viaggio senza farti distruggere.";
+  if (cat === "moto") return "Giro da moto: strada/spot che ti fa tornare col sorriso (panorama + guida piacevole).";
+  return "Micro-meta poco ovvia: abbastanza speciale da valere l’uscita, abbastanza semplice da farla anche al volo.";
 }
 
 function scoreWow(el){
   const t = el.tags || {};
   let s = 0;
+  const name = low(t.name || "");
 
-  // boost wow
-  if (t.tourism === "viewpoint") s += 45;
+  // tramonto easy
+  if (t.tourism === "viewpoint") s += 46;
+  if (t.man_made === "tower" && (name.includes("belvedere") || name.includes("panoram") || name.includes("vista"))) s += 26;
+
+  // natura wow
   if (t.waterway === "waterfall" || t.natural === "waterfall") s += 55;
-  if (t.natural === "cave_entrance" || t.natural === "cave") s += 35;
-  if (t.natural === "peak" || t.natural === "cliff") s += 22;
+  if (t.natural === "cave_entrance" || t.natural === "cave") s += 34;
 
-  // family/relax/indoor
-  if (t.tourism === "theme_park" || t.tourism === "zoo") s += 26;
-  if (t.leisure === "playground") s += 20;
+  // family (ma non playground)
+  if (t.tourism === "theme_park" || t.tourism === "zoo") s += 28;
+  if (t.tourism === "attraction") s += 16;
+  if (t.tourism === "picnic_site") s += 10;
+  // penalty se playground (non lo vogliamo)
+  if (t.leisure === "playground") s -= 40;
+
+  // pioggia
   if (t.tourism === "museum" || t.tourism === "gallery") s += 18;
   if (t.amenity === "spa") s += 18;
 
@@ -260,40 +279,41 @@ function scoreWow(el){
     if (c && !["pizza","burger","kebab","italian"].includes(c)) s += 5;
   }
 
-  // anti-ovvio soft: wiki penalizza ma non uccide
+  // anti-ovvio soft
   if (hasWiki(t)) s -= 28;
   if (t.brand || t["brand:wikidata"] || t["brand:wikipedia"]) s -= 45;
 
-  const name = norm(t.name || "");
-  if (name.length >= 10) s += 4;
-
+  if (norm(t.name || "").length >= 10) s += 4;
   s += Math.random() * 12;
   return s;
 }
 
 // -------------------- Overpass queries --------------------
-// Nota: qui NON chiediamo "food" enorme a caso: lo prendiamo ma poi lo capiamo con QUOTA.
+// Nota: tolto playground (era spam). Aggiunti: attraction, picnic_site, tower/viewpoint.
 function overpassQueryWowFamilyIndoor(b){
   return `
 [out:json][timeout:180];
 (
-  // WOW / natura
+  // TRAMONTO easy / belvedere
   nwr["tourism"="viewpoint"](${b.s},${b.w},${b.n},${b.e});
+  nwr["man_made"="tower"]["name"](${b.s},${b.w},${b.n},${b.e});
+
+  // NATURA wow
   nwr["waterway"="waterfall"](${b.s},${b.w},${b.n},${b.e});
   nwr["natural"="waterfall"](${b.s},${b.w},${b.n},${b.e});
   nwr["natural"="spring"](${b.s},${b.w},${b.n},${b.e});
   nwr["natural"="cave_entrance"](${b.s},${b.w},${b.n},${b.e});
   nwr["natural"="cave"](${b.s},${b.w},${b.n},${b.e});
-  nwr["natural"="peak"](${b.s},${b.w},${b.n},${b.e});
-  nwr["natural"="cliff"](${b.s},${b.w},${b.n},${b.e});
   nwr["boundary"="protected_area"](${b.s},${b.w},${b.n},${b.e});
   nwr["leisure"="nature_reserve"](${b.s},${b.w},${b.n},${b.e});
+  nwr["natural"="wood"](${b.s},${b.w},${b.n},${b.e});
 
-  // FAMILY
-  nwr["tourism"="zoo"](${b.s},${b.w},${b.n},${b.e});
-  nwr["tourism"="theme_park"](${b.s},${b.w},${b.n},${b.e});
+  // FAMILY (bello, non playground)
+  nwr["tourism"="zoo"]["name"](${b.s},${b.w},${b.n},${b.e});
+  nwr["tourism"="theme_park"]["name"](${b.s},${b.w},${b.n},${b.e});
+  nwr["tourism"="attraction"]["name"](${b.s},${b.w},${b.n},${b.e});
   nwr["leisure"="park"]["name"](${b.s},${b.w},${b.n},${b.e});
-  nwr["leisure"="playground"]["name"](${b.s},${b.w},${b.n},${b.e});
+  nwr["tourism"="picnic_site"]["name"](${b.s},${b.w},${b.n},${b.e});
 
   // PIOGGIA (indoor)
   nwr["tourism"="museum"]["name"](${b.s},${b.w},${b.n},${b.e});
@@ -302,13 +322,15 @@ function overpassQueryWowFamilyIndoor(b){
   nwr["amenity"="theatre"]["name"](${b.s},${b.w},${b.n},${b.e});
   nwr["amenity"="library"]["name"](${b.s},${b.w},${b.n},${b.e});
 
-  // RELAX
+  // RELAX (parchi/giardini/spa)
   nwr["amenity"="spa"]["name"](${b.s},${b.w},${b.n},${b.e});
   nwr["leisure"="garden"]["name"](${b.s},${b.w},${b.n},${b.e});
+  nwr["tourism"="picnic_site"]["name"](${b.s},${b.w},${b.n},${b.e});
 
-  // BICI (cose “esplicite”)
+  // BICI
   nwr["highway"="cycleway"](${b.s},${b.w},${b.n},${b.e});
-  nwr["route"="bicycle"](${b.s},${b.w},${b.n},${b.e});
+  relation["route"="bicycle"](${b.s},${b.w},${b.n},${b.e});
+  relation["route"="mtb"](${b.s},${b.w},${b.n},${b.e});
 
   // MOTO (passi)
   nwr["mountain_pass"="yes"](${b.s},${b.w},${b.n},${b.e});
@@ -346,7 +368,7 @@ out center tags;
 `;
 }
 
-// -------------------- ROBUST fetch (anti undici crash) --------------------
+// -------------------- ROBUST fetch --------------------
 async function fetchWithTimeout(url, options, timeoutMs){
   const ctrl = new AbortController();
   const t = setTimeout(() => ctrl.abort(), timeoutMs);
@@ -431,8 +453,10 @@ function buildIdea(el){
 
   const cat = classify(t);
 
-  // IMPORTANT: scarta roba con category fuori dai bottoni (sicurezza)
   if (!["relax","famiglia","bici","moto","natura","pioggia","tramonto","mangiare"].includes(cat)) return null;
+
+  // scarta “playground” a prescindere (non lo vuoi proprio)
+  if (String(t.leisure || "") === "playground") return null;
 
   const bucket = durationBucketFor(cat);
   const why = buildWhy(t, cat);
@@ -456,15 +480,7 @@ function buildIdea(el){
   };
 }
 
-function shuffle(arr){
-  for (let i = arr.length - 1; i > 0; i--){
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
-}
-
-// selezione con QUOTE per categoria (anti sbilanciamento)
+// selezione con QUOTE per categoria
 function selectWithQuotas(elements, quotas){
   const buckets = {
     tramonto: [], natura: [], relax: [], famiglia: [],
@@ -477,21 +493,21 @@ function selectWithQuotas(elements, quotas){
     buckets[idea.category].push({ el, s: scoreWow(el) });
   }
 
-  // sort per wow desc
   for (const k of Object.keys(buckets)){
     buckets[k].sort((a,b)=> b.s - a.s);
   }
 
   const picked = [];
   const seenName = new Set();
-
   const order = ["tramonto","natura","relax","famiglia","pioggia","bici","moto","mangiare"];
 
-  // 1) prendi quota per categoria
+  // 1) quota per categoria
   for (const cat of order){
     const need = Math.max(0, Number(quotas[cat] || 0));
     let i = 0;
-    while (picked.length < TARGET_IDEAS && i < buckets[cat].length && (picked.filter(x=>x.category===cat).length < need)){
+    const countCat = () => picked.filter(x=>x.category===cat).length;
+
+    while (picked.length < TARGET_IDEAS && i < buckets[cat].length && countCat() < need){
       const el = buckets[cat][i].el;
       i++;
 
@@ -500,14 +516,14 @@ function selectWithQuotas(elements, quotas){
 
       const kn = idea.title.toLowerCase();
       if (seenName.has(kn)) continue;
-      seenName.add(kn);
 
       if (idea.title.length < 5) continue;
+      seenName.add(kn);
       picked.push(idea);
     }
   }
 
-  // 2) fill restante (se una categoria è povera) – ma sempre senza esplodere mangiare
+  // 2) fill restante (ma non esplodere “mangiare”)
   const fillPool = [];
   for (const cat of order){
     for (const x of buckets[cat]){
@@ -524,7 +540,6 @@ function selectWithQuotas(elements, quotas){
     const kn = idea.title.toLowerCase();
     if (seenName.has(kn)) continue;
 
-    // ulteriore anti-mangiare: non superare quota*1.4
     if (idea.category === "mangiare"){
       const maxFood = Math.round((Number(quotas.mangiare || 0) || 250) * 1.4);
       const foodNow = picked.filter(p=>p.category==="mangiare").length;
@@ -603,7 +618,7 @@ async function main(){
     filtered = all;
   }
 
-  // PRE counts (per debug)
+  // PRE counts
   const preCounts = {};
   for (const el of filtered){
     const idea = buildIdea(el);
@@ -612,10 +627,9 @@ async function main(){
   }
   console.log("PRE counts:", preCounts);
 
-  // quota selection
   const ideas = selectWithQuotas(filtered, QUOTAS);
 
-  // POST counts (per debug)
+  // POST counts
   const postCounts = {};
   for (const i of ideas){
     postCounts[i.category] = (postCounts[i.category] || 0) + 1;
@@ -623,10 +637,10 @@ async function main(){
   console.log("POST counts:", postCounts);
 
   const out = {
-    _build_id: "abruzzo_" + Date.now(), // cambia sempre => commit
+    _build_id: "abruzzo_" + Date.now(),
     updated_at: new Date().toISOString(),
     count: ideas.length,
-    area: "Abruzzo — Mai fatto (WOW completo) — quota-balanced — robust build",
+    area: "Abruzzo — Mai fatto (WOW completo) — quota-balanced — reachable-first",
     stats: {
       region: "Abruzzo",
       bbox: ABRUZZO_BBOX,
