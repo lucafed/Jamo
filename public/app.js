@@ -934,6 +934,37 @@
 
   // ❌ locali / hotel anche se hanno "lido" nel nome
   if (
+    hasAny(n, ["bar","ristorante","hotel","b&b","bb","residence","pizzeria","trattoria","osteria"]) &&
+    !t.includes("natural=beach") &&
+    !t.includes("natural=coastline")
+  ) {
+    return false;
+  }
+
+  // fallback stretto (nome + almeno un tag turistico)
+  if (
+    looksBeachByName(place) &&
+    (t.includes("natural=") || t.includes("tourism=") || t.includes("man_made="))
+  ) {
+    return true;
+  }
+
+  return false;
+  }
+  }
+
+  // ✅ segnali FORTI di mare vero
+  if (type === "mare") return true;
+  if (t.includes("natural=beach")) return true;
+  if (t.includes("natural=coastline")) return true;
+
+  // ✅ strutture costiere (solo se nome coerente)
+  if (t.includes("leisure=marina") && looksBeachByName(place)) return true;
+  if (t.includes("man_made=pier") && looksBeachByName(place)) return true;
+  if (t.includes("man_made=lighthouse")) return true;
+
+  // ❌ locali / hotel anche se hanno "lido" nel nome
+  if (
     hasAny(n, [
       "bar",
       "ristorante",
