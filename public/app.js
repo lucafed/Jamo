@@ -1591,6 +1591,8 @@ if (cat === "eventi") {
   return;
 }
 
+      
+
   window.JAMO_EVENTS.run({
     origin,
     maxMinutes: maxMinutesInput,
