@@ -869,25 +869,39 @@
   }
 
   function isSea(place) {
-    const t = tagsStr(place);
-    const type = normalizeType(place?.type);
-    const quality = hasQualitySignals(place);
-    const n = normName(place?.name || "");
+  const t = tagsStr(place);
+  const type = normalizeType(place?.type);
+  const quality = hasQualitySignals(place);
+  const n = normName(place?.name || "");
 
-    if (type === "mare") return true;
-    if (t.includes("natural=beach")) return true;
-    if (t.includes("leisure=marina")) return true;
-    if (t.includes("man_made=pier") && (looksBeachByName(place) || quality)) return true;
+  // ✅ Se il dataset già marca mare, ok
+  if (type === "mare") return true;
 
-    if (t.includes("tourism=attraction") && looksBeachByName(place)) return true;
+  // ❌ Anti “acqua dolce / lago / fiume”
+  if (t.includes("water=lake") || t.includes("natural=water") || t.includes("waterway=")) return false;
+  if (hasAny(n, ["lago","laghetto","fiume","torrente","sorgente","cascata","gola"])) return false;
 
-    if (t.includes("natural=coastline")) return looksBeachByName(place) || quality;
+  // ✅ TAG FORTI: mare vero
+  if (t.includes("natural=beach")) return true;
+  if (t.includes("leisure=marina")) return true;
 
-    if (looksBeachByName(place) && (quality || t.includes("tourism=") || t.includes("natural="))) return true;
+  // Molo/pier SOLO se ha segnali mare nel nome (o qualità)
+  if (t.includes("man_made=pier") && (hasAny(n, ["spiaggia","lido","baia","cala","mare"]) || quality)) return true;
 
-    if (hasAny(n, ["bar", "ristorante", "hotel"]) && looksBeachByName(place)) return false;
+  // Coastline da sola è troppo “tecnica”: la accettiamo solo se è chiaramente spiaggia/lido nel nome o qualità
+  if (t.includes("natural=coastline")) {
+    return hasAny(n, ["spiaggia","lido","baia","cala","scogliera","mare"]) || quality;
+  }
 
-    return false;
+  // Nome “spiaggia/lido/baia/cala” → ok SOLO se NON è chiaramente un bar/ristorante/hotel
+  const nameLooksBeach = hasAny(n, ["spiaggia","lido","baia","cala","scogliera","beach"]);
+  if (nameLooksBeach) {
+    if (hasAny(n, ["bar","ristorante","hotel","b&b","residence"])) return false;
+    // un minimo di tag turistico/naturale aiuta a evitare “rumore”
+    if (quality || t.includes("tourism=") || t.includes("natural=") || t.includes("leisure=")) return true;
+  }
+
+  return false;
   }
 
   function isMountain(place) {
