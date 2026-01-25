@@ -696,18 +696,18 @@
   }
 
   // -------------------- GEOCODING --------------------
-  async function geocodeLabel(label) {
-    const q = String(label || "").trim();
-    if (!q) throw new Error("Scrivi un luogo (es: Verona, Padova, Venezia...)");
-    const r = await fetch(`/api/geocode?q=${encodeURIComponent(q)}`, { method: "GET", cache: "no-store" });
-    const j = await r.json().catch(() => null);
-    if (!j) throw new Error("Geocoding fallito (risposta vuota)");
-    if (!j.ok) throw new Error(j.error || "Geocoding fallito");
-    if (!j.result || !Number.isFinite(Number(j.result.lat)) || !Number.isFinite(Number(j.result.lon))) {
-      throw new Error("Geocoding fallito (coordinate non valide)");
-    }
-    return j.result;
-        }
+async function geocodeLabel(label) {
+  const q = String(label || "").trim();
+  if (!q) throw new Error("Scrivi un luogo (es: Verona, Padova, Venezia...)");
+  const r = await fetch(`/api/geocode?q=${encodeURIComponent(q)}`, { method: "GET", cache: "no-store" });
+  const j = await r.json().catch(() => null);
+  if (!j) throw new Error("Geocoding fallito (risposta vuota)");
+  if (!j.ok) throw new Error(j.error || "Geocoding fallito");
+  if (!j.result || !Number.isFinite(Number(j.result.lat)) || !Number.isFinite(Number(j.result.lon))) {
+    throw new Error("Geocoding fallito (coordinate non valide)");
+  }
+  return j.result;
+}
   // -------------------- SEARCH --------------------
   function widenMinutesSteps(m, categoryUI) {
     const category = canonicalCategory(categoryUI);
