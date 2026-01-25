@@ -9,9 +9,14 @@
  * ✅ Mai 0 “per colpa del filtro”: se il filtro è troppo stretto, si allenta
  *
  * ✅ FIX LINK:
- *    - "🧭 Vai" = directions con ORIGIN (coord) ma DESTINAZIONE testuale (nome+luogo), no coord che sballano
- *    - "📍 Apri posto" = Google Maps search con nome+luogo (sempre preciso)
- *    - "🧩 Info" = solo se info_url è un vero link informativo (non una search generica)
+ *    - "🧭 Vai" = directions con ORIGIN (coord) ma DESTINAZIONE testuale (nome+luogo)
+ *    - "📍 Apri posto" = Google Maps search con nome+luogo
+ *    - "🧩 Info" = solo se info_url è un vero link informativo
+ *
+ * ✅ FAMILY FIX (richiesta Luca):
+ *    - Family deve mostrare: zoo, parchi avventura, parchi divertimento, acquari, waterpark, safari, luna park…
+ *    - NO piazze / giardini / parchi generici (a meno che siano “parco avventura” ecc.)
+ *    - Se troppo pochi: fallback SOFT a playground / parco giochi / museo bambini / science center
  *
  * Dataset:
  *  /data/mai_fatto/mai_fatto_it_abruzzo.json
@@ -48,6 +53,15 @@
       .replaceAll(">", "&gt;")
       .replaceAll('"', "&quot;")
       .replaceAll("'", "&#039;");
+
+  function norm(s){
+    return String(s ?? "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]+/g, " ")
+      .trim();
+  }
 
   function fmtDateShort(iso) {
     if (!iso) return "";
@@ -93,13 +107,10 @@
       .trim();
   }
 
-  // Query "precisa": meglio usare place + city + region (title a volte è “narrativa”)
   function placeQuery(e) {
     const place = (e.place || "").trim();
     const city = (e.city || "").trim();
     const region = (e.region || "").trim();
-
-    // fallback: se place manca, usa title
     const base = place || (e.title || "").trim();
     const q = cleanJoin([base, city, region, "Italia"]);
     return q || "";
@@ -110,7 +121,6 @@
     return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
   }
 
-  // Directions: origin coord (ok), destination TESTO (nome+luogo) => più affidabile delle coord che “sballano”
   function mapsDirUrlTextDest({ oLat, oLon, destQuery, mode }) {
     const m = mode || "driving";
     const base = `https://www.google.com/maps/dir/?api=1`;
@@ -123,12 +133,10 @@
     return `${base}${originPart}${dest}&travelmode=${encodeURIComponent(m)}`;
   }
 
-  // Info URL: lo mostriamo SOLO se sembra una pagina “info” vera (non una search maps che già facciamo)
   function isProbablyInfoUrl(u) {
     const s = String(u || "").trim();
     if (!s) return false;
     if (!/^https?:\/\//i.test(s)) return false;
-    // se è già una maps search generica, non serve
     if (s.includes("google.com/maps/search")) return false;
     return true;
   }
@@ -174,6 +182,47 @@
   function isTooFamous(e) {
     const hay = `${e.title || ""} ${e.place || ""} ${e.city || ""}`.toLowerCase();
     return TOO_FAMOUS_WORDS.some((w) => hay.includes(w));
+  }
+
+  // ------------------ FAMILY: filtro qualità ------------------
+  function familyQualityLevel(e){
+    // 2 = family vero (zoo/themepark/adventure/aquarium/waterpark/safari/lunapark)
+    // 1 = family soft (playground/parco giochi/museo kids/science center)
+    // 0 = NO (piazza/parco/giardino generico)
+    const h = norm(`${e.title || ""} ${e.place || ""} ${e.city || ""}`);
+
+    const strong = [
+      "zoo","safari","wildlife","faunist","acquario","aquarium","oceanario",
+      "parco avventura","adventure park","percorsi sospesi","zipline",
+      "parco divertimenti","theme park","luna park","lunapark","giostre",
+      "water park","parco acquatico","aquapark","aqualand","acquapark",
+      "fattoria didattica","agriturismo didattico","fattoria",
+      "dinosaur","dinopark","parco preistorico"
+    ];
+
+    const soft = [
+      "parco giochi","playground","area giochi","ludoteca",
+      "museo dei bambini","museo bambini","kids museum",
+      "planetario","science center","museo della scienza","museo scienza"
+    ];
+
+    const genericBad = [
+      "piazza","corso","via ","viale ","giardino","giardini",
+      "parco","villa comunale","villetta","pineta","passeggiata"
+    ];
+
+    const hasStrong = strong.some(w => h.includes(norm(w)));
+    if (hasStrong) return 2;
+
+    const hasSoft = soft.some(w => h.includes(norm(w)));
+    if (hasSoft) return 1;
+
+    // “parco” da solo = NO. “parco xxx” solo se contiene parole forti (già sopra).
+    const looksGeneric = genericBad.some(w => h.includes(norm(w)));
+    if (looksGeneric) return 0;
+
+    // se non è chiaramente generico, lo consideriamo soft=0 (non vogliamo roba random)
+    return 0;
   }
 
   // ------------------ UI patch (safe) ------------------
@@ -239,6 +288,7 @@
 
     const inBox = (w, s, e, n) => lon >= w && lon <= e && lat >= s && lat <= n;
 
+    // Abruzzo (abbastanza corretta)
     if (inBox(13.0, 41.65, 14.85, 42.95)) return "abruzzo";
 
     // Veneto/Verona proxy (larga, volutamente)
@@ -331,6 +381,18 @@
     return true;
   }
 
+  function applyFamilyFilter(arr, { soft=false } = {}){
+    // soft=false => SOLO livello 2
+    // soft=true  => livello 2 o 1
+    const out = [];
+    for (const e of arr){
+      const lvl = familyQualityLevel(e);
+      if (!soft && lvl >= 2) out.push(e);
+      if (soft && lvl >= 1) out.push(e);
+    }
+    return out;
+  }
+
   function pickIdeas({ all, origin, maxMinutes, eventType, haversineKm, estCarMinutesFromKm }) {
     let list = Array.isArray(all) ? all.slice() : [];
     const mm = Math.max(15, Number(maxMinutes) || 120);
@@ -345,11 +407,24 @@
         out = out.filter((e) => normalizeCategoryFromData(e.category) === et);
       }
 
+      // ✅ FAMILY vero
+      if (et === "famiglia") {
+        out = applyFamilyFilter(out, { soft:false });
+      }
+
       return out;
     };
 
     const beforeStrict = list.length;
     list = filterStrict(list);
+
+    // se family troppo vuoto → fallback soft (playground/musei kids)
+    if (et === "famiglia" && list.length < 6) {
+      const baseFamily = (Array.isArray(all) ? all.slice() : [])
+        .filter((e) => normalizeCategoryFromData(e.category) === "famiglia");
+      const softFamily = applyFamilyFilter(baseFamily, { soft:true });
+      if (softFamily.length) list = softFamily;
+    }
 
     // anti-famoso soft
     const preAnti = list.length;
@@ -358,7 +433,7 @@
       list = filterStrict(Array.isArray(all) ? all.slice() : []);
     }
 
-    // allenta se troppo poco
+    // allenta se troppo poco (ma FAMILY resta “family”, non prende piazze)
     if (beforeStrict > 0 && list.length < 4) {
       if (et === "1h" || et === "2h") {
         list = Array.isArray(all) ? all.slice() : [];
@@ -366,14 +441,22 @@
         list = (Array.isArray(all) ? all.slice() : []).filter((e) => {
           const c = normalizeCategoryFromData(e.category);
           if (c === et) return true;
-          if (et === "famiglia" && c === "family") return true;
-          if (et === "mangiare" && c === "food") return true;
           return false;
         });
+
+        if (et === "famiglia") {
+          // prima hard, poi soft
+          let hard = applyFamilyFilter(list, { soft:false });
+          if (hard.length >= 4) list = hard;
+          else {
+            const soft = applyFamilyFilter(list, { soft:true });
+            list = soft.length ? soft : hard;
+          }
+        }
       }
     }
 
-    // distanza + minuti (filtra SOLO per minuti impostati)
+    // distanza + minuti (filtra SOLO per minuti impostati, con estensione soft)
     if (origin && typeof origin.lat === "number" && typeof origin.lon === "number") {
       list = list
         .map((e) => {
@@ -445,10 +528,9 @@
       const oLat = Number(origin?.lat);
       const oLon = Number(origin?.lon);
 
-      // ✅ link precisi
       const q = placeQuery(e);
-      const openPlaceUrl = mapsSearchUrl(q); // sempre
-      const goUrl = mapsDirUrlTextDest({ oLat, oLon, destQuery: q, mode: "driving" }); // directions, dest testuale
+      const openPlaceUrl = mapsSearchUrl(q);
+      const goUrl = mapsDirUrlTextDest({ oLat, oLon, destQuery: q, mode: "driving" });
 
       const infoUrlRaw = (e.info_url || e.url || "").trim();
       const infoUrl = isProbablyInfoUrl(infoUrlRaw) ? infoUrlRaw : "";
