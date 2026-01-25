@@ -1591,13 +1591,6 @@ if (cat === "eventi") {
   return;
 }
 
-      // MAI FATTO / COSE DA FARE (usa events.js)
-if (cat === "eventi") {
-  if (!window.JAMO_EVENTS || typeof window.JAMO_EVENTS.run !== "function") {
-    showStatus("err", "Modulo 'Mai fatto' non disponibile.");
-    return;
-  }
-
   window.JAMO_EVENTS.run({
     origin,
     maxMinutes: maxMinutesInput,
