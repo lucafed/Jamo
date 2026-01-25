@@ -1566,32 +1566,13 @@
       const maxMinutesInput = clamp(Number($("maxMinutes")?.value) || 120, 10, 600);
       const categoryUI = getActiveCategory();
       const cat = canonicalCategory(categoryUI);
-      // ✅ MAI FATTO / EVENTI → delega a events.js
+
+      // MAI FATTO / COSE DA FARE (usa events.js)
 if (cat === "eventi") {
   if (!window.JAMO_EVENTS || typeof window.JAMO_EVENTS.run !== "function") {
-    showStatus(
-      "err",
-      "Modulo 'Mai fatto' non disponibile. Controlla che events.js sia caricato prima di app.js"
-    );
+    showStatus("err", "Modulo 'Mai fatto' non disponibile.");
     return;
   }
-
-  window.JAMO_EVENTS.run({
-    origin,
-    maxMinutes: maxMinutesInput,
-    eventType: getEventType?.() || "tutti",
-    eventWhen: getEventWhen?.() || "any",
-    haversineKm,
-    estCarMinutesFromKm,
-    escapeHtml,
-    showStatus,
-    scrollToId,
-  });
-
-  return;
-}
-
-      
 
   window.JAMO_EVENTS.run({
     origin,
