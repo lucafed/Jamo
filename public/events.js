@@ -1,4 +1,4 @@
-/* public/events.js — JAMO_MAIFATTO bridge (OFFLINE • WOW-first • robust)
+/* public/events.js — JAMO_MAIFATTO bridge (OFFLINE • WOW-first • robust • SMART)
  * Compatibile con app.js v22.2
  *
  * ✅ "Eventi" => "✨ Mai fatto"
@@ -6,17 +6,13 @@
  * ✅ 1h/2h filtrano su duration_bucket (NON su category) + fallback su duration_min
  * ✅ Regione scelta da COORDINATE (bbox), non da origin.region
  * ✅ Anti-famoso SOFT (non blocca)
- * ✅ Mai 0 “per colpa del filtro”: se il filtro è troppo stretto, si allenta
+ * ✅ Mai 0 “per colpa del filtro”: se troppo stretto, si allenta
+ * ✅ WIDEN SOFT: se poche idee coerenti entro i minuti, aumenta tolleranza distanza/minuti (senza buttare roba random)
  *
  * ✅ FIX LINK:
  *    - "🧭 Vai" = directions con ORIGIN (coord) ma DESTINAZIONE testuale (nome+luogo)
  *    - "📍 Apri posto" = Google Maps search con nome+luogo
  *    - "🧩 Info" = solo se info_url è un vero link informativo
- *
- * ✅ FAMILY FIX (richiesta Luca):
- *    - Family deve mostrare: zoo, parchi avventura, parchi divertimento, acquari, waterpark, safari, luna park…
- *    - NO piazze / giardini / parchi generici (a meno che siano “parco avventura” ecc.)
- *    - Se troppo pochi: fallback SOFT a playground / parco giochi / museo bambini / science center
  *
  * Dataset:
  *  /data/mai_fatto/mai_fatto_it_abruzzo.json
@@ -53,15 +49,6 @@
       .replaceAll(">", "&gt;")
       .replaceAll('"', "&quot;")
       .replaceAll("'", "&#039;");
-
-  function norm(s){
-    return String(s ?? "")
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/[^a-z0-9]+/g, " ")
-      .trim();
-  }
 
   function fmtDateShort(iso) {
     if (!iso) return "";
@@ -158,7 +145,6 @@
     if (!s) return "";
     if (s === "family") return "famiglia";
     if (s === "food") return "mangiare";
-    if (s === "mangiare" || s === "food") return "mangiare";
     return s;
   }
 
@@ -182,47 +168,6 @@
   function isTooFamous(e) {
     const hay = `${e.title || ""} ${e.place || ""} ${e.city || ""}`.toLowerCase();
     return TOO_FAMOUS_WORDS.some((w) => hay.includes(w));
-  }
-
-  // ------------------ FAMILY: filtro qualità ------------------
-  function familyQualityLevel(e){
-    // 2 = family vero (zoo/themepark/adventure/aquarium/waterpark/safari/lunapark)
-    // 1 = family soft (playground/parco giochi/museo kids/science center)
-    // 0 = NO (piazza/parco/giardino generico)
-    const h = norm(`${e.title || ""} ${e.place || ""} ${e.city || ""}`);
-
-    const strong = [
-      "zoo","safari","wildlife","faunist","acquario","aquarium","oceanario",
-      "parco avventura","adventure park","percorsi sospesi","zipline",
-      "parco divertimenti","theme park","luna park","lunapark","giostre",
-      "water park","parco acquatico","aquapark","aqualand","acquapark",
-      "fattoria didattica","agriturismo didattico","fattoria",
-      "dinosaur","dinopark","parco preistorico"
-    ];
-
-    const soft = [
-      "parco giochi","playground","area giochi","ludoteca",
-      "museo dei bambini","museo bambini","kids museum",
-      "planetario","science center","museo della scienza","museo scienza"
-    ];
-
-    const genericBad = [
-      "piazza","corso","via ","viale ","giardino","giardini",
-      "parco","villa comunale","villetta","pineta","passeggiata"
-    ];
-
-    const hasStrong = strong.some(w => h.includes(norm(w)));
-    if (hasStrong) return 2;
-
-    const hasSoft = soft.some(w => h.includes(norm(w)));
-    if (hasSoft) return 1;
-
-    // “parco” da solo = NO. “parco xxx” solo se contiene parole forti (già sopra).
-    const looksGeneric = genericBad.some(w => h.includes(norm(w)));
-    if (looksGeneric) return 0;
-
-    // se non è chiaramente generico, lo consideriamo soft=0 (non vogliamo roba random)
-    return 0;
   }
 
   // ------------------ UI patch (safe) ------------------
@@ -261,7 +206,7 @@
       }
 
       const info = document.querySelector("#eventsSubfilters .small.muted");
-      if (info) info.textContent = "Offline: idee WOW • regione → Italia • filtri soft • link precisi su Maps.";
+      if (info) info.textContent = "Offline: idee WOW • regione → Italia • filtri soft • widening automatico • link Maps precisi.";
     } catch (e) {
       console.warn("patchUI warning:", e);
     }
@@ -269,6 +214,103 @@
 
   safePatchUI();
   setTimeout(safePatchUI, 50);
+
+  // ------------------ MAIFATTO SMART TAGS (inferenza + scoring) ------------------
+  const TAG_RULES = [
+    // FAMILY WOW
+    { tag: "zoo", rx: /\b(zoo|parco faunistico|parco zoologico|bioparco|safari)\b/i },
+    { tag: "acquario", rx: /\b(acquario|aquarium)\b/i },
+    { tag: "parco_avventura", rx: /\b(parco avventura|percors[oi] sospes[oi]|zipline|tree\s*climbing)\b/i },
+    { tag: "parco_divertimenti", rx: /\b(parco divertimenti|luna\s*park|giostre|theme\s*park)\b/i },
+    { tag: "waterpark", rx: /\b(aquapark|water\s*park|scivoli|piscine\s*con\s*scivoli)\b/i },
+    { tag: "fattoria_didattica", rx: /\b(fattoria didattica|agriturismo didattico|fattoria|parco agricolo)\b/i },
+    { tag: "museo_bimbi", rx: /\b(museo.*bambin|museo.*ragazz|children.?s\s*museum)\b/i },
+
+    // RELAX REAL
+    { tag: "spa", rx: /\b(spa|wellness|centro benessere|sauna|bagno turco|hammam)\b/i },
+    { tag: "terme", rx: /\b(terme|termal|thermal)\b/i },
+
+    // PIOGGIA / INDOOR
+    { tag: "indoor", rx: /\b(indoor|al\s*coperto|coperto)\b/i },
+    { tag: "museo", rx: /\b(museo|galleria|pinacoteca|mostra)\b/i },
+    { tag: "grotta", rx: /\b(grotta|grotte|caverna)\b/i },
+
+    // MANGIA WOW
+    { tag: "degustazione", rx: /\b(degustazione|tasting|wine\s*tasting|frantoio|oleificio)\b/i },
+    { tag: "street_food", rx: /\b(street\s*food|mercato\s*(coperto|storico)|food\s*market)\b/i },
+    { tag: "birrificio", rx: /\b(birrificio|brewery)\b/i },
+    { tag: "sagra", rx: /\b(sagra|festa\s+(della|del|dei|degli))\b/i },
+
+    // TRAMONTO / PANORAMI
+    { tag: "belvedere", rx: /\b(belvedere|punto panoramico|panoram|terrazza|vedetta)\b/i },
+    { tag: "lago", rx: /\b(lago)\b/i },
+    { tag: "mare", rx: /\b(mare|spiaggia|lido|baia|faro|promontorio)\b/i },
+  ];
+
+  const NEG_RELAX = [
+    /\b(bivacco|rifugio|vetta|cima|sentiero|trekking|arrampicata|via ferrata)\b/i
+  ];
+
+  function inferTags(e) {
+    const t = `${e.title || ""} ${e.place || ""} ${e.city || ""} ${e.region || ""}`.toLowerCase();
+    const tags = new Set(Array.isArray(e.tags) ? e.tags.map(x => String(x).toLowerCase().trim()) : []);
+    for (const r of TAG_RULES) if (r.rx.test(t)) tags.add(r.tag);
+    return [...tags];
+  }
+
+  function scoreForEventType(e, etKey) {
+    const tags = inferTags(e);
+    const text = `${e.title || ""} ${e.place || ""} ${e.city || ""}`.toLowerCase();
+    let s = (typeof e.wow_score === "number" ? e.wow_score : 0);
+
+    if (etKey === "famiglia") {
+      if (tags.includes("zoo")) s += 10;
+      if (tags.includes("parco_avventura")) s += 10;
+      if (tags.includes("parco_divertimenti")) s += 10;
+      if (tags.includes("acquario")) s += 9;
+      if (tags.includes("waterpark")) s += 8;
+      if (tags.includes("fattoria_didattica")) s += 7;
+      if (tags.includes("museo_bimbi")) s += 6;
+      if (/\bparco\b/i.test(text) && !tags.some(x => ["zoo","parco_avventura","parco_divertimenti","acquario","waterpark","fattoria_didattica"].includes(x))) {
+        s -= 3;
+      }
+    }
+
+    if (etKey === "relax") {
+      if (tags.includes("terme")) s += 12;
+      if (tags.includes("spa")) s += 12;
+      if (NEG_RELAX.some(rx => rx.test(text))) s -= 10;
+    }
+
+    if (etKey === "pioggia") {
+      if (tags.includes("spa") || tags.includes("terme")) s += 9;
+      if (tags.includes("acquario")) s += 9;
+      if (tags.includes("museo")) s += 8;
+      if (tags.includes("indoor")) s += 6;
+      if (tags.includes("grotta")) s += 4;
+    }
+
+    if (etKey === "mangiare") {
+      if (tags.includes("degustazione")) s += 8;
+      if (tags.includes("street_food")) s += 8;
+      if (tags.includes("birrificio")) s += 7;
+      if (tags.includes("sagra")) s += 7;
+      if (/ristorant|trattoria|osteria|agritur/i.test(text)) s += 2;
+    }
+
+    if (etKey === "tramonto") {
+      if (tags.includes("belvedere")) s += 10;
+      if (tags.includes("mare")) s += 5;
+      if (tags.includes("lago")) s += 3;
+    }
+
+    if (etKey === "natura") {
+      if (tags.includes("belvedere")) s += 3;
+      if (tags.includes("lago")) s += 3;
+    }
+
+    return s;
+  }
 
   // ------------------ cache dataset ------------------
   const CACHE = new Map(); // url -> { ideas, meta }
@@ -288,9 +330,7 @@
 
     const inBox = (w, s, e, n) => lon >= w && lon <= e && lat >= s && lat <= n;
 
-    // Abruzzo (abbastanza corretta)
     if (inBox(13.0, 41.65, 14.85, 42.95)) return "abruzzo";
-
     // Veneto/Verona proxy (larga, volutamente)
     if (inBox(10.2, 44.7, 12.3, 46.2)) return "verona";
 
@@ -381,20 +421,8 @@
     return true;
   }
 
-  function applyFamilyFilter(arr, { soft=false } = {}){
-    // soft=false => SOLO livello 2
-    // soft=true  => livello 2 o 1
-    const out = [];
-    for (const e of arr){
-      const lvl = familyQualityLevel(e);
-      if (!soft && lvl >= 2) out.push(e);
-      if (soft && lvl >= 1) out.push(e);
-    }
-    return out;
-  }
-
   function pickIdeas({ all, origin, maxMinutes, eventType, haversineKm, estCarMinutesFromKm }) {
-    let list = Array.isArray(all) ? all.slice() : [];
+    let base = Array.isArray(all) ? all.slice() : [];
     const mm = Math.max(15, Number(maxMinutes) || 120);
     const et = normalizeKey(eventType || "tutti");
 
@@ -407,58 +435,39 @@
         out = out.filter((e) => normalizeCategoryFromData(e.category) === et);
       }
 
-      // ✅ FAMILY vero
-      if (et === "famiglia") {
-        out = applyFamilyFilter(out, { soft:false });
-      }
-
       return out;
     };
 
-    const beforeStrict = list.length;
-    list = filterStrict(list);
+    // 1) filtro per sottocategoria (se presente nel dataset)
+    let list = filterStrict(base);
 
-    // se family troppo vuoto → fallback soft (playground/musei kids)
-    if (et === "famiglia" && list.length < 6) {
-      const baseFamily = (Array.isArray(all) ? all.slice() : [])
-        .filter((e) => normalizeCategoryFromData(e.category) === "famiglia");
-      const softFamily = applyFamilyFilter(baseFamily, { soft:true });
-      if (softFamily.length) list = softFamily;
-    }
-
-    // anti-famoso soft
+    // 2) anti-famoso soft
     const preAnti = list.length;
     list = list.filter((e) => !isTooFamous(e));
     if (preAnti > 0 && list.length < Math.min(8, Math.round(preAnti * 0.15))) {
-      list = filterStrict(Array.isArray(all) ? all.slice() : []);
+      list = filterStrict(base);
     }
 
-    // allenta se troppo poco (ma FAMILY resta “family”, non prende piazze)
-    if (beforeStrict > 0 && list.length < 4) {
+    // 3) se troppo poco, allenta filtro sottocategoria (ma resta “mai fatto”)
+    if (list.length < 4) {
       if (et === "1h" || et === "2h") {
-        list = Array.isArray(all) ? all.slice() : [];
+        list = base.slice();
       } else if (et && et !== "tutti") {
-        list = (Array.isArray(all) ? all.slice() : []).filter((e) => {
-          const c = normalizeCategoryFromData(e.category);
-          if (c === et) return true;
-          return false;
-        });
-
-        if (et === "famiglia") {
-          // prima hard, poi soft
-          let hard = applyFamilyFilter(list, { soft:false });
-          if (hard.length >= 4) list = hard;
-          else {
-            const soft = applyFamilyFilter(list, { soft:true });
-            list = soft.length ? soft : hard;
-          }
-        }
+        list = base.slice(); // prima allenta *categoria*
       }
     }
 
-    // distanza + minuti (filtra SOLO per minuti impostati, con estensione soft)
-    if (origin && typeof origin.lat === "number" && typeof origin.lon === "number") {
-      list = list
+    // 4) distanza/minuti con widening SOFT:
+    //    - prima prova entro mm * 1.35
+    //    - se poche, prova mm * 1.9
+    //    - se ancora poche, prova mm * 2.6
+    const widenSteps = [1.35, 1.9, 2.6];
+
+    const hasOrigin = origin && typeof origin.lat === "number" && typeof origin.lon === "number";
+
+    function rankAndFilter(arr, factor) {
+      const cap = Math.round(mm * factor);
+      const items = arr
         .map((e) => {
           const lat = Number(e.lat);
           const lon = Number(e.lon);
@@ -469,22 +478,36 @@
             : null;
 
           const mins = km == null ? null : approxMinutesFromKm(km, estCarMinutesFromKm);
-          const wow = typeof e.wow_score === "number" ? e.wow_score : 0;
 
-          return { e, mins, wow };
+          const s = scoreForEventType(e, et);
+          return { e, mins, s };
         })
         .filter(Boolean)
-        .filter((x) => (x.mins == null ? true : x.mins <= Math.round(mm * 1.35)))
-        .sort((a, b) => (a.mins ?? 999999) - (b.mins ?? 999999) || (b.wow - a.wow))
+        .filter((x) => (x.mins == null ? true : x.mins <= cap))
+        .sort((a, b) => {
+          // prima qualità per sottocategoria, poi vicino
+          if (Math.abs(b.s - a.s) > 0.5) return b.s - a.s;
+          return (a.mins ?? 999999) - (b.mins ?? 999999);
+        })
         .map((x) => x.e);
+
+      return items;
+    }
+
+    let picked = [];
+    if (hasOrigin) {
+      for (const f of widenSteps) {
+        picked = rankAndFilter(list, f);
+        if (picked.length >= 6) break; // abbastanza, stop
+      }
     } else {
-      list = list
-        .map((e) => ({ e, wow: typeof e.wow_score === "number" ? e.wow_score : 0 }))
-        .sort((a, b) => b.wow - a.wow)
+      picked = list
+        .map((e) => ({ e, s: scoreForEventType(e, et) }))
+        .sort((a, b) => b.s - a.s)
         .map((x) => x.e);
     }
 
-    return list.slice(0, SHOW_LIMIT);
+    return picked.slice(0, SHOW_LIMIT);
   }
 
   // ------------------ render ------------------
@@ -586,7 +609,7 @@
           ${updated ? `Dataset aggiornato ${esc(updated)}` : "Dataset offline"} • totale ${esc(total)}${areaName}
         </div>
         <div class="small muted" style="margin-top:6px;">
-          Mostrate: ${esc(items.length)} • entro ~${esc(maxMinutes)} min (estensione soft inclusa)
+          Mostrate: ${esc(items.length)} • entro ~${esc(maxMinutes)} min (widening soft incluso)
         </div>
       </div>
       ${cards}
