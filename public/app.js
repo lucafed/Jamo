@@ -868,41 +868,62 @@
     return false;
   }
 
-  function isSea(place) {
+  function isNearCoast(place, maxKm = 6) {
+  // se abbiamo già coastline / beach → è mare vero
+  const t = tagsStr(place);
+  if (t.includes("natural=beach") || t.includes("natural=coastline")) return true;
+
+  // fallback geografico: se il dataset ha country IT
+  // e siamo MOLTO lontani dal mare, lo scartiamo
+  // (valore empirico: 6 km dalla costa)
+  if (!Number.isFinite(place?.lat) || !Number.isFinite(place?.lon)) return false;
+
+  // bounding box mare IT (molto larga, cheap check)
+  // serve SOLO per escludere Appennino & pianura interna
+  const lat = place.lat;
+  const lon = place.lon;
+
+  // se sei sopra ~45.5 o sotto ~36 sei ok, ma questo non basta
+  // quindi: se sei troppo "interno" all'Appennino centrale → no mare
+  if (
+    lat > 43.5 && lat < 44.8 &&  // Abruzzo interno
+    lon > 12.5 && lon < 14.2
+  ) {
+    return false;
+  }
+
+  return true; // fallback permissivo solo se non chiaramente interno
+  }
+function isSea(place) {
   const t = tagsStr(place);
   const type = normalizeType(place?.type);
   const quality = hasQualitySignals(place);
   const n = normName(place?.name || "");
 
-  // ✅ Se il dataset già marca mare, ok
+  // ❌ Se NON è vicino alla costa → NON è mare
+  if (!isNearCoast(place)) return false;
+
+  // ✅ Tag fortissimi
   if (type === "mare") return true;
-
-  // ❌ Anti “acqua dolce / lago / fiume”
-  if (t.includes("water=lake") || t.includes("natural=water") || t.includes("waterway=")) return false;
-  if (hasAny(n, ["lago","laghetto","fiume","torrente","sorgente","cascata","gola"])) return false;
-
-  // ✅ TAG FORTI: mare vero
   if (t.includes("natural=beach")) return true;
   if (t.includes("leisure=marina")) return true;
 
-  // Molo/pier SOLO se ha segnali mare nel nome (o qualità)
-  if (t.includes("man_made=pier") && (hasAny(n, ["spiaggia","lido","baia","cala","mare"]) || quality)) return true;
-
-  // Coastline da sola è troppo “tecnica”: la accettiamo solo se è chiaramente spiaggia/lido nel nome o qualità
-  if (t.includes("natural=coastline")) {
-    return hasAny(n, ["spiaggia","lido","baia","cala","scogliera","mare"]) || quality;
+  // Molo / pier solo se davvero costiero
+  if (t.includes("man_made=pier") && (quality || hasAny(n, ["spiaggia","lido","mare"]))) {
+    return true;
   }
 
-  // Nome “spiaggia/lido/baia/cala” → ok SOLO se NON è chiaramente un bar/ristorante/hotel
+  // Nome spiaggia/baia SOLO se:
+  // - vicino alla costa
+  // - NON bar/ristorante/hotel
   const nameLooksBeach = hasAny(n, ["spiaggia","lido","baia","cala","scogliera","beach"]);
   if (nameLooksBeach) {
     if (hasAny(n, ["bar","ristorante","hotel","b&b","residence"])) return false;
-    // un minimo di tag turistico/naturale aiuta a evitare “rumore”
-    if (quality || t.includes("tourism=") || t.includes("natural=") || t.includes("leisure=")) return true;
+    return quality || t.includes("natural=") || t.includes("tourism=");
   }
 
   return false;
-  }
+}
 
   function isMountain(place) {
     const t = tagsStr(place);
