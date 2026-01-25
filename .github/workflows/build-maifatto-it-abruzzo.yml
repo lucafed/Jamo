@@ -2,21 +2,18 @@ name: Build MaiFatto IT Abruzzo
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - "scripts/build_maifatto_it_abruzzo.mjs"
-      - ".github/workflows/build-maifatto-it-abruzzo.yml"
 
 permissions:
   contents: write
 
 concurrency:
-  group: maifatto-it-abruzzo
+  group: maifatto-it-abruzzo-main
   cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout (full history)
         uses: actions/checkout@v4
@@ -35,22 +32,25 @@ jobs:
           GRID_COLS: "5"
           GRID_ROWS: "5"
           TARGET_IDEAS: "2600"
+          # vuoto = tutte le tile
+          MAX_TILES: ""
         run: node scripts/build_maifatto_it_abruzzo.mjs
 
-      - name: Commit generated file (if changed) + push (rebase-safe)
+      - name: Commit & Push (safe)
         run: |
           set -e
+
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           git add public/data/mai_fatto/mai_fatto_it_abruzzo.json
 
-          # niente cambi? esci senza errore
+          # Se non ci sono differenze, esci pulito
           git diff --cached --quiet && echo "No changes" && exit 0
 
           git commit -m "Update MaiFatto Abruzzo"
 
-          # evita "fetch first"
+          # Allinea al remote prima del push (evita fetch-first)
           git pull --rebase origin main
 
           git push origin HEAD:main
