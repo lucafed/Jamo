@@ -894,33 +894,68 @@
 
   return true; // fallback permissivo solo se non chiaramente interno
   }
+  // -------------------- COASTAL BBOX (MARE SOLO SE VICINO ALLA COSTA) --------------------
+
+// BBOX costiere IT (prima versione, offline, conservative)
+const COASTAL_BBOXES_IT = [
+  // Abruzzo coast (Adriatico)
+  { minLat: 41.98, maxLat: 42.52, minLon: 13.90, maxLon: 14.90 },
+
+  // Lazio coast (Tirreno)
+  { minLat: 41.00, maxLat: 42.20, minLon: 11.20, maxLon: 12.90 },
+
+  // Toscana coast
+  { minLat: 42.30, maxLat: 44.10, minLon: 9.70,  maxLon: 11.40 },
+
+  // Campania coast
+  { minLat: 40.40, maxLat: 41.20, minLon: 13.70, maxLon: 15.10 },
+
+  // Puglia coast (Adriatico + Ionio)
+  { minLat: 39.70, maxLat: 42.20, minLon: 15.00, maxLon: 18.60 },
+
+  // Sicilia (tutta)
+  { minLat: 36.60, maxLat: 38.40, minLon: 12.20, maxLon: 15.70 },
+
+  // Sardegna (tutta)
+  { minLat: 38.80, maxLat: 41.40, minLon: 8.00,  maxLon: 9.90 },
+];
+
+function isNearCoast(place) {
+  const lat = Number(place?.lat);
+  const lon = Number(place?.lon);
+  if (!Number.isFinite(lat) || !Number.isFinite(lon)) return false;
+
+  for (const b of COASTAL_BBOXES_IT) {
+    if (
+      lat >= b.minLat &&
+      lat <= b.maxLat &&
+      lon >= b.minLon &&
+      lon <= b.maxLon
+    ) {
+      return true;
+    }
+  }
+  return false;
+}
 function isSea(place) {
+  // 🔒 REGOLA CHIAVE: se NON sei vicino alla costa → NON sei mare
+  if (!isNearCoast(place)) return false;
+
   const t = tagsStr(place);
   const type = normalizeType(place?.type);
   const quality = hasQualitySignals(place);
   const n = normName(place?.name || "");
 
-  // ❌ Se NON è vicino alla costa → NON è mare
-  if (!isNearCoast(place)) return false;
-
-  // ✅ Tag fortissimi
   if (type === "mare") return true;
   if (t.includes("natural=beach")) return true;
   if (t.includes("leisure=marina")) return true;
+  if (t.includes("man_made=pier") && (looksBeachByName(place) || quality)) return true;
 
-  // Molo / pier solo se davvero costiero
-  if (t.includes("man_made=pier") && (quality || hasAny(n, ["spiaggia","lido","mare"]))) {
-    return true;
-  }
+  if (t.includes("tourism=attraction") && looksBeachByName(place)) return true;
 
-  // Nome spiaggia/baia SOLO se:
-  // - vicino alla costa
-  // - NON bar/ristorante/hotel
-  const nameLooksBeach = hasAny(n, ["spiaggia","lido","baia","cala","scogliera","beach"]);
-  if (nameLooksBeach) {
-    if (hasAny(n, ["bar","ristorante","hotel","b&b","residence"])) return false;
-    return quality || t.includes("natural=") || t.includes("tourism=");
-  }
+  if (t.includes("natural=coastline")) return true;
+
+  if (looksBeachByName(place) && (quality || t.includes("tourism="))) return true;
 
   return false;
 }
