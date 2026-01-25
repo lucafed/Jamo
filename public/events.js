@@ -8,6 +8,11 @@
  * ✅ Anti-famoso SOFT (non blocca)
  * ✅ Mai 0 “per colpa del filtro”: se il filtro è troppo stretto, si allenta
  *
+ * ✅ FIX LINK:
+ *    - "🧭 Vai" = directions con ORIGIN (coord) ma DESTINAZIONE testuale (nome+luogo), no coord che sballano
+ *    - "📍 Apri posto" = Google Maps search con nome+luogo (sempre preciso)
+ *    - "🧩 Info" = solo se info_url è un vero link informativo (non una search generica)
+ *
  * Dataset:
  *  /data/mai_fatto/mai_fatto_it_abruzzo.json
  *  /data/mai_fatto/mai_fatto_it_verona.json
@@ -73,31 +78,62 @@
     return `<span class="pill ${soft ? "soft" : ""}">${esc(label)}</span>`;
   }
 
-  function mapsDirUrl({ oLat, oLon, dLat, dLon, mode }) {
-    const m = mode || "driving";
-    const base = `https://www.google.com/maps/dir/?api=1`;
-    const originPart =
-      (typeof oLat === "number" && typeof oLon === "number")
-        ? `&origin=${encodeURIComponent(`${oLat},${oLon}`)}`
-        : "";
-    return `${base}${originPart}&destination=${encodeURIComponent(`${dLat},${dLon}`)}&travelmode=${encodeURIComponent(m)}`;
-  }
-
-  function infoUrlFor(e) {
-    const u = (e.info_url || e.url || "").trim();
-    if (u) return u;
-    const q = [e.title, e.place, e.city].filter(Boolean).join(" ");
-    if (!q.trim()) return "";
-    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
-  }
-
   function approxMinutesFromKm(km, estCarMinutesFromKm) {
     if (typeof estCarMinutesFromKm === "function") return estCarMinutesFromKm(km);
-    // fallback grezzo
     return Math.round(km + 8);
   }
 
-  // Normalizza chip -> chiave filtro
+  // ------------------ query/link builders (TESTO, non coord) ------------------
+  function cleanJoin(parts) {
+    return parts
+      .map((x) => String(x || "").trim())
+      .filter(Boolean)
+      .join(" ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  // Query "precisa": meglio usare place + city + region (title a volte è “narrativa”)
+  function placeQuery(e) {
+    const place = (e.place || "").trim();
+    const city = (e.city || "").trim();
+    const region = (e.region || "").trim();
+
+    // fallback: se place manca, usa title
+    const base = place || (e.title || "").trim();
+    const q = cleanJoin([base, city, region, "Italia"]);
+    return q || "";
+  }
+
+  function mapsSearchUrl(q) {
+    if (!q) return "";
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
+  }
+
+  // Directions: origin coord (ok), destination TESTO (nome+luogo) => più affidabile delle coord che “sballano”
+  function mapsDirUrlTextDest({ oLat, oLon, destQuery, mode }) {
+    const m = mode || "driving";
+    const base = `https://www.google.com/maps/dir/?api=1`;
+    const originPart =
+      (Number.isFinite(oLat) && Number.isFinite(oLon))
+        ? `&origin=${encodeURIComponent(`${oLat},${oLon}`)}`
+        : "";
+    const dest = destQuery ? `&destination=${encodeURIComponent(destQuery)}` : "";
+    if (!dest) return "";
+    return `${base}${originPart}${dest}&travelmode=${encodeURIComponent(m)}`;
+  }
+
+  // Info URL: lo mostriamo SOLO se sembra una pagina “info” vera (non una search maps che già facciamo)
+  function isProbablyInfoUrl(u) {
+    const s = String(u || "").trim();
+    if (!s) return false;
+    if (!/^https?:\/\//i.test(s)) return false;
+    // se è già una maps search generica, non serve
+    if (s.includes("google.com/maps/search")) return false;
+    return true;
+  }
+
+  // ------------------ Normalizzazione chiavi ------------------
   function normalizeKey(k) {
     const s = String(k || "").toLowerCase().trim();
     if (!s) return "tutti";
@@ -109,7 +145,6 @@
     return s;
   }
 
-  // Normalizza categoria evento dal dataset
   function normalizeCategoryFromData(cat) {
     const s = String(cat || "").toLowerCase().trim();
     if (!s) return "";
@@ -119,7 +154,6 @@
     return s;
   }
 
-  // ✅ Label carini solo per pill
   function labelCategory(k) {
     const m = {
       relax: "Reset mentale",
@@ -171,7 +205,6 @@
         `;
       }
 
-      // nascondi "Quando" (non serve per Mai fatto)
       const whenRow = document.getElementById("eventWhenChips");
       if (whenRow) {
         const parent = whenRow.closest("div");
@@ -179,7 +212,7 @@
       }
 
       const info = document.querySelector("#eventsSubfilters .small.muted");
-      if (info) info.textContent = "Offline: idee WOW • regione → Italia • anti-famoso soft (non blocca).";
+      if (info) info.textContent = "Offline: idee WOW • regione → Italia • filtri soft • link precisi su Maps.";
     } catch (e) {
       console.warn("patchUI warning:", e);
     }
@@ -199,7 +232,6 @@
   }
 
   // ✅ regione da coordinate (bbox)
-  // Abruzzo bbox: w=13, s=41.65, e=14.85, n=42.95
   function regionKeyFromLatLon(origin) {
     const lat = Number(origin?.lat);
     const lon = Number(origin?.lon);
@@ -210,7 +242,6 @@
     if (inBox(13.0, 41.65, 14.85, 42.95)) return "abruzzo";
 
     // Veneto/Verona proxy (larga, volutamente)
-    // (se vuoi più precisa la facciamo)
     if (inBox(10.2, 44.7, 12.3, 46.2)) return "verona";
 
     return "all";
@@ -235,8 +266,8 @@
         }
 
         const j = await fetchJson(url);
-
         const ideas = Array.isArray(j?.ideas) ? j.ideas : [];
+
         if (ideas.length) {
           const meta = {
             updated_at: j?.updated_at || "",
@@ -248,9 +279,7 @@
           LAST_META = meta;
           return ideas;
         }
-      } catch (_) {
-        // prova prossimo
-      }
+      } catch (_) {}
     }
 
     // fallback events (per non rompere)
@@ -290,13 +319,13 @@
     if (wantKey === "1h") {
       if (b === "1h") return true;
       const m = Number(e.duration_min);
-      if (Number.isFinite(m) && m <= 100) return true; // fallback
+      if (Number.isFinite(m) && m <= 100) return true;
       return false;
     }
     if (wantKey === "2h") {
       if (b === "2h") return true;
       const m = Number(e.duration_min);
-      if (Number.isFinite(m) && m > 100 && m <= 170) return true; // fallback
+      if (Number.isFinite(m) && m > 100 && m <= 170) return true;
       return false;
     }
     return true;
@@ -307,11 +336,9 @@
     const mm = Math.max(15, Number(maxMinutes) || 120);
     const et = normalizeKey(eventType || "tutti");
 
-    // 1) filtro tipo WOW
     const filterStrict = (arr) => {
       let out = arr;
 
-      // ✅ 1h/2h filtrano su duration_bucket (NON su category)
       if (et === "1h" || et === "2h") {
         out = out.filter((e) => matchesDurationBucket(e, et));
       } else if (et && et !== "tutti") {
@@ -324,25 +351,21 @@
     const beforeStrict = list.length;
     list = filterStrict(list);
 
-    // 2) anti-famoso soft: se ammazza tutto, si disattiva
+    // anti-famoso soft
     const preAnti = list.length;
     list = list.filter((e) => !isTooFamous(e));
     if (preAnti > 0 && list.length < Math.min(8, Math.round(preAnti * 0.15))) {
-      // troppo aggressivo: ripristina senza anti-famoso
       list = filterStrict(Array.isArray(all) ? all.slice() : []);
     }
 
-    // 3) se dopo il filtro rimane quasi nulla, allenta automaticamente (mai 0 “ingiusto”)
+    // allenta se troppo poco
     if (beforeStrict > 0 && list.length < 4) {
-      // a) se era 1h/2h: prova a NON filtrare e ordinare per minuti
       if (et === "1h" || et === "2h") {
         list = Array.isArray(all) ? all.slice() : [];
       } else if (et && et !== "tutti") {
-        // b) prova a includere anche matching “morbidi” su category (es: family/food)
         list = (Array.isArray(all) ? all.slice() : []).filter((e) => {
           const c = normalizeCategoryFromData(e.category);
           if (c === et) return true;
-          // sinonimi morbidi:
           if (et === "famiglia" && c === "family") return true;
           if (et === "mangiare" && c === "food") return true;
           return false;
@@ -350,7 +373,7 @@
       }
     }
 
-    // 4) distanza + minuti
+    // distanza + minuti (filtra SOLO per minuti impostati)
     if (origin && typeof origin.lat === "number" && typeof origin.lon === "number") {
       list = list
         .map((e) => {
@@ -368,9 +391,7 @@
           return { e, mins, wow };
         })
         .filter(Boolean)
-        // entro minuti: estensione soft 1.35×
         .filter((x) => (x.mins == null ? true : x.mins <= Math.round(mm * 1.35)))
-        // ordina: vicino, poi wow
         .sort((a, b) => (a.mins ?? 999999) - (b.mins ?? 999999) || (b.wow - a.wow))
         .map((x) => x.e);
     } else {
@@ -421,18 +442,16 @@
           ? `⏱️ ${durBucket.toUpperCase()} • ~${esc(e.duration_min || "")} min`
           : (e.duration_min ? `⏱️ ~${esc(e.duration_min)} min` : "");
 
-      const lat = Number(e.lat);
-      const lon = Number(e.lon);
-
       const oLat = Number(origin?.lat);
       const oLon = Number(origin?.lon);
 
-      const mapsAuto =
-        (Number.isFinite(lat) && Number.isFinite(lon))
-          ? mapsDirUrl({ oLat, oLon, dLat: lat, dLon: lon, mode: "driving" })
-          : "";
+      // ✅ link precisi
+      const q = placeQuery(e);
+      const openPlaceUrl = mapsSearchUrl(q); // sempre
+      const goUrl = mapsDirUrlTextDest({ oLat, oLon, destQuery: q, mode: "driving" }); // directions, dest testuale
 
-      const infoUrl = infoUrlFor(e);
+      const infoUrlRaw = (e.info_url || e.url || "").trim();
+      const infoUrl = isProbablyInfoUrl(infoUrlRaw) ? infoUrlRaw : "";
 
       const placeBlock = where
         ? `<div style="margin-top:10px; font-weight:950; font-size:15px; letter-spacing:.2px;">
@@ -466,8 +485,9 @@
           }
 
           <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
-            ${mapsAuto ? `<a class="btn btnPrimary" href="${esc(mapsAuto)}" target="_blank" rel="noopener">🧭 Vai</a>` : ""}
-            ${infoUrl ? `<a class="btn" href="${esc(infoUrl)}" target="_blank" rel="noopener">🧩 Cosa c’è</a>` : ""}
+            ${goUrl ? `<a class="btn btnPrimary" href="${esc(goUrl)}" target="_blank" rel="noopener">🧭 Vai</a>` : ""}
+            ${openPlaceUrl ? `<a class="btn" href="${esc(openPlaceUrl)}" target="_blank" rel="noopener">📍 Apri posto</a>` : ""}
+            ${infoUrl ? `<a class="btn" href="${esc(infoUrl)}" target="_blank" rel="noopener">🧩 Info</a>` : ""}
           </div>
 
           <div class="small muted" style="margin-top:10px; opacity:.70;">
