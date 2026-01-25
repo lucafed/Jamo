@@ -758,8 +758,38 @@
     return hasAny(n, ["terme","termale","thermal","spa","wellness","benessere","hammam","hamam","sauna"]);
   }
   function looksBeachByName(place) {
-    const n = normName(place?.name || "");
-    return hasAny(n, ["spiaggia","lido","baia","cala","scogliera","mare","beach"]);
+  const n = normName(place?.name || "");
+
+  // parole che indicano chiaramente MARE
+  const yes = hasAny(n, [
+    "spiaggia",
+    "beach",
+    "lido",
+    "baia",
+    "cala",
+    "caletta",
+    "scogliera",
+    "scogli",
+    "lungomare",
+    "promontorio",
+    "faro",
+    "duna"
+  ]);
+
+  // parole che indicano ACQUA INTERNA (da escludere)
+  const no = hasAny(n, [
+    "lago",
+    "laghetto",
+    "fiume",
+    "torrente",
+    "cascata",
+    "sorgente",
+    "canale",
+    "diga"
+  ]);
+
+  return yes && !no;
+  }
   }
   function looksTrailByName(place) {
     const n = normName(place?.name || "");
@@ -869,25 +899,68 @@
   }
 
   function isSea(place) {
-    const t = tagsStr(place);
-    const type = normalizeType(place?.type);
-    const quality = hasQualitySignals(place);
-    const n = normName(place?.name || "");
+  const t = tagsStr(place);
+  const type = normalizeType(place?.type);
+  const n = normName(place?.name || "");
 
-    if (type === "mare") return true;
-    if (t.includes("natural=beach")) return true;
-    if (t.includes("leisure=marina")) return true;
-    if (t.includes("man_made=pier") && (looksBeachByName(place) || quality)) return true;
-
-    if (t.includes("tourism=attraction") && looksBeachByName(place)) return true;
-
-    if (t.includes("natural=coastline")) return looksBeachByName(place) || quality;
-
-    if (looksBeachByName(place) && (quality || t.includes("tourism=") || t.includes("natural="))) return true;
-
-    if (hasAny(n, ["bar", "ristorante", "hotel"]) && looksBeachByName(place)) return false;
-
+  // ❌ escludi SEMPRE acqua interna
+  if (
+    hasAny(n, [
+      "lago",
+      "laghetto",
+      "fiume",
+      "torrente",
+      "cascata",
+      "sorgente",
+      "canale",
+      "diga"
+    ]) ||
+    t.includes("water=lake") ||
+    t.includes("natural=water") ||
+    t.includes("waterway=")
+  ) {
     return false;
+  }
+
+  // ✅ segnali FORTI di mare vero
+  if (type === "mare") return true;
+  if (t.includes("natural=beach")) return true;
+  if (t.includes("natural=coastline")) return true;
+
+  // ✅ strutture costiere (solo se nome coerente)
+  if (t.includes("leisure=marina") && looksBeachByName(place)) return true;
+  if (t.includes("man_made=pier") && looksBeachByName(place)) return true;
+  if (t.includes("man_made=lighthouse")) return true;
+
+  // ❌ locali / hotel anche se hanno "lido" nel nome
+  if (
+    hasAny(n, [
+      "bar",
+      "ristorante",
+      "hotel",
+      "b&b",
+      "bb",
+      "residence",
+      "pizzeria",
+      "trattoria",
+      "osteria"
+    ]) &&
+    !t.includes("natural=beach") &&
+    !t.includes("natural=coastline")
+  ) {
+    return false;
+  }
+
+  // fallback stretto (nome + almeno un tag turistico)
+  if (
+    looksBeachByName(place) &&
+    (t.includes("natural=") || t.includes("tourism=") || t.includes("man_made="))
+  ) {
+    return true;
+  }
+
+  return false;
+  }
   }
 
   function isMountain(place) {
