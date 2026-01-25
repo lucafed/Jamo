@@ -1,18 +1,24 @@
-name: Build Mai Fatto — Abruzzo (verona-style)
+name: Build MaiFatto IT Abruzzo
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "17 3 * * *" # ogni giorno 03:17 UTC (regola se vuoi)
+  push:
+    paths:
+      - "scripts/build_maifatto_it_abruzzo.mjs"
+      - ".github/workflows/build-maifatto-it-abruzzo.yml"
 
-permissions:
-  contents: write
+concurrency:
+  group: build-maifatto-it-abruzzo
+  cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
     steps:
-      - name: Checkout
+      - name: Checkout (full history for rebase)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -25,23 +31,52 @@ jobs:
       - name: Build Abruzzo dataset
         env:
           OVERPASS_ENDPOINT: ${{ secrets.OVERPASS_ENDPOINT }}
+          SLEEP_MS: "1400"
           GRID_COLS: "5"
           GRID_ROWS: "5"
-          SLEEP_MS: "900"
-          TARGET_TOTAL: "1200"
-          PER_MODE_MIN: "70"
-        run: |
-          node scripts/build_maifatto_it_abruzzo_like_verona.mjs
+          TARGET_IDEAS: "2600"
+          MAX_TILES: ""
+        run: node scripts/build_maifatto_it_abruzzo.mjs
 
-      - name: Commit generated file (if changed)
+      - name: Commit & Push generated file (robust)
+        shell: bash
         run: |
-          git status --porcelain
-          if [ -n "$(git status --porcelain)" ]; then
-            git config user.name "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
-            git add public/data/mai_fatto/mai_fatto_it_abruzzo.json
-            git commit -m "chore(data): update mai_fatto Abruzzo (verona-style)"
-            git push
-          else
-            echo "No changes"
+          set -euo pipefail
+
+          FILE="public/data/mai_fatto/mai_fatto_it_abruzzo.json"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # assicurati di stare su main e di avere origin/main aggiornato
+          git checkout main
+          git fetch origin main
+
+          # stage
+          git add "$FILE" || true
+
+          # se non ci sono differenze, stop
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
           fi
+
+          git commit -m "Update MaiFatto Abruzzo"
+
+          # rebase su origin/main prima di pushare (evita fetch-first)
+          git pull --rebase origin main
+
+          # push con retry (in caso di gara con altri push)
+          for i in 1 2 3; do
+            if git push origin HEAD:main; then
+              echo "Pushed successfully."
+              exit 0
+            fi
+            echo "Push failed (attempt $i). Re-trying after rebase..."
+            git fetch origin main
+            git pull --rebase origin main
+            sleep $((i*2))
+          done
+
+          echo "Push failed after retries."
+          exit 1
