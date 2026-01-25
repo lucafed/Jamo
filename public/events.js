@@ -14,6 +14,11 @@
  *    - "📍 Apri posto" = Google Maps search con nome+luogo
  *    - "🧩 Info" = solo se info_url è un vero link informativo
  *
+ * ✅ FIX FAMILY:
+ *    - Family mostra SOLO posti kids veri (zoo/parchi avventura/playground seri/acquari/waterpark/fattorie didattiche/musei kids)
+ *    - Blocca piazze/chiese/monasteri/aree picnic/roba civica
+ *    - Se troppo stretto, allenta SOLO dentro family (non random)
+ *
  * Dataset:
  *  /data/mai_fatto/mai_fatto_it_abruzzo.json
  *  /data/mai_fatto/mai_fatto_it_verona.json
@@ -50,6 +55,14 @@
       .replaceAll('"', "&quot;")
       .replaceAll("'", "&#039;");
 
+  function norm(s){
+    return String(s||"")
+      .toLowerCase()
+      .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+      .replace(/[^a-z0-9]+/g," ")
+      .trim();
+  }
+
   function fmtDateShort(iso) {
     if (!iso) return "";
     const d = new Date(iso);
@@ -82,6 +95,11 @@
   function approxMinutesFromKm(km, estCarMinutesFromKm) {
     if (typeof estCarMinutesFromKm === "function") return estCarMinutesFromKm(km);
     return Math.round(km + 8);
+  }
+
+  function hasAny(str, arr){
+    for (const k of arr) if (str.includes(k)) return true;
+    return false;
   }
 
   // ------------------ query/link builders (TESTO, non coord) ------------------
@@ -220,11 +238,12 @@
     // FAMILY WOW
     { tag: "zoo", rx: /\b(zoo|parco faunistico|parco zoologico|bioparco|safari)\b/i },
     { tag: "acquario", rx: /\b(acquario|aquarium)\b/i },
-    { tag: "parco_avventura", rx: /\b(parco avventura|percors[oi] sospes[oi]|zipline|tree\s*climbing)\b/i },
-    { tag: "parco_divertimenti", rx: /\b(parco divertimenti|luna\s*park|giostre|theme\s*park)\b/i },
-    { tag: "waterpark", rx: /\b(aquapark|water\s*park|scivoli|piscine\s*con\s*scivoli)\b/i },
+    { tag: "parco_avventura", rx: /\b(parco avventura|percors[oi] sospes[oi]|zipline|tree\s*climbing|park\s*avventura)\b/i },
+    { tag: "parco_divertimenti", rx: /\b(parco divertimenti|luna\s*park|giostre|theme\s*park|parco tematico)\b/i },
+    { tag: "waterpark", rx: /\b(aquapark|acquapark|water\s*park|scivoli|piscine\s*con\s*scivoli)\b/i },
     { tag: "fattoria_didattica", rx: /\b(fattoria didattica|agriturismo didattico|fattoria|parco agricolo)\b/i },
-    { tag: "museo_bimbi", rx: /\b(museo.*bambin|museo.*ragazz|children.?s\s*museum)\b/i },
+    { tag: "museo_bimbi", rx: /\b(museo.*bambin|museo.*ragazz|children.?s\s*museum|museo dei bambini|kid(s)?)\b/i },
+    { tag: "playground", rx: /\b(parco giochi|playground|area giochi|giochi per bambini)\b/i },
 
     // RELAX REAL
     { tag: "spa", rx: /\b(spa|wellness|centro benessere|sauna|bagno turco|hammam)\b/i },
@@ -251,6 +270,13 @@
     /\b(bivacco|rifugio|vetta|cima|sentiero|trekking|arrampicata|via ferrata)\b/i
   ];
 
+  // ⚠️ roba NON family (da tagliare netto)
+  const NEG_FAMILY = [
+    /\b(piazza|corso|viale|rotonda|svincolo|stazione|fermata|parcheggio)\b/i,
+    /\b(chiesa|duomo|cattedrale|abbazia|monaster|convento|santuario|oratorio)\b/i,
+    /\b(area picnic|picnic|aia\b|belvedere\b|centro storico\b)\b/i,
+  ];
+
   function inferTags(e) {
     const t = `${e.title || ""} ${e.place || ""} ${e.city || ""} ${e.region || ""}`.toLowerCase();
     const tags = new Set(Array.isArray(e.tags) ? e.tags.map(x => String(x).toLowerCase().trim()) : []);
@@ -258,28 +284,71 @@
     return [...tags];
   }
 
+  function isBadForFamily(e){
+    const text = norm(`${e.title || ""} ${e.place || ""} ${e.city || ""}`);
+    return NEG_FAMILY.some(rx => rx.test(text));
+  }
+
+  function isTrueFamily(e){
+    // family vero = almeno 1 tag forte kids
+    const tags = inferTags(e);
+    const text = norm(`${e.title || ""} ${e.place || ""} ${e.city || ""}`);
+
+    if (isBadForFamily(e)) return false;
+
+    const strong = [
+      "zoo","acquario","parco_avventura","parco_divertimenti","waterpark","fattoria_didattica","museo_bimbi","playground"
+    ];
+    if (tags.some(t => strong.includes(t))) return true;
+
+    // fallback keyword (se dataset è povero di tag)
+    if (hasAny(text, [
+      "parco giochi","playground","area giochi","fattoria didattica",
+      "zoo","acquario","parco avventura","zipline",
+      "luna park","giostre","parco divertimenti",
+      "acquapark","aquapark","water park",
+      "museo dei bambini","kids","bambin"
+    ])) return true;
+
+    return false;
+  }
+
   function scoreForEventType(e, etKey) {
     const tags = inferTags(e);
-    const text = `${e.title || ""} ${e.place || ""} ${e.city || ""}`.toLowerCase();
+    const textRaw = `${e.title || ""} ${e.place || ""} ${e.city || ""}`.toLowerCase();
+    const text = norm(textRaw);
     let s = (typeof e.wow_score === "number" ? e.wow_score : 0);
 
     if (etKey === "famiglia") {
-      if (tags.includes("zoo")) s += 10;
-      if (tags.includes("parco_avventura")) s += 10;
-      if (tags.includes("parco_divertimenti")) s += 10;
-      if (tags.includes("acquario")) s += 9;
-      if (tags.includes("waterpark")) s += 8;
-      if (tags.includes("fattoria_didattica")) s += 7;
-      if (tags.includes("museo_bimbi")) s += 6;
-      if (/\bparco\b/i.test(text) && !tags.some(x => ["zoo","parco_avventura","parco_divertimenti","acquario","waterpark","fattoria_didattica"].includes(x))) {
-        s -= 3;
+      // blocchi netti
+      if (isBadForFamily(e)) s -= 50;
+
+      // boost forti
+      if (tags.includes("zoo")) s += 16;
+      if (tags.includes("parco_avventura")) s += 16;
+      if (tags.includes("parco_divertimenti")) s += 16;
+      if (tags.includes("acquario")) s += 14;
+      if (tags.includes("waterpark")) s += 12;
+      if (tags.includes("fattoria_didattica")) s += 10;
+      if (tags.includes("museo_bimbi")) s += 9;
+      if (tags.includes("playground")) s += 8;
+
+      // "parco" generico: penalizza se non è kids
+      if (/\bparco\b/i.test(textRaw) && !tags.some(x => ["zoo","parco_avventura","parco_divertimenti","acquario","waterpark","fattoria_didattica","playground"].includes(x))) {
+        s -= 6;
       }
+
+      // keyword kids
+      if (hasAny(text, ["bambin","kids","children"])) s += 3;
+
+      // se non è true family, abbassa forte
+      if (!isTrueFamily(e)) s -= 20;
     }
 
     if (etKey === "relax") {
       if (tags.includes("terme")) s += 12;
       if (tags.includes("spa")) s += 12;
-      if (NEG_RELAX.some(rx => rx.test(text))) s -= 10;
+      if (NEG_RELAX.some(rx => rx.test(textRaw))) s -= 10;
     }
 
     if (etKey === "pioggia") {
@@ -295,7 +364,7 @@
       if (tags.includes("street_food")) s += 8;
       if (tags.includes("birrificio")) s += 7;
       if (tags.includes("sagra")) s += 7;
-      if (/ristorant|trattoria|osteria|agritur/i.test(text)) s += 2;
+      if (/ristorant|trattoria|osteria|agritur/i.test(textRaw)) s += 2;
     }
 
     if (etKey === "tramonto") {
@@ -392,6 +461,7 @@
       url: e.url,
       source: e.source || "events_fallback",
       wow_score: e.wow_score,
+      tags: e.tags
     }));
 
     LAST_META = {
@@ -435,6 +505,11 @@
         out = out.filter((e) => normalizeCategoryFromData(e.category) === et);
       }
 
+      // ✅ family: anche se il dataset dice "famiglia", filtriamo per TRUE FAMILY
+      if (et === "famiglia") {
+        out = out.filter((e) => isTrueFamily(e));
+      }
+
       return out;
     };
 
@@ -453,7 +528,12 @@
       if (et === "1h" || et === "2h") {
         list = base.slice();
       } else if (et && et !== "tutti") {
-        list = base.slice(); // prima allenta *categoria*
+        // ✅ allenta categoria MA se è family resta family-guard
+        list = base.slice();
+        if (et === "famiglia") {
+          // prima prova: true-family su tutto (anche se category non è famiglia)
+          list = list.filter((e) => isTrueFamily(e));
+        }
       }
     }
 
@@ -485,7 +565,6 @@
         .filter(Boolean)
         .filter((x) => (x.mins == null ? true : x.mins <= cap))
         .sort((a, b) => {
-          // prima qualità per sottocategoria, poi vicino
           if (Math.abs(b.s - a.s) > 0.5) return b.s - a.s;
           return (a.mins ?? 999999) - (b.mins ?? 999999);
         })
@@ -498,13 +577,19 @@
     if (hasOrigin) {
       for (const f of widenSteps) {
         picked = rankAndFilter(list, f);
-        if (picked.length >= 6) break; // abbastanza, stop
+
+        // ✅ se è family e rimane poco, ultima difesa: filtra ancora TRUE FAMILY
+        if (et === "famiglia") picked = picked.filter(e => isTrueFamily(e));
+
+        if (picked.length >= 6) break;
       }
     } else {
       picked = list
         .map((e) => ({ e, s: scoreForEventType(e, et) }))
         .sort((a, b) => b.s - a.s)
         .map((x) => x.e);
+
+      if (et === "famiglia") picked = picked.filter(e => isTrueFamily(e));
     }
 
     return picked.slice(0, SHOW_LIMIT);
