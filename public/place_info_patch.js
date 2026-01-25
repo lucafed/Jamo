@@ -1,125 +1,136 @@
-/* public/place_info_patch.js — adds "🧩 Cosa c’è" button for ALL categories (non-events)
- * ✅ No changes to app.js
- * ✅ Uses NAME + AREA (not coordinates)
- * ✅ Works every time result card is re-rendered
+/* public/place_info_patch.js
+ * Aggiunge un bottone "🧩 Cosa c’è" (Google Maps search) alle schede standard di app.js
+ * - Non tocca app.js
+ * - Usa NOME + AREA (non coordinate) per evitare risultati sbagliati
+ * - Non interferisce con MaiFatto (events.js già ha "Cosa c’è")
  */
 
 (() => {
   "use strict";
 
+  const BTN_ID = "btnWhatThereIs";
   const RESULT_AREA_ID = "resultArea";
 
-  function esc(s) {
-    return String(s ?? "")
+  const esc = (s) =>
+    String(s ?? "")
       .replaceAll("&", "&amp;")
       .replaceAll("<", "&lt;")
       .replaceAll(">", "&gt;")
       .replaceAll('"', "&quot;")
       .replaceAll("'", "&#039;");
-  }
 
-  function stableQuery(name, area) {
+  function mapsSearchUrlByName(name, area) {
     const n = String(name || "").trim();
     const a = String(area || "").trim();
-    if (!n && !a) return "";
-    // nome tra virgolette = più preciso
-    return a ? `"${n}" ${a}` : `"${n}"`;
-  }
-
-  function googleMapsSearchUrl(q) {
+    const q = a ? `"${n}" ${a}` : `"${n}"`;
     return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
   }
 
-  function googleSearchUrl(q) {
-    return `https://www.google.com/search?q=${encodeURIComponent(q)}`;
-  }
+  function extractNameAreaFromCard(root) {
+    // app.js renderChosenCard mette:
+    // - il nome in un div grande (font-size:30px; font-weight:1000)
+    // - l'area nella riga: "📍 AREA • lat, lon"
+    let name = "";
+    let area = "";
 
-  function readTitleFromCard(card) {
-    // Nel tuo renderChosenCard il titolo è un div grande con font-weight:1000; font-size:30px
-    // Prendiamo il primo blocco "grande" dentro il body della card.
-    const titleEl =
-      card.querySelector('div[style*="font-weight:1000"][style*="font-size:30px"]') ||
-      card.querySelector("div[style*='font-size:30px']") ||
-      card.querySelector("div");
+    // 1) nome: prendo il testo più "forte" dentro la card
+    // (cerco un div con font-weight:1000 oppure font-size:30)
+    const nameEl =
+      root.querySelector('div[style*="font-weight:1000"]') ||
+      root.querySelector('div[style*="font-size:30px"]');
 
-    const t = (titleEl?.textContent || "").trim();
-    return t;
-  }
+    if (nameEl) name = (nameEl.textContent || "").trim();
 
-  function readAreaLine(card) {
-    // Riga: "📍 AREA • lat, lon"
-    const lines = [...card.querySelectorAll(".small.muted")].map(x => (x.textContent || "").trim());
-    const loc = lines.find(s => s.startsWith("📍")) || "";
-    // togli "📍"
-    const clean = loc.replace(/^📍\s*/,"");
-    // prima del "• lat"
-    const area = clean.split("•")[0]?.trim() || "";
-    return area;
-  }
-
-  function ensureInfoButton(card) {
-    // Se la card è quella di MaiFatto, ha già i bottoni suoi in events.js
-    // (e spesso il titolo è "✨ MAI FATTO — ..."). Non tocchiamo.
-    const header = (card.textContent || "").toLowerCase();
-    if (header.includes("mai fatto") && card.querySelector('a.btn')) {
-      return;
+    // 2) area: cerco la riga con "📍"
+    const lines = [...root.querySelectorAll(".small.muted")];
+    const locLine = lines.find((el) => (el.textContent || "").includes("📍"));
+    if (locLine) {
+      const txt = (locLine.textContent || "").trim();
+      // formato: "📍 AREA • 45.00000, 11.00000"
+      // prendo tra "📍" e "•"
+      const afterPin = txt.split("📍")[1] ? txt.split("📍")[1].trim() : "";
+      area = afterPin.includes("•") ? afterPin.split("•")[0].trim() : afterPin.trim();
     }
 
-    const grid = card.querySelector(".actionGrid");
+    // pulizie
+    name = name.replace(/\s+/g, " ").trim();
+    area = area.replace(/\s+/g, " ").trim();
+
+    if (!name) return null;
+    return { name, area };
+  }
+
+  function isMaiFattoCard(root) {
+    // Se è MaiFatto, events.js renderizza card con titolo "✨ MAI FATTO"
+    // ma la scheda standard di app.js non ha quel testo.
+    const t = (root.textContent || "").toLowerCase();
+    return t.includes("mai fatto") && t.includes("wow");
+  }
+
+  function ensureButton() {
+    const area = document.getElementById(RESULT_AREA_ID);
+    if (!area) return;
+
+    // cerco la "card grande" (quella con actionGrid)
+    const grid = area.querySelector(".actionGrid");
     if (!grid) return;
 
-    // evita duplicati
-    if (grid.querySelector("[data-jamo-info='1']")) return;
+    // se già inserito, stop
+    if (grid.querySelector(`#${BTN_ID}`)) return;
 
-    const name = readTitleFromCard(card);
-    const area = readAreaLine(card);
+    // non mettiamolo sulle card di MaiFatto (che hanno già "Cosa c’è")
+    if (isMaiFattoCard(area)) return;
 
-    const q = stableQuery(name, area);
-    if (!q) return;
+    // estrai nome + area
+    const data = extractNameAreaFromCard(area);
+    if (!data) return;
 
-    // crea bottone
+    const url = mapsSearchUrlByName(data.name, data.area);
+
+    // creo un bottone stile app.js: "btnGhost"
     const btn = document.createElement("button");
     btn.type = "button";
-    btn.className = "btn";
-    btn.setAttribute("data-jamo-info", "1");
-    btn.textContent = "🧩 Cosa c’è";
+    btn.id = BTN_ID;
+    btn.className = "btnGhost";
+    btn.innerHTML = `🧩 ${esc("Cosa c’è")}`;
 
     btn.addEventListener("click", () => {
-      // Preferisco Maps search perché è più “posto-esatto”
-      const url = googleMapsSearchUrl(q);
-      // fallback: se vuoi anche Google web, basta cambiare qui
       window.open(url, "_blank", "noopener");
     });
 
-    // Inseriscilo subito dopo "🧭 Vai" se c’è, altrimenti in testa
+    // Inserimento: in actionGrid, subito dopo "🧭 Vai" se esiste
     const goBtn = grid.querySelector("#btnGo");
-    if (goBtn && goBtn.nextSibling) grid.insertBefore(btn, goBtn.nextSibling);
-    else grid.insertBefore(btn, grid.firstChild);
+    if (goBtn && goBtn.parentElement === grid) {
+      // inserisci dopo goBtn
+      if (goBtn.nextSibling) grid.insertBefore(btn, goBtn.nextSibling);
+      else grid.appendChild(btn);
+    } else {
+      grid.appendChild(btn);
+    }
   }
 
-  function scanAndPatch() {
+  function startObserver() {
     const area = document.getElementById(RESULT_AREA_ID);
-    if (!area) return;
+    if (!area) return false;
 
-    // La tua card principale è il primo container con border-radius:18px ecc.
-    // Patcheremo qualsiasi card che contenga .actionGrid
-    const candidates = area.querySelectorAll(".actionGrid");
-    candidates.forEach((grid) => {
-      const card = grid.closest("div");
-      if (card) ensureInfoButton(card);
-    });
-  }
+    // prova subito
+    ensureButton();
 
-  function boot() {
-    scanAndPatch();
-
-    // Observer: ogni volta che app.js riscrive resultArea, reiniettiamo il bottone
-    const area = document.getElementById(RESULT_AREA_ID);
-    if (!area) return;
-
-    const obs = new MutationObserver(() => scanAndPatch());
+    // osserva cambi (quando l’utente fa CERCA / Cambia meta / Altre destinazioni)
+    const obs = new MutationObserver(() => ensureButton());
     obs.observe(area, { childList: true, subtree: true });
+    return true;
   }
+
+  // boot robusto
+  const boot = () => {
+    if (startObserver()) return;
+    // se resultArea non c'è ancora
+    const t = setInterval(() => {
+      if (startObserver()) clearInterval(t);
+    }, 120);
+    setTimeout(() => clearInterval(t), 8000);
+  };
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", boot, { once: true });
