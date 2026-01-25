@@ -7,11 +7,8 @@
  * ✅ Regione scelta da COORDINATE (bbox), non da origin.region
  * ✅ Anti-famoso SOFT (non blocca)
  * ✅ Mai 0 “per colpa del filtro”: se il filtro è troppo stretto, si allenta
- *
- * ✅ FIX LINK:
- *    - "🧭 Vai" = directions con ORIGIN (coord) ma DESTINAZIONE testuale (nome+luogo), no coord che sballano
- *    - "📍 Apri posto" = Google Maps search con nome+luogo (sempre preciso)
- *    - "🧩 Info" = solo se info_url è un vero link informativo (non una search generica)
+ * ✅ "📍 Vedi posto" = Google Maps SEARCH per NOME+LUOGO (ignora SEMPRE info_url/url)
+ * ✅ "🧭 Vai" = Google Maps directions mantiene ORIGIN dell’app (origin=lat,lon)
  *
  * Dataset:
  *  /data/mai_fatto/mai_fatto_it_abruzzo.json
@@ -78,62 +75,45 @@
     return `<span class="pill ${soft ? "soft" : ""}">${esc(label)}</span>`;
   }
 
-  function approxMinutesFromKm(km, estCarMinutesFromKm) {
-    if (typeof estCarMinutesFromKm === "function") return estCarMinutesFromKm(km);
-    return Math.round(km + 8);
-  }
-
-  // ------------------ query/link builders (TESTO, non coord) ------------------
-  function cleanJoin(parts) {
-    return parts
-      .map((x) => String(x || "").trim())
-      .filter(Boolean)
-      .join(" ")
-      .replace(/\s+/g, " ")
-      .trim();
-  }
-
-  // Query "precisa": meglio usare place + city + region (title a volte è “narrativa”)
-  function placeQuery(e) {
-    const place = (e.place || "").trim();
-    const city = (e.city || "").trim();
-    const region = (e.region || "").trim();
-
-    // fallback: se place manca, usa title
-    const base = place || (e.title || "").trim();
-    const q = cleanJoin([base, city, region, "Italia"]);
-    return q || "";
-  }
-
-  function mapsSearchUrl(q) {
-    if (!q) return "";
-    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
-  }
-
-  // Directions: origin coord (ok), destination TESTO (nome+luogo) => più affidabile delle coord che “sballano”
-  function mapsDirUrlTextDest({ oLat, oLon, destQuery, mode }) {
+  // Google Maps directions (mantieni origin dall’app)
+  function mapsDirUrl({ oLat, oLon, dLat, dLon, mode }) {
     const m = mode || "driving";
     const base = `https://www.google.com/maps/dir/?api=1`;
     const originPart =
-      (Number.isFinite(oLat) && Number.isFinite(oLon))
+      (typeof oLat === "number" && typeof oLon === "number")
         ? `&origin=${encodeURIComponent(`${oLat},${oLon}`)}`
         : "";
-    const dest = destQuery ? `&destination=${encodeURIComponent(destQuery)}` : "";
-    if (!dest) return "";
-    return `${base}${originPart}${dest}&travelmode=${encodeURIComponent(m)}`;
+    return `${base}${originPart}&destination=${encodeURIComponent(`${dLat},${dLon}`)}&travelmode=${encodeURIComponent(m)}`;
   }
 
-  // Info URL: lo mostriamo SOLO se sembra una pagina “info” vera (non una search maps che già facciamo)
-  function isProbablyInfoUrl(u) {
-    const s = String(u || "").trim();
-    if (!s) return false;
-    if (!/^https?:\/\//i.test(s)) return false;
-    // se è già una maps search generica, non serve
-    if (s.includes("google.com/maps/search")) return false;
-    return true;
+  // ✅ Scelta 1: IGNORA SEMPRE info_url/url
+  // Usa solo Google Maps Search per NOME+LUOGO (molto più preciso delle coordinate)
+  function infoUrlFor(e) {
+    const title  = (e.title || "").trim();
+    const place  = (e.place || "").trim();
+    const city   = (e.city || "").trim();
+    const region = (e.region || "").trim();
+
+    const parts = [];
+    if (title) parts.push(title);
+    if (place && place.toLowerCase() !== title.toLowerCase()) parts.push(place);
+    if (city) parts.push(city);
+    if (region) parts.push(region);
+    parts.push("Italia");
+
+    const q = parts.join(" ").replace(/\s+/g, " ").trim();
+    if (!q) return "";
+
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
   }
 
-  // ------------------ Normalizzazione chiavi ------------------
+  function approxMinutesFromKm(km, estCarMinutesFromKm) {
+    if (typeof estCarMinutesFromKm === "function") return estCarMinutesFromKm(km);
+    // fallback grezzo
+    return Math.round(km + 8);
+  }
+
+  // Normalizza chip -> chiave filtro
   function normalizeKey(k) {
     const s = String(k || "").toLowerCase().trim();
     if (!s) return "tutti";
@@ -145,15 +125,17 @@
     return s;
   }
 
+  // Normalizza categoria evento dal dataset
   function normalizeCategoryFromData(cat) {
     const s = String(cat || "").toLowerCase().trim();
     if (!s) return "";
     if (s === "family") return "famiglia";
     if (s === "food") return "mangiare";
-    if (s === "mangiare" || s === "food") return "mangiare";
+    if (s === "mangiare") return "mangiare";
     return s;
   }
 
+  // ✅ Label carini solo per pill
   function labelCategory(k) {
     const m = {
       relax: "Reset mentale",
@@ -205,6 +187,7 @@
         `;
       }
 
+      // nascondi "Quando" (non serve per Mai fatto)
       const whenRow = document.getElementById("eventWhenChips");
       if (whenRow) {
         const parent = whenRow.closest("div");
@@ -212,7 +195,7 @@
       }
 
       const info = document.querySelector("#eventsSubfilters .small.muted");
-      if (info) info.textContent = "Offline: idee WOW • regione → Italia • filtri soft • link precisi su Maps.";
+      if (info) info.textContent = "Offline: idee WOW • regione → Italia • anti-famoso soft (non blocca).";
     } catch (e) {
       console.warn("patchUI warning:", e);
     }
@@ -232,6 +215,7 @@
   }
 
   // ✅ regione da coordinate (bbox)
+  // Abruzzo bbox: w=13, s=41.65, e=14.85, n=42.95
   function regionKeyFromLatLon(origin) {
     const lat = Number(origin?.lat);
     const lon = Number(origin?.lon);
@@ -267,7 +251,6 @@
 
         const j = await fetchJson(url);
         const ideas = Array.isArray(j?.ideas) ? j.ideas : [];
-
         if (ideas.length) {
           const meta = {
             updated_at: j?.updated_at || "",
@@ -279,7 +262,9 @@
           LAST_META = meta;
           return ideas;
         }
-      } catch (_) {}
+      } catch (_) {
+        // prova prossimo
+      }
     }
 
     // fallback events (per non rompere)
@@ -298,6 +283,7 @@
       duration_bucket: e.duration_bucket,
       duration_min: e.duration_min,
       why: e.why,
+      // ✅ ignorati comunque da infoUrlFor, ma li teniamo per compat
       info_url: e.info_url || e.url || "",
       url: e.url,
       source: e.source || "events_fallback",
@@ -319,13 +305,13 @@
     if (wantKey === "1h") {
       if (b === "1h") return true;
       const m = Number(e.duration_min);
-      if (Number.isFinite(m) && m <= 100) return true;
+      if (Number.isFinite(m) && m <= 100) return true; // fallback
       return false;
     }
     if (wantKey === "2h") {
       if (b === "2h") return true;
       const m = Number(e.duration_min);
-      if (Number.isFinite(m) && m > 100 && m <= 170) return true;
+      if (Number.isFinite(m) && m > 100 && m <= 190) return true; // fallback
       return false;
     }
     return true;
@@ -336,9 +322,11 @@
     const mm = Math.max(15, Number(maxMinutes) || 120);
     const et = normalizeKey(eventType || "tutti");
 
+    // 1) filtro tipo WOW
     const filterStrict = (arr) => {
       let out = arr;
 
+      // ✅ 1h/2h filtrano su duration_bucket (NON su category)
       if (et === "1h" || et === "2h") {
         out = out.filter((e) => matchesDurationBucket(e, et));
       } else if (et && et !== "tutti") {
@@ -351,14 +339,14 @@
     const beforeStrict = list.length;
     list = filterStrict(list);
 
-    // anti-famoso soft
+    // 2) anti-famoso soft: se ammazza tutto, si disattiva
     const preAnti = list.length;
     list = list.filter((e) => !isTooFamous(e));
     if (preAnti > 0 && list.length < Math.min(8, Math.round(preAnti * 0.15))) {
       list = filterStrict(Array.isArray(all) ? all.slice() : []);
     }
 
-    // allenta se troppo poco
+    // 3) se dopo il filtro rimane quasi nulla, allenta automaticamente (mai 0 “ingiusto”)
     if (beforeStrict > 0 && list.length < 4) {
       if (et === "1h" || et === "2h") {
         list = Array.isArray(all) ? all.slice() : [];
@@ -366,6 +354,7 @@
         list = (Array.isArray(all) ? all.slice() : []).filter((e) => {
           const c = normalizeCategoryFromData(e.category);
           if (c === et) return true;
+          // sinonimi morbidi:
           if (et === "famiglia" && c === "family") return true;
           if (et === "mangiare" && c === "food") return true;
           return false;
@@ -373,7 +362,7 @@
       }
     }
 
-    // distanza + minuti (filtra SOLO per minuti impostati)
+    // 4) distanza + minuti (tempo utente = “vicino vs lontano”, NON cambia tipologia)
     if (origin && typeof origin.lat === "number" && typeof origin.lon === "number") {
       list = list
         .map((e) => {
@@ -391,7 +380,9 @@
           return { e, mins, wow };
         })
         .filter(Boolean)
+        // entro minuti: estensione soft 1.35× (per non far “sparire tutto”)
         .filter((x) => (x.mins == null ? true : x.mins <= Math.round(mm * 1.35)))
+        // ordina: vicino, poi wow
         .sort((a, b) => (a.mins ?? 999999) - (b.mins ?? 999999) || (b.wow - a.wow))
         .map((x) => x.e);
     } else {
@@ -442,16 +433,18 @@
           ? `⏱️ ${durBucket.toUpperCase()} • ~${esc(e.duration_min || "")} min`
           : (e.duration_min ? `⏱️ ~${esc(e.duration_min)} min` : "");
 
+      const lat = Number(e.lat);
+      const lon = Number(e.lon);
+
       const oLat = Number(origin?.lat);
       const oLon = Number(origin?.lon);
 
-      // ✅ link precisi
-      const q = placeQuery(e);
-      const openPlaceUrl = mapsSearchUrl(q); // sempre
-      const goUrl = mapsDirUrlTextDest({ oLat, oLon, destQuery: q, mode: "driving" }); // directions, dest testuale
+      const mapsAuto =
+        (Number.isFinite(lat) && Number.isFinite(lon))
+          ? mapsDirUrl({ oLat, oLon, dLat: lat, dLon: lon, mode: "driving" })
+          : "";
 
-      const infoUrlRaw = (e.info_url || e.url || "").trim();
-      const infoUrl = isProbablyInfoUrl(infoUrlRaw) ? infoUrlRaw : "";
+      const infoUrl = infoUrlFor(e);
 
       const placeBlock = where
         ? `<div style="margin-top:10px; font-weight:950; font-size:15px; letter-spacing:.2px;">
@@ -485,9 +478,8 @@
           }
 
           <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
-            ${goUrl ? `<a class="btn btnPrimary" href="${esc(goUrl)}" target="_blank" rel="noopener">🧭 Vai</a>` : ""}
-            ${openPlaceUrl ? `<a class="btn" href="${esc(openPlaceUrl)}" target="_blank" rel="noopener">📍 Apri posto</a>` : ""}
-            ${infoUrl ? `<a class="btn" href="${esc(infoUrl)}" target="_blank" rel="noopener">🧩 Info</a>` : ""}
+            ${mapsAuto ? `<a class="btn btnPrimary" href="${esc(mapsAuto)}" target="_blank" rel="noopener">🧭 Vai</a>` : ""}
+            ${infoUrl ? `<a class="btn" href="${esc(infoUrl)}" target="_blank" rel="noopener">📍 Vedi posto</a>` : ""}
           </div>
 
           <div class="small muted" style="margin-top:10px; opacity:.70;">
@@ -568,5 +560,7 @@
     }
   }
 
+  // IMPORTANTISSIMO: esporta SEMPRE il modulo
   window.JAMO_EVENTS = { run };
 })();
+```0
