@@ -769,6 +769,65 @@
     const n = normName(place?.name || "");
     return hasAny(n, ["monte","cima","passo","rifugio","malga","alpe","valico","piana","laghetto"]);
   }
+  function looksLakeByName(place) {
+  const n = normName(place?.name || "");
+  return hasAny(n, ["lago","laghetto","lake","lac","laguna"]);
+}
+
+function isClearlyRiverOrCanal(place) {
+  const t = tagsStr(place);
+  const n = normName(place?.name || "");
+
+  // tag tipici "acqua ma NON lago turistico"
+  if (t.includes("waterway=")) return true;                 // fiumi/canali
+  if (t.includes("waterway=river") || t.includes("waterway=stream")) return true;
+  if (t.includes("waterway=canal") || t.includes("waterway=ditch")) return true;
+  if (t.includes("man_made=water_works") || t.includes("man_made=spillway")) return true;
+  if (t.includes("power=plant") || t.includes("power=generator")) return true;
+
+  // nomi tipici da scartare
+  if (hasAny(n, ["canale","fiume","torrente","fosso","scolo","chiusa","idrovora","centrale","impianto","diga"])) return true;
+
+  return false;
+}
+
+function isLake(place) {
+  // 🔒 prima escludiamo roba "acqua" sbagliata
+  if (isClearlyRiverOrCanal(place)) return false;
+
+  const t = tagsStr(place);
+  const type = normalizeType(place?.type);
+  const quality = hasQualitySignals(place);
+
+  // segnali forti lago
+  const strong =
+    t.includes("water=lake") ||
+    t.includes("natural=water") && t.includes("water=lake") ||
+    t.includes("water=reservoir") ||                  // ok, ma poi filtriamo turistico
+    t.includes("landuse=reservoir") ||
+    type === "lago";
+
+  // segnali turistici attorno al lago
+  const touristic =
+    t.includes("natural=beach") ||                    // spiaggia (anche lacustre)
+    t.includes("leisure=beach_resort") ||
+    t.includes("leisure=marina") ||                   // porticciolo/attracco
+    t.includes("tourism=attraction") ||
+    t.includes("leisure=swimming_area") ||
+    t.includes("amenity=boat_rental") ||
+    t.includes("sport=swimming") ||
+    t.includes("tourism=camp_site") ||                // campeggi sul lago (ok se non diventa spam)
+    t.includes("tourism=picnic_site");
+
+  // regola: deve essere lago vero + almeno un segnale turistico o qualità o nome forte
+  if (strong && (touristic || quality || looksLakeByName(place))) return true;
+
+  // fallback: nome "lago" + qualità
+  if (looksLakeByName(place) && (quality || t.includes("tourism=") || t.includes("leisure="))) return true;
+
+  return false;
+}
+
 
   function isSpaPlace(place) {
     const t = tagsStr(place);
