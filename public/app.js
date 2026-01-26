@@ -1111,6 +1111,7 @@ function isNearCoast(place) {
     if (cat === "cantine") return isWinery(place) && (quality || t.includes("website="));
     if (cat === "hiking") return isHiking(place);
     if (cat === "mare") return isSea(place);
+    if (cat === "lago") return isLake(place);
     if (cat === "montagna") return isMountain(place);
 
     // (eventi: prossimo step)
