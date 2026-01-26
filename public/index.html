@@ -6,163 +6,89 @@
   <title>Jamo — Trova la meta perfetta</title>
 
   <link rel="manifest" href="/manifest.webmanifest">
-  <meta name="theme-color" content="#0E1116">
+  <meta name="theme-color" content="#0B0F1A">
 
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
 
-  <link rel="stylesheet" href="/style.css?v=6.1" />
+  <link rel="stylesheet" href="/style.css?v=6.0" />
 
-  <!-- ✅ TUTTI i colori come l’ultimo (mix blu/menta/caldo) + UX, senza rompere app.js -->
+  <!-- ✅ Palette MIX + glow (override soft: non rompe style.css) -->
   <style>
     :root{
-      --bg:#0E1116;
-      --surface:#151A21;
-      --text:#FFFFFF;
-      --muted:#9AA4B2;
+      /* base */
+      --bg:#0B0F1A;
+      --surface:#111A2A;
+      --surface2:#0F1726;
+      --text:#F4F7FF;
+      --muted:#A7B3C2;
+      --border:rgba(255,255,255,.10);
 
-      --accent:#6C8CFF;     /* blu */
-      --accent2:#6CF2C2;    /* menta */
-      --accent3:#FFB86B;    /* caldo */
+      /* mix accent */
+      --acc:#7C5CFF;   /* violet */
+      --acc2:#00E7FF;  /* cyan */
+      --acc3:#1BFFB1;  /* mint */
+      --warn:#FFB84D;
 
-      --border:rgba(255,255,255,.08);
-      --chipBg:rgba(255,255,255,.045);
-      --chipBgOn:rgba(108,140,255,.16);
-      --chipBorder:rgba(255,255,255,.10);
-      --chipBorderOn:rgba(108,140,255,.40);
-
-      --glass:rgba(255,255,255,.035);
-      --glass2:rgba(255,255,255,.055);
-      --ring:rgba(108,242,194,.14);
-      --warn:rgba(255,184,107,.30);
+      /* se il tuo style.css usa questi nomi, li piglia al volo */
+      --accent: var(--acc);
+      --accent2: var(--acc2);
     }
 
-    body{ background:var(--bg); color:var(--text); }
+    body{
+      background: radial-gradient(1200px 800px at 15% 10%, rgba(124,92,255,.18), transparent 55%),
+                  radial-gradient(900px 700px at 85% 20%, rgba(0,231,255,.16), transparent 55%),
+                  radial-gradient(900px 700px at 60% 90%, rgba(27,255,177,.12), transparent 60%),
+                  var(--bg);
+    }
 
-    /* Glow mix */
+    /* glow layer già presente */
     .bgGlow{
+      position: fixed;
+      inset: -20vh -20vw;
+      pointer-events: none;
+      z-index: 0;
+      filter: blur(42px) saturate(1.25);
+      opacity: .95;
       background:
-        radial-gradient(700px 360px at 12% 8%, rgba(108,140,255,.22), transparent 60%),
-        radial-gradient(560px 360px at 88% 14%, rgba(108,242,194,.18), transparent 60%),
-        radial-gradient(520px 340px at 55% 88%, rgba(255,184,107,.12), transparent 60%);
+        radial-gradient(600px 420px at 18% 18%, rgba(124,92,255,.35), transparent 60%),
+        radial-gradient(620px 420px at 82% 22%, rgba(0,231,255,.30), transparent 62%),
+        radial-gradient(620px 420px at 55% 92%, rgba(27,255,177,.22), transparent 65%);
     }
 
-    /* Aggiusta qualche componente base senza dipendere dallo style.css */
-    .card, .heroCard{
-      background: linear-gradient(180deg, var(--glass2), var(--glass));
-      border:1px solid var(--border);
-      box-shadow: 0 10px 30px rgba(0,0,0,.28);
-      backdrop-filter: blur(10px);
-    }
-    .accent{ color: var(--accent2); }
+    /* sopra il glow */
+    header, main { position: relative; z-index: 1; }
 
-    .chip{
-      border:1px solid var(--chipBorder);
-      background:var(--chipBg);
-      transition:transform .12s ease, background .12s ease, border .12s ease, box-shadow .12s ease;
-      -webkit-tap-highlight-color: transparent;
+    /* piccoli ritocchi visivi “tech” senza stravolgere */
+    .logoMark{
+      background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(0,231,255,.85));
+      box-shadow: 0 10px 30px rgba(0,0,0,.35), 0 0 0 1px rgba(255,255,255,.10) inset;
+      border-radius: 14px;
     }
-    .chip:active{ transform:scale(.98); }
+    .heroBadge{
+      background: linear-gradient(135deg, rgba(124,92,255,.22), rgba(0,231,255,.18));
+      border: 1px solid rgba(255,255,255,.12);
+      box-shadow: 0 12px 32px rgba(0,0,0,.35);
+    }
+    .accent{
+      background: linear-gradient(90deg, var(--acc2), var(--acc), var(--acc3));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    /* chips “active” più evidenti se il tuo style.css usa .chip.active */
     .chip.active{
-      border-color:var(--chipBorderOn);
-      background:var(--chipBgOn);
-      box-shadow: 0 0 0 1px rgba(108,242,194,.06) inset;
+      border-color: rgba(0,231,255,.40) !important;
+      box-shadow: 0 10px 26px rgba(0,0,0,.28);
     }
 
+    /* CTA un filo più wow (se classi esistono già) */
     .btnPrimary{
-      background: linear-gradient(135deg, rgba(108,140,255,.95), rgba(108,242,194,.85));
-      border-color: rgba(108,140,255,.55);
-    }
-    .btnGhost{
-      border-color: rgba(255,255,255,.14);
-      background: rgba(255,255,255,.04);
-    }
-
-    /* --- Collapsible categories --- */
-    .catPanel{
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 10px;
-      background: rgba(255,255,255,.02);
-      margin-top: 10px;
-    }
-    .catHeader{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      width:100%;
-      border:0;
-      background:transparent;
-      color:var(--text);
-      cursor:pointer;
-      padding: 6px 4px;
-      font-weight: 950;
-    }
-    .catHeaderLeft{
-      display:flex;
-      flex-direction:column;
-      gap:2px;
-      text-align:left;
-    }
-    .catHeaderSub{
-      font-size:12px;
-      color:var(--muted);
-      font-weight: 800;
-    }
-    .catChevron{
-      font-size: 16px;
-      opacity:.9;
-    }
-    .catBody{ margin-top: 10px; }
-    .catPanel.collapsed .catBody{ display:none; }
-
-    .stepHint{
-      display:inline-flex;
-      gap:8px;
-      align-items:center;
-      padding:7px 10px;
-      border-radius: 999px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.18);
-      font-weight: 900;
-      font-size: 12px;
-      color: var(--muted);
-    }
-    .stepHint b{ color:#fff; }
-
-    /* ✅ Box "Cosa c'è (Google)" */
-    #googleWhatsOn{
-      display:none;
-      margin-top:12px;
-      border-color: rgba(108,140,255,.18);
-    }
-    #googleWhatsOn .gwTitle{
-      font-weight: 950;
-      font-size: 16px;
-      display:flex;
-      align-items:center;
-      gap:10px;
-    }
-    #googleWhatsOn .gwTitle .dot{
-      width:10px;height:10px;border-radius:99px;
-      background: linear-gradient(135deg, rgba(108,140,255,1), rgba(108,242,194,1));
-      box-shadow: 0 0 0 3px rgba(108,242,194,.08);
-    }
-    #googleWhatsOn .gwBtns{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      margin-top:12px;
-    }
-    #googleWhatsOn .gwBtns .btn{
-      border-color: rgba(255,255,255,.14);
-      background: rgba(255,255,255,.04);
-    }
-    #googleWhatsOn .gwBtns .btnPrimary{
-      background: linear-gradient(135deg, rgba(255,184,107,.95), rgba(108,242,194,.75));
-      border-color: rgba(255,184,107,.45);
+      background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(0,231,255,.85)) !important;
+      border: 1px solid rgba(255,255,255,.14) !important;
+      box-shadow: 0 14px 34px rgba(0,0,0,.38);
     }
   </style>
 </head>
@@ -204,13 +130,18 @@
         </p>
 
         <div class="heroKpis">
-          <div class="kpi"><div class="kpiN">1</div><div class="kpiT">Partenza</div></div>
-          <div class="kpi"><div class="kpiN">2</div><div class="kpiT">Categoria</div></div>
-          <div class="kpi"><div class="kpiN">3</div><div class="kpiT">Cerca</div></div>
-        </div>
-
-        <div style="margin-top:12px;">
-          <span class="stepHint">⚡ Flusso: <b>tempo → vibe → preferisci → cerca</b></span>
+          <div class="kpi">
+            <div class="kpiN">1</div>
+            <div class="kpiT">Partenza</div>
+          </div>
+          <div class="kpi">
+            <div class="kpiN">2</div>
+            <div class="kpiT">Categoria</div>
+          </div>
+          <div class="kpi">
+            <div class="kpiN">3</div>
+            <div class="kpiT">Cerca</div>
+          </div>
         </div>
       </div>
     </section>
@@ -270,33 +201,20 @@
 
       <div class="divider"></div>
 
-      <!-- CATEGORY (COLLAPSIBLE) -->
-      <div class="subTitle" id="catTitle">🧭 Che vibe vuoi?</div>
-
-      <div id="catPanel" class="catPanel collapsed">
-        <button id="btnToggleCats" class="catHeader" type="button" aria-expanded="false">
-          <div class="catHeaderLeft">
-            <div>Categoria</div>
-            <div class="catHeaderSub" id="catSelectedLabel">Selezionata: 🌿 Natura</div>
-          </div>
-          <div class="catChevron" id="catChevron">⬇️</div>
-        </button>
-
-        <div class="catBody">
-          <div id="categoryChips" class="chips chipsGrid">
-            <div class="chip active" data-cat="natura">🌿 Natura</div>
-            <div class="chip" data-cat="hiking">🥾 Trekking</div>
-            <div class="chip" data-cat="borghi">🏘️ Borghi</div>
-            <div class="chip" data-cat="storia">🏛️ Storia</div>
-            <div class="chip" data-cat="montagna">🏔️ Montagna</div>
-            <div class="chip" data-cat="mare">🌊 Mare</div>
-            <div class="chip" data-cat="lago">🏞️ Lago</div>
-            <div class="chip" data-cat="relax">🧖 Relax</div>
-            <div class="chip" data-cat="family">👨‍👩‍👧‍👦 Family</div>
-            <div class="chip" data-cat="cantine">🍷 Cantine</div>
-            <div class="chip" data-cat="eventi">✨ Mai fatto</div>
-          </div>
-        </div>
+      <!-- CATEGORY -->
+      <div class="subTitle" id="categoryTitle">🧭 Che vibe vuoi?</div>
+      <div id="categoryChips" class="chips chipsGrid">
+        <div class="chip active" data-cat="natura">🌿 Natura</div>
+        <div class="chip" data-cat="hiking">🥾 Trekking</div>
+        <div class="chip" data-cat="borghi">🏘️ Borghi</div>
+        <div class="chip" data-cat="storia">🏛️ Storia</div>
+        <div class="chip" data-cat="montagna">🏔️ Montagna</div>
+        <div class="chip" data-cat="mare">🌊 Mare</div>
+        <div class="chip" data-cat="lago">🏞️ Lago</div>
+        <div class="chip" data-cat="relax">🧖 Relax</div>
+        <div class="chip" data-cat="family">👨‍👩‍👧‍👦 Family</div>
+        <div class="chip" data-cat="cantine">🍷 Cantine</div>
+        <div class="chip" data-cat="eventi">✨ Mai fatto</div>
       </div>
 
       <!-- EVENTS SUBFILTERS (app.js toggles .active when category=eventi) -->
@@ -360,29 +278,11 @@
           <div class="emptyDesc">Imposta la partenza e premi <b>CERCA</b>: la meta appare qui, con link e alternative.</div>
         </div>
       </div>
-
-      <!-- ✅ RIMESSO: "Cosa c'è (Google)" (si attiva automaticamente quando appare un risultato) -->
-      <div id="googleWhatsOn" class="card clickSafe">
-        <div class="gwTitle"><span class="dot" aria-hidden="true"></span> Cosa c’è qui vicino (Google)</div>
-        <div class="small muted" id="gwSub" style="margin-top:6px; line-height:1.4;">
-          Appena trovi una meta, qui compaiono i pulsanti Google “Cosa vedere / Cosa fare / Ristoranti…”.
-        </div>
-        <div class="gwBtns">
-          <button class="btn btnPrimary" id="gwThingsToDo" type="button">✨ Cosa fare</button>
-          <button class="btn" id="gwThingsToSee" type="button">👀 Cosa vedere</button>
-          <button class="btn" id="gwFood" type="button">🍝 Ristoranti</button>
-          <button class="btn" id="gwBars" type="button">🍸 Bar</button>
-          <button class="btn" id="gwHotels" type="button">🛏️ Hotel</button>
-          <button class="btn" id="gwEvents" type="button">🎉 Eventi</button>
-          <button class="btnGhost" id="gwImages" type="button">📸 Foto</button>
-          <button class="btnGhost" id="gwWiki" type="button">📚 Wiki</button>
-        </div>
-      </div>
     </section>
 
     <footer class="footer clickSafe">
       <div class="footerLine">
-        <span class="dot"></span> Jamo • build UI v6.1 • smart flow
+        <span class="dot"></span> Jamo • build UI v6 • neon glass
       </div>
       <div class="footerLine small muted">
         Offline-first (best effort). Nessun tracciamento GPS. Link esterni: Maps / Wiki / Foto.
@@ -391,183 +291,100 @@
 
   </main>
 
-  <!-- ✅ UX FLOW + "Cosa c'è (Google)" (non interferisce con app.js) -->
+  <!-- Scripts -->
+  <script src="/events.js?v=1.0"></script>
+
+  <!-- ✅ Auto-scroll “azione successiva” (non rompe app.js, è solo UI) -->
   <script>
     (function(){
+      "use strict";
+
       const $ = (id) => document.getElementById(id);
 
-      function scrollToId(id){
-        const el = $(id);
+      function scrollToEl(el){
         if(!el) return;
-        el.scrollIntoView({ behavior:"smooth", block:"start" });
-      }
-
-      function googleSearchUrl(q){
-        return "https://www.google.com/search?q=" + encodeURIComponent(q);
-      }
-      function googleImagesUrl(q){
-        return "https://www.google.com/search?tbm=isch&q=" + encodeURIComponent(q);
-      }
-      function wikiUrl(q){
-        return "https://it.wikipedia.org/w/index.php?search=" + encodeURIComponent(q);
-      }
-
-      // --- Collapsible categorie ---
-      const panel = $("catPanel");
-      const btn = $("btnToggleCats");
-      const chevron = $("catChevron");
-      const label = $("catSelectedLabel");
-
-      function setExpanded(expanded){
-        if(!panel || !btn) return;
-        panel.classList.toggle("collapsed", !expanded);
-        btn.setAttribute("aria-expanded", expanded ? "true" : "false");
-        if(chevron) chevron.textContent = expanded ? "⬆️" : "⬇️";
-      }
-      setExpanded(false);
-
-      btn && btn.addEventListener("click", () => {
-        const expanded = panel.classList.contains("collapsed");
-        setExpanded(expanded);
-        if(expanded) setTimeout(() => scrollToId("catTitle"), 60);
-      });
-
-      // --- Flow guidato: tempo -> vibe -> preferisci -> cerca -> risultato ---
-      $("timeChips")?.addEventListener("click", (e) => {
-        const chip = e.target.closest(".chip");
-        if(!chip) return;
-        setTimeout(() => { setExpanded(true); scrollToId("catTitle"); }, 120);
-      });
-
-      $("maxMinutes")?.addEventListener("change", () => {
-        setTimeout(() => { setExpanded(true); scrollToId("catTitle"); }, 120);
-      });
-
-      $("categoryChips")?.addEventListener("click", (e) => {
-        const chip = e.target.closest(".chip");
-        if(!chip) return;
-
-        const txt = chip.textContent?.trim() || "Categoria";
-        if(label) label.textContent = "Selezionata: " + txt;
-
-        setExpanded(false);
-
-        const cat = chip.getAttribute("data-cat");
+        // piccolo delay per lasciare aggiornare gli "active" di app.js
         setTimeout(() => {
-          const sub = $("eventsSubfilters");
-          const isEventi = (cat === "eventi");
-          const subIsActive = sub && sub.classList.contains("active"); // gestita da app.js
-          if(isEventi && subIsActive){
-            sub.scrollIntoView({ behavior:"smooth", block:"start" });
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 60);
+      }
+
+      function scrollToId(id){ scrollToEl($(id)); }
+
+      function isCategoryEventi(){
+        const active = document.querySelector('#categoryChips .chip.active');
+        const cat = (active && active.dataset && active.dataset.cat) ? String(active.dataset.cat) : "";
+        return cat.toLowerCase().trim() === "eventi";
+      }
+
+      // 1) dopo "Usa questo luogo" -> vai alla Ricerca
+      document.addEventListener("click", (e) => {
+        const btn = e.target.closest("#btnFindPlace");
+        if (btn) scrollToId("searchCard");
+      });
+
+      // reset partenza -> torna su Partenza
+      document.addEventListener("click", (e) => {
+        const btn = e.target.closest("#btnResetOrigin");
+        if (btn) scrollToId("quickStartCard");
+      });
+
+      // 2) scelgo tempo -> porta a "Che vibe vuoi?"
+      document.addEventListener("click", (e) => {
+        const chip = e.target.closest("#timeChips .chip");
+        if (chip) scrollToId("categoryTitle");
+      });
+
+      // 3) scelgo vibe -> se eventi mostra subchip e ci scrolla, altrimenti porta a "Preferisci?"
+      document.addEventListener("click", (e) => {
+        const chip = e.target.closest("#categoryChips .chip");
+        if (!chip) return;
+
+        setTimeout(() => {
+          if (isCategoryEventi()) {
+            scrollToId("eventsSubfilters");
           } else {
             scrollToId("styleTitle");
           }
-        }, 160);
+        }, 80);
       });
 
-      $("eventTypeChips")?.addEventListener("click", (e) => {
-        const chip = e.target.closest(".chip");
-        if(!chip) return;
-        setTimeout(() => scrollToId("styleTitle"), 140);
+      // 4) scelgo tipo WOW (eventi) -> porta al bottone CERCA
+      document.addEventListener("click", (e) => {
+        const chip = e.target.closest("#eventTypeChips .chip");
+        if (chip) scrollToId("btnFind");
       });
 
-      $("styleChips")?.addEventListener("click", (e) => {
-        const chip = e.target.closest(".chip");
-        if(!chip) return;
-        setTimeout(() => $("btnFind")?.scrollIntoView({ behavior:"smooth", block:"center" }), 140);
+      // 5) scelgo preferenza -> porta al bottone CERCA
+      document.addEventListener("click", (e) => {
+        const chip = e.target.closest("#styleChips .chip");
+        if (chip) scrollToId("btnFind");
       });
 
-      $("btnFind")?.addEventListener("click", () => {
-        setTimeout(() => scrollToId("resultCard"), 260);
+      // 6) premo CERCA -> porta al risultato (dopo che app.js ha renderizzato)
+      document.addEventListener("click", (e) => {
+        const btn = e.target.closest("#btnFind");
+        if (!btn) return;
+
+        // se vuoi più rapido o più lento cambia questo delay
+        setTimeout(() => scrollToId("resultCard"), 250);
       });
 
-      $("btnFindPlace")?.addEventListener("click", () => {
-        setTimeout(() => scrollToId("searchCard"), 260);
+      // bonus: se l’utente apre “Risultato” ma non ha settato la partenza, torna su Partenza
+      // (non blocca nulla, è solo un aiuto)
+      document.addEventListener("click", (e) => {
+        const btn = e.target.closest("#btnFind");
+        if (!btn) return;
+
+        setTimeout(() => {
+          const lat = Number(($("originLat") && $("originLat").value) || NaN);
+          const lon = Number(($("originLon") && $("originLon").value) || NaN);
+          if (!Number.isFinite(lat) || !Number.isFinite(lon)) scrollToId("quickStartCard");
+        }, 50);
       });
-
-      // --- ✅ "Cosa c'è (Google)" — prende nome/area dalla scheda risultato (DOM) ---
-      const gwBox = $("googleWhatsOn");
-      const gwSub = $("gwSub");
-
-      function extractPlaceFromResult(){
-        const area = $("resultArea");
-        if(!area) return null;
-
-        // Nome: primo blocco grande (renderChosenCard in app.js mette un div con font-size 30)
-        const nameEl = area.querySelector('div[style*="font-size:30px"]') || area.querySelector(".optName");
-        const name = (nameEl?.textContent || "").trim();
-
-        // Area label: riga con "📍 ..."
-        const areaEl = Array.from(area.querySelectorAll(".small.muted"))
-          .find(x => (x.textContent || "").includes("📍"));
-        const line = (areaEl?.textContent || "").replace(/\s+/g," ").trim();
-
-        // prova a prendere solo "area" prima delle coordinate
-        // es: "📍 Verona • 45.12345, 10.12345"
-        let placeArea = "";
-        if(line){
-          const s = line.replace("📍","").trim();
-          placeArea = s.split("•")[0]?.trim() || "";
-        }
-
-        if(!name) return null;
-        return { name, placeArea };
-      }
-
-      function openQ(q){
-        window.open(googleSearchUrl(q), "_blank", "noopener");
-      }
-
-      function bindGoogleWhatsOn(place){
-        if(!place) return;
-        const base = (place.name + " " + (place.placeArea || "")).trim();
-
-        $("gwThingsToDo")?.addEventListener("click", () => openQ(base + " cosa fare"));
-        $("gwThingsToSee")?.addEventListener("click", () => openQ(base + " cosa vedere"));
-        $("gwFood")?.addEventListener("click", () => openQ("ristoranti vicino " + base));
-        $("gwBars")?.addEventListener("click", () => openQ("bar vicino " + base));
-        $("gwHotels")?.addEventListener("click", () => openQ("hotel " + base));
-        $("gwEvents")?.addEventListener("click", () => openQ("eventi " + base));
-        $("gwImages")?.addEventListener("click", () => window.open(googleImagesUrl(base), "_blank", "noopener"));
-        $("gwWiki")?.addEventListener("click", () => window.open(wikiUrl(base), "_blank", "noopener"));
-
-        if(gwSub){
-          gwSub.textContent = "Query base: " + base + " • tap su un pulsante per aprire Google.";
-        }
-      }
-
-      // MutationObserver: quando app.js scrive un risultato, mostriamo il box
-      const area = $("resultArea");
-      if(area && gwBox){
-        const obs = new MutationObserver(() => {
-          const place = extractPlaceFromResult();
-
-          // Se appare un vero risultato (non emptyState) -> mostra
-          const hasChosen = !!place && !area.querySelector(".emptyState");
-          if(hasChosen){
-            gwBox.style.display = "block";
-
-            // per evitare doppio binding, clona e rimpiazza box (reset listeners)
-            const clone = gwBox.cloneNode(true);
-            gwBox.parentNode.replaceChild(clone, gwBox);
-
-            // ricalcola refs
-            const gwBox2 = $("googleWhatsOn");
-            if(!gwBox2) return;
-
-            bindGoogleWhatsOn(place);
-          } else {
-            $("googleWhatsOn") && ($("googleWhatsOn").style.display = "none");
-          }
-        });
-        obs.observe(area, { childList:true, subtree:true });
-      }
-
     })();
   </script>
 
-  <!-- Scripts -->
-  <script src="/events.js?v=1.0"></script>
   <script src="/app.js?v=22.2"></script>
 </body>
 </html>
