@@ -6,8 +6,7 @@
   <title>Jamo — Trova la meta perfetta</title>
 
   <link rel="manifest" href="/manifest.webmanifest">
-  <!-- theme color premium (no turchese) -->
-  <meta name="theme-color" content="#0B1020">
+  <meta name="theme-color" content="#0B0F1A">
 
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
@@ -15,28 +14,31 @@
 
   <style>
     :root{
-      /* PREMIUM TECH — dark, elegante, niente turchese/neon */
+      /* --- Premium Tech (NO turchese) --- */
       --bg:#070A10;
-      --surface:#0E1626;
-      --surface2:#0B1220;
+      --surface:#0E1422;
+      --surface2:#0B111C;
+      --text:#FFFFFF;
+      --muted:#A7B2C0;
 
-      --text:#F3F6FF;
-      --muted:#AAB3C5;
-
-      /* Accenti: blu/viola tech */
-      --acc:#4C6FFF;
-      --acc2:#7C4DFF;
+      --acc:#7C5CFF;   /* violet */
+      --acc2:#4AA3FF;  /* soft blue */
+      --acc3:#22D3EE;  /* micro highlight (quasi invisibile, NON neon) */
 
       --border: rgba(255,255,255,.12);
-      --border2: rgba(255,255,255,.09);
+      --border2: rgba(255,255,255,.08);
 
       --radius: 18px;
 
-      --shadow-card: 0 10px 26px rgba(0,0,0,.38);
-      --shadow-hero: 0 18px 46px rgba(0,0,0,.60);
-      --shadow-cta: 0 14px 34px rgba(76,111,255,.20);
+      --shadow-card: 0 10px 26px rgba(0,0,0,.48);
+      --shadow-hero: 0 18px 48px rgba(0,0,0,.62);
+      --shadow-cta: 0 14px 34px rgba(124,92,255,.28);
 
       --safe-bottom: env(safe-area-inset-bottom);
+
+      /* click feedback */
+      --press: translateY(1px);
+      --ring: 0 0 0 3px rgba(124,92,255,.22);
     }
 
     *{ box-sizing:border-box; }
@@ -45,9 +47,10 @@
       color:var(--text);
       font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
       background:
-        radial-gradient(1000px 600px at 16% -10%, rgba(124,77,255,.22), rgba(0,0,0,0) 60%),
-        radial-gradient(1000px 620px at 90% -8%, rgba(76,111,255,.18), rgba(0,0,0,0) 62%),
-        linear-gradient(180deg, #070A10 0%, #0B1020 100%);
+        radial-gradient(900px 520px at 18% -10%, rgba(124,92,255,.20), rgba(0,0,0,0)),
+        radial-gradient(900px 520px at 92% -10%, rgba(74,163,255,.12), rgba(0,0,0,0)),
+        radial-gradient(900px 520px at 55% 0%, rgba(34,211,238,.06), rgba(0,0,0,0)),
+        var(--bg);
       padding-bottom: calc(14px + var(--safe-bottom));
     }
     a{ color:inherit; text-decoration:none; }
@@ -70,13 +73,13 @@
     .logo{
       width:42px; height:42px; border-radius:14px;
       background:
-        radial-gradient(circle at 30% 30%, rgba(255,255,255,.40), rgba(255,255,255,0) 38%),
-        linear-gradient(135deg, rgba(76,111,255,.95), rgba(124,77,255,.90));
-      box-shadow: 0 18px 40px rgba(76,111,255,.18);
-      border: 1px solid rgba(255,255,255,.12);
+        radial-gradient(circle at 30% 30%, rgba(255,255,255,.18), rgba(255,255,255,0)),
+        linear-gradient(135deg, var(--acc), var(--acc2));
+      box-shadow: 0 18px 44px rgba(124,92,255,.24);
+      border: 1px solid rgba(255,255,255,.10);
       flex: 0 0 auto;
     }
-    .title h1{ margin:0; font-size:18px; letter-spacing:.2px; }
+    .title h1{ margin:0; font-size:18px; letter-spacing:.2px; font-weight:950; }
     .title p{ margin:2px 0 0; color:var(--muted); font-size:12px; }
 
     .btnInstall{
@@ -89,24 +92,26 @@
       font-weight:900;
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
-      box-shadow: 0 10px 22px rgba(0,0,0,.28);
+      box-shadow: 0 10px 22px rgba(0,0,0,.25);
+      cursor:pointer;
     }
-    .btnInstall:active{ transform: translateY(1px); }
+    .btnInstall:active{ transform: var(--press); }
 
     .card{
       background:
-        radial-gradient(900px 400px at 20% 0%, rgba(76,111,255,.08), rgba(0,0,0,0) 65%),
+        radial-gradient(900px 240px at 30% 0%, rgba(124,92,255,.10), rgba(0,0,0,0)),
         linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
       border: 1px solid var(--border2);
       border-radius: var(--radius);
       padding: 14px;
       box-shadow: var(--shadow-card);
-      backdrop-filter: blur(10px);
+      position: relative;
+      overflow: hidden;
     }
     .card + .card{ margin-top: 12px; }
 
     .card.resultCard{
-      border-color: rgba(76,111,255,.22);
+      border-color: rgba(124,92,255,.26);
       box-shadow: var(--shadow-hero);
     }
 
@@ -114,76 +119,62 @@
       margin:0 0 10px;
       font-weight: 950;
       font-size: 16px;
-      letter-spacing: -.01em;
+      letter-spacing:.2px;
     }
     .small{ font-size:12px; color:var(--muted); }
     .muted{ color:var(--muted); }
 
     input{
       width:100%;
-      background: rgba(255,255,255,.05);
+      background: rgba(255,255,255,.06);
       color: var(--text);
       border:1px solid rgba(255,255,255,.10);
       border-radius: 14px;
       padding: 12px 12px;
       outline:none;
+      transition: box-shadow .15s ease, border-color .15s ease, background .15s ease;
     }
     input:focus{
-      border-color: rgba(76,111,255,.55);
-      box-shadow: 0 0 0 3px rgba(76,111,255,.14);
+      border-color: rgba(124,92,255,.55);
+      box-shadow: var(--ring);
+      background: rgba(255,255,255,.08);
     }
 
     .row{ display:flex; align-items:center; gap:10px; }
     .wraprow{ flex-wrap:wrap; }
     .chiprow{ display:flex; flex-wrap:wrap; gap:8px; }
 
-    /* CHIP = chiaramente cliccabile */
+    /* Chips: più "premibili" */
     .chip{
       padding: 10px 12px;
       border-radius: 999px;
       border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.04);
+      background: rgba(255,255,255,.05);
       cursor:pointer;
       user-select:none;
       font-size: 13px;
-      font-weight: 900;
+      font-weight: 850;
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
-      box-shadow: 0 10px 20px rgba(0,0,0,.22);
-      transition: transform .08s ease, border-color .12s ease, background .12s ease;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease, box-shadow .12s ease;
     }
-    .chip:active{ transform: scale(.98); }
+    .chip:hover{
+      background: rgba(255,255,255,.08);
+      border-color: rgba(255,255,255,.18);
+    }
+    .chip:active{ transform: scale(.985); }
     .chip.active{
-      border-color: rgba(76,111,255,.60);
-      background: linear-gradient(135deg, rgba(76,111,255,.18), rgba(124,77,255,.12));
-      box-shadow: 0 0 0 2px rgba(76,111,255,.16), 0 12px 26px rgba(0,0,0,.26);
+      border-color: rgba(124,92,255,.75);
+      background: linear-gradient(135deg, rgba(124,92,255,.28), rgba(74,163,255,.18));
+      box-shadow: 0 0 0 2px rgba(124,92,255,.14);
     }
 
-    /* BOTTONI = super chiari */
+    /* Bottoni: chiari, eleganti, NO neon */
     .btn{
-      border: 1px solid rgba(255,255,255,.14);
-      background: linear-gradient(135deg, rgba(76,111,255,.92), rgba(124,77,255,.82));
-      color:var(--text);
-      border-radius: 16px;
-      padding: 12px 12px;
-      font-weight: 1000;
-      cursor:pointer;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-      user-select:none;
-      -webkit-tap-highlight-color: transparent;
-      touch-action: manipulation;
-      box-shadow: var(--shadow-cta);
-      transition: transform .08s ease, filter .12s ease;
-    }
-    .btn:active{ transform: translateY(1px) scale(.99); }
-    .btnPrimary{ }
-
-    .btnGhost{
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(124,92,255,.55);
+      background:
+        radial-gradient(800px 220px at 30% 0%, rgba(255,255,255,.18), rgba(0,0,0,0)),
+        linear-gradient(135deg, rgba(124,92,255,.75), rgba(74,163,255,.55));
       color:var(--text);
       border-radius: 16px;
       padding: 12px 12px;
@@ -196,11 +187,34 @@
       user-select:none;
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
-      box-shadow: 0 10px 20px rgba(0,0,0,.24);
-      transition: transform .08s ease, border-color .12s ease;
+      box-shadow: 0 12px 26px rgba(124,92,255,.24);
+      transition: transform .12s ease, filter .12s ease, box-shadow .12s ease;
     }
-    .btnGhost:active{ transform: translateY(1px) scale(.99); }
-    .btnGhost:hover{ border-color: rgba(255,255,255,.18); }
+    .btn:hover{ filter: brightness(1.03); box-shadow: 0 14px 30px rgba(124,92,255,.30); }
+    .btn:active{ transform: var(--press); }
+
+    .btnPrimary{ box-shadow: var(--shadow-cta); }
+
+    .btnGhost{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      border-radius: 16px;
+      padding: 12px 12px;
+      font-weight: 900;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      box-shadow: 0 10px 20px rgba(0,0,0,.20);
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+    }
+    .btnGhost:hover{ background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.18); }
+    .btnGhost:active{ transform: var(--press); }
 
     .hr{ height:1px; background: rgba(255,255,255,.10); margin: 12px 0; }
 
@@ -215,7 +229,7 @@
 
     .footer{
       text-align:center;
-      color: rgba(255,255,255,.42);
+      color: rgba(255,255,255,.45);
       font-size: 12px;
       margin-top: 12px;
       padding-bottom: calc(6px + var(--safe-bottom));
@@ -233,9 +247,18 @@
       margin-top: 12px;
     }
 
-    /* Sotto-filtri MAI FATTO */
+    /* Sotto-filtri MAI FATTO (mostrati solo quando categoria data-cat="eventi" è attiva) */
     #eventsSubfilters{ display:none; margin-top:10px; }
     #eventsSubfilters.active{ display:block; }
+
+    /* Piccolo “premium” on card headers */
+    .hTitle::after{
+      content:"";
+      display:block;
+      height:1px;
+      margin-top:10px;
+      background: linear-gradient(90deg, rgba(124,92,255,.35), rgba(74,163,255,.18), rgba(255,255,255,0));
+    }
   </style>
 </head>
 
@@ -319,14 +342,16 @@
         <div class="chip" data-cat="storia">🏛️ Storia</div>
         <div class="chip" data-cat="montagna">🏔️ Montagna</div>
         <div class="chip" data-cat="mare">🌊 Mare</div>
+
+        <!-- ✅ NUOVA: LAGO -->
+        <div class="chip" data-cat="lago">🟦 Lago</div>
+
         <div class="chip" data-cat="relax">🧖 Relax</div>
         <div class="chip" data-cat="family">👨‍👩‍👧‍👦 Family</div>
         <div class="chip" data-cat="cantine">🍷 Cantine</div>
 
-        <!-- ✅ NUOVA CATEGORIA (solo UI): Lago -->
-        <div class="chip" data-cat="lago">🏞️ Lago</div>
-
-        <!-- ✅ compatibilità app.js -->
+        <!-- ✅ IMPORTANTE: lasciamo data-cat="eventi" per compatibilità con app.js,
+             ma in UI si chiama MAI FATTO -->
         <div class="chip" data-cat="eventi">✨ Mai fatto</div>
       </div>
 
@@ -351,6 +376,8 @@
 
         <div style="margin-top:10px;">
           <div class="small">Quando</div>
+          <!-- ✅ lasciamo questi chip per compatibilità con app.js (che li legge),
+               ma li rendiamo "neutri": non filtrano per data nel tuo events.js nuovo -->
           <div class="chiprow" id="eventWhenChips" style="margin-top:8px;">
             <div class="chip active" data-ewhen="any">♾️ Sempre</div>
             <div class="chip" data-ewhen="oggi">📅 Oggi</div>
