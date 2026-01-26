@@ -7,57 +7,40 @@
 
   <link rel="manifest" href="/manifest.webmanifest">
   <meta name="theme-color" content="#0A0F14">
+  <link rel="stylesheet" href="/style.css?v=6.2" />
 
-  <link rel="stylesheet" href="/style.css?v=6.1" />
-
-  <!-- 🎨 ACCENT COLORS -->
   <style>
     :root{
       --bg:#0A0F14;
       --card:#141C22;
-      --text:#ffffff;
+      --text:#fff;
       --muted:#A0B2BA;
 
       --blue:#38BDF8;
       --green:#34D399;
       --violet:#A855F7;
       --amber:#F59E0B;
-
-      --grad-main:linear-gradient(135deg,#6366F1,#22D3EE);
+      --grad:linear-gradient(135deg,#6366F1,#22D3EE);
     }
 
     body{background:var(--bg);color:var(--text)}
 
-    .chip.active{font-weight:700}
-
-    /* TEMPO */
     #timeChips .chip.active{
-      background:#0B3B52;
-      border-color:var(--blue);
-      color:#BAE6FD;
+      background:#0B3B52;border-color:var(--blue);color:#BAE6FD
     }
-
-    /* CATEGORIE */
     #categoryChips .chip.active{
-      background:#052E1B;
-      border-color:var(--green);
-      color:#A7F3D0;
+      background:#052E1B;border-color:var(--green);color:#A7F3D0
     }
-
-    /* MAI FATTO */
     #categoryChips .chip[data-cat="eventi"].active,
     #eventTypeChips .chip.active{
-      background:#2E1065;
-      border-color:var(--violet);
-      color:#E9D5FF;
+      background:#2E1065;border-color:var(--violet);color:#E9D5FF
+    }
+    #styleChips .chip.active{
+      background:#3A1F04;border-color:var(--amber);color:#FDE68A
     }
 
-    /* CTA */
     .btnPrimary{
-      background:var(--grad-main);
-      border:none;
-      color:#fff;
-      font-weight:800;
+      background:var(--grad);border:none;color:#fff;font-weight:800
     }
   </style>
 </head>
@@ -85,6 +68,7 @@
 
   <input id="originLat" type="hidden" />
   <input id="originLon" type="hidden" />
+  <input id="originCC" type="hidden" />
 </section>
 
 <!-- RICERCA -->
@@ -93,19 +77,29 @@
   <!-- TEMPO -->
   <div class="subTitle">⏱️ Quanto tempo hai?</div>
   <div id="timeChips" class="chips">
+    <div class="chip" data-min="45">45m</div>
     <div class="chip" data-min="60">1h</div>
     <div class="chip active" data-min="90">1h 30</div>
     <div class="chip" data-min="120">2h</div>
     <div class="chip" data-min="180">3h</div>
+    <div class="chip" data-min="240">4h</div>
   </div>
+
+  <input id="maxMinutes" class="input inputMini" type="number" min="10" max="600" step="5" value="90">
 
   <!-- CATEGORIE -->
   <div class="subTitle">🧭 Che vibe vuoi?</div>
   <div id="categoryChips" class="chips chipsGrid">
     <div class="chip active" data-cat="natura">🌿 Natura</div>
+    <div class="chip" data-cat="hiking">🥾 Trekking</div>
     <div class="chip" data-cat="borghi">🏘️ Borghi</div>
+    <div class="chip" data-cat="storia">🏛️ Storia</div>
+    <div class="chip" data-cat="montagna">🏔️ Montagna</div>
+    <div class="chip" data-cat="mare">🌊 Mare</div>
+    <div class="chip" data-cat="lago">🏞️ Lago</div>
     <div class="chip" data-cat="relax">🧖 Relax</div>
     <div class="chip" data-cat="family">👨‍👩‍👧‍👦 Family</div>
+    <div class="chip" data-cat="cantine">🍷 Cantine</div>
     <div class="chip" data-cat="eventi">✨ Mai fatto</div>
   </div>
 
@@ -116,8 +110,22 @@
       <div class="chip active" data-etype="tutti">⭐ Tutti</div>
       <div class="chip" data-etype="relax">🧠 Reset</div>
       <div class="chip" data-etype="famiglia">👨‍👩‍👧‍👦 Family</div>
+      <div class="chip" data-etype="bici">🚴 Bici</div>
+      <div class="chip" data-etype="moto">🏍️ Moto</div>
+      <div class="chip" data-etype="natura">🌿 Natura</div>
+      <div class="chip" data-etype="pioggia">🌧️ Pioggia</div>
       <div class="chip" data-etype="tramonto">🌅 Tramonto</div>
+      <div class="chip" data-etype="mangiare">🍝 Food</div>
+      <div class="chip" data-etype="1h">🕐 1h</div>
+      <div class="chip" data-etype="2h">🕑 2h</div>
     </div>
+  </div>
+
+  <!-- STILE -->
+  <div class="subTitle">✨ Preferisci?</div>
+  <div id="styleChips" class="chips">
+    <div class="chip active" data-style="chicche">✨ Chicche</div>
+    <div class="chip active" data-style="classici">✅ Classici</div>
   </div>
 
   <button id="btnFind" class="btn btnPrimary btnBig">🚀 CERCA</button>
@@ -136,11 +144,11 @@
 <script src="/events.js?v=1.0"></script>
 <script src="/app.js?v=22.2"></script>
 
-<!-- 🧭 UX GUIDATA -->
+<!-- UX GUIDATA -->
 <script>
 (() => {
-  const go = id =>
-    document.getElementById(id)?.scrollIntoView({behavior:"smooth",block:"start"});
+  const go = id => document.getElementById(id)
+    ?.scrollIntoView({behavior:"smooth",block:"start"});
 
   btnFindPlace.onclick = () => setTimeout(()=>go("timeChips"),200);
 
