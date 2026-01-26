@@ -1154,6 +1154,7 @@ function isNearCoast(place) {
     if (cat === "natura") return isNature(place);
     if (cat === "hiking") return isHiking(place);
     if (cat === "mare") return isSea(place);
+    if (cat === "lago") return isLake(place);
     if (cat === "relax") return isSpaPlace(place);
     if (cat === "borghi") return isBorgo(place);
     if (cat === "cantine") return isWinery(place);
