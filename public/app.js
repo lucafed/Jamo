@@ -922,27 +922,70 @@ function isNearCoast(place) {
   return false;
 }
 function isSea(place) {
-  // 🔒 REGOLA CHIAVE: se NON sei vicino alla costa → NON sei mare
+  function isSea(place) {
+  // 1) deve stare vicino alla costa (il tuo filtro bbox)
   if (!isNearCoast(place)) return false;
 
   const t = tagsStr(place);
-  const type = normalizeType(place?.type);
-  const quality = hasQualitySignals(place);
   const n = normName(place?.name || "");
+  const q = hasQualitySignals(place);
 
-  if (type === "mare") return true;
-  if (t.includes("natural=beach")) return true;
-  if (t.includes("leisure=marina")) return true;
-  if (t.includes("man_made=pier") && (looksBeachByName(place) || quality)) return true;
+  // 2) ESCLUSIONI dure (roba “non turistica mare”)
+  if (
+    t.includes("waterway=") ||
+    t.includes("waterway=river") ||
+    t.includes("waterway=canal") ||
+    t.includes("waterway=stream") ||
+    t.includes("amenity=ferry_terminal") ||
+    t.includes("harbour=") ||
+    t.includes("leisure=marina") ||              // marina spesso fluviale/porticciolo
+    t.includes("amenity=boat_rental") ||
+    t.includes("shop=fishmonger") ||             // pescheria
+    n.includes("pescheria") ||
+    n.includes("centro nautico") ||
+    n.includes("nautico") ||
+    n.includes("darsena") ||
+    n.includes("rimessaggio")
+  ) return false;
 
-  if (t.includes("tourism=attraction") && looksBeachByName(place)) return true;
+  // 3) SEGNALI OSM “mare vero”
+  const strongSea =
+    t.includes("natural=beach") ||
+    t.includes("natural=coastline") ||
+    t.includes("natural=bay") ||
+    t.includes("natural=reef") ||
+    t.includes("natural=cliff") ||
+    t.includes("man_made=pier") ||
+    t.includes("tourism=beach_resort");
 
-  if (t.includes("natural=coastline")) return true;
+  // 4) SEGNALI TURISTICI (visitabile)
+  const touristSignal =
+    t.includes("tourism=attraction") ||
+    t.includes("tourism=viewpoint") ||
+    t.includes("tourism=information") ||
+    t.includes("tourism=beach_resort") ||
+    t.includes("leisure=beach_resort") ||
+    t.includes("amenity=bar") ||
+    t.includes("amenity=restaurant") ||
+    t.includes("amenity=cafe") ||
+    t.includes("amenity=ice_cream") ||
+    t.includes("amenity=toilets") ||
+    t.includes("sport=swimming") ||
+    q;
 
-  if (looksBeachByName(place) && (quality || t.includes("tourism="))) return true;
+  // 5) NOMI “balneari” (ma solo se c’è un segnale turistico/qualità)
+  const nameSea =
+    hasAny(n, ["spiaggia","lido","baia","cala","scogliera","litorale","lungomare","beach"]);
+
+  // Regola finale: mare vero + (turistico OR nome balneare)  
+  if (strongSea && (touristSignal || nameSea)) return true;
+
+  // Anche senza tag strong: nome balneare + forte segnale turistico/qualità
+  if (nameSea && touristSignal) return true;
 
   return false;
 }
+
 
   function isMountain(place) {
     const t = tagsStr(place);
