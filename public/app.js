@@ -921,7 +921,7 @@ function isNearCoast(place) {
   }
   return false;
 }
-function isSea(place) {
+
   function isSea(place) {
   // 1) deve stare vicino alla costa (il tuo filtro bbox)
   if (!isNearCoast(place)) return false;
