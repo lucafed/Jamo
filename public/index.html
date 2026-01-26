@@ -6,215 +6,512 @@
   <title>Jamo — Trova la meta perfetta</title>
 
   <link rel="manifest" href="/manifest.webmanifest">
-  <meta name="theme-color" content="#0A0F14">
+  <meta name="theme-color" content="#0D1117">
 
+  <!-- Best effort cache control -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
 
-  <link rel="stylesheet" href="/style.css?v=6.0" />
+  <style>
+    /* =========================================================
+       Jamo Premium UI (tech by UX, not by neon)
+       - keeps app.js IDs and classes
+       - tap-safe
+    ========================================================== */
+
+    :root{
+      /* Premium palette (warm graphite + refined accent) */
+      --bg:#0B0F14;            /* main background */
+      --bg2:#0D1219;           /* secondary background */
+      --surface:#111824;       /* cards */
+      --surface2:#0F1620;      /* panels */
+      --line:rgba(255,255,255,.10);
+      --line2:rgba(255,255,255,.14);
+
+      --text:#F5F7FB;
+      --muted:#A7B3C2;
+
+      /* Accent (elegant, not neon) */
+      --acc:#D6A76C;           /* warm sand / gold */
+      --acc2:#8BD3C7;          /* calm mint */
+      --danger:#FF6A6A;
+      --warn:#FFB55A;
+      --ok:#2DE2C5;
+
+      --shadow: rgba(0,0,0,.45);
+      --shadow2: rgba(0,0,0,.30);
+
+      --r16:16px;
+      --r18:18px;
+      --r22:22px;
+
+      --pad:14px;
+      --pad2:18px;
+
+      --tap: transparent;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      background:
+        radial-gradient(1200px 800px at 20% -10%, rgba(214,167,108,.12), transparent 55%),
+        radial-gradient(900px 600px at 110% 10%, rgba(139,211,199,.10), transparent 60%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+      -webkit-tap-highlight-color: var(--tap);
+    }
+
+    a{ color:inherit; text-decoration:none; }
+    .wrap{
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 18px 14px 80px;
+    }
+
+    /* Topbar */
+    .topbar{
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      padding: 12px 14px;
+      margin: -18px -14px 14px;
+      backdrop-filter: blur(14px);
+      background: linear-gradient(180deg, rgba(11,15,20,.92), rgba(11,15,20,.65));
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .topbarRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      max-width:860px;
+      margin:0 auto;
+    }
+    .brand{
+      display:flex; align-items:center; gap:10px;
+      min-width: 0;
+    }
+    .logoDot{
+      width:12px; height:12px; border-radius:999px;
+      background: conic-gradient(from 180deg, var(--acc), var(--acc2), var(--acc));
+      box-shadow: 0 0 0 4px rgba(214,167,108,.12);
+      flex:0 0 auto;
+    }
+    .brandTitle{
+      font-weight: 950;
+      letter-spacing:.2px;
+      line-height:1.05;
+    }
+    .brandSub{
+      font-size: 12px;
+      color: var(--muted);
+      margin-top:2px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .pillMini{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      font-weight: 900;
+      font-size: 12px;
+      color: rgba(245,247,251,.92);
+    }
+
+    /* Cards */
+    .card{
+      border-radius: var(--r22);
+      background: linear-gradient(180deg, rgba(17,24,36,.88), rgba(15,22,32,.88));
+      border: 1px solid rgba(255,255,255,.10);
+      box-shadow: 0 14px 30px var(--shadow);
+      padding: var(--pad2);
+    }
+    .card + .card{ margin-top: 14px; }
+    .cardTitle{
+      font-size: 18px;
+      font-weight: 950;
+      letter-spacing:.2px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+    .cardTitle .tag{
+      font-size: 12px;
+      color: rgba(245,247,251,.86);
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-weight: 900;
+    }
+    .small{ font-size: 13px; }
+    .muted{ color: var(--muted); }
+
+    /* Inputs */
+    .field{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      margin-top: 12px;
+    }
+    .labelRow{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .labelRow label{
+      font-weight: 900;
+      font-size: 13px;
+      color: rgba(245,247,251,.90);
+    }
+    .inputRow{
+      display:flex; gap:10px; align-items:center;
+      flex-wrap: wrap;
+    }
+    input[type="text"], input[type="number"]{
+      width:100%;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      color: var(--text);
+      padding: 13px 14px;
+      outline: none;
+      font-size: 15px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+    }
+    input[type="text"]::placeholder{ color: rgba(167,179,194,.70); }
+    input[type="number"]{
+      max-width: 150px;
+    }
+
+    /* Buttons */
+    .row{ display:flex; gap:10px; align-items:center; }
+    .wraprow{ flex-wrap:wrap; }
+    .btn, .btnPrimary, .btnGhost{
+      border-radius: 16px;
+      padding: 12px 14px;
+      font-weight: 950;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      cursor: pointer;
+      user-select:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      transition: transform .12s ease, filter .12s ease, border-color .12s ease, background .12s ease;
+      -webkit-tap-highlight-color: var(--tap);
+    }
+    .btn:active, .btnPrimary:active, .btnGhost:active{
+      transform: scale(.985);
+      filter: brightness(1.04);
+    }
+    .btnPrimary{
+      border-color: rgba(214,167,108,.55);
+      background: linear-gradient(180deg, rgba(214,167,108,.22), rgba(214,167,108,.12));
+      box-shadow: 0 10px 18px rgba(214,167,108,.10);
+    }
+    .btnGhost{
+      background: rgba(0,0,0,.20);
+    }
+    .btnWide{
+      width:100%;
+      padding: 14px 16px;
+      border-radius: 18px;
+      font-size: 15px;
+    }
+
+    /* Chips */
+    .chips{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top: 12px;
+    }
+    .chip{
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.16);
+      font-weight: 950;
+      font-size: 13px;
+      cursor:pointer;
+      user-select:none;
+      transition: transform .12s ease, border-color .12s ease, background .12s ease, box-shadow .12s ease;
+      -webkit-tap-highlight-color: var(--tap);
+    }
+    .chip:active{ transform: scale(.985); }
+    .chip.active{
+      border-color: rgba(214,167,108,.65);
+      background: linear-gradient(180deg, rgba(214,167,108,.20), rgba(214,167,108,.10));
+      box-shadow: 0 10px 18px rgba(214,167,108,.10);
+    }
+
+    /* Subfilters panel */
+    .subfilters{
+      margin-top: 12px;
+      border-radius: var(--r18);
+      border: 1px dashed rgba(255,255,255,.16);
+      background: rgba(0,0,0,.16);
+      padding: 12px 12px;
+      display:none;
+    }
+    .subfilters.active{ display:block; }
+    .subfiltersHeader{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom: 8px;
+    }
+    .subfiltersHeader .small{
+      margin:0;
+    }
+
+    /* Status */
+    #statusBox{
+      display:none;
+      border-radius: var(--r18);
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      padding: 12px 12px;
+      margin-bottom: 14px;
+      box-shadow: 0 12px 24px var(--shadow2);
+    }
+    #statusText{
+      font-weight: 900;
+      letter-spacing:.15px;
+    }
+
+    /* Result anchor card */
+    #resultCard{ scroll-margin-top: 86px; }
+
+    /* QuickStart collapse */
+    #quickStartCard.collapsed .collapseBody{ display:none; }
+    .collapseBody{ margin-top: 10px; }
+
+    /* Action grid (used by app.js renderChosenCard) */
+    .actionGrid{
+      margin-top: 12px;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+
+    /* Footer hint */
+    .hint{
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.14);
+      color: rgba(245,247,251,.86);
+      font-size: 12.5px;
+      line-height: 1.4;
+    }
+    .kbd{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding: 4px 8px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.22);
+      font-weight: 950;
+      font-size: 12px;
+      margin: 0 4px;
+    }
+  </style>
 </head>
 
 <body>
-  <!-- Ambient glow -->
-  <div class="bgGlow" aria-hidden="true"></div>
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbarRow">
+      <div class="brand">
+        <div class="logoDot"></div>
+        <div style="min-width:0;">
+          <div class="brandTitle">Jamo</div>
+          <div class="brandSub">scegli una meta davvero visitabile, in modo smart</div>
+        </div>
+      </div>
+      <div class="pillMini">Offline • Region-first</div>
+    </div>
+  </div>
 
-  <header class="topbar clickSafe">
-    <div class="brand">
-      <div class="logoMark" aria-hidden="true">J</div>
-      <div class="brandText">
-        <div class="brandTitle">Jamo</div>
-        <div class="brandSub">Offline-first • Tech vibes • Tap-safe</div>
+  <div class="wrap">
+    <!-- Status -->
+    <div id="statusBox" class="clickSafe">
+      <div id="statusText">—</div>
+    </div>
+
+    <!-- Quick Start / Origin -->
+    <div class="card clickSafe" id="quickStartCard">
+      <!-- app.js injects the collapse header button here (originToggle) -->
+      <div class="collapseBody">
+        <div class="cardTitle">
+          📍 Partenza
+          <span class="tag">senza GPS</span>
+        </div>
+
+        <div class="field">
+          <div class="labelRow">
+            <label for="originLabel">Scrivi il luogo di partenza</label>
+            <span class="small muted">es. “Bussolengo”, “Verona”, “L’Aquila”</span>
+          </div>
+
+          <div class="inputRow">
+            <input id="originLabel" type="text" placeholder="Inserisci città o zona…" autocomplete="off" />
+          </div>
+
+          <div class="row wraprow" style="margin-top:10px;">
+            <button class="btnPrimary" id="btnFindPlace" type="button">🔎 Usa questo luogo</button>
+            <button class="btnGhost" id="btnResetOrigin" type="button">🧽 Reset</button>
+            <button class="btnGhost" id="btnUseGPS" type="button" aria-hidden="true">📡 GPS</button>
+          </div>
+
+          <div class="hint" id="originStatus">
+            Inserisci un luogo e premi <span class="kbd">Usa questo luogo</span>. Jamo lavora offline con dataset locali.
+          </div>
+        </div>
+
+        <!-- Hidden fields used by app.js -->
+        <input id="originLat" type="hidden" />
+        <input id="originLon" type="hidden" />
+        <input id="originCC" type="hidden" />
       </div>
     </div>
 
-    <div class="topActions">
-      <button id="btnResetVisited" class="btnGhost" type="button" title="Reset visitati">🧽</button>
-    </div>
-  </header>
-
-  <main class="wrap">
-
-    <!-- STATUS -->
-    <section id="statusBox" class="statusBox clickSafe" style="display:none;">
-      <div class="statusDot" aria-hidden="true"></div>
-      <div id="statusText" class="statusText"></div>
-    </section>
-
-    <!-- HERO -->
-    <section class="hero clickSafe">
-      <div class="heroCard">
-        <div class="heroBadge">✨ WOW Finder</div>
-        <h1 class="heroTitle">Trova una meta <span class="accent">perfetta</span> in pochi secondi.</h1>
-        <p class="heroDesc">
-          Imposta la partenza, scegli <b>tempo</b> e <b>stile</b>, poi premi <b>CERCA</b>.
-          Nessun GPS, tutto offline (quando disponibile). Risultato al centro. Subito.
-        </p>
-
-        <div class="heroKpis">
-          <div class="kpi">
-            <div class="kpiN">1</div>
-            <div class="kpiT">Partenza</div>
-          </div>
-          <div class="kpi">
-            <div class="kpiN">2</div>
-            <div class="kpiT">Categoria</div>
-          </div>
-          <div class="kpi">
-            <div class="kpiN">3</div>
-            <div class="kpiT">Cerca</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- QUICK START / ORIGIN -->
-    <section id="quickStartCard" class="card clickSafe">
-      <!-- app.js inserisce il toggle header qui automaticamente -->
-      <div class="cardTitleRow">
-        <div class="cardTitle">📍 Partenza</div>
-        <div class="cardHint">Scegli da dove parti</div>
+    <!-- Search controls -->
+    <div class="card clickSafe" id="searchCard">
+      <div class="cardTitle">🎯 Cosa vuoi fare?</div>
+      <div class="small muted" style="margin-top:8px; line-height:1.45;">
+        Scegli categoria, stile e tempo massimo. Poi premi <b>CERCA</b>.
       </div>
 
-      <div class="field">
-        <label class="label" for="originLabel">Inserisci un luogo</label>
-        <div class="fieldRow">
-          <input id="originLabel" class="input" type="text" placeholder="Es: Bussolengo, Verona, L'Aquila..." autocomplete="off">
-          <button id="btnFindPlace" class="btn btnPrimary" type="button">Usa questo luogo</button>
-        </div>
-        <div id="originStatus" class="small muted" style="margin-top:10px; line-height:1.35;">
-          Inserisci un luogo e premi <b>Usa questo luogo</b>.
-        </div>
-      </div>
-
-      <div class="row wraprow" style="gap:10px; margin-top:12px;">
-        <button id="btnResetOrigin" class="btnGhost" type="button">🧽 Reset partenza</button>
-        <button id="btnUseGPS" class="btnGhost" type="button" style="display:none;">📡 GPS</button>
-      </div>
-
-      <!-- Hidden fields used by app.js -->
-      <input id="originLat" type="hidden" />
-      <input id="originLon" type="hidden" />
-      <input id="originCC" type="hidden" />
-    </section>
-
-    <!-- SEARCH CONTROLS -->
-    <section id="searchCard" class="card clickSafe">
-      <div class="cardTitleRow">
-        <div class="cardTitle">🎯 Ricerca</div>
-        <div class="cardHint">Scegli tempo + categoria + stile</div>
-      </div>
-
-      <!-- TIME -->
-      <div class="subTitle">⏱️ Quanto tempo hai?</div>
-      <div id="timeChips" class="chips">
-        <div class="chip" data-min="45">45m</div>
-        <div class="chip" data-min="60">1h</div>
-        <div class="chip active" data-min="90">1h 30</div>
-        <div class="chip" data-min="120">2h</div>
-        <div class="chip" data-min="180">3h</div>
-        <div class="chip" data-min="240">4h</div>
-      </div>
-
-      <div class="fieldRow" style="margin-top:10px;">
-        <div class="miniLabel">Oppure minuti precisi</div>
-        <input id="maxMinutes" class="input inputMini" type="number" min="10" max="600" step="5" value="90">
-      </div>
-
-      <div class="divider"></div>
-
-      <!-- CATEGORY -->
-      <div class="subTitle">🧭 Che vibe vuoi?</div>
-      <div id="categoryChips" class="chips chipsGrid">
+      <!-- Category chips -->
+      <div class="chips" id="categoryChips" style="margin-top:14px;">
         <div class="chip active" data-cat="natura">🌿 Natura</div>
-        <div class="chip" data-cat="hiking">🥾 Trekking</div>
         <div class="chip" data-cat="borghi">🏘️ Borghi</div>
         <div class="chip" data-cat="storia">🏛️ Storia</div>
-        <div class="chip" data-cat="montagna">🏔️ Montagna</div>
-        <div class="chip" data-cat="mare">🌊 Mare</div>
-        <div class="chip" data-cat="lago">🏞️ Lago</div>
         <div class="chip" data-cat="relax">🧖 Relax</div>
+        <div class="chip" data-cat="lago">🏞️ Lago</div>
+        <div class="chip" data-cat="mare">🌊 Mare</div>
+        <div class="chip" data-cat="hiking">🥾 Trekking</div>
+        <div class="chip" data-cat="montagna">🏔️ Montagna</div>
         <div class="chip" data-cat="family">👨‍👩‍👧‍👦 Family</div>
         <div class="chip" data-cat="cantine">🍷 Cantine</div>
         <div class="chip" data-cat="eventi">✨ Mai fatto</div>
       </div>
 
-      <!-- EVENTS SUBFILTERS (app.js toggles .active when category=eventi) -->
-      <div id="eventsSubfilters" class="eventsSubfilters">
-        <div class="small">Mai fatto (scegli il tipo di WOW)</div>
-        <div class="small muted" style="margin-top:6px;">
-          Offline: idee WOW • filtri soft • widening automatico • link Maps precisi.
+      <!-- Style chips -->
+      <div class="field" style="margin-top:14px;">
+        <div class="labelRow">
+          <label>Stile</label>
+          <span class="small muted">filtri “soft”</span>
+        </div>
+        <div class="chips" id="styleChips">
+          <div class="chip active" data-style="classici">✅ Classici</div>
+          <div class="chip" data-style="chicche">✨ Chicche</div>
+        </div>
+      </div>
+
+      <!-- Time chips + input -->
+      <div class="field">
+        <div class="labelRow">
+          <label for="maxMinutes">Tempo massimo</label>
+          <span class="small muted">minuti in auto (stima)</span>
         </div>
 
-        <div style="margin-top:12px;">
-          <div class="subTitleMini">Tipo</div>
-          <div id="eventTypeChips" class="chips">
-            <div class="chip active" data-etype="tutti">⭐ Tutti</div>
-            <div class="chip" data-etype="relax">🧠 Reset</div>
-            <div class="chip" data-etype="famiglia">👨‍👩‍👧‍👦 Family</div>
-            <div class="chip" data-etype="bici">🚴 Bici</div>
-            <div class="chip" data-etype="moto">🏍️ Moto</div>
-            <div class="chip" data-etype="natura">🌿 Natura</div>
-            <div class="chip" data-etype="pioggia">🌧️ Pioggia</div>
-            <div class="chip" data-etype="tramonto">🌅 Tramonto</div>
-            <div class="chip" data-etype="mangiare">🍝 Food</div>
-            <div class="chip" data-etype="1h">🕐 1h</div>
-            <div class="chip" data-etype="2h">🕑 2h</div>
+        <div class="row wraprow">
+          <input id="maxMinutes" type="number" min="10" max="600" step="5" value="120" />
+          <div class="small muted">Suggerimento: inizia da 120 e poi stringi.</div>
+        </div>
+
+        <div class="chips" id="timeChips">
+          <div class="chip" data-min="45">⏱️ 45</div>
+          <div class="chip" data-min="60">⏱️ 60</div>
+          <div class="chip active" data-min="120">⏱️ 120</div>
+          <div class="chip" data-min="180">⏱️ 180</div>
+          <div class="chip" data-min="240">⏱️ 240</div>
+        </div>
+      </div>
+
+      <!-- Events subfilters (Mai fatto) -->
+      <div id="eventsSubfilters" class="subfilters">
+        <div class="subfiltersHeader">
+          <div>
+            <div class="small" style="font-weight:950;">Mai fatto (scegli il tipo di WOW)</div>
+            <div class="small muted" style="margin-top:4px;">
+              Offline: idee WOW • filtri soft • widening automatico • link Maps precisi.
+            </div>
           </div>
         </div>
 
-        <div id="eventWhenChips" class="chips" style="display:none;">
+        <div class="chips" id="eventTypeChips">
+          <!-- events.js may rewrite this row; keep base fallback -->
+          <div class="chip active" data-etype="tutti">⭐ Tutti</div>
+          <div class="chip" data-etype="relax">🧠 Reset</div>
+          <div class="chip" data-etype="famiglia">👨‍👩‍👧‍👦 Family</div>
+          <div class="chip" data-etype="natura">🌿 Natura</div>
+          <div class="chip" data-etype="mangiare">🍝 Food</div>
+          <div class="chip" data-etype="1h">🕐 1h</div>
+          <div class="chip" data-etype="2h">🕑 2h</div>
+        </div>
+
+        <div class="chips" id="eventWhenChips" style="margin-top:10px;">
+          <!-- app.js legge questo ma events.js lo nasconde: lo lasciamo per compatibilità -->
           <div class="chip active" data-ewhen="oggi">Oggi</div>
+          <div class="chip" data-ewhen="weekend">Weekend</div>
+          <div class="chip" data-ewhen="7giorni">7 giorni</div>
+          <div class="chip" data-ewhen="any">Quando capita</div>
         </div>
       </div>
 
-      <div class="divider"></div>
+      <!-- Primary actions -->
+      <div class="field" style="margin-top:16px;">
+        <button class="btnPrimary btnWide" id="btnFind" type="button">🚀 CERCA</button>
 
-      <!-- STYLE -->
-      <div class="subTitle">✨ Preferisci?</div>
-      <div id="styleChips" class="chips">
-        <div class="chip active" data-style="chicche">✨ Chicche</div>
-        <div class="chip active" data-style="classici">✅ Classici</div>
-      </div>
+        <div class="row wraprow" style="margin-top:10px;">
+          <button class="btnGhost" id="btnResetVisited" type="button">🧽 Reset visitati</button>
+        </div>
 
-      <div class="ctaRow">
-        <button id="btnFind" class="btn btnPrimary btnBig" type="button">🚀 CERCA</button>
-      </div>
-
-      <div class="small muted" style="margin-top:10px;">
-        Tip: se trovi sempre “troppo lontano”, abbassa minuti oppure togli widening in events.js.
-      </div>
-    </section>
-
-    <!-- RESULT -->
-    <section id="resultCard" class="card clickSafe">
-      <div class="cardTitleRow">
-        <div class="cardTitle">📌 Risultato</div>
-        <div class="cardHint">Meta + alternative</div>
-      </div>
-
-      <div id="resultArea">
-        <div class="emptyState">
-          <div class="emptyIcon" aria-hidden="true">🧠⚡</div>
-          <div class="emptyTitle">Pronto quando lo sei tu.</div>
-          <div class="emptyDesc">Imposta la partenza e premi <b>CERCA</b>: la meta appare qui, con link e alternative.</div>
+        <div class="hint">
+          Tip “smart”: se non trovi nulla, aumenta i minuti. Jamo allarga in modo controllato (non random).
         </div>
       </div>
-    </section>
+    </div>
 
-    <footer class="footer clickSafe">
-      <div class="footerLine">
-        <span class="dot"></span> Jamo • build UI v6 • neon glass
+    <!-- Result -->
+    <div class="card clickSafe" id="resultCard">
+      <div class="cardTitle">📌 Risultato</div>
+      <div class="small muted" style="margin-top:8px; line-height:1.45;">
+        Qui appare la meta scelta (o le idee “Mai fatto”). Tocca i pulsanti per mappe, foto e info.
       </div>
-      <div class="footerLine small muted">
-        Offline-first (best effort). Nessun tracciamento GPS. Link esterni: Maps / Wiki / Foto.
+
+      <div id="resultArea" style="margin-top:12px;">
+        <div class="card clickSafe" style="box-shadow:none; border-color:rgba(255,255,255,.10); background:rgba(0,0,0,.10);">
+          <div style="font-weight:950; font-size:16px;">Pronto quando lo sei tu.</div>
+          <div class="small muted" style="margin-top:6px;">
+            Imposta la partenza, scegli categoria e premi <b>CERCA</b>.
+          </div>
+        </div>
       </div>
-    </footer>
+    </div>
 
-  </main>
+    <div class="small muted" style="margin-top:16px; text-align:center; opacity:.75;">
+      Jamo • offline-first • risultati “visitabili” • tap-safe
+    </div>
+  </div>
 
-  <!-- Scripts -->
-  <script src="/events.js?v=1.0"></script>
-  <script src="/app.js?v=22.2"></script>
+  <!-- Scripts: keep defer, no blocking -->
+  <script defer src="/events.js?v=22.2"></script>
+  <script defer src="/app.js?v=22.2"></script>
 </body>
 </html>
