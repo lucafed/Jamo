@@ -6,7 +6,8 @@
   <title>Jamo — Trova la meta perfetta</title>
 
   <link rel="manifest" href="/manifest.webmanifest">
-  <meta name="theme-color" content="#00E0FF">
+  <!-- niente turchese -->
+  <meta name="theme-color" content="#7C5CFF">
 
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
@@ -14,23 +15,27 @@
 
   <style>
     :root{
-      --bg:#050C10;
-      --surface:#0C151B;
-      --surface2:#0A1217;
+      --bg:#070A10;
+      --surface:#0E1422;
+      --surface2:#0B111C;
       --text:#FFFFFF;
-      --muted:#A7B7C0;
+      --muted:#A7B2C0;
 
-      --acc:#00E0FF;
-      --acc2:#1AFFD5;
+      /* Aurora premium (soft, non neon) */
+      --acc:#7C5CFF;   /* violet */
+      --acc2:#4AA3FF;  /* blue */
+      --acc3:#FF4FD8;  /* pink */
+      --acc4:#FFB020;  /* amber */
+      --acc5:#2EE59D;  /* green */
 
-      --border: rgba(255,255,255,.12);
-      --border2: rgba(255,255,255,.08);
+      --border: rgba(255,255,255,.14);
+      --border2: rgba(255,255,255,.09);
 
       --radius: 18px;
 
-      --shadow-card: 0 6px 16px rgba(0,0,0,.35);
-      --shadow-hero: 0 14px 38px rgba(0,0,0,.55);
-      --shadow-cta: 0 12px 30px rgba(0,224,255,.22);
+      --shadow-card: 0 10px 26px rgba(0,0,0,.48);
+      --shadow-hero: 0 18px 48px rgba(0,0,0,.62);
+      --shadow-cta: 0 16px 40px rgba(124,92,255,.22);
 
       --safe-bottom: env(safe-area-inset-bottom);
     }
@@ -41,8 +46,11 @@
       color:var(--text);
       font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
       background:
-        radial-gradient(900px 520px at 20% -10%, rgba(0,224,255,.16), rgba(0,0,0,0)),
-        radial-gradient(900px 520px at 90% -10%, rgba(26,255,213,.10), rgba(0,0,0,0)),
+        radial-gradient(900px 520px at 15% -10%, rgba(124,92,255,.20), rgba(0,0,0,0)),
+        radial-gradient(900px 520px at 90% -10%, rgba(74,163,255,.14), rgba(0,0,0,0)),
+        radial-gradient(900px 520px at 40% 10%, rgba(255,79,216,.10), rgba(0,0,0,0)),
+        radial-gradient(900px 520px at 70% 15%, rgba(46,229,157,.08), rgba(0,0,0,0)),
+        radial-gradient(900px 520px at 55% 0%, rgba(255,176,32,.06), rgba(0,0,0,0)),
         var(--bg);
       padding-bottom: calc(14px + var(--safe-bottom));
     }
@@ -65,9 +73,12 @@
     .brand{ display:flex; align-items:center; gap:10px; }
     .logo{
       width:42px; height:42px; border-radius:14px;
-      background: radial-gradient(circle at 30% 30%, var(--acc2), var(--acc));
-      box-shadow: 0 16px 34px rgba(0,224,255,.12);
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255,255,255,.30), rgba(0,0,0,0)),
+        linear-gradient(135deg, rgba(124,92,255,.85), rgba(74,163,255,.55), rgba(255,79,216,.35));
+      box-shadow: 0 18px 40px rgba(124,92,255,.16);
       flex: 0 0 auto;
+      border:1px solid rgba(255,255,255,.12);
     }
     .title h1{ margin:0; font-size:18px; letter-spacing:.2px; }
     .title p{ margin:2px 0 0; color:var(--muted); font-size:12px; }
@@ -79,13 +90,15 @@
       color:var(--text);
       border-radius: 14px;
       padding: 10px 12px;
-      font-weight:800;
+      font-weight:900;
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
     }
 
     .card{
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      background:
+        radial-gradient(1200px 260px at 20% 0%, rgba(255,255,255,.10), rgba(0,0,0,0)),
+        linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
       border: 1px solid var(--border2);
       border-radius: var(--radius);
       padding: 14px;
@@ -94,7 +107,7 @@
     .card + .card{ margin-top: 12px; }
 
     .card.resultCard{
-      border-color: rgba(0,224,255,.22);
+      border-color: rgba(124,92,255,.26);
       box-shadow: var(--shadow-hero);
     }
 
@@ -116,36 +129,39 @@
       outline:none;
     }
     input:focus{
-      border-color: rgba(0,224,255,.45);
-      box-shadow: 0 0 0 3px rgba(0,224,255,.10);
+      border-color: rgba(124,92,255,.55);
+      box-shadow: 0 0 0 3px rgba(124,92,255,.14);
     }
 
     .row{ display:flex; align-items:center; gap:10px; }
     .wraprow{ flex-wrap:wrap; }
     .chiprow{ display:flex; flex-wrap:wrap; gap:8px; }
 
+    /* CHIP: super chiari */
     .chip{
       padding: 10px 12px;
       border-radius: 999px;
-      border: 1px solid var(--border2);
-      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
       cursor:pointer;
       user-select:none;
       font-size: 13px;
-      font-weight: 850;
+      font-weight: 900;
+      letter-spacing:.1px;
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
+      box-shadow: 0 8px 18px rgba(0,0,0,.22);
+      transition: transform .06s ease, border-color .12s ease, background .12s ease;
     }
+    .chip:active{ transform: translateY(1px); }
     .chip.active{
-      border-color: rgba(0,224,255,.70);
-      background: rgba(0,224,255,.10);
-      box-shadow: 0 0 0 2px rgba(0,224,255,.18);
+      border-color: rgba(124,92,255,.75);
+      background: rgba(124,92,255,.16);
+      box-shadow: 0 0 0 2px rgba(124,92,255,.16), 0 10px 24px rgba(0,0,0,.28);
     }
 
-    .btn{
-      border: 1px solid rgba(0,224,255,.45);
-      background: linear-gradient(90deg, rgba(0,224,255,.22), rgba(26,255,213,.12));
-      color:var(--text);
+    /* BOTTONI: “premibili” */
+    .btn, .btnGhost{
       border-radius: 16px;
       padding: 12px 12px;
       font-weight: 950;
@@ -157,26 +173,30 @@
       user-select:none;
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
+      min-height: 46px;
+      transition: transform .06s ease, filter .12s ease, box-shadow .12s ease;
     }
-    .btn:active{ transform: translateY(1px); }
+    .btn:active, .btnGhost:active{ transform: translateY(1px); }
+
+    .btn{
+      border: 1px solid rgba(124,92,255,.55);
+      background:
+        radial-gradient(900px 240px at 30% 0%, rgba(255,255,255,.16), rgba(0,0,0,0)),
+        linear-gradient(135deg, rgba(124,92,255,.85), rgba(74,163,255,.55), rgba(255,79,216,.35));
+      color:var(--text);
+      box-shadow: 0 14px 34px rgba(0,0,0,.30);
+    }
+    .btn:hover{ filter: brightness(1.03); }
 
     .btnPrimary{ box-shadow: var(--shadow-cta); }
 
     .btnGhost{
-      border:1px solid var(--border2);
-      background: rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.14);
+      background:
+        radial-gradient(900px 240px at 40% 0%, rgba(255,255,255,.10), rgba(0,0,0,0)),
+        rgba(255,255,255,.05);
       color:var(--text);
-      border-radius: 16px;
-      padding: 12px 12px;
-      font-weight: 900;
-      cursor:pointer;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-      user-select:none;
-      -webkit-tap-highlight-color: transparent;
-      touch-action: manipulation;
+      box-shadow: 0 12px 28px rgba(0,0,0,.24);
     }
 
     .hr{ height:1px; background: rgba(255,255,255,.10); margin: 12px 0; }
@@ -200,7 +220,6 @@
 
     /* Collasso Partenza (app.js aggiunge classe) */
     #quickStartCard.collapsed .originBody{ display:none; }
-
     #resultArea{ margin-top: 10px; }
 
     .actionGrid{
@@ -210,7 +229,7 @@
       margin-top: 12px;
     }
 
-    /* Sotto-filtri MAI FATTO (mostrati solo quando la chip categoria con data-cat="eventi" è attiva) */
+    /* Sotto-filtri MAI FATTO */
     #eventsSubfilters{ display:none; margin-top:10px; }
     #eventsSubfilters.active{ display:block; }
   </style>
@@ -296,12 +315,15 @@
         <div class="chip" data-cat="storia">🏛️ Storia</div>
         <div class="chip" data-cat="montagna">🏔️ Montagna</div>
         <div class="chip" data-cat="mare">🌊 Mare</div>
+
+        <!-- ✅ aggiunta UI lago -->
+        <div class="chip" data-cat="lago">🏞️ Lago</div>
+
         <div class="chip" data-cat="relax">🧖 Relax</div>
         <div class="chip" data-cat="family">👨‍👩‍👧‍👦 Family</div>
         <div class="chip" data-cat="cantine">🍷 Cantine</div>
 
-        <!-- ✅ IMPORTANTE: lasciamo data-cat="eventi" per compatibilità con app.js,
-             ma in UI si chiama MAI FATTO -->
+        <!-- compatibilità app.js -->
         <div class="chip" data-cat="eventi">✨ Mai fatto</div>
       </div>
 
@@ -326,8 +348,6 @@
 
         <div style="margin-top:10px;">
           <div class="small">Quando</div>
-          <!-- ✅ lasciamo questi chip per compatibilità con app.js (che li legge),
-               ma li rendiamo "neutri": non filtrano per data nel tuo events.js nuovo -->
           <div class="chiprow" id="eventWhenChips" style="margin-top:8px;">
             <div class="chip active" data-ewhen="any">♾️ Sempre</div>
             <div class="chip" data-ewhen="oggi">📅 Oggi</div>
@@ -368,8 +388,8 @@
     <div class="footer">Jamo • PWA • Auto-only • Offline-first</div>
   </div>
 
-  <!-- ✅ Ordine GARANTITO: prima events.js poi app.js poi patch -->
-  <script src="/events.js?v=1.3"></script>
+  <!-- ✅ Ordine GARANTITO -->
+  <script src="/events.js?v=1.4"></script>
   <script src="/app.js?v=22.2"></script>
   <script src="/place_info_patch.js?v=1"></script>
 
