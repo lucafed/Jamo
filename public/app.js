@@ -873,6 +873,15 @@
 
 // BBOX costiere IT (prima versione, offline, conservative)
 const COASTAL_BBOXES_IT = [
+    // Veneto + Friuli VG coast (Adriatico nord)
+  { minLat: 44.75, maxLat: 46.30, minLon: 12.00, maxLon: 13.90 },
+
+  // Emilia-Romagna coast (Adriatico)
+  { minLat: 44.00, maxLat: 45.15, minLon: 11.80, maxLon: 13.40 },
+
+  // Marche coast (Adriatico)
+  { minLat: 42.55, maxLat: 44.20, minLon: 12.90, maxLon: 13.90 },
+
   // Abruzzo coast (Adriatico)
   { minLat: 41.98, maxLat: 42.52, minLon: 13.90, maxLon: 14.90 },
 
