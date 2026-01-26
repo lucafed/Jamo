@@ -2,163 +2,256 @@
 <html lang="it">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>Jamo — Trova la meta perfetta</title>
 
   <link rel="manifest" href="/manifest.webmanifest">
-  <meta name="theme-color" content="#0F1218">
+  <meta name="theme-color" content="#111318">
 
   <style>
     :root{
-      --bg:#0F1218;
-      --surface:#171B23;
-      --surface-2:#1E2430;
-      --text:#F4F6FA;
-      --muted:#9AA3B2;
-      --accent:#4C6FFF;     /* blu elegante */
-      --accent-soft:#2B3450;
-      --border:rgba(255,255,255,.08);
-      --ok:#7ED957;
-      --warn:#FFB347;
+      /* Premium + friendly (caldo, zero neon) */
+      --bg:#0F1116;
+      --bg2:#0B0D12;
+      --surface:#171A22;
+      --surface2:#1C2130;
+      --cardGlow:rgba(255,255,255,.04);
+
+      --text:#F6F7FB;
+      --muted:#A8B0C2;
+
+      --accent:#FF6A3D;        /* corallo */
+      --accent2:#FFC857;       /* miele */
+      --accentInk:#1A120F;
+
+      --line:rgba(255,255,255,.10);
+      --line2:rgba(255,255,255,.14);
+
+      --ok:#7EE081;
+      --warn:#FFCC66;
       --err:#FF6B6B;
+
+      --radius:22px;
+      --btnRadius:18px;
     }
 
     *{box-sizing:border-box}
+    html,body{height:100%}
     body{
       margin:0;
-      background:linear-gradient(180deg,#0F1218,#0B0E14);
       color:var(--text);
       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+      background:
+        radial-gradient(900px 400px at 15% 0%, rgba(255,106,61,.10), transparent 60%),
+        radial-gradient(800px 500px at 85% 15%, rgba(255,200,87,.10), transparent 60%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
     }
 
     .app{
-      max-width:520px;
+      max-width:560px;
       margin:0 auto;
       padding:18px 14px 140px;
     }
 
+    .hero{
+      margin-top:8px;
+      padding:10px 2px 0;
+    }
     h1{
-      font-size:30px;
-      line-height:1.1;
-      margin:18px 0 6px;
+      margin:12px 0 6px;
+      font-size:34px;
+      line-height:1.05;
       font-weight:1000;
+      letter-spacing:-.02em;
     }
     .subtitle{
       color:var(--muted);
       font-size:15px;
-      line-height:1.4;
+      line-height:1.45;
     }
 
     .card{
-      background:linear-gradient(180deg,var(--surface),var(--surface-2));
-      border:1px solid var(--border);
-      border-radius:22px;
-      padding:16px;
       margin-top:16px;
+      padding:16px;
+      border-radius:var(--radius);
+      border:1px solid var(--line);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01)),
+        linear-gradient(180deg, var(--surface), var(--surface2));
+      box-shadow: 0 10px 26px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.06);
     }
 
     .sectionTitle{
-      font-weight:900;
-      margin-bottom:10px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:950;
       font-size:16px;
+      margin-bottom:10px;
     }
 
+    /* inputs */
     .input{
       width:100%;
       padding:14px 14px;
-      border-radius:16px;
-      border:1px solid var(--border);
-      background:#0B0E14;
-      color:var(--text);
-      font-size:16px;
-    }
-
-    .btn{
-      width:100%;
-      padding:15px;
       border-radius:18px;
-      border:1px solid var(--border);
-      background:#22283A;
+      border:1px solid var(--line);
+      background:rgba(12,14,18,.85);
       color:var(--text);
-      font-weight:900;
       font-size:16px;
-      cursor:pointer;
+      outline:none;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
     }
-    .btnPrimary{
-      background:linear-gradient(135deg,#3D4FFF,#5F7CFF);
-      border:none;
-      box-shadow:0 14px 30px rgba(79,111,255,.25);
-    }
-    .btnGhost{
-      background:#0B0E14;
+    .input:focus{
+      border-color:rgba(255,106,61,.45);
+      box-shadow: 0 0 0 4px rgba(255,106,61,.12), inset 0 1px 0 rgba(255,255,255,.06);
     }
 
-    .btn:active{transform:scale(.98)}
+    /* shared text helpers (app.js uses these classes) */
+    .small{font-size:13px}
+    .muted{color:var(--muted)}
+    .row{display:flex; gap:10px; align-items:center}
+    .wraprow{flex-wrap:wrap}
 
+    /* chips */
     .chips{
       display:flex;
-      gap:10px;
       flex-wrap:wrap;
+      gap:10px;
     }
     .chip{
+      user-select:none;
       padding:10px 14px;
       border-radius:999px;
-      border:1px solid var(--border);
-      background:#0B0E14;
+      border:1px solid var(--line);
+      background:rgba(12,14,18,.70);
       color:var(--muted);
-      font-weight:800;
+      font-weight:900;
       cursor:pointer;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+      transition: transform .08s ease, border-color .12s ease, background .12s ease;
     }
+    .chip:active{transform:scale(.98)}
     .chip.active{
-      background:var(--accent-soft);
-      color:#EAF0FF;
-      border-color:rgba(76,111,255,.35);
+      color:#fff;
+      border-color:rgba(255,106,61,.45);
+      background: linear-gradient(180deg, rgba(255,106,61,.18), rgba(255,200,87,.10));
     }
 
+    /* buttons */
+    .btn, .btnGhost{
+      width:100%;
+      border-radius:var(--btnRadius);
+      padding:14px 14px;
+      font-weight:950;
+      font-size:16px;
+      cursor:pointer;
+      border:1px solid var(--line2);
+      color:var(--text);
+      background: rgba(12,14,18,.70);
+      box-shadow: 0 10px 22px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.06);
+      transition: transform .08s ease, filter .12s ease, border-color .12s ease;
+    }
+    .btn:active, .btnGhost:active{transform:scale(.98)}
+    .btn:hover, .btnGhost:hover{filter:brightness(1.05)}
+    .btnPrimary{
+      border:none;
+      color: #1A120F;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 18px 30px rgba(255,106,61,.18);
+    }
+    .btnGhost{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+
+    /* result action grid (app.js uses .actionGrid) */
+    .actionGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+      margin-top:12px;
+    }
+    /* make result buttons obviously clickable */
+    #resultArea button{
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* status box (app.js uses #statusBox/#statusText) */
+    #statusBox{
+      display:none;
+      margin-top:10px;
+      padding:12px 12px;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background: rgba(12,14,18,.65);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+    }
+    #statusText{display:block; color:var(--muted); font-size:13px; line-height:1.35}
+
+    /* bottom CTA */
     .footerCTA{
       position:fixed;
       left:0; right:0; bottom:0;
-      background:linear-gradient(180deg,rgba(15,18,24,.0),#0F1218 35%);
-      padding:16px;
+      padding:14px 14px calc(14px + env(safe-area-inset-bottom));
+      background: linear-gradient(180deg, rgba(15,17,22,0), rgba(15,17,22,.92) 30%, rgba(15,17,22,1) 80%);
+      backdrop-filter: blur(10px);
     }
     .footerInner{
-      max-width:520px;
+      max-width:560px;
       margin:0 auto;
     }
 
-    .status{
-      margin-top:12px;
-      font-size:14px;
+    /* little fun badge */
+    .badgeHint{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:999px;
+      border:1px dashed rgba(255,255,255,.18);
+      background: rgba(12,14,18,.55);
       color:var(--muted);
+      font-weight:850;
+      font-size:13px;
     }
   </style>
 </head>
 
 <body>
   <div class="app">
-
-    <h1>Trova la meta perfetta</h1>
-    <div class="subtitle">
-      In base al tempo che hai, ai tuoi gusti e a quello che vale davvero la pena vedere.
+    <div class="hero">
+      <h1>Trova la meta perfetta</h1>
+      <div class="subtitle">
+        Tempo + gusto + un pizzico di fortuna buona. Ti porto dove vale davvero la pena andare.
+      </div>
+      <div class="badgeHint">✨ Tip: prova “Chicche” quando vuoi stupirti davvero</div>
     </div>
 
-    <!-- PARTENZA -->
+    <!-- PARTENZA (app.js qui inserisce anche il toggle "Partenza ⬇️") -->
     <div class="card" id="quickStartCard">
       <div class="sectionTitle">📍 Partenza</div>
+
       <input class="input" id="originLabel" placeholder="Es. Bussolengo, Verona, Milano…" />
       <input type="hidden" id="originLat">
       <input type="hidden" id="originLon">
       <input type="hidden" id="originCC">
 
       <div style="margin-top:10px;">
-        <button class="btn" id="btnFindPlace">Usa questo luogo</button>
+        <button class="btn" id="btnFindPlace" type="button">Usa questo luogo</button>
       </div>
 
-      <div class="status" id="originStatus"></div>
+      <div class="small muted" id="originStatus" style="margin-top:10px;"></div>
+      <button class="btnGhost" id="btnResetOrigin" type="button" style="margin-top:12px;">
+        <span>🧽 Cambia partenza</span><span>↺</span>
+      </button>
     </div>
 
     <!-- TEMPO -->
-    <div class="card">
+    <div class="card" id="searchCard">
       <div class="sectionTitle">⏱ Quanto tempo hai?</div>
       <div class="chips" id="timeChips">
         <div class="chip" data-min="60">1h</div>
@@ -167,6 +260,7 @@
         <div class="chip" data-min="180">3h</div>
         <div class="chip" data-min="240">4h</div>
       </div>
+
       <input type="range" min="30" max="360" step="30" value="120"
              id="maxMinutes" style="width:100%;margin-top:14px;">
     </div>
@@ -175,14 +269,32 @@
     <div class="card">
       <div class="sectionTitle">🎯 Cosa vuoi fare?</div>
       <div class="chips" id="categoryChips">
-        <div class="chip active" data-cat="natura">Natura</div>
-        <div class="chip" data-cat="mare">Mare</div>
-        <div class="chip" data-cat="lago">Lago</div>
-        <div class="chip" data-cat="borghi">Borghi</div>
-        <div class="chip" data-cat="montagna">Montagna</div>
-        <div class="chip" data-cat="relax">Relax</div>
-        <div class="chip" data-cat="cantine">Cantine</div>
+        <div class="chip active" data-cat="natura">🌿 Natura</div>
+        <div class="chip" data-cat="mare">🌊 Mare</div>
+        <div class="chip" data-cat="lago">🏞️ Lago</div>
+        <div class="chip" data-cat="borghi">🏘️ Borghi</div>
+        <div class="chip" data-cat="montagna">🏔️ Montagna</div>
+        <div class="chip" data-cat="relax">🧖 Relax</div>
+        <div class="chip" data-cat="cantine">🍷 Cantine</div>
         <div class="chip" data-cat="eventi">✨ Mai fatto</div>
+      </div>
+
+      <!-- Subfiltri eventi (app.js li mostra/nasconde) -->
+      <div id="eventsSubfilters" style="display:none; margin-top:14px;">
+        <div class="sectionTitle">🎟️ Che tipo?</div>
+        <div class="chips" id="eventTypeChips">
+          <div class="chip active" data-etype="tutti">Tutti</div>
+          <div class="chip" data-etype="family">Family</div>
+          <div class="chip" data-etype="sagre">Sagre</div>
+          <div class="chip" data-etype="concerti">Concerti</div>
+        </div>
+
+        <div class="sectionTitle" style="margin-top:12px;">📅 Quando?</div>
+        <div class="chips" id="eventWhenChips">
+          <div class="chip active" data-ewhen="oggi">Oggi</div>
+          <div class="chip" data-ewhen="weekend">Weekend</div>
+          <div class="chip" data-ewhen="7giorni">7 giorni</div>
+        </div>
       </div>
     </div>
 
@@ -190,34 +302,45 @@
     <div class="card">
       <div class="sectionTitle">✨ Stile</div>
       <div class="chips" id="styleChips">
-        <div class="chip active" data-style="classici">Classici</div>
-        <div class="chip" data-style="chicche">Chicche</div>
+        <div class="chip active" data-style="classici">✅ Classici</div>
+        <div class="chip" data-style="chicche">✨ Chicche</div>
       </div>
+
+      <button class="btnGhost" id="btnResetVisited" type="button" style="margin-top:14px;">
+        <span>♻️ Reset visitati</span><span>↺</span>
+      </button>
     </div>
 
     <!-- RISULTATI -->
     <div class="card" id="resultCard">
       <div id="resultArea">
         <div class="subtitle">
-          Seleziona tutto sopra e poi premi il pulsante in basso 👇
+          Scegli tempo, categoria e stile… poi premi il bottone in basso 👇
         </div>
       </div>
     </div>
-
   </div>
 
-  <!-- CTA FINALE -->
+  <!-- CTA FISSA -->
   <div class="footerCTA">
     <div class="footerInner">
-      <button class="btn btnPrimary" id="btnFind">
-        🎯 Cerca la meta WOW
-      </button>
-      <div class="status" id="statusBox">
-        <span id="statusText"></span>
-      </div>
+      <button class="btn btnPrimary" id="btnFind" type="button">🎯 Cerca la meta WOW</button>
+      <div id="statusBox"><span id="statusText"></span></div>
     </div>
   </div>
 
   <script src="/app.js"></script>
+
+  <!-- mini helper: mostra subfiltri eventi quando app.js aggiunge la classe .active -->
+  <script>
+    // app.js fa: sub.classList.toggle("active", cat === "eventi");
+    // qui traduciamo "active" in display:block senza toccare app.js
+    const sub = document.getElementById("eventsSubfilters");
+    const obs = new MutationObserver(() => {
+      if (!sub) return;
+      sub.style.display = sub.classList.contains("active") ? "block" : "none";
+    });
+    if (sub) obs.observe(sub, { attributes:true, attributeFilter:["class"] });
+  </script>
 </body>
 </html>
