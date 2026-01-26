@@ -1726,27 +1726,42 @@ function isNearCoast(place) {
       const categoryUI = getActiveCategory();
       const cat = canonicalCategory(categoryUI);
 
-      // MAI FATTO / COSE DA FARE (usa events.js)
+     // MAI FATTO / COSE DA FARE (events.js)
 if (cat === "eventi") {
-  if (!window.JAMO_EVENTS || typeof window.JAMO_EVENTS.run !== "function") {
-    showStatus("err", "Modulo 'Mai fatto' non disponibile.");
-    return;
-  }
-
-  window.JAMO_EVENTS.run({
+  const payload = {
     origin,
     maxMinutes: maxMinutesInput,
     eventType: getEventType(),   // sagre / concerti / family / ecc
-    eventWhen: getEventWhen(),   // oggi / weekend / 7giorni
+    eventWhen: getEventWhen(),   // oggi / weekend / 7giorni / any
     haversineKm,
     estCarMinutesFromKm,
     escapeHtml,
     showStatus,
     scrollToId,
-  });
+  };
 
+  // ✅ nuovo formato
+  if (window.JAMO_EVENTS && typeof window.JAMO_EVENTS.run === "function") {
+    window.JAMO_EVENTS.run(payload);
+    return;
+  }
+
+  // ✅ vecchio formato (quello che ti funzionava prima)
+  if (typeof window.runEventsSearchBridge === "function") {
+    window.runEventsSearchBridge(payload);
+    return;
+  }
+
+  // ✅ ultimo fallback: prova anche namespace vecchi comuni
+  if (window.JAMO_EVENTS && typeof window.JAMO_EVENTS === "function") {
+    window.JAMO_EVENTS(payload);
+    return;
+  }
+
+  showStatus("err", "Modulo 'Mai fatto' non disponibile (events.js non caricato o export diverso).");
   return;
 }
+
 
       const styles = getActiveStyles();
 
