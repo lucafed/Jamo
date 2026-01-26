@@ -1294,6 +1294,7 @@ function isNearCoast(place) {
       storia:   { emoji:"🏛️", label:"Storia" },
       montagna: { emoji:"🏔️", label:"Montagna" },
       mare:     { emoji:"🌊", label:"Mare" },
+      lago:     { emoji:"🏞️", label:"Lago" },
       relax:    { emoji:"🧖", label:"Relax" },
       family:   { emoji:"👨‍👩‍👧‍👦", label:"Family" },
       cantine:  { emoji:"🍷", label:"Cantine" },
