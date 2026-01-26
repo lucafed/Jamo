@@ -6,248 +6,158 @@
   <title>Jamo — Trova la meta perfetta</title>
 
   <link rel="manifest" href="/manifest.webmanifest">
-  <meta name="theme-color" content="#F6F7FB">
-
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <meta http-equiv="Pragma" content="no-cache" />
-  <meta http-equiv="Expires" content="0" />
+  <meta name="theme-color" content="#0A0F14">
 
   <link rel="stylesheet" href="/style.css?v=6.1" />
 
-  <!-- 🎨 COLORI PRODOTTO (override sicuro) -->
+  <!-- 🎨 ACCENT COLORS -->
   <style>
     :root{
-      --bg:#F6F7FB;
-      --surface:#FFFFFF;
-      --surface-soft:#F1F3F9;
+      --bg:#0A0F14;
+      --card:#141C22;
+      --text:#ffffff;
+      --muted:#A0B2BA;
 
-      --text:#111827;
-      --muted:#6B7280;
+      --blue:#38BDF8;
+      --green:#34D399;
+      --violet:#A855F7;
+      --amber:#F59E0B;
 
-      --acc:#4F46E5;
-      --acc-soft:#EEF2FF;
-
-      --border:rgba(17,24,39,.08);
-      --radius:16px;
+      --grad-main:linear-gradient(135deg,#6366F1,#22D3EE);
     }
 
-    body{
-      background:
-        radial-gradient(900px 400px at 10% -10%, rgba(79,70,229,.08), transparent),
-        radial-gradient(900px 400px at 90% -10%, rgba(56,189,248,.08), transparent),
-        var(--bg);
-      color:var(--text);
+    body{background:var(--bg);color:var(--text)}
+
+    .chip.active{font-weight:700}
+
+    /* TEMPO */
+    #timeChips .chip.active{
+      background:#0B3B52;
+      border-color:var(--blue);
+      color:#BAE6FD;
     }
 
-    .card{
-      background:var(--surface);
-      border:1px solid var(--border);
-      border-radius:var(--radius);
+    /* CATEGORIE */
+    #categoryChips .chip.active{
+      background:#052E1B;
+      border-color:var(--green);
+      color:#A7F3D0;
     }
 
-    .chip{
-      background:var(--surface-soft);
-      border:1px solid var(--border);
-      color:var(--text);
-    }
-    .chip.active{
-      background:var(--acc-soft);
-      border-color:var(--acc);
-      color:var(--acc);
-      font-weight:700;
+    /* MAI FATTO */
+    #categoryChips .chip[data-cat="eventi"].active,
+    #eventTypeChips .chip.active{
+      background:#2E1065;
+      border-color:var(--violet);
+      color:#E9D5FF;
     }
 
+    /* CTA */
     .btnPrimary{
-      background:linear-gradient(135deg,#4F46E5,#6366F1);
-      color:#fff;
+      background:var(--grad-main);
       border:none;
+      color:#fff;
+      font-weight:800;
     }
   </style>
 </head>
 
 <body>
 
-  <header class="topbar clickSafe">
-    <div class="brand">
-      <div class="logoMark">J</div>
-      <div class="brandText">
-        <div class="brandTitle">Jamo</div>
-        <div class="brandSub">Offline-first • UX guidata • Tap-safe</div>
-      </div>
+<header class="topbar clickSafe">
+  <div class="brand">
+    <div class="logoMark">J</div>
+    <div>
+      <div class="brandTitle">Jamo</div>
+      <div class="brandSub">Offline-first • UX guidata</div>
     </div>
+  </div>
+</header>
 
-    <div class="topActions">
-      <button id="btnResetVisited" class="btnGhost" type="button" title="Reset visitati">🧽</button>
+<main class="wrap">
+
+<!-- PARTENZA -->
+<section id="quickStartCard" class="card clickSafe">
+  <div class="cardTitle">📍 Partenza</div>
+
+  <input id="originLabel" class="input" placeholder="Es: Bussolengo, Verona…" />
+  <button id="btnFindPlace" class="btn btnPrimary">Usa questo luogo</button>
+
+  <input id="originLat" type="hidden" />
+  <input id="originLon" type="hidden" />
+</section>
+
+<!-- RICERCA -->
+<section id="searchCard" class="card clickSafe">
+
+  <!-- TEMPO -->
+  <div class="subTitle">⏱️ Quanto tempo hai?</div>
+  <div id="timeChips" class="chips">
+    <div class="chip" data-min="60">1h</div>
+    <div class="chip active" data-min="90">1h 30</div>
+    <div class="chip" data-min="120">2h</div>
+    <div class="chip" data-min="180">3h</div>
+  </div>
+
+  <!-- CATEGORIE -->
+  <div class="subTitle">🧭 Che vibe vuoi?</div>
+  <div id="categoryChips" class="chips chipsGrid">
+    <div class="chip active" data-cat="natura">🌿 Natura</div>
+    <div class="chip" data-cat="borghi">🏘️ Borghi</div>
+    <div class="chip" data-cat="relax">🧖 Relax</div>
+    <div class="chip" data-cat="family">👨‍👩‍👧‍👦 Family</div>
+    <div class="chip" data-cat="eventi">✨ Mai fatto</div>
+  </div>
+
+  <!-- MAI FATTO -->
+  <div id="eventsSubfilters" class="eventsSubfilters">
+    <div class="subTitleMini">Tipo WOW</div>
+    <div id="eventTypeChips" class="chips">
+      <div class="chip active" data-etype="tutti">⭐ Tutti</div>
+      <div class="chip" data-etype="relax">🧠 Reset</div>
+      <div class="chip" data-etype="famiglia">👨‍👩‍👧‍👦 Family</div>
+      <div class="chip" data-etype="tramonto">🌅 Tramonto</div>
     </div>
-  </header>
+  </div>
 
-  <main class="wrap">
+  <button id="btnFind" class="btn btnPrimary btnBig">🚀 CERCA</button>
+</section>
 
-    <!-- STATUS -->
-    <section id="statusBox" class="statusBox clickSafe" style="display:none;">
-      <div class="statusDot"></div>
-      <div id="statusText" class="statusText"></div>
-    </section>
+<!-- RISULTATO -->
+<section id="resultCard" class="card clickSafe">
+  <div class="cardTitle">📌 Risultato</div>
+  <div id="resultArea">
+    <div class="emptyState">Pronto quando lo sei tu.</div>
+  </div>
+</section>
 
-    <!-- HERO -->
-    <section class="hero clickSafe">
-      <div class="heroCard">
-        <div class="heroBadge">✨ WOW Finder</div>
-        <h1 class="heroTitle">
-          Trova una meta <span class="accent">perfetta</span> in pochi secondi
-        </h1>
-        <p class="heroDesc">
-          Imposta la partenza, scegli <b>tempo</b> e <b>vibe</b>, premi <b>CERCA</b>.
-          Il risultato appare subito sotto. Zero casino.
-        </p>
-      </div>
-    </section>
+</main>
 
-    <!-- PARTENZA -->
-    <section id="quickStartCard" class="card clickSafe">
-      <div class="cardTitleRow">
-        <div class="cardTitle">📍 Partenza</div>
-        <div class="cardHint">Da dove parti</div>
-      </div>
+<script src="/events.js?v=1.0"></script>
+<script src="/app.js?v=22.2"></script>
 
-      <div class="field">
-        <label class="label" for="originLabel">Inserisci un luogo</label>
-        <div class="fieldRow">
-          <input id="originLabel" class="input" type="text"
-                 placeholder="Es: Bussolengo, Verona, L'Aquila…">
-          <button id="btnFindPlace" class="btn btnPrimary" type="button">
-            Usa questo luogo
-          </button>
-        </div>
-        <div id="originStatus" class="small muted" style="margin-top:8px;">
-          Inserisci un luogo e conferma.
-        </div>
-      </div>
+<!-- 🧭 UX GUIDATA -->
+<script>
+(() => {
+  const go = id =>
+    document.getElementById(id)?.scrollIntoView({behavior:"smooth",block:"start"});
 
-      <div class="row wraprow" style="margin-top:12px;">
-        <button id="btnResetOrigin" class="btnGhost" type="button">🧽 Reset partenza</button>
-        <button id="btnUseGPS" class="btnGhost" type="button" style="display:none;">📡 GPS</button>
-      </div>
+  btnFindPlace.onclick = () => setTimeout(()=>go("timeChips"),200);
 
-      <input id="originLat" type="hidden" />
-      <input id="originLon" type="hidden" />
-      <input id="originCC" type="hidden" />
-    </section>
+  document.querySelectorAll("#timeChips .chip")
+    .forEach(c=>c.onclick=()=>setTimeout(()=>go("categoryChips"),150));
 
-    <!-- RICERCA -->
-    <section id="searchCard" class="card clickSafe">
-      <div class="cardTitleRow">
-        <div class="cardTitle">🎯 Ricerca</div>
-        <div class="cardHint">Tempo • Categoria • Stile</div>
-      </div>
+  document.querySelectorAll("#categoryChips .chip")
+    .forEach(c=>c.onclick=()=>setTimeout(()=>{
+      c.dataset.cat==="eventi"?go("eventsSubfilters"):go("btnFind");
+    },150));
 
-      <!-- TEMPO -->
-      <div class="subTitle">⏱️ Quanto tempo hai?</div>
-      <div id="timeChips" class="chips">
-        <div class="chip" data-min="45">45m</div>
-        <div class="chip" data-min="60">1h</div>
-        <div class="chip active" data-min="90">1h 30</div>
-        <div class="chip" data-min="120">2h</div>
-        <div class="chip" data-min="180">3h</div>
-        <div class="chip" data-min="240">4h</div>
-      </div>
+  document.querySelectorAll("#eventTypeChips .chip")
+    .forEach(c=>c.onclick=()=>setTimeout(()=>go("btnFind"),120));
 
-      <input id="maxMinutes" class="input inputMini"
-             type="number" value="90" min="10" max="600" step="5">
-
-      <div class="divider"></div>
-
-      <!-- CATEGORIE -->
-      <div class="subTitle">🧭 Che vibe vuoi?</div>
-      <div id="categoryChips" class="chips chipsGrid">
-        <div class="chip active" data-cat="natura">🌿 Natura</div>
-        <div class="chip" data-cat="hiking">🥾 Trekking</div>
-        <div class="chip" data-cat="borghi">🏘️ Borghi</div>
-        <div class="chip" data-cat="storia">🏛️ Storia</div>
-        <div class="chip" data-cat="montagna">🏔️ Montagna</div>
-        <div class="chip" data-cat="mare">🌊 Mare</div>
-        <div class="chip" data-cat="lago">🏞️ Lago</div>
-        <div class="chip" data-cat="relax">🧖 Relax</div>
-        <div class="chip" data-cat="family">👨‍👩‍👧‍👦 Family</div>
-        <div class="chip" data-cat="cantine">🍷 Cantine</div>
-        <div class="chip" data-cat="eventi">✨ Mai fatto</div>
-      </div>
-
-      <!-- MAI FATTO -->
-      <div id="eventsSubfilters" class="eventsSubfilters">
-        <div class="small">Mai fatto — scegli il tipo di WOW</div>
-        <div id="eventTypeChips" class="chips" style="margin-top:10px;">
-          <div class="chip active" data-etype="tutti">⭐ Tutti</div>
-          <div class="chip" data-etype="famiglia">👨‍👩‍👧‍👦 Family</div>
-          <div class="chip" data-etype="relax">🧠 Reset</div>
-          <div class="chip" data-etype="natura">🌿 Natura</div>
-          <div class="chip" data-etype="tramonto">🌅 Tramonto</div>
-        </div>
-      </div>
-
-      <div class="divider"></div>
-
-      <!-- STILE -->
-      <div class="subTitle">✨ Preferisci?</div>
-      <div id="styleChips" class="chips">
-        <div class="chip active" data-style="chicche">✨ Chicche</div>
-        <div class="chip active" data-style="classici">✅ Classici</div>
-      </div>
-
-      <div class="ctaRow">
-        <button id="btnFind" class="btn btnPrimary btnBig">🚀 CERCA</button>
-      </div>
-    </section>
-
-    <!-- RISULTATO -->
-    <section id="resultCard" class="card clickSafe">
-      <div class="cardTitleRow">
-        <div class="cardTitle">📌 Risultato</div>
-        <div class="cardHint">La meta appare qui</div>
-      </div>
-
-      <div id="resultArea">
-        <div class="emptyState">
-          <div class="emptyIcon">🧭</div>
-          <div class="emptyTitle">Pronto quando lo sei tu</div>
-          <div class="emptyDesc">Imposta la partenza e premi CERCA.</div>
-        </div>
-      </div>
-    </section>
-
-    <footer class="footer clickSafe">
-      <div class="small muted">
-        Jamo • UX guidata • Offline-first
-      </div>
-    </footer>
-
-  </main>
-
-  <!-- SCRIPT -->
-  <script src="/events.js?v=1.0"></script>
-  <script src="/app.js?v=22.2"></script>
-
-  <!-- 🧭 AUTO-SCROLL GUIDATO -->
-  <script>
-  (function(){
-    const go = (id) => {
-      const el = document.getElementById(id);
-      if (el) el.scrollIntoView({ behavior:"smooth", block:"start" });
-    };
-
-    document.getElementById("btnFindPlace")
-      ?.addEventListener("click",()=>setTimeout(()=>go("searchCard"),150));
-
-    document.getElementById("btnResetOrigin")
-      ?.addEventListener("click",()=>setTimeout(()=>go("quickStartCard"),100));
-
-    document.querySelectorAll("#categoryChips .chip,#timeChips .chip")
-      .forEach(c=>c.addEventListener("click",()=>setTimeout(()=>go("searchCard"),80)));
-
-    document.getElementById("btnFind")
-      ?.addEventListener("click",()=>setTimeout(()=>go("resultCard"),200));
-  })();
-  </script>
+  btnFind.onclick = () => setTimeout(()=>go("resultCard"),300);
+})();
+</script>
 
 </body>
 </html>
