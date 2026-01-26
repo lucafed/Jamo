@@ -6,7 +6,7 @@
   <title>Jamo — Trova la meta perfetta</title>
 
   <link rel="manifest" href="/manifest.webmanifest">
-  <meta name="theme-color" content="#0B0F1A">
+  <meta name="theme-color" content="#00E0FF">
 
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
@@ -14,31 +14,25 @@
 
   <style>
     :root{
-      /* --- Premium Tech (NO turchese) --- */
-      --bg:#070A10;
-      --surface:#0E1422;
-      --surface2:#0B111C;
+      --bg:#050C10;
+      --surface:#0C151B;
+      --surface2:#0A1217;
       --text:#FFFFFF;
-      --muted:#A7B2C0;
+      --muted:#A7B7C0;
 
-      --acc:#7C5CFF;   /* violet */
-      --acc2:#4AA3FF;  /* soft blue */
-      --acc3:#22D3EE;  /* micro highlight (quasi invisibile, NON neon) */
+      --acc:#00E0FF;
+      --acc2:#1AFFD5;
 
       --border: rgba(255,255,255,.12);
       --border2: rgba(255,255,255,.08);
 
       --radius: 18px;
 
-      --shadow-card: 0 10px 26px rgba(0,0,0,.48);
-      --shadow-hero: 0 18px 48px rgba(0,0,0,.62);
-      --shadow-cta: 0 14px 34px rgba(124,92,255,.28);
+      --shadow-card: 0 6px 16px rgba(0,0,0,.35);
+      --shadow-hero: 0 14px 38px rgba(0,0,0,.55);
+      --shadow-cta: 0 12px 30px rgba(0,224,255,.22);
 
       --safe-bottom: env(safe-area-inset-bottom);
-
-      /* click feedback */
-      --press: translateY(1px);
-      --ring: 0 0 0 3px rgba(124,92,255,.22);
     }
 
     *{ box-sizing:border-box; }
@@ -47,9 +41,8 @@
       color:var(--text);
       font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
       background:
-        radial-gradient(900px 520px at 18% -10%, rgba(124,92,255,.20), rgba(0,0,0,0)),
-        radial-gradient(900px 520px at 92% -10%, rgba(74,163,255,.12), rgba(0,0,0,0)),
-        radial-gradient(900px 520px at 55% 0%, rgba(34,211,238,.06), rgba(0,0,0,0)),
+        radial-gradient(900px 520px at 20% -10%, rgba(0,224,255,.16), rgba(0,0,0,0)),
+        radial-gradient(900px 520px at 90% -10%, rgba(26,255,213,.10), rgba(0,0,0,0)),
         var(--bg);
       padding-bottom: calc(14px + var(--safe-bottom));
     }
@@ -72,46 +65,36 @@
     .brand{ display:flex; align-items:center; gap:10px; }
     .logo{
       width:42px; height:42px; border-radius:14px;
-      background:
-        radial-gradient(circle at 30% 30%, rgba(255,255,255,.18), rgba(255,255,255,0)),
-        linear-gradient(135deg, var(--acc), var(--acc2));
-      box-shadow: 0 18px 44px rgba(124,92,255,.24);
-      border: 1px solid rgba(255,255,255,.10);
+      background: radial-gradient(circle at 30% 30%, var(--acc2), var(--acc));
+      box-shadow: 0 16px 34px rgba(0,224,255,.12);
       flex: 0 0 auto;
     }
-    .title h1{ margin:0; font-size:18px; letter-spacing:.2px; font-weight:950; }
+    .title h1{ margin:0; font-size:18px; letter-spacing:.2px; }
     .title p{ margin:2px 0 0; color:var(--muted); font-size:12px; }
 
     .btnInstall{
       display:none;
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.05);
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.04);
       color:var(--text);
       border-radius: 14px;
       padding: 10px 12px;
-      font-weight:900;
+      font-weight:800;
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
-      box-shadow: 0 10px 22px rgba(0,0,0,.25);
-      cursor:pointer;
     }
-    .btnInstall:active{ transform: var(--press); }
 
     .card{
-      background:
-        radial-gradient(900px 240px at 30% 0%, rgba(124,92,255,.10), rgba(0,0,0,0)),
-        linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
       border: 1px solid var(--border2);
       border-radius: var(--radius);
       padding: 14px;
       box-shadow: var(--shadow-card);
-      position: relative;
-      overflow: hidden;
     }
     .card + .card{ margin-top: 12px; }
 
     .card.resultCard{
-      border-color: rgba(124,92,255,.26);
+      border-color: rgba(0,224,255,.22);
       box-shadow: var(--shadow-hero);
     }
 
@@ -119,7 +102,6 @@
       margin:0 0 10px;
       font-weight: 950;
       font-size: 16px;
-      letter-spacing:.2px;
     }
     .small{ font-size:12px; color:var(--muted); }
     .muted{ color:var(--muted); }
@@ -128,53 +110,41 @@
       width:100%;
       background: rgba(255,255,255,.06);
       color: var(--text);
-      border:1px solid rgba(255,255,255,.10);
+      border:1px solid var(--border2);
       border-radius: 14px;
       padding: 12px 12px;
       outline:none;
-      transition: box-shadow .15s ease, border-color .15s ease, background .15s ease;
     }
     input:focus{
-      border-color: rgba(124,92,255,.55);
-      box-shadow: var(--ring);
-      background: rgba(255,255,255,.08);
+      border-color: rgba(0,224,255,.45);
+      box-shadow: 0 0 0 3px rgba(0,224,255,.10);
     }
 
     .row{ display:flex; align-items:center; gap:10px; }
     .wraprow{ flex-wrap:wrap; }
     .chiprow{ display:flex; flex-wrap:wrap; gap:8px; }
 
-    /* Chips: più "premibili" */
     .chip{
       padding: 10px 12px;
       border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.05);
+      border: 1px solid var(--border2);
+      background: rgba(255,255,255,.04);
       cursor:pointer;
       user-select:none;
       font-size: 13px;
       font-weight: 850;
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
-      transition: transform .12s ease, background .12s ease, border-color .12s ease, box-shadow .12s ease;
     }
-    .chip:hover{
-      background: rgba(255,255,255,.08);
-      border-color: rgba(255,255,255,.18);
-    }
-    .chip:active{ transform: scale(.985); }
     .chip.active{
-      border-color: rgba(124,92,255,.75);
-      background: linear-gradient(135deg, rgba(124,92,255,.28), rgba(74,163,255,.18));
-      box-shadow: 0 0 0 2px rgba(124,92,255,.14);
+      border-color: rgba(0,224,255,.70);
+      background: rgba(0,224,255,.10);
+      box-shadow: 0 0 0 2px rgba(0,224,255,.18);
     }
 
-    /* Bottoni: chiari, eleganti, NO neon */
     .btn{
-      border: 1px solid rgba(124,92,255,.55);
-      background:
-        radial-gradient(800px 220px at 30% 0%, rgba(255,255,255,.18), rgba(0,0,0,0)),
-        linear-gradient(135deg, rgba(124,92,255,.75), rgba(74,163,255,.55));
+      border: 1px solid rgba(0,224,255,.45);
+      background: linear-gradient(90deg, rgba(0,224,255,.22), rgba(26,255,213,.12));
       color:var(--text);
       border-radius: 16px;
       padding: 12px 12px;
@@ -187,17 +157,14 @@
       user-select:none;
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
-      box-shadow: 0 12px 26px rgba(124,92,255,.24);
-      transition: transform .12s ease, filter .12s ease, box-shadow .12s ease;
     }
-    .btn:hover{ filter: brightness(1.03); box-shadow: 0 14px 30px rgba(124,92,255,.30); }
-    .btn:active{ transform: var(--press); }
+    .btn:active{ transform: translateY(1px); }
 
     .btnPrimary{ box-shadow: var(--shadow-cta); }
 
     .btnGhost{
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.06);
+      border:1px solid var(--border2);
+      background: rgba(255,255,255,.05);
       color:var(--text);
       border-radius: 16px;
       padding: 12px 12px;
@@ -210,11 +177,7 @@
       user-select:none;
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
-      box-shadow: 0 10px 20px rgba(0,0,0,.20);
-      transition: transform .12s ease, background .12s ease, border-color .12s ease;
     }
-    .btnGhost:hover{ background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.18); }
-    .btnGhost:active{ transform: var(--press); }
 
     .hr{ height:1px; background: rgba(255,255,255,.10); margin: 12px 0; }
 
@@ -247,18 +210,9 @@
       margin-top: 12px;
     }
 
-    /* Sotto-filtri MAI FATTO (mostrati solo quando categoria data-cat="eventi" è attiva) */
+    /* Sotto-filtri MAI FATTO (mostrati solo quando la chip categoria con data-cat="eventi" è attiva) */
     #eventsSubfilters{ display:none; margin-top:10px; }
     #eventsSubfilters.active{ display:block; }
-
-    /* Piccolo “premium” on card headers */
-    .hTitle::after{
-      content:"";
-      display:block;
-      height:1px;
-      margin-top:10px;
-      background: linear-gradient(90deg, rgba(124,92,255,.35), rgba(74,163,255,.18), rgba(255,255,255,0));
-    }
   </style>
 </head>
 
@@ -342,10 +296,6 @@
         <div class="chip" data-cat="storia">🏛️ Storia</div>
         <div class="chip" data-cat="montagna">🏔️ Montagna</div>
         <div class="chip" data-cat="mare">🌊 Mare</div>
-
-        <!-- ✅ NUOVA: LAGO -->
-        <div class="chip" data-cat="lago">🟦 Lago</div>
-
         <div class="chip" data-cat="relax">🧖 Relax</div>
         <div class="chip" data-cat="family">👨‍👩‍👧‍👦 Family</div>
         <div class="chip" data-cat="cantine">🍷 Cantine</div>
