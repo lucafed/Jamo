@@ -6,385 +6,158 @@
   <title>Jamo — Trova la meta perfetta</title>
 
   <link rel="manifest" href="/manifest.webmanifest">
-  <meta name="theme-color" content="#0B0F1A">
+  <meta name="theme-color" content="#0A0F14">
 
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <meta http-equiv="Pragma" content="no-cache" />
-  <meta http-equiv="Expires" content="0" />
+  <link rel="stylesheet" href="/style.css?v=6.1" />
 
-  <link rel="stylesheet" href="/style.css?v=6.0" />
-
-  <!-- ✅ Palette MIX + glow (override soft: non rompe style.css) -->
+  <!-- 🎨 ACCENT COLORS -->
   <style>
     :root{
-      /* base */
-      --bg:#0B0F1A;
-      --surface:#111A2A;
-      --surface2:#0F1726;
-      --text:#F4F7FF;
-      --muted:#A7B3C2;
-      --border:rgba(255,255,255,.10);
+      --bg:#0A0F14;
+      --card:#141C22;
+      --text:#ffffff;
+      --muted:#A0B2BA;
 
-      /* mix accent */
-      --acc:#7C5CFF;   /* violet */
-      --acc2:#00E7FF;  /* cyan */
-      --acc3:#1BFFB1;  /* mint */
-      --warn:#FFB84D;
+      --blue:#38BDF8;
+      --green:#34D399;
+      --violet:#A855F7;
+      --amber:#F59E0B;
 
-      /* se il tuo style.css usa questi nomi, li piglia al volo */
-      --accent: var(--acc);
-      --accent2: var(--acc2);
+      --grad-main:linear-gradient(135deg,#6366F1,#22D3EE);
     }
 
-    body{
-      background: radial-gradient(1200px 800px at 15% 10%, rgba(124,92,255,.18), transparent 55%),
-                  radial-gradient(900px 700px at 85% 20%, rgba(0,231,255,.16), transparent 55%),
-                  radial-gradient(900px 700px at 60% 90%, rgba(27,255,177,.12), transparent 60%),
-                  var(--bg);
+    body{background:var(--bg);color:var(--text)}
+
+    .chip.active{font-weight:700}
+
+    /* TEMPO */
+    #timeChips .chip.active{
+      background:#0B3B52;
+      border-color:var(--blue);
+      color:#BAE6FD;
     }
 
-    /* glow layer già presente */
-    .bgGlow{
-      position: fixed;
-      inset: -20vh -20vw;
-      pointer-events: none;
-      z-index: 0;
-      filter: blur(42px) saturate(1.25);
-      opacity: .95;
-      background:
-        radial-gradient(600px 420px at 18% 18%, rgba(124,92,255,.35), transparent 60%),
-        radial-gradient(620px 420px at 82% 22%, rgba(0,231,255,.30), transparent 62%),
-        radial-gradient(620px 420px at 55% 92%, rgba(27,255,177,.22), transparent 65%);
+    /* CATEGORIE */
+    #categoryChips .chip.active{
+      background:#052E1B;
+      border-color:var(--green);
+      color:#A7F3D0;
     }
 
-    /* sopra il glow */
-    header, main { position: relative; z-index: 1; }
-
-    /* piccoli ritocchi visivi “tech” senza stravolgere */
-    .logoMark{
-      background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(0,231,255,.85));
-      box-shadow: 0 10px 30px rgba(0,0,0,.35), 0 0 0 1px rgba(255,255,255,.10) inset;
-      border-radius: 14px;
-    }
-    .heroBadge{
-      background: linear-gradient(135deg, rgba(124,92,255,.22), rgba(0,231,255,.18));
-      border: 1px solid rgba(255,255,255,.12);
-      box-shadow: 0 12px 32px rgba(0,0,0,.35);
-    }
-    .accent{
-      background: linear-gradient(90deg, var(--acc2), var(--acc), var(--acc3));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
+    /* MAI FATTO */
+    #categoryChips .chip[data-cat="eventi"].active,
+    #eventTypeChips .chip.active{
+      background:#2E1065;
+      border-color:var(--violet);
+      color:#E9D5FF;
     }
 
-    /* chips “active” più evidenti se il tuo style.css usa .chip.active */
-    .chip.active{
-      border-color: rgba(0,231,255,.40) !important;
-      box-shadow: 0 10px 26px rgba(0,0,0,.28);
-    }
-
-    /* CTA un filo più wow (se classi esistono già) */
+    /* CTA */
     .btnPrimary{
-      background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(0,231,255,.85)) !important;
-      border: 1px solid rgba(255,255,255,.14) !important;
-      box-shadow: 0 14px 34px rgba(0,0,0,.38);
+      background:var(--grad-main);
+      border:none;
+      color:#fff;
+      font-weight:800;
     }
   </style>
 </head>
 
 <body>
-  <!-- Ambient glow -->
-  <div class="bgGlow" aria-hidden="true"></div>
 
-  <header class="topbar clickSafe">
-    <div class="brand">
-      <div class="logoMark" aria-hidden="true">J</div>
-      <div class="brandText">
-        <div class="brandTitle">Jamo</div>
-        <div class="brandSub">Offline-first • Tech vibes • Tap-safe</div>
-      </div>
+<header class="topbar clickSafe">
+  <div class="brand">
+    <div class="logoMark">J</div>
+    <div>
+      <div class="brandTitle">Jamo</div>
+      <div class="brandSub">Offline-first • UX guidata</div>
     </div>
+  </div>
+</header>
 
-    <div class="topActions">
-      <button id="btnResetVisited" class="btnGhost" type="button" title="Reset visitati">🧽</button>
+<main class="wrap">
+
+<!-- PARTENZA -->
+<section id="quickStartCard" class="card clickSafe">
+  <div class="cardTitle">📍 Partenza</div>
+
+  <input id="originLabel" class="input" placeholder="Es: Bussolengo, Verona…" />
+  <button id="btnFindPlace" class="btn btnPrimary">Usa questo luogo</button>
+
+  <input id="originLat" type="hidden" />
+  <input id="originLon" type="hidden" />
+</section>
+
+<!-- RICERCA -->
+<section id="searchCard" class="card clickSafe">
+
+  <!-- TEMPO -->
+  <div class="subTitle">⏱️ Quanto tempo hai?</div>
+  <div id="timeChips" class="chips">
+    <div class="chip" data-min="60">1h</div>
+    <div class="chip active" data-min="90">1h 30</div>
+    <div class="chip" data-min="120">2h</div>
+    <div class="chip" data-min="180">3h</div>
+  </div>
+
+  <!-- CATEGORIE -->
+  <div class="subTitle">🧭 Che vibe vuoi?</div>
+  <div id="categoryChips" class="chips chipsGrid">
+    <div class="chip active" data-cat="natura">🌿 Natura</div>
+    <div class="chip" data-cat="borghi">🏘️ Borghi</div>
+    <div class="chip" data-cat="relax">🧖 Relax</div>
+    <div class="chip" data-cat="family">👨‍👩‍👧‍👦 Family</div>
+    <div class="chip" data-cat="eventi">✨ Mai fatto</div>
+  </div>
+
+  <!-- MAI FATTO -->
+  <div id="eventsSubfilters" class="eventsSubfilters">
+    <div class="subTitleMini">Tipo WOW</div>
+    <div id="eventTypeChips" class="chips">
+      <div class="chip active" data-etype="tutti">⭐ Tutti</div>
+      <div class="chip" data-etype="relax">🧠 Reset</div>
+      <div class="chip" data-etype="famiglia">👨‍👩‍👧‍👦 Family</div>
+      <div class="chip" data-etype="tramonto">🌅 Tramonto</div>
     </div>
-  </header>
+  </div>
 
-  <main class="wrap">
+  <button id="btnFind" class="btn btnPrimary btnBig">🚀 CERCA</button>
+</section>
 
-    <!-- STATUS -->
-    <section id="statusBox" class="statusBox clickSafe" style="display:none;">
-      <div class="statusDot" aria-hidden="true"></div>
-      <div id="statusText" class="statusText"></div>
-    </section>
+<!-- RISULTATO -->
+<section id="resultCard" class="card clickSafe">
+  <div class="cardTitle">📌 Risultato</div>
+  <div id="resultArea">
+    <div class="emptyState">Pronto quando lo sei tu.</div>
+  </div>
+</section>
 
-    <!-- HERO -->
-    <section class="hero clickSafe">
-      <div class="heroCard">
-        <div class="heroBadge">✨ WOW Finder</div>
-        <h1 class="heroTitle">Trova una meta <span class="accent">perfetta</span> in pochi secondi.</h1>
-        <p class="heroDesc">
-          Imposta la partenza, scegli <b>tempo</b> e <b>stile</b>, poi premi <b>CERCA</b>.
-          Nessun GPS, tutto offline (quando disponibile). Risultato al centro. Subito.
-        </p>
+</main>
 
-        <div class="heroKpis">
-          <div class="kpi">
-            <div class="kpiN">1</div>
-            <div class="kpiT">Partenza</div>
-          </div>
-          <div class="kpi">
-            <div class="kpiN">2</div>
-            <div class="kpiT">Categoria</div>
-          </div>
-          <div class="kpi">
-            <div class="kpiN">3</div>
-            <div class="kpiT">Cerca</div>
-          </div>
-        </div>
-      </div>
-    </section>
+<script src="/events.js?v=1.0"></script>
+<script src="/app.js?v=22.2"></script>
 
-    <!-- QUICK START / ORIGIN -->
-    <section id="quickStartCard" class="card clickSafe">
-      <!-- app.js inserisce il toggle header qui automaticamente -->
-      <div class="cardTitleRow">
-        <div class="cardTitle">📍 Partenza</div>
-        <div class="cardHint">Scegli da dove parti</div>
-      </div>
+<!-- 🧭 UX GUIDATA -->
+<script>
+(() => {
+  const go = id =>
+    document.getElementById(id)?.scrollIntoView({behavior:"smooth",block:"start"});
 
-      <div class="field">
-        <label class="label" for="originLabel">Inserisci un luogo</label>
-        <div class="fieldRow">
-          <input id="originLabel" class="input" type="text" placeholder="Es: Bussolengo, Verona, L'Aquila..." autocomplete="off">
-          <button id="btnFindPlace" class="btn btnPrimary" type="button">Usa questo luogo</button>
-        </div>
-        <div id="originStatus" class="small muted" style="margin-top:10px; line-height:1.35;">
-          Inserisci un luogo e premi <b>Usa questo luogo</b>.
-        </div>
-      </div>
+  btnFindPlace.onclick = () => setTimeout(()=>go("timeChips"),200);
 
-      <div class="row wraprow" style="gap:10px; margin-top:12px;">
-        <button id="btnResetOrigin" class="btnGhost" type="button">🧽 Reset partenza</button>
-        <button id="btnUseGPS" class="btnGhost" type="button" style="display:none;">📡 GPS</button>
-      </div>
+  document.querySelectorAll("#timeChips .chip")
+    .forEach(c=>c.onclick=()=>setTimeout(()=>go("categoryChips"),150));
 
-      <!-- Hidden fields used by app.js -->
-      <input id="originLat" type="hidden" />
-      <input id="originLon" type="hidden" />
-      <input id="originCC" type="hidden" />
-    </section>
+  document.querySelectorAll("#categoryChips .chip")
+    .forEach(c=>c.onclick=()=>setTimeout(()=>{
+      c.dataset.cat==="eventi"?go("eventsSubfilters"):go("btnFind");
+    },150));
 
-    <!-- SEARCH CONTROLS -->
-    <section id="searchCard" class="card clickSafe">
-      <div class="cardTitleRow">
-        <div class="cardTitle">🎯 Ricerca</div>
-        <div class="cardHint">Scegli tempo + categoria + stile</div>
-      </div>
+  document.querySelectorAll("#eventTypeChips .chip")
+    .forEach(c=>c.onclick=()=>setTimeout(()=>go("btnFind"),120));
 
-      <!-- TIME -->
-      <div class="subTitle" id="timeTitle">⏱️ Quanto tempo hai?</div>
-      <div id="timeChips" class="chips">
-        <div class="chip" data-min="45">45m</div>
-        <div class="chip" data-min="60">1h</div>
-        <div class="chip active" data-min="90">1h 30</div>
-        <div class="chip" data-min="120">2h</div>
-        <div class="chip" data-min="180">3h</div>
-        <div class="chip" data-min="240">4h</div>
-      </div>
+  btnFind.onclick = () => setTimeout(()=>go("resultCard"),300);
+})();
+</script>
 
-      <div class="fieldRow" style="margin-top:10px;">
-        <div class="miniLabel">Oppure minuti precisi</div>
-        <input id="maxMinutes" class="input inputMini" type="number" min="10" max="600" step="5" value="90">
-      </div>
-
-      <div class="divider"></div>
-
-      <!-- CATEGORY -->
-      <div class="subTitle" id="categoryTitle">🧭 Che vibe vuoi?</div>
-      <div id="categoryChips" class="chips chipsGrid">
-        <div class="chip active" data-cat="natura">🌿 Natura</div>
-        <div class="chip" data-cat="hiking">🥾 Trekking</div>
-        <div class="chip" data-cat="borghi">🏘️ Borghi</div>
-        <div class="chip" data-cat="storia">🏛️ Storia</div>
-        <div class="chip" data-cat="montagna">🏔️ Montagna</div>
-        <div class="chip" data-cat="mare">🌊 Mare</div>
-        <div class="chip" data-cat="lago">🏞️ Lago</div>
-        <div class="chip" data-cat="relax">🧖 Relax</div>
-        <div class="chip" data-cat="family">👨‍👩‍👧‍👦 Family</div>
-        <div class="chip" data-cat="cantine">🍷 Cantine</div>
-        <div class="chip" data-cat="eventi">✨ Mai fatto</div>
-      </div>
-
-      <!-- EVENTS SUBFILTERS (app.js toggles .active when category=eventi) -->
-      <div id="eventsSubfilters" class="eventsSubfilters">
-        <div class="small">Mai fatto (scegli il tipo di WOW)</div>
-        <div class="small muted" style="margin-top:6px;">
-          Offline: idee WOW • filtri soft • widening automatico • link Maps precisi.
-        </div>
-
-        <div style="margin-top:12px;">
-          <div class="subTitleMini">Tipo</div>
-          <div id="eventTypeChips" class="chips">
-            <div class="chip active" data-etype="tutti">⭐ Tutti</div>
-            <div class="chip" data-etype="relax">🧠 Reset</div>
-            <div class="chip" data-etype="famiglia">👨‍👩‍👧‍👦 Family</div>
-            <div class="chip" data-etype="bici">🚴 Bici</div>
-            <div class="chip" data-etype="moto">🏍️ Moto</div>
-            <div class="chip" data-etype="natura">🌿 Natura</div>
-            <div class="chip" data-etype="pioggia">🌧️ Pioggia</div>
-            <div class="chip" data-etype="tramonto">🌅 Tramonto</div>
-            <div class="chip" data-etype="mangiare">🍝 Food</div>
-            <div class="chip" data-etype="1h">🕐 1h</div>
-            <div class="chip" data-etype="2h">🕑 2h</div>
-          </div>
-        </div>
-
-        <div id="eventWhenChips" class="chips" style="display:none;">
-          <div class="chip active" data-ewhen="oggi">Oggi</div>
-        </div>
-      </div>
-
-      <div class="divider"></div>
-
-      <!-- STYLE -->
-      <div class="subTitle" id="styleTitle">✨ Preferisci?</div>
-      <div id="styleChips" class="chips">
-        <div class="chip active" data-style="chicche">✨ Chicche</div>
-        <div class="chip active" data-style="classici">✅ Classici</div>
-      </div>
-
-      <div class="ctaRow">
-        <button id="btnFind" class="btn btnPrimary btnBig" type="button">🚀 CERCA</button>
-      </div>
-
-      <div class="small muted" style="margin-top:10px;">
-        Tip: se trovi sempre “troppo lontano”, abbassa minuti oppure togli widening in events.js.
-      </div>
-    </section>
-
-    <!-- RESULT -->
-    <section id="resultCard" class="card clickSafe">
-      <div class="cardTitleRow">
-        <div class="cardTitle">📌 Risultato</div>
-        <div class="cardHint">Meta + alternative</div>
-      </div>
-
-      <div id="resultArea">
-        <div class="emptyState">
-          <div class="emptyIcon" aria-hidden="true">🧠⚡</div>
-          <div class="emptyTitle">Pronto quando lo sei tu.</div>
-          <div class="emptyDesc">Imposta la partenza e premi <b>CERCA</b>: la meta appare qui, con link e alternative.</div>
-        </div>
-      </div>
-    </section>
-
-    <footer class="footer clickSafe">
-      <div class="footerLine">
-        <span class="dot"></span> Jamo • build UI v6 • neon glass
-      </div>
-      <div class="footerLine small muted">
-        Offline-first (best effort). Nessun tracciamento GPS. Link esterni: Maps / Wiki / Foto.
-      </div>
-    </footer>
-
-  </main>
-
-  <!-- Scripts -->
-  <script src="/events.js?v=1.0"></script>
-
-  <!-- ✅ Auto-scroll “azione successiva” (non rompe app.js, è solo UI) -->
-  <script>
-    (function(){
-      "use strict";
-
-      const $ = (id) => document.getElementById(id);
-
-      function scrollToEl(el){
-        if(!el) return;
-        // piccolo delay per lasciare aggiornare gli "active" di app.js
-        setTimeout(() => {
-          el.scrollIntoView({ behavior: "smooth", block: "start" });
-        }, 60);
-      }
-
-      function scrollToId(id){ scrollToEl($(id)); }
-
-      function isCategoryEventi(){
-        const active = document.querySelector('#categoryChips .chip.active');
-        const cat = (active && active.dataset && active.dataset.cat) ? String(active.dataset.cat) : "";
-        return cat.toLowerCase().trim() === "eventi";
-      }
-
-      // 1) dopo "Usa questo luogo" -> vai alla Ricerca
-      document.addEventListener("click", (e) => {
-        const btn = e.target.closest("#btnFindPlace");
-        if (btn) scrollToId("searchCard");
-      });
-
-      // reset partenza -> torna su Partenza
-      document.addEventListener("click", (e) => {
-        const btn = e.target.closest("#btnResetOrigin");
-        if (btn) scrollToId("quickStartCard");
-      });
-
-      // 2) scelgo tempo -> porta a "Che vibe vuoi?"
-      document.addEventListener("click", (e) => {
-        const chip = e.target.closest("#timeChips .chip");
-        if (chip) scrollToId("categoryTitle");
-      });
-
-      // 3) scelgo vibe -> se eventi mostra subchip e ci scrolla, altrimenti porta a "Preferisci?"
-      document.addEventListener("click", (e) => {
-        const chip = e.target.closest("#categoryChips .chip");
-        if (!chip) return;
-
-        setTimeout(() => {
-          if (isCategoryEventi()) {
-            scrollToId("eventsSubfilters");
-          } else {
-            scrollToId("styleTitle");
-          }
-        }, 80);
-      });
-
-      // 4) scelgo tipo WOW (eventi) -> porta al bottone CERCA
-      document.addEventListener("click", (e) => {
-        const chip = e.target.closest("#eventTypeChips .chip");
-        if (chip) scrollToId("btnFind");
-      });
-
-      // 5) scelgo preferenza -> porta al bottone CERCA
-      document.addEventListener("click", (e) => {
-        const chip = e.target.closest("#styleChips .chip");
-        if (chip) scrollToId("btnFind");
-      });
-
-      // 6) premo CERCA -> porta al risultato (dopo che app.js ha renderizzato)
-      document.addEventListener("click", (e) => {
-        const btn = e.target.closest("#btnFind");
-        if (!btn) return;
-
-        // se vuoi più rapido o più lento cambia questo delay
-        setTimeout(() => scrollToId("resultCard"), 250);
-      });
-
-      // bonus: se l’utente apre “Risultato” ma non ha settato la partenza, torna su Partenza
-      // (non blocca nulla, è solo un aiuto)
-      document.addEventListener("click", (e) => {
-        const btn = e.target.closest("#btnFind");
-        if (!btn) return;
-
-        setTimeout(() => {
-          const lat = Number(($("originLat") && $("originLat").value) || NaN);
-          const lon = Number(($("originLon") && $("originLon").value) || NaN);
-          if (!Number.isFinite(lat) || !Number.isFinite(lon)) scrollToId("quickStartCard");
-        }, 50);
-      });
-    })();
-  </script>
-
-  <script src="/app.js?v=22.2"></script>
 </body>
 </html>
