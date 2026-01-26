@@ -868,32 +868,7 @@
     return false;
   }
 
-  function isNearCoast(place, maxKm = 6) {
-  // se abbiamo già coastline / beach → è mare vero
-  const t = tagsStr(place);
-  if (t.includes("natural=beach") || t.includes("natural=coastline")) return true;
-
-  // fallback geografico: se il dataset ha country IT
-  // e siamo MOLTO lontani dal mare, lo scartiamo
-  // (valore empirico: 6 km dalla costa)
-  if (!Number.isFinite(place?.lat) || !Number.isFinite(place?.lon)) return false;
-
-  // bounding box mare IT (molto larga, cheap check)
-  // serve SOLO per escludere Appennino & pianura interna
-  const lat = place.lat;
-  const lon = place.lon;
-
-  // se sei sopra ~45.5 o sotto ~36 sei ok, ma questo non basta
-  // quindi: se sei troppo "interno" all'Appennino centrale → no mare
-  if (
-    lat > 43.5 && lat < 44.8 &&  // Abruzzo interno
-    lon > 12.5 && lon < 14.2
-  ) {
-    return false;
-  }
-
-  return true; // fallback permissivo solo se non chiaramente interno
-  }
+  
   // -------------------- COASTAL BBOX (MARE SOLO SE VICINO ALLA COSTA) --------------------
 
 // BBOX costiere IT (prima versione, offline, conservative)
