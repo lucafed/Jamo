@@ -6,158 +6,568 @@
   <title>Jamo — Trova la meta perfetta</title>
 
   <link rel="manifest" href="/manifest.webmanifest">
-  <meta name="theme-color" content="#0A0F14">
+  <meta name="theme-color" content="#0E1116">
+
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
 
   <link rel="stylesheet" href="/style.css?v=6.1" />
 
-  <!-- 🎨 ACCENT COLORS -->
+  <!-- ✅ TUTTI i colori come l’ultimo (mix blu/menta/caldo) + UX, senza rompere app.js -->
   <style>
     :root{
-      --bg:#0A0F14;
-      --card:#141C22;
-      --text:#ffffff;
-      --muted:#A0B2BA;
+      --bg:#0E1116;
+      --surface:#151A21;
+      --text:#FFFFFF;
+      --muted:#9AA4B2;
 
-      --blue:#38BDF8;
-      --green:#34D399;
-      --violet:#A855F7;
-      --amber:#F59E0B;
+      --accent:#6C8CFF;     /* blu */
+      --accent2:#6CF2C2;    /* menta */
+      --accent3:#FFB86B;    /* caldo */
 
-      --grad-main:linear-gradient(135deg,#6366F1,#22D3EE);
+      --border:rgba(255,255,255,.08);
+      --chipBg:rgba(255,255,255,.045);
+      --chipBgOn:rgba(108,140,255,.16);
+      --chipBorder:rgba(255,255,255,.10);
+      --chipBorderOn:rgba(108,140,255,.40);
+
+      --glass:rgba(255,255,255,.035);
+      --glass2:rgba(255,255,255,.055);
+      --ring:rgba(108,242,194,.14);
+      --warn:rgba(255,184,107,.30);
     }
 
-    body{background:var(--bg);color:var(--text)}
+    body{ background:var(--bg); color:var(--text); }
 
-    .chip.active{font-weight:700}
-
-    /* TEMPO */
-    #timeChips .chip.active{
-      background:#0B3B52;
-      border-color:var(--blue);
-      color:#BAE6FD;
+    /* Glow mix */
+    .bgGlow{
+      background:
+        radial-gradient(700px 360px at 12% 8%, rgba(108,140,255,.22), transparent 60%),
+        radial-gradient(560px 360px at 88% 14%, rgba(108,242,194,.18), transparent 60%),
+        radial-gradient(520px 340px at 55% 88%, rgba(255,184,107,.12), transparent 60%);
     }
 
-    /* CATEGORIE */
-    #categoryChips .chip.active{
-      background:#052E1B;
-      border-color:var(--green);
-      color:#A7F3D0;
+    /* Aggiusta qualche componente base senza dipendere dallo style.css */
+    .card, .heroCard{
+      background: linear-gradient(180deg, var(--glass2), var(--glass));
+      border:1px solid var(--border);
+      box-shadow: 0 10px 30px rgba(0,0,0,.28);
+      backdrop-filter: blur(10px);
+    }
+    .accent{ color: var(--accent2); }
+
+    .chip{
+      border:1px solid var(--chipBorder);
+      background:var(--chipBg);
+      transition:transform .12s ease, background .12s ease, border .12s ease, box-shadow .12s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .chip:active{ transform:scale(.98); }
+    .chip.active{
+      border-color:var(--chipBorderOn);
+      background:var(--chipBgOn);
+      box-shadow: 0 0 0 1px rgba(108,242,194,.06) inset;
     }
 
-    /* MAI FATTO */
-    #categoryChips .chip[data-cat="eventi"].active,
-    #eventTypeChips .chip.active{
-      background:#2E1065;
-      border-color:var(--violet);
-      color:#E9D5FF;
-    }
-
-    /* CTA */
     .btnPrimary{
-      background:var(--grad-main);
-      border:none;
-      color:#fff;
-      font-weight:800;
+      background: linear-gradient(135deg, rgba(108,140,255,.95), rgba(108,242,194,.85));
+      border-color: rgba(108,140,255,.55);
+    }
+    .btnGhost{
+      border-color: rgba(255,255,255,.14);
+      background: rgba(255,255,255,.04);
+    }
+
+    /* --- Collapsible categories --- */
+    .catPanel{
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 10px;
+      background: rgba(255,255,255,.02);
+      margin-top: 10px;
+    }
+    .catHeader{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      width:100%;
+      border:0;
+      background:transparent;
+      color:var(--text);
+      cursor:pointer;
+      padding: 6px 4px;
+      font-weight: 950;
+    }
+    .catHeaderLeft{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+      text-align:left;
+    }
+    .catHeaderSub{
+      font-size:12px;
+      color:var(--muted);
+      font-weight: 800;
+    }
+    .catChevron{
+      font-size: 16px;
+      opacity:.9;
+    }
+    .catBody{ margin-top: 10px; }
+    .catPanel.collapsed .catBody{ display:none; }
+
+    .stepHint{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      padding:7px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      font-weight: 900;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .stepHint b{ color:#fff; }
+
+    /* ✅ Box "Cosa c'è (Google)" */
+    #googleWhatsOn{
+      display:none;
+      margin-top:12px;
+      border-color: rgba(108,140,255,.18);
+    }
+    #googleWhatsOn .gwTitle{
+      font-weight: 950;
+      font-size: 16px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    #googleWhatsOn .gwTitle .dot{
+      width:10px;height:10px;border-radius:99px;
+      background: linear-gradient(135deg, rgba(108,140,255,1), rgba(108,242,194,1));
+      box-shadow: 0 0 0 3px rgba(108,242,194,.08);
+    }
+    #googleWhatsOn .gwBtns{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:12px;
+    }
+    #googleWhatsOn .gwBtns .btn{
+      border-color: rgba(255,255,255,.14);
+      background: rgba(255,255,255,.04);
+    }
+    #googleWhatsOn .gwBtns .btnPrimary{
+      background: linear-gradient(135deg, rgba(255,184,107,.95), rgba(108,242,194,.75));
+      border-color: rgba(255,184,107,.45);
     }
   </style>
 </head>
 
 <body>
+  <!-- Ambient glow -->
+  <div class="bgGlow" aria-hidden="true"></div>
 
-<header class="topbar clickSafe">
-  <div class="brand">
-    <div class="logoMark">J</div>
-    <div>
-      <div class="brandTitle">Jamo</div>
-      <div class="brandSub">Offline-first • UX guidata</div>
+  <header class="topbar clickSafe">
+    <div class="brand">
+      <div class="logoMark" aria-hidden="true">J</div>
+      <div class="brandText">
+        <div class="brandTitle">Jamo</div>
+        <div class="brandSub">Offline-first • Tech vibes • Tap-safe</div>
+      </div>
     </div>
-  </div>
-</header>
 
-<main class="wrap">
-
-<!-- PARTENZA -->
-<section id="quickStartCard" class="card clickSafe">
-  <div class="cardTitle">📍 Partenza</div>
-
-  <input id="originLabel" class="input" placeholder="Es: Bussolengo, Verona…" />
-  <button id="btnFindPlace" class="btn btnPrimary">Usa questo luogo</button>
-
-  <input id="originLat" type="hidden" />
-  <input id="originLon" type="hidden" />
-</section>
-
-<!-- RICERCA -->
-<section id="searchCard" class="card clickSafe">
-
-  <!-- TEMPO -->
-  <div class="subTitle">⏱️ Quanto tempo hai?</div>
-  <div id="timeChips" class="chips">
-    <div class="chip" data-min="60">1h</div>
-    <div class="chip active" data-min="90">1h 30</div>
-    <div class="chip" data-min="120">2h</div>
-    <div class="chip" data-min="180">3h</div>
-  </div>
-
-  <!-- CATEGORIE -->
-  <div class="subTitle">🧭 Che vibe vuoi?</div>
-  <div id="categoryChips" class="chips chipsGrid">
-    <div class="chip active" data-cat="natura">🌿 Natura</div>
-    <div class="chip" data-cat="borghi">🏘️ Borghi</div>
-    <div class="chip" data-cat="relax">🧖 Relax</div>
-    <div class="chip" data-cat="family">👨‍👩‍👧‍👦 Family</div>
-    <div class="chip" data-cat="eventi">✨ Mai fatto</div>
-  </div>
-
-  <!-- MAI FATTO -->
-  <div id="eventsSubfilters" class="eventsSubfilters">
-    <div class="subTitleMini">Tipo WOW</div>
-    <div id="eventTypeChips" class="chips">
-      <div class="chip active" data-etype="tutti">⭐ Tutti</div>
-      <div class="chip" data-etype="relax">🧠 Reset</div>
-      <div class="chip" data-etype="famiglia">👨‍👩‍👧‍👦 Family</div>
-      <div class="chip" data-etype="tramonto">🌅 Tramonto</div>
+    <div class="topActions">
+      <button id="btnResetVisited" class="btnGhost" type="button" title="Reset visitati">🧽</button>
     </div>
-  </div>
+  </header>
 
-  <button id="btnFind" class="btn btnPrimary btnBig">🚀 CERCA</button>
-</section>
+  <main class="wrap">
 
-<!-- RISULTATO -->
-<section id="resultCard" class="card clickSafe">
-  <div class="cardTitle">📌 Risultato</div>
-  <div id="resultArea">
-    <div class="emptyState">Pronto quando lo sei tu.</div>
-  </div>
-</section>
+    <!-- STATUS -->
+    <section id="statusBox" class="statusBox clickSafe" style="display:none;">
+      <div class="statusDot" aria-hidden="true"></div>
+      <div id="statusText" class="statusText"></div>
+    </section>
 
-</main>
+    <!-- HERO -->
+    <section class="hero clickSafe">
+      <div class="heroCard">
+        <div class="heroBadge">✨ WOW Finder</div>
+        <h1 class="heroTitle">Trova una meta <span class="accent">perfetta</span> in pochi secondi.</h1>
+        <p class="heroDesc">
+          Imposta la partenza, scegli <b>tempo</b> e <b>stile</b>, poi premi <b>CERCA</b>.
+          Nessun GPS, tutto offline (quando disponibile). Risultato al centro. Subito.
+        </p>
 
-<script src="/events.js?v=1.0"></script>
-<script src="/app.js?v=22.2"></script>
+        <div class="heroKpis">
+          <div class="kpi"><div class="kpiN">1</div><div class="kpiT">Partenza</div></div>
+          <div class="kpi"><div class="kpiN">2</div><div class="kpiT">Categoria</div></div>
+          <div class="kpi"><div class="kpiN">3</div><div class="kpiT">Cerca</div></div>
+        </div>
 
-<!-- 🧭 UX GUIDATA -->
-<script>
-(() => {
-  const go = id =>
-    document.getElementById(id)?.scrollIntoView({behavior:"smooth",block:"start"});
+        <div style="margin-top:12px;">
+          <span class="stepHint">⚡ Flusso: <b>tempo → vibe → preferisci → cerca</b></span>
+        </div>
+      </div>
+    </section>
 
-  btnFindPlace.onclick = () => setTimeout(()=>go("timeChips"),200);
+    <!-- QUICK START / ORIGIN -->
+    <section id="quickStartCard" class="card clickSafe">
+      <!-- app.js inserisce il toggle header qui automaticamente -->
+      <div class="cardTitleRow">
+        <div class="cardTitle">📍 Partenza</div>
+        <div class="cardHint">Scegli da dove parti</div>
+      </div>
 
-  document.querySelectorAll("#timeChips .chip")
-    .forEach(c=>c.onclick=()=>setTimeout(()=>go("categoryChips"),150));
+      <div class="field">
+        <label class="label" for="originLabel">Inserisci un luogo</label>
+        <div class="fieldRow">
+          <input id="originLabel" class="input" type="text" placeholder="Es: Bussolengo, Verona, L'Aquila..." autocomplete="off">
+          <button id="btnFindPlace" class="btn btnPrimary" type="button">Usa questo luogo</button>
+        </div>
+        <div id="originStatus" class="small muted" style="margin-top:10px; line-height:1.35;">
+          Inserisci un luogo e premi <b>Usa questo luogo</b>.
+        </div>
+      </div>
 
-  document.querySelectorAll("#categoryChips .chip")
-    .forEach(c=>c.onclick=()=>setTimeout(()=>{
-      c.dataset.cat==="eventi"?go("eventsSubfilters"):go("btnFind");
-    },150));
+      <div class="row wraprow" style="gap:10px; margin-top:12px;">
+        <button id="btnResetOrigin" class="btnGhost" type="button">🧽 Reset partenza</button>
+        <button id="btnUseGPS" class="btnGhost" type="button" style="display:none;">📡 GPS</button>
+      </div>
 
-  document.querySelectorAll("#eventTypeChips .chip")
-    .forEach(c=>c.onclick=()=>setTimeout(()=>go("btnFind"),120));
+      <!-- Hidden fields used by app.js -->
+      <input id="originLat" type="hidden" />
+      <input id="originLon" type="hidden" />
+      <input id="originCC" type="hidden" />
+    </section>
 
-  btnFind.onclick = () => setTimeout(()=>go("resultCard"),300);
-})();
-</script>
+    <!-- SEARCH CONTROLS -->
+    <section id="searchCard" class="card clickSafe">
+      <div class="cardTitleRow">
+        <div class="cardTitle">🎯 Ricerca</div>
+        <div class="cardHint">Scegli tempo + categoria + stile</div>
+      </div>
 
+      <!-- TIME -->
+      <div class="subTitle" id="timeTitle">⏱️ Quanto tempo hai?</div>
+      <div id="timeChips" class="chips">
+        <div class="chip" data-min="45">45m</div>
+        <div class="chip" data-min="60">1h</div>
+        <div class="chip active" data-min="90">1h 30</div>
+        <div class="chip" data-min="120">2h</div>
+        <div class="chip" data-min="180">3h</div>
+        <div class="chip" data-min="240">4h</div>
+      </div>
+
+      <div class="fieldRow" style="margin-top:10px;">
+        <div class="miniLabel">Oppure minuti precisi</div>
+        <input id="maxMinutes" class="input inputMini" type="number" min="10" max="600" step="5" value="90">
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- CATEGORY (COLLAPSIBLE) -->
+      <div class="subTitle" id="catTitle">🧭 Che vibe vuoi?</div>
+
+      <div id="catPanel" class="catPanel collapsed">
+        <button id="btnToggleCats" class="catHeader" type="button" aria-expanded="false">
+          <div class="catHeaderLeft">
+            <div>Categoria</div>
+            <div class="catHeaderSub" id="catSelectedLabel">Selezionata: 🌿 Natura</div>
+          </div>
+          <div class="catChevron" id="catChevron">⬇️</div>
+        </button>
+
+        <div class="catBody">
+          <div id="categoryChips" class="chips chipsGrid">
+            <div class="chip active" data-cat="natura">🌿 Natura</div>
+            <div class="chip" data-cat="hiking">🥾 Trekking</div>
+            <div class="chip" data-cat="borghi">🏘️ Borghi</div>
+            <div class="chip" data-cat="storia">🏛️ Storia</div>
+            <div class="chip" data-cat="montagna">🏔️ Montagna</div>
+            <div class="chip" data-cat="mare">🌊 Mare</div>
+            <div class="chip" data-cat="lago">🏞️ Lago</div>
+            <div class="chip" data-cat="relax">🧖 Relax</div>
+            <div class="chip" data-cat="family">👨‍👩‍👧‍👦 Family</div>
+            <div class="chip" data-cat="cantine">🍷 Cantine</div>
+            <div class="chip" data-cat="eventi">✨ Mai fatto</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EVENTS SUBFILTERS (app.js toggles .active when category=eventi) -->
+      <div id="eventsSubfilters" class="eventsSubfilters">
+        <div class="small">Mai fatto (scegli il tipo di WOW)</div>
+        <div class="small muted" style="margin-top:6px;">
+          Offline: idee WOW • filtri soft • widening automatico • link Maps precisi.
+        </div>
+
+        <div style="margin-top:12px;">
+          <div class="subTitleMini">Tipo</div>
+          <div id="eventTypeChips" class="chips">
+            <div class="chip active" data-etype="tutti">⭐ Tutti</div>
+            <div class="chip" data-etype="relax">🧠 Reset</div>
+            <div class="chip" data-etype="famiglia">👨‍👩‍👧‍👦 Family</div>
+            <div class="chip" data-etype="bici">🚴 Bici</div>
+            <div class="chip" data-etype="moto">🏍️ Moto</div>
+            <div class="chip" data-etype="natura">🌿 Natura</div>
+            <div class="chip" data-etype="pioggia">🌧️ Pioggia</div>
+            <div class="chip" data-etype="tramonto">🌅 Tramonto</div>
+            <div class="chip" data-etype="mangiare">🍝 Food</div>
+            <div class="chip" data-etype="1h">🕐 1h</div>
+            <div class="chip" data-etype="2h">🕑 2h</div>
+          </div>
+        </div>
+
+        <div id="eventWhenChips" class="chips" style="display:none;">
+          <div class="chip active" data-ewhen="oggi">Oggi</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- STYLE -->
+      <div class="subTitle" id="styleTitle">✨ Preferisci?</div>
+      <div id="styleChips" class="chips">
+        <div class="chip active" data-style="chicche">✨ Chicche</div>
+        <div class="chip active" data-style="classici">✅ Classici</div>
+      </div>
+
+      <div class="ctaRow">
+        <button id="btnFind" class="btn btnPrimary btnBig" type="button">🚀 CERCA</button>
+      </div>
+
+      <div class="small muted" style="margin-top:10px;">
+        Tip: se trovi sempre “troppo lontano”, abbassa minuti oppure togli widening in events.js.
+      </div>
+    </section>
+
+    <!-- RESULT -->
+    <section id="resultCard" class="card clickSafe">
+      <div class="cardTitleRow">
+        <div class="cardTitle">📌 Risultato</div>
+        <div class="cardHint">Meta + alternative</div>
+      </div>
+
+      <div id="resultArea">
+        <div class="emptyState">
+          <div class="emptyIcon" aria-hidden="true">🧠⚡</div>
+          <div class="emptyTitle">Pronto quando lo sei tu.</div>
+          <div class="emptyDesc">Imposta la partenza e premi <b>CERCA</b>: la meta appare qui, con link e alternative.</div>
+        </div>
+      </div>
+
+      <!-- ✅ RIMESSO: "Cosa c'è (Google)" (si attiva automaticamente quando appare un risultato) -->
+      <div id="googleWhatsOn" class="card clickSafe">
+        <div class="gwTitle"><span class="dot" aria-hidden="true"></span> Cosa c’è qui vicino (Google)</div>
+        <div class="small muted" id="gwSub" style="margin-top:6px; line-height:1.4;">
+          Appena trovi una meta, qui compaiono i pulsanti Google “Cosa vedere / Cosa fare / Ristoranti…”.
+        </div>
+        <div class="gwBtns">
+          <button class="btn btnPrimary" id="gwThingsToDo" type="button">✨ Cosa fare</button>
+          <button class="btn" id="gwThingsToSee" type="button">👀 Cosa vedere</button>
+          <button class="btn" id="gwFood" type="button">🍝 Ristoranti</button>
+          <button class="btn" id="gwBars" type="button">🍸 Bar</button>
+          <button class="btn" id="gwHotels" type="button">🛏️ Hotel</button>
+          <button class="btn" id="gwEvents" type="button">🎉 Eventi</button>
+          <button class="btnGhost" id="gwImages" type="button">📸 Foto</button>
+          <button class="btnGhost" id="gwWiki" type="button">📚 Wiki</button>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer clickSafe">
+      <div class="footerLine">
+        <span class="dot"></span> Jamo • build UI v6.1 • smart flow
+      </div>
+      <div class="footerLine small muted">
+        Offline-first (best effort). Nessun tracciamento GPS. Link esterni: Maps / Wiki / Foto.
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- ✅ UX FLOW + "Cosa c'è (Google)" (non interferisce con app.js) -->
+  <script>
+    (function(){
+      const $ = (id) => document.getElementById(id);
+
+      function scrollToId(id){
+        const el = $(id);
+        if(!el) return;
+        el.scrollIntoView({ behavior:"smooth", block:"start" });
+      }
+
+      function googleSearchUrl(q){
+        return "https://www.google.com/search?q=" + encodeURIComponent(q);
+      }
+      function googleImagesUrl(q){
+        return "https://www.google.com/search?tbm=isch&q=" + encodeURIComponent(q);
+      }
+      function wikiUrl(q){
+        return "https://it.wikipedia.org/w/index.php?search=" + encodeURIComponent(q);
+      }
+
+      // --- Collapsible categorie ---
+      const panel = $("catPanel");
+      const btn = $("btnToggleCats");
+      const chevron = $("catChevron");
+      const label = $("catSelectedLabel");
+
+      function setExpanded(expanded){
+        if(!panel || !btn) return;
+        panel.classList.toggle("collapsed", !expanded);
+        btn.setAttribute("aria-expanded", expanded ? "true" : "false");
+        if(chevron) chevron.textContent = expanded ? "⬆️" : "⬇️";
+      }
+      setExpanded(false);
+
+      btn && btn.addEventListener("click", () => {
+        const expanded = panel.classList.contains("collapsed");
+        setExpanded(expanded);
+        if(expanded) setTimeout(() => scrollToId("catTitle"), 60);
+      });
+
+      // --- Flow guidato: tempo -> vibe -> preferisci -> cerca -> risultato ---
+      $("timeChips")?.addEventListener("click", (e) => {
+        const chip = e.target.closest(".chip");
+        if(!chip) return;
+        setTimeout(() => { setExpanded(true); scrollToId("catTitle"); }, 120);
+      });
+
+      $("maxMinutes")?.addEventListener("change", () => {
+        setTimeout(() => { setExpanded(true); scrollToId("catTitle"); }, 120);
+      });
+
+      $("categoryChips")?.addEventListener("click", (e) => {
+        const chip = e.target.closest(".chip");
+        if(!chip) return;
+
+        const txt = chip.textContent?.trim() || "Categoria";
+        if(label) label.textContent = "Selezionata: " + txt;
+
+        setExpanded(false);
+
+        const cat = chip.getAttribute("data-cat");
+        setTimeout(() => {
+          const sub = $("eventsSubfilters");
+          const isEventi = (cat === "eventi");
+          const subIsActive = sub && sub.classList.contains("active"); // gestita da app.js
+          if(isEventi && subIsActive){
+            sub.scrollIntoView({ behavior:"smooth", block:"start" });
+          } else {
+            scrollToId("styleTitle");
+          }
+        }, 160);
+      });
+
+      $("eventTypeChips")?.addEventListener("click", (e) => {
+        const chip = e.target.closest(".chip");
+        if(!chip) return;
+        setTimeout(() => scrollToId("styleTitle"), 140);
+      });
+
+      $("styleChips")?.addEventListener("click", (e) => {
+        const chip = e.target.closest(".chip");
+        if(!chip) return;
+        setTimeout(() => $("btnFind")?.scrollIntoView({ behavior:"smooth", block:"center" }), 140);
+      });
+
+      $("btnFind")?.addEventListener("click", () => {
+        setTimeout(() => scrollToId("resultCard"), 260);
+      });
+
+      $("btnFindPlace")?.addEventListener("click", () => {
+        setTimeout(() => scrollToId("searchCard"), 260);
+      });
+
+      // --- ✅ "Cosa c'è (Google)" — prende nome/area dalla scheda risultato (DOM) ---
+      const gwBox = $("googleWhatsOn");
+      const gwSub = $("gwSub");
+
+      function extractPlaceFromResult(){
+        const area = $("resultArea");
+        if(!area) return null;
+
+        // Nome: primo blocco grande (renderChosenCard in app.js mette un div con font-size 30)
+        const nameEl = area.querySelector('div[style*="font-size:30px"]') || area.querySelector(".optName");
+        const name = (nameEl?.textContent || "").trim();
+
+        // Area label: riga con "📍 ..."
+        const areaEl = Array.from(area.querySelectorAll(".small.muted"))
+          .find(x => (x.textContent || "").includes("📍"));
+        const line = (areaEl?.textContent || "").replace(/\s+/g," ").trim();
+
+        // prova a prendere solo "area" prima delle coordinate
+        // es: "📍 Verona • 45.12345, 10.12345"
+        let placeArea = "";
+        if(line){
+          const s = line.replace("📍","").trim();
+          placeArea = s.split("•")[0]?.trim() || "";
+        }
+
+        if(!name) return null;
+        return { name, placeArea };
+      }
+
+      function openQ(q){
+        window.open(googleSearchUrl(q), "_blank", "noopener");
+      }
+
+      function bindGoogleWhatsOn(place){
+        if(!place) return;
+        const base = (place.name + " " + (place.placeArea || "")).trim();
+
+        $("gwThingsToDo")?.addEventListener("click", () => openQ(base + " cosa fare"));
+        $("gwThingsToSee")?.addEventListener("click", () => openQ(base + " cosa vedere"));
+        $("gwFood")?.addEventListener("click", () => openQ("ristoranti vicino " + base));
+        $("gwBars")?.addEventListener("click", () => openQ("bar vicino " + base));
+        $("gwHotels")?.addEventListener("click", () => openQ("hotel " + base));
+        $("gwEvents")?.addEventListener("click", () => openQ("eventi " + base));
+        $("gwImages")?.addEventListener("click", () => window.open(googleImagesUrl(base), "_blank", "noopener"));
+        $("gwWiki")?.addEventListener("click", () => window.open(wikiUrl(base), "_blank", "noopener"));
+
+        if(gwSub){
+          gwSub.textContent = "Query base: " + base + " • tap su un pulsante per aprire Google.";
+        }
+      }
+
+      // MutationObserver: quando app.js scrive un risultato, mostriamo il box
+      const area = $("resultArea");
+      if(area && gwBox){
+        const obs = new MutationObserver(() => {
+          const place = extractPlaceFromResult();
+
+          // Se appare un vero risultato (non emptyState) -> mostra
+          const hasChosen = !!place && !area.querySelector(".emptyState");
+          if(hasChosen){
+            gwBox.style.display = "block";
+
+            // per evitare doppio binding, clona e rimpiazza box (reset listeners)
+            const clone = gwBox.cloneNode(true);
+            gwBox.parentNode.replaceChild(clone, gwBox);
+
+            // ricalcola refs
+            const gwBox2 = $("googleWhatsOn");
+            if(!gwBox2) return;
+
+            bindGoogleWhatsOn(place);
+          } else {
+            $("googleWhatsOn") && ($("googleWhatsOn").style.display = "none");
+          }
+        });
+        obs.observe(area, { childList:true, subtree:true });
+      }
+
+    })();
+  </script>
+
+  <!-- Scripts -->
+  <script src="/events.js?v=1.0"></script>
+  <script src="/app.js?v=22.2"></script>
 </body>
 </html>
