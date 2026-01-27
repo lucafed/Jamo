@@ -14,7 +14,7 @@
 
   <link rel="stylesheet" href="/style.css?v=6.1" />
 
-  <!-- ✅ Palette calda/premium (NON “tech” nei colori) + override safe + layout categorie più immediato -->
+  <!-- ✅ Palette calda/premium (NON “tech” nei colori) + override safe + UX -->
   <style>
     :root{
       --bg:#121214;
@@ -53,35 +53,26 @@
       box-shadow: 0 0 0 2px rgba(232,106,51,.12) inset;
     }
 
-    /* ---------------------------
-       ✅ CATEGORIE: più immediate
-       2 righe compatte, scorrimento orizzontale
-       (stesso #categoryChips -> non rompe app.js)
-    --------------------------- */
+    /* ✅ categorie più immediate: 2 righe, scroll orizzontale (stesso ID => non rompe app.js) */
     #categoryChips{
       display:grid;
-      grid-auto-flow: column;         /* colonne "infinite" */
-      grid-template-rows: repeat(2, auto); /* 2 righe */
+      grid-auto-flow: column;
+      grid-template-rows: repeat(2, auto);
       gap:10px;
       overflow-x:auto;
       overflow-y:hidden;
       padding-bottom:6px;
       scroll-snap-type: x mandatory;
       -webkit-overflow-scrolling: touch;
+
+      mask-image: linear-gradient(to right, transparent 0, black 18px, black calc(100% - 18px), transparent 100%);
+      -webkit-mask-image: linear-gradient(to right, transparent 0, black 18px, black calc(100% - 18px), transparent 100%);
     }
     #categoryChips .chip{
       scroll-snap-align: start;
       white-space: nowrap;
-      min-width: 128px; /* più leggibile e tap-safe */
+      min-width: 132px;
     }
-
-    /* sfumatura ai lati per far capire che scorre */
-    #categoryChips{
-      mask-image: linear-gradient(to right, transparent 0, black 18px, black calc(100% - 18px), transparent 100%);
-      -webkit-mask-image: linear-gradient(to right, transparent 0, black 18px, black calc(100% - 18px), transparent 100%);
-    }
-
-    /* mini hint sotto la griglia */
     .hScrollHint{
       margin-top:8px;
       display:flex;
@@ -94,6 +85,92 @@
       background: rgba(244,211,94,.9);
       box-shadow: 0 0 0 3px rgba(232,106,51,.14);
       flex:0 0 auto;
+    }
+
+    /* ✅ Tasto flottante SOS (compare solo in Family) */
+    .fabSOS{
+      position: fixed;
+      right: 14px;
+      bottom: 16px;
+      z-index: 9999;
+      display:none;
+      align-items:center;
+      gap:10px;
+      padding: 12px 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(26,26,31,.72);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 14px 30px rgba(0,0,0,.35);
+      color: var(--text);
+      font-weight: 950;
+      letter-spacing: .2px;
+    }
+    .fabSOS .b{
+      width:34px;height:34px;border-radius:12px;
+      display:flex;align-items:center;justify-content:center;
+      background: linear-gradient(135deg, rgba(232,106,51,.92), rgba(244,211,94,.92));
+      color:#141214;
+      flex:0 0 auto;
+      box-shadow: 0 10px 18px rgba(0,0,0,.25);
+    }
+    .fabSOS:active{ transform: scale(.99); }
+
+    /* ✅ Bottom sheet SOS */
+    .sheetMask{
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.55);
+      display:none;
+      z-index: 9998;
+    }
+    .sheet{
+      position: fixed;
+      left: 0; right: 0;
+      bottom: -100%;
+      z-index: 10000;
+      background: rgba(26,26,31,.92);
+      border-top: 1px solid rgba(255,255,255,.14);
+      border-top-left-radius: 18px;
+      border-top-right-radius: 18px;
+      padding: 14px 14px 18px;
+      box-shadow: 0 -18px 40px rgba(0,0,0,.45);
+      transition: bottom .22s ease;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .sheet.open{ bottom: 0; }
+    .sheetTop{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px;
+    }
+    .sheetTitle{
+      font-weight: 950;
+      font-size: 16px;
+    }
+    .sheetDesc{
+      margin-top:8px;
+      color: var(--muted);
+      line-height: 1.35;
+      font-size: 13px;
+    }
+    .sheetGrid{
+      margin-top: 12px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .ideaCard{
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      border-radius: 14px;
+      padding: 12px;
+    }
+    .ideaCard .t{ font-weight: 950; }
+    .ideaCard .d{ margin-top:6px; color: var(--muted); line-height:1.35; font-size:13px; }
+    .sheetActions{
+      margin-top: 12px;
+      display:flex; gap:10px; flex-wrap:wrap;
     }
   </style>
 </head>
@@ -117,13 +194,11 @@
 
   <main class="wrap">
 
-    <!-- STATUS -->
     <section id="statusBox" class="statusBox clickSafe" style="display:none;">
       <div class="statusDot" aria-hidden="true"></div>
       <div id="statusText" class="statusText"></div>
     </section>
 
-    <!-- HERO -->
     <section class="hero clickSafe">
       <div class="heroCard">
         <div class="heroBadge">✨ WOW Finder</div>
@@ -134,23 +209,13 @@
         </p>
 
         <div class="heroKpis">
-          <div class="kpi">
-            <div class="kpiN">1</div>
-            <div class="kpiT">Partenza</div>
-          </div>
-          <div class="kpi">
-            <div class="kpiN">2</div>
-            <div class="kpiT">Categoria</div>
-          </div>
-          <div class="kpi">
-            <div class="kpiN">3</div>
-            <div class="kpiT">Cerca</div>
-          </div>
+          <div class="kpi"><div class="kpiN">1</div><div class="kpiT">Partenza</div></div>
+          <div class="kpi"><div class="kpiN">2</div><div class="kpiT">Categoria</div></div>
+          <div class="kpi"><div class="kpiN">3</div><div class="kpiT">Cerca</div></div>
         </div>
       </div>
     </section>
 
-    <!-- QUICK START / ORIGIN -->
     <section id="quickStartCard" class="card clickSafe">
       <div class="cardTitleRow">
         <div class="cardTitle">📍 Partenza</div>
@@ -178,14 +243,12 @@
       <input id="originCC" type="hidden" />
     </section>
 
-    <!-- SEARCH CONTROLS -->
     <section id="searchCard" class="card clickSafe">
       <div class="cardTitleRow">
         <div class="cardTitle">🎯 Ricerca</div>
         <div class="cardHint">Scegli tempo + categoria + stile</div>
       </div>
 
-      <!-- TIME -->
       <div class="subTitle">⏱️ Quanto tempo hai?</div>
       <div id="timeChips" class="chips">
         <div class="chip" data-min="45">45m</div>
@@ -203,10 +266,7 @@
 
       <div class="divider"></div>
 
-      <!-- CATEGORY -->
       <div class="subTitle">🧭 Che vibe vuoi?</div>
-
-      <!-- ✅ stesso ID: categoryChips (ma layout più immediato in CSS) -->
       <div id="categoryChips" class="chips chipsGrid">
         <div class="chip active" data-cat="natura">🌿 Natura</div>
         <div class="chip" data-cat="hiking">🥾 Trekking</div>
@@ -226,7 +286,6 @@
         Scorri a destra per vedere tutte le vibe
       </div>
 
-      <!-- EVENTS SUBFILTERS -->
       <div id="eventsSubfilters" class="eventsSubfilters">
         <div class="small">Mai fatto (scegli il tipo di WOW)</div>
         <div class="small muted" style="margin-top:6px;">
@@ -257,7 +316,6 @@
 
       <div class="divider"></div>
 
-      <!-- STYLE -->
       <div class="subTitle">✨ Preferisci?</div>
       <div id="styleChips" class="chips">
         <div class="chip active" data-style="chicche">✨ Chicche</div>
@@ -273,16 +331,15 @@
       </div>
     </section>
 
-    <!-- RESULT -->
     <section id="resultCard" class="card clickSafe">
       <div class="cardTitleRow">
         <div class="cardTitle">📌 Risultato</div>
         <div class="cardHint">Meta + alternative</div>
       </div>
 
-      <!-- ✅ “Cosa c’è” FUORI dalle card (come prima, sempre chiaro) -->
+      <!-- ✅ TASTO COSA C’È (fuori dalle card dei luoghi) -->
       <div class="row wraprow" style="gap:10px; margin:10px 0 14px;">
-        <button id="btnWhatsThere" class="btnGhost" type="button">👀 Cosa c’è qui?</button>
+        <button id="btnWhatsThere" class="btnGhost" type="button">👀 Cosa c’è</button>
       </div>
 
       <div id="resultArea">
@@ -305,47 +362,74 @@
 
   </main>
 
+  <!-- ✅ FAB SOS (solo Family) -->
+  <button id="fabSOS" class="fabSOS" type="button" aria-label="SOS Family: idee a casa">
+    <span class="b" aria-hidden="true">🏠</span>
+    <span>SOS</span>
+  </button>
+
+  <!-- ✅ Bottom sheet SOS -->
+  <div id="sheetMask" class="sheetMask" aria-hidden="true"></div>
+  <div id="sheetSOS" class="sheet" role="dialog" aria-modal="true" aria-label="SOS Family">
+    <div class="sheetTop">
+      <div class="sheetTitle">🏠 SOS Family — idee a casa (no sbatti)</div>
+      <button id="btnCloseSheet" class="btnGhost" type="button">✕</button>
+    </div>
+    <div class="sheetDesc">
+      Quando non vuoi uscire ma vuoi una <b>risata</b> o una cosa <b>furba</b> da fare coi bimbi.
+      (Poi le rendiamo ancora più uniche, ma intanto la UI è pronta.)
+    </div>
+
+    <div class="sheetGrid" id="sosIdeas">
+      <div class="ideaCard">
+        <div class="t">🧦 Gara dei calzini (versione stupida)</div>
+        <div class="d">Prendi 6 calzini. Abbinali nel modo più sbagliato possibile. Vince chi ride per ultimo.</div>
+      </div>
+      <div class="ideaCard">
+        <div class="t">📺 Pubblicità bruttissima</div>
+        <div class="d">Scegli un oggetto a caso e inventa lo spot più imbarazzante del mondo. 20 secondi. Via.</div>
+      </div>
+      <div class="ideaCard">
+        <div class="t">🪑 Pavimento quasi lava</div>
+        <div class="d">Si cammina solo toccando 3 materiali (es. legno/plastica/stoffa). Se sbagli: “freeze!”</div>
+      </div>
+    </div>
+
+    <div class="sheetActions">
+      <button id="btnSOSShuffle" class="btn btnPrimary" type="button">🎲 Cambia idee</button>
+      <button id="btnSOSClose2" class="btnGhost" type="button">Ok, torno alle mete</button>
+    </div>
+  </div>
+
   <script src="/events.js?v=1.0"></script>
   <script src="/app.js?v=22.2"></script>
 
-  <!-- ✅ Scroll intelligente + hook “Cosa c’è” (senza toccare app.js) -->
   <script>
   (() => {
     "use strict";
     const $ = (id) => document.getElementById(id);
+
+    /* ------------------ scroll smart ------------------ */
     const scrollTo = (id, block = "start") => {
       const el = $(id);
       if (!el) return;
       setTimeout(() => el.scrollIntoView({ behavior: "smooth", block }), 120);
     };
 
-    // 1) Dopo "Usa questo luogo" -> vai a Ricerca
-    $("btnFindPlace")?.addEventListener("click", () => {
-      setTimeout(() => scrollTo("searchCard"), 450);
-    });
+    $("btnFindPlace")?.addEventListener("click", () => setTimeout(() => scrollTo("searchCard"), 450));
 
-    // 2) Tap su categoria -> porta allo step successivo
     $("categoryChips")?.addEventListener("click", (e) => {
       const chip = e.target.closest(".chip");
       if (!chip) return;
-
       const cat = String(chip.dataset.cat || "").toLowerCase();
 
       if (cat === "eventi") {
-        setTimeout(() => {
-          const box = $("eventsSubfilters");
-          if (box) box.scrollIntoView({ behavior: "smooth", block: "center" });
-        }, 160);
+        setTimeout(() => $("eventsSubfilters")?.scrollIntoView({ behavior:"smooth", block:"center" }), 160);
         return;
       }
-
-      setTimeout(() => {
-        const st = $("styleChips");
-        if (st) st.scrollIntoView({ behavior: "smooth", block: "center" });
-      }, 140);
+      setTimeout(() => $("styleChips")?.scrollIntoView({ behavior:"smooth", block:"center" }), 140);
     });
 
-    // 3) Tap su stile -> porta al bottone CERCA
     $("styleChips")?.addEventListener("click", (e) => {
       const chip = e.target.closest(".chip");
       if (!chip) return;
@@ -355,21 +439,113 @@
       }, 140);
     });
 
-    // 4) Tap su CERCA -> porta a Risultato
     $("btnFind")?.addEventListener("click", () => {
       setTimeout(() => scrollTo("resultCard"), 250);
       if (navigator.vibrate) navigator.vibrate(20);
     });
 
-    // 5) Reset visitati -> resta comodo sulla Ricerca
-    $("btnResetVisited")?.addEventListener("click", () => {
-      setTimeout(() => scrollTo("searchCard"), 200);
-    });
+    $("btnResetVisited")?.addEventListener("click", () => setTimeout(() => scrollTo("searchCard"), 200));
 
-    // 6) “Cosa c’è” -> focus sul risultato (poi app.js/events.js possono riempire contenuti)
+    /* ------------------ “Cosa c’è” ------------------ */
     $("btnWhatsThere")?.addEventListener("click", () => {
       setTimeout(() => scrollTo("resultArea", "center"), 120);
       if (navigator.vibrate) navigator.vibrate(10);
+    });
+
+    /* ------------------ FAB SOS (solo Family) ------------------ */
+    const fab = $("fabSOS");
+    const mask = $("sheetMask");
+    const sheet = $("sheetSOS");
+    const openSheet = () => {
+      mask.style.display = "block";
+      sheet.classList.add("open");
+      if (navigator.vibrate) navigator.vibrate(14);
+    };
+    const closeSheet = () => {
+      sheet.classList.remove("open");
+      setTimeout(() => { mask.style.display = "none"; }, 180);
+      if (navigator.vibrate) navigator.vibrate(10);
+    };
+
+    fab?.addEventListener("click", openSheet);
+    $("btnCloseSheet")?.addEventListener("click", closeSheet);
+    $("btnSOSClose2")?.addEventListener("click", closeSheet);
+    mask?.addEventListener("click", closeSheet);
+
+    // show/hide FAB when selecting Family
+    $("categoryChips")?.addEventListener("click", (e) => {
+      const chip = e.target.closest(".chip");
+      if (!chip) return;
+      const cat = String(chip.dataset.cat || "").toLowerCase();
+      if (!fab) return;
+      fab.style.display = (cat === "family") ? "flex" : "none";
+    });
+
+    /* ------------------ Palette cycle: ogni tocco su “scheda” cambia colori ------------------ */
+    const PALETTES = [
+      { acc:"#E86A33", acc2:"#F4D35E", glow1:"rgba(232,106,51,.20)", glow2:"rgba(244,211,94,.14)", glow3:"rgba(232,106,51,.10)" }, // warm (default)
+      { acc:"#C85C5C", acc2:"#F3B562", glow1:"rgba(200,92,92,.20)", glow2:"rgba(243,181,98,.14)", glow3:"rgba(200,92,92,.10)" }, // terracotta
+      { acc:"#7A77FF", acc2:"#FFB703", glow1:"rgba(122,119,255,.18)", glow2:"rgba(255,183,3,.12)", glow3:"rgba(122,119,255,.10)" }, // violet + amber
+      { acc:"#2A9D8F", acc2:"#E9C46A", glow1:"rgba(42,157,143,.18)", glow2:"rgba(233,196,106,.12)", glow3:"rgba(42,157,143,.10)" }, // teal + sand
+      { acc:"#D62828", acc2:"#F77F00", glow1:"rgba(214,40,40,.18)", glow2:"rgba(247,127,0,.12)", glow3:"rgba(214,40,40,.10)" }  // red + orange
+    ];
+    let pIdx = 0;
+
+    const applyPalette = (p) => {
+      document.documentElement.style.setProperty("--acc", p.acc);
+      document.documentElement.style.setProperty("--acc2", p.acc2);
+
+      // aggiorna glow (semplice override inline)
+      const g = document.querySelector(".bgGlow");
+      if (g){
+        g.style.background =
+          `radial-gradient(700px 420px at 18% 10%, ${p.glow1}, transparent 55%),
+           radial-gradient(760px 460px at 82% 22%, ${p.glow2}, transparent 60%),
+           radial-gradient(900px 520px at 50% 92%, ${p.glow3}, transparent 60%)`;
+      }
+
+      // aggiorna btnPrimary con CSS variables già settate (niente altro)
+      const metaTheme = document.querySelector('meta[name="theme-color"]');
+      if (metaTheme) metaTheme.setAttribute("content", getComputedStyle(document.documentElement).getPropertyValue("--bg").trim() || "#121214");
+    };
+
+    const isInteractive = (el) => {
+      if (!el) return false;
+      return !!el.closest("button,a,input,textarea,select,label,.chip");
+    };
+
+    // “schede” = card + heroCard (tap sul corpo, non sui bottoni)
+    document.addEventListener("click", (e) => {
+      const target = e.target;
+      if (isInteractive(target)) return;
+
+      const card = target.closest(".card, .heroCard");
+      if (!card) return;
+
+      pIdx = (pIdx + 1) % PALETTES.length;
+      applyPalette(PALETTES[pIdx]);
+      if (navigator.vibrate) navigator.vibrate(8);
+    }, { passive:true });
+
+    // Shuffle idee (placeholder rapido)
+    const ideas = [
+      ["🧦 Gara dei calzini (versione stupida)", "Prendi 6 calzini. Abbinali nel modo più sbagliato possibile. Vince chi ride per ultimo."],
+      ["📦 Scatola inutile", "Prendi una scatola. Riempila di cose inutili. Poi vendila come invenzione geniale (con spot)."],
+      ["🥄 Trasporto assurdo", "Porta un oggetto in un’altra stanza usando solo gomiti / cucchiai / piedi. Zero mani."],
+      ["🗣️ Parlato strano", "Fai una cosa normale ma parlando solo come robot / alieni / nonni drammatici."],
+      ["🏃 Rallentatore estremo", "Qualsiasi azione… ma al rallentatore massimo. Chi ride perde."]
+    ];
+    $("btnSOSShuffle")?.addEventListener("click", () => {
+      const box = $("sosIdeas");
+      if (!box) return;
+      const pick = () => ideas[Math.floor(Math.random() * ideas.length)];
+      const a = pick(), b = pick(), c = pick();
+      box.innerHTML = `
+        <div class="ideaCard"><div class="t">${a[0]}</div><div class="d">${a[1]}</div></div>
+        <div class="ideaCard"><div class="t">${b[0]}</div><div class="d">${b[1]}</div></div>
+        <div class="ideaCard"><div class="t">${c[0]}</div><div class="d">${c[1]}</div></div>
+      `;
+      if (navigator.vibrate) navigator.vibrate(12);
     });
   })();
   </script>
