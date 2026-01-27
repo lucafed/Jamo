@@ -14,7 +14,7 @@
 
   <link rel="stylesheet" href="/style.css?v=6.1" />
 
-  <!-- ✅ Palette calda/premium (NON “tech” nei colori) + piccoli override safe -->
+  <!-- ✅ Palette calda/premium (NON “tech” nei colori) + override safe + layout categorie più immediato -->
   <style>
     :root{
       --bg:#121214;
@@ -28,10 +28,8 @@
       --shadow: rgba(0,0,0,.35);
     }
 
-    /* Accent text helper (se non già in css) */
     .accent{ color: var(--acc2); }
 
-    /* Glow più “ambient” e meno neon (se bgGlow è gestito da CSS esterno, questo è un soft override) */
     .bgGlow{
       background:
         radial-gradient(700px 420px at 18% 10%, rgba(232,106,51,.20), transparent 55%),
@@ -42,7 +40,6 @@
       pointer-events: none;
     }
 
-    /* CTA più “premium” */
     .btnPrimary{
       background: linear-gradient(135deg, rgba(232,106,51,1), rgba(244,211,94,1));
       border-color: rgba(244,211,94,.35);
@@ -51,16 +48,57 @@
     }
     .btnPrimary:active{ transform: scale(.99); }
 
-    /* Chips attive più chiare */
     .chip.active{
       border-color: rgba(244,211,94,.45);
       box-shadow: 0 0 0 2px rgba(232,106,51,.12) inset;
+    }
+
+    /* ---------------------------
+       ✅ CATEGORIE: più immediate
+       2 righe compatte, scorrimento orizzontale
+       (stesso #categoryChips -> non rompe app.js)
+    --------------------------- */
+    #categoryChips{
+      display:grid;
+      grid-auto-flow: column;         /* colonne "infinite" */
+      grid-template-rows: repeat(2, auto); /* 2 righe */
+      gap:10px;
+      overflow-x:auto;
+      overflow-y:hidden;
+      padding-bottom:6px;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+    }
+    #categoryChips .chip{
+      scroll-snap-align: start;
+      white-space: nowrap;
+      min-width: 128px; /* più leggibile e tap-safe */
+    }
+
+    /* sfumatura ai lati per far capire che scorre */
+    #categoryChips{
+      mask-image: linear-gradient(to right, transparent 0, black 18px, black calc(100% - 18px), transparent 100%);
+      -webkit-mask-image: linear-gradient(to right, transparent 0, black 18px, black calc(100% - 18px), transparent 100%);
+    }
+
+    /* mini hint sotto la griglia */
+    .hScrollHint{
+      margin-top:8px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      opacity:.9;
+    }
+    .hScrollHint .dot{
+      width:6px;height:6px;border-radius:50%;
+      background: rgba(244,211,94,.9);
+      box-shadow: 0 0 0 3px rgba(232,106,51,.14);
+      flex:0 0 auto;
     }
   </style>
 </head>
 
 <body>
-  <!-- Ambient glow -->
   <div class="bgGlow" aria-hidden="true"></div>
 
   <header class="topbar clickSafe">
@@ -114,7 +152,6 @@
 
     <!-- QUICK START / ORIGIN -->
     <section id="quickStartCard" class="card clickSafe">
-      <!-- app.js inserisce il toggle header qui automaticamente -->
       <div class="cardTitleRow">
         <div class="cardTitle">📍 Partenza</div>
         <div class="cardHint">Scegli da dove parti</div>
@@ -136,7 +173,6 @@
         <button id="btnUseGPS" class="btnGhost" type="button" style="display:none;">📡 GPS</button>
       </div>
 
-      <!-- Hidden fields used by app.js -->
       <input id="originLat" type="hidden" />
       <input id="originLon" type="hidden" />
       <input id="originCC" type="hidden" />
@@ -169,6 +205,8 @@
 
       <!-- CATEGORY -->
       <div class="subTitle">🧭 Che vibe vuoi?</div>
+
+      <!-- ✅ stesso ID: categoryChips (ma layout più immediato in CSS) -->
       <div id="categoryChips" class="chips chipsGrid">
         <div class="chip active" data-cat="natura">🌿 Natura</div>
         <div class="chip" data-cat="hiking">🥾 Trekking</div>
@@ -183,7 +221,12 @@
         <div class="chip" data-cat="eventi">✨ Mai fatto</div>
       </div>
 
-      <!-- EVENTS SUBFILTERS (app.js toggles .active when category=eventi) -->
+      <div class="hScrollHint small muted">
+        <span class="dot" aria-hidden="true"></span>
+        Scorri a destra per vedere tutte le vibe
+      </div>
+
+      <!-- EVENTS SUBFILTERS -->
       <div id="eventsSubfilters" class="eventsSubfilters">
         <div class="small">Mai fatto (scegli il tipo di WOW)</div>
         <div class="small muted" style="margin-top:6px;">
@@ -237,6 +280,11 @@
         <div class="cardHint">Meta + alternative</div>
       </div>
 
+      <!-- ✅ “Cosa c’è” FUORI dalle card (come prima, sempre chiaro) -->
+      <div class="row wraprow" style="gap:10px; margin:10px 0 14px;">
+        <button id="btnWhatsThere" class="btnGhost" type="button">👀 Cosa c’è qui?</button>
+      </div>
+
       <div id="resultArea">
         <div class="emptyState">
           <div class="emptyIcon" aria-hidden="true">🧠⚡</div>
@@ -257,11 +305,10 @@
 
   </main>
 
-  <!-- Scripts -->
   <script src="/events.js?v=1.0"></script>
   <script src="/app.js?v=22.2"></script>
 
-  <!-- ✅ Scroll intelligente: ti porta sempre allo step successivo (senza toccare app.js) -->
+  <!-- ✅ Scroll intelligente + hook “Cosa c’è” (senza toccare app.js) -->
   <script>
   (() => {
     "use strict";
@@ -284,7 +331,6 @@
 
       const cat = String(chip.dataset.cat || "").toLowerCase();
 
-      // Se eventi: porta ai subfiltri
       if (cat === "eventi") {
         setTimeout(() => {
           const box = $("eventsSubfilters");
@@ -293,7 +339,6 @@
         return;
       }
 
-      // Altrimenti: porta a "Preferisci?"
       setTimeout(() => {
         const st = $("styleChips");
         if (st) st.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -316,9 +361,15 @@
       if (navigator.vibrate) navigator.vibrate(20);
     });
 
-    // 5) Se l’utente clicca "Reset visitati" -> resta comodo sulla Ricerca
+    // 5) Reset visitati -> resta comodo sulla Ricerca
     $("btnResetVisited")?.addEventListener("click", () => {
       setTimeout(() => scrollTo("searchCard"), 200);
+    });
+
+    // 6) “Cosa c’è” -> focus sul risultato (poi app.js/events.js possono riempire contenuti)
+    $("btnWhatsThere")?.addEventListener("click", () => {
+      setTimeout(() => scrollTo("resultArea", "center"), 120);
+      if (navigator.vibrate) navigator.vibrate(10);
     });
   })();
   </script>
