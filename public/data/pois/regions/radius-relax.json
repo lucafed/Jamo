@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-01-14T21:32:25.570Z",
+  "generated_at": "2026-01-27T04:11:07.308Z",
   "places": [
     {
       "id": "way:48528567",
@@ -404,6 +404,33 @@
       "score": 151
     },
     {
+      "id": "relation:2428656",
+      "name": "Terme Berzieri",
+      "lat": 44.8161157,
+      "lon": 9.9798504,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Salsomaggiore Terme",
+        "addr:housenumber=1",
+        "addr:postcode=43039",
+        "addr:street=Piazza Lorenzo Berzieri",
+        "amenity=public_bath",
+        "brand=QC Terme",
+        "brand:wikidata=Q115543071",
+        "building=yes",
+        "fee=yes",
+        "name=Terme Berzieri",
+        "phone=+39 0524 758410",
+        "source=Regione Emilia Romagna",
+        "type=multipolygon",
+        "website=https://www.qcterme.com/it/destinazioni/salsomaggiore/qc-spa-salsomaggiore-terme",
+        "wikidata=Q24934178",
+        "wikipedia=it:Terme Berzieri"
+      ],
+      "score": 151
+    },
+    {
       "id": "node:12308269875",
       "name": "QC Terme San Pellegrino",
       "lat": 45.8414835,
@@ -423,25 +450,6 @@
         "payment:maestro=yes",
         "payment:mastercard=yes",
         "payment:visa=yes"
-      ],
-      "score": 145
-    },
-    {
-      "id": "relation:2428656",
-      "name": "Terme Berzieri",
-      "lat": 44.8161157,
-      "lon": 9.9798504,
-      "type": "relax",
-      "visibility": "classica",
-      "tags": [
-        "amenity=public_bath",
-        "building=yes",
-        "name=Terme Berzieri",
-        "source=Regione Emilia Romagna",
-        "type=multipolygon",
-        "website=https://www.termedisalsomaggiore.it/",
-        "wikidata=Q24934178",
-        "wikipedia=it:Terme Berzieri"
       ],
       "score": 145
     },
@@ -2779,7 +2787,8 @@
         "contact:phone=+39 049 8669342",
         "denomination=roman_catholic",
         "name=Sacro Cuore alle Terme",
-        "religion=christian"
+        "religion=christian",
+        "wikidata=Q122158006"
       ],
       "score": 61
     },
@@ -3179,7 +3188,8 @@
         "name=Caderzone Terme",
         "place=village",
         "population=602",
-        "source=geodati.gfoss.it"
+        "source=geodati.gfoss.it",
+        "wikidata=Q49281689"
       ],
       "score": 55
     },
@@ -3256,7 +3266,8 @@
         "name:ru=Батталья-Терме",
         "place=village",
         "population=4152",
-        "source=geodati.gfoss.it"
+        "source=geodati.gfoss.it",
+        "wikidata=Q30022662"
       ],
       "score": 55
     },
@@ -3275,7 +3286,7 @@
         "place=town",
         "population=19950",
         "source=ISTAT",
-        "wikidata=Q34603"
+        "wikidata=Q30021869"
       ],
       "score": 55
     },
@@ -3312,7 +3323,7 @@
         "place=village",
         "population=6453",
         "source=Regione Veneto, License IODL-2.0",
-        "wikidata=Q46131",
+        "wikidata=Q30029301",
         "wikipedia=it:Recoaro Terme"
       ],
       "score": 55
@@ -3587,7 +3598,8 @@
         "name=Garniga Terme",
         "place=village",
         "population=384",
-        "source=geodati.gfoss.it"
+        "source=geodati.gfoss.it",
+        "wikidata=Q18479921"
       ],
       "score": 55
     },
@@ -4176,8 +4188,8 @@
     {
       "id": "node:5375513969",
       "name": "APT Terme di Comano",
-      "lat": 46.0355868,
-      "lon": 10.8737886,
+      "lat": 46.0356067,
+      "lon": 10.8738129,
       "type": "relax",
       "visibility": "classica",
       "tags": [
@@ -5308,10 +5320,12 @@
       "visibility": "classica",
       "tags": [
         "amenity=place_of_worship",
+        "building=church",
         "denomination=catholic",
         "height=5.6",
         "name=Chiesa Parrocchiale di Recoaro Terme",
-        "religion=christian"
+        "religion=christian",
+        "wikidata=Q107304014"
       ],
       "score": 55
     },
@@ -5326,7 +5340,8 @@
         "amenity=townhall",
         "building=yes",
         "height=17.8",
-        "name=Comune di Recoaro Terme"
+        "name=Comune di Recoaro Terme",
+        "wikidata=Q134658453"
       ],
       "score": 55
     },
@@ -5678,7 +5693,24 @@
         "denomination=roman_catholic",
         "landuse=cemetery",
         "name=Cimitero di Montegrotto Terme",
-        "religion=christian"
+        "religion=christian",
+        "wikidata=Q109365075"
+      ],
+      "score": 55
+    },
+    {
+      "id": "way:375280640",
+      "name": "cimitero di Battaglia Terme",
+      "lat": 45.2835219,
+      "lon": 11.7845262,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "denomination=catholic",
+        "landuse=cemetery",
+        "name=cimitero di Battaglia Terme",
+        "religion=christian",
+        "wikidata=Q109365055"
       ],
       "score": 55
     },
@@ -5696,7 +5728,8 @@
         "addr:street=Via Alessandro Volta",
         "amenity=townhall",
         "building=public",
-        "name=Municipio di Battaglia Terme"
+        "name=Municipio di Battaglia Terme",
+        "wikidata=Q134658519"
       ],
       "score": 55
     },
@@ -5716,6 +5749,22 @@
       "score": 55
     },
     {
+      "id": "way:375600599",
+      "name": "cimitero di Galzignano Terme",
+      "lat": 45.3127988,
+      "lon": 11.7318507,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "denomination=catholic",
+        "landuse=cemetery",
+        "name=cimitero di Galzignano Terme",
+        "religion=christian",
+        "wikidata=Q109363270"
+      ],
+      "score": 55
+    },
+    {
       "id": "way:375602585",
       "name": "Municipio di Galzignano Terme",
       "lat": 45.3086201,
@@ -5726,7 +5775,8 @@
         "amenity=townhall",
         "building=public",
         "fixme=buildings msaligne with respect to PCN2006 by 6m to NNW",
-        "name=Municipio di Galzignano Terme"
+        "name=Municipio di Galzignano Terme",
+        "wikidata=Q134662218"
       ],
       "score": 55
     },
