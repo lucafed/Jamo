@@ -14,6 +14,7 @@
 
   <link rel="stylesheet" href="/style.css?v=6.1" />
 
+  <!-- ✅ Palette calda/premium (NON “tech” nei colori) + piccoli override safe -->
   <style>
     :root{
       --bg:#121214;
@@ -21,8 +22,8 @@
       --text:#F6F6F6;
       --muted:#B9B2A9;
 
-      --acc:#E86A33;
-      --acc2:#F4D35E;
+      --acc:#E86A33;     /* arancio caldo */
+      --acc2:#F4D35E;    /* giallo caldo */
       --border:rgba(255,255,255,.10);
       --shadow: rgba(0,0,0,.35);
     }
@@ -52,119 +53,44 @@
       box-shadow: 0 0 0 2px rgba(232,106,51,.12) inset;
     }
 
-    /* ✅ categorie più immediate: 2 righe, scroll orizzontale */
-    #categoryChips{
-      display:grid;
-      grid-auto-flow: column;
-      grid-template-rows: repeat(2, auto);
-      gap:10px;
-      overflow-x:auto;
-      overflow-y:hidden;
-      padding-bottom:6px;
-      scroll-snap-type: x mandatory;
-      -webkit-overflow-scrolling: touch;
-
-      mask-image: linear-gradient(to right, transparent 0, black 18px, black calc(100% - 18px), transparent 100%);
-      -webkit-mask-image: linear-gradient(to right, transparent 0, black 18px, black calc(100% - 18px), transparent 100%);
-    }
-    #categoryChips .chip{
-      scroll-snap-align: start;
-      white-space: nowrap;
-      min-width: 132px;
-    }
-    .hScrollHint{
-      margin-top:8px;
-      display:flex;
-      align-items:center;
-      gap:8px;
-      opacity:.9;
-    }
-    .hScrollHint .dot{
-      width:6px;height:6px;border-radius:50%;
-      background: rgba(244,211,94,.9);
-      box-shadow: 0 0 0 3px rgba(232,106,51,.14);
-      flex:0 0 auto;
-    }
-
-    /* ✅ FAB SOS */
-    .fabSOS{
-      position: fixed;
-      right: 14px;
-      bottom: 16px;
-      z-index: 9999;
-      display:none;
-      align-items:center;
-      gap:10px;
-      padding: 12px 14px;
-      border-radius: 18px;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(26,26,31,.72);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      box-shadow: 0 14px 30px rgba(0,0,0,.35);
+    /* ✅ COSA C'È: molto visibile */
+    .btnWhatIs{
+      background: rgba(244,211,94,.14);
+      border-color: rgba(244,211,94,.42);
       color: var(--text);
       font-weight: 950;
-      letter-spacing: .2px;
     }
-    .fabSOS .b{
-      width:34px;height:34px;border-radius:12px;
-      display:flex;align-items:center;justify-content:center;
-      background: linear-gradient(135deg, rgba(232,106,51,.92), rgba(244,211,94,.92));
-      color:#141214;
-      flex:0 0 auto;
-      box-shadow: 0 10px 18px rgba(0,0,0,.25);
-    }
-    .fabSOS:active{ transform: scale(.99); }
+    .btnWhatIs:hover{ filter: brightness(1.05); }
+    .btnWhatIs:active{ transform: scale(.99); }
 
-    /* ✅ Bottom sheet SOS */
-    .sheetMask{
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,.55);
-      display:none;
-      z-index: 9998;
+    /* ✅ Cambio colore al tap sulle card */
+    #resultArea .card{
+      transition: background .35s ease, border-color .35s ease, box-shadow .35s ease, transform .12s ease;
     }
-    .sheet{
-      position: fixed;
-      left: 0; right: 0;
-      bottom: -100%;
-      z-index: 10000;
-      background: rgba(26,26,31,.92);
-      border-top: 1px solid rgba(255,255,255,.14);
-      border-top-left-radius: 18px;
-      border-top-right-radius: 18px;
-      padding: 14px 14px 18px;
-      box-shadow: 0 -18px 40px rgba(0,0,0,.45);
-      transition: bottom .22s ease;
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+    #resultArea .card:active{ transform: scale(.985); }
+
+    /* varianti */
+    #resultArea .card[data-tone="1"]{
+      background: linear-gradient(180deg, rgba(232,106,51,.12), rgba(26,26,31,1));
+      border-color: rgba(232,106,51,.35);
     }
-    .sheet.open{ bottom: 0; }
-    .sheetTop{
-      display:flex; align-items:center; justify-content:space-between;
-      gap:10px;
+    #resultArea .card[data-tone="2"]{
+      background: linear-gradient(180deg, rgba(244,211,94,.14), rgba(26,26,31,1));
+      border-color: rgba(244,211,94,.35);
     }
-    .sheetTitle{ font-weight: 950; font-size: 16px; }
-    .sheetDesc{
-      margin-top:8px;
-      color: var(--muted);
-      line-height: 1.35;
-      font-size: 13px;
+    #resultArea .card[data-tone="3"]{
+      background: linear-gradient(180deg, rgba(155,193,188,.18), rgba(26,26,31,1));
+      border-color: rgba(155,193,188,.35);
     }
-    .sheetGrid{
-      margin-top: 12px;
-      display:grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
+    #resultArea .card[data-tone="4"]{
+      background: linear-gradient(180deg, rgba(246,189,96,.18), rgba(26,26,31,1));
+      border-color: rgba(246,189,96,.35);
     }
-    .ideaCard{
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      border-radius: 14px;
-      padding: 12px;
+
+    /* mini badge "selezionata" */
+    #resultArea .card.isActive{
+      box-shadow: 0 18px 36px rgba(0,0,0,.35);
     }
-    .ideaCard .t{ font-weight: 950; }
-    .ideaCard .d{ margin-top:6px; color: var(--muted); line-height:1.35; font-size:13px; }
-    .sheetActions{ margin-top: 12px; display:flex; gap:10px; flex-wrap:wrap; }
   </style>
 </head>
 
@@ -187,11 +113,13 @@
 
   <main class="wrap">
 
+    <!-- STATUS -->
     <section id="statusBox" class="statusBox clickSafe" style="display:none;">
       <div class="statusDot" aria-hidden="true"></div>
       <div id="statusText" class="statusText"></div>
     </section>
 
+    <!-- HERO -->
     <section class="hero clickSafe">
       <div class="heroCard">
         <div class="heroBadge">✨ WOW Finder</div>
@@ -209,6 +137,7 @@
       </div>
     </section>
 
+    <!-- ORIGIN -->
     <section id="quickStartCard" class="card clickSafe">
       <div class="cardTitleRow">
         <div class="cardTitle">📍 Partenza</div>
@@ -236,6 +165,7 @@
       <input id="originCC" type="hidden" />
     </section>
 
+    <!-- SEARCH -->
     <section id="searchCard" class="card clickSafe">
       <div class="cardTitleRow">
         <div class="cardTitle">🎯 Ricerca</div>
@@ -272,11 +202,6 @@
         <div class="chip" data-cat="family">👨‍👩‍👧‍👦 Family</div>
         <div class="chip" data-cat="cantine">🍷 Cantine</div>
         <div class="chip" data-cat="eventi">✨ Mai fatto</div>
-      </div>
-
-      <div class="hScrollHint small muted">
-        <span class="dot" aria-hidden="true"></span>
-        Scorri a destra per vedere tutte le vibe
       </div>
 
       <div id="eventsSubfilters" class="eventsSubfilters">
@@ -324,18 +249,24 @@
       </div>
     </section>
 
+    <!-- RESULT -->
     <section id="resultCard" class="card clickSafe">
       <div class="cardTitleRow">
         <div class="cardTitle">📌 Risultato</div>
         <div class="cardHint">Meta + alternative</div>
       </div>
 
-      <!-- ✅ QUESTO è il “Cosa c’è” che apre Google (AI Overview) -->
-      <div class="row wraprow" style="gap:10px; margin:10px 0 14px;">
-        <button id="btnWhatsThere" class="btnGhost" type="button">👀 Cosa c’è</button>
+      <!-- ✅ COSA C'È (super visibile, fuori dalle card) -->
+      <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
+        <button id="btnWhatIsGlobal" class="btn btnWhatIs" type="button">
+          ✨ COSA C’È
+        </button>
+        <div class="small muted" style="align-self:center;">
+          (apre Google AI sul posto selezionato)
+        </div>
       </div>
 
-      <div id="resultArea">
+      <div id="resultArea" style="margin-top:12px;">
         <div class="emptyState">
           <div class="emptyIcon" aria-hidden="true">🧠⚡</div>
           <div class="emptyTitle">Pronto quando lo sei tu.</div>
@@ -355,42 +286,6 @@
 
   </main>
 
-  <button id="fabSOS" class="fabSOS" type="button" aria-label="SOS Family: idee a casa">
-    <span class="b" aria-hidden="true">🏠</span>
-    <span>SOS</span>
-  </button>
-
-  <div id="sheetMask" class="sheetMask" aria-hidden="true"></div>
-  <div id="sheetSOS" class="sheet" role="dialog" aria-modal="true" aria-label="SOS Family">
-    <div class="sheetTop">
-      <div class="sheetTitle">🏠 SOS Family — idee a casa (no sbatti)</div>
-      <button id="btnCloseSheet" class="btnGhost" type="button">✕</button>
-    </div>
-    <div class="sheetDesc">
-      Quando non vuoi uscire ma vuoi una <b>risata</b> o una cosa <b>furba</b> da fare coi bimbi.
-    </div>
-
-    <div class="sheetGrid" id="sosIdeas">
-      <div class="ideaCard">
-        <div class="t">🧦 Gara dei calzini (versione stupida)</div>
-        <div class="d">Prendi 6 calzini. Abbinali nel modo più sbagliato possibile. Vince chi ride per ultimo.</div>
-      </div>
-      <div class="ideaCard">
-        <div class="t">📺 Pubblicità bruttissima</div>
-        <div class="d">Scegli un oggetto a caso e inventa lo spot più imbarazzante del mondo. 20 secondi. Via.</div>
-      </div>
-      <div class="ideaCard">
-        <div class="t">🪑 Pavimento quasi lava</div>
-        <div class="d">Si cammina solo toccando 3 materiali (es. legno/plastica/stoffa). Se sbagli: “freeze!”</div>
-      </div>
-    </div>
-
-    <div class="sheetActions">
-      <button id="btnSOSShuffle" class="btn btnPrimary" type="button">🎲 Cambia idee</button>
-      <button id="btnSOSClose2" class="btnGhost" type="button">Ok, torno alle mete</button>
-    </div>
-  </div>
-
   <script src="/events.js?v=1.0"></script>
   <script src="/app.js?v=22.2"></script>
 
@@ -399,35 +294,7 @@
     "use strict";
     const $ = (id) => document.getElementById(id);
 
-    /* ------------------ palette engine ------------------ */
-    const PALETTES = [
-      { acc:"#E86A33", acc2:"#F4D35E", g1:"rgba(232,106,51,.20)", g2:"rgba(244,211,94,.14)", g3:"rgba(232,106,51,.10)" },
-      { acc:"#C85C5C", acc2:"#F3B562", g1:"rgba(200,92,92,.20)", g2:"rgba(243,181,98,.14)", g3:"rgba(200,92,92,.10)" },
-      { acc:"#7A77FF", acc2:"#FFB703", g1:"rgba(122,119,255,.18)", g2:"rgba(255,183,3,.12)", g3:"rgba(122,119,255,.10)" },
-      { acc:"#2A9D8F", acc2:"#E9C46A", g1:"rgba(42,157,143,.18)", g2:"rgba(233,196,106,.12)", g3:"rgba(42,157,143,.10)" },
-      { acc:"#D62828", acc2:"#F77F00", g1:"rgba(214,40,40,.18)", g2:"rgba(247,127,0,.12)", g3:"rgba(214,40,40,.10)" }
-    ];
-    let pIdx = 0;
-
-    function applyPalette(p){
-      document.documentElement.style.setProperty("--acc", p.acc);
-      document.documentElement.style.setProperty("--acc2", p.acc2);
-
-      const g = document.querySelector(".bgGlow");
-      if (g){
-        g.style.background =
-          `radial-gradient(700px 420px at 18% 10%, ${p.g1}, transparent 55%),
-           radial-gradient(760px 460px at 82% 22%, ${p.g2}, transparent 60%),
-           radial-gradient(900px 520px at 50% 92%, ${p.g3}, transparent 60%)`;
-      }
-    }
-    function nextPalette(){
-      pIdx = (pIdx + 1) % PALETTES.length;
-      applyPalette(PALETTES[pIdx]);
-      if (navigator.vibrate) navigator.vibrate(8);
-    }
-
-    /* ------------------ scroll smart (come prima) ------------------ */
+    // ---------- scroll helper ----------
     const scrollTo = (id, block = "start") => {
       const el = $(id);
       if (!el) return;
@@ -439,21 +306,13 @@
     $("categoryChips")?.addEventListener("click", (e) => {
       const chip = e.target.closest(".chip");
       if (!chip) return;
-
-      // ✅ cambia colori ad ogni tap su categoria
-      nextPalette();
-
       const cat = String(chip.dataset.cat || "").toLowerCase();
 
-      // FAB SOS solo in family
-      const fab = $("fabSOS");
-      if (fab) fab.style.display = (cat === "family") ? "flex" : "none";
-
       if (cat === "eventi") {
-        setTimeout(() => $("eventsSubfilters")?.scrollIntoView({ behavior:"smooth", block:"center" }), 160);
-        return;
+        setTimeout(() => $("eventsSubfilters")?.scrollIntoView({ behavior: "smooth", block: "center" }), 160);
+      } else {
+        setTimeout(() => $("styleChips")?.scrollIntoView({ behavior: "smooth", block: "center" }), 140);
       }
-      setTimeout(() => $("styleChips")?.scrollIntoView({ behavior:"smooth", block:"center" }), 140);
     });
 
     $("styleChips")?.addEventListener("click", (e) => {
@@ -472,158 +331,139 @@
 
     $("btnResetVisited")?.addEventListener("click", () => setTimeout(() => scrollTo("searchCard"), 200));
 
-    /* ------------------ “Cosa c’è” (Google AI) ------------------ */
-    function getPrimaryPlaceQuery(){
-      const area = $("resultArea");
-      if (!area) return "";
+    // ---------- COSA C'È (Google AI via Search) ----------
+    let lastQuery = ""; // aggiornato quando selezioni una card
 
-      // prova a prendere la prima card risultato vera
-      const firstCard = area.querySelector(".card");
-      if (!firstCard) return "";
+    const cleanText = (s) => String(s || "")
+      .replace(/\s+/g, " ")
+      .replace(/[^\p{L}\p{N}\s'’.,-]/gu, "") // toglie emoji/icone
+      .trim();
 
-      // titolo = prima riga grossa (fallback: textContent)
-      const tEl = firstCard.querySelector("div[style*='font-weight:950']") || firstCard.querySelector("h3,h2,h1");
-      const title = (tEl?.textContent || "").trim();
+    function buildWhatIsQueryFromCard(card){
+      if (!card) return "";
 
-      // luogo: cerca una riga che contiene 📍 (come in events.js) o comunque testo
-      const whereEl = Array.from(firstCard.querySelectorAll("div"))
-        .find(d => (d.textContent || "").trim().startsWith("📍"));
-      const where = (whereEl?.textContent || "").replace("📍", "").trim();
+      // prova a prendere titolo "forte"
+      let title = "";
+      const candidates = card.querySelectorAll("h1,h2,h3,.title,.cardTitle,[data-title]");
+      if (candidates && candidates[0]) title = candidates[0].textContent || "";
 
-      const q = [title, where, "Italia"].filter(Boolean).join(" ");
-      return q.trim();
-    }
-
-    function openGoogleAIForPlace(query){
-      const q = (query || "").trim();
-      if (!q) {
-        // fallback: cerca sulla partenza (se non c’è risultato)
-        const o = ($("originLabel")?.value || "").trim();
-        const q2 = o ? `Cosa c'è a ${o}` : "Cosa c'è a Verona";
-        window.open(`https://www.google.com/search?q=${encodeURIComponent(q2)}`, "_blank", "noopener");
-        return;
+      // fallback: prima riga "grossa"
+      if (!title) {
+        const firstDiv = card.querySelector("div");
+        title = firstDiv ? firstDiv.textContent : "";
       }
-      const full = `Cosa c'è a ${q} cosa vedere cosa fare`;
-      window.open(`https://www.google.com/search?q=${encodeURIComponent(full)}`, "_blank", "noopener");
+
+      // prova a prendere riga con 📍
+      let where = "";
+      const allText = card.textContent || "";
+      const lines = allText.split("\n").map(x => x.trim()).filter(Boolean);
+      const whereLine = lines.find(l => l.includes("📍"));
+      if (whereLine) where = whereLine.replace("📍","").trim();
+
+      title = cleanText(title);
+      where = cleanText(where);
+
+      const q = cleanText(`cos'è ${title} ${where}`) || cleanText(`cos'è ${where || title}`);
+      return q;
     }
 
-    // bottone fuori (quello “storico”)
-    $("btnWhatsThere")?.addEventListener("click", () => {
-      const q = getPrimaryPlaceQuery();
-      openGoogleAIForPlace(q);
-    });
+    function openGoogleAI(q){
+      const query = cleanText(q);
+      if (!query) return;
+      const url = `https://www.google.com/search?q=${encodeURIComponent(query)}&hl=it&gl=it`;
+      window.open(url, "_blank", "noopener");
+    }
 
-    // ✅ Inietta “Cosa c’è” dentro ogni card risultato (senza toccare app.js)
+    // ---------- Inserisci bottone "COSA C'È" dentro OGNI card (senza toccare app.js) ----------
     function injectWhatIsButtons(){
       const area = $("resultArea");
       if (!area) return;
 
-      const cards = Array.from(area.querySelectorAll(".card"));
-      for (const c of cards) {
-        if (c.querySelector("[data-what-is-btn='1']")) continue;
+      const cards = area.querySelectorAll(".card");
+      cards.forEach(card => {
+        // evita doppioni
+        if (card.querySelector(".btnWhatIsInCard")) return;
 
-        // Evita di mettere il bottone nella card “header”/emptyState se vuoi
-        const txt = (c.textContent || "").toLowerCase();
-        const looksLikeEmpty = txt.includes("pronto quando lo sei") || txt.includes("nessuna idea trovata");
-        if (looksLikeEmpty) continue;
+        // crea bottone
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "btn btnWhatIs btnWhatIsInCard";
+        btn.textContent = "✨ COSA C’È";
+        btn.style.marginLeft = "0";
 
-        const row = document.createElement("div");
-        row.style.display = "flex";
-        row.style.gap = "10px";
-        row.style.flexWrap = "wrap";
-        row.style.marginTop = "12px";
-
-        const b = document.createElement("button");
-        b.className = "btnGhost";
-        b.type = "button";
-        b.textContent = "👀 Cosa c’è";
-        b.setAttribute("data-what-is-btn","1");
-
-        b.addEventListener("click", (ev) => {
+        btn.addEventListener("click", (ev) => {
           ev.preventDefault();
           ev.stopPropagation();
-
-          // query dal testo della card (titolo + luogo)
-          const tEl = c.querySelector("div[style*='font-weight:950']") || c.querySelector("h3,h2,h1");
-          const title = (tEl?.textContent || "").trim();
-
-          const whereEl = Array.from(c.querySelectorAll("div"))
-            .find(d => (d.textContent || "").trim().startsWith("📍"));
-          const where = (whereEl?.textContent || "").replace("📍", "").trim();
-
-          const q = [title, where, "Italia"].filter(Boolean).join(" ").trim();
-          openGoogleAIForPlace(q);
+          const q = buildWhatIsQueryFromCard(card);
+          lastQuery = q || lastQuery;
+          openGoogleAI(lastQuery);
         });
 
-        row.appendChild(b);
+        // dove inserirlo? -> cerca una "row di bottoni", se esiste, altrimenti append in fondo
+        const actionRow =
+          card.querySelector(".ctaRow") ||
+          card.querySelector("[style*='display:flex']") ||
+          card.querySelector(".row") ||
+          null;
 
-        // lo metto in fondo alla card, ma prima della "Fonte:" se esiste
-        const footer = Array.from(c.querySelectorAll("div")).find(d => (d.textContent||"").trim().toLowerCase().startsWith("fonte:"));
-        if (footer && footer.parentNode === c) {
-          c.insertBefore(row, footer);
+        if (actionRow) {
+          actionRow.appendChild(btn);
         } else {
-          c.appendChild(row);
+          const wrap = document.createElement("div");
+          wrap.style.display = "flex";
+          wrap.style.gap = "10px";
+          wrap.style.flexWrap = "wrap";
+          wrap.style.marginTop = "12px";
+          wrap.appendChild(btn);
+          card.appendChild(wrap);
         }
-      }
+      });
     }
 
-    const area = $("resultArea");
-    if (area) {
-      const mo = new MutationObserver(() => injectWhatIsButtons());
-      mo.observe(area, { childList: true, subtree: true });
+    // osserva #resultArea: quando app.js/events.js renderizza nuove card -> reinserisci i bottoni
+    const obs = new MutationObserver(() => {
       injectWhatIsButtons();
+    });
+    if ($("resultArea")) {
+      obs.observe($("resultArea"), { childList: true, subtree: true });
+    }
+    // prima passata
+    setTimeout(injectWhatIsButtons, 300);
+
+    // ---------- Cambio colore al tocco delle card + selezione meta per "COSA C'È" globale ----------
+    const TONES = [1,2,3,4];
+    function nextTone(cur){
+      const i = TONES.indexOf(Number(cur || 0));
+      return TONES[(i + 1) % TONES.length];
     }
 
-    /* ------------------ FAB SOS ------------------ */
-    const fab = $("fabSOS");
-    const mask = $("sheetMask");
-    const sheet = $("sheetSOS");
+    document.addEventListener("click", (e) => {
+      const card = e.target.closest("#resultArea .card");
+      if (!card) return;
 
-    const openSheet = () => {
-      mask.style.display = "block";
-      sheet.classList.add("open");
-      if (navigator.vibrate) navigator.vibrate(14);
-    };
-    const closeSheet = () => {
-      sheet.classList.remove("open");
-      setTimeout(() => { mask.style.display = "none"; }, 180);
+      // evidenzia selezione
+      document.querySelectorAll("#resultArea .card.isActive").forEach(c => c.classList.remove("isActive"));
+      card.classList.add("isActive");
+
+      // cambia colore
+      card.dataset.tone = String(nextTone(card.dataset.tone));
+
+      // aggiorna query per tasto globale
+      const q = buildWhatIsQueryFromCard(card);
+      if (q) lastQuery = q;
+
       if (navigator.vibrate) navigator.vibrate(10);
-    };
-
-    fab?.addEventListener("click", openSheet);
-    $("btnCloseSheet")?.addEventListener("click", closeSheet);
-    $("btnSOSClose2")?.addEventListener("click", closeSheet);
-    mask?.addEventListener("click", closeSheet);
-
-    const ideas = [
-      ["🧦 Gara dei calzini (versione stupida)", "Prendi 6 calzini. Abbinali nel modo più sbagliato possibile. Vince chi ride per ultimo."],
-      ["📦 Scatola inutile", "Prendi una scatola. Riempila di cose inutili. Poi vendila come invenzione geniale (con spot)."],
-      ["🥄 Trasporto assurdo", "Porta un oggetto in un’altra stanza usando solo gomiti / cucchiai / piedi. Zero mani."],
-      ["🗣️ Parlato strano", "Fai una cosa normale ma parlando solo come robot / alieni / nonni drammatici."],
-      ["🏃 Rallentatore estremo", "Qualsiasi azione… ma al rallentatore massimo. Chi ride perde."]
-    ];
-    $("btnSOSShuffle")?.addEventListener("click", () => {
-      const box = $("sosIdeas");
-      if (!box) return;
-      const pick = () => ideas[Math.floor(Math.random() * ideas.length)];
-      const a = pick(), b = pick(), c = pick();
-      box.innerHTML = `
-        <div class="ideaCard"><div class="t">${a[0]}</div><div class="d">${a[1]}</div></div>
-        <div class="ideaCard"><div class="t">${b[0]}</div><div class="d">${b[1]}</div></div>
-        <div class="ideaCard"><div class="t">${c[0]}</div><div class="d">${c[1]}</div></div>
-      `;
-      if (navigator.vibrate) navigator.vibrate(12);
     });
 
-    /* ------------------ cambio palette su tocco schede (resta) ------------------ */
-    const isInteractive = (el) => !!el?.closest("button,a,input,textarea,select,label,.chip");
-    document.addEventListener("click", (e) => {
-      const t = e.target;
-      if (isInteractive(t)) return;
-      const card = t.closest(".card, .heroCard");
-      if (!card) return;
-      nextPalette();
-    }, { passive:true });
+    // tasto globale (fuori)
+    $("btnWhatIsGlobal")?.addEventListener("click", () => {
+      // se non c'è selezione, prova la prima card
+      if (!lastQuery) {
+        const first = document.querySelector("#resultArea .card");
+        if (first) lastQuery = buildWhatIsQueryFromCard(first);
+      }
+      openGoogleAI(lastQuery);
+    });
 
   })();
   </script>
