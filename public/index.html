@@ -21,35 +21,55 @@
       --text:#F6F6F6;
       --muted:#B9B2A9;
 
-      --acc:#E86A33;
-      --acc2:#F4D35E;
+      /* ✅ NUOVI ACCENT (no arancione) */
+      --acc:#8B5CF6;   /* viola premium */
+      --acc2:#E9D5FF;  /* lilla soft */
       --border:rgba(255,255,255,.10);
       --shadow: rgba(0,0,0,.35);
+
+      /* ✅ colore chip attiva (dinamico per categoria) */
+      --chipBg: rgba(139,92,246,.18);
+      --chipFg: #F6F6F6;
+      --chipRing: rgba(233,213,255,.35);
     }
 
     .accent{ color: var(--acc2); }
 
+    /* ✅ fix accavallamenti (safe, globale) */
+    .heroTitle, .cardTitle, .brandTitle { 
+      line-height: 1.12;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+    }
+    .heroDesc, .cardHint, .small, .muted {
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
     .bgGlow{
       background:
-        radial-gradient(700px 420px at 18% 10%, rgba(232,106,51,.20), transparent 55%),
-        radial-gradient(760px 460px at 82% 22%, rgba(244,211,94,.14), transparent 60%),
-        radial-gradient(900px 520px at 50% 92%, rgba(232,106,51,.10), transparent 60%);
+        radial-gradient(700px 420px at 18% 10%, rgba(139,92,246,.18), transparent 55%),
+        radial-gradient(760px 460px at 82% 22%, rgba(233,213,255,.12), transparent 60%),
+        radial-gradient(900px 520px at 50% 92%, rgba(139,92,246,.10), transparent 60%);
       filter: blur(6px);
       opacity: .95;
       pointer-events: none;
     }
 
     .btnPrimary{
-      background: linear-gradient(135deg, rgba(232,106,51,1), rgba(244,211,94,1));
-      border-color: rgba(244,211,94,.35);
+      background: linear-gradient(135deg, rgba(139,92,246,1), rgba(233,213,255,1));
+      border-color: rgba(233,213,255,.32);
       color:#141214;
       font-weight: 950;
     }
     .btnPrimary:active{ transform: scale(.99); }
 
+    /* ✅ chips più “piene” (non solo bordo) quando active */
     .chip.active{
-      border-color: rgba(244,211,94,.45);
-      box-shadow: 0 0 0 2px rgba(232,106,51,.12) inset;
+      background: var(--chipBg);
+      color: var(--chipFg);
+      border-color: var(--chipRing);
+      box-shadow: 0 0 0 2px rgba(0,0,0,.18) inset;
     }
 
     /* ✅ categorie più immediate: 2 righe, scroll orizzontale */
@@ -81,8 +101,8 @@
     }
     .hScrollHint .dot{
       width:6px;height:6px;border-radius:50%;
-      background: rgba(244,211,94,.9);
-      box-shadow: 0 0 0 3px rgba(232,106,51,.14);
+      background: rgba(233,213,255,.85);
+      box-shadow: 0 0 0 3px rgba(139,92,246,.14);
       flex:0 0 auto;
     }
 
@@ -109,7 +129,7 @@
     .fabSOS .b{
       width:34px;height:34px;border-radius:12px;
       display:flex;align-items:center;justify-content:center;
-      background: linear-gradient(135deg, rgba(232,106,51,.92), rgba(244,211,94,.92));
+      background: linear-gradient(135deg, rgba(139,92,246,.92), rgba(233,213,255,.92));
       color:#141214;
       flex:0 0 auto;
       box-shadow: 0 10px 18px rgba(0,0,0,.25);
@@ -165,6 +185,13 @@
     .ideaCard .t{ font-weight: 950; }
     .ideaCard .d{ margin-top:6px; color: var(--muted); line-height:1.35; font-size:13px; }
     .sheetActions{ margin-top: 12px; display:flex; gap:10px; flex-wrap:wrap; }
+
+    /* ✅ rende il bottone "Cosa c'è" più visibile senza cambiare UI */
+    #btnWhatsThere{
+      border-color: rgba(233,213,255,.35);
+      box-shadow: 0 0 0 2px rgba(139,92,246,.10) inset;
+      font-weight: 900;
+    }
   </style>
 </head>
 
@@ -330,7 +357,6 @@
         <div class="cardHint">Meta + alternative</div>
       </div>
 
-      <!-- ✅ “Cosa c’è” globale (DEVE aprire l’ultimo posto selezionato) -->
       <div class="row wraprow" style="gap:10px; margin:10px 0 14px;">
         <button id="btnWhatsThere" class="btnGhost" type="button">👀 Cosa c’è</button>
       </div>
@@ -346,7 +372,7 @@
 
     <footer class="footer clickSafe">
       <div class="footerLine">
-        <span class="dot"></span> Jamo • build UI v6.1 • warm premium
+        <span class="dot"></span> Jamo • build UI v6.1 • premium vibes
       </div>
       <div class="footerLine small muted">
         Offline-first (best effort). Nessun tracciamento GPS. Link esterni: Maps / Wiki / Foto.
@@ -441,9 +467,39 @@
 
     $("btnResetVisited")?.addEventListener("click", () => setTimeout(() => scrollTo("searchCard"), 200));
 
-    /* ------------------ “Cosa c’è” (Google AI) — FIX ROBUSTO ------------------ */
+    /* ------------------ CHIP COLORS (per categoria) ------------------ */
+    const CAT_COLORS = {
+      mare:   { bg:"rgba(59,130,246,.16)",  fg:"#F6F6F6", ring:"rgba(59,130,246,.30)" },  // blu mare soft
+      lago:   { bg:"rgba(14,165,233,.16)",  fg:"#F6F6F6", ring:"rgba(14,165,233,.30)" },  // azzurro soft
+      natura: { bg:"rgba(34,197,94,.14)",   fg:"#F6F6F6", ring:"rgba(34,197,94,.28)"  },  // verde soft
+      hiking: { bg:"rgba(132,204,22,.14)",  fg:"#F6F6F6", ring:"rgba(132,204,22,.28)" },  // lime soft
+      montagna:{bg:"rgba(148,163,184,.16)", fg:"#F6F6F6", ring:"rgba(148,163,184,.30)"},  // slate soft
+      borghi: { bg:"rgba(245,158,11,.12)",  fg:"#F6F6F6", ring:"rgba(245,158,11,.26)" },  // ambra soft (non arancio sparato)
+      storia: { bg:"rgba(168,85,247,.14)",  fg:"#F6F6F6", ring:"rgba(168,85,247,.28)" },  // viola soft
+      relax:  { bg:"rgba(20,184,166,.14)",  fg:"#F6F6F6", ring:"rgba(20,184,166,.28)" },  // teal soft
+      family: { bg:"rgba(244,114,182,.14)", fg:"#F6F6F6", ring:"rgba(244,114,182,.28)"},  // pink soft
+      cantine:{ bg:"rgba(244,63,94,.12)",   fg:"#F6F6F6", ring:"rgba(244,63,94,.26)"  },  // rose soft
+      eventi: { bg:"rgba(234,179,8,.12)",   fg:"#F6F6F6", ring:"rgba(234,179,8,.26)"  },  // gold soft
+      default:{ bg:"rgba(139,92,246,.18)",  fg:"#F6F6F6", ring:"rgba(233,213,255,.35)"}
+    };
 
-    // Salva ultimo posto "selezionato" dall’utente (card toccata / bottone card)
+    function setChipThemeForCategory(cat){
+      const c = CAT_COLORS[cat] || CAT_COLORS.default;
+      document.documentElement.style.setProperty("--chipBg", c.bg);
+      document.documentElement.style.setProperty("--chipFg", c.fg);
+      document.documentElement.style.setProperty("--chipRing", c.ring);
+    }
+
+    // aggiorna tema chip quando selezioni una categoria (senza rompere logica active di app.js)
+    $("categoryChips")?.addEventListener("click", (e) => {
+      const chip = e.target.closest(".chip");
+      if (!chip) return;
+      const cat = String(chip.dataset.cat || "").toLowerCase();
+      setChipThemeForCategory(cat);
+    });
+
+    /* ------------------ “Cosa c’è” (Google) — SOLO TESTO, NO COORD ------------------ */
+
     let LAST_SELECTED_QUERY = "";
 
     function cleanText(s){
@@ -453,33 +509,27 @@
         .trim();
     }
 
-    // 1) prova: leggere da card (titolo + riga 📍)
-    function extractNamePlaceFromCard(card){
-      if (!card) return "";
+    function extractTitleFromCard(card){
       const titleEl =
         card.querySelector("h1,h2,h3") ||
         card.querySelector("[data-title]") ||
         card.querySelector("div[style*='font-weight:950']") ||
         card.querySelector("div[style*='font-weight: 950']");
-
-      const title = cleanText(titleEl?.textContent || "");
-      const whereEl = Array.from(card.querySelectorAll("div,span,p"))
-        .find(el => cleanText(el.textContent || "").startsWith("📍") || (el.textContent||"").trim().startsWith("📍"));
-      const where = cleanText(whereEl?.textContent || "");
-
-      const q = [title, where].filter(Boolean).join(" • ").trim();
-      return q;
+      return cleanText(titleEl?.textContent || "");
     }
 
-    // 2) fallback: prendere testo dalla query di Google Maps search (sempre testuale, NO coordinate)
+    function extractWhereFromCard(card){
+      const whereEl = Array.from(card.querySelectorAll("div,span,p"))
+        .find(el => (el.textContent || "").trim().startsWith("📍"));
+      return cleanText(whereEl?.textContent || "");
+    }
+
     function extractFromMapsSearchLink(card){
-      if (!card) return "";
       const a = Array.from(card.querySelectorAll("a[href]"))
         .find(x => /google\.[^/]+\/maps\/search\/\?api=1&query=/i.test(x.getAttribute("href") || ""));
       if (!a) return "";
       try{
-        const href = a.getAttribute("href") || "";
-        const u = new URL(href);
+        const u = new URL(a.getAttribute("href"));
         const q = u.searchParams.get("query") || "";
         return cleanText(decodeURIComponent(q));
       }catch(_){
@@ -488,19 +538,21 @@
     }
 
     function bestQueryForCard(card){
-      // preferisci sempre nome+luogo; se non c’è, usa maps search query (testo)
-      const a = extractNamePlaceFromCard(card);
-      if (a && a.length >= 3) return a;
-      const b = extractFromMapsSearchLink(card);
-      if (b && b.length >= 3) return b;
+      if (!card) return "";
+      const title = extractTitleFromCard(card);
+      const where = extractWhereFromCard(card);
+      const combo = [title, where].filter(Boolean).join(" • ").trim();
+      if (combo && combo.length >= 3) return combo;
+
+      const fromMaps = extractFromMapsSearchLink(card);
+      if (fromMaps && fromMaps.length >= 3) return fromMaps;
+
       return "";
     }
 
     function getPrimaryResultCard(){
       const area = $("resultArea");
       if (!area) return null;
-
-      // prendi la prima card "vera"
       const cards = Array.from(area.querySelectorAll(".card"));
       for (const c of cards){
         const txt = (c.textContent || "").toLowerCase();
@@ -511,30 +563,28 @@
       return null;
     }
 
-    function openGoogleAIForPlace(query){
+    function openGoogleForPlace(query){
       const q = cleanText(query);
       if (!q){
-        // fallback ultra-safe: usa origine SOLO se non abbiamo proprio niente
         const o = cleanText($("originLabel")?.value || "");
         const q2 = o ? `Cosa c'è a ${o} cosa vedere cosa fare` : "Cosa c'è a Verona cosa vedere cosa fare";
         window.open(`https://www.google.com/search?q=${encodeURIComponent(q2)}`, "_blank", "noopener");
         return;
       }
+      // ✅ query “AI-friendly”
       const full = `Cosa c'è a ${q} cosa vedere cosa fare`;
       window.open(`https://www.google.com/search?q=${encodeURIComponent(full)}`, "_blank", "noopener");
     }
 
-    // ✅ Bottone globale: apre ultimo selezionato; se non c’è, prende il primo risultato
     $("btnWhatsThere")?.addEventListener("click", () => {
       let q = cleanText(LAST_SELECTED_QUERY);
       if (!q){
         const c = getPrimaryResultCard();
         q = bestQueryForCard(c);
       }
-      openGoogleAIForPlace(q);
+      openGoogleForPlace(q);
     });
 
-    // ✅ Inietta “Cosa c’è” dentro OGNI card risultato (senza toccare app.js)
     function injectWhatIsButtons(){
       const area = $("resultArea");
       if (!area) return;
@@ -558,29 +608,27 @@
         b.type = "button";
         b.textContent = "👀 Cosa c’è";
         b.setAttribute("data-what-is-btn","1");
+        b.style.borderColor = "rgba(233,213,255,.35)";
+        b.style.fontWeight = "900";
 
         b.addEventListener("click", (ev) => {
           ev.preventDefault();
           ev.stopPropagation();
-
           const q = bestQueryForCard(c);
-          if (q) LAST_SELECTED_QUERY = q;   // ✅ salva selezione
-          openGoogleAIForPlace(q);
+          if (q) LAST_SELECTED_QUERY = q;
+          openGoogleForPlace(q);
         });
 
         row.appendChild(b);
 
         // Inserisci prima di "Fonte:" se esiste, altrimenti in fondo
-        const footer = Array.from(c.querySelectorAll("div")).find(d => (d.textContent||"").trim().toLowerCase().startsWith("fonte:"));
-        if (footer && footer.parentNode === c) {
-          c.insertBefore(row, footer);
-        } else {
-          c.appendChild(row);
-        }
+        const footer = Array.from(c.querySelectorAll("div"))
+          .find(d => (d.textContent||"").trim().toLowerCase().startsWith("fonte:"));
+        if (footer && footer.parentNode === c) c.insertBefore(row, footer);
+        else c.appendChild(row);
       }
     }
 
-    // ✅ Quando tocchi una card (anche senza premere bottoni), salviamo quel posto come “selezionato”
     function enableCardSelectionCapture(){
       const area = $("resultArea");
       if (!area) return;
@@ -646,6 +694,10 @@
       `;
       if (navigator.vibrate) navigator.vibrate(12);
     });
+
+    /* ✅ init: allineo chip theme alla categoria attiva iniziale */
+    const firstActive = document.querySelector("#categoryChips .chip.active");
+    if (firstActive) setChipThemeForCategory(String(firstActive.dataset.cat||"").toLowerCase());
 
   })();
   </script>
