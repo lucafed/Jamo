@@ -21,9 +21,9 @@
       --text:#F6F6F6;
       --muted:#B9B2A9;
 
-      /* ✅ NUOVA PALETTE (via arancione) — “figa” ma non neon */
-      --acc:#7C5CFF;     /* viola premium */
-      --acc2:#2EE6A6;    /* menta elegante */
+      /* ✅ default premium (non arancione) */
+      --acc:#7C5CFF;     /* viola */
+      --acc2:#2EE6A6;    /* teal */
       --border:rgba(255,255,255,.10);
       --shadow: rgba(0,0,0,.35);
     }
@@ -40,28 +40,20 @@
       pointer-events: none;
     }
 
-    /* CTA più “premium” */
     .btnPrimary{
-      background: linear-gradient(135deg, rgba(124,92,255,1), rgba(46,230,166,1));
-      border-color: rgba(46,230,166,.35);
+      background: linear-gradient(135deg, var(--acc), var(--acc2));
+      border-color: rgba(255,255,255,.14);
       color:#121214;
       font-weight: 950;
     }
     .btnPrimary:active{ transform: scale(.99); }
 
-    /* ✅ CHIP: cambio pieno (non solo bordo) */
-    .chip{
-      background: rgba(255,255,255,.04);
-      border: 1px solid rgba(255,255,255,.10);
-      transition: background .18s ease, color .18s ease, transform .12s ease, border-color .18s ease;
-    }
+    /* ✅ chip active piena (non solo contorno) */
     .chip.active{
-      background: linear-gradient(135deg, rgba(124,92,255,1), rgba(46,230,166,1));
+      background: linear-gradient(135deg, var(--acc), var(--acc2));
       color:#111215;
-      font-weight: 950;
       border-color: rgba(255,255,255,.12);
-      transform: scale(1.03);
-      box-shadow: 0 10px 22px rgba(0,0,0,.20);
+      box-shadow: 0 10px 18px rgba(0,0,0,.18);
     }
 
     /* ✅ categorie più immediate: 2 righe, scroll orizzontale */
@@ -93,7 +85,7 @@
     }
     .hScrollHint .dot{
       width:6px;height:6px;border-radius:50%;
-      background: rgba(46,230,166,.9);
+      background: rgba(255,255,255,.85);
       box-shadow: 0 0 0 3px rgba(124,92,255,.14);
       flex:0 0 auto;
     }
@@ -121,7 +113,7 @@
     .fabSOS .b{
       width:34px;height:34px;border-radius:12px;
       display:flex;align-items:center;justify-content:center;
-      background: linear-gradient(135deg, rgba(124,92,255,.92), rgba(46,230,166,.92));
+      background: linear-gradient(135deg, var(--acc), var(--acc2));
       color:#121214;
       flex:0 0 auto;
       box-shadow: 0 10px 18px rgba(0,0,0,.25);
@@ -178,31 +170,31 @@
     .ideaCard .d{ margin-top:6px; color: var(--muted); line-height:1.35; font-size:13px; }
     .sheetActions{ margin-top: 12px; display:flex; gap:10px; flex-wrap:wrap; }
 
-    /* ✅ “Cosa c’è” visibile e non si accavalla MAI */
-    .whatIsRow{
+    /* ✅ evita accavalli: riga “Cosa c’è” dentro le card */
+    .whatIsWrap{
       display:flex;
+      justify-content:flex-start;
       gap:10px;
       flex-wrap:wrap;
-      margin:10px 0 14px;
-      align-items:center;
+      margin-top:12px;
     }
     .btnWhatIs{
-      padding:10px 14px;
-      border-radius: 16px;
-      border: 1px solid rgba(255,255,255,.16);
-      background: rgba(255,255,255,.06);
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.04);
       color: var(--text);
-      font-weight: 950;
+      font-weight: 900;
       letter-spacing: .2px;
-      white-space: nowrap;
     }
     .btnWhatIs:active{ transform: scale(.99); }
 
-    /* wrapper iniettato nelle card risultato */
-    .whatIsWrap{
-      margin-top: 12px;
-      display:flex;
-      justify-content:flex-start;
+    /* (opzionale) highlight card selezionata */
+    #resultArea .card[data-selected="1"]{
+      box-shadow: 0 0 0 2px rgba(255,255,255,.10) inset, 0 18px 30px rgba(0,0,0,.25);
     }
   </style>
 </head>
@@ -369,9 +361,9 @@
         <div class="cardHint">Meta + alternative</div>
       </div>
 
-      <!-- ✅ bottone globale, ben visibile -->
-      <div class="whatIsRow">
-        <button id="btnWhatsThere" class="btnWhatIs" type="button">👀 Cosa c’è</button>
+      <!-- ✅ bottone globale (usa la meta selezionata o la prima) -->
+      <div class="row wraprow" style="gap:10px; margin:10px 0 14px;">
+        <button id="btnWhatsThere" class="btnWhatIs" type="button">👀 Cosa c’è (del posto)</button>
       </div>
 
       <div id="resultArea">
@@ -385,7 +377,7 @@
 
     <footer class="footer clickSafe">
       <div class="footerLine">
-        <span class="dot"></span> Jamo • build UI v6.1 • premium
+        <span class="dot"></span> Jamo • build UI v6.1
       </div>
       <div class="footerLine small muted">
         Offline-first (best effort). Nessun tracciamento GPS. Link esterni: Maps / Wiki / Foto.
@@ -438,21 +430,29 @@
     "use strict";
     const $ = (id) => document.getElementById(id);
 
-    /* ------------------ palette engine (solo cambio colori, non UI) ------------------ */
-    const PALETTES = [
-      { acc:"#7C5CFF", acc2:"#2EE6A6", g1:"rgba(124,92,255,.18)", g2:"rgba(46,230,166,.12)", g3:"rgba(124,92,255,.10)" },
-      { acc:"#FF5C8A", acc2:"#FFD166", g1:"rgba(255,92,138,.16)", g2:"rgba(255,209,102,.10)", g3:"rgba(255,92,138,.08)" },
-      { acc:"#2A9D8F", acc2:"#E9C46A", g1:"rgba(42,157,143,.16)", g2:"rgba(233,196,106,.10)", g3:"rgba(42,157,143,.08)" },
-      { acc:"#6D6875", acc2:"#FFB4A2", g1:"rgba(109,104,117,.16)", g2:"rgba(255,180,162,.10)", g3:"rgba(109,104,117,.08)" },
-      { acc:"#3A86FF", acc2:"#FFBE0B", g1:"rgba(58,134,255,.16)", g2:"rgba(255,190,11,.10)", g3:"rgba(58,134,255,.08)" }
-    ];
-    let pIdx = 0;
+    /* ===============================
+       PALETTE COERENTE PER CATEGORIA
+       =============================== */
+    const CAT_PALETTES = {
+      natura:   { acc:"#2ECC71", acc2:"#A8FF78", g1:"rgba(46,204,113,.18)", g2:"rgba(168,255,120,.10)", g3:"rgba(46,204,113,.08)" },
+      hiking:   { acc:"#16A085", acc2:"#B8F2E6", g1:"rgba(22,160,133,.18)", g2:"rgba(184,242,230,.10)", g3:"rgba(22,160,133,.08)" },
+      borghi:   { acc:"#C08457", acc2:"#F2D0A4", g1:"rgba(192,132,87,.18)", g2:"rgba(242,208,164,.10)", g3:"rgba(192,132,87,.08)" },
+      storia:   { acc:"#8E7CC3", acc2:"#D7C7FF", g1:"rgba(142,124,195,.18)", g2:"rgba(215,199,255,.10)", g3:"rgba(142,124,195,.08)" },
+      montagna: { acc:"#6C757D", acc2:"#CED4DA", g1:"rgba(108,117,125,.18)", g2:"rgba(206,212,218,.10)", g3:"rgba(108,117,125,.08)" },
+      mare:     { acc:"#1D4ED8", acc2:"#38BDF8", g1:"rgba(29,78,216,.16)",  g2:"rgba(56,189,248,.10)", g3:"rgba(29,78,216,.08)" },
+      lago:     { acc:"#2563EB", acc2:"#22C55E", g1:"rgba(37,99,235,.16)",  g2:"rgba(34,197,94,.10)",  g3:"rgba(37,99,235,.08)" },
+      relax:    { acc:"#A855F7", acc2:"#FBCFE8", g1:"rgba(168,85,247,.16)", g2:"rgba(251,207,232,.10)", g3:"rgba(168,85,247,.08)" },
+      family:   { acc:"#F59E0B", acc2:"#34D399", g1:"rgba(245,158,11,.16)", g2:"rgba(52,211,153,.10)", g3:"rgba(245,158,11,.08)" },
+      cantine:  { acc:"#9B2226", acc2:"#E9C46A", g1:"rgba(155,34,38,.16)",  g2:"rgba(233,196,106,.10)", g3:"rgba(155,34,38,.08)" },
+      eventi:   { acc:"#7C3AED", acc2:"#FDE047", g1:"rgba(124,58,237,.16)", g2:"rgba(253,224,71,.10)",  g3:"rgba(124,58,237,.08)" },
+      default:  { acc:"#7C5CFF", acc2:"#2EE6A6", g1:"rgba(124,92,255,.18)", g2:"rgba(46,230,166,.12)", g3:"rgba(124,92,255,.10)" },
+    };
+    let currentCat = "default";
 
     function applyPalette(p){
       document.documentElement.style.setProperty("--acc", p.acc);
       document.documentElement.style.setProperty("--acc2", p.acc2);
 
-      // aggiorna glow
       const g = document.querySelector(".bgGlow");
       if (g){
         g.style.background =
@@ -461,37 +461,17 @@
            radial-gradient(900px 520px at 50% 92%, ${p.g3}, transparent 60%)`;
       }
 
-      // aggiorna CTA coerente (senza toccare CSS esterno)
-      const styleTagId = "dynPrimaryBtn";
-      let st = document.getElementById(styleTagId);
-      if (!st){
-        st = document.createElement("style");
-        st.id = styleTagId;
-        document.head.appendChild(st);
-      }
-      st.textContent = `
-        .btnPrimary{
-          background: linear-gradient(135deg, ${p.acc}, ${p.acc2}) !important;
-          border-color: rgba(255,255,255,.14) !important;
-          color:#121214 !important;
-        }
-        .chip.active{
-          background: linear-gradient(135deg, ${p.acc}, ${p.acc2}) !important;
-          color:#111215 !important;
-        }
-        .fabSOS .b{
-          background: linear-gradient(135deg, ${p.acc}, ${p.acc2}) !important;
-          color:#121214 !important;
-        }
-      `;
-    }
-    function nextPalette(){
-      pIdx = (pIdx + 1) % PALETTES.length;
-      applyPalette(PALETTES[pIdx]);
       if (navigator.vibrate) navigator.vibrate(8);
     }
+    function setCategory(cat){
+      currentCat = cat || "default";
+      applyPalette(CAT_PALETTES[currentCat] || CAT_PALETTES.default);
+    }
+    applyPalette(CAT_PALETTES.default);
 
-    /* ------------------ scroll smart (come prima) ------------------ */
+    /* ===============================
+       SCROLL SMART
+       =============================== */
     const scrollTo = (id, block = "start") => {
       const el = $(id);
       if (!el) return;
@@ -504,12 +484,9 @@
       const chip = e.target.closest(".chip");
       if (!chip) return;
 
-      // ✅ cambia palette ad ogni tap categoria
-      nextPalette();
-
       const cat = String(chip.dataset.cat || "").toLowerCase();
+      setCategory(cat);
 
-      // FAB SOS solo in family
       const fab = $("fabSOS");
       if (fab) fab.style.display = (cat === "family") ? "flex" : "none";
 
@@ -523,82 +500,92 @@
     $("styleChips")?.addEventListener("click", (e) => {
       const chip = e.target.closest(".chip");
       if (!chip) return;
-      setTimeout(() => {
-        $("btnFind")?.scrollIntoView({ behavior: "smooth", block: "center" });
-        if (navigator.vibrate) navigator.vibrate(12);
-      }, 140);
+      setTimeout(() => $("btnFind")?.scrollIntoView({ behavior: "smooth", block: "center" }), 140);
     });
 
-    $("btnFind")?.addEventListener("click", () => {
-      setTimeout(() => scrollTo("resultCard"), 250);
-      if (navigator.vibrate) navigator.vibrate(20);
-    });
-
+    $("btnFind")?.addEventListener("click", () => setTimeout(() => scrollTo("resultCard"), 250));
     $("btnResetVisited")?.addEventListener("click", () => setTimeout(() => scrollTo("searchCard"), 200));
 
-    /* ------------------ “Cosa c’è” (Google AI) — SOLO NOME + LUOGO ------------------ */
-    function extractBestPlaceTextFromCard(card){
-      const text = (card.textContent || "").replace(/\s+/g," ").trim();
+    /* ===============================
+       COSA C’È -> posto selezionato (NO coordinate)
+       =============================== */
+    const resultArea = $("resultArea");
+    let selectedCard = null;
 
-      // prende una riga con 📍 (molto comune nei tuoi render) oppure prova con " • "
-      const m = text.match(/📍\s*([^]+?)\s*(Fonte:|Dataset:|score:|$)/i);
-      if (m && m[1]) return m[1].replace(/\s+/g," ").trim();
-
-      return "";
+    function stripCoords(s){
+      return String(s||"")
+        .replace(/\b-?\d{1,3}\.\d+\s*,\s*-?\d{1,3}\.\d+\b/g, "")
+        .replace(/\b-?\d{1,3}\.\d+\s+-?\d{1,3}\.\d+\b/g, "")
+        .replace(/\s{2,}/g," ")
+        .trim();
     }
-
+    function extractWhereFromCard(card){
+      const divs = Array.from(card.querySelectorAll("div"));
+      const whereEl = divs.find(d => (d.textContent || "").trim().startsWith("📍"));
+      let where = (whereEl?.textContent || "").replace(/^📍\s*/,"").trim();
+      where = stripCoords(where);
+      where = where.replace(/\s*[•|—|-]\s*$/g,"").trim();
+      return where;
+    }
     function extractTitleFromCard(card){
-      // prova: prima riga grossa / h1-h3 / fallback
       const h = card.querySelector("h1,h2,h3");
       if (h && h.textContent.trim()) return h.textContent.trim();
-
-      // fallback: primo pezzo di testo “sensato”
+      const strongish = card.querySelector("div[style*='font-weight:950']");
+      if (strongish && strongish.textContent.trim()) return strongish.textContent.trim();
       const t = (card.textContent || "").replace(/\s+/g," ").trim();
       return t.split("•")[0].slice(0,80).trim();
     }
-
-    function openGoogleAIForPlace(title, where){
+    function buildGoogleQueryFromCard(card){
+      const title = extractTitleFromCard(card);
+      const where = extractWhereFromCard(card);
       const parts = [];
       if (title) parts.push(title);
       if (where) parts.push(where);
       parts.push("Italia");
-      const base = parts.join(" ").replace(/\s+/g," ").trim();
-
-      const q = `Cosa c'è a ${base} cosa vedere cosa fare`;
+      return parts.join(" ").replace(/\s+/g," ").trim();
+    }
+    function openGoogleAI(query){
+      const q = `Cosa c'è a ${query} cosa vedere cosa fare`;
       window.open(`https://www.google.com/search?q=${encodeURIComponent(q)}`, "_blank", "noopener");
     }
-
-    function getPrimaryCard(){
-      const area = $("resultArea");
-      if (!area) return null;
-
-      // prima card “vera” dentro resultArea (quella della meta principale)
-      const cards = Array.from(area.querySelectorAll(".card"));
+    function getFirstRealCard(){
+      if (!resultArea) return null;
+      const cards = Array.from(resultArea.querySelectorAll(".card"));
       return cards.find(c => !/pronto quando lo sei|nessuna idea trovata/i.test(c.textContent || "")) || null;
     }
+    function setSelectedCard(card){
+      selectedCard = card;
+      Array.from(resultArea?.querySelectorAll(".card[data-selected='1']") || []).forEach(c => c.removeAttribute("data-selected"));
+      if (card) card.setAttribute("data-selected","1");
+    }
 
-    $("btnWhatsThere")?.addEventListener("click", () => {
-      const c = getPrimaryCard();
-      if (!c){
-        const o = ($("originLabel")?.value || "").trim();
-        openGoogleAIForPlace(o ? o : "Verona", "");
-        return;
-      }
-      const title = extractTitleFromCard(c);
-      const where = extractBestPlaceTextFromCard(c);
-      openGoogleAIForPlace(title, where);
+    resultArea?.addEventListener("click", (e) => {
+      const t = e.target;
+      if (t.closest("button,a,input,textarea,select,label,.chip")) return;
+      const c = t.closest("#resultArea .card");
+      if (!c) return;
+      if (/pronto quando lo sei|nessuna idea trovata/i.test(c.textContent || "")) return;
+      setSelectedCard(c);
     });
 
-    /* ✅ Inietta UN SOLO bottone “Cosa c’è” per card (NO accavallo) */
-    function injectWhatIsButtons(){
-      const area = $("resultArea");
-      if (!area) return;
+    $("btnWhatsThere")?.addEventListener("click", () => {
+      const card = selectedCard || getFirstRealCard();
+      if (card){
+        openGoogleAI(buildGoogleQueryFromCard(card));
+        return;
+      }
+      const o = ($("originLabel")?.value || "").trim();
+      openGoogleAI(o ? o : "Verona");
+    });
 
-      const cards = Array.from(area.querySelectorAll(".card"));
+    function injectWhatIsButtons(){
+      if (!resultArea) return;
+
+      const cards = Array.from(resultArea.querySelectorAll(".card"));
       for (const c of cards) {
         if (/pronto quando lo sei|nessuna idea trovata/i.test(c.textContent || "")) continue;
 
-        // già presente? stop
+        // ✅ evita duplicati -> niente accavalli
         if (c.querySelector(".whatIsWrap")) continue;
 
         const wrap = document.createElement("div");
@@ -612,29 +599,35 @@
         b.addEventListener("click", (ev) => {
           ev.preventDefault();
           ev.stopPropagation();
-          const title = extractTitleFromCard(c);
-          const where = extractBestPlaceTextFromCard(c);
-          openGoogleAIForPlace(title, where);
+          setSelectedCard(c);
+          openGoogleAI(buildGoogleQueryFromCard(c));
         });
 
         wrap.appendChild(b);
 
-        // append in fondo, ma prima di eventuali righe “Dataset/score” se presenti
+        // inserisci in punto “sicuro” (prima di debug tipo Dataset/Score/Fonte)
         const stopNode = Array.from(c.querySelectorAll("div"))
           .find(d => /dataset:|score:|fonte:/i.test((d.textContent||"").trim()));
         if (stopNode && stopNode.parentNode === c) c.insertBefore(wrap, stopNode);
         else c.appendChild(wrap);
       }
+
+      // se non selezionata, seleziona la prima meta reale
+      if (!selectedCard){
+        const first = getFirstRealCard();
+        if (first) setSelectedCard(first);
+      }
     }
 
-    const area = $("resultArea");
-    if (area) {
+    if (resultArea) {
       const mo = new MutationObserver(() => injectWhatIsButtons());
-      mo.observe(area, { childList: true, subtree: true });
+      mo.observe(resultArea, { childList: true, subtree: true });
       injectWhatIsButtons();
     }
 
-    /* ------------------ FAB SOS ------------------ */
+    /* ===============================
+       FAB SOS
+       =============================== */
     const fab = $("fabSOS");
     const mask = $("sheetMask");
     const sheet = $("sheetSOS");
@@ -674,19 +667,6 @@
       `;
       if (navigator.vibrate) navigator.vibrate(12);
     });
-
-    /* ------------------ cambio palette su tocco schede (resta) ------------------ */
-    const isInteractive = (el) => !!el?.closest("button,a,input,textarea,select,label,.chip");
-    document.addEventListener("click", (e) => {
-      const t = e.target;
-      if (isInteractive(t)) return;
-      const card = t.closest(".card, .heroCard");
-      if (!card) return;
-      nextPalette();
-    }, { passive:true });
-
-    // applica palette iniziale coerente
-    applyPalette(PALETTES[0]);
 
   })();
   </script>
