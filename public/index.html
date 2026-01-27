@@ -21,54 +21,63 @@
       --text:#F6F6F6;
       --muted:#B9B2A9;
 
-      /* ✅ NUOVI ACCENT (no arancione) */
-      --acc:#8B5CF6;   /* viola premium */
-      --acc2:#E9D5FF;  /* lilla soft */
+      /* ✅ accent dinamici (si agganciano alla categoria selezionata) */
+      --acc:#3B82F6;    /* default: mare soft */
+      --acc2:#93C5FD;   /* highlight soft */
       --border:rgba(255,255,255,.10);
       --shadow: rgba(0,0,0,.35);
 
-      /* ✅ colore chip attiva (dinamico per categoria) */
-      --chipBg: rgba(139,92,246,.18);
-      --chipFg: #F6F6F6;
-      --chipRing: rgba(233,213,255,.35);
+      /* ✅ chip theme dinamico (active “piena”) */
+      --chipActiveBg: rgba(59,130,246,.18);
+      --chipActiveRing: rgba(59,130,246,.32);
+      --chipActiveFg: #F6F6F6;
+
+      /* ✅ CTA (btnPrimary) dinamico */
+      --cta1: rgba(59,130,246,1);
+      --cta2: rgba(147,197,253,1);
+
+      /* ✅ SOS accent */
+      --sos1: rgba(59,130,246,.92);
+      --sos2: rgba(147,197,253,.92);
     }
 
     .accent{ color: var(--acc2); }
 
-    /* ✅ fix accavallamenti (safe, globale) */
-    .heroTitle, .cardTitle, .brandTitle { 
+    /* ✅ anti-accavallamento testi (safe) */
+    .heroTitle, .cardTitle, .brandTitle{
       line-height: 1.12;
+      overflow-wrap:anywhere;
       word-break: break-word;
-      overflow-wrap: anywhere;
     }
-    .heroDesc, .cardHint, .small, .muted {
-      overflow-wrap: anywhere;
+    .heroDesc, .cardHint, .small, .muted{
+      overflow-wrap:anywhere;
       word-break: break-word;
     }
 
     .bgGlow{
       background:
-        radial-gradient(700px 420px at 18% 10%, rgba(139,92,246,.18), transparent 55%),
-        radial-gradient(760px 460px at 82% 22%, rgba(233,213,255,.12), transparent 60%),
-        radial-gradient(900px 520px at 50% 92%, rgba(139,92,246,.10), transparent 60%);
+        radial-gradient(700px 420px at 18% 10%, rgba(59,130,246,.14), transparent 55%),
+        radial-gradient(760px 460px at 82% 22%, rgba(147,197,253,.10), transparent 60%),
+        radial-gradient(900px 520px at 50% 92%, rgba(59,130,246,.08), transparent 60%);
       filter: blur(6px);
       opacity: .95;
       pointer-events: none;
     }
 
+    /* ✅ tasto principale agganciato alla categoria */
     .btnPrimary{
-      background: linear-gradient(135deg, rgba(139,92,246,1), rgba(233,213,255,1));
-      border-color: rgba(233,213,255,.32);
+      background: linear-gradient(135deg, var(--cta1), var(--cta2));
+      border-color: rgba(255,255,255,.12);
       color:#141214;
       font-weight: 950;
     }
     .btnPrimary:active{ transform: scale(.99); }
 
-    /* ✅ chips più “piene” (non solo bordo) quando active */
+    /* ✅ chip active “piena” */
     .chip.active{
-      background: var(--chipBg);
-      color: var(--chipFg);
-      border-color: var(--chipRing);
+      background: var(--chipActiveBg);
+      color: var(--chipActiveFg);
+      border-color: var(--chipActiveRing);
       box-shadow: 0 0 0 2px rgba(0,0,0,.18) inset;
     }
 
@@ -91,7 +100,10 @@
       scroll-snap-align: start;
       white-space: nowrap;
       min-width: 132px;
+      transition: background .16s ease, border-color .16s ease, transform .12s ease;
     }
+    #categoryChips .chip:active{ transform: scale(.99); }
+
     .hScrollHint{
       margin-top:8px;
       display:flex;
@@ -101,9 +113,17 @@
     }
     .hScrollHint .dot{
       width:6px;height:6px;border-radius:50%;
-      background: rgba(233,213,255,.85);
-      box-shadow: 0 0 0 3px rgba(139,92,246,.14);
+      background: rgba(255,255,255,.65);
+      box-shadow: 0 0 0 3px rgba(255,255,255,.08);
       flex:0 0 auto;
+    }
+
+    /* ✅ rende "Cosa c’è" più visibile */
+    #btnWhatsThere{
+      border-color: rgba(255,255,255,.18);
+      box-shadow: 0 0 0 2px rgba(0,0,0,.18) inset;
+      font-weight: 950;
+      padding: 10px 14px;
     }
 
     /* ✅ FAB SOS */
@@ -129,7 +149,7 @@
     .fabSOS .b{
       width:34px;height:34px;border-radius:12px;
       display:flex;align-items:center;justify-content:center;
-      background: linear-gradient(135deg, rgba(139,92,246,.92), rgba(233,213,255,.92));
+      background: linear-gradient(135deg, var(--sos1), var(--sos2));
       color:#141214;
       flex:0 0 auto;
       box-shadow: 0 10px 18px rgba(0,0,0,.25);
@@ -186,12 +206,8 @@
     .ideaCard .d{ margin-top:6px; color: var(--muted); line-height:1.35; font-size:13px; }
     .sheetActions{ margin-top: 12px; display:flex; gap:10px; flex-wrap:wrap; }
 
-    /* ✅ rende il bottone "Cosa c'è" più visibile senza cambiare UI */
-    #btnWhatsThere{
-      border-color: rgba(233,213,255,.35);
-      box-shadow: 0 0 0 2px rgba(139,92,246,.10) inset;
-      font-weight: 900;
-    }
+    /* ✅ mini badge per evitare “accavalli” su card lunghe generate */
+    .ideaCard .t, .ideaCard .d{ overflow-wrap:anywhere; word-break: break-word; }
   </style>
 </head>
 
@@ -372,7 +388,7 @@
 
     <footer class="footer clickSafe">
       <div class="footerLine">
-        <span class="dot"></span> Jamo • build UI v6.1 • premium vibes
+        <span class="dot"></span> Jamo • build UI v6.1 • category colors
       </div>
       <div class="footerLine small muted">
         Offline-first (best effort). Nessun tracciamento GPS. Link esterni: Maps / Wiki / Foto.
@@ -389,27 +405,14 @@
   <div id="sheetMask" class="sheetMask" aria-hidden="true"></div>
   <div id="sheetSOS" class="sheet" role="dialog" aria-modal="true" aria-label="SOS Family">
     <div class="sheetTop">
-      <div class="sheetTitle">🏠 SOS Family — idee a casa (no sbatti)</div>
+      <div class="sheetTitle">🏠 SOS Family — idee a casa (zero sbatti)</div>
       <button id="btnCloseSheet" class="btnGhost" type="button">✕</button>
     </div>
     <div class="sheetDesc">
-      Quando non vuoi uscire ma vuoi una <b>risata</b> o una cosa <b>furba</b> da fare coi bimbi.
+      Idee <b>pratiche</b>, <b>veloci</b>, con possibilità di <b>risata</b>. Niente doppioni: ogni “Cambia idee” pesca dal pool senza ripetere.
     </div>
 
-    <div class="sheetGrid" id="sosIdeas">
-      <div class="ideaCard">
-        <div class="t">🧦 Gara dei calzini (versione stupida)</div>
-        <div class="d">Prendi 6 calzini. Abbinali nel modo più sbagliato possibile. Vince chi ride per ultimo.</div>
-      </div>
-      <div class="ideaCard">
-        <div class="t">📺 Pubblicità bruttissima</div>
-        <div class="d">Scegli un oggetto a caso e inventa lo spot più imbarazzante del mondo. 20 secondi. Via.</div>
-      </div>
-      <div class="ideaCard">
-        <div class="t">🪑 Pavimento quasi lava</div>
-        <div class="d">Si cammina solo toccando 3 materiali (es. legno/plastica/stoffa). Se sbagli: “freeze!”</div>
-      </div>
-    </div>
+    <div class="sheetGrid" id="sosIdeas"></div>
 
     <div class="sheetActions">
       <button id="btnSOSShuffle" class="btn btnPrimary" type="button">🎲 Cambia idee</button>
@@ -444,6 +447,9 @@
       const fab = $("fabSOS");
       if (fab) fab.style.display = (cat === "family") ? "flex" : "none";
 
+      // ✅ colori: aggiorna tutta la UI (CTA + chips)
+      applyCategoryTheme(cat);
+
       if (cat === "eventi") {
         setTimeout(() => $("eventsSubfilters")?.scrollIntoView({ behavior:"smooth", block:"center" }), 160);
         return;
@@ -467,39 +473,89 @@
 
     $("btnResetVisited")?.addEventListener("click", () => setTimeout(() => scrollTo("searchCard"), 200));
 
-    /* ------------------ CHIP COLORS (per categoria) ------------------ */
-    const CAT_COLORS = {
-      mare:   { bg:"rgba(59,130,246,.16)",  fg:"#F6F6F6", ring:"rgba(59,130,246,.30)" },  // blu mare soft
-      lago:   { bg:"rgba(14,165,233,.16)",  fg:"#F6F6F6", ring:"rgba(14,165,233,.30)" },  // azzurro soft
-      natura: { bg:"rgba(34,197,94,.14)",   fg:"#F6F6F6", ring:"rgba(34,197,94,.28)"  },  // verde soft
-      hiking: { bg:"rgba(132,204,22,.14)",  fg:"#F6F6F6", ring:"rgba(132,204,22,.28)" },  // lime soft
-      montagna:{bg:"rgba(148,163,184,.16)", fg:"#F6F6F6", ring:"rgba(148,163,184,.30)"},  // slate soft
-      borghi: { bg:"rgba(245,158,11,.12)",  fg:"#F6F6F6", ring:"rgba(245,158,11,.26)" },  // ambra soft (non arancio sparato)
-      storia: { bg:"rgba(168,85,247,.14)",  fg:"#F6F6F6", ring:"rgba(168,85,247,.28)" },  // viola soft
-      relax:  { bg:"rgba(20,184,166,.14)",  fg:"#F6F6F6", ring:"rgba(20,184,166,.28)" },  // teal soft
-      family: { bg:"rgba(244,114,182,.14)", fg:"#F6F6F6", ring:"rgba(244,114,182,.28)"},  // pink soft
-      cantine:{ bg:"rgba(244,63,94,.12)",   fg:"#F6F6F6", ring:"rgba(244,63,94,.26)"  },  // rose soft
-      eventi: { bg:"rgba(234,179,8,.12)",   fg:"#F6F6F6", ring:"rgba(234,179,8,.26)"  },  // gold soft
-      default:{ bg:"rgba(139,92,246,.18)",  fg:"#F6F6F6", ring:"rgba(233,213,255,.35)"}
+    /* ------------------ THEMES (tutti colori categoria, meno accesi) ------------------ */
+    const THEMES = {
+      mare:     { c1:"#3B82F6", c2:"#93C5FD", chip:"rgba(59,130,246,.12)", ring:"rgba(59,130,246,.24)" },
+      lago:     { c1:"#0EA5E9", c2:"#7DD3FC", chip:"rgba(14,165,233,.12)", ring:"rgba(14,165,233,.24)" },
+      natura:   { c1:"#22C55E", c2:"#86EFAC", chip:"rgba(34,197,94,.11)",  ring:"rgba(34,197,94,.23)" },
+      hiking:   { c1:"#84CC16", c2:"#BEF264", chip:"rgba(132,204,22,.11)", ring:"rgba(132,204,22,.23)" },
+      montagna: { c1:"#94A3B8", c2:"#CBD5E1", chip:"rgba(148,163,184,.12)",ring:"rgba(148,163,184,.24)" },
+      borghi:   { c1:"#F59E0B", c2:"#FCD34D", chip:"rgba(245,158,11,.10)", ring:"rgba(245,158,11,.22)" },
+      storia:   { c1:"#A855F7", c2:"#D8B4FE", chip:"rgba(168,85,247,.11)", ring:"rgba(168,85,247,.23)" },
+      relax:    { c1:"#14B8A6", c2:"#99F6E4", chip:"rgba(20,184,166,.11)", ring:"rgba(20,184,166,.23)" },
+      family:   { c1:"#F472B6", c2:"#FBCFE8", chip:"rgba(244,114,182,.11)",ring:"rgba(244,114,182,.23)" },
+      cantine:  { c1:"#F43F5E", c2:"#FDA4AF", chip:"rgba(244,63,94,.10)",  ring:"rgba(244,63,94,.22)" },
+      eventi:   { c1:"#EAB308", c2:"#FDE68A", chip:"rgba(234,179,8,.10)",  ring:"rgba(234,179,8,.22)" },
+      default:  { c1:"#3B82F6", c2:"#93C5FD", chip:"rgba(59,130,246,.12)", ring:"rgba(59,130,246,.24)" }
     };
 
-    function setChipThemeForCategory(cat){
-      const c = CAT_COLORS[cat] || CAT_COLORS.default;
-      document.documentElement.style.setProperty("--chipBg", c.bg);
-      document.documentElement.style.setProperty("--chipFg", c.fg);
-      document.documentElement.style.setProperty("--chipRing", c.ring);
+    function setVars(t){
+      document.documentElement.style.setProperty("--acc", t.c1);
+      document.documentElement.style.setProperty("--acc2", t.c2);
+
+      document.documentElement.style.setProperty("--cta1", t.c1);
+      document.documentElement.style.setProperty("--cta2", t.c2);
+
+      document.documentElement.style.setProperty("--chipActiveBg", t.chip);
+      document.documentElement.style.setProperty("--chipActiveRing", t.ring);
+
+      document.documentElement.style.setProperty("--sos1", t.c1 + "E8"); // add alpha-ish? (fallback)
+      document.documentElement.style.setProperty("--sos2", t.c2 + "E8");
+
+      // bg glow soft
+      const g = document.querySelector(".bgGlow");
+      if (g){
+        g.style.background =
+          `radial-gradient(700px 420px at 18% 10%, ${hexToRgba(t.c1, .14)}, transparent 55%),
+           radial-gradient(760px 460px at 82% 22%, ${hexToRgba(t.c2, .10)}, transparent 60%),
+           radial-gradient(900px 520px at 50% 92%, ${hexToRgba(t.c1, .08)}, transparent 60%)`;
+      }
     }
 
-    // aggiorna tema chip quando selezioni una categoria (senza rompere logica active di app.js)
-    $("categoryChips")?.addEventListener("click", (e) => {
-      const chip = e.target.closest(".chip");
-      if (!chip) return;
-      const cat = String(chip.dataset.cat || "").toLowerCase();
-      setChipThemeForCategory(cat);
-    });
+    function hexToRgba(hex, a){
+      const h = (hex||"").replace("#","").trim();
+      if (h.length !== 6) return `rgba(255,255,255,${a})`;
+      const r = parseInt(h.slice(0,2),16);
+      const g = parseInt(h.slice(2,4),16);
+      const b = parseInt(h.slice(4,6),16);
+      return `rgba(${r},${g},${b},${a})`;
+    }
 
-    /* ------------------ “Cosa c’è” (Google) — SOLO TESTO, NO COORD ------------------ */
+    function colorizeAllCategoryChips(){
+      const wrap = $("categoryChips");
+      if (!wrap) return;
+      const chips = Array.from(wrap.querySelectorAll(".chip"));
+      for (const ch of chips){
+        const cat = String(ch.dataset.cat||"default").toLowerCase();
+        const t = THEMES[cat] || THEMES.default;
 
+        // ✅ tutte colorate (soft)
+        if (!ch.classList.contains("active")){
+          ch.style.background = hexToRgba(t.c1, 0.06);
+          ch.style.borderColor = hexToRgba(t.c1, 0.16);
+          ch.style.color = "var(--text)";
+        } else {
+          // active è già gestita dalla classe .chip.active con var dinamiche
+          ch.style.background = "";
+          ch.style.borderColor = "";
+          ch.style.color = "";
+        }
+      }
+    }
+
+    function applyCategoryTheme(cat){
+      const t = THEMES[cat] || THEMES.default;
+      setVars(t);
+      // ricolora tutte le chips
+      setTimeout(colorizeAllCategoryChips, 0);
+      if (navigator.vibrate) navigator.vibrate(8);
+    }
+
+    // init: tema da categoria attiva iniziale
+    const active0 = document.querySelector("#categoryChips .chip.active");
+    applyCategoryTheme(String(active0?.dataset?.cat || "natura").toLowerCase());
+
+    /* ------------------ “Cosa c’è” (Google) — SOLO TESTO (NO coordinate) ------------------ */
     let LAST_SELECTED_QUERY = "";
 
     function cleanText(s){
@@ -507,6 +563,12 @@
         .replace(/\s+/g, " ")
         .replace(/^📍\s*/,"")
         .trim();
+    }
+
+    function looksLikeCoordinates(s){
+      const t = String(s||"");
+      // pattern tipo "45.123, 11.456" oppure "45.123 11.456"
+      return /\b-?\d{1,2}\.\d{3,}\s*[,\s]\s*-?\d{1,3}\.\d{3,}\b/.test(t);
     }
 
     function extractTitleFromCard(card){
@@ -531,7 +593,8 @@
       try{
         const u = new URL(a.getAttribute("href"));
         const q = u.searchParams.get("query") || "";
-        return cleanText(decodeURIComponent(q));
+        const decoded = cleanText(decodeURIComponent(q));
+        return looksLikeCoordinates(decoded) ? "" : decoded;
       }catch(_){
         return "";
       }
@@ -541,9 +604,12 @@
       if (!card) return "";
       const title = extractTitleFromCard(card);
       const where = extractWhereFromCard(card);
-      const combo = [title, where].filter(Boolean).join(" • ").trim();
-      if (combo && combo.length >= 3) return combo;
 
+      // ✅ preferisci sempre: "Titolo, Luogo"
+      const combo = [title, where].filter(Boolean).join(", ").trim();
+      if (combo && combo.length >= 3 && !looksLikeCoordinates(combo)) return combo;
+
+      // fallback: query testuale da maps search link
       const fromMaps = extractFromMapsSearchLink(card);
       if (fromMaps && fromMaps.length >= 3) return fromMaps;
 
@@ -571,7 +637,6 @@
         window.open(`https://www.google.com/search?q=${encodeURIComponent(q2)}`, "_blank", "noopener");
         return;
       }
-      // ✅ query “AI-friendly”
       const full = `Cosa c'è a ${q} cosa vedere cosa fare`;
       window.open(`https://www.google.com/search?q=${encodeURIComponent(full)}`, "_blank", "noopener");
     }
@@ -608,8 +673,8 @@
         b.type = "button";
         b.textContent = "👀 Cosa c’è";
         b.setAttribute("data-what-is-btn","1");
-        b.style.borderColor = "rgba(233,213,255,.35)";
-        b.style.fontWeight = "900";
+        b.style.fontWeight = "950";
+        b.style.borderColor = "rgba(255,255,255,.18)";
 
         b.addEventListener("click", (ev) => {
           ev.preventDefault();
@@ -621,7 +686,6 @@
 
         row.appendChild(b);
 
-        // Inserisci prima di "Fonte:" se esiste, altrimenti in fondo
         const footer = Array.from(c.querySelectorAll("div"))
           .find(d => (d.textContent||"").trim().toLowerCase().startsWith("fonte:"));
         if (footer && footer.parentNode === c) c.insertBefore(row, footer);
@@ -632,7 +696,6 @@
     function enableCardSelectionCapture(){
       const area = $("resultArea");
       if (!area) return;
-
       area.addEventListener("click", (e) => {
         const card = e.target.closest(".card");
         if (!card) return;
@@ -654,7 +717,7 @@
       enableCardSelectionCapture();
     }
 
-    /* ------------------ FAB SOS ------------------ */
+    /* ------------------ SOS: RICCO + NO RIPETIZIONI ------------------ */
     const fab = $("fabSOS");
     const mask = $("sheetMask");
     const sheet = $("sheetSOS");
@@ -675,29 +738,77 @@
     $("btnSOSClose2")?.addEventListener("click", closeSheet);
     mask?.addEventListener("click", closeSheet);
 
-    const ideas = [
-      ["🧦 Gara dei calzini (versione stupida)", "Prendi 6 calzini. Abbinali nel modo più sbagliato possibile. Vince chi ride per ultimo."],
-      ["📦 Scatola inutile", "Prendi una scatola. Riempila di cose inutili. Poi vendila come invenzione geniale (con spot)."],
-      ["🥄 Trasporto assurdo", "Porta un oggetto in un’altra stanza usando solo gomiti / cucchiai / piedi. Zero mani."],
-      ["🗣️ Parlato strano", "Fai una cosa normale ma parlando solo come robot / alieni / nonni drammatici."],
-      ["🏃 Rallentatore estremo", "Qualsiasi azione… ma al rallentatore massimo. Chi ride perde."]
+    // Pool ricco (pratiche, immediate, no preparazione)
+    const SOS_POOL = [
+      ["🧦 Gara calzini — “abbinamento sbagliato”", "Tira fuori 8 calzini. Regola: devi abbinarli nel modo più assurdo possibile. Poi sfilata. 2 minuti."],
+      ["📺 Spot imbarazzante", "Scegli un oggetto (spazzola, cucchiaio). Fate uno spot di 15 secondi con slogan bruttissimo. Replay x3."],
+      ["🪑 Pavimento quasi lava", "Puoi camminare solo su 3 materiali (legno/plastica/stoffa). Se tocchi “proibito”: freeze e posa ridicola."],
+      ["🥄 Trasporto assurdo", "Porta un oggetto in un’altra stanza usando solo gomiti / cucchiai / piedi. Zero mani. Cronometro 30 sec."],
+      ["🗣️ Voce proibita", "Per 2 minuti si parla solo come robot / nonno drammatico / alieno. Se sbagli voce: penitenza (3 salti strani)."],
+      ["🧻 Bocce da corridoio", "Palline di carta igienica (o carta). Usate una scatola come bersaglio. Chi fa centro deve fare la danza vittoria."],
+      ["🧼 Olimpiadi delle pulizie finte", "Pulite 1 metro quadro… ma ognuno è un personaggio (ninja, presentatore TV, spia). Ridicolo obbligatorio."],
+      ["🕵️ Caccia al “cosa NON è”", "Scegli un oggetto: tutti devono dire 5 cose che NON è (assurde ma veloci). Chi si blocca: faccia buffa."],
+      ["🧊 Congelati!", "Un adulto fa il DJ: dice STOP a caso. Tutti si congelano nella posa più stupida. Foto mentale e si riparte."],
+      ["📦 Scatola geniale", "Prendi una scatola: inventate a cosa serve (assurdo ma convincente). Fate la demo in 20 secondi."],
+      ["🎭 Telegiornale di casa", "Uno conduce TG: “Breaking news: il divano è scomparso!”. L’altro fa inviato sul posto (drammatico)."],
+      ["🏃 Rallentatore estremo", "Qualsiasi azione (bere, sedersi) ma super slow motion. Il primo che ride perde e deve imitare un pollo."],
+      ["🧢 Capo al contrario", "Metti un capo al contrario e spiega perché è una tecnologia avanzata. L’altro fa domande serie come un giornalista."],
+      ["🧸 Processo al peluche", "Un peluche è imputato (perché?). Fate processo: accusa, difesa, giudice. Sentenza ridicola."],
+      ["🍝 Chef senza mani", "Finta cucina: preparate un “piatto” con oggetti (non cibo). Regola: mani dietro la schiena, solo gomiti."],
+      ["🧩 60 secondi: missione", "Dai una missione: “metti 10 cose morbide sul letto”. Timer 60s. Alla fine: posa di vittoria obbligatoria."],
+      ["🎯 Lancio calzino nel secchio", "Fai una palla di calzino. Bersaglio: cestino/scatola. Ogni centro vale un potere (es. ‘voce robot’)."],
+      ["📣 Commentatore sportivo", "Uno fa qualsiasi cosa. L’altro commenta come in TV con entusiasmo esagerato. Scambiate ruoli."],
+      ["🧠 Memory lampo", "Metti 12 oggetti sul tavolo. Guardate 10 secondi. Copri. Dite a turno cosa manca. Chi sbaglia: rumore alieno."],
+      ["🧱 “Non toccare il colore”", "Scegli un colore proibito. In 2 minuti nessuno può toccarlo. Chi lo tocca: deve parlare solo in rima per 1 minuto."],
+      ["🌀 Il telecomando stregato", "Il telecomando è magico: chi lo prende cambia ‘modalità’ (robot, lento, super serio). Cambia ogni 20 secondi."],
+      ["👣 Percorso cieco", "Fai un mini percorso con cuscini. Uno guida a voce. Regola: istruzioni assurde ma utili (tipo ‘passo da astronauta’)."],
+      ["🧠 Indovina il suono", "Batti su 3 oggetti (tavolo, bottiglia, libro). L’altro indovina al buio con occhi chiusi. Poi scambio."],
+      ["🎲 Dado del caos", "Scrivi 6 azioni su foglietti (saltare, lento, robot, ecc). Tira un dado (o numero a caso) e fai l’azione 20 sec."]
     ];
-    $("btnSOSShuffle")?.addEventListener("click", () => {
+
+    // “No-repeat” bag: finché non finisce, non ripete
+    let sosBag = [];
+
+    function refillBag(){
+      sosBag = SOS_POOL.map((_, i) => i);
+      // shuffle
+      for (let i = sosBag.length - 1; i > 0; i--){
+        const j = Math.floor(Math.random() * (i + 1));
+        [sosBag[i], sosBag[j]] = [sosBag[j], sosBag[i]];
+      }
+    }
+
+    function drawUnique(n){
+      if (sosBag.length < n) refillBag();
+      const picks = [];
+      while (picks.length < n){
+        if (sosBag.length === 0) refillBag();
+        picks.push(sosBag.pop());
+      }
+      return picks.map(i => SOS_POOL[i]);
+    }
+
+    function renderSOS(){
       const box = $("sosIdeas");
       if (!box) return;
-      const pick = () => ideas[Math.floor(Math.random() * ideas.length)];
-      const a = pick(), b = pick(), c = pick();
+      const [a,b,c] = drawUnique(3);
       box.innerHTML = `
         <div class="ideaCard"><div class="t">${a[0]}</div><div class="d">${a[1]}</div></div>
         <div class="ideaCard"><div class="t">${b[0]}</div><div class="d">${b[1]}</div></div>
         <div class="ideaCard"><div class="t">${c[0]}</div><div class="d">${c[1]}</div></div>
       `;
+    }
+
+    refillBag();
+    renderSOS();
+
+    $("btnSOSShuffle")?.addEventListener("click", () => {
+      renderSOS();
       if (navigator.vibrate) navigator.vibrate(12);
     });
 
-    /* ✅ init: allineo chip theme alla categoria attiva iniziale */
-    const firstActive = document.querySelector("#categoryChips .chip.active");
-    if (firstActive) setChipThemeForCategory(String(firstActive.dataset.cat||"").toLowerCase());
+    /* ✅ quando apri SOS, aggiorna idee (ma non ripete) */
+    fab?.addEventListener("click", () => setTimeout(renderSOS, 80));
 
   })();
   </script>
