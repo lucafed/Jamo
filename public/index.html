@@ -6,33 +6,56 @@
   <title>Jamo — Trova la meta perfetta</title>
 
   <link rel="manifest" href="/manifest.webmanifest">
-  <meta name="theme-color" content="#0A0F14">
+  <meta name="theme-color" content="#121214">
 
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
 
-  <link rel="stylesheet" href="/style.css?v=6.0" />
+  <link rel="stylesheet" href="/style.css?v=6.1" />
 
+  <!-- ✅ Palette calda/premium (NON “tech” nei colori) + piccoli override safe -->
   <style>
-    /* non cambio la tua UI: aggiungo SOLO utilità */
-    .flowHint{margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;}
-    .flowPill{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:7px 10px; border-radius:999px;
-      border:1px solid rgba(255,255,255,.12);
-      background:rgba(0,0,0,.18);
-      font-weight:900; font-size:12px;
+    :root{
+      --bg:#121214;
+      --surface:#1A1A1F;
+      --text:#F6F6F6;
+      --muted:#B9B2A9;
+
+      --acc:#E86A33;     /* arancio caldo */
+      --acc2:#F4D35E;    /* giallo caldo */
+      --border:rgba(255,255,255,.10);
+      --shadow: rgba(0,0,0,.35);
     }
-    .microHelp{
-      margin-top:10px;
-      padding:10px 12px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(255,255,255,.04);
-      line-height:1.45;
+
+    /* Accent text helper (se non già in css) */
+    .accent{ color: var(--acc2); }
+
+    /* Glow più “ambient” e meno neon (se bgGlow è gestito da CSS esterno, questo è un soft override) */
+    .bgGlow{
+      background:
+        radial-gradient(700px 420px at 18% 10%, rgba(232,106,51,.20), transparent 55%),
+        radial-gradient(760px 460px at 82% 22%, rgba(244,211,94,.14), transparent 60%),
+        radial-gradient(900px 520px at 50% 92%, rgba(232,106,51,.10), transparent 60%);
+      filter: blur(6px);
+      opacity: .95;
+      pointer-events: none;
     }
-    .anchorTitle{scroll-margin-top: 88px;}
+
+    /* CTA più “premium” */
+    .btnPrimary{
+      background: linear-gradient(135deg, rgba(232,106,51,1), rgba(244,211,94,1));
+      border-color: rgba(244,211,94,.35);
+      color:#141214;
+      font-weight: 950;
+    }
+    .btnPrimary:active{ transform: scale(.99); }
+
+    /* Chips attive più chiare */
+    .chip.active{
+      border-color: rgba(244,211,94,.45);
+      box-shadow: 0 0 0 2px rgba(232,106,51,.12) inset;
+    }
   </style>
 </head>
 
@@ -45,7 +68,7 @@
       <div class="logoMark" aria-hidden="true">J</div>
       <div class="brandText">
         <div class="brandTitle">Jamo</div>
-        <div class="brandSub">Offline-first • Tech vibes • Tap-safe</div>
+        <div class="brandSub">Offline-first • Smart flow • Tap-safe</div>
       </div>
     </div>
 
@@ -62,18 +85,14 @@
       <div id="statusText" class="statusText"></div>
     </section>
 
-    <!-- HERO (più comprensibile) -->
+    <!-- HERO -->
     <section class="hero clickSafe">
       <div class="heroCard">
         <div class="heroBadge">✨ WOW Finder</div>
-        <h1 class="heroTitle">
-          Ti propone <span class="accent">una meta</span> perfetta in base al tempo che hai.
-        </h1>
-
+        <h1 class="heroTitle">Trova una meta <span class="accent">perfetta</span> in pochi secondi.</h1>
         <p class="heroDesc">
-          Tu metti <b>partenza</b> + <b>minuti</b> + <b>vibe</b>. Jamo pesca dal dataset offline e ti dà:
-          <b>1 meta</b> + <b>alternative</b> + link rapidi (Maps / Foto / Wiki / “Cosa c’è”).
-          <br><span class="small muted">Niente GPS. Solo coordinate della partenza che inserisci tu.</span>
+          Imposta la partenza, scegli <b>tempo</b> e <b>vibe</b>, poi premi <b>CERCA</b>.
+          Nessun GPS. Risultato al centro. Subito.
         </p>
 
         <div class="heroKpis">
@@ -83,29 +102,18 @@
           </div>
           <div class="kpi">
             <div class="kpiN">2</div>
-            <div class="kpiT">Tempo</div>
+            <div class="kpiT">Categoria</div>
           </div>
           <div class="kpi">
             <div class="kpiN">3</div>
-            <div class="kpiT">Vibe</div>
-          </div>
-          <div class="kpi">
-            <div class="kpiN">4</div>
             <div class="kpiT">Cerca</div>
           </div>
-        </div>
-
-        <div class="flowHint">
-          <span class="flowPill">📍 Parti da un posto</span>
-          <span class="flowPill">⏱️ Scegli minuti</span>
-          <span class="flowPill">🧭 Scegli vibe</span>
-          <span class="flowPill">🚀 Premi CERCA</span>
         </div>
       </div>
     </section>
 
     <!-- QUICK START / ORIGIN -->
-    <section id="quickStartCard" class="card clickSafe anchorTitle">
+    <section id="quickStartCard" class="card clickSafe">
       <!-- app.js inserisce il toggle header qui automaticamente -->
       <div class="cardTitleRow">
         <div class="cardTitle">📍 Partenza</div>
@@ -118,11 +126,6 @@
           <input id="originLabel" class="input" type="text" placeholder="Es: Bussolengo, Verona, L'Aquila..." autocomplete="off">
           <button id="btnFindPlace" class="btn btnPrimary" type="button">Usa questo luogo</button>
         </div>
-
-        <div class="microHelp small muted">
-          👉 Scrivi un luogo, premi <b>Usa questo luogo</b> e poi scorri su <b>Ricerca</b>.
-        </div>
-
         <div id="originStatus" class="small muted" style="margin-top:10px; line-height:1.35;">
           Inserisci un luogo e premi <b>Usa questo luogo</b>.
         </div>
@@ -140,7 +143,7 @@
     </section>
 
     <!-- SEARCH CONTROLS -->
-    <section id="searchCard" class="card clickSafe anchorTitle">
+    <section id="searchCard" class="card clickSafe">
       <div class="cardTitleRow">
         <div class="cardTitle">🎯 Ricerca</div>
         <div class="cardHint">Scegli tempo + categoria + stile</div>
@@ -165,7 +168,7 @@
       <div class="divider"></div>
 
       <!-- CATEGORY -->
-      <div class="subTitle" id="vibeTitle">🧭 Che vibe vuoi?</div>
+      <div class="subTitle">🧭 Che vibe vuoi?</div>
       <div id="categoryChips" class="chips chipsGrid">
         <div class="chip active" data-cat="natura">🌿 Natura</div>
         <div class="chip" data-cat="hiking">🥾 Trekking</div>
@@ -212,17 +215,10 @@
       <div class="divider"></div>
 
       <!-- STYLE -->
-      <div class="subTitle" id="styleTitle">✨ Preferisci?</div>
+      <div class="subTitle">✨ Preferisci?</div>
       <div id="styleChips" class="chips">
         <div class="chip active" data-style="chicche">✨ Chicche</div>
         <div class="chip active" data-style="classici">✅ Classici</div>
-      </div>
-
-      <!-- EXTRA: Google "cosa c'è" -->
-      <div class="microHelp small muted" style="margin-top:12px;">
-        📌 Vuoi “cosa c’è / cosa fare” al volo?
-        Dopo che hai una meta, usa i link nel risultato — oppure apri Google:
-        <button id="btnGoogleWhatsOn" class="btnGhost" type="button" style="margin-left:8px;">🔎 Cosa c’è (Google)</button>
       </div>
 
       <div class="ctaRow">
@@ -235,7 +231,7 @@
     </section>
 
     <!-- RESULT -->
-    <section id="resultCard" class="card clickSafe anchorTitle">
+    <section id="resultCard" class="card clickSafe">
       <div class="cardTitleRow">
         <div class="cardTitle">📌 Risultato</div>
         <div class="cardHint">Meta + alternative</div>
@@ -245,20 +241,17 @@
         <div class="emptyState">
           <div class="emptyIcon" aria-hidden="true">🧠⚡</div>
           <div class="emptyTitle">Pronto quando lo sei tu.</div>
-          <div class="emptyDesc">
-            1) Imposta la partenza → 2) scegli vibe → 3) premi <b>CERCA</b>.<br>
-            La meta appare qui, con link e alternative.
-          </div>
+          <div class="emptyDesc">Imposta la partenza e premi <b>CERCA</b>: la meta appare qui, con link e alternative.</div>
         </div>
       </div>
     </section>
 
     <footer class="footer clickSafe">
       <div class="footerLine">
-        <span class="dot"></span> Jamo • build UI v6 • neon glass
+        <span class="dot"></span> Jamo • build UI v6.1 • warm premium
       </div>
       <div class="footerLine small muted">
-        Offline-first (best effort). Nessun tracciamento GPS. Link esterni: Maps / Wiki / Foto / Google.
+        Offline-first (best effort). Nessun tracciamento GPS. Link esterni: Maps / Wiki / Foto.
       </div>
     </footer>
 
@@ -268,59 +261,66 @@
   <script src="/events.js?v=1.0"></script>
   <script src="/app.js?v=22.2"></script>
 
-  <!-- UI FLOW (solo scroll + google, non rompe app.js) -->
+  <!-- ✅ Scroll intelligente: ti porta sempre allo step successivo (senza toccare app.js) -->
   <script>
-    (function(){
-      "use strict";
-      const $ = (id) => document.getElementById(id);
+  (() => {
+    "use strict";
+    const $ = (id) => document.getElementById(id);
+    const scrollTo = (id, block = "start") => {
+      const el = $(id);
+      if (!el) return;
+      setTimeout(() => el.scrollIntoView({ behavior: "smooth", block }), 120);
+    };
 
-      function scrollToId(id){
-        const el = $(id);
-        if(!el) return;
-        setTimeout(()=>el.scrollIntoView({behavior:"smooth", block:"start"}), 120);
+    // 1) Dopo "Usa questo luogo" -> vai a Ricerca
+    $("btnFindPlace")?.addEventListener("click", () => {
+      setTimeout(() => scrollTo("searchCard"), 450);
+    });
+
+    // 2) Tap su categoria -> porta allo step successivo
+    $("categoryChips")?.addEventListener("click", (e) => {
+      const chip = e.target.closest(".chip");
+      if (!chip) return;
+
+      const cat = String(chip.dataset.cat || "").toLowerCase();
+
+      // Se eventi: porta ai subfiltri
+      if (cat === "eventi") {
+        setTimeout(() => {
+          const box = $("eventsSubfilters");
+          if (box) box.scrollIntoView({ behavior: "smooth", block: "center" });
+        }, 160);
+        return;
       }
 
-      // 1) dopo "Usa questo luogo" -> vai a Ricerca
-      $("btnFindPlace")?.addEventListener("click", () => {
-        // lascia fare a app.js (geocode + setOrigin), noi scrolliamo e basta
-        setTimeout(() => scrollToId("searchCard"), 450);
-      });
+      // Altrimenti: porta a "Preferisci?"
+      setTimeout(() => {
+        const st = $("styleChips");
+        if (st) st.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 140);
+    });
 
-      // 2) quando scegli categoria -> porta allo stile o al bottone CERCA
-      const catWrap = $("categoryChips");
-      catWrap?.addEventListener("click", (e) => {
-        const chip = e.target.closest(".chip");
-        if(!chip) return;
-        // se scegli "eventi" ha i subfiltri: resta lì un pelo e poi scendi allo stile
-        const cat = String(chip.dataset.cat || "");
-        if (cat === "eventi") {
-          setTimeout(() => scrollToId("eventsSubfilters"), 220);
-          return;
-        }
-        setTimeout(() => scrollToId("styleTitle"), 220);
-      });
+    // 3) Tap su stile -> porta al bottone CERCA
+    $("styleChips")?.addEventListener("click", (e) => {
+      const chip = e.target.closest(".chip");
+      if (!chip) return;
+      setTimeout(() => {
+        $("btnFind")?.scrollIntoView({ behavior: "smooth", block: "center" });
+        if (navigator.vibrate) navigator.vibrate(12);
+      }, 140);
+    });
 
-      // 3) quando scegli stile -> porta al CERCA
-      $("styleChips")?.addEventListener("click", (e) => {
-        const chip = e.target.closest(".chip");
-        if(!chip) return;
-        setTimeout(() => scrollToId("btnFind"), 180);
-      });
+    // 4) Tap su CERCA -> porta a Risultato
+    $("btnFind")?.addEventListener("click", () => {
+      setTimeout(() => scrollTo("resultCard"), 250);
+      if (navigator.vibrate) navigator.vibrate(20);
+    });
 
-      // 4) quando premi CERCA -> porta al risultato
-      $("btnFind")?.addEventListener("click", () => {
-        setTimeout(() => scrollToId("resultCard"), 220);
-      });
-
-      // 5) Google “Cosa c’è”
-      $("btnGoogleWhatsOn")?.addEventListener("click", () => {
-        const originLabel = ($("originLabel")?.value || "").trim();
-        const catActive = document.querySelector("#categoryChips .chip.active");
-        const catTxt = catActive ? catActive.textContent.trim() : "cosa fare";
-        const q = [originLabel || "vicino a me", catTxt, "cosa fare oggi"].join(" ").trim();
-        window.open("https://www.google.com/search?q=" + encodeURIComponent(q), "_blank", "noopener");
-      });
-    })();
+    // 5) Se l’utente clicca "Reset visitati" -> resta comodo sulla Ricerca
+    $("btnResetVisited")?.addEventListener("click", () => {
+      setTimeout(() => scrollTo("searchCard"), 200);
+    });
+  })();
   </script>
 </body>
 </html>
