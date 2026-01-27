@@ -21,9 +21,8 @@
       --text:#F6F6F6;
       --muted:#B9B2A9;
 
-      /* ✅ default premium (non arancione) */
-      --acc:#7C5CFF;     /* viola */
-      --acc2:#2EE6A6;    /* teal */
+      --acc:#E86A33;
+      --acc2:#F4D35E;
       --border:rgba(255,255,255,.10);
       --shadow: rgba(0,0,0,.35);
     }
@@ -32,28 +31,25 @@
 
     .bgGlow{
       background:
-        radial-gradient(700px 420px at 18% 10%, rgba(124,92,255,.18), transparent 55%),
-        radial-gradient(760px 460px at 82% 22%, rgba(46,230,166,.12), transparent 60%),
-        radial-gradient(900px 520px at 50% 92%, rgba(124,92,255,.10), transparent 60%);
+        radial-gradient(700px 420px at 18% 10%, rgba(232,106,51,.20), transparent 55%),
+        radial-gradient(760px 460px at 82% 22%, rgba(244,211,94,.14), transparent 60%),
+        radial-gradient(900px 520px at 50% 92%, rgba(232,106,51,.10), transparent 60%);
       filter: blur(6px);
       opacity: .95;
       pointer-events: none;
     }
 
     .btnPrimary{
-      background: linear-gradient(135deg, var(--acc), var(--acc2));
-      border-color: rgba(255,255,255,.14);
-      color:#121214;
+      background: linear-gradient(135deg, rgba(232,106,51,1), rgba(244,211,94,1));
+      border-color: rgba(244,211,94,.35);
+      color:#141214;
       font-weight: 950;
     }
     .btnPrimary:active{ transform: scale(.99); }
 
-    /* ✅ chip active piena (non solo contorno) */
     .chip.active{
-      background: linear-gradient(135deg, var(--acc), var(--acc2));
-      color:#111215;
-      border-color: rgba(255,255,255,.12);
-      box-shadow: 0 10px 18px rgba(0,0,0,.18);
+      border-color: rgba(244,211,94,.45);
+      box-shadow: 0 0 0 2px rgba(232,106,51,.12) inset;
     }
 
     /* ✅ categorie più immediate: 2 righe, scroll orizzontale */
@@ -85,8 +81,8 @@
     }
     .hScrollHint .dot{
       width:6px;height:6px;border-radius:50%;
-      background: rgba(255,255,255,.85);
-      box-shadow: 0 0 0 3px rgba(124,92,255,.14);
+      background: rgba(244,211,94,.9);
+      box-shadow: 0 0 0 3px rgba(232,106,51,.14);
       flex:0 0 auto;
     }
 
@@ -113,8 +109,8 @@
     .fabSOS .b{
       width:34px;height:34px;border-radius:12px;
       display:flex;align-items:center;justify-content:center;
-      background: linear-gradient(135deg, var(--acc), var(--acc2));
-      color:#121214;
+      background: linear-gradient(135deg, rgba(232,106,51,.92), rgba(244,211,94,.92));
+      color:#141214;
       flex:0 0 auto;
       box-shadow: 0 10px 18px rgba(0,0,0,.25);
     }
@@ -169,33 +165,6 @@
     .ideaCard .t{ font-weight: 950; }
     .ideaCard .d{ margin-top:6px; color: var(--muted); line-height:1.35; font-size:13px; }
     .sheetActions{ margin-top: 12px; display:flex; gap:10px; flex-wrap:wrap; }
-
-    /* ✅ evita accavalli: riga “Cosa c’è” dentro le card */
-    .whatIsWrap{
-      display:flex;
-      justify-content:flex-start;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-top:12px;
-    }
-    .btnWhatIs{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:10px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.04);
-      color: var(--text);
-      font-weight: 900;
-      letter-spacing: .2px;
-    }
-    .btnWhatIs:active{ transform: scale(.99); }
-
-    /* (opzionale) highlight card selezionata */
-    #resultArea .card[data-selected="1"]{
-      box-shadow: 0 0 0 2px rgba(255,255,255,.10) inset, 0 18px 30px rgba(0,0,0,.25);
-    }
   </style>
 </head>
 
@@ -361,9 +330,9 @@
         <div class="cardHint">Meta + alternative</div>
       </div>
 
-      <!-- ✅ bottone globale (usa la meta selezionata o la prima) -->
+      <!-- ✅ “Cosa c’è” globale (DEVE aprire l’ultimo posto selezionato) -->
       <div class="row wraprow" style="gap:10px; margin:10px 0 14px;">
-        <button id="btnWhatsThere" class="btnWhatIs" type="button">👀 Cosa c’è (del posto)</button>
+        <button id="btnWhatsThere" class="btnGhost" type="button">👀 Cosa c’è</button>
       </div>
 
       <div id="resultArea">
@@ -377,7 +346,7 @@
 
     <footer class="footer clickSafe">
       <div class="footerLine">
-        <span class="dot"></span> Jamo • build UI v6.1
+        <span class="dot"></span> Jamo • build UI v6.1 • warm premium
       </div>
       <div class="footerLine small muted">
         Offline-first (best effort). Nessun tracciamento GPS. Link esterni: Maps / Wiki / Foto.
@@ -430,48 +399,7 @@
     "use strict";
     const $ = (id) => document.getElementById(id);
 
-    /* ===============================
-       PALETTE COERENTE PER CATEGORIA
-       =============================== */
-    const CAT_PALETTES = {
-      natura:   { acc:"#2ECC71", acc2:"#A8FF78", g1:"rgba(46,204,113,.18)", g2:"rgba(168,255,120,.10)", g3:"rgba(46,204,113,.08)" },
-      hiking:   { acc:"#16A085", acc2:"#B8F2E6", g1:"rgba(22,160,133,.18)", g2:"rgba(184,242,230,.10)", g3:"rgba(22,160,133,.08)" },
-      borghi:   { acc:"#C08457", acc2:"#F2D0A4", g1:"rgba(192,132,87,.18)", g2:"rgba(242,208,164,.10)", g3:"rgba(192,132,87,.08)" },
-      storia:   { acc:"#8E7CC3", acc2:"#D7C7FF", g1:"rgba(142,124,195,.18)", g2:"rgba(215,199,255,.10)", g3:"rgba(142,124,195,.08)" },
-      montagna: { acc:"#6C757D", acc2:"#CED4DA", g1:"rgba(108,117,125,.18)", g2:"rgba(206,212,218,.10)", g3:"rgba(108,117,125,.08)" },
-      mare:     { acc:"#1D4ED8", acc2:"#38BDF8", g1:"rgba(29,78,216,.16)",  g2:"rgba(56,189,248,.10)", g3:"rgba(29,78,216,.08)" },
-      lago:     { acc:"#2563EB", acc2:"#22C55E", g1:"rgba(37,99,235,.16)",  g2:"rgba(34,197,94,.10)",  g3:"rgba(37,99,235,.08)" },
-      relax:    { acc:"#A855F7", acc2:"#FBCFE8", g1:"rgba(168,85,247,.16)", g2:"rgba(251,207,232,.10)", g3:"rgba(168,85,247,.08)" },
-      family:   { acc:"#F59E0B", acc2:"#34D399", g1:"rgba(245,158,11,.16)", g2:"rgba(52,211,153,.10)", g3:"rgba(245,158,11,.08)" },
-      cantine:  { acc:"#9B2226", acc2:"#E9C46A", g1:"rgba(155,34,38,.16)",  g2:"rgba(233,196,106,.10)", g3:"rgba(155,34,38,.08)" },
-      eventi:   { acc:"#7C3AED", acc2:"#FDE047", g1:"rgba(124,58,237,.16)", g2:"rgba(253,224,71,.10)",  g3:"rgba(124,58,237,.08)" },
-      default:  { acc:"#7C5CFF", acc2:"#2EE6A6", g1:"rgba(124,92,255,.18)", g2:"rgba(46,230,166,.12)", g3:"rgba(124,92,255,.10)" },
-    };
-    let currentCat = "default";
-
-    function applyPalette(p){
-      document.documentElement.style.setProperty("--acc", p.acc);
-      document.documentElement.style.setProperty("--acc2", p.acc2);
-
-      const g = document.querySelector(".bgGlow");
-      if (g){
-        g.style.background =
-          `radial-gradient(700px 420px at 18% 10%, ${p.g1}, transparent 55%),
-           radial-gradient(760px 460px at 82% 22%, ${p.g2}, transparent 60%),
-           radial-gradient(900px 520px at 50% 92%, ${p.g3}, transparent 60%)`;
-      }
-
-      if (navigator.vibrate) navigator.vibrate(8);
-    }
-    function setCategory(cat){
-      currentCat = cat || "default";
-      applyPalette(CAT_PALETTES[currentCat] || CAT_PALETTES.default);
-    }
-    applyPalette(CAT_PALETTES.default);
-
-    /* ===============================
-       SCROLL SMART
-       =============================== */
+    /* ------------------ scroll smart (come prima) ------------------ */
     const scrollTo = (id, block = "start") => {
       const el = $(id);
       if (!el) return;
@@ -485,8 +413,8 @@
       if (!chip) return;
 
       const cat = String(chip.dataset.cat || "").toLowerCase();
-      setCategory(cat);
 
+      // FAB SOS solo in family
       const fab = $("fabSOS");
       if (fab) fab.style.display = (cat === "family") ? "flex" : "none";
 
@@ -500,134 +428,185 @@
     $("styleChips")?.addEventListener("click", (e) => {
       const chip = e.target.closest(".chip");
       if (!chip) return;
-      setTimeout(() => $("btnFind")?.scrollIntoView({ behavior: "smooth", block: "center" }), 140);
+      setTimeout(() => {
+        $("btnFind")?.scrollIntoView({ behavior: "smooth", block: "center" });
+        if (navigator.vibrate) navigator.vibrate(12);
+      }, 140);
     });
 
-    $("btnFind")?.addEventListener("click", () => setTimeout(() => scrollTo("resultCard"), 250));
+    $("btnFind")?.addEventListener("click", () => {
+      setTimeout(() => scrollTo("resultCard"), 250);
+      if (navigator.vibrate) navigator.vibrate(20);
+    });
+
     $("btnResetVisited")?.addEventListener("click", () => setTimeout(() => scrollTo("searchCard"), 200));
 
-    /* ===============================
-       COSA C’È -> posto selezionato (NO coordinate)
-       =============================== */
-    const resultArea = $("resultArea");
-    let selectedCard = null;
+    /* ------------------ “Cosa c’è” (Google AI) — FIX ROBUSTO ------------------ */
 
-    function stripCoords(s){
-      return String(s||"")
-        .replace(/\b-?\d{1,3}\.\d+\s*,\s*-?\d{1,3}\.\d+\b/g, "")
-        .replace(/\b-?\d{1,3}\.\d+\s+-?\d{1,3}\.\d+\b/g, "")
-        .replace(/\s{2,}/g," ")
+    // Salva ultimo posto "selezionato" dall’utente (card toccata / bottone card)
+    let LAST_SELECTED_QUERY = "";
+
+    function cleanText(s){
+      return String(s || "")
+        .replace(/\s+/g, " ")
+        .replace(/^📍\s*/,"")
         .trim();
     }
-    function extractWhereFromCard(card){
-      const divs = Array.from(card.querySelectorAll("div"));
-      const whereEl = divs.find(d => (d.textContent || "").trim().startsWith("📍"));
-      let where = (whereEl?.textContent || "").replace(/^📍\s*/,"").trim();
-      where = stripCoords(where);
-      where = where.replace(/\s*[•|—|-]\s*$/g,"").trim();
-      return where;
-    }
-    function extractTitleFromCard(card){
-      const h = card.querySelector("h1,h2,h3");
-      if (h && h.textContent.trim()) return h.textContent.trim();
-      const strongish = card.querySelector("div[style*='font-weight:950']");
-      if (strongish && strongish.textContent.trim()) return strongish.textContent.trim();
-      const t = (card.textContent || "").replace(/\s+/g," ").trim();
-      return t.split("•")[0].slice(0,80).trim();
-    }
-    function buildGoogleQueryFromCard(card){
-      const title = extractTitleFromCard(card);
-      const where = extractWhereFromCard(card);
-      const parts = [];
-      if (title) parts.push(title);
-      if (where) parts.push(where);
-      parts.push("Italia");
-      return parts.join(" ").replace(/\s+/g," ").trim();
-    }
-    function openGoogleAI(query){
-      const q = `Cosa c'è a ${query} cosa vedere cosa fare`;
-      window.open(`https://www.google.com/search?q=${encodeURIComponent(q)}`, "_blank", "noopener");
-    }
-    function getFirstRealCard(){
-      if (!resultArea) return null;
-      const cards = Array.from(resultArea.querySelectorAll(".card"));
-      return cards.find(c => !/pronto quando lo sei|nessuna idea trovata/i.test(c.textContent || "")) || null;
-    }
-    function setSelectedCard(card){
-      selectedCard = card;
-      Array.from(resultArea?.querySelectorAll(".card[data-selected='1']") || []).forEach(c => c.removeAttribute("data-selected"));
-      if (card) card.setAttribute("data-selected","1");
+
+    // 1) prova: leggere da card (titolo + riga 📍)
+    function extractNamePlaceFromCard(card){
+      if (!card) return "";
+      const titleEl =
+        card.querySelector("h1,h2,h3") ||
+        card.querySelector("[data-title]") ||
+        card.querySelector("div[style*='font-weight:950']") ||
+        card.querySelector("div[style*='font-weight: 950']");
+
+      const title = cleanText(titleEl?.textContent || "");
+      const whereEl = Array.from(card.querySelectorAll("div,span,p"))
+        .find(el => cleanText(el.textContent || "").startsWith("📍") || (el.textContent||"").trim().startsWith("📍"));
+      const where = cleanText(whereEl?.textContent || "");
+
+      const q = [title, where].filter(Boolean).join(" • ").trim();
+      return q;
     }
 
-    resultArea?.addEventListener("click", (e) => {
-      const t = e.target;
-      if (t.closest("button,a,input,textarea,select,label,.chip")) return;
-      const c = t.closest("#resultArea .card");
-      if (!c) return;
-      if (/pronto quando lo sei|nessuna idea trovata/i.test(c.textContent || "")) return;
-      setSelectedCard(c);
-    });
+    // 2) fallback: prendere testo dalla query di Google Maps search (sempre testuale, NO coordinate)
+    function extractFromMapsSearchLink(card){
+      if (!card) return "";
+      const a = Array.from(card.querySelectorAll("a[href]"))
+        .find(x => /google\.[^/]+\/maps\/search\/\?api=1&query=/i.test(x.getAttribute("href") || ""));
+      if (!a) return "";
+      try{
+        const href = a.getAttribute("href") || "";
+        const u = new URL(href);
+        const q = u.searchParams.get("query") || "";
+        return cleanText(decodeURIComponent(q));
+      }catch(_){
+        return "";
+      }
+    }
 
-    $("btnWhatsThere")?.addEventListener("click", () => {
-      const card = selectedCard || getFirstRealCard();
-      if (card){
-        openGoogleAI(buildGoogleQueryFromCard(card));
+    function bestQueryForCard(card){
+      // preferisci sempre nome+luogo; se non c’è, usa maps search query (testo)
+      const a = extractNamePlaceFromCard(card);
+      if (a && a.length >= 3) return a;
+      const b = extractFromMapsSearchLink(card);
+      if (b && b.length >= 3) return b;
+      return "";
+    }
+
+    function getPrimaryResultCard(){
+      const area = $("resultArea");
+      if (!area) return null;
+
+      // prendi la prima card "vera"
+      const cards = Array.from(area.querySelectorAll(".card"));
+      for (const c of cards){
+        const txt = (c.textContent || "").toLowerCase();
+        const looksLikeEmpty = txt.includes("pronto quando lo sei") || txt.includes("nessuna idea trovata");
+        if (looksLikeEmpty) continue;
+        return c;
+      }
+      return null;
+    }
+
+    function openGoogleAIForPlace(query){
+      const q = cleanText(query);
+      if (!q){
+        // fallback ultra-safe: usa origine SOLO se non abbiamo proprio niente
+        const o = cleanText($("originLabel")?.value || "");
+        const q2 = o ? `Cosa c'è a ${o} cosa vedere cosa fare` : "Cosa c'è a Verona cosa vedere cosa fare";
+        window.open(`https://www.google.com/search?q=${encodeURIComponent(q2)}`, "_blank", "noopener");
         return;
       }
-      const o = ($("originLabel")?.value || "").trim();
-      openGoogleAI(o ? o : "Verona");
+      const full = `Cosa c'è a ${q} cosa vedere cosa fare`;
+      window.open(`https://www.google.com/search?q=${encodeURIComponent(full)}`, "_blank", "noopener");
+    }
+
+    // ✅ Bottone globale: apre ultimo selezionato; se non c’è, prende il primo risultato
+    $("btnWhatsThere")?.addEventListener("click", () => {
+      let q = cleanText(LAST_SELECTED_QUERY);
+      if (!q){
+        const c = getPrimaryResultCard();
+        q = bestQueryForCard(c);
+      }
+      openGoogleAIForPlace(q);
     });
 
+    // ✅ Inietta “Cosa c’è” dentro OGNI card risultato (senza toccare app.js)
     function injectWhatIsButtons(){
-      if (!resultArea) return;
+      const area = $("resultArea");
+      if (!area) return;
 
-      const cards = Array.from(resultArea.querySelectorAll(".card"));
+      const cards = Array.from(area.querySelectorAll(".card"));
       for (const c of cards) {
-        if (/pronto quando lo sei|nessuna idea trovata/i.test(c.textContent || "")) continue;
+        if (c.querySelector("[data-what-is-btn='1']")) continue;
 
-        // ✅ evita duplicati -> niente accavalli
-        if (c.querySelector(".whatIsWrap")) continue;
+        const txt = (c.textContent || "").toLowerCase();
+        const looksLikeEmpty = txt.includes("pronto quando lo sei") || txt.includes("nessuna idea trovata");
+        if (looksLikeEmpty) continue;
 
-        const wrap = document.createElement("div");
-        wrap.className = "whatIsWrap";
+        const row = document.createElement("div");
+        row.style.display = "flex";
+        row.style.gap = "10px";
+        row.style.flexWrap = "wrap";
+        row.style.marginTop = "12px";
 
         const b = document.createElement("button");
-        b.className = "btnWhatIs";
+        b.className = "btnGhost";
         b.type = "button";
         b.textContent = "👀 Cosa c’è";
+        b.setAttribute("data-what-is-btn","1");
 
         b.addEventListener("click", (ev) => {
           ev.preventDefault();
           ev.stopPropagation();
-          setSelectedCard(c);
-          openGoogleAI(buildGoogleQueryFromCard(c));
+
+          const q = bestQueryForCard(c);
+          if (q) LAST_SELECTED_QUERY = q;   // ✅ salva selezione
+          openGoogleAIForPlace(q);
         });
 
-        wrap.appendChild(b);
+        row.appendChild(b);
 
-        // inserisci in punto “sicuro” (prima di debug tipo Dataset/Score/Fonte)
-        const stopNode = Array.from(c.querySelectorAll("div"))
-          .find(d => /dataset:|score:|fonte:/i.test((d.textContent||"").trim()));
-        if (stopNode && stopNode.parentNode === c) c.insertBefore(wrap, stopNode);
-        else c.appendChild(wrap);
-      }
-
-      // se non selezionata, seleziona la prima meta reale
-      if (!selectedCard){
-        const first = getFirstRealCard();
-        if (first) setSelectedCard(first);
+        // Inserisci prima di "Fonte:" se esiste, altrimenti in fondo
+        const footer = Array.from(c.querySelectorAll("div")).find(d => (d.textContent||"").trim().toLowerCase().startsWith("fonte:"));
+        if (footer && footer.parentNode === c) {
+          c.insertBefore(row, footer);
+        } else {
+          c.appendChild(row);
+        }
       }
     }
 
-    if (resultArea) {
+    // ✅ Quando tocchi una card (anche senza premere bottoni), salviamo quel posto come “selezionato”
+    function enableCardSelectionCapture(){
+      const area = $("resultArea");
+      if (!area) return;
+
+      area.addEventListener("click", (e) => {
+        const card = e.target.closest(".card");
+        if (!card) return;
+
+        const txt = (card.textContent || "").toLowerCase();
+        const looksLikeEmpty = txt.includes("pronto quando lo sei") || txt.includes("nessuna idea trovata");
+        if (looksLikeEmpty) return;
+
+        const q = bestQueryForCard(card);
+        if (q) LAST_SELECTED_QUERY = q;
+      }, { passive:true });
+    }
+
+    const area = $("resultArea");
+    if (area) {
       const mo = new MutationObserver(() => injectWhatIsButtons());
-      mo.observe(resultArea, { childList: true, subtree: true });
+      mo.observe(area, { childList: true, subtree: true });
       injectWhatIsButtons();
+      enableCardSelectionCapture();
     }
 
-    /* ===============================
-       FAB SOS
-       =============================== */
+    /* ------------------ FAB SOS ------------------ */
     const fab = $("fabSOS");
     const mask = $("sheetMask");
     const sheet = $("sheetSOS");
