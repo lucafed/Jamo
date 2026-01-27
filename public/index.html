@@ -21,8 +21,9 @@
       --text:#F6F6F6;
       --muted:#B9B2A9;
 
-      --acc:#E86A33;
-      --acc2:#F4D35E;
+      /* ✅ NUOVA PALETTE (via arancione) — “figa” ma non neon */
+      --acc:#7C5CFF;     /* viola premium */
+      --acc2:#2EE6A6;    /* menta elegante */
       --border:rgba(255,255,255,.10);
       --shadow: rgba(0,0,0,.35);
     }
@@ -31,25 +32,36 @@
 
     .bgGlow{
       background:
-        radial-gradient(700px 420px at 18% 10%, rgba(232,106,51,.20), transparent 55%),
-        radial-gradient(760px 460px at 82% 22%, rgba(244,211,94,.14), transparent 60%),
-        radial-gradient(900px 520px at 50% 92%, rgba(232,106,51,.10), transparent 60%);
+        radial-gradient(700px 420px at 18% 10%, rgba(124,92,255,.18), transparent 55%),
+        radial-gradient(760px 460px at 82% 22%, rgba(46,230,166,.12), transparent 60%),
+        radial-gradient(900px 520px at 50% 92%, rgba(124,92,255,.10), transparent 60%);
       filter: blur(6px);
       opacity: .95;
       pointer-events: none;
     }
 
+    /* CTA più “premium” */
     .btnPrimary{
-      background: linear-gradient(135deg, rgba(232,106,51,1), rgba(244,211,94,1));
-      border-color: rgba(244,211,94,.35);
-      color:#141214;
+      background: linear-gradient(135deg, rgba(124,92,255,1), rgba(46,230,166,1));
+      border-color: rgba(46,230,166,.35);
+      color:#121214;
       font-weight: 950;
     }
     .btnPrimary:active{ transform: scale(.99); }
 
+    /* ✅ CHIP: cambio pieno (non solo bordo) */
+    .chip{
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.10);
+      transition: background .18s ease, color .18s ease, transform .12s ease, border-color .18s ease;
+    }
     .chip.active{
-      border-color: rgba(244,211,94,.45);
-      box-shadow: 0 0 0 2px rgba(232,106,51,.12) inset;
+      background: linear-gradient(135deg, rgba(124,92,255,1), rgba(46,230,166,1));
+      color:#111215;
+      font-weight: 950;
+      border-color: rgba(255,255,255,.12);
+      transform: scale(1.03);
+      box-shadow: 0 10px 22px rgba(0,0,0,.20);
     }
 
     /* ✅ categorie più immediate: 2 righe, scroll orizzontale */
@@ -81,8 +93,8 @@
     }
     .hScrollHint .dot{
       width:6px;height:6px;border-radius:50%;
-      background: rgba(244,211,94,.9);
-      box-shadow: 0 0 0 3px rgba(232,106,51,.14);
+      background: rgba(46,230,166,.9);
+      box-shadow: 0 0 0 3px rgba(124,92,255,.14);
       flex:0 0 auto;
     }
 
@@ -109,8 +121,8 @@
     .fabSOS .b{
       width:34px;height:34px;border-radius:12px;
       display:flex;align-items:center;justify-content:center;
-      background: linear-gradient(135deg, rgba(232,106,51,.92), rgba(244,211,94,.92));
-      color:#141214;
+      background: linear-gradient(135deg, rgba(124,92,255,.92), rgba(46,230,166,.92));
+      color:#121214;
       flex:0 0 auto;
       box-shadow: 0 10px 18px rgba(0,0,0,.25);
     }
@@ -166,25 +178,32 @@
     .ideaCard .d{ margin-top:6px; color: var(--muted); line-height:1.35; font-size:13px; }
     .sheetActions{ margin-top: 12px; display:flex; gap:10px; flex-wrap:wrap; }
 
-    /* =========================================================
-       ✅ SOLO AGGIUNTA: colori chip per categoria (no change UI)
-       ========================================================= */
-    #categoryChips .chip.active{
-      position: relative;
-      overflow: hidden;
+    /* ✅ “Cosa c’è” visibile e non si accavalla MAI */
+    .whatIsRow{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin:10px 0 14px;
+      align-items:center;
     }
-    /* tinta (molto soft) */
-    #categoryChips .chip.active[data-cat="natura"]   { border-color: rgba( 72, 199, 116,.55); box-shadow: 0 0 0 2px rgba( 72,199,116,.12) inset; }
-    #categoryChips .chip.active[data-cat="hiking"]   { border-color: rgba( 46, 134, 193,.55); box-shadow: 0 0 0 2px rgba( 46,134,193,.12) inset; }
-    #categoryChips .chip.active[data-cat="borghi"]   { border-color: rgba(155,  89, 182,.55); box-shadow: 0 0 0 2px rgba(155, 89,182,.12) inset; }
-    #categoryChips .chip.active[data-cat="storia"]   { border-color: rgba(241, 196,  15,.60); box-shadow: 0 0 0 2px rgba(241,196, 15,.12) inset; }
-    #categoryChips .chip.active[data-cat="montagna"] { border-color: rgba(149, 165, 166,.60); box-shadow: 0 0 0 2px rgba(149,165,166,.12) inset; }
-    #categoryChips .chip.active[data-cat="mare"]     { border-color: rgba( 52, 152, 219,.60); box-shadow: 0 0 0 2px rgba( 52,152,219,.12) inset; }
-    #categoryChips .chip.active[data-cat="lago"]     { border-color: rgba( 26, 188, 156,.60); box-shadow: 0 0 0 2px rgba( 26,188,156,.12) inset; }
-    #categoryChips .chip.active[data-cat="relax"]    { border-color: rgba(231,  76,  60,.55); box-shadow: 0 0 0 2px rgba(231, 76, 60,.12) inset; }
-    #categoryChips .chip.active[data-cat="family"]   { border-color: rgba(243, 156,  18,.62); box-shadow: 0 0 0 2px rgba(243,156, 18,.12) inset; }
-    #categoryChips .chip.active[data-cat="cantine"]  { border-color: rgba(192,  57,  43,.60); box-shadow: 0 0 0 2px rgba(192, 57, 43,.12) inset; }
-    #categoryChips .chip.active[data-cat="eventi"]   { border-color: rgba(244, 211,  94,.70); box-shadow: 0 0 0 2px rgba(244,211, 94,.14) inset; }
+    .btnWhatIs{
+      padding:10px 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      font-weight: 950;
+      letter-spacing: .2px;
+      white-space: nowrap;
+    }
+    .btnWhatIs:active{ transform: scale(.99); }
+
+    /* wrapper iniettato nelle card risultato */
+    .whatIsWrap{
+      margin-top: 12px;
+      display:flex;
+      justify-content:flex-start;
+    }
   </style>
 </head>
 
@@ -350,8 +369,9 @@
         <div class="cardHint">Meta + alternative</div>
       </div>
 
-      <div class="row wraprow" style="gap:10px; margin:10px 0 14px;">
-        <button id="btnWhatsThere" class="btnGhost" type="button">👀 Cosa c’è</button>
+      <!-- ✅ bottone globale, ben visibile -->
+      <div class="whatIsRow">
+        <button id="btnWhatsThere" class="btnWhatIs" type="button">👀 Cosa c’è</button>
       </div>
 
       <div id="resultArea">
@@ -365,7 +385,7 @@
 
     <footer class="footer clickSafe">
       <div class="footerLine">
-        <span class="dot"></span> Jamo • build UI v6.1 • warm premium
+        <span class="dot"></span> Jamo • build UI v6.1 • premium
       </div>
       <div class="footerLine small muted">
         Offline-first (best effort). Nessun tracciamento GPS. Link esterni: Maps / Wiki / Foto.
@@ -418,13 +438,13 @@
     "use strict";
     const $ = (id) => document.getElementById(id);
 
-    /* ------------------ palette engine ------------------ */
+    /* ------------------ palette engine (solo cambio colori, non UI) ------------------ */
     const PALETTES = [
-      { acc:"#E86A33", acc2:"#F4D35E", g1:"rgba(232,106,51,.20)", g2:"rgba(244,211,94,.14)", g3:"rgba(232,106,51,.10)" },
-      { acc:"#C85C5C", acc2:"#F3B562", g1:"rgba(200,92,92,.20)", g2:"rgba(243,181,98,.14)", g3:"rgba(200,92,92,.10)" },
-      { acc:"#7A77FF", acc2:"#FFB703", g1:"rgba(122,119,255,.18)", g2:"rgba(255,183,3,.12)", g3:"rgba(122,119,255,.10)" },
-      { acc:"#2A9D8F", acc2:"#E9C46A", g1:"rgba(42,157,143,.18)", g2:"rgba(233,196,106,.12)", g3:"rgba(42,157,143,.10)" },
-      { acc:"#D62828", acc2:"#F77F00", g1:"rgba(214,40,40,.18)", g2:"rgba(247,127,0,.12)", g3:"rgba(214,40,40,.10)" }
+      { acc:"#7C5CFF", acc2:"#2EE6A6", g1:"rgba(124,92,255,.18)", g2:"rgba(46,230,166,.12)", g3:"rgba(124,92,255,.10)" },
+      { acc:"#FF5C8A", acc2:"#FFD166", g1:"rgba(255,92,138,.16)", g2:"rgba(255,209,102,.10)", g3:"rgba(255,92,138,.08)" },
+      { acc:"#2A9D8F", acc2:"#E9C46A", g1:"rgba(42,157,143,.16)", g2:"rgba(233,196,106,.10)", g3:"rgba(42,157,143,.08)" },
+      { acc:"#6D6875", acc2:"#FFB4A2", g1:"rgba(109,104,117,.16)", g2:"rgba(255,180,162,.10)", g3:"rgba(109,104,117,.08)" },
+      { acc:"#3A86FF", acc2:"#FFBE0B", g1:"rgba(58,134,255,.16)", g2:"rgba(255,190,11,.10)", g3:"rgba(58,134,255,.08)" }
     ];
     let pIdx = 0;
 
@@ -432,6 +452,7 @@
       document.documentElement.style.setProperty("--acc", p.acc);
       document.documentElement.style.setProperty("--acc2", p.acc2);
 
+      // aggiorna glow
       const g = document.querySelector(".bgGlow");
       if (g){
         g.style.background =
@@ -439,6 +460,30 @@
            radial-gradient(760px 460px at 82% 22%, ${p.g2}, transparent 60%),
            radial-gradient(900px 520px at 50% 92%, ${p.g3}, transparent 60%)`;
       }
+
+      // aggiorna CTA coerente (senza toccare CSS esterno)
+      const styleTagId = "dynPrimaryBtn";
+      let st = document.getElementById(styleTagId);
+      if (!st){
+        st = document.createElement("style");
+        st.id = styleTagId;
+        document.head.appendChild(st);
+      }
+      st.textContent = `
+        .btnPrimary{
+          background: linear-gradient(135deg, ${p.acc}, ${p.acc2}) !important;
+          border-color: rgba(255,255,255,.14) !important;
+          color:#121214 !important;
+        }
+        .chip.active{
+          background: linear-gradient(135deg, ${p.acc}, ${p.acc2}) !important;
+          color:#111215 !important;
+        }
+        .fabSOS .b{
+          background: linear-gradient(135deg, ${p.acc}, ${p.acc2}) !important;
+          color:#121214 !important;
+        }
+      `;
     }
     function nextPalette(){
       pIdx = (pIdx + 1) % PALETTES.length;
@@ -459,7 +504,7 @@
       const chip = e.target.closest(".chip");
       if (!chip) return;
 
-      // ✅ cambia palette globale (come avevi) + chip colorate (CSS sopra)
+      // ✅ cambia palette ad ogni tap categoria
       nextPalette();
 
       const cat = String(chip.dataset.cat || "").toLowerCase();
@@ -491,126 +536,94 @@
 
     $("btnResetVisited")?.addEventListener("click", () => setTimeout(() => scrollTo("searchCard"), 200));
 
-    /* ------------------ “Cosa c’è” (Google AI) FIX DEFINITIVO ------------------ */
+    /* ------------------ “Cosa c’è” (Google AI) — SOLO NOME + LUOGO ------------------ */
+    function extractBestPlaceTextFromCard(card){
+      const text = (card.textContent || "").replace(/\s+/g," ").trim();
 
-    // Prende un testo "buono" dalla prima card/event card dentro resultArea
-    function getBestCardInResult(){
+      // prende una riga con 📍 (molto comune nei tuoi render) oppure prova con " • "
+      const m = text.match(/📍\s*([^]+?)\s*(Fonte:|Dataset:|score:|$)/i);
+      if (m && m[1]) return m[1].replace(/\s+/g," ").trim();
+
+      return "";
+    }
+
+    function extractTitleFromCard(card){
+      // prova: prima riga grossa / h1-h3 / fallback
+      const h = card.querySelector("h1,h2,h3");
+      if (h && h.textContent.trim()) return h.textContent.trim();
+
+      // fallback: primo pezzo di testo “sensato”
+      const t = (card.textContent || "").replace(/\s+/g," ").trim();
+      return t.split("•")[0].slice(0,80).trim();
+    }
+
+    function openGoogleAIForPlace(title, where){
+      const parts = [];
+      if (title) parts.push(title);
+      if (where) parts.push(where);
+      parts.push("Italia");
+      const base = parts.join(" ").replace(/\s+/g," ").trim();
+
+      const q = `Cosa c'è a ${base} cosa vedere cosa fare`;
+      window.open(`https://www.google.com/search?q=${encodeURIComponent(q)}`, "_blank", "noopener");
+    }
+
+    function getPrimaryCard(){
       const area = $("resultArea");
       if (!area) return null;
 
-      // 1) event cards (events.js) => .card.clickSafe
-      const c1 = area.querySelector(".card");
-      if (c1) return c1;
-
-      // 2) app.js potrebbe renderizzare "cards" senza .card: prova contenitori noti
-      // (non rompo nulla: cerco blocchi con link/bottoni, o div con border/padding)
-      const candidates = Array.from(area.querySelectorAll("section, article, div"))
-        .filter(el => el !== area)
-        .filter(el => (el.querySelector("a,button") || (el.textContent||"").trim().length > 20))
-        .slice(0, 20);
-
-      return candidates[0] || null;
+      // prima card “vera” dentro resultArea (quella della meta principale)
+      const cards = Array.from(area.querySelectorAll(".card"));
+      return cards.find(c => !/pronto quando lo sei|nessuna idea trovata/i.test(c.textContent || "")) || null;
     }
 
-    function clean(s){
-      return String(s || "")
-        .replace(/\s+/g, " ")
-        .replace(/[^\p{L}\p{N}\s'’.,-]/gu, "")
-        .trim();
-    }
-
-    function queryFromElement(el){
-      if (!el) return "";
-
-      // title: cerca prima un blocco "grosso"
-      const tEl =
-        el.querySelector("h1,h2,h3") ||
-        el.querySelector("div[style*='font-weight:950']") ||
-        el.querySelector(".title,.cardTitle") ||
-        null;
-      let title = clean(tEl?.textContent || "");
-
-      // where: riga che inizia con 📍 (events.js) oppure una riga breve con città
-      let where = "";
-      const divs = Array.from(el.querySelectorAll("div"));
-      const wEl = divs.find(d => clean(d.textContent).startsWith("📍"));
-      if (wEl) where = clean((wEl.textContent||"").replace("📍",""));
-
-      // fallback: prendi prime 2 righe significative dal testo
-      if (!title || !where){
-        const lines = clean(el.textContent || "").split(" ").join(" ").split("  ").join(" ");
-        // non faccio magie: basta testo pulito
-        if (!title) title = clean(lines).slice(0, 90);
-      }
-
-      const q = clean([title, where, "Italia"].filter(Boolean).join(" "));
-      return q;
-    }
-
-    function openGoogleAI(query){
-      const q = clean(query);
-      const origin = clean($("originLabel")?.value || "");
-
-      const finalQ = q
-        ? `Cosa c'è a ${q} cosa vedere cosa fare`
-        : (origin ? `Cosa c'è a ${origin} cosa vedere cosa fare` : "Cosa c'è a Verona cosa vedere cosa fare");
-
-      window.open(`https://www.google.com/search?q=${encodeURIComponent(finalQ)}&hl=it&gl=it`, "_blank", "noopener");
-    }
-
-    // bottone fuori (quello storico)
     $("btnWhatsThere")?.addEventListener("click", () => {
-      const el = getBestCardInResult();
-      const q = queryFromElement(el);
-      openGoogleAI(q);
+      const c = getPrimaryCard();
+      if (!c){
+        const o = ($("originLabel")?.value || "").trim();
+        openGoogleAIForPlace(o ? o : "Verona", "");
+        return;
+      }
+      const title = extractTitleFromCard(c);
+      const where = extractBestPlaceTextFromCard(c);
+      openGoogleAIForPlace(title, where);
     });
 
-    // inietta bottone dentro card/event card (senza toccare app.js)
+    /* ✅ Inietta UN SOLO bottone “Cosa c’è” per card (NO accavallo) */
     function injectWhatIsButtons(){
       const area = $("resultArea");
       if (!area) return;
 
-      // prendo card vere se ci sono, altrimenti "blocchi" sensati
-      const blocks = area.querySelectorAll(".card");
-      const targets = blocks.length
-        ? Array.from(blocks)
-        : Array.from(area.querySelectorAll("section, article, div")).filter(el => el !== area).slice(0, 12);
+      const cards = Array.from(area.querySelectorAll(".card"));
+      for (const c of cards) {
+        if (/pronto quando lo sei|nessuna idea trovata/i.test(c.textContent || "")) continue;
 
-      for (const el of targets) {
-        if (el.querySelector("[data-what-is-btn='1']")) continue;
+        // già presente? stop
+        if (c.querySelector(".whatIsWrap")) continue;
 
-        const txt = (el.textContent || "").toLowerCase();
-        if (txt.includes("pronto quando lo sei") || txt.includes("nessuna idea trovata")) continue;
-
-        const row = document.createElement("div");
-        row.style.display = "flex";
-        row.style.gap = "10px";
-        row.style.flexWrap = "wrap";
-        row.style.marginTop = "12px";
+        const wrap = document.createElement("div");
+        wrap.className = "whatIsWrap";
 
         const b = document.createElement("button");
-        b.className = "btnGhost";
+        b.className = "btnWhatIs";
         b.type = "button";
         b.textContent = "👀 Cosa c’è";
-        b.setAttribute("data-what-is-btn","1");
 
         b.addEventListener("click", (ev) => {
           ev.preventDefault();
           ev.stopPropagation();
-          openGoogleAI(queryFromElement(el));
+          const title = extractTitleFromCard(c);
+          const where = extractBestPlaceTextFromCard(c);
+          openGoogleAIForPlace(title, where);
         });
 
-        row.appendChild(b);
+        wrap.appendChild(b);
 
-        // se c'è una riga bottoni già esistente, append lì, altrimenti in fondo
-        const actionRow =
-          el.querySelector(".ctaRow") ||
-          el.querySelector(".row") ||
-          el.querySelector("[style*='display:flex']") ||
-          null;
-
-        if (actionRow) actionRow.appendChild(b);
-        else el.appendChild(row);
+        // append in fondo, ma prima di eventuali righe “Dataset/score” se presenti
+        const stopNode = Array.from(c.querySelectorAll("div"))
+          .find(d => /dataset:|score:|fonte:/i.test((d.textContent||"").trim()));
+        if (stopNode && stopNode.parentNode === c) c.insertBefore(wrap, stopNode);
+        else c.appendChild(wrap);
       }
     }
 
@@ -671,6 +684,9 @@
       if (!card) return;
       nextPalette();
     }, { passive:true });
+
+    // applica palette iniziale coerente
+    applyPalette(PALETTES[0]);
 
   })();
   </script>
