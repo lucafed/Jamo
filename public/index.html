@@ -412,7 +412,7 @@
       Idee <b>pratiche</b>, <b>veloci</b>, con possibilità di <b>risata</b>. Niente doppioni: ogni “Cambia idee” pesca dal pool senza ripetere.
     </div>
 
-    <!-- ✅ NEW: Toggle Casa / Auto -->
+    <!-- ✅ Toggle Casa / Auto -->
     <div class="row wraprow" style="gap:10px; margin-top:10px;">
       <button id="chipSOSHome" class="chip active" type="button">🏠 Casa</button>
       <button id="chipSOSCar" class="chip" type="button">🚗 Auto</button>
@@ -433,6 +433,18 @@
   (() => {
     "use strict";
     const $ = (id) => document.getElementById(id);
+
+    /* ------------------ mini status helper (no popup) ------------------ */
+    let _statusTimer = null;
+    function showStatus(msg, ms = 2200){
+      const box = $("statusBox");
+      const txt = $("statusText");
+      if (!box || !txt) return;
+      txt.textContent = String(msg || "");
+      box.style.display = "flex";
+      clearTimeout(_statusTimer);
+      _statusTimer = setTimeout(() => { box.style.display = "none"; }, ms);
+    }
 
     /* ------------------ scroll smart (come prima) ------------------ */
     const scrollTo = (id, block = "start") => {
@@ -505,10 +517,9 @@
       document.documentElement.style.setProperty("--chipActiveBg", t.chip);
       document.documentElement.style.setProperty("--chipActiveRing", t.ring);
 
-      document.documentElement.style.setProperty("--sos1", t.c1 + "E8"); // add alpha-ish? (fallback)
+      document.documentElement.style.setProperty("--sos1", t.c1 + "E8");
       document.documentElement.style.setProperty("--sos2", t.c2 + "E8");
 
-      // bg glow soft
       const g = document.querySelector(".bgGlow");
       if (g){
         g.style.background =
@@ -535,13 +546,11 @@
         const cat = String(ch.dataset.cat||"default").toLowerCase();
         const t = THEMES[cat] || THEMES.default;
 
-        // ✅ tutte colorate (soft)
         if (!ch.classList.contains("active")){
           ch.style.background = hexToRgba(t.c1, 0.06);
           ch.style.borderColor = hexToRgba(t.c1, 0.16);
           ch.style.color = "var(--text)";
         } else {
-          // active è già gestita dalla classe .chip.active con var dinamiche
           ch.style.background = "";
           ch.style.borderColor = "";
           ch.style.color = "";
@@ -556,11 +565,10 @@
       if (navigator.vibrate) navigator.vibrate(8);
     }
 
-    // init: tema da categoria attiva iniziale
     const active0 = document.querySelector("#categoryChips .chip.active");
     applyCategoryTheme(String(active0?.dataset?.cat || "natura").toLowerCase());
 
-    /* ------------------ “Cosa c’è” (Google) — SOLO TESTO (NO coordinate) ------------------ */
+    /* ------------------ “Cosa c’è” (Google) — SOLO DESTINAZIONE ------------------ */
     let LAST_SELECTED_QUERY = "";
 
     function cleanText(s){
@@ -631,14 +639,22 @@
       return null;
     }
 
+    function syncSelectedQueryFromPrimaryCard(){
+      const c = getPrimaryResultCard();
+      const q = bestQueryForCard(c);
+      if (q) LAST_SELECTED_QUERY = q;
+    }
+
     function openGoogleForPlace(query){
       const q = cleanText(query);
+
+      // ✅ NO fallback sulla partenza: deve essere una destinazione
       if (!q){
-        const o = cleanText($("originLabel")?.value || "");
-        const q2 = o ? `Cosa c'è a ${o} cosa vedere cosa fare` : "Cosa c'è a Verona cosa vedere cosa fare";
-        window.open(`https://www.google.com/search?q=${encodeURIComponent(q2)}`, "_blank", "noopener");
+        if (navigator.vibrate) navigator.vibrate([20,40,20]);
+        showStatus("Prima fai CERCA: ‘Cosa c’è’ si aggancia alla destinazione suggerita 🙂", 2400);
         return;
       }
+
       const full = `Cosa c'è a ${q} cosa vedere cosa fare`;
       window.open(`https://www.google.com/search?q=${encodeURIComponent(full)}`, "_blank", "noopener");
     }
@@ -713,9 +729,14 @@
 
     const area = $("resultArea");
     if (area) {
-      const mo = new MutationObserver(() => injectWhatIsButtons());
+      const mo = new MutationObserver(() => {
+        injectWhatIsButtons();
+        syncSelectedQueryFromPrimaryCard(); // ✅ auto-aggancio destinazione
+      });
       mo.observe(area, { childList: true, subtree: true });
+
       injectWhatIsButtons();
+      syncSelectedQueryFromPrimaryCard();
       enableCardSelectionCapture();
     }
 
@@ -740,9 +761,7 @@
     $("btnSOSClose2")?.addEventListener("click", closeSheet);
     mask?.addEventListener("click", closeSheet);
 
-    // --- POOL CASA (tuoi + tanti nuovi “cognitivi pratici”) ---
     const SOS_HOME_POOL = [
-      // ✅ i tuoi
       ["🎯 Tiro al bersaglio con la carta","3 fogli appallottolati + un secchio. 10 tiri a testa. Se fai centro: scegli la prossima regola."],
       ["🧊 Missione “Ghiaccio in salvo”","Un cubetto su un cucchiaio: devi portarlo in cucina senza farlo cadere. Gara a tempo."],
       ["🧦 Calcio-calzino","Palla fatta con calzino arrotolato. Porta da “porta” a “porta” tra sedie senza usare le mani."],
@@ -767,28 +786,16 @@
       ["🧠 Parole vietate","2 minuti conversazione dove è vietato dire “io” o “sì”. Se lo dici: 1 salto."],
       ["🧲 Il magnete umano","Raccogli 5 cose che non sono al loro posto. Chi completa prima vince."],
       ["🧑‍🍳 Chef velocissimo","Prepara una merenda semplice. L’altro fa il giudice severissimo ma simpatico."],
-
-      // ✅ cognitive pratico (zero scuola)
       ["🧠 Memory reale 8","Metti 8 oggetti. Guarda 10s. Copri. Nominali in ordine. Bonus: al contrario."],
-      ["🧠 Memory “cosa manca”","Metti 10 oggetti. Copri. Togliene 2. Indovina i mancanti."],
       ["🔁 Sequenza inversa","Io faccio 4 gesti. Tu ripeti al contrario. Aumenta di 1 ogni turno."],
-      ["🧩 Pattern rapido","Forchetta–cucchiaio–forchetta… continua il pattern 10 mosse senza sbagliare."],
       ["🪛 Debug umano","Fai un’azione saltando un passaggio. L’altro trova l’errore."],
       ["🧠 If/Then reale","SE succede X → ALLORA fai Y. Cambiate regola ogni 60s."],
-      ["📏 Stima e verifica","Quanti passi fino alla porta? Stima e poi conta."],
       ["🧠 Attenzione selettiva","Trova 3 cose blu senza muoverti. Poi 3 cose rotonde. Timer 45s."],
-      ["🧠 Ordina al volo","5 oggetti: ordina per grandezza in 20s. Poi per ‘peso a sensazione’."],
-      ["🧠 Categorie sprint","In 20s: animali / cibi / città. Chi si blocca perde."],
-
-      // ✅ extra casa vera
-      ["🪑 Pavimento quasi lava","Puoi camminare solo su 2 materiali (legno/stoffa). Se sbagli: freeze 3s."],
-      ["📺 Spot imbarazzante","Scegli un oggetto e fai uno spot di 15s con slogan tremendo."],
       ["🎭 Telegiornale di casa","Breaking news: ‘il divano è scomparso’. Inviato sul posto obbligatorio."],
       ["🧸 Processo al peluche","Accusa, difesa, giudice. Sentenza ridicola."],
       ["🎲 Dado del caos","Scrivi 6 azioni su foglietti. Numero a caso. Azione 20s."]
     ];
 
-    // --- POOL AUTO (nuovo) ---
     const SOS_CAR_POOL = [
       ["🔤 Targa Bingo","Scegli 3 lettere (es. M-A-R). Ogni targa che le contiene = 1 punto. A 5 punti cambi gioco."],
       ["🎨 Caccia al colore","Trova 5 auto rosse / 3 camion bianchi. A turno. Timer 60s."],
@@ -800,20 +807,18 @@
       ["🧩 Indovina l’oggetto (in auto)","È qui dentro. 3 indizi massimo. Se indovini: scegli la prossima categoria."],
       ["🎙️ Speaker radio","Uno fa DJ: presenta una canzone e una ‘pubblicità’ di 15 secondi di un oggetto in auto."],
       ["⭐ Recensione della strada","Recensione stile TripAdvisor di una rotonda/ponte: stelle + 1 motivo serio + 1 assurdo."],
-      ["🧠 Memory strada","Ricorda le ultime 3 cose viste (distributore, ponte, cartello). Dopo 1 min ripeti e aggiungi 1 cosa."],
+      ["🧠 Memory strada","Ricorda le ultime 3 cose viste. Dopo 1 min ripeti e aggiungi 1 cosa."],
       ["🧠 Categorie sprint","Animali / cibi / città: 20 secondi. Chi si blocca = 1 punto all’altro."],
       ["🔎 Trova la parola","Scegli una parola (es. ‘BAR’). Cercatela nelle insegne. Chi la vede prima = 1 punto."],
-      ["🧠 Due cose in comune","Scegli 2 cose viste fuori (es. ‘camion’ e ‘semaforo’). Trova 2 cose in comune (anche assurde)."],
+      ["🧠 Due cose in comune","Scegli 2 cose viste fuori (es. camion e semaforo). Trova 2 cose in comune (anche assurde)."],
       ["🗣️ Voce proibita (soft)","Per 60s si parla solo ‘robot’ o ‘super serio’. Se sbagli: 1 punto all’altro."],
       ["✅ Vero/Falso lampo","10 domande veloci inventate. Chi sbaglia fa ‘beep beep’ da robot."]
     ];
 
-    // --- Modalità SOS ---
-    let SOS_MODE = "home"; // home | car
+    let SOS_MODE = "home";
     const chipHome = $("chipSOSHome");
     const chipCar = $("chipSOSCar");
 
-    // --- no-repeat bag separati ---
     let sosBagHome = [];
     let sosBagCar = [];
 
@@ -869,7 +874,6 @@
       SOS_MODE = (mode === "car") ? "car" : "home";
       chipHome?.classList.toggle("active", SOS_MODE === "home");
       chipCar?.classList.toggle("active", SOS_MODE === "car");
-      // non ripete cross-mode: rigenera bag del mode corrente
       if (SOS_MODE === "home") refillBagHome(); else refillBagCar();
       renderSOS();
       if (navigator.vibrate) navigator.vibrate(8);
@@ -878,7 +882,6 @@
     chipHome?.addEventListener("click", () => setSOSMode("home"));
     chipCar?.addEventListener("click", () => setSOSMode("car"));
 
-    // init
     refillBagHome();
     refillBagCar();
     renderSOS();
