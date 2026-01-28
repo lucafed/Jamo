@@ -475,18 +475,18 @@
 
     /* ------------------ THEMES (tutti colori categoria, meno accesi) ------------------ */
     const THEMES = {
-      mare:     { c1:"#3B82F6", c2:"#93C5FD", chip:"rgba(59,130,246,.12)", ring:"rgba(59,130,246,.24)" },
-      lago:     { c1:"#0EA5E9", c2:"#7DD3FC", chip:"rgba(14,165,233,.12)", ring:"rgba(14,165,233,.24)" },
-      natura:   { c1:"#22C55E", c2:"#86EFAC", chip:"rgba(34,197,94,.11)",  ring:"rgba(34,197,94,.23)" },
-      hiking:   { c1:"#84CC16", c2:"#BEF264", chip:"rgba(132,204,22,.11)", ring:"rgba(132,204,22,.23)" },
-      montagna: { c1:"#94A3B8", c2:"#CBD5E1", chip:"rgba(148,163,184,.12)",ring:"rgba(148,163,184,.24)" },
-      borghi:   { c1:"#F59E0B", c2:"#FCD34D", chip:"rgba(245,158,11,.10)", ring:"rgba(245,158,11,.22)" },
-      storia:   { c1:"#A855F7", c2:"#D8B4FE", chip:"rgba(168,85,247,.11)", ring:"rgba(168,85,247,.23)" },
-      relax:    { c1:"#14B8A6", c2:"#99F6E4", chip:"rgba(20,184,166,.11)", ring:"rgba(20,184,166,.23)" },
-      family:   { c1:"#F472B6", c2:"#FBCFE8", chip:"rgba(244,114,182,.11)",ring:"rgba(244,114,182,.23)" },
-      cantine:  { c1:"#F43F5E", c2:"#FDA4AF", chip:"rgba(244,63,94,.10)",  ring:"rgba(244,63,94,.22)" },
-      eventi:   { c1:"#EAB308", c2:"#FDE68A", chip:"rgba(234,179,8,.10)",  ring:"rgba(234,179,8,.22)" },
-      default:  { c1:"#3B82F6", c2:"#93C5FD", chip:"rgba(59,130,246,.12)", ring:"rgba(59,130,246,.24)" }
+      mare:     { c1:"#3B82F6", c2:"#93C5FD", chip:"rgba(59,130,246,.10)", ring:"rgba(59,130,246,.20)" },
+      lago:     { c1:"#0EA5E9", c2:"#7DD3FC", chip:"rgba(14,165,233,.10)", ring:"rgba(14,165,233,.20)" },
+      natura:   { c1:"#22C55E", c2:"#86EFAC", chip:"rgba(34,197,94,.09)",  ring:"rgba(34,197,94,.19)" },
+      hiking:   { c1:"#84CC16", c2:"#BEF264", chip:"rgba(132,204,22,.09)", ring:"rgba(132,204,22,.19)" },
+      montagna: { c1:"#94A3B8", c2:"#CBD5E1", chip:"rgba(148,163,184,.10)",ring:"rgba(148,163,184,.20)" },
+      borghi:   { c1:"#F59E0B", c2:"#FCD34D", chip:"rgba(245,158,11,.08)", ring:"rgba(245,158,11,.18)" },
+      storia:   { c1:"#A855F7", c2:"#D8B4FE", chip:"rgba(168,85,247,.09)", ring:"rgba(168,85,247,.19)" },
+      relax:    { c1:"#14B8A6", c2:"#99F6E4", chip:"rgba(20,184,166,.09)", ring:"rgba(20,184,166,.19)" },
+      family:   { c1:"#F472B6", c2:"#FBCFE8", chip:"rgba(244,114,182,.09)",ring:"rgba(244,114,182,.19)" },
+      cantine:  { c1:"#F43F5E", c2:"#FDA4AF", chip:"rgba(244,63,94,.08)",  ring:"rgba(244,63,94,.18)" },
+      eventi:   { c1:"#EAB308", c2:"#FDE68A", chip:"rgba(234,179,8,.08)",  ring:"rgba(234,179,8,.18)" },
+      default:  { c1:"#3B82F6", c2:"#93C5FD", chip:"rgba(59,130,246,.10)", ring:"rgba(59,130,246,.20)" }
     };
 
     function setVars(t){
@@ -496,10 +496,12 @@
       document.documentElement.style.setProperty("--cta1", t.c1);
       document.documentElement.style.setProperty("--cta2", t.c2);
 
+      // (active piena resta uguale, ma più soft col nuovo THEMES)
       document.documentElement.style.setProperty("--chipActiveBg", t.chip);
       document.documentElement.style.setProperty("--chipActiveRing", t.ring);
 
-      document.documentElement.style.setProperty("--sos1", t.c1 + "E8"); // add alpha-ish? (fallback)
+      // sos gradient coerente
+      document.documentElement.style.setProperty("--sos1", t.c1 + "E8");
       document.documentElement.style.setProperty("--sos2", t.c2 + "E8");
 
       // bg glow soft
@@ -529,13 +531,12 @@
         const cat = String(ch.dataset.cat||"default").toLowerCase();
         const t = THEMES[cat] || THEMES.default;
 
-        // ✅ tutte colorate (soft)
+        // ✅ tutte colorate (ancora più soft)
         if (!ch.classList.contains("active")){
-          ch.style.background = hexToRgba(t.c1, 0.06);
-          ch.style.borderColor = hexToRgba(t.c1, 0.16);
+          ch.style.background = hexToRgba(t.c1, 0.05);
+          ch.style.borderColor = hexToRgba(t.c1, 0.14);
           ch.style.color = "var(--text)";
         } else {
-          // active è già gestita dalla classe .chip.active con var dinamiche
           ch.style.background = "";
           ch.style.borderColor = "";
           ch.style.color = "";
@@ -546,12 +547,10 @@
     function applyCategoryTheme(cat){
       const t = THEMES[cat] || THEMES.default;
       setVars(t);
-      // ricolora tutte le chips
       setTimeout(colorizeAllCategoryChips, 0);
       if (navigator.vibrate) navigator.vibrate(8);
     }
 
-    // init: tema da categoria attiva iniziale
     const active0 = document.querySelector("#categoryChips .chip.active");
     applyCategoryTheme(String(active0?.dataset?.cat || "natura").toLowerCase());
 
@@ -567,7 +566,6 @@
 
     function looksLikeCoordinates(s){
       const t = String(s||"");
-      // pattern tipo "45.123, 11.456" oppure "45.123 11.456"
       return /\b-?\d{1,2}\.\d{3,}\s*[,\s]\s*-?\d{1,3}\.\d{3,}\b/.test(t);
     }
 
@@ -605,11 +603,9 @@
       const title = extractTitleFromCard(card);
       const where = extractWhereFromCard(card);
 
-      // ✅ preferisci sempre: "Titolo, Luogo"
       const combo = [title, where].filter(Boolean).join(", ").trim();
       if (combo && combo.length >= 3 && !looksLikeCoordinates(combo)) return combo;
 
-      // fallback: query testuale da maps search link
       const fromMaps = extractFromMapsSearchLink(card);
       if (fromMaps && fromMaps.length >= 3) return fromMaps;
 
@@ -738,32 +734,71 @@
     $("btnSOSClose2")?.addEventListener("click", closeSheet);
     mask?.addEventListener("click", closeSheet);
 
-    // Pool ricco (pratiche, immediate, no preparazione)
+    /* ✅ SOS_POOL: dentro TUTTI i tuoi + tanti nuovi (cognitivi pratici) */
     const SOS_POOL = [
-      ["🧦 Gara calzini — “abbinamento sbagliato”", "Tira fuori 8 calzini. Regola: devi abbinarli nel modo più assurdo possibile. Poi sfilata. 2 minuti."],
-      ["📺 Spot imbarazzante", "Scegli un oggetto (spazzola, cucchiaio). Fate uno spot di 15 secondi con slogan bruttissimo. Replay x3."],
-      ["🪑 Pavimento quasi lava", "Puoi camminare solo su 3 materiali (legno/plastica/stoffa). Se tocchi “proibito”: freeze e posa ridicola."],
-      ["🥄 Trasporto assurdo", "Porta un oggetto in un’altra stanza usando solo gomiti / cucchiai / piedi. Zero mani. Cronometro 30 sec."],
-      ["🗣️ Voce proibita", "Per 2 minuti si parla solo come robot / nonno drammatico / alieno. Se sbagli voce: penitenza (3 salti strani)."],
-      ["🧻 Bocce da corridoio", "Palline di carta igienica (o carta). Usate una scatola come bersaglio. Chi fa centro deve fare la danza vittoria."],
-      ["🧼 Olimpiadi delle pulizie finte", "Pulite 1 metro quadro… ma ognuno è un personaggio (ninja, presentatore TV, spia). Ridicolo obbligatorio."],
-      ["🕵️ Caccia al “cosa NON è”", "Scegli un oggetto: tutti devono dire 5 cose che NON è (assurde ma veloci). Chi si blocca: faccia buffa."],
-      ["🧊 Congelati!", "Un adulto fa il DJ: dice STOP a caso. Tutti si congelano nella posa più stupida. Foto mentale e si riparte."],
-      ["📦 Scatola geniale", "Prendi una scatola: inventate a cosa serve (assurdo ma convincente). Fate la demo in 20 secondi."],
-      ["🎭 Telegiornale di casa", "Uno conduce TG: “Breaking news: il divano è scomparso!”. L’altro fa inviato sul posto (drammatico)."],
-      ["🏃 Rallentatore estremo", "Qualsiasi azione (bere, sedersi) ma super slow motion. Il primo che ride perde e deve imitare un pollo."],
-      ["🧢 Capo al contrario", "Metti un capo al contrario e spiega perché è una tecnologia avanzata. L’altro fa domande serie come un giornalista."],
-      ["🧸 Processo al peluche", "Un peluche è imputato (perché?). Fate processo: accusa, difesa, giudice. Sentenza ridicola."],
-      ["🍝 Chef senza mani", "Finta cucina: preparate un “piatto” con oggetti (non cibo). Regola: mani dietro la schiena, solo gomiti."],
-      ["🧩 60 secondi: missione", "Dai una missione: “metti 10 cose morbide sul letto”. Timer 60s. Alla fine: posa di vittoria obbligatoria."],
-      ["🎯 Lancio calzino nel secchio", "Fai una palla di calzino. Bersaglio: cestino/scatola. Ogni centro vale un potere (es. ‘voce robot’)."],
-      ["📣 Commentatore sportivo", "Uno fa qualsiasi cosa. L’altro commenta come in TV con entusiasmo esagerato. Scambiate ruoli."],
-      ["🧠 Memory lampo", "Metti 12 oggetti sul tavolo. Guardate 10 secondi. Copri. Dite a turno cosa manca. Chi sbaglia: rumore alieno."],
-      ["🧱 “Non toccare il colore”", "Scegli un colore proibito. In 2 minuti nessuno può toccarlo. Chi lo tocca: deve parlare solo in rima per 1 minuto."],
-      ["🌀 Il telecomando stregato", "Il telecomando è magico: chi lo prende cambia ‘modalità’ (robot, lento, super serio). Cambia ogni 20 secondi."],
-      ["👣 Percorso cieco", "Fai un mini percorso con cuscini. Uno guida a voce. Regola: istruzioni assurde ma utili (tipo ‘passo da astronauta’)."],
-      ["🧠 Indovina il suono", "Batti su 3 oggetti (tavolo, bottiglia, libro). L’altro indovina al buio con occhi chiusi. Poi scambio."],
-      ["🎲 Dado del caos", "Scrivi 6 azioni su foglietti (saltare, lento, robot, ecc). Tira un dado (o numero a caso) e fai l’azione 20 sec."]
+      /* --- I TUOI (esatti nello spirito) --- */
+      ["🎯 Tiro al bersaglio con la carta", "3 fogli appallottolati + un secchio. 10 tiri a testa. Centro = scegli la prossima regola."],
+      ["🧊 Missione “Ghiaccio in salvo”", "Un cubetto su un cucchiaio: portalo in cucina senza farlo cadere. Gara a tempo."],
+      ["🧦 Calcio-calzino", "Palla fatta con calzino arrotolato. Porta da “porta” a “porta” tra sedie senza usare le mani."],
+      ["🕵️ Caccia al tesoro “3 cose”", "Portami: una cosa morbida, una cosa rossa, una cosa che fa rumore. Chi torna prima vince."],
+      ["⏱️ Sfida 60 secondi", "Timer 60s: quante mollette su una maglietta? quanti tappi impili? quanti salti fai?"],
+      ["🧱 Torre instabile", "Bicchieri di plastica o rotoli carta. Torre più alta in 2 minuti. Se cade: risata gratis."],
+      ["🧠 Indovina l’oggetto (al tatto)", "5 oggetti in una busta/stoffa. Occhi chiusi: indovina in 10 secondi."],
+      ["🎭 Mimo velocissimo", "1 minuto: mima “lavarsi i denti”, “guidare”, “dormire”, “fare la spesa”. L’altro indovina."],
+      ["📢 Commentatore sportivo", "Uno fa una cosa normalissima, l’altro la commenta come una finale mondiale."],
+      ["🚦 Semaforo", "Verde cammina, giallo rallenta, rosso statua. Chi si muove perde."],
+      ["🐢 Rallentatore serio", "Azione normalissima ma in slow-motion estremo. Chi ride perde (ma perde bene)."],
+      ["🧩 Puzzle lampo", "10 oggetti: guardali 10s, coprili, togline 2. “Dimmi quali mancano”."],
+      ["🧺 Basket lavanderia", "Cesto bucato come canestro. Tiri da vicino/medio/lontano. Segnapunti semplice."],
+      ["🧽 Pulizie sprint", "2 minuti: raccogli 10 cose e rimettili al posto giusto. Se finisci: scegli tu la prossima sfida."],
+      ["📦 Percorso ad ostacoli “serio”", "Cuscini a terra come isole. Arriva al divano senza “toccare il pavimento”."],
+      ["🎵 Karaoke del nonsense", "Metti una canzone e sostituisci UNA parola sempre con “PIZZA”. Risata assicurabile."],
+      ["🧻 Bowling corridoio", "Rotolo di carta come palla + bottigliette/rotoli come birilli. 2 tiri a testa."],
+      ["🧠 “Vero o falso” lampo", "10 domande rapidissime inventate. Chi sbaglia fa 3 saltelli."],
+      ["🖍️ Disegno bendato", "Uno descrive, l’altro disegna senza guardare. Risate e basta."],
+      ["👂 Indovina il suono", "Fai suoni con oggetti (chiavi, bottiglia, carta). L’altro indovina in 3 tentativi."],
+      ["🧍 Statua con missione", "Resti fermo… ma devi fare una faccia assurda. Se ridi o ti muovi, perdi."],
+      ["🧠 Parole vietate", "2 minuti conversazione dove è vietato dire “io” o “sì”. Se lo dici: 1 salto."],
+      ["🧲 Il magnete umano", "Raccogli 5 cose che non sono al loro posto. Chi completa prima vince."],
+      ["🧑‍🍳 Chef velocissimo", "Merenda semplice (pane+qualcosa / yogurt+frutta). L’altro giudice severissimo ma simpatico."],
+
+      /* --- COGNITIVO PRATICO (coding-like, zero scuola) --- */
+      ["🧠 Memory reale 8", "Metti 8 oggetti in fila. Guarda 10s. Copri. Nominali in ordine. Bonus: al contrario."],
+      ["🧠 Memory “cosa manca”", "Metti 10 oggetti. Copri. Togliene 2. Indovina i mancanti."],
+      ["🔁 Sequenza inversa", "Io faccio 4 gesti (batti mani, tocca naso, ecc). Tu ripeti al contrario. Aumenta di 1."],
+      ["🧩 Pattern da cucina", "Cucchiaio-forchetta-cucchiaio… continua il pattern 10 mosse senza sbagliare."],
+      ["🪛 Debug umano", "Fai un’azione (mettere scarpe) ma con 1 step sbagliato. L’altro deve trovare il bug."],
+      ["🧠 If/Then da salotto", "Scrivete 5 regole: SE succede X → ALLORA fai Y. Eseguite 60s senza sbagliare."],
+      ["🧠 “Compila il comando”", "Dico: ‘prendi X e mettilo su Y’ ma X e Y cambiano ogni 5 secondi."],
+      ["🧠 Attenzione selettiva", "Trova 3 cose blu senza muoverti. Poi 3 cose rotonde. Timer 45s."],
+      ["📏 Stima + verifica", "Stima quanti passi fino alla porta. Poi contali. Chi è più vicino vince."],
+      ["🧠 Ordina al volo", "5 oggetti: ordina per grandezza in 20s. Poi per peso (a sensazione)."],
+      ["🧠 Categorize sprint", "Prendi 12 oggetti: fai 3 gruppi con regola tua (es. ‘fa rumore’, ‘morbido’, ‘serve in cucina’)."],
+      ["🧠 “Due cose in comune”", "Io scelgo 2 oggetti a caso. Tu devi dire 2 cose che hanno in comune (anche assurde)."],
+
+      /* --- MOVIMENTO + RISATE (casa vera) --- */
+      ["🧦 Calcio-calzino (porta stretta)", "Porta fatta con 2 cuscini. Goal vale 1 punto. Primo a 5."],
+      ["🎯 Carta nel secchio (3 distanze)", "Vicino/medio/lontano. Ogni centro = scegli una regola buffa per 20s."],
+      ["🧻 Bocce da corridoio", "Palline di carta: avvicinati a una scarpa-bersaglio. Più vicino vince."],
+      ["🪑 Pavimento quasi lava", "Puoi camminare solo su 2 materiali (es. legno+stoffa). Chi sbaglia freeze 3s."],
+      ["🧺 Basket “trick shot”", "Un tiro con regola (da seduto / girato / con una mano dietro)."],
+      ["🥄 Trasporto assurdo", "Trasporta un oggetto usando solo gomiti / cucchiai / piedi. 30s."],
+      ["🧊 Congelati!", "Un DJ dice STOP a caso. Tutti si congelano nella posa più stupida."],
+
+      /* --- TEATRO / IMPRO (ma non cringe) --- */
+      ["🎭 Telegiornale di casa", "Breaking news su qualcosa di banalissimo. Inviato sul posto obbligatorio."],
+      ["📺 Spot imbarazzante", "Scegli un oggetto e vendilo in 15 secondi con slogan tremendo."],
+      ["🧸 Processo al peluche", "Accusa, difesa, giudice. Sentenza ridicola e fine."],
+      ["🌀 Telecomando stregato", "Chi prende il telecomando cambia modalità (robot/lento/serio). 20s a modalità."],
+      ["📣 Speaker sportivo", "Uno fa qualsiasi cosa. L’altro la commenta come finale mondiale."],
+
+      /* --- MICRO-SFIDE EXTRA (molte, rapide) --- */
+      ["🧢 Capo al contrario", "Metti un capo al contrario e spiega perché è ‘tecnologia avanzata’. 30s."],
+      ["🧩 60s: missione", "Metti 10 cose morbide sul letto. Timer 60s."],
+      ["🕵️ Caccia “cosa NON è”", "Scegli un oggetto: 5 cose che NON è. Chi si blocca perde."],
+      ["🎲 Dado del caos", "6 azioni su foglietti. Numero a caso. Azione 20s."],
+      ["👣 Percorso cieco", "Uno guida a voce, l’altro fa. Istruzioni buffe ma utili."],
+      ["🧠 Indovina il suono PRO", "3 suoni in fila. Devi indovinare ordine e oggetti."]
     ];
 
     // “No-repeat” bag: finché non finisce, non ripete
@@ -771,7 +806,6 @@
 
     function refillBag(){
       sosBag = SOS_POOL.map((_, i) => i);
-      // shuffle
       for (let i = sosBag.length - 1; i > 0; i--){
         const j = Math.floor(Math.random() * (i + 1));
         [sosBag[i], sosBag[j]] = [sosBag[j], sosBag[i]];
