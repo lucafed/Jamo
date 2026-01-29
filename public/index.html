@@ -21,7 +21,7 @@
       --text:#F6F6F6;
       --muted:#B9B2A9;
 
-      /* ✅ accent dinamici (si agganciano alla categoria selezionata) */
+      /* ✅ accent dinamici */
       --acc:#3B82F6;
       --acc2:#93C5FD;
       --border:rgba(255,255,255,.10);
@@ -43,7 +43,7 @@
 
     .accent{ color: var(--acc2); }
 
-    /* ✅ anti-accavallamento testi (safe) */
+    /* ✅ anti-accavallamento testi */
     .heroTitle, .cardTitle, .brandTitle{
       line-height: 1.12;
       overflow-wrap:anywhere;
@@ -92,7 +92,6 @@
       padding-bottom:6px;
       scroll-snap-type: x mandatory;
       -webkit-overflow-scrolling: touch;
-
       mask-image: linear-gradient(to right, transparent 0, black 18px, black calc(100% - 18px), transparent 100%);
       -webkit-mask-image: linear-gradient(to right, transparent 0, black 18px, black calc(100% - 18px), transparent 100%);
     }
@@ -158,7 +157,7 @@
     }
     .fabSOS:active{ transform: scale(.99); }
 
-    /* ✅ FAB "Cosa c’è" (sempre visibile quando c'è destinazione) */
+    /* ✅ FAB "Cosa c’è" (super visibile quando c'è destinazione) */
     .fabWhats{
       position: fixed;
       left: 14px;
@@ -170,10 +169,10 @@
       padding: 12px 14px;
       border-radius: 18px;
       border: 1px solid rgba(255,255,255,.16);
-      background: rgba(26,26,31,.72);
+      background: rgba(26,26,31,.86);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
-      box-shadow: 0 14px 30px rgba(0,0,0,.35);
+      box-shadow: 0 16px 34px rgba(0,0,0,.42);
       color: var(--text);
       font-weight: 950;
       letter-spacing: .2px;
@@ -237,7 +236,6 @@
     .ideaCard .t{ font-weight: 950; }
     .ideaCard .d{ margin-top:6px; color: var(--muted); line-height:1.35; font-size:13px; }
     .sheetActions{ margin-top: 12px; display:flex; gap:10px; flex-wrap:wrap; }
-
     .ideaCard .t, .ideaCard .d{ overflow-wrap:anywhere; word-break: break-word; }
   </style>
 </head>
@@ -253,7 +251,6 @@
         <div class="brandSub">Offline-first • Smart flow • Tap-safe</div>
       </div>
     </div>
-
     <div class="topActions">
       <button id="btnResetVisited" class="btnGhost" type="button" title="Reset visitati">🧽</button>
     </div>
@@ -482,7 +479,7 @@
       _statusTimer = setTimeout(() => { box.style.display = "none"; }, ms);
     }
 
-    /* ------------------ scroll smart (come prima) ------------------ */
+    /* ------------------ scroll smart ------------------ */
     const scrollTo = (id, block = "start") => {
       const el = $(id);
       if (!el) return;
@@ -527,12 +524,12 @@
       setTimeout(() => {
         syncSelectedQueryFromPrimaryCard();
         updateWhatsThereUI();
-      }, 750);
+      }, 900);
     });
 
     $("btnResetVisited")?.addEventListener("click", () => setTimeout(() => scrollTo("searchCard"), 200));
 
-    /* ------------------ THEMES (tutti colori categoria, meno accesi) ------------------ */
+    /* ------------------ THEMES ------------------ */
     const THEMES = {
       mare:     { c1:"#3B82F6", c2:"#93C5FD", chip:"rgba(59,130,246,.12)", ring:"rgba(59,130,246,.24)" },
       lago:     { c1:"#0EA5E9", c2:"#7DD3FC", chip:"rgba(14,165,233,.12)", ring:"rgba(14,165,233,.24)" },
@@ -609,7 +606,7 @@
     const active0 = document.querySelector("#categoryChips .chip.active");
     applyCategoryTheme(String(active0?.dataset?.cat || "natura").toLowerCase());
 
-    /* ------------------ “Cosa c’è” — A PROVA DI BOMBA ------------------ */
+    /* ------------------ “Cosa c’è” — SOLO NOME DESTINAZIONE (ANTI "vicino a me") ------------------ */
     let LAST_SELECTED_QUERY = "";
 
     function cleanText(s){
@@ -622,13 +619,6 @@
     function looksLikeCoordinates(s){
       const t = String(s||"");
       return /\b-?\d{1,2}\.\d{3,}\s*[,\s]\s*-?\d{1,3}\.\d{3,}\b/.test(t);
-    }
-
-    function extractCoordsFromText(s){
-      const t = String(s||"");
-      const m = t.match(/\b(-?\d{1,2}\.\d{3,})\s*[,\s]\s*(-?\d{1,3}\.\d{3,})\b/);
-      if (!m) return "";
-      return `${m[1]}, ${m[2]}`;
     }
 
     function extractTitleFromCard(card){
@@ -646,60 +636,16 @@
       return cleanText(whereEl?.textContent || "");
     }
 
-    // ✅ prende query da QUALSIASI link maps presente (search/place/dir)
-    function extractFromAnyMapsLink(card){
-      const links = Array.from(card.querySelectorAll("a[href]"));
-      for (const a of links){
-        const href = a.getAttribute("href") || "";
-        if (!/google\.[^/]+\/maps\//i.test(href)) continue;
-
-        try{
-          const u = new URL(href, window.location.origin);
-
-          // 1) maps/search?query=...
-          const q1 = u.searchParams.get("query") || u.searchParams.get("q") || "";
-          if (q1){
-            const decoded = cleanText(decodeURIComponent(q1));
-            if (decoded) return decoded;
-          }
-
-          // 2) maps/dir/?api=1&destination=...
-          const dest = u.searchParams.get("destination") || "";
-          if (dest){
-            const decoded = cleanText(decodeURIComponent(dest));
-            if (decoded) return decoded;
-          }
-
-          // 3) coordinate dentro l'href stesso
-          const coords = extractCoordsFromText(href);
-          if (coords) return coords;
-
-        }catch(_){
-          // fallback grezzo
-          const coords = extractCoordsFromText(href);
-          if (coords) return coords;
-        }
-      }
-      return "";
-    }
-
+    // ✅ SOLO "Titolo, Luogo" (Niente coordinate, niente link maps)
     function bestDestinationQueryForCard(card){
       if (!card) return "";
-
       const title = extractTitleFromCard(card);
       const where = extractWhereFromCard(card);
 
-      // preferisci "Titolo, Luogo" se c'è
       const combo = [title, where].filter(Boolean).join(", ").trim();
-      if (combo && combo.length >= 3) return combo;
 
-      // prova link maps (anche coordinate)
-      const fromMaps = extractFromAnyMapsLink(card);
-      if (fromMaps && fromMaps.length >= 3) return fromMaps;
-
-      // prova coordinate dal testo della card
-      const coordsFromText = extractCoordsFromText(card.textContent || "");
-      if (coordsFromText) return coordsFromText;
+      // serve almeno 1 lettera (così Google NON usa la tua posizione)
+      if (combo && /[a-zA-ZÀ-ÿ]/.test(combo) && !looksLikeCoordinates(combo)) return combo;
 
       return "";
     }
@@ -721,12 +667,8 @@
       const t = cleanText(q);
       if (!t) return false;
       if (t.length < 3) return false;
-
-      // accettiamo anche coordinate (bomb-proof)
-      if (looksLikeCoordinates(t)) return true;
-
-      // se non sono coordinate, deve avere almeno una lettera
-      if (!/[a-zA-ZÀ-ÿ]/.test(t)) return false;
+      if (looksLikeCoordinates(t)) return false;         // ❌ blocco duro
+      if (!/[a-zA-ZÀ-ÿ]/.test(t)) return false;          // deve avere lettere
       return true;
     }
 
@@ -736,11 +678,10 @@
       if (isUsableDestination(q)) LAST_SELECTED_QUERY = cleanText(q);
     }
 
+    // ✅ A PROVA DI BOMBA: se non c'è un nome chiaro -> NON apre
     function openGoogleForDestination(){
-      // prova query salvata
       let q = cleanText(LAST_SELECTED_QUERY);
 
-      // se manca, prova dal risultato principale
       if (!isUsableDestination(q)){
         const c = getPrimaryResultCard();
         q = bestDestinationQueryForCard(c);
@@ -748,16 +689,11 @@
 
       if (!isUsableDestination(q)){
         if (navigator.vibrate) navigator.vibrate([20,40,20]);
-        showStatus("Prima fai CERCA: ‘Cosa c’è’ si aggancia alla destinazione suggerita 🙂", 2400);
+        showStatus("Destinazione non chiara. Rifai CERCA 🙂", 2400);
         return;
       }
 
-      // ✅ se sono coordinate, non scrivere "a <coords>" se vuoi:
-      // ma va bene anche così: Google non userà la posizione attuale
-      const full = looksLikeCoordinates(q)
-        ? `Cosa c'è vicino a ${q} cosa vedere cosa fare`
-        : `Cosa c'è a ${q} cosa vedere cosa fare`;
-
+      const full = `${q} cosa vedere cosa fare`;
       window.open(`https://www.google.com/search?q=${encodeURIComponent(full)}`, "_blank", "noopener");
     }
 
@@ -767,11 +703,11 @@
       if (fab) fab.style.display = ok ? "flex" : "none";
     }
 
-    // Bottoni "Cosa c’è"
+    // Bottoni
     $("btnWhatsThere")?.addEventListener("click", openGoogleForDestination);
     $("fabWhatsThere")?.addEventListener("click", openGoogleForDestination);
 
-    // inject bottone anche nelle card (come prima)
+    // inject bottone anche nelle card
     function injectWhatIsButtons(){
       const area = $("resultArea");
       if (!area) return;
