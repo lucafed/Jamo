@@ -794,7 +794,7 @@ q = bestDestinationQueryForCard(c);
 
     function updateWhatsThereUI(){
       const fab = $("fabWhatsThere");
-      const ok = looksUsableName(LAST_SELECTED_QUERY) || looksUsableName(bestDestinationQueryForCard(getPrimaryResultCard()));
+      const ok = looksUsableName(LAST_SELECTED_QUERY) || looksUsableName(bestDestinationQueryForCard(getCardForWhatsThere()));
       if (fab) fab.style.display = ok ? "flex" : "none";
     }
 
