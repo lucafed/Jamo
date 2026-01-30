@@ -848,7 +848,6 @@ function openGoogleForDestination(){
     if (_ra) {
       const mo = new MutationObserver(() => {
         injectWhatIsButtons();
-        syncSelectedQueryFromPrimaryCard();
         updateWhatsThereUI();
       });
       mo.observe(_ra, { childList: true, subtree: true });
