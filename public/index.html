@@ -745,6 +745,22 @@
       }
       return null;
     }
+    function markCardSelected(card){
+  if (!card) return;
+  document.querySelectorAll("#resultArea .card[data-selected='1']").forEach(el => {
+    el.removeAttribute("data-selected");
+  });
+  card.setAttribute("data-selected", "1");
+}
+
+function getSelectedResultCard(){
+  return document.querySelector("#resultArea .card[data-selected='1']") || null;
+}
+
+function getCardForWhatsThere(){
+  return getSelectedResultCard() || getPrimaryResultCard();
+}
+
 
     function syncSelectedQueryFromPrimaryCard(){
       const c = getPrimaryResultCard();
