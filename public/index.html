@@ -753,24 +753,28 @@
       if (looksUsableName(q)) LAST_SELECTED_QUERY = q;
     }
 
-    function openGoogleForDestination(){
-      let q = stripCoordsAndJunk(LAST_SELECTED_QUERY);
+function openGoogleForDestination(){
+  let q = stripCoordsAndJunk(LAST_SELECTED_QUERY);
 
-      if (!looksUsableName(q)){
-        const c = getPrimaryResultCard();
-        q = bestDestinationQueryForCard(c);
-      }
+  if (!looksUsableName(q)){
+    const c = getPrimaryResultCard();
+    q = bestDestinationQueryForCard(c);
+  }
 
-      if (!looksUsableName(q)){
-        if (navigator.vibrate) navigator.vibrate([20,40,20]);
-        showStatus("Destinazione non chiara. Rifai CERCA 🙂", 2400);
-        return;
-      }
+  if (!looksUsableName(q)){
+    if (navigator.vibrate) navigator.vibrate([20,40,20]);
+    showStatus("Destinazione non chiara. Rifai CERCA 🙂", 2400);
+    return;
+  }
 
-      // ✅ Google Search AI con NOME DESTINAZIONE (non posizione attuale)
-      const full = `${q} cosa vedere cosa fare`;
-      window.open(`https://www.google.com/search?q=${encodeURIComponent(full)}`, "_blank", "noopener");
-    }
+  // ✅ come events.js: query testuale, non coord, non "vicino a me"
+  // aggiunge Italia per evitare ambiguità e per NON far usare la posizione attuale
+  const qFinal = `${q} Italia`.replace(/\s+/g," ").trim();
+
+  const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(qFinal)}`;
+  window.open(url, "_blank", "noopener");
+}
+
 
     function updateWhatsThereUI(){
       const fab = $("fabWhatsThere");
