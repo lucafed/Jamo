@@ -772,8 +772,9 @@ function openGoogleForDestination(){
   let q = stripCoordsAndJunk(LAST_SELECTED_QUERY);
 
   if (!looksUsableName(q)){
-    const c = getPrimaryResultCard();
-    q = bestDestinationQueryForCard(c);
+   const c = getPrimaryResultCard();
+q = bestDestinationQueryForCard(c);
+
   }
 
   if (!looksUsableName(q)){
