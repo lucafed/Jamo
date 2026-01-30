@@ -855,9 +855,12 @@ q = bestDestinationQueryForCard(c);
         const looksLikeEmpty = txt.includes("pronto quando lo sei") || txt.includes("nessuna idea trovata");
         if (looksLikeEmpty) return;
 
-        const q = bestDestinationQueryForCard(card);
-        if (looksUsableName(q)) LAST_SELECTED_QUERY = q;
-        updateWhatsThereUI();
+        markCardSelected(card);
+
+const q = bestDestinationQueryForCard(card);
+if (looksUsableName(q)) LAST_SELECTED_QUERY = q;
+updateWhatsThereUI();
+
       }, { passive:true });
     }
 
