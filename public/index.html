@@ -606,8 +606,14 @@
     const active0 = document.querySelector("#categoryChips .chip.active");
     applyCategoryTheme(String(active0?.dataset?.cat || "natura").toLowerCase());
 
-    /* ------------------ “Cosa c’è” — SOLO NOME DESTINAZIONE (ANTI "vicino a me") ------------------ */
+        /* ------------------ “Cosa c’è” — DESTINAZIONE PRECISA (ANTI DATASET/REGIONE/COORD) ------------------ */
     let LAST_SELECTED_QUERY = "";
+
+    const IT_REGIONS = new Set([
+      "abruzzo","basilicata","calabria","campania","emilia-romagna","emilia romagna","friuli-venezia giulia","friuli venezia giulia",
+      "lazio","liguria","lombardia","marche","molise","piemonte","puglia","sardegna","sicilia","toscana","trentino-alto adige",
+      "trentino alto adige","umbria","valle d'aosta","valle d’aosta","veneto"
+    ]);
 
     function cleanText(s){
       return String(s || "")
@@ -616,38 +622,116 @@
         .trim();
     }
 
-    function looksLikeCoordinates(s){
-      const t = String(s||"");
-      return /\b-?\d{1,2}\.\d{3,}\s*[,\s]\s*-?\d{1,3}\.\d{3,}\b/.test(t);
+    function stripCoordsAndJunk(s){
+      let t = cleanText(s);
+
+      // taglia tutto ciò che somiglia a "• 45.33149, 11.79121"
+      t = t.replace(/[\u2022•]\s*-?\d{1,2}\.\d{3,}\s*,\s*-?\d{1,3}\.\d{3,}\s*/g, " ");
+      // rimuovi coordinate anche se senza bullet
+      t = t.replace(/\b-?\d{1,2}\.\d{3,}\s*,\s*-?\d{1,3}\.\d{3,}\b/g, " ");
+
+      // rimuovi righe rumorose tipiche (dataset/score ecc.)
+      t = t.replace(/\bdataset\s*:\s*[^.]+/gi, " ");
+      t = t.replace(/\bscore\s*:\s*[0-9.]+/gi, " ");
+      t = t.replace(/\bpoi[-_ ]?it[-_ ]?[a-z0-9-_.]+/gi, " ");
+      t = t.replace(/\bit[-_ ]?[a-z]{2,}[-_ ]?[a-z0-9-_.]+/gi, " "); // "it-veneto-borghi" ecc.
+
+      // pulizia separatori strani
+      t = t.replace(/[|•·]+/g, " ");
+      t = t.replace(/\s+/g, " ").trim();
+      return t;
     }
 
+    function isRegionOnly(q){
+      const t = stripCoordsAndJunk(q).toLowerCase();
+      if (!t) return false;
+      // se contiene solo una regione (o "veneto" ecc.) lo consideriamo NON valido
+      if (IT_REGIONS.has(t)) return true;
+
+      // tipo "veneto, italia" -> ancora troppo generico
+      const parts = t.split(",").map(x=>x.trim()).filter(Boolean);
+      if (parts.length === 1 && IT_REGIONS.has(parts[0])) return true;
+      if (parts.length === 2 && IT_REGIONS.has(parts[0]) && (parts[1]==="italia" || parts[1]==="italy")) return true;
+
+      return false;
+    }
+
+    function looksUsableName(q){
+      const t = stripCoordsAndJunk(q);
+      if (!t || t.length < 3) return false;
+      if (!/[a-zA-ZÀ-ÿ]/.test(t)) return false;        // deve avere lettere
+      if (isRegionOnly(t)) return false;               // NO "Veneto" da solo
+      return true;
+    }
+
+    // prende il titolo vero: preferisci heading, poi elementi grandi/forti MA evitando "Risultato", "Dataset"
     function extractTitleFromCard(card){
-      const titleEl =
-        card.querySelector("h1,h2,h3") ||
-        card.querySelector("[data-title]") ||
-        card.querySelector("div[style*='font-weight:950']") ||
-        card.querySelector("div[style*='font-weight: 950']");
-      return cleanText(titleEl?.textContent || "");
+      if (!card) return "";
+
+      const bad = (tx) => {
+        const t = (tx||"").toLowerCase();
+        return (
+          t.includes("dataset:") ||
+          t.includes("score:") ||
+          t.includes("risultato") ||
+          t.includes("meta + alternative") ||
+          t.includes("fonte:")
+        );
+      };
+
+      // 1) heading
+      const h = card.querySelector("h1,h2,h3");
+      if (h && !bad(h.textContent)) return stripCoordsAndJunk(h.textContent);
+
+      // 2) primo "testo forte" (molti template mettono font-weight:950)
+      const strongCandidates = Array.from(card.querySelectorAll("div,span"))
+        .filter(el => {
+          const st = getComputedStyle(el);
+          const w = parseInt(st.fontWeight || "400", 10);
+          const tx = (el.textContent||"").trim();
+          return tx && tx.length < 80 && w >= 700 && !bad(tx);
+        });
+
+      if (strongCandidates.length){
+        // prendi il più “lungo ma umano”
+        strongCandidates.sort((a,b)=> (b.textContent||"").length - (a.textContent||"").length);
+        return stripCoordsAndJunk(strongCandidates[0].textContent);
+      }
+
+      // 3) fallback: prima riga del testo
+      const firstLine = stripCoordsAndJunk((card.textContent||"").split("\n").find(x=>x.trim()) || "");
+      return bad(firstLine) ? "" : firstLine;
     }
 
     function extractWhereFromCard(card){
+      if (!card) return "";
       const whereEl = Array.from(card.querySelectorAll("div,span,p"))
         .find(el => (el.textContent || "").trim().startsWith("📍"));
-      return cleanText(whereEl?.textContent || "");
+      return stripCoordsAndJunk(whereEl?.textContent || "");
     }
 
-    // ✅ SOLO "Titolo, Luogo" (Niente coordinate, niente link maps)
     function bestDestinationQueryForCard(card){
       if (!card) return "";
+
       const title = extractTitleFromCard(card);
       const where = extractWhereFromCard(card);
 
-      const combo = [title, where].filter(Boolean).join(", ").trim();
+      // se "where" è vuoto o generico, usiamo SOLO titolo
+      let q = title;
 
-      // serve almeno 1 lettera (così Google NON usa la tua posizione)
-      if (combo && /[a-zA-ZÀ-ÿ]/.test(combo) && !looksLikeCoordinates(combo)) return combo;
+      // se where sembra un posto (con lettere) e NON è solo regione, aggiungilo (ma spesso è vuoto/coord)
+      if (where && looksUsableName(where) && !isRegionOnly(where)) {
+        // evita duplicati tipo "Montegrotto Terme, Montegrotto Terme"
+        const lowT = (title||"").toLowerCase();
+        const lowW = (where||"").toLowerCase();
+        if (lowT && lowW && !lowW.includes(lowT)) q = `${title}, ${where}`;
+      }
 
-      return "";
+      q = stripCoordsAndJunk(q);
+
+      // protezione finale: se per sbaglio è regione-only, rifiuta
+      if (!looksUsableName(q)) return "";
+      return q;
     }
 
     function getPrimaryResultCard(){
@@ -663,51 +747,40 @@
       return null;
     }
 
-    function isUsableDestination(q){
-      const t = cleanText(q);
-      if (!t) return false;
-      if (t.length < 3) return false;
-      if (looksLikeCoordinates(t)) return false;         // ❌ blocco duro
-      if (!/[a-zA-ZÀ-ÿ]/.test(t)) return false;          // deve avere lettere
-      return true;
-    }
-
     function syncSelectedQueryFromPrimaryCard(){
       const c = getPrimaryResultCard();
       const q = bestDestinationQueryForCard(c);
-      if (isUsableDestination(q)) LAST_SELECTED_QUERY = cleanText(q);
+      if (looksUsableName(q)) LAST_SELECTED_QUERY = q;
     }
 
-    // ✅ A PROVA DI BOMBA: se non c'è un nome chiaro -> NON apre
     function openGoogleForDestination(){
-      let q = cleanText(LAST_SELECTED_QUERY);
+      let q = stripCoordsAndJunk(LAST_SELECTED_QUERY);
 
-      if (!isUsableDestination(q)){
+      if (!looksUsableName(q)){
         const c = getPrimaryResultCard();
         q = bestDestinationQueryForCard(c);
       }
 
-      if (!isUsableDestination(q)){
+      if (!looksUsableName(q)){
         if (navigator.vibrate) navigator.vibrate([20,40,20]);
         showStatus("Destinazione non chiara. Rifai CERCA 🙂", 2400);
         return;
       }
 
+      // ✅ Google Search AI con NOME DESTINAZIONE (non posizione attuale)
       const full = `${q} cosa vedere cosa fare`;
       window.open(`https://www.google.com/search?q=${encodeURIComponent(full)}`, "_blank", "noopener");
     }
 
     function updateWhatsThereUI(){
       const fab = $("fabWhatsThere");
-      const ok = isUsableDestination(LAST_SELECTED_QUERY) || isUsableDestination(bestDestinationQueryForCard(getPrimaryResultCard()));
+      const ok = looksUsableName(LAST_SELECTED_QUERY) || looksUsableName(bestDestinationQueryForCard(getPrimaryResultCard()));
       if (fab) fab.style.display = ok ? "flex" : "none";
     }
 
-    // Bottoni
     $("btnWhatsThere")?.addEventListener("click", openGoogleForDestination);
     $("fabWhatsThere")?.addEventListener("click", openGoogleForDestination);
 
-    // inject bottone anche nelle card
     function injectWhatIsButtons(){
       const area = $("resultArea");
       if (!area) return;
@@ -738,7 +811,7 @@
           ev.preventDefault();
           ev.stopPropagation();
           const q = bestDestinationQueryForCard(c);
-          if (isUsableDestination(q)) LAST_SELECTED_QUERY = cleanText(q);
+          if (looksUsableName(q)) LAST_SELECTED_QUERY = q;
           openGoogleForDestination();
         });
 
@@ -763,25 +836,26 @@
         if (looksLikeEmpty) return;
 
         const q = bestDestinationQueryForCard(card);
-        if (isUsableDestination(q)) LAST_SELECTED_QUERY = cleanText(q);
+        if (looksUsableName(q)) LAST_SELECTED_QUERY = q;
         updateWhatsThereUI();
       }, { passive:true });
     }
 
-    const resultArea = $("resultArea");
-    if (resultArea) {
+    const _ra = $("resultArea");
+    if (_ra) {
       const mo = new MutationObserver(() => {
         injectWhatIsButtons();
         syncSelectedQueryFromPrimaryCard();
         updateWhatsThereUI();
       });
-      mo.observe(resultArea, { childList: true, subtree: true });
+      mo.observe(_ra, { childList: true, subtree: true });
 
       injectWhatIsButtons();
       syncSelectedQueryFromPrimaryCard();
       updateWhatsThereUI();
       enableCardSelectionCapture();
     }
+
 
     /* ------------------ SOS: CASA + AUTO (NO RIPETIZIONI) ------------------ */
     const fabSOS = $("fabSOS");
