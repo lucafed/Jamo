@@ -7,7 +7,7 @@
     "lng": 11.9,
     "radius_km": 240
   },
-  "generated_at": "2026-01-27T04:16:33.055Z",
+  "generated_at": "2026-02-03T04:58:23.964Z",
   "places": [
     {
       "id": "osm:w:48528567",
@@ -828,7 +828,7 @@
         "addr:city=Trento",
         "addr:country=IT",
         "addr:housenumber=25",
-        "addr:postcode=38122",
+        "addr:postcode=31822",
         "addr:street=Via Torre D'Augusto",
         "bath:type=thermal",
         "leisure=fitness_centre",
@@ -1554,7 +1554,7 @@
     },
     {
       "id": "osm:w:204533817",
-      "name": "SPAZIO SPORT LIDO",
+      "name": "Spazio Sport Lido",
       "lat": 46.1991809,
       "lon": 13.1169439,
       "type": "relax",
@@ -1564,7 +1564,7 @@
       "area": "Veneto",
       "tags": [
         "leisure=swimming_pool",
-        "name=SPAZIO SPORT LIDO",
+        "name=Spazio Sport Lido",
         "opening_hours=Mo-Su 10:00-19:30",
         "sport=swimming"
       ],
