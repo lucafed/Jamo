@@ -3,7 +3,7 @@
   "country": "IT",
   "area": "Veneto",
   "label_it": "Veneto • Borghi (pulito)",
-  "generated_at": "2026-02-03T04:44:32.390Z",
+  "generated_at": "2026-02-10T05:01:04.357Z",
   "places": [
     {
       "id": "node:66503077",
@@ -2480,8 +2480,8 @@
     {
       "id": "node:62513642",
       "name": "Bigarello",
-      "lat": 45.2023225,
-      "lon": 10.9255849,
+      "lat": 45.2029121,
+      "lon": 10.9259175,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -8287,8 +8287,8 @@
     {
       "id": "node:64778397",
       "name": "Arzergrande",
-      "lat": 45.2728605,
-      "lon": 12.053944,
+      "lat": 45.2733363,
+      "lon": 12.04723,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -13503,6 +13503,26 @@
         "population=1263",
         "wikidata=Q53150",
         "wikipedia=it:Arzene"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:66502926",
+      "name": "Pinzano al Tagliamento / Pinçan",
+      "lat": 46.1830744,
+      "lon": 12.9454465,
+      "type": "borgo",
+      "borgo_type": "classico",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=7535",
+        "name=Pinzano al Tagliamento / Pinçan",
+        "name:fur=Pinçan",
+        "place=village",
+        "population=1608",
+        "source=geodati.gfoss.it",
+        "wikidata=Q53180",
+        "wikipedia=it:Pinzano al Tagliamento"
       ],
       "score": 80
     },
@@ -42059,6 +42079,7 @@
         "contact:website=http://www.comune.suzzara.mn.it/servizi/notizie/notizie_homepage.aspx",
         "gfoss_id=2746",
         "name=Suzzara",
+        "name:uk=Суцара",
         "place=town",
         "population=21049",
         "postal_code=46029",
@@ -45298,6 +45319,7 @@
         "gfoss_id=3622",
         "name=Adria",
         "name:ru=Адрия",
+        "name:uk=Адрія",
         "place=town",
         "population=19746",
         "source=geodati.gfoss.it",
@@ -47309,6 +47331,7 @@
       "tags": [
         "name=Badia Polesine",
         "name:ru=Бадия-Полезине",
+        "name:uk=Бадія-Полезіне",
         "place=town",
         "population=10509",
         "wikidata=Q30022483"
@@ -102049,8 +102072,8 @@
     {
       "id": "node:10913743536",
       "name": "San Pietro",
-      "lat": 45.6786567,
-      "lon": 11.4376871,
+      "lat": 45.678723,
+      "lon": 11.4379225,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -131490,24 +131513,6 @@
       "score": 55
     },
     {
-      "id": "node:66502926",
-      "name": "Pinzano al Tagliamento / Pinçan",
-      "lat": 46.1831041,
-      "lon": 12.9454483,
-      "type": "borgo",
-      "borgo_type": "chicca",
-      "visibility": "chicca",
-      "tags": [
-        "gfoss_id=7535",
-        "name=Pinzano al Tagliamento / Pinçan",
-        "name:fur=Pinçan",
-        "place=village",
-        "population=1608",
-        "source=geodati.gfoss.it"
-      ],
-      "score": 55
-    },
-    {
       "id": "node:66502930",
       "name": "Zoppola / Sopula",
       "lat": 45.9662544,
@@ -132566,7 +132571,7 @@
     },
     {
       "id": "node:66503541",
-      "name": "Villa Santina",
+      "name": "Villa Santina / Vile",
       "lat": 46.4140956,
       "lon": 12.9207476,
       "type": "borgo",
@@ -132575,7 +132580,7 @@
       "tags": [
         "gfoss_id=3804",
         "loc_name:fur=Vile",
-        "name=Villa Santina",
+        "name=Villa Santina / Vile",
         "name:fur=Vile di Cjargne",
         "name:it=Villa Santina",
         "place=village",
@@ -132597,6 +132602,7 @@
         "loc_name:fur=Trasagas",
         "name=Trasaghis / Trasâgas",
         "name:fur=Trasaghis",
+        "name:it=Trasaghis",
         "place=village",
         "population=2490",
         "source=geodati.gfoss.it"
@@ -135332,6 +135338,7 @@
         "loc_name:fur=Vasinas",
         "name=Avasinis / Vasinas",
         "name:fur=Vasinis",
+        "name:it=Avasinis",
         "place=village"
       ],
       "score": 55
@@ -135347,6 +135354,7 @@
       "tags": [
         "name=Alesso / Dalès",
         "name:fur=Dales",
+        "name:it=Alesso",
         "place=village"
       ],
       "score": 55
@@ -141566,6 +141574,7 @@
         "loc_name:fur=Voncedas",
         "name=Borgo Oncedis / Voncedas",
         "name:fur=Voncedis",
+        "name:it=Borgo Oncedis",
         "place=hamlet"
       ],
       "score": 50
@@ -151815,20 +151824,6 @@
       "visibility": "chicca",
       "tags": [
         "name=Isoletta",
-        "place=hamlet"
-      ],
-      "score": 40
-    },
-    {
-      "id": "node:558385846",
-      "name": "San Pellegrino",
-      "lat": 44.7912371,
-      "lon": 10.3039454,
-      "type": "borgo",
-      "borgo_type": "chicca",
-      "visibility": "chicca",
-      "tags": [
-        "name=San Pellegrino",
         "place=hamlet"
       ],
       "score": 40
@@ -163084,6 +163079,7 @@
       "tags": [
         "name=Tiveriacco / Trivià",
         "name:fur=Trivià",
+        "name:it=Tiveriacco",
         "place=hamlet"
       ],
       "score": 40
@@ -165776,8 +165772,8 @@
     {
       "id": "node:1575368692",
       "name": "Forcal",
-      "lat": 46.0148784,
-      "lon": 12.2837332,
+      "lat": 46.0149221,
+      "lon": 12.2837046,
       "type": "borgo",
       "borgo_type": "chicca",
       "visibility": "chicca",
@@ -194214,6 +194210,20 @@
       "visibility": "chicca",
       "tags": [
         "name=Cason",
+        "place=hamlet"
+      ],
+      "score": 40
+    },
+    {
+      "id": "node:9531966388",
+      "name": "Palazzetto",
+      "lat": 45.6059618,
+      "lon": 11.3264135,
+      "type": "borgo",
+      "borgo_type": "chicca",
+      "visibility": "chicca",
+      "tags": [
+        "name=Palazzetto",
         "place=hamlet"
       ],
       "score": 40
