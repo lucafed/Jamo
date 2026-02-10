@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-02-03T04:54:58.503Z",
+  "generated_at": "2026-02-10T05:10:00.505Z",
   "places": [
     {
       "id": "node:2692275706",
@@ -6018,6 +6018,19 @@
       "score": 80
     },
     {
+      "id": "node:13534280369",
+      "name": "Vini e Sfizi",
+      "lat": 45.7056951,
+      "lon": 9.6844392,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "craft=winery",
+        "name=Vini e Sfizi"
+      ],
+      "score": 80
+    },
+    {
       "id": "way:81085412",
       "name": "Cantine naturali Torboli",
       "lat": 45.9222755,
@@ -6164,8 +6177,8 @@
       "type": "cantine",
       "visibility": "classica",
       "tags": [
-        "building=yes",
         "craft=winery",
+        "landuse=industrial",
         "name=Montelvini"
       ],
       "score": 80
@@ -6240,7 +6253,8 @@
         "building=yes",
         "check_date=2025-02-15",
         "craft=winery",
-        "name=H. Lentsch"
+        "name=H. Lentsch",
+        "wheelchair=yes"
       ],
       "score": 80
     },

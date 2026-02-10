@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-02-03T04:54:14.600Z",
+  "generated_at": "2026-02-10T05:09:51.027Z",
   "places": [
     {
       "id": "node:62513426",
@@ -31467,8 +31467,8 @@
     {
       "id": "node:62513642",
       "name": "Bigarello",
-      "lat": 45.2023225,
-      "lon": 10.9255849,
+      "lat": 45.2029121,
+      "lon": 10.9259175,
       "type": "borghi",
       "visibility": "chicca",
       "tags": [
@@ -42483,8 +42483,8 @@
     {
       "id": "node:64778397",
       "name": "Arzergrande",
-      "lat": 45.2728605,
-      "lon": 12.053944,
+      "lat": 45.2733363,
+      "lon": 12.04723,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -62500,6 +62500,7 @@
         "admin_level=8",
         "boundary=administrative",
         "name=Suzzara",
+        "name:uk=Суцара",
         "postal_code=46029",
         "ref:ISTAT=020065",
         "ref:catasto=L020",
@@ -63858,6 +63859,7 @@
         "boundary=administrative",
         "name=Badia Polesine",
         "name:ru=Бадия-Полезине",
+        "name:uk=Бадія-Полезіне",
         "old_name=La Badia",
         "postal_code=45021",
         "ref:ISTAT=029004",
@@ -85455,7 +85457,7 @@
       "id": "relation:46601",
       "name": "Tione di Trento",
       "lat": 46.0084772,
-      "lon": 10.7220232,
+      "lon": 10.7220945,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -85615,7 +85617,7 @@
       "id": "relation:46628",
       "name": "Bleggio Superiore",
       "lat": 46.0060058,
-      "lon": 10.7964113,
+      "lon": 10.7964512,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -90276,7 +90278,7 @@
       "type": "borghi",
       "visibility": "classica",
       "tags": [
-        "addr:postcode=39100",
+        "admin_centre:postal_code=39100",
         "admin_level=8",
         "boundary=administrative",
         "coat_of_arms=File:ITA Bolzano COA.svg",
@@ -118438,10 +118440,10 @@
       "tags": [
         "gfoss_id=1930",
         "name=Albino",
+        "name:it=Albino",
         "name:ru=Альбино",
         "place=town",
         "population=17800",
-        "source=geodati.gfoss.it",
         "wikidata=Q53489"
       ],
       "score": 85
@@ -119720,6 +119722,7 @@
         "contact:website=http://www.comune.suzzara.mn.it/servizi/notizie/notizie_homepage.aspx",
         "gfoss_id=2746",
         "name=Suzzara",
+        "name:uk=Суцара",
         "place=town",
         "population=21049",
         "postal_code=46029",
@@ -120406,6 +120409,7 @@
         "gfoss_id=3622",
         "name=Adria",
         "name:ru=Адрия",
+        "name:uk=Адрія",
         "place=town",
         "population=19746",
         "source=geodati.gfoss.it",
@@ -122349,6 +122353,7 @@
       "tags": [
         "name=Badia Polesine",
         "name:ru=Бадия-Полезине",
+        "name:uk=Бадія-Полезіне",
         "place=town",
         "population=10509",
         "wikidata=Q30022483"
@@ -150009,8 +150014,8 @@
     {
       "id": "node:10913743536",
       "name": "San Pietro",
-      "lat": 45.6786567,
-      "lon": 11.4376871,
+      "lat": 45.678723,
+      "lon": 11.4379225,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -182767,8 +182772,8 @@
     {
       "id": "node:2721254260",
       "name": "Gombaiolo",
-      "lat": 45.6537646,
-      "lon": 10.2381319,
+      "lat": 45.6538124,
+      "lon": 10.2379924,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -195540,6 +195545,20 @@
       "score": 65
     },
     {
+      "id": "node:13528952637",
+      "name": "Reggiolo",
+      "lat": 44.7501795,
+      "lon": 10.533088,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Reggiolo",
+        "place=hamlet",
+        "population=20"
+      ],
+      "score": 65
+    },
+    {
       "id": "way:84013281",
       "name": "Matassone",
       "lat": 45.8154683,
@@ -197357,20 +197376,6 @@
       "visibility": "classica",
       "tags": [
         "name=Trebi",
-        "place=hamlet"
-      ],
-      "score": 55
-    },
-    {
-      "id": "node:304937068",
-      "name": "San Donato",
-      "lat": 45.6322514,
-      "lon": 11.7906747,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=San Donato",
-        "name:vec=San Donà",
         "place=hamlet"
       ],
       "score": 55
