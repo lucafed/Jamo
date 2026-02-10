@@ -7,7 +7,7 @@
     "lng": 11.9,
     "radius_km": 240
   },
-  "generated_at": "2026-02-03T04:58:23.964Z",
+  "generated_at": "2026-02-10T05:14:02.037Z",
   "places": [
     {
       "id": "osm:w:48528567",
@@ -211,6 +211,29 @@
         "roof:shape=flat",
         "sauna=yes",
         "website=https://www.qcterme.com/it/val-di-fassa/qc-terme-dolomiti"
+      ],
+      "score": 165
+    },
+    {
+      "id": "osm:w:1473925342",
+      "name": "Mioni Luxury Swim & Spa",
+      "lat": 45.32521,
+      "lon": 11.7946029,
+      "type": "relax",
+      "visibility": "chicca",
+      "beauty_score": 0.86,
+      "country": "IT",
+      "area": "Veneto",
+      "tags": [
+        "access=yes",
+        "amenity=public_bath",
+        "bath:type=thermal",
+        "check_date=2026-01-26",
+        "fee=yes",
+        "min_age=18",
+        "name=Mioni Luxury Swim & Spa",
+        "shower=yes",
+        "unisex=yes"
       ],
       "score": 165
     },
