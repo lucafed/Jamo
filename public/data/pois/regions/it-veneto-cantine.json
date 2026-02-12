@@ -7,7 +7,7 @@
     "minLon": 10.2,
     "maxLon": 13.2
   },
-  "generated_at": "2026-02-05T04:30:30.201Z",
+  "generated_at": "2026-02-12T04:50:58.387Z",
   "places": [
     {
       "id": "node:12766026527",
@@ -1598,23 +1598,22 @@
       "type": "cantine",
       "visibility": "classica",
       "tags": [
-        "contact:city=Eppan an der Weinstraße - Appiano sulla Strada del Vino",
-        "contact:city:de=Eppan an der Weinstraße",
-        "contact:city:it=Appiano sulla Strada del Vino",
-        "contact:hamlet=St. Michael - San Michele",
-        "contact:hamlet:de=St. Michael",
-        "contact:hamlet:it=San Michele",
-        "contact:housenumber=29",
-        "contact:postcode=39057",
-        "contact:street=Maderneidstraße - Via Maderneto",
-        "contact:street:de=Maderneidstraße",
-        "contact:street:it=Via Maderneto",
+        "addr:city=Eppan an der Weinstraße - Appiano sulla Strada del Vino",
+        "addr:city:de=Eppan an der Weinstraße",
+        "addr:city:it=Appiano sulla Strada del Vino",
+        "addr:hamlet=St. Michael - San Michele",
+        "addr:hamlet:de=St. Michael",
+        "addr:hamlet:it=San Michele",
+        "addr:housenumber=29",
+        "addr:postcode=39057",
+        "addr:street=Maderneidstraße - Via Maderneto",
+        "addr:street:de=Maderneidstraße",
+        "addr:street:it=Via Maderneto",
         "contact:website=https://www.weingutabraham.it",
         "craft=winery",
         "name=Weingut Abraham - Tenuta Abraham",
         "name:de=Weingut Abraham",
         "name:it=Tenuta Abraham",
-        "note:contact:addr=Charlieu's Schema",
         "opening_hours=Mo 16:00-17:00 || \"by appointment\""
       ],
       "score": 88,
@@ -3277,8 +3276,9 @@
       "visibility": "classica",
       "tags": [
         "addr:city=Trento",
+        "addr:country=IT",
         "addr:housenumber=52",
-        "addr:postcode=38121",
+        "addr:postcode=31821",
         "addr:street=Via dell'Albera",
         "building=yes",
         "craft=winery",
@@ -4801,6 +4801,24 @@
       "beauty_score": 1
     },
     {
+      "id": "node:13510630526",
+      "name": "Azienda Vinicola - Andrea Lunardelli",
+      "lat": 46.0516163,
+      "lon": 13.1465298,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Pasian di Prato",
+        "addr:housenumber=15",
+        "addr:postcode=33037",
+        "addr:street=Via Udine",
+        "craft=winery",
+        "name=Azienda Vinicola - Andrea Lunardelli"
+      ],
+      "score": 70,
+      "beauty_score": 1
+    },
+    {
       "id": "way:30691669",
       "name": "Cantina Rotari",
       "lat": 46.202523,
@@ -5101,8 +5119,8 @@
       "type": "cantine",
       "visibility": "chicca",
       "tags": [
-        "building=yes",
         "craft=winery",
+        "landuse=industrial",
         "name=Montelvini"
       ],
       "score": 70,
@@ -5232,7 +5250,8 @@
         "building=yes",
         "check_date=2025-02-15",
         "craft=winery",
-        "name=H. Lentsch"
+        "name=H. Lentsch",
+        "wheelchair=yes"
       ],
       "score": 70,
       "beauty_score": 1
