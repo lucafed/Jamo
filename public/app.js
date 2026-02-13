@@ -1244,7 +1244,7 @@ function isNearCoast(place) {
     let b = 0;
     if (t.includes("historic=") || t.includes("heritage=")) b += 0.10;
     if (hasQualitySignals(place)) b += 0.08;
-    if (hasAny(n, ["centro storico","borgo","castel","rocca","pieve","duomo"])) b += 0.06;
+    if (hasAny(n, ["centro storico","borgo","pieve","duomo"])) b += 0.06;
     return b;
   }
 
