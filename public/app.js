@@ -877,6 +877,11 @@ function isLake(place) {
     const t = tagsStr(place);
     const n = normName(place?.name || "");
     const type = normalizeType(place?.type);
+    // ✅ castelli/fortificazioni NON sono "borghi": devono andare in "storia"
+if (t.includes("historic=castle") || t.includes("historic=fort") || t.includes("historic=citywalls") || t.includes("historic=ruins")) {
+  return false;
+}
+
 
     const isSettlement =
       t.includes("place=village") ||
