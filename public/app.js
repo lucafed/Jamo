@@ -888,7 +888,6 @@ if (t.includes("historic=castle") || t.includes("historic=fort") || t.includes("
 if (looksWellnessByName(place) || isSpaPlace(place)) {
   return false;
 }
-
       t.includes("place=village") ||
       t.includes("place=hamlet") ||
       t.includes("place=town") ||
