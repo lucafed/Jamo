@@ -890,12 +890,15 @@ if (t.includes("historic=castle") || t.includes("historic=fort") || t.includes("
       t.includes("place=suburb") ||
       t.includes("place=neighbourhood");
 
-    const nameLooksBorgo = hasAny(n, ["borgo","centro storico","frazione","contrada","corte","castel"]);
-    const nameLooksObject = hasAny(n, [
-      "ponte","locomotiva","treno","museo","area archeologica","villa comunale","parco",
-      "torre","rocca","forte","bagno","cascata","gola","sorgente","belvedere","sentiero",
-      "rifugio","spiaggia","lido"
-    ]);
+   const nameLooksBorgo = hasAny(n, ["borgo","centro storico","frazione","contrada","corte"]);
+
+const nameLooksObject = hasAny(n, [
+  "castello","castel",            // ✅ qui
+  "ponte","locomotiva","treno","museo","area archeologica","villa comunale","parco",
+  "torre","rocca","forte","bagno","cascata","gola","sorgente","belvedere","sentiero",
+  "rifugio","spiaggia","lido"
+]);
+
 
     const typeSaysBorgo = (type === "borghi" || type === "borgo");
 
