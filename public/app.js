@@ -884,10 +884,6 @@ if (t.includes("historic=castle") || t.includes("historic=fort") || t.includes("
 
 
     const isSettlement =
-      // ❌ Se è chiaramente terme/spa NON può essere borgo
-if (looksWellnessByName(place) || isSpaPlace(place)) {
-  return false;
-}
       t.includes("place=village") ||
       t.includes("place=hamlet") ||
       t.includes("place=town") ||
