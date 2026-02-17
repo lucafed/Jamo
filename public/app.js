@@ -938,39 +938,61 @@ function isLake(place) {
     );
   }
 
-  function isBorgo(place) {
-    const t = tagsStr(place);
-    const n = normName(place?.name || "");
-    const type = normalizeType(place?.type);
-    // ✅ castelli/fortificazioni NON sono "borghi": devono andare in "storia"
-if (t.includes("historic=castle") || t.includes("historic=fort") || t.includes("historic=citywalls") || t.includes("historic=ruins")) {
+ function isBorgo(place) {
+  const t = tagsStr(place);
+  const n = normName(place?.name || "");
+  const type = normalizeType(place?.type);
+
+  // ❌ castelli NON sono borghi
+  if (
+    t.includes("historic=castle") ||
+    t.includes("historic=fort") ||
+    t.includes("historic=citywalls") ||
+    t.includes("historic=ruins")
+  ) {
+    return false;
+  }
+
+  const isSettlement =
+    t.includes("place=village") ||
+    t.includes("place=hamlet") ||
+    t.includes("place=town") ||
+    t.includes("place=suburb") ||
+    t.includes("place=neighbourhood");
+
+  const nameLooksBorgo = hasAny(n, [
+    "borgo",
+    "centro storico",
+    "frazione",
+    "contrada",
+    "corte"
+  ]);
+
+  const nameLooksObject = hasAny(n, [
+    "castello","castel",
+    "ponte","locomotiva","treno","museo",
+    "area archeologica","villa comunale","parco",
+    "torre","rocca","forte",
+    "bagno","cascata","gola","sorgente",
+    "belvedere","sentiero",
+    "rifugio","spiaggia","lido"
+  ]);
+
+  const typeSaysBorgo = (type === "borghi" || type === "borgo");
+
+  // ✅ REGOLA NUOVA: settlement sì, ma solo se turistico WOW
+  if (isSettlement) {
+    return isWowBorgo(place);
+  }
+
+  // ✅ REGOLA NUOVA: nome borgo sì, ma solo se turistico WOW
+  if ((typeSaysBorgo || nameLooksBorgo) && !nameLooksObject) {
+    return isWowBorgo(place);
+  }
+
   return false;
 }
 
-
-    const isSettlement =
-      t.includes("place=village") ||
-      t.includes("place=hamlet") ||
-      t.includes("place=town") ||
-      t.includes("place=suburb") ||
-      t.includes("place=neighbourhood");
-
-   const nameLooksBorgo = hasAny(n, ["borgo","centro storico","frazione","contrada","corte"]);
-
-const nameLooksObject = hasAny(n, [
-  "castello","castel",            // ✅ qui
-  "ponte","locomotiva","treno","museo","area archeologica","villa comunale","parco",
-  "torre","rocca","forte","bagno","cascata","gola","sorgente","belvedere","sentiero",
-  "rifugio","spiaggia","lido"
-]);
-
-
-    const typeSaysBorgo = (type === "borghi" || type === "borgo");
-
-    if (isSettlement) return true;
-    if ((typeSaysBorgo || nameLooksBorgo) && !nameLooksObject) return true;
-    return false;
-  }
 
   function isHiking(place) {
     const t = tagsStr(place);
