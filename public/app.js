@@ -741,6 +741,71 @@
       t.includes("contact:phone=")
     );
   }
+  function hasTouristSignals(place){
+  const t = tagsStr(place);
+  return (
+    t.includes("tourism=attraction") ||
+    t.includes("tourism=museum") ||
+    t.includes("tourism=gallery") ||
+    t.includes("tourism=viewpoint") ||
+    t.includes("tourism=information") ||
+    t.includes("historic=") ||
+    t.includes("heritage=") ||
+    t.includes("man_made=tower") ||
+    t.includes("man_made=lighthouse") ||
+    t.includes("natural=waterfall") ||
+    t.includes("natural=cave_entrance") ||
+    t.includes("natural=gorge") ||
+    t.includes("boundary=national_park") ||
+    t.includes("leisure=nature_reserve") ||
+    t.includes("leisure=park")
+  );
+}
+
+function hasServiziSignals(place){
+  const t = tagsStr(place);
+  return (
+    t.includes("amenity=restaurant") ||
+    t.includes("amenity=cafe") ||
+    t.includes("amenity=bar") ||
+    t.includes("amenity=ice_cream") ||
+    t.includes("amenity=toilets") ||
+    t.includes("amenity=pharmacy") ||
+    t.includes("amenity=parking") ||
+    t.includes("tourism=hotel") ||
+    t.includes("tourism=guest_house") ||
+    t.includes("tourism=camp_site")
+  );
+}
+
+/**
+ * ✅ BORGO WOW: turistico e “servito”
+ * - NO hamlet/neighbourhood/suburb (troppo micro)
+ * - SI town/village
+ * - deve avere: segnali turistici OR (servizi + qualità)
+ * - blocca nomi “borgo + nome” generici che spesso sono fuffa
+ */
+function isWowBorgo(place){
+  const t = tagsStr(place);
+  const n = normName(place?.name || "");
+
+  const isTownOrVillage = t.includes("place=town") || t.includes("place=village");
+  if (!isTownOrVillage) return false;
+
+  // nomi fuffa ricorrenti
+  if (n.startsWith("borgo ")) return false;
+  if (n.includes("frazione") || n.includes("contrada")) return false;
+
+  // turistico OR servizi+qualità
+  const tourist = hasTouristSignals(place);
+  const serviced = hasServiziSignals(place) && hasQualitySignals(place);
+
+  // bonus: "centro storico" ok se comunque town/village
+  const centroStorico = n.includes("centro storico") || n.includes("centro-storico");
+
+  return tourist || serviced || (centroStorico && (tourist || hasQualitySignals(place)));
+}
+
 
   function isClearlyIrrelevantPlace(place) {
     const t = tagsStr(place);
