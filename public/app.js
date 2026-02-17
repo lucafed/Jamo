@@ -1,7 +1,7 @@
 /* Jamo — app.js v22.2 (CLEAN • TOURISTIC • MONETIZZABILE • TAP-SAFE)
  * ✅ Offline-first • ✅ NO GPS • ✅ Region-first IT
  * ✅ Rimossi: Ovunque / Città / Panorami
- * ✅ Borghi: SOLO insediamenti veri
+ * ✅ Borghi: SOLO insediamenti veri + SOLO “WOW/turistici” (no borghetti sconosciuti senza segnali)
  * ✅ Trekking & Mare: filtri più larghi (trova di più, sempre turistico)
  * ✅ Montagna: categoria vera (picchi/rifugi/passi/attrazioni alpine)
  * ✅ Eventi: UI ok (subfiltri on/off) — dataset/eventi nel prossimo step
@@ -620,13 +620,13 @@
 
   // ✅ categoria canonica: no ovunque/citta/panorami
   function canonicalCategory(cat) {
-  const c = String(cat || "").toLowerCase().trim();
-  if (c === "trekking" || c === "hiking") return "hiking";
+    const c = String(cat || "").toLowerCase().trim();
+    if (c === "trekking" || c === "hiking") return "hiking";
 
-  // ✅ alias: Eventi = Mai fatto (UI può dire "mai_fatto" o "maifatto")
-  if (c === "eventi" || c === "mai_fatto" || c === "maifatto" || c === "mai fatto") return "eventi";
+    // ✅ alias: Eventi = Mai fatto
+    if (c === "eventi" || c === "mai_fatto" || c === "maifatto" || c === "mai fatto") return "eventi";
 
-  return c || "natura";
+    return c || "natura";
   }
 
   function datasetInfoLabel(kind, src, poolLen) {
@@ -670,7 +670,7 @@
       }
     }
 
-    // radius-cat (utile)
+    // radius-cat
     const p3 = `/data/pois/regions/radius-${cat}.json`;
     const loaded3 = await tryLoadPlacesFile(p3, signal);
     if (loaded3) {
@@ -741,71 +741,54 @@
       t.includes("contact:phone=")
     );
   }
-  function hasTouristSignals(place){
-  const t = tagsStr(place);
-  return (
-    t.includes("tourism=attraction") ||
-    t.includes("tourism=museum") ||
-    t.includes("tourism=gallery") ||
-    t.includes("tourism=viewpoint") ||
-    t.includes("tourism=information") ||
-    t.includes("historic=") ||
-    t.includes("heritage=") ||
-    t.includes("man_made=tower") ||
-    t.includes("man_made=lighthouse") ||
-    t.includes("natural=waterfall") ||
-    t.includes("natural=cave_entrance") ||
-    t.includes("natural=gorge") ||
-    t.includes("boundary=national_park") ||
-    t.includes("leisure=nature_reserve") ||
-    t.includes("leisure=park")
-  );
-}
 
-function hasServiziSignals(place){
-  const t = tagsStr(place);
-  return (
-    t.includes("amenity=restaurant") ||
-    t.includes("amenity=cafe") ||
-    t.includes("amenity=bar") ||
-    t.includes("amenity=ice_cream") ||
-    t.includes("amenity=toilets") ||
-    t.includes("amenity=pharmacy") ||
-    t.includes("amenity=parking") ||
-    t.includes("tourism=hotel") ||
-    t.includes("tourism=guest_house") ||
-    t.includes("tourism=camp_site")
-  );
-}
+  // ✅ segnali turistici “wow”
+  function hasTouristSignals(place) {
+    const t = tagsStr(place);
+    return (
+      t.includes("tourism=attraction") ||
+      t.includes("tourism=museum") ||
+      t.includes("tourism=gallery") ||
+      t.includes("tourism=viewpoint") ||
+      t.includes("tourism=information") ||
+      t.includes("historic=") ||
+      t.includes("heritage=")
+    );
+  }
 
-/**
- * ✅ BORGO WOW: turistico e “servito”
- * - NO hamlet/neighbourhood/suburb (troppo micro)
- * - SI town/village
- * - deve avere: segnali turistici OR (servizi + qualità)
- * - blocca nomi “borgo + nome” generici che spesso sono fuffa
- */
-function isWowBorgo(place){
-  const t = tagsStr(place);
-  const n = normName(place?.name || "");
+  // ✅ segnali “servito”: se un borgo ha un minimo di servizi è più credibile/visitabile
+  function hasServiziSignals(place) {
+    const t = tagsStr(place);
+    return (
+      t.includes("amenity=restaurant") ||
+      t.includes("amenity=cafe") ||
+      t.includes("amenity=bar") ||
+      t.includes("tourism=hotel") ||
+      t.includes("tourism=guest_house")
+    );
+  }
 
-  const isTownOrVillage = t.includes("place=town") || t.includes("place=village");
-  if (!isTownOrVillage) return false;
+  // ✅ borghi WOW (niente posti sconosciuti senza segnali)
+  function isWowBorgo(place) {
+    const n = normName(place?.name || "");
+    const quality = hasQualitySignals(place);
 
-  // nomi fuffa ricorrenti
-  if (n.startsWith("borgo ")) return false;
-  if (n.includes("frazione") || n.includes("contrada")) return false;
+    const wowName = hasAny(n, [
+      "centro storico",
+      "borgo",
+      "pieve",
+      "duomo",
+      "abbazia",
+      "terme"
+    ]);
 
-  // turistico OR servizi+qualità
-  const tourist = hasTouristSignals(place);
-  const serviced = hasServiziSignals(place) && hasQualitySignals(place);
-
-  // bonus: "centro storico" ok se comunque town/village
-  const centroStorico = n.includes("centro storico") || n.includes("centro-storico");
-
-  return tourist || serviced || (centroStorico && (tourist || hasQualitySignals(place)));
-}
-
+    return (
+      quality ||
+      hasTouristSignals(place) ||
+      hasServiziSignals(place) ||
+      wowName
+    );
+  }
 
   function isClearlyIrrelevantPlace(place) {
     const t = tagsStr(place);
@@ -835,64 +818,55 @@ function isWowBorgo(place){
     return hasAny(n, ["monte","cima","passo","rifugio","malga","alpe","valico","piana","laghetto"]);
   }
   function looksLakeByName(place) {
-  const n = normName(place?.name || "");
-  return hasAny(n, ["lago","laghetto","lake","lac","laguna"]);
-}
+    const n = normName(place?.name || "");
+    return hasAny(n, ["lago","laghetto","lake","lac","laguna"]);
+  }
 
-function isClearlyRiverOrCanal(place) {
-  const t = tagsStr(place);
-  const n = normName(place?.name || "");
+  function isClearlyRiverOrCanal(place) {
+    const t = tagsStr(place);
+    const n = normName(place?.name || "");
 
-  // tag tipici "acqua ma NON lago turistico"
-  if (t.includes("waterway=")) return true;                 // fiumi/canali
-  if (t.includes("waterway=river") || t.includes("waterway=stream")) return true;
-  if (t.includes("waterway=canal") || t.includes("waterway=ditch")) return true;
-  if (t.includes("man_made=water_works") || t.includes("man_made=spillway")) return true;
-  if (t.includes("power=plant") || t.includes("power=generator")) return true;
+    if (t.includes("waterway=")) return true;
+    if (t.includes("waterway=river") || t.includes("waterway=stream")) return true;
+    if (t.includes("waterway=canal") || t.includes("waterway=ditch")) return true;
+    if (t.includes("man_made=water_works") || t.includes("man_made=spillway")) return true;
+    if (t.includes("power=plant") || t.includes("power=generator")) return true;
 
-  // nomi tipici da scartare
-  if (hasAny(n, ["canale","fiume","torrente","fosso","scolo","chiusa","idrovora","centrale","impianto","diga"])) return true;
+    if (hasAny(n, ["canale","fiume","torrente","fosso","scolo","chiusa","idrovora","centrale","impianto","diga"])) return true;
 
-  return false;
-}
+    return false;
+  }
 
-function isLake(place) {
-  // 🔒 prima escludiamo roba "acqua" sbagliata
-  if (isClearlyRiverOrCanal(place)) return false;
+  function isLake(place) {
+    if (isClearlyRiverOrCanal(place)) return false;
 
-  const t = tagsStr(place);
-  const type = normalizeType(place?.type);
-  const quality = hasQualitySignals(place);
+    const t = tagsStr(place);
+    const type = normalizeType(place?.type);
+    const quality = hasQualitySignals(place);
 
-  // segnali forti lago
-  const strong =
-    t.includes("water=lake") ||
-    t.includes("natural=water") && t.includes("water=lake") ||
-    t.includes("water=reservoir") ||                  // ok, ma poi filtriamo turistico
-    t.includes("landuse=reservoir") ||
-    type === "lago";
+    const strong =
+      t.includes("water=lake") ||
+      (t.includes("natural=water") && t.includes("water=lake")) ||
+      t.includes("water=reservoir") ||
+      t.includes("landuse=reservoir") ||
+      type === "lago";
 
-  // segnali turistici attorno al lago
-  const touristic =
-    t.includes("natural=beach") ||                    // spiaggia (anche lacustre)
-    t.includes("leisure=beach_resort") ||
-    t.includes("leisure=marina") ||                   // porticciolo/attracco
-    t.includes("tourism=attraction") ||
-    t.includes("leisure=swimming_area") ||
-    t.includes("amenity=boat_rental") ||
-    t.includes("sport=swimming") ||
-    t.includes("tourism=camp_site") ||                // campeggi sul lago (ok se non diventa spam)
-    t.includes("tourism=picnic_site");
+    const touristic =
+      t.includes("natural=beach") ||
+      t.includes("leisure=beach_resort") ||
+      t.includes("leisure=marina") ||
+      t.includes("tourism=attraction") ||
+      t.includes("leisure=swimming_area") ||
+      t.includes("amenity=boat_rental") ||
+      t.includes("sport=swimming") ||
+      t.includes("tourism=camp_site") ||
+      t.includes("tourism=picnic_site");
 
-  // regola: deve essere lago vero + almeno un segnale turistico o qualità o nome forte
-  if (strong && (touristic || quality || looksLakeByName(place))) return true;
+    if (strong && (touristic || quality || looksLakeByName(place))) return true;
+    if (looksLakeByName(place) && (quality || t.includes("tourism=") || t.includes("leisure="))) return true;
 
-  // fallback: nome "lago" + qualità
-  if (looksLakeByName(place) && (quality || t.includes("tourism=") || t.includes("leisure="))) return true;
-
-  return false;
-}
-
+    return false;
+  }
 
   function isSpaPlace(place) {
     const t = tagsStr(place);
@@ -938,61 +912,42 @@ function isLake(place) {
     );
   }
 
- function isBorgo(place) {
-  const t = tagsStr(place);
-  const n = normName(place?.name || "");
-  const type = normalizeType(place?.type);
+  // ✅ BORGO: deve essere insediamento vero + deve essere “WOW/servito/qualità”
+  function isBorgo(place) {
+    const t = tagsStr(place);
+    const n = normName(place?.name || "");
+    const type = normalizeType(place?.type);
 
-  // ❌ castelli NON sono borghi
-  if (
-    t.includes("historic=castle") ||
-    t.includes("historic=fort") ||
-    t.includes("historic=citywalls") ||
-    t.includes("historic=ruins")
-  ) {
-    return false;
-  }
+    // castelli/fortificazioni NON sono "borghi": vanno in "storia"
+    if (t.includes("historic=castle") || t.includes("historic=fort") || t.includes("historic=citywalls") || t.includes("historic=ruins")) {
+      return false;
+    }
 
-  const isSettlement =
-    t.includes("place=village") ||
-    t.includes("place=hamlet") ||
-    t.includes("place=town") ||
-    t.includes("place=suburb") ||
-    t.includes("place=neighbourhood");
+    const isSettlement =
+      t.includes("place=village") ||
+      t.includes("place=town") ||
+      t.includes("place=hamlet") ||
+      t.includes("place=suburb") ||
+      t.includes("place=neighbourhood");
 
-  const nameLooksBorgo = hasAny(n, [
-    "borgo",
-    "centro storico",
-    "frazione",
-    "contrada",
-    "corte"
-  ]);
+    const nameLooksBorgo = hasAny(n, ["borgo","centro storico","frazione","contrada","corte"]);
+    const typeSaysBorgo = (type === "borghi" || type === "borgo");
 
-  const nameLooksObject = hasAny(n, [
-    "castello","castel",
-    "ponte","locomotiva","treno","museo",
-    "area archeologica","villa comunale","parco",
-    "torre","rocca","forte",
-    "bagno","cascata","gola","sorgente",
-    "belvedere","sentiero",
-    "rifugio","spiaggia","lido"
-  ]);
+    // se non è insediamento, non è borgo
+    if (!isSettlement && !typeSaysBorgo && !nameLooksBorgo) return false;
 
-  const typeSaysBorgo = (type === "borghi" || type === "borgo");
+    // 🚫 evita oggetti spacciati per borgo
+    const nameLooksObject = hasAny(n, [
+      "castello","castel",
+      "ponte","locomotiva","treno","museo","area archeologica","villa comunale","parco",
+      "torre","rocca","forte","bagno","cascata","gola","sorgente","belvedere","sentiero",
+      "rifugio","spiaggia","lido"
+    ]);
+    if (nameLooksObject) return false;
 
-  // ✅ REGOLA NUOVA: settlement sì, ma solo se turistico WOW
-  if (isSettlement) {
+    // ✅ Filtro WOW: se è settlement ma non ha segnali, lo scartiamo (niente “Borgo Vespana” random)
     return isWowBorgo(place);
   }
-
-  // ✅ REGOLA NUOVA: nome borgo sì, ma solo se turistico WOW
-  if ((typeSaysBorgo || nameLooksBorgo) && !nameLooksObject) {
-    return isWowBorgo(place);
-  }
-
-  return false;
-}
-
 
   function isHiking(place) {
     const t = tagsStr(place);
@@ -1014,132 +969,91 @@ function isLake(place) {
       t.includes("trail_visibility=");
 
     if (hasTrailTags && (looksTrailByName(place) || hasQualitySignals(place))) return true;
-
     if (t.includes("natural=peak") && (hasTrailTags || looksTrailByName(place))) return true;
-
     if (hasQualitySignals(place) && looksTrailByName(place) && n.length >= 6) return true;
 
     return false;
   }
 
-  
   // -------------------- COASTAL BBOX (MARE SOLO SE VICINO ALLA COSTA) --------------------
+  const COASTAL_BBOXES_IT = [
+    { minLat: 44.75, maxLat: 46.30, minLon: 12.00, maxLon: 13.90 }, // Veneto+FVG
+    { minLat: 44.00, maxLat: 45.15, minLon: 11.80, maxLon: 13.40 }, // Emilia-Romagna
+    { minLat: 42.55, maxLat: 44.20, minLon: 12.90, maxLon: 13.90 }, // Marche
+    { minLat: 41.98, maxLat: 42.52, minLon: 13.90, maxLon: 14.90 }, // Abruzzo
+    { minLat: 41.00, maxLat: 42.20, minLon: 11.20, maxLon: 12.90 }, // Lazio
+    { minLat: 42.30, maxLat: 44.10, minLon: 9.70,  maxLon: 11.40 }, // Toscana
+    { minLat: 40.40, maxLat: 41.20, minLon: 13.70, maxLon: 15.10 }, // Campania
+    { minLat: 39.70, maxLat: 42.20, minLon: 15.00, maxLon: 18.60 }, // Puglia
+    { minLat: 36.60, maxLat: 38.40, minLon: 12.20, maxLon: 15.70 }, // Sicilia
+    { minLat: 38.80, maxLat: 41.40, minLon: 8.00,  maxLon: 9.90 },  // Sardegna
+  ];
 
-// BBOX costiere IT (prima versione, offline, conservative)
-const COASTAL_BBOXES_IT = [
-    // Veneto + Friuli VG coast (Adriatico nord)
-  { minLat: 44.75, maxLat: 46.30, minLon: 12.00, maxLon: 13.90 },
+  function isNearCoast(place) {
+    const lat = Number(place?.lat);
+    const lon = Number(place?.lon);
+    if (!Number.isFinite(lat) || !Number.isFinite(lon)) return false;
 
-  // Emilia-Romagna coast (Adriatico)
-  { minLat: 44.00, maxLat: 45.15, minLon: 11.80, maxLon: 13.40 },
-
-  // Marche coast (Adriatico)
-  { minLat: 42.55, maxLat: 44.20, minLon: 12.90, maxLon: 13.90 },
-
-  // Abruzzo coast (Adriatico)
-  { minLat: 41.98, maxLat: 42.52, minLon: 13.90, maxLon: 14.90 },
-
-  // Lazio coast (Tirreno)
-  { minLat: 41.00, maxLat: 42.20, minLon: 11.20, maxLon: 12.90 },
-
-  // Toscana coast
-  { minLat: 42.30, maxLat: 44.10, minLon: 9.70,  maxLon: 11.40 },
-
-  // Campania coast
-  { minLat: 40.40, maxLat: 41.20, minLon: 13.70, maxLon: 15.10 },
-
-  // Puglia coast (Adriatico + Ionio)
-  { minLat: 39.70, maxLat: 42.20, minLon: 15.00, maxLon: 18.60 },
-
-  // Sicilia (tutta)
-  { minLat: 36.60, maxLat: 38.40, minLon: 12.20, maxLon: 15.70 },
-
-  // Sardegna (tutta)
-  { minLat: 38.80, maxLat: 41.40, minLon: 8.00,  maxLon: 9.90 },
-];
-
-function isNearCoast(place) {
-  const lat = Number(place?.lat);
-  const lon = Number(place?.lon);
-  if (!Number.isFinite(lat) || !Number.isFinite(lon)) return false;
-
-  for (const b of COASTAL_BBOXES_IT) {
-    if (
-      lat >= b.minLat &&
-      lat <= b.maxLat &&
-      lon >= b.minLon &&
-      lon <= b.maxLon
-    ) {
-      return true;
+    for (const b of COASTAL_BBOXES_IT) {
+      if (lat >= b.minLat && lat <= b.maxLat && lon >= b.minLon && lon <= b.maxLon) return true;
     }
+    return false;
   }
-  return false;
-}
 
   function isSea(place) {
-  // 1) deve stare vicino alla costa (il tuo filtro bbox)
-  if (!isNearCoast(place)) return false;
+    if (!isNearCoast(place)) return false;
 
-  const t = tagsStr(place);
-  const n = normName(place?.name || "");
-  const q = hasQualitySignals(place);
+    const t = tagsStr(place);
+    const n = normName(place?.name || "");
+    const q = hasQualitySignals(place);
 
-  // 2) ESCLUSIONI dure (roba “non turistica mare”)
-  if (
-    t.includes("waterway=") ||
-    t.includes("waterway=river") ||
-    t.includes("waterway=canal") ||
-    t.includes("waterway=stream") ||
-    t.includes("amenity=ferry_terminal") ||
-    t.includes("harbour=") ||
-    t.includes("leisure=marina") ||              // marina spesso fluviale/porticciolo
-    t.includes("amenity=boat_rental") ||
-    t.includes("shop=fishmonger") ||             // pescheria
-    n.includes("pescheria") ||
-    n.includes("centro nautico") ||
-    n.includes("nautico") ||
-    n.includes("darsena") ||
-    n.includes("rimessaggio")
-  ) return false;
+    if (
+      t.includes("waterway=") ||
+      t.includes("waterway=river") ||
+      t.includes("waterway=canal") ||
+      t.includes("waterway=stream") ||
+      t.includes("amenity=ferry_terminal") ||
+      t.includes("harbour=") ||
+      t.includes("leisure=marina") ||
+      t.includes("amenity=boat_rental") ||
+      t.includes("shop=fishmonger") ||
+      n.includes("pescheria") ||
+      n.includes("centro nautico") ||
+      n.includes("nautico") ||
+      n.includes("darsena") ||
+      n.includes("rimessaggio")
+    ) return false;
 
-  // 3) SEGNALI OSM “mare vero”
-  const strongSea =
-    t.includes("natural=beach") ||
-    t.includes("natural=coastline") ||
-    t.includes("natural=bay") ||
-    t.includes("natural=reef") ||
-    t.includes("natural=cliff") ||
-    t.includes("man_made=pier") ||
-    t.includes("tourism=beach_resort");
+    const strongSea =
+      t.includes("natural=beach") ||
+      t.includes("natural=coastline") ||
+      t.includes("natural=bay") ||
+      t.includes("natural=reef") ||
+      t.includes("natural=cliff") ||
+      t.includes("man_made=pier") ||
+      t.includes("tourism=beach_resort");
 
-  // 4) SEGNALI TURISTICI (visitabile)
-  const touristSignal =
-    t.includes("tourism=attraction") ||
-    t.includes("tourism=viewpoint") ||
-    t.includes("tourism=information") ||
-    t.includes("tourism=beach_resort") ||
-    t.includes("leisure=beach_resort") ||
-    t.includes("amenity=bar") ||
-    t.includes("amenity=restaurant") ||
-    t.includes("amenity=cafe") ||
-    t.includes("amenity=ice_cream") ||
-    t.includes("amenity=toilets") ||
-    t.includes("sport=swimming") ||
-    q;
+    const touristSignal =
+      t.includes("tourism=attraction") ||
+      t.includes("tourism=viewpoint") ||
+      t.includes("tourism=information") ||
+      t.includes("tourism=beach_resort") ||
+      t.includes("leisure=beach_resort") ||
+      t.includes("amenity=bar") ||
+      t.includes("amenity=restaurant") ||
+      t.includes("amenity=cafe") ||
+      t.includes("amenity=ice_cream") ||
+      t.includes("amenity=toilets") ||
+      t.includes("sport=swimming") ||
+      q;
 
-  // 5) NOMI “balneari” (ma solo se c’è un segnale turistico/qualità)
-  const nameSea =
-    hasAny(n, ["spiaggia","lido","baia","cala","scogliera","litorale","lungomare","beach"]);
+    const nameSea = hasAny(n, ["spiaggia","lido","baia","cala","scogliera","litorale","lungomare","beach"]);
 
-  // Regola finale: mare vero + (turistico OR nome balneare)  
-  if (strongSea && (touristSignal || nameSea)) return true;
+    if (strongSea && (touristSignal || nameSea)) return true;
+    if (nameSea && touristSignal) return true;
 
-  // Anche senza tag strong: nome balneare + forte segnale turistico/qualità
-  if (nameSea && touristSignal) return true;
-
-  return false;
-}
-
+    return false;
+  }
 
   function isMountain(place) {
     const t = tagsStr(place);
@@ -1147,19 +1061,13 @@ function isNearCoast(place) {
     const quality = hasQualitySignals(place);
 
     if (type === "montagna") return true;
-
-    // forti
     if (t.includes("natural=peak")) return true;
     if (t.includes("tourism=alpine_hut") || t.includes("amenity=shelter") || t.includes("building=hut")) return true;
     if (t.includes("aerialway=")) return true;
     if (t.includes("piste:type=") || t.includes("sport=skiing")) return true;
-
-    // passi / viewpoint alpini
     if (t.includes("mountain_pass=") || t.includes("natural=valley")) return true;
 
-    // fallback: nome + qualità
     if (looksMountainByName(place) && (quality || t.includes("natural=") || t.includes("tourism="))) return true;
-
     return false;
   }
 
@@ -1209,7 +1117,7 @@ function isNearCoast(place) {
     if (cat === "lago") return isLake(place);
     if (cat === "montagna") return isMountain(place);
 
-    // (eventi: prossimo step)
+    // eventi: gestito da events.js
     if (cat === "eventi") return false;
 
     const strong =
@@ -1525,75 +1433,6 @@ function isNearCoast(place) {
     scrollToId("resultCard");
   }
 
-  function renderEventiPlaceholder() {
-    const area = $("resultArea");
-    if (!area) return;
-    const et = getEventType();
-    const ew = getEventWhen();
-    area.innerHTML = `
-      <div class="card clickSafe" style="box-shadow:none; border-color:rgba(0,224,255,.25); background:rgba(0,224,255,.06);">
-        <div style="font-weight:950; font-size:18px;">🎉 Eventi (in arrivo)</div>
-        <div class="small muted" style="margin-top:8px; line-height:1.45;">
-          Subfiltri selezionati: <b>${escapeHtml(et)}</b> • <b>${escapeHtml(ew)}</b><br>
-          Nel prossimo step aggiungiamo il dataset eventi offline + workflow di aggiornamento.
-        </div>
-      </div>
-    `;
-    showStatus("warn", "Eventi: funzione in arrivo (ora UI ok).");
-    scrollToId("resultCard");
-  }
-
-  function renderOptionsListHTML() {
-    const chosen = CURRENT_CHOSEN;
-    if (!chosen) return "";
-
-    const alts = ALL_OPTIONS.filter(x => x.pid !== chosen.pid);
-    if (!alts.length) return "";
-
-    const visible = alts.slice(0, VISIBLE_ALTS);
-    const chosenCat = canonicalCategory(getActiveCategory());
-    const tb = typeBadge(chosenCat);
-
-    const items = visible.map((x) => {
-      const p = x.place;
-      const name = escapeHtml(p.name || "");
-      const time = `~${x.driveMin} min`;
-      const areaLabel = escapeHtml((p.area || p.country || "—").trim());
-      const vis = escapeHtml(visibilityLabel(p));
-
-      return `
-        <button class="optBtn clickSafe" data-pid="${escapeHtml(x.pid)}" type="button">
-          <div class="optTop">
-            <div class="optName">${name}</div>
-            <div class="small muted" style="font-weight:950;">${time}</div>
-          </div>
-          <div class="optMeta">
-            <span class="pill acc">${tb.emoji} ${tb.label}</span>
-            <span class="pill soft">${vis}</span>
-            <span class="pill soft">📍 ${areaLabel}</span>
-          </div>
-        </button>
-      `;
-    }).join("");
-
-    const canMore = VISIBLE_ALTS < alts.length;
-
-    return `
-      <div style="margin-top:14px;">
-        <div style="font-weight:950; font-size:18px; margin: 6px 0 10px;">Altre destinazioni</div>
-        <div class="optList">${items}</div>
-        ${canMore ? `<button class="moreBtn clickSafe" id="btnMoreAlts" type="button">⬇️ Altre ${CFG.ALTS_PAGE}</button>` : ""}
-        <div class="small muted" style="margin-top:10px;">Tocca un’opzione per aprire la scheda (senza rifare ricerca).</div>
-      </div>
-    `;
-  }
-
-  function updateAltsUI() {
-    const altsArea = $("altsArea");
-    if (!altsArea) return;
-    altsArea.innerHTML = renderOptionsListHTML();
-  }
-
   function renderChosenCard(origin, chosen, categoryUI, datasetInfo, usedMinutes, maxMinutesInput) {
     const area = $("resultArea");
     if (!area) return;
@@ -1712,6 +1551,57 @@ function isNearCoast(place) {
     addRecent(pid);
   }
 
+  function renderOptionsListHTML() {
+    const chosen = CURRENT_CHOSEN;
+    if (!chosen) return "";
+
+    const alts = ALL_OPTIONS.filter(x => x.pid !== chosen.pid);
+    if (!alts.length) return "";
+
+    const visible = alts.slice(0, VISIBLE_ALTS);
+    const chosenCat = canonicalCategory(getActiveCategory());
+    const tb = typeBadge(chosenCat);
+
+    const items = visible.map((x) => {
+      const p = x.place;
+      const name = escapeHtml(p.name || "");
+      const time = `~${x.driveMin} min`;
+      const areaLabel = escapeHtml((p.area || p.country || "—").trim());
+      const vis = escapeHtml(visibilityLabel(p));
+
+      return `
+        <button class="optBtn clickSafe" data-pid="${escapeHtml(x.pid)}" type="button">
+          <div class="optTop">
+            <div class="optName">${name}</div>
+            <div class="small muted" style="font-weight:950;">${time}</div>
+          </div>
+          <div class="optMeta">
+            <span class="pill acc">${tb.emoji} ${tb.label}</span>
+            <span class="pill soft">${vis}</span>
+            <span class="pill soft">📍 ${areaLabel}</span>
+          </div>
+        </button>
+      `;
+    }).join("");
+
+    const canMore = VISIBLE_ALTS < alts.length;
+
+    return `
+      <div style="margin-top:14px;">
+        <div style="font-weight:950; font-size:18px; margin: 6px 0 10px;">Altre destinazioni</div>
+        <div class="optList">${items}</div>
+        ${canMore ? `<button class="moreBtn clickSafe" id="btnMoreAlts" type="button">⬇️ Altre ${CFG.ALTS_PAGE}</button>` : ""}
+        <div class="small muted" style="margin-top:10px;">Tocca un’opzione per aprire la scheda (senza rifare ricerca).</div>
+      </div>
+    `;
+  }
+
+  function updateAltsUI() {
+    const altsArea = $("altsArea");
+    if (!altsArea) return;
+    altsArea.innerHTML = renderOptionsListHTML();
+  }
+
   // -------------------- EVENT DELEGATION (opzioni + more) --------------------
   function bindResultAreaDelegation() {
     const area = $("resultArea");
@@ -1821,42 +1711,36 @@ function isNearCoast(place) {
       const categoryUI = getActiveCategory();
       const cat = canonicalCategory(categoryUI);
 
-     // MAI FATTO / COSE DA FARE (events.js)
-if (cat === "eventi") {
-  const payload = {
-    origin,
-    maxMinutes: maxMinutesInput,
-    eventType: getEventType(),   // sagre / concerti / family / ecc
-    eventWhen: getEventWhen(),   // oggi / weekend / 7giorni / any
-    haversineKm,
-    estCarMinutesFromKm,
-    escapeHtml,
-    showStatus,
-    scrollToId,
-  };
+      // MAI FATTO / COSE DA FARE (events.js)
+      if (cat === "eventi") {
+        const payload = {
+          origin,
+          maxMinutes: maxMinutesInput,
+          eventType: getEventType(),
+          eventWhen: getEventWhen(),
+          haversineKm,
+          estCarMinutesFromKm,
+          escapeHtml,
+          showStatus,
+          scrollToId,
+        };
 
-  // ✅ nuovo formato
-  if (window.JAMO_EVENTS && typeof window.JAMO_EVENTS.run === "function") {
-    window.JAMO_EVENTS.run(payload);
-    return;
-  }
+        if (window.JAMO_EVENTS && typeof window.JAMO_EVENTS.run === "function") {
+          window.JAMO_EVENTS.run(payload);
+          return;
+        }
+        if (typeof window.runEventsSearchBridge === "function") {
+          window.runEventsSearchBridge(payload);
+          return;
+        }
+        if (window.JAMO_EVENTS && typeof window.JAMO_EVENTS === "function") {
+          window.JAMO_EVENTS(payload);
+          return;
+        }
 
-  // ✅ vecchio formato (quello che ti funzionava prima)
-  if (typeof window.runEventsSearchBridge === "function") {
-    window.runEventsSearchBridge(payload);
-    return;
-  }
-
-  // ✅ ultimo fallback: prova anche namespace vecchi comuni
-  if (window.JAMO_EVENTS && typeof window.JAMO_EVENTS === "function") {
-    window.JAMO_EVENTS(payload);
-    return;
-  }
-
-  showStatus("err", "Modulo 'Mai fatto' non disponibile (events.js non caricato o export diverso).");
-  return;
-}
-
+        showStatus("err", "Modulo 'Mai fatto' non disponibile (events.js non caricato o export diverso).");
+        return;
+      }
 
       const styles = getActiveStyles();
 
@@ -2019,7 +1903,7 @@ if (cat === "eventi") {
     initChips("categoryChips", { multi: false });
     initChips("styleChips", { multi: true });
 
-    // eventi sub-chips (non multi)
+    // eventi sub-chips
     initChips("eventTypeChips", { multi: false });
     initChips("eventWhenChips", { multi: false });
 
