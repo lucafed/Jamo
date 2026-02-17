@@ -1,8 +1,10 @@
 /* Jamo — app.js v22.2 (CLEAN • TOURISTIC • MONETIZZABILE • TAP-SAFE)
  * ✅ Offline-first • ✅ NO GPS • ✅ Region-first IT
  * ✅ Rimossi: Ovunque / Città / Panorami
- * ✅ Borghi: SOLO insediamenti veri + SOLO “WOW/turistici” (no borghetti sconosciuti senza segnali)
- * ✅ Trekking & Mare: filtri più larghi (trova di più, sempre turistico)
+ * ✅ Borghi: SOLO insediamenti veri + turistici (NO frazioni random)
+ * ✅ Terme/Spa NON finiscono nei Borghi (vanno in Relax)
+ * ✅ Tutte le categorie: filtro “WOW + servito” (segnali turistici)
+ * ✅ Trekking & Mare: filtri più larghi ma sempre turistici
  * ✅ Montagna: categoria vera (picchi/rifugi/passi/attrazioni alpine)
  * ✅ Eventi: UI ok (subfiltri on/off) — dataset/eventi nel prossimo step
  * ✅ Reset partenza: usa btnResetOrigin dell’HTML (niente bottoni duplicati)
@@ -182,6 +184,10 @@
         border:1px solid rgba(255,255,255,.14);
         background:rgba(0,0,0,.25);
         font-weight:900; font-size:12px;
+        max-width:100%;
+        overflow:hidden;
+        text-overflow:ellipsis;
+        white-space:nowrap;
       }
       .pill.soft{opacity:.92}
       .pill.acc{border-color: rgba(0,224,255,.40); background: rgba(0,224,255,.10);}
@@ -706,7 +712,6 @@
     }
 
     if (!pools.length) throw new Error("Nessun dataset offline valido disponibile.");
-
     return { pools, region };
   }
 
@@ -742,52 +747,43 @@
     );
   }
 
-  // ✅ segnali turistici “wow”
-  function hasTouristSignals(place) {
+  // ✅ NUOVO: segnali “WOW + servito”
+  function hasTouristSignals(place){
     const t = tagsStr(place);
-    return (
+    const n = normName(place?.name || "");
+
+    const quality = hasQualitySignals(place);
+
+    const osmTourism =
       t.includes("tourism=attraction") ||
       t.includes("tourism=museum") ||
       t.includes("tourism=gallery") ||
       t.includes("tourism=viewpoint") ||
       t.includes("tourism=information") ||
       t.includes("historic=") ||
-      t.includes("heritage=")
-    );
-  }
+      t.includes("heritage=") ||
+      t.includes("leisure=park") ||
+      t.includes("leisure=garden") ||
+      t.includes("natural=waterfall") ||
+      t.includes("natural=cave_entrance");
 
-  // ✅ segnali “servito”: se un borgo ha un minimo di servizi è più credibile/visitabile
-  function hasServiziSignals(place) {
-    const t = tagsStr(place);
-    return (
+    const services =
       t.includes("amenity=restaurant") ||
       t.includes("amenity=cafe") ||
       t.includes("amenity=bar") ||
+      t.includes("amenity=toilets") ||
       t.includes("tourism=hotel") ||
-      t.includes("tourism=guest_house")
-    );
-  }
-
-  // ✅ borghi WOW (niente posti sconosciuti senza segnali)
-  function isWowBorgo(place) {
-    const n = normName(place?.name || "");
-    const quality = hasQualitySignals(place);
+      t.includes("tourism=guest_house");
 
     const wowName = hasAny(n, [
-      "centro storico",
-      "borgo",
-      "pieve",
-      "duomo",
-      "abbazia",
-      "terme"
+      "centro storico","borgo",
+      "castello","rocca","forte","torre",
+      "abbazia","duomo","cattedrale","santuario",
+      "riserva","oasi","parco",
+      "cascata","gole","belvedere","panorama"
     ]);
 
-    return (
-      quality ||
-      hasTouristSignals(place) ||
-      hasServiziSignals(place) ||
-      wowName
-    );
+    return quality || osmTourism || services || wowName;
   }
 
   function isClearlyIrrelevantPlace(place) {
@@ -833,7 +829,6 @@
     if (t.includes("power=plant") || t.includes("power=generator")) return true;
 
     if (hasAny(n, ["canale","fiume","torrente","fosso","scolo","chiusa","idrovora","centrale","impianto","diga"])) return true;
-
     return false;
   }
 
@@ -912,41 +907,39 @@
     );
   }
 
-  // ✅ BORGO: deve essere insediamento vero + deve essere “WOW/servito/qualità”
+  // ✅ SOSTITUITA: borghi “turistici + serviti”
   function isBorgo(place) {
     const t = tagsStr(place);
     const n = normName(place?.name || "");
     const type = normalizeType(place?.type);
 
-    // castelli/fortificazioni NON sono "borghi": vanno in "storia"
+    // ❌ Terme/Spa NON sono Borghi
+    if (looksWellnessByName(place) || isSpaPlace(place) || hasAny(n, ["terme","spa","wellness","thermal","termale"])) {
+      return false;
+    }
+
+    // ❌ castelli/fortificazioni NON sono "borghi" (vanno in Storia)
     if (t.includes("historic=castle") || t.includes("historic=fort") || t.includes("historic=citywalls") || t.includes("historic=ruins")) {
       return false;
     }
 
     const isSettlement =
       t.includes("place=village") ||
-      t.includes("place=town") ||
       t.includes("place=hamlet") ||
+      t.includes("place=town") ||
       t.includes("place=suburb") ||
       t.includes("place=neighbourhood");
 
     const nameLooksBorgo = hasAny(n, ["borgo","centro storico","frazione","contrada","corte"]);
     const typeSaysBorgo = (type === "borghi" || type === "borgo");
 
-    // se non è insediamento, non è borgo
-    if (!isSettlement && !typeSaysBorgo && !nameLooksBorgo) return false;
+    // ✅ REGOLA: è borgo SOLO se è settlement + segnali turistici
+    if (isSettlement) return hasTouristSignals(place);
 
-    // 🚫 evita oggetti spacciati per borgo
-    const nameLooksObject = hasAny(n, [
-      "castello","castel",
-      "ponte","locomotiva","treno","museo","area archeologica","villa comunale","parco",
-      "torre","rocca","forte","bagno","cascata","gola","sorgente","belvedere","sentiero",
-      "rifugio","spiaggia","lido"
-    ]);
-    if (nameLooksObject) return false;
+    // ✅ oppure: type/nome “borgo” ma sempre con segnali turistici
+    if ((typeSaysBorgo || nameLooksBorgo) && hasTouristSignals(place)) return true;
 
-    // ✅ Filtro WOW: se è settlement ma non ha segnali, lo scartiamo (niente “Borgo Vespana” random)
-    return isWowBorgo(place);
+    return false;
   }
 
   function isHiking(place) {
@@ -977,16 +970,16 @@
 
   // -------------------- COASTAL BBOX (MARE SOLO SE VICINO ALLA COSTA) --------------------
   const COASTAL_BBOXES_IT = [
-    { minLat: 44.75, maxLat: 46.30, minLon: 12.00, maxLon: 13.90 }, // Veneto+FVG
-    { minLat: 44.00, maxLat: 45.15, minLon: 11.80, maxLon: 13.40 }, // Emilia-Romagna
-    { minLat: 42.55, maxLat: 44.20, minLon: 12.90, maxLon: 13.90 }, // Marche
-    { minLat: 41.98, maxLat: 42.52, minLon: 13.90, maxLon: 14.90 }, // Abruzzo
-    { minLat: 41.00, maxLat: 42.20, minLon: 11.20, maxLon: 12.90 }, // Lazio
-    { minLat: 42.30, maxLat: 44.10, minLon: 9.70,  maxLon: 11.40 }, // Toscana
-    { minLat: 40.40, maxLat: 41.20, minLon: 13.70, maxLon: 15.10 }, // Campania
-    { minLat: 39.70, maxLat: 42.20, minLon: 15.00, maxLon: 18.60 }, // Puglia
-    { minLat: 36.60, maxLat: 38.40, minLon: 12.20, maxLon: 15.70 }, // Sicilia
-    { minLat: 38.80, maxLat: 41.40, minLon: 8.00,  maxLon: 9.90 },  // Sardegna
+    { minLat: 44.75, maxLat: 46.30, minLon: 12.00, maxLon: 13.90 },
+    { minLat: 44.00, maxLat: 45.15, minLon: 11.80, maxLon: 13.40 },
+    { minLat: 42.55, maxLat: 44.20, minLon: 12.90, maxLon: 13.90 },
+    { minLat: 41.98, maxLat: 42.52, minLon: 13.90, maxLon: 14.90 },
+    { minLat: 41.00, maxLat: 42.20, minLon: 11.20, maxLon: 12.90 },
+    { minLat: 42.30, maxLat: 44.10, minLon: 9.70,  maxLon: 11.40 },
+    { minLat: 40.40, maxLat: 41.20, minLon: 13.70, maxLon: 15.10 },
+    { minLat: 39.70, maxLat: 42.20, minLon: 15.00, maxLon: 18.60 },
+    { minLat: 36.60, maxLat: 38.40, minLon: 12.20, maxLon: 15.70 },
+    { minLat: 38.80, maxLat: 41.40, minLon: 8.00,  maxLon: 9.90 },
   ];
 
   function isNearCoast(place) {
@@ -1061,10 +1054,12 @@
     const quality = hasQualitySignals(place);
 
     if (type === "montagna") return true;
+
     if (t.includes("natural=peak")) return true;
     if (t.includes("tourism=alpine_hut") || t.includes("amenity=shelter") || t.includes("building=hut")) return true;
     if (t.includes("aerialway=")) return true;
     if (t.includes("piste:type=") || t.includes("sport=skiing")) return true;
+
     if (t.includes("mountain_pass=") || t.includes("natural=valley")) return true;
 
     if (looksMountainByName(place) && (quality || t.includes("natural=") || t.includes("tourism="))) return true;
@@ -1103,53 +1098,33 @@
     return lodging || food;
   }
 
+  // ✅ QUI: filtro “premium” per TUTTE le categorie
   function isTouristicVisitabile(place, categoryUI) {
-    const t = tagsStr(place);
-    const n = normName(place?.name || "");
     const cat = canonicalCategory(categoryUI);
-    const quality = hasQualitySignals(place);
 
     if (cat === "borghi") return isBorgo(place);
-    if (cat === "relax") return isSpaPlace(place);
-    if (cat === "cantine") return isWinery(place) && (quality || t.includes("website="));
-    if (cat === "hiking") return isHiking(place);
-    if (cat === "mare") return isSea(place);
-    if (cat === "lago") return isLake(place);
-    if (cat === "montagna") return isMountain(place);
 
-    // eventi: gestito da events.js
+    if (cat === "relax") return isSpaPlace(place);
+
+    if (cat === "cantine") return isWinery(place) && (hasQualitySignals(place) || tagsStr(place).includes("website="));
+
+    if (cat === "hiking") return isHiking(place) && (hasTouristSignals(place) || hasQualitySignals(place));
+
+    if (cat === "mare") return isSea(place) && hasTouristSignals(place);
+
+    if (cat === "lago") return isLake(place) && hasTouristSignals(place);
+
+    if (cat === "montagna") return isMountain(place) && (hasTouristSignals(place) || hasQualitySignals(place));
+
+    if (cat === "storia") return matchesCategoryStrict(place, "storia") && hasTouristSignals(place);
+
+    if (cat === "natura") return isNature(place) && hasTouristSignals(place);
+
+    if (cat === "family") return matchesCategoryStrict(place, "family") && hasTouristSignals(place);
+
     if (cat === "eventi") return false;
 
-    const strong =
-      t.includes("tourism=attraction") ||
-      t.includes("tourism=museum") ||
-      t.includes("tourism=gallery") ||
-      t.includes("tourism=theme_park") ||
-      t.includes("tourism=zoo") ||
-      t.includes("tourism=aquarium") ||
-      t.includes("historic=") ||
-      t.includes("heritage=") ||
-      t.includes("natural=peak") ||
-      t.includes("natural=waterfall") ||
-      t.includes("natural=cave_entrance") ||
-      t.includes("natural=volcano") ||
-      t.includes("boundary=national_park") ||
-      t.includes("leisure=nature_reserve") ||
-      t.includes("leisure=park") ||
-      t.includes("leisure=garden") ||
-      t.includes("man_made=lighthouse") ||
-      t.includes("man_made=tower");
-
-    if (strong) return true;
-
-    if (
-      quality &&
-      hasAny(n, ["castell","abbazi","duomo","cattedral","museo","gole","cascat","parco","riserva","oasi","lago","forte","rocca"])
-    ) {
-      return true;
-    }
-
-    return false;
+    return hasTouristSignals(place);
   }
 
   function matchesCategoryStrict(place, catUI) {
@@ -1160,7 +1135,13 @@
     if (cat === "mare") return isSea(place);
     if (cat === "lago") return isLake(place);
     if (cat === "relax") return isSpaPlace(place);
-    if (cat === "borghi") return isBorgo(place);
+
+    if (cat === "borghi") {
+      // doppia sicurezza: se è relax, non può essere borgo
+      if (isSpaPlace(place) || looksWellnessByName(place) || hasAny(normName(place?.name||""), ["terme","spa","wellness","thermal"])) return false;
+      return isBorgo(place);
+    }
+
     if (cat === "cantine") return isWinery(place);
     if (cat === "montagna") return isMountain(place);
 
@@ -1382,9 +1363,9 @@
     if (category === "relax") return "Relax • terme/spa/sauna (spesso su prenotazione).";
     if (category === "mare") return "Mare • spiaggia/baia/scogliera (stagione consigliata).";
     if (category === "hiking") return "Trekking • controlla meteo e percorso (scarpe ok).";
-    if (category === "montagna") return "Montagna • picchi/rifugi/passi/impianti (controlla meteo).";
+    if (category === "montagna") return "Montagna • picchi/rifugi/passi/attrazioni alpine (controlla meteo).";
     if (category === "storia") return "Storia • castelli/musei/attrazioni (verifica orari).";
-    if (category === "borghi") return "Borgo • passeggiata nel centro, scorci e foto.";
+    if (category === "borghi") return "Borgo turistico • centro storico, scorci, foto e cose da vedere.";
     if (category === "natura") {
       if (t.includes("natural=waterfall")) return "Cascata • foto + passeggiata.";
       if (t.includes("natural=cave_entrance")) return "Grotta • verifica accesso/sicurezza.";
@@ -1431,6 +1412,57 @@
 
     CURRENT_CHOSEN = null;
     scrollToId("resultCard");
+  }
+
+  function renderOptionsListHTML() {
+    const chosen = CURRENT_CHOSEN;
+    if (!chosen) return "";
+
+    const alts = ALL_OPTIONS.filter(x => x.pid !== chosen.pid);
+    if (!alts.length) return "";
+
+    const visible = alts.slice(0, VISIBLE_ALTS);
+    const chosenCat = canonicalCategory(getActiveCategory());
+    const tb = typeBadge(chosenCat);
+
+    const items = visible.map((x) => {
+      const p = x.place;
+      const name = escapeHtml(p.name || "");
+      const time = `~${x.driveMin} min`;
+      const areaLabel = escapeHtml((p.area || p.country || "—").trim());
+      const vis = escapeHtml(visibilityLabel(p));
+
+      return `
+        <button class="optBtn clickSafe" data-pid="${escapeHtml(x.pid)}" type="button">
+          <div class="optTop">
+            <div class="optName">${name}</div>
+            <div class="small muted" style="font-weight:950;">${time}</div>
+          </div>
+          <div class="optMeta">
+            <span class="pill acc">${tb.emoji} ${tb.label}</span>
+            <span class="pill soft">${vis}</span>
+            <span class="pill soft">📍 ${areaLabel}</span>
+          </div>
+        </button>
+      `;
+    }).join("");
+
+    const canMore = VISIBLE_ALTS < alts.length;
+
+    return `
+      <div style="margin-top:14px;">
+        <div style="font-weight:950; font-size:18px; margin: 6px 0 10px;">Altre destinazioni</div>
+        <div class="optList">${items}</div>
+        ${canMore ? `<button class="moreBtn clickSafe" id="btnMoreAlts" type="button">⬇️ Altre ${CFG.ALTS_PAGE}</button>` : ""}
+        <div class="small muted" style="margin-top:10px;">Tocca un’opzione per aprire la scheda (senza rifare ricerca).</div>
+      </div>
+    `;
+  }
+
+  function updateAltsUI() {
+    const altsArea = $("altsArea");
+    if (!altsArea) return;
+    altsArea.innerHTML = renderOptionsListHTML();
   }
 
   function renderChosenCard(origin, chosen, categoryUI, datasetInfo, usedMinutes, maxMinutesInput) {
@@ -1549,57 +1581,6 @@
     LAST_SHOWN_PID = pid;
     SESSION_SEEN.add(pid);
     addRecent(pid);
-  }
-
-  function renderOptionsListHTML() {
-    const chosen = CURRENT_CHOSEN;
-    if (!chosen) return "";
-
-    const alts = ALL_OPTIONS.filter(x => x.pid !== chosen.pid);
-    if (!alts.length) return "";
-
-    const visible = alts.slice(0, VISIBLE_ALTS);
-    const chosenCat = canonicalCategory(getActiveCategory());
-    const tb = typeBadge(chosenCat);
-
-    const items = visible.map((x) => {
-      const p = x.place;
-      const name = escapeHtml(p.name || "");
-      const time = `~${x.driveMin} min`;
-      const areaLabel = escapeHtml((p.area || p.country || "—").trim());
-      const vis = escapeHtml(visibilityLabel(p));
-
-      return `
-        <button class="optBtn clickSafe" data-pid="${escapeHtml(x.pid)}" type="button">
-          <div class="optTop">
-            <div class="optName">${name}</div>
-            <div class="small muted" style="font-weight:950;">${time}</div>
-          </div>
-          <div class="optMeta">
-            <span class="pill acc">${tb.emoji} ${tb.label}</span>
-            <span class="pill soft">${vis}</span>
-            <span class="pill soft">📍 ${areaLabel}</span>
-          </div>
-        </button>
-      `;
-    }).join("");
-
-    const canMore = VISIBLE_ALTS < alts.length;
-
-    return `
-      <div style="margin-top:14px;">
-        <div style="font-weight:950; font-size:18px; margin: 6px 0 10px;">Altre destinazioni</div>
-        <div class="optList">${items}</div>
-        ${canMore ? `<button class="moreBtn clickSafe" id="btnMoreAlts" type="button">⬇️ Altre ${CFG.ALTS_PAGE}</button>` : ""}
-        <div class="small muted" style="margin-top:10px;">Tocca un’opzione per aprire la scheda (senza rifare ricerca).</div>
-      </div>
-    `;
-  }
-
-  function updateAltsUI() {
-    const altsArea = $("altsArea");
-    if (!altsArea) return;
-    altsArea.innerHTML = renderOptionsListHTML();
   }
 
   // -------------------- EVENT DELEGATION (opzioni + more) --------------------
@@ -1885,7 +1866,6 @@
       }
     });
 
-    // ✅ usa il bottone dell’HTML
     $("btnResetOrigin")?.addEventListener("click", () => clearOrigin({ keepText: false }));
   }
 
@@ -1903,7 +1883,6 @@
     initChips("categoryChips", { multi: false });
     initChips("styleChips", { multi: true });
 
-    // eventi sub-chips
     initChips("eventTypeChips", { multi: false });
     initChips("eventWhenChips", { multi: false });
 
