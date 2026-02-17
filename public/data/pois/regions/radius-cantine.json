@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-02-10T05:10:00.505Z",
+  "generated_at": "2026-02-17T04:58:48.587Z",
   "places": [
     {
       "id": "node:2692275706",
@@ -9807,7 +9807,7 @@
         "addr:street=Via Donatori di Sangue",
         "name=Edoardo Fredd International",
         "shop=wine",
-        "website=http://edoardofreddi.it"
+        "website=https://www.edoardofreddi.it/"
       ],
       "score": 35
     },

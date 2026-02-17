@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-02-10T05:09:51.027Z",
+  "generated_at": "2026-02-17T04:58:05.200Z",
   "places": [
     {
       "id": "node:62513426",
@@ -30014,8 +30014,8 @@
     {
       "id": "node:4581897024",
       "name": "Poiano",
-      "lat": 45.307441,
-      "lon": 10.4367502,
+      "lat": 45.3074712,
+      "lon": 10.4367717,
       "type": "borghi",
       "visibility": "chicca",
       "tags": [
@@ -31467,8 +31467,8 @@
     {
       "id": "node:62513642",
       "name": "Bigarello",
-      "lat": 45.2029121,
-      "lon": 10.9259175,
+      "lat": 45.2029839,
+      "lon": 10.9259819,
       "type": "borghi",
       "visibility": "chicca",
       "tags": [
@@ -124299,8 +124299,8 @@
     {
       "id": "node:320886138",
       "name": "San Giacomo",
-      "lat": 45.8953452,
-      "lon": 10.8360264,
+      "lat": 45.8953497,
+      "lon": 10.8359509,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -139408,8 +139408,8 @@
     {
       "id": "node:2630519083",
       "name": "Teregua",
-      "lat": 46.464847,
-      "lon": 10.4062536,
+      "lat": 46.4648701,
+      "lon": 10.4061014,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
