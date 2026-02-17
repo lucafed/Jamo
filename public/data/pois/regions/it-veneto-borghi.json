@@ -3,7 +3,7 @@
   "country": "IT",
   "area": "Veneto",
   "label_it": "Veneto • Borghi (pulito)",
-  "generated_at": "2026-02-10T05:01:04.357Z",
+  "generated_at": "2026-02-17T04:49:55.791Z",
   "places": [
     {
       "id": "node:66503077",
@@ -2480,8 +2480,8 @@
     {
       "id": "node:62513642",
       "name": "Bigarello",
-      "lat": 45.2029121,
-      "lon": 10.9259175,
+      "lat": 45.2029839,
+      "lon": 10.9259819,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -54183,8 +54183,8 @@
     {
       "id": "node:320886138",
       "name": "San Giacomo",
-      "lat": 45.8953452,
-      "lon": 10.8360264,
+      "lat": 45.8953497,
+      "lon": 10.8359509,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -77167,6 +77167,7 @@
         "istat_id=2147483647",
         "name=Magnanins",
         "name:fur=Magnanins",
+        "name:it=Magnanins",
         "place=hamlet",
         "population=49",
         "source=Istat 2001 - geodati.gfoss.it",
@@ -77189,6 +77190,7 @@
         "loc_name:fur=Stalos",
         "name=Stalis / Stalos",
         "name:fur=Stalis",
+        "name:it=Stalis",
         "place=hamlet",
         "population=5",
         "source=Istat 2001 - geodati.gfoss.it",
@@ -80006,22 +80008,6 @@
         "name=Previdal",
         "place=hamlet",
         "wikidata=Q18502252"
-      ],
-      "score": 65
-    },
-    {
-      "id": "node:1575368664",
-      "name": "San Floriano",
-      "lat": 46.0289683,
-      "lon": 12.3014396,
-      "type": "borgo",
-      "borgo_type": "classico",
-      "visibility": "classica",
-      "tags": [
-        "name=San Floriano",
-        "place=hamlet",
-        "wikidata=Q3947075",
-        "wikipedia=it:San Floriano (Vittorio Veneto)"
       ],
       "score": 65
     },
@@ -88894,8 +88880,8 @@
     {
       "id": "node:2630519083",
       "name": "Teregua",
-      "lat": 46.464847,
-      "lon": 10.4062536,
+      "lat": 46.4648701,
+      "lon": 10.4061014,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -97127,8 +97113,8 @@
     {
       "id": "node:4581897024",
       "name": "Poiano",
-      "lat": 45.307441,
-      "lon": 10.4367502,
+      "lat": 45.3074712,
+      "lon": 10.4367717,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -132196,6 +132182,7 @@
         "gfoss_id=3765",
         "name=Rigolato / Rigulât",
         "name:fur=Rigulât",
+        "name:it=Rigolato",
         "place=village",
         "population=641",
         "source=geodati.gfoss.it"
@@ -162090,8 +162077,8 @@
     {
       "id": "node:1440138285",
       "name": "Negrisiola",
-      "lat": 46.0251755,
-      "lon": 12.2952388,
+      "lat": 46.0245752,
+      "lon": 12.2950816,
       "type": "borgo",
       "borgo_type": "chicca",
       "visibility": "chicca",
@@ -162885,7 +162872,7 @@
     },
     {
       "id": "node:1460518440",
-      "name": "Gracco / grac",
+      "name": "Gracco / Grac",
       "lat": 46.5478602,
       "lon": 12.8652654,
       "type": "borgo",
@@ -162895,8 +162882,9 @@
         "ele=760",
         "gfoss_id=33639",
         "istat_id=2147483647",
-        "name=Gracco / grac",
+        "name=Gracco / Grac",
         "name:fur=Grac",
+        "name:it=Grac",
         "place=hamlet",
         "population=14",
         "source=Istat 2001 - geodati.gfoss.it"
@@ -162915,6 +162903,7 @@
         "loc_name:fur=Ludario",
         "name=Ludaria / Ludario",
         "name:fur=Ludarie",
+        "name:it=Ludaria",
         "place=hamlet"
       ],
       "score": 40
@@ -162934,6 +162923,7 @@
         "loc_name:fur=Vuezos",
         "name=Vuezzis / Vuezos",
         "name:fur=Vuezis",
+        "name:it=Vuezzis",
         "place=hamlet",
         "population=17",
         "source=Istat 2001 - geodati.gfoss.it"
@@ -176484,8 +176474,8 @@
     {
       "id": "node:2630519073",
       "name": "Cadalbert",
-      "lat": 46.4664392,
-      "lon": 10.4250903,
+      "lat": 46.4664475,
+      "lon": 10.4249414,
       "type": "borgo",
       "borgo_type": "chicca",
       "visibility": "chicca",
@@ -176620,8 +176610,8 @@
     {
       "id": "node:2630519082",
       "name": "San Gottardo",
-      "lat": 46.4575646,
-      "lon": 10.4314265,
+      "lat": 46.4576718,
+      "lon": 10.4312803,
       "type": "borgo",
       "borgo_type": "chicca",
       "visibility": "chicca",
@@ -188061,14 +188051,14 @@
     },
     {
       "id": "node:5471019892",
-      "name": "Fanell",
+      "name": "Farnell",
       "lat": 46.6607981,
       "lon": 10.9912102,
       "type": "borgo",
       "borgo_type": "chicca",
       "visibility": "chicca",
       "tags": [
-        "name=Fanell",
+        "name=Farnell",
         "place=hamlet"
       ],
       "score": 40
@@ -194224,6 +194214,20 @@
       "visibility": "chicca",
       "tags": [
         "name=Palazzetto",
+        "place=hamlet"
+      ],
+      "score": 40
+    },
+    {
+      "id": "node:9547688626",
+      "name": "Camparso",
+      "lat": 45.6581508,
+      "lon": 10.9327228,
+      "type": "borgo",
+      "borgo_type": "chicca",
+      "visibility": "chicca",
+      "tags": [
+        "name=Camparso",
         "place=hamlet"
       ],
       "score": 40
