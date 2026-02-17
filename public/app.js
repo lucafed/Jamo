@@ -1,9 +1,9 @@
 /* Jamo — app.js v22.2 (CLEAN • TOURISTIC • MONETIZZABILE • TAP-SAFE)
  * ✅ Offline-first • ✅ NO GPS • ✅ Region-first IT
+ * ✅ Rimossi: Ovunque / Città / Panorami
  * ✅ Borghi: SOLO insediamenti veri + turistici (NO frazioni random)
  * ✅ Terme/Spa NON finiscono nei Borghi (vanno in Relax)
- * ✅ Relax in città (es. Milano): NO “centri estetici random” / NO “spa” non-terme
- * ✅ Family: più risultati (parchi/aree gioco anche senza website/wikipedia) ma sempre sensati
+ * ✅ Tutte le categorie: filtro “WOW + servito” (segnali turistici)
  * ✅ Trekking & Mare: filtri più larghi ma sempre turistici
  * ✅ Montagna: categoria vera (picchi/rifugi/passi/attrazioni alpine)
  * ✅ Eventi: UI ok (subfiltri on/off) — dataset/eventi nel prossimo step
@@ -48,7 +48,7 @@
     REGION_SOFT_MIN_RESULTS: 3,
 
     MIN_KM_DEFAULT: 1.6,
-    MIN_KM_FAMILY: 1.0, // ✅ un filo più permissivo (parchi cittadini)
+    MIN_KM_FAMILY: 1.2,
   };
 
   // -------------------- STATE --------------------
@@ -451,11 +451,13 @@
         chip.classList.toggle("active");
       }
 
+      // sync time
       if (containerId === "timeChips") {
         const v = Number(chip.dataset.min);
         if (Number.isFinite(v) && $("maxMinutes")) $("maxMinutes").value = String(v);
       }
 
+      // toggle eventi subfilters on category click
       if (containerId === "categoryChips") {
         refreshEventsSubfiltersUI();
       }
@@ -529,6 +531,7 @@
     if (!s) return "";
     if (s === "borgo" || s === "borghi") return "borghi";
     if (s === "trekking") return "hiking";
+    if (s === "montagna") return "montagna";
     return s;
   }
 
@@ -621,10 +624,14 @@
     }
   }
 
+  // ✅ categoria canonica: no ovunque/citta/panorami
   function canonicalCategory(cat) {
     const c = String(cat || "").toLowerCase().trim();
     if (c === "trekking" || c === "hiking") return "hiking";
+
+    // ✅ alias: Eventi = Mai fatto
     if (c === "eventi" || c === "mai_fatto" || c === "maifatto" || c === "mai fatto") return "eventi";
+
     return c || "natura";
   }
 
@@ -652,6 +659,7 @@
     if (isItaly && region?.id) {
       const rid = String(region.id);
 
+      // regione-cat
       const p1 = region.paths?.[cat] || `/data/pois/regions/${rid}-${cat}.json`;
       const loaded1 = await tryLoadPlacesFile(p1, signal);
       if (loaded1) {
@@ -659,6 +667,7 @@
         DATASETS_USED.push({ kind: "region", source: p1, placesLen: loaded1.places.length });
       }
 
+      // regione-core
       const p2 = region.paths?.core || `/data/pois/regions/${rid}.json`;
       const loaded2 = await tryLoadPlacesFile(p2, signal);
       if (loaded2) {
@@ -667,6 +676,7 @@
       }
     }
 
+    // radius-cat
     const p3 = `/data/pois/regions/radius-${cat}.json`;
     const loaded3 = await tryLoadPlacesFile(p3, signal);
     if (loaded3) {
@@ -674,6 +684,7 @@
       DATASETS_USED.push({ kind: "radius", source: p3, placesLen: loaded3.places.length });
     }
 
+    // macro
     const countryMacro = findCountryMacroPathRobust(cc || (isItaly ? "IT" : ""));
     const macroUrls = [];
     if (countryMacro) macroUrls.push(countryMacro);
@@ -736,7 +747,7 @@
     );
   }
 
-  // ✅ segnali turistici generici (WOW + servito)
+  // ✅ NUOVO: segnali “WOW + servito”
   function hasTouristSignals(place){
     const t = tagsStr(place);
     const n = normName(place?.name || "");
@@ -775,35 +786,6 @@
     return quality || osmTourism || services || wowName;
   }
 
-  // ✅ Family: segnali dedicati (non richiede wikipedia/website)
-  function hasFamilySignals(place) {
-    const t = tagsStr(place);
-    const n = normName(place?.name || "");
-
-    const strong =
-      t.includes("tourism=theme_park") ||
-      t.includes("leisure=water_park") ||
-      t.includes("tourism=zoo") ||
-      t.includes("tourism=aquarium") ||
-      t.includes("amenity=aquarium") ||
-      t.includes("leisure=playground") ||
-      t.includes("leisure=park");
-
-    const nameHints = hasAny(n, [
-      "parco giochi","area giochi","playground",
-      "parco","giardini","giardino",
-      "avventura","zipline","percorsi sospesi",
-      "fattoria didattica","didattica",
-      "acquario","zoo","safari",
-      "planetario","planetarium",
-      "museo dei bambini","museo bambini","kids","children"
-    ]);
-
-    const softTourism = t.includes("tourism=attraction") && (nameHints || t.includes("leisure=park"));
-
-    return strong || nameHints || softTourism;
-  }
-
   function isClearlyIrrelevantPlace(place) {
     const t = tagsStr(place);
     const n = normName(place?.name || "");
@@ -836,62 +818,6 @@
     return hasAny(n, ["lago","laghetto","lake","lac","laguna"]);
   }
 
-  // -------------------- RELAX: SPA VERA (NO estetica random) --------------------
-  function isBeautyOrSalon(place) {
-    const t = tagsStr(place);
-    const n = normName(place?.name || "");
-    if (t.includes("shop=beauty") || t.includes("shop=cosmetics") || t.includes("shop=hairdresser")) return true;
-    if (t.includes("amenity=beauty") || t.includes("beauty=")) return true;
-    if (hasAny(n, ["estetica","centro estetico","parrucchiere","barbiere","nails","unghie","solarium","lampade","massaggiatore"])) return true;
-    return false;
-  }
-
-  function isSpaPlace(place) {
-    const t = tagsStr(place);
-    const nm = normName(place?.name || "");
-
-    // ❌ tag “spa” ma in realtà beauty/salon
-    if (isBeautyOrSalon(place)) return false;
-
-    // ✅ segnali termali veri (stretti)
-    const thermalStrong =
-      t.includes("natural=hot_spring") ||
-      t.includes("amenity=public_bath") ||
-      t.includes("bath:type=thermal") ||
-      t.includes("thermal=yes");
-
-    // ✅ spa/sauna “vere”
-    const spaStrong =
-      t.includes("amenity=spa") ||
-      t.includes("leisure=spa") ||
-      t.includes("tourism=spa") ||
-      t.includes("amenity=sauna") ||
-      t.includes("leisure=sauna") ||
-      t.includes("healthcare=spa") ||
-      t.includes("healthcare=sauna");
-
-    // ✅ “hotel con spa” (ok SOLO se c’è segnale spa)
-    const hotelWithSpa = t.includes("tourism=hotel") && (t.includes("spa=") || t.includes("sauna="));
-
-    // ✅ name hint: solo se non beauty/salon
-    const nameHint = hasAny(nm, ["terme","termale","thermal","spa","wellness","benessere","hammam","hamam","sauna"]);
-
-    // ✅ piscina: NON relax a meno che sia chiaramente terme/spa nel nome
-    const poolSpaLike =
-      t.includes("leisure=swimming_pool") && hasAny(nm, ["terme","spa","thermal","wellness","termale"]);
-
-    // REGOLA: Relax = termale forte OR spa forte OR hotel+spa OR nameHint (ma NO beauty)
-    const ok = thermalStrong || spaStrong || hotelWithSpa || nameHint || poolSpaLike;
-
-    // filtro extra: se è solo “spa” senza altri segnali, chiediamo un minimo di qualità
-    if (ok && !thermalStrong && !spaStrong && !hotelWithSpa && nameHint) {
-      return hasQualitySignals(place) || t.includes("website=") || t.includes("contact:website=");
-    }
-
-    return ok;
-  }
-
-  // -------------------- CATEGORY LOGIC --------------------
   function isClearlyRiverOrCanal(place) {
     const t = tagsStr(place);
     const n = normName(place?.name || "");
@@ -937,6 +863,20 @@
     return false;
   }
 
+  function isSpaPlace(place) {
+    const t = tagsStr(place);
+    const nm = normName(place?.name || "");
+    const spaTags =
+      t.includes("amenity=spa") || t.includes("leisure=spa") || t.includes("tourism=spa") ||
+      t.includes("natural=hot_spring") || t.includes("amenity=public_bath") ||
+      t.includes("amenity=sauna") || t.includes("leisure=sauna") ||
+      t.includes("healthcare=sauna") || t.includes("healthcare=spa") ||
+      t.includes("bath:type=thermal") || t.includes("thermal") || t.includes("terme");
+    const poolSpaLike =
+      t.includes("leisure=swimming_pool") && (nm.includes("terme") || nm.includes("spa") || nm.includes("thermal") || nm.includes("wellness"));
+    return spaTags || looksWellnessByName(place) || poolSpaLike;
+  }
+
   function isThemePark(place) { return tagsStr(place).includes("tourism=theme_park"); }
   function isWaterPark(place) { return tagsStr(place).includes("leisure=water_park"); }
   function isZooOrAquarium(place) {
@@ -967,14 +907,16 @@
     );
   }
 
-  // ✅ Borghi “turistici + serviti”
+  // ✅ SOSTITUITA: borghi “turistici + serviti”
   function isBorgo(place) {
     const t = tagsStr(place);
     const n = normName(place?.name || "");
     const type = normalizeType(place?.type);
 
     // ❌ Terme/Spa NON sono Borghi
-    if (looksWellnessByName(place) || isSpaPlace(place)) return false;
+    if (looksWellnessByName(place) || isSpaPlace(place) || hasAny(n, ["terme","spa","wellness","thermal","termale"])) {
+      return false;
+    }
 
     // ❌ castelli/fortificazioni NON sono "borghi" (vanno in Storia)
     if (t.includes("historic=castle") || t.includes("historic=fort") || t.includes("historic=citywalls") || t.includes("historic=ruins")) {
@@ -991,7 +933,10 @@
     const nameLooksBorgo = hasAny(n, ["borgo","centro storico","frazione","contrada","corte"]);
     const typeSaysBorgo = (type === "borghi" || type === "borgo");
 
+    // ✅ REGOLA: è borgo SOLO se è settlement + segnali turistici
     if (isSettlement) return hasTouristSignals(place);
+
+    // ✅ oppure: type/nome “borgo” ma sempre con segnali turistici
     if ((typeSaysBorgo || nameLooksBorgo) && hasTouristSignals(place)) return true;
 
     return false;
@@ -1153,30 +1098,29 @@
     return lodging || food;
   }
 
-  // ✅ filtro “visitabile” per categorie
+  // ✅ QUI: filtro “premium” per TUTTE le categorie
   function isTouristicVisitabile(place, categoryUI) {
     const cat = canonicalCategory(categoryUI);
 
     if (cat === "borghi") return isBorgo(place);
+
     if (cat === "relax") return isSpaPlace(place);
 
-    // cantine: ok se winery + almeno website/quality (riduce enoteche random)
-    if (cat === "cantine") return isWinery(place) && (hasQualitySignals(place) || tagsStr(place).includes("website=") || tagsStr(place).includes("contact:website="));
+    if (cat === "cantine") return isWinery(place) && (hasQualitySignals(place) || tagsStr(place).includes("website="));
 
-    // hiking: serve segnale + un minimo di “turistico”
     if (cat === "hiking") return isHiking(place) && (hasTouristSignals(place) || hasQualitySignals(place));
 
-    // mare/lago/montagna/natura: sempre con segnali turistici
     if (cat === "mare") return isSea(place) && hasTouristSignals(place);
-    if (cat === "lago") return isLake(place) && hasTouristSignals(place);
-    if (cat === "montagna") return isMountain(place) && (hasTouristSignals(place) || hasQualitySignals(place));
-    if (cat === "natura") return isNature(place) && hasTouristSignals(place);
 
-    // storia: serve segnale turistico
+    if (cat === "lago") return isLake(place) && hasTouristSignals(place);
+
+    if (cat === "montagna") return isMountain(place) && (hasTouristSignals(place) || hasQualitySignals(place));
+
     if (cat === "storia") return matchesCategoryStrict(place, "storia") && hasTouristSignals(place);
 
-    // ✅ family: NON richiede “touristSignals” (troppo severo); usa segnali family dedicati
-    if (cat === "family") return matchesCategoryStrict(place, "family") && hasFamilySignals(place);
+    if (cat === "natura") return isNature(place) && hasTouristSignals(place);
+
+    if (cat === "family") return matchesCategoryStrict(place, "family") && hasTouristSignals(place);
 
     if (cat === "eventi") return false;
 
@@ -1185,18 +1129,23 @@
 
   function matchesCategoryStrict(place, catUI) {
     const cat = canonicalCategory(catUI);
-    const t = tagsStr(place);
-    const n = normName(place?.name || "");
 
     if (cat === "natura") return isNature(place);
     if (cat === "hiking") return isHiking(place);
     if (cat === "mare") return isSea(place);
     if (cat === "lago") return isLake(place);
     if (cat === "relax") return isSpaPlace(place);
-    if (cat === "borghi") return isBorgo(place);
+
+    if (cat === "borghi") {
+      // doppia sicurezza: se è relax, non può essere borgo
+      if (isSpaPlace(place) || looksWellnessByName(place) || hasAny(normName(place?.name||""), ["terme","spa","wellness","thermal"])) return false;
+      return isBorgo(place);
+    }
+
     if (cat === "cantine") return isWinery(place);
     if (cat === "montagna") return isMountain(place);
 
+    const t = tagsStr(place);
     if (cat === "storia") {
       return (
         t.includes("historic=castle") ||
@@ -1211,14 +1160,14 @@
         t.includes("tourism=attraction")
       );
     }
-
     if (cat === "family") {
-      // ✅ molto più robusto rispetto a prima
-      if (isThemePark(place) || isWaterPark(place) || isZooOrAquarium(place) || isAdventurePark(place)) return true;
-      if (t.includes("leisure=playground") || t.includes("leisure=park")) return true;
-      if (t.includes("tourism=museum") && hasAny(n, ["bambin","kids","children","science","planetari","planetarium"])) return true;
-      if (t.includes("tourism=attraction") && hasAny(n, ["parco","avventura","fattoria","zoo","acquario","planetario","bambin","kids","children"])) return true;
-      return false;
+      return (
+        isThemePark(place) ||
+        isWaterPark(place) ||
+        isZooOrAquarium(place) ||
+        isAdventurePark(place) ||
+        (t.includes("tourism=museum") && (t.includes("children") || t.includes("science") || t.includes("planetarium")))
+      );
     }
 
     return true;
@@ -1417,7 +1366,6 @@
     if (category === "montagna") return "Montagna • picchi/rifugi/passi/attrazioni alpine (controlla meteo).";
     if (category === "storia") return "Storia • castelli/musei/attrazioni (verifica orari).";
     if (category === "borghi") return "Borgo turistico • centro storico, scorci, foto e cose da vedere.";
-    if (category === "family") return "Family • parchi, giochi, zoo, avventura (perfetto con bimbi).";
     if (category === "natura") {
       if (t.includes("natural=waterfall")) return "Cascata • foto + passeggiata.";
       if (t.includes("natural=cave_entrance")) return "Grotta • verifica accesso/sicurezza.";
@@ -1684,7 +1632,7 @@
     const base = clamp(Number(m) || 120, 10, 600);
 
     const muls =
-      category === "family" ? [1.15, 1.30, 1.55] :
+      category === "family" ? [1.15, 1.30, 1.50] :
       category === "mare"   ? [1.15, 1.35, 1.55] :
       category === "hiking" ? [1.15, 1.35, 1.60] :
       category === "montagna"?[1.15, 1.35, 1.60] :
@@ -1968,4 +1916,3 @@
     getDatasetsUsed: () => DATASETS_USED,
   };
 })();
-```0
