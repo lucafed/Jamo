@@ -748,7 +748,44 @@
   }
 
   // ✅ NUOVO: segnali “WOW + servito”
- 
+  function hasTouristSignals(place){
+    const t = tagsStr(place);
+    const n = normName(place?.name || "");
+
+    const quality = hasQualitySignals(place);
+
+    const osmTourism =
+      t.includes("tourism=attraction") ||
+      t.includes("tourism=museum") ||
+      t.includes("tourism=gallery") ||
+      t.includes("tourism=viewpoint") ||
+      t.includes("tourism=information") ||
+      t.includes("historic=") ||
+      t.includes("heritage=") ||
+      t.includes("leisure=park") ||
+      t.includes("leisure=garden") ||
+      t.includes("natural=waterfall") ||
+      t.includes("natural=cave_entrance");
+
+    const services =
+      t.includes("amenity=restaurant") ||
+      t.includes("amenity=cafe") ||
+      t.includes("amenity=bar") ||
+      t.includes("amenity=toilets") ||
+      t.includes("tourism=hotel") ||
+      t.includes("tourism=guest_house");
+
+    const wowName = hasAny(n, [
+      "centro storico","borgo",
+      "castello","rocca","forte","torre",
+      "abbazia","duomo","cattedrale","santuario",
+      "riserva","oasi","parco",
+      "cascata","gole","belvedere","panorama"
+    ]);
+
+    return quality || osmTourism || services || wowName;
+  }
+
   function isClearlyIrrelevantPlace(place) {
     const t = tagsStr(place);
     const n = normName(place?.name || "");
