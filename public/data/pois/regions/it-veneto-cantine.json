@@ -7,7 +7,7 @@
     "minLon": 10.2,
     "maxLon": 13.2
   },
-  "generated_at": "2026-02-12T04:50:58.387Z",
+  "generated_at": "2026-02-19T04:45:48.033Z",
   "places": [
     {
       "id": "node:12766026527",
@@ -3637,6 +3637,25 @@
       "beauty_score": 1
     },
     {
+      "id": "node:13564092973",
+      "name": "Vigne Salse",
+      "lat": 45.5476893,
+      "lon": 12.5961232,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Musile di Piave",
+        "addr:housenumber=44",
+        "addr:street=Via Salsi",
+        "craft=winery",
+        "name=Vigne Salse",
+        "operator=Billotto Marco",
+        "phone=+39 329 742 6088"
+      ],
+      "score": 76,
+      "beauty_score": 1
+    },
+    {
       "id": "way:36170989",
       "name": "Pitars",
       "lat": 46.0143214,
@@ -3672,26 +3691,6 @@
         "craft=winery",
         "name=Klinger",
         "phone=+39 3341539034"
-      ],
-      "score": 76,
-      "beauty_score": 1
-    },
-    {
-      "id": "way:177277994",
-      "name": "Vigne Salse",
-      "lat": 45.547659,
-      "lon": 12.5961172,
-      "type": "cantine",
-      "visibility": "classica",
-      "tags": [
-        "addr:city=Musile di Piave",
-        "addr:housenumber=44",
-        "addr:street=Via Salsi",
-        "building=yes",
-        "craft=winery",
-        "name=Vigne Salse",
-        "operator=Billotto Marco",
-        "phone=+39 329 7426088"
       ],
       "score": 76,
       "beauty_score": 1
