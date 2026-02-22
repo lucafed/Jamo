@@ -37,10 +37,79 @@ jobs:
           test -f "public/data/pois/it/${{ inputs.region_slug }}/index.json"
           echo "OK: index exists"
 
+      # ✅ BRIDGE: crea i file attesi da app.js in /data/pois/regions/
+      - name: Create regions shims for app.js (bridge)
+        env:
+          REGION_SLUG: ${{ inputs.region_slug }}
+        run: |
+          node - <<'NODE'
+          const fs = require("fs");
+          const path = require("path");
+
+          const slug = String(process.env.REGION_SLUG || "").trim().toLowerCase();
+          if (!slug) { console.error("Missing REGION_SLUG"); process.exit(1); }
+
+          const rid = `it-${slug}`; // <-- id regione atteso da app.js (rid)
+          const srcDir = path.join(process.cwd(), "public", "data", "pois", "it", slug);
+          const idxPath = path.join(srcDir, "index.json");
+          const outDir = path.join(process.cwd(), "public", "data", "pois", "regions");
+
+          if (!fs.existsSync(idxPath)) { console.error("Missing index.json:", idxPath); process.exit(1); }
+          fs.mkdirSync(outDir, { recursive: true });
+
+          const idx = JSON.parse(fs.readFileSync(idxPath, "utf8"));
+
+          // Supporto a 2 formati comuni:
+          // A) idx.paths = { core: "core.json", natura:"natura.json", ... }
+          // B) idx.files = { ... } (se lo chiami diverso)
+          const pathsMap = idx.paths || idx.files || idx.datasets || null;
+          if (!pathsMap || typeof pathsMap !== "object") {
+            console.error("index.json non contiene un mapping (paths/files/datasets). Contenuto keys:", Object.keys(idx));
+            process.exit(1);
+          }
+
+          // copia core -> rid.json
+          const coreRel = pathsMap.core || pathsMap.all || pathsMap.base || null;
+          if (coreRel) {
+            const coreSrc = path.join(srcDir, coreRel);
+            const coreDst = path.join(outDir, `${rid}.json`);
+            if (fs.existsSync(coreSrc)) {
+              fs.copyFileSync(coreSrc, coreDst);
+              console.log("OK core:", coreDst);
+            } else {
+              console.warn("Core source missing:", coreSrc);
+            }
+          } else {
+            console.warn("No core/all/base in index.json mapping. (rid.json non creato)");
+          }
+
+          // categorie -> rid-cat.json
+          const reserved = new Set(["core","all","base","meta","index"]);
+          for (const [k, rel] of Object.entries(pathsMap)) {
+            const cat = String(k || "").trim().toLowerCase();
+            if (!cat || reserved.has(cat)) continue;
+            if (typeof rel !== "string" || !rel.endsWith(".json")) continue;
+
+            const src = path.join(srcDir, rel);
+            const dst = path.join(outDir, `${rid}-${cat}.json`);
+
+            if (!fs.existsSync(src)) {
+              console.warn("Missing category source:", cat, src);
+              continue;
+            }
+            fs.copyFileSync(src, dst);
+            console.log("OK cat:", cat, "->", dst);
+          }
+
+          // mini-log
+          console.log("Bridge done. rid =", rid);
+          NODE
+
       - name: Commit & push generated files
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add "public/data/pois/it/${{ inputs.region_slug }}/*.json"
+          git add "public/data/pois/regions/*.json"
           git commit -m "build: POIs all categories IT region ${{ inputs.region_slug }} (${{ inputs.region_iso }})" || echo "No changes to commit"
           git push
