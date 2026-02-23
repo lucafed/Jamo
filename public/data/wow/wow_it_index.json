@@ -1,0 +1,15 @@
+{
+  "version": "wow_v1",
+  "updated_at": "2026-02-23",
+  "region_files": {
+    "piemonte": "/data/wow/wow_it_piemonte.json",
+    "veneto": "/data/wow/wow_it_veneto.json",
+    "abruzzo": "/data/wow/wow_it_abruzzo.json"
+  },
+  "neighbors": {
+    "piemonte": ["liguria", "lombardia", "valle-d-aosta"],
+    "veneto": ["trentino-alto-adige", "lombardia", "friuli-venezia-giulia", "emilia-romagna"],
+    "abruzzo": ["lazio", "marche", "molise"]
+  },
+  "italy_fallback": "/data/wow/wow_it_all.json"
+}
