@@ -1,0 +1,41 @@
+name: Trim legacy region dataset (in-place)
+
+on:
+  workflow_dispatch:
+    inputs:
+      region_id:
+        description: "Legacy region id (es: it-piemonte)"
+        required: true
+        default: "it-piemonte"
+      category:
+        description: "Category (es: borghi)"
+        required: true
+        default: "borghi"
+      limit:
+        description: "Max places (es: 600)"
+        required: true
+        default: "600"
+
+jobs:
+  trim:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Trim dataset
+        run: |
+          node scripts/trim_regions_dataset.mjs "${{ inputs.region_id }}" "${{ inputs.category }}" "${{ inputs.limit }}"
+
+      - name: Commit & push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add "public/data/pois/regions/${{ inputs.region_id }}-${{ inputs.category }}.json"
+          git commit -m "trim: ${{ inputs.region_id }}-${{ inputs.category }} limit ${{ inputs.limit }}" || echo "No changes"
+          git push
