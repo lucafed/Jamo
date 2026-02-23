@@ -1,0 +1,33 @@
+name: Trim bbox region dataset
+
+on:
+  workflow_dispatch:
+    inputs:
+      region:
+        required: true
+        default: "piemonte"
+      category:
+        required: true
+        default: "borghi"
+      limit:
+        required: true
+        default: "600"
+
+jobs:
+  trim:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: |
+          node scripts/trim_bbox_region.mjs "${{ inputs.region }}" "${{ inputs.category }}" "${{ inputs.limit }}"
+
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/data/pois/regions/data-it-${{ inputs.region }}-${{ inputs.category }}/*
+          git commit -m "trim bbox ${{ inputs.region }}-${{ inputs.category }}"
+          git push
