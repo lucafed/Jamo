@@ -1,79 +1,48 @@
 /**
  * build-radius-mare.js
- * Genera dataset "mare" offline (Italia + Europa) da Overpass.
+ * Genera: public/data/pois/regions/radius-mare.json
  *
- * Output:
- *  - public/data/pois/regions/radius-mare-it.json
- *  - public/data/pois/regions/radius-mare-eu.json
- *  - public/data/pois/regions/radius-mare.json (merge)
+ * Requisiti: Node 18+
+ * Esecuzione: node scripts/build-radius-mare.js
  *
  * NOTE:
- * - Overpass ha limiti: usiamo bbox "tile" e dedupe.
- * - Solo POI costieri "veri": spiagge/baie/scogliere + alcuni viewpoint costieri.
+ * - usa Overpass API (OSM). Se rate-limit, ritenta automaticamente.
+ * - filtra hard: niente ferry/harbour/terminal/porti tecnici
  */
 
 import fs from "fs";
 import path from "path";
 
-const OUT_DIR = path.join(process.cwd(), "public/data/pois/regions");
-fs.mkdirSync(OUT_DIR, { recursive: true });
+const OUT_PATH = path.join(process.cwd(), "public", "data", "pois", "regions", "radius-mare.json");
 
-// -------------- CONFIG --------------
-const OVERPASS = "https://overpass-api.de/api/interpreter";
-
-// BBOX (W,S,E,N) — grossolane ma ok per “radius mare”
-// IT: include coste + isole
-const BBOX_IT = [6.5, 36.3, 18.7, 47.2];
-
-// EU “larga” (Europa geografica più UK/IE + coste nord)
-// Se vuoi più stretto dimmelo, ma così copre bene.
-const BBOX_EU = [-11.5, 34.5, 31.8, 71.5];
-
-// Step griglia (gradi). Più piccolo = più preciso ma più chiamate.
-const GRID_STEP = 2.5;
-
-// Filtri
-const MIN_NAME_LEN = 3;
-
-// Tag “mare vero” (nodi + way + rel)
-const SELECTORS = [
-  // spiagge e baie
-  'nwr["natural"="beach"]',
-  'nwr["natural"="bay"]',
-  'nwr["natural"="cliff"]',
-  'nwr["natural"="reef"]',
-  // scogliere/rocce note (spesso su man_made=breakwater NO, quindi evitiamo)
-  // resort spiaggia
-  'nwr["tourism"="beach_resort"]',
-  // swimming area spesso indica spot balneabile
-  'nwr["leisure"="swimming_area"]',
-  // viewpoint ma SOLO se costiero (lo filtriamo dopo con coastalHeuristic)
-  'nwr["tourism"="viewpoint"]',
+// BBOX costiere Italia (uguali alle tue, le riuso per non pescare roba inland)
+const COASTAL_BBOXES_IT = [
+  { minLat: 44.75, maxLat: 46.30, minLon: 12.00, maxLon: 13.90 },
+  { minLat: 44.00, maxLat: 45.15, minLon: 11.80, maxLon: 13.40 },
+  { minLat: 42.55, maxLat: 44.20, minLon: 12.90, maxLon: 13.90 },
+  { minLat: 41.98, maxLat: 42.52, minLon: 13.90, maxLon: 14.90 },
+  { minLat: 41.00, maxLat: 42.20, minLon: 11.20, maxLon: 12.90 },
+  { minLat: 42.30, maxLat: 44.10, minLon: 9.70,  maxLon: 11.40 },
+  { minLat: 40.40, maxLat: 41.20, minLon: 13.70, maxLon: 15.10 },
+  { minLat: 39.70, maxLat: 42.20, minLon: 15.00, maxLon: 18.60 },
+  { minLat: 36.60, maxLat: 38.40, minLon: 12.20, maxLon: 15.70 },
+  { minLat: 38.80, maxLat: 41.40, minLon: 8.00,  maxLon: 9.90 },
 ];
 
-// roba da ESCLUDERE (porti, industria, trasporti)
-const NEG_TAG_KEYS = [
-  "industrial",
-  "landuse",
-  "power",
-  "man_made",
+// Overpass endpoints (fallback)
+const OVERPASS_ENDPOINTS = [
+  "https://overpass-api.de/api/interpreter",
+  "https://overpass.kumi.systems/api/interpreter",
+  "https://overpass.openstreetmap.ru/api/interpreter",
 ];
 
-const NEG_TAG_SUBSTR = [
-  "harbour",
-  "port",
-  "dock",
-  "shipyard",
-  "cargo",
-  "terminal",
-  "ferry",
-  "marina", // marina spesso è “porto turistico”: se la vuoi includere lo togli
-];
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-// -------------- HELPERS --------------
-function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
+function clamp(n, a, b) {
+  return Math.max(a, Math.min(b, n));
+}
 
-function norm(s) {
+function normName(s) {
   return String(s ?? "")
     .toLowerCase()
     .normalize("NFD")
@@ -82,209 +51,256 @@ function norm(s) {
     .trim();
 }
 
-function tileBboxes([w,s,e,n], step) {
+function safeId(el, name, lat, lon) {
+  if (el?.type && typeof el?.id !== "undefined") return `${el.type}/${el.id}`;
+  const nm = normName(name);
+  return `p_${nm || "x"}_${String(lat).slice(0, 8)}_${String(lon).slice(0, 8)}`;
+}
+
+function tagsToArray(tags = {}) {
   const out = [];
-  for (let y = s; y < n; y += step) {
-    for (let x = w; x < e; x += step) {
-      const w2 = x;
-      const s2 = y;
-      const e2 = Math.min(e, x + step);
-      const n2 = Math.min(n, y + step);
-      out.push([w2, s2, e2, n2]);
-    }
+  for (const [k, v] of Object.entries(tags)) {
+    if (v === undefined || v === null) continue;
+    out.push(`${k}=${String(v)}`);
   }
-  return out;
+  return out.map((x) => x.toLowerCase());
 }
 
-function tagsToArray(tags) {
-  const arr = [];
-  if (!tags) return arr;
-  for (const [k,v] of Object.entries(tags)) arr.push(`${k}=${v}`);
-  return arr;
+function getName(tags = {}) {
+  return (
+    tags.name ||
+    tags["name:it"] ||
+    tags["name:en"] ||
+    tags["official_name"] ||
+    tags["alt_name"] ||
+    ""
+  ).trim();
 }
 
-function isClearlyBad(tags) {
-  const t = tags || {};
-  const all = Object.entries(t).map(([k,v]) => `${k}=${v}`.toLowerCase());
-
-  // escludi key sospette
-  for (const k of NEG_TAG_KEYS) {
-    if (Object.prototype.hasOwnProperty.call(t, k)) return true;
-  }
-
-  // escludi substring su qualunque tag
-  for (const s of NEG_TAG_SUBSTR) {
-    if (all.some(x => x.includes(s))) return true;
-  }
-
-  // escludi se è trasporto
-  if (all.some(x => x.startsWith("highway=") || x.startsWith("railway=") || x.startsWith("public_transport="))) return true;
-
-  return false;
+function isBadPortThing(tagsArr) {
+  const t = tagsArr.join(" ");
+  // roba tecnica/portuale/ferry
+  return (
+    t.includes("amenity=ferry_terminal") ||
+    t.includes("harbour=") ||
+    t.includes("man_made=pier") && (t.includes("industrial") || t.includes("cargo")) ||
+    t.includes("seamark=") ||
+    t.includes("route=ferry") ||
+    t.includes("ferry=") ||
+    t.includes("port") && !t.includes("beach") && !t.includes("lido")
+  );
 }
 
-// euristica “coastal”: se nel nome/tags c’è roba da mare
-function coastalHeuristic(name, tagsArr) {
-  const n = norm(name);
-  const t = (tagsArr || []).join(" ").toLowerCase();
+function isSeaCategory(tagsArr, nameNorm) {
+  const t = tagsArr.join(" ");
 
-  const goodName = [
-    "spiaggia","beach","plage","playa","strand",
-    "cala","baia","bay",
-    "scogliera","cliff","falesia",
-    "lido","lungomare","promenade",
-    "capo","punta","faro","lighthouse",
-    "costa","coast",
-    "golf","gulf","anse",
-  ];
-
-  const goodTags =
+  // Strong sea
+  const strong =
     t.includes("natural=beach") ||
+    t.includes("tourism=beach_resort") ||
     t.includes("natural=bay") ||
     t.includes("natural=cliff") ||
     t.includes("natural=reef") ||
-    t.includes("tourism=beach_resort") ||
-    t.includes("leisure=swimming_area");
+    t.includes("natural=cape") ||
+    t.includes("natural=strait");
 
-  if (goodTags) return true;
-  return goodName.some(w => n.includes(w));
+  // Name hints
+  const nameHint =
+    nameNorm.includes("spiaggia") ||
+    nameNorm.includes("lido") ||
+    nameNorm.includes("baia") ||
+    nameNorm.includes("cala") ||
+    nameNorm.includes("scogliera") ||
+    nameNorm.includes("lungomare") ||
+    nameNorm.includes("litorale");
+
+  // Tourist/quality signals
+  const quality =
+    t.includes("wikipedia=") ||
+    t.includes("wikidata=") ||
+    t.includes("website=") ||
+    t.includes("contact:website=") ||
+    t.includes("opening_hours=");
+
+  // Un minimo di “visitabile”
+  const visitabile =
+    t.includes("tourism=attraction") ||
+    t.includes("tourism=information") ||
+    t.includes("amenity=toilets") ||
+    t.includes("amenity=bar") ||
+    t.includes("amenity=restaurant") ||
+    t.includes("sport=swimming") ||
+    quality;
+
+  // Regola: o strong, o (nameHint + visitabile)
+  return strong || (nameHint && (visitabile || quality));
 }
 
-function makeId(el) {
-  const t = el.type; // node/way/relation
-  return `${t}_${el.id}`;
+async function postOverpass(query, endpoint) {
+  const res = await fetch(endpoint, {
+    method: "POST",
+    headers: { "content-type": "application/x-www-form-urlencoded;charset=UTF-8" },
+    body: "data=" + encodeURIComponent(query),
+  });
+  if (!res.ok) {
+    const txt = await res.text().catch(() => "");
+    throw new Error(`Overpass HTTP ${res.status} @ ${endpoint} :: ${txt.slice(0, 140)}`);
+  }
+  return await res.json();
 }
 
-function getCenter(el) {
-  // Overpass: node ha lat/lon; way/rel spesso ha "center" se richiesto
-  if (Number.isFinite(el.lat) && Number.isFinite(el.lon)) return { lat: el.lat, lon: el.lon };
-  if (el.center && Number.isFinite(el.center.lat) && Number.isFinite(el.center.lon)) return { lat: el.center.lat, lon: el.center.lon };
-  return null;
+async function overpassWithRetry(query, { tries = 8 } = {}) {
+  let lastErr = null;
+  for (let i = 0; i < tries; i++) {
+    const endpoint = OVERPASS_ENDPOINTS[i % OVERPASS_ENDPOINTS.length];
+    try {
+      // backoff progressivo
+      if (i > 0) await sleep(800 * i);
+      return await postOverpass(query, endpoint);
+    } catch (e) {
+      lastErr = e;
+      // se rate-limit, aspetta un po’ di più
+      await sleep(1200 + i * 700);
+    }
+  }
+  throw lastErr || new Error("Overpass failed");
 }
 
-// -------------- OVERPASS --------------
-function overpassQueryForBBox([w,s,e,n]) {
-  const bbox = `${s},${w},${n},${e}`; // Overpass usa S,W,N,E
-  const body = `
-[out:json][timeout:120];
+function makeQueryForBBox(b) {
+  // out center => per ways/relations hai "center"
+  // cerchiamo solo tag mare “buoni”
+  return `
+[out:json][timeout:180];
 (
-  ${SELECTORS.map(sel => `${sel}(${bbox});`).join("\n  ")}
+  nwr["natural"="beach"](${b.minLat},${b.minLon},${b.maxLat},${b.maxLon});
+  nwr["tourism"="beach_resort"](${b.minLat},${b.minLon},${b.maxLat},${b.maxLon});
+  nwr["natural"="bay"](${b.minLat},${b.minLon},${b.maxLat},${b.maxLon});
+  nwr["natural"="cliff"](${b.minLat},${b.minLon},${b.maxLat},${b.maxLon});
+  nwr["natural"="reef"](${b.minLat},${b.minLon},${b.maxLat},${b.maxLon});
+  nwr["natural"="cape"](${b.minLat},${b.minLon},${b.maxLat},${b.maxLon});
 );
 out center tags;
 `;
-  return body.trim();
 }
 
-async function fetchOverpass(query) {
-  const r = await fetch(OVERPASS, {
-    method: "POST",
-    headers: { "content-type": "application/x-www-form-urlencoded;charset=UTF-8" },
-    body: `data=${encodeURIComponent(query)}`
-  });
-  if (!r.ok) throw new Error(`Overpass HTTP ${r.status}`);
-  return await r.json();
+function elementToPlace(el) {
+  const tags = el.tags || {};
+  const name = getName(tags);
+  const lat = Number(el.lat ?? el.center?.lat);
+  const lon = Number(el.lon ?? el.center?.lon);
+  if (!name || name.length < 2) return null;
+  if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
+
+  const tagsArr = tagsToArray(tags);
+  const nn = normName(name);
+
+  // filtri duri anti-robaccia
+  if (isBadPortThing(tagsArr)) return null;
+
+  // filtro mare vero
+  if (!isSeaCategory(tagsArr, nn)) return null;
+
+  const area =
+    (tags["addr:city"] || tags["is_in:city"] || tags["addr:suburb"] || tags["addr:province"] || "").toString();
+
+  return {
+    id: safeId(el, name, lat, lon),
+    name,
+    lat,
+    lon,
+    type: "mare",
+    primary_category: "mare",
+    country: "IT",
+    area: area || "",
+    visibility: "unknown",
+    beauty_score: 0.72,
+    tags: tagsArr,
+    source: "osm_overpass",
+  };
 }
 
-async function collectForBBoxRegion(label, bbox) {
-  const tiles = tileBboxes(bbox, GRID_STEP);
-  const map = new Map(); // id -> place
-
-  for (let i = 0; i < tiles.length; i++) {
-    const tbox = tiles[i];
-    const q = overpassQueryForBBox(tbox);
-
-    let j;
-    try {
-      j = await fetchOverpass(q);
-    } catch (e) {
-      // retry semplice 1 volta
-      await new Promise(res => setTimeout(res, 1000));
-      j = await fetchOverpass(q);
-    }
-
-    const els = Array.isArray(j?.elements) ? j.elements : [];
-    for (const el of els) {
-      const id = makeId(el);
-      const c = getCenter(el);
-      if (!c) continue;
-
-      const tags = el.tags || {};
-      const name = tags.name || tags["name:it"] || tags["name:en"] || "";
-
-      if (String(name).trim().length < MIN_NAME_LEN) continue;
-
-      const tagsArr = tagsToArray(tags);
-      if (isClearlyBad(tags)) continue;
-
-      // se è solo viewpoint, deve “sembrare mare”
-      if (tags.tourism === "viewpoint") {
-        if (!coastalHeuristic(name, tagsArr)) continue;
-      } else {
-        // gli altri devono comunque passare euristica (aiuta a pulire)
-        if (!coastalHeuristic(name, tagsArr)) continue;
-      }
-
-      if (!map.has(id)) {
-        map.set(id, {
-          id,
-          name: String(name).trim(),
-          lat: c.lat,
-          lon: c.lon,
-          type: "mare",
-          visibility: "unknown",
-          beauty_score: 0.72,
-          country: (tags["addr:country"] || "").toUpperCase(),
-          area: label,
-          tags: tagsArr,
-          source: "osm_overpass_mare",
-        });
-      }
-    }
-
-    // mini-pausa per non martellare
-    if (i % 8 === 7) await new Promise(res => setTimeout(res, 350));
+function dedupePlaces(places) {
+  const byId = new Map();
+  for (const p of places) {
+    if (!p?.id) continue;
+    if (!byId.has(p.id)) byId.set(p.id, p);
   }
 
-  return [...map.values()];
+  // dedupe extra by (name bucket + ~close)
+  const out = [];
+  const buckets = new Map();
+  const CLONE_KM = 1.8;
+
+  function hav(aLat, aLon, bLat, bLon) {
+    const R = 6371;
+    const toRad = (x) => (x * Math.PI) / 180;
+    const dLat = toRad(bLat - aLat);
+    const dLon = toRad(bLon - aLon);
+    const lat1 = toRad(aLat);
+    const lat2 = toRad(bLat);
+    const s =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2;
+    return 2 * R * Math.asin(Math.sqrt(s));
+  }
+
+  for (const p of byId.values()) {
+    const key = normName(p.name);
+    const arr = buckets.get(key) || [];
+    let tooClose = false;
+    for (const q of arr) {
+      if (hav(p.lat, p.lon, q.lat, q.lon) < CLONE_KM) {
+        tooClose = true;
+        break;
+      }
+    }
+    if (!tooClose) {
+      arr.push({ lat: p.lat, lon: p.lon });
+      buckets.set(key, arr);
+      out.push(p);
+    }
+  }
+
+  return out;
 }
 
-function writeDataset(file, places, meta = {}) {
+async function main() {
+  console.log("🌊 Build radius-mare.json — start");
+
+  let all = [];
+  for (let i = 0; i < COASTAL_BBOXES_IT.length; i++) {
+    const b = COASTAL_BBOXES_IT[i];
+    const q = makeQueryForBBox(b);
+    console.log(`→ Overpass bbox ${i + 1}/${COASTAL_BBOXES_IT.length}...`);
+    const j = await overpassWithRetry(q, { tries: 10 });
+
+    const els = Array.isArray(j?.elements) ? j.elements : [];
+    const places = els.map(elementToPlace).filter(Boolean);
+    console.log(`   + got ${places.length}`);
+    all = all.concat(places);
+
+    // micro-pausa per non farsi odiare da Overpass
+    await sleep(450);
+  }
+
+  all = dedupePlaces(all);
+  console.log(`✅ final places: ${all.length}`);
+
+  // sort carino: per nome
+  all.sort((a, b) => a.name.localeCompare(b.name));
+
   const out = {
     updated_at: new Date().toISOString(),
-    count: places.length,
-    ...meta,
-    places,
+    count: all.length,
+    places: all,
   };
-  fs.writeFileSync(file, JSON.stringify(out, null, 2), "utf-8");
-  console.log(`✅ wrote ${file} (${places.length})`);
-}
 
-function mergeUnique(a, b) {
-  const map = new Map();
-  for (const x of [...a, ...b]) map.set(x.id, x);
-  return [...map.values()];
-}
-
-// -------------- MAIN --------------
-async function main() {
-  console.log("🌊 Building radius-mare IT...");
-  const it = await collectForBBoxRegion("IT", BBOX_IT);
-
-  console.log("🌍 Building radius-mare EU...");
-  const eu = await collectForBBoxRegion("EU", BBOX_EU);
-
-  // Merge
-  const merged = mergeUnique(it, eu);
-
-  // Scrivi
-  writeDataset(path.join(OUT_DIR, "radius-mare-it.json"), it, { area: "IT" });
-  writeDataset(path.join(OUT_DIR, "radius-mare-eu.json"), eu, { area: "EU" });
-  writeDataset(path.join(OUT_DIR, "radius-mare.json"), merged, { area: "IT+EU" });
-
-  console.log("✅ DONE");
+  fs.mkdirSync(path.dirname(OUT_PATH), { recursive: true });
+  fs.writeFileSync(OUT_PATH, JSON.stringify(out, null, 2), "utf-8");
+  console.log(`💾 wrote: ${OUT_PATH}`);
 }
 
 main().catch((e) => {
-  console.error("❌ build-radius-mare failed:", e);
+  console.error("❌ build failed:", e);
   process.exit(1);
 });
