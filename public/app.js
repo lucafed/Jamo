@@ -665,6 +665,13 @@
       DATASETS_USED.push({ kind: "radius", source: p3, placesLen: loaded3.places.length });
     }
 
+    // ✅ FIX MARE: NON usare MAI i macro generici per "mare"
+    const DISABLE_MACRO_FOR = new Set(["mare"]);
+    if (DISABLE_MACRO_FOR.has(cat)) {
+      if (!pools.length) throw new Error("Nessun dataset mare valido (region/radius).");
+      return { pools, region };
+    }
+
     const countryMacro = findCountryMacroPathRobust(cc || (isItaly ? "IT" : ""));
     const macroUrls = [];
     if (countryMacro) macroUrls.push(countryMacro);
@@ -896,8 +903,10 @@
     const n = normName(place?.name || "");
     const q = hasQualitySignals(place);
 
-    if (t.includes("waterway=") || t.includes("amenity=ferry_terminal") || t.includes("harbour=") || t.includes("leisure=marina")) return false;
+    // ✅ meno aggressivo: marina non è "no" a prescindere
+    if (t.includes("waterway=") || t.includes("amenity=ferry_terminal") || t.includes("harbour=")) return false;
 
+    // ✅ include marina come segnale mare
     const strongSea =
       t.includes("natural=beach") ||
       t.includes("natural=coastline") ||
@@ -905,7 +914,8 @@
       t.includes("natural=reef") ||
       t.includes("natural=cliff") ||
       t.includes("man_made=pier") ||
-      t.includes("tourism=beach_resort");
+      t.includes("tourism=beach_resort") ||
+      t.includes("leisure=marina");
 
     const touristSignal =
       t.includes("tourism=attraction") ||
@@ -921,6 +931,8 @@
     const nameSea = hasAny(n, ["spiaggia","lido","baia","cala","scogliera","litorale","lungomare","beach"]);
     if (strongSea && (touristSignal || nameSea)) return true;
     if (nameSea && touristSignal) return true;
+    // ✅ se è spiaggia/lido ecc. anche senza servizi, accetta (molti OSM sono "poveri")
+    if (nameSea && strongSea) return true;
     return false;
   }
 
@@ -1046,7 +1058,10 @@
     if (cat === "borghi") return isBorgo(place);
     if (cat === "relax") return isSpaPlace(place);
     if (cat === "cantine") return isWinery(place) && (hasQualitySignals(place) || tagsStr(place).includes("website="));
-    if (cat === "mare") return isSea(place) && hasTouristSignals(place);
+
+    // ✅ FIX MARE: NON richiedere hasTouristSignals (troppo severo su OSM)
+    if (cat === "mare") return isSea(place);
+
     if (cat === "lago") return isLake(place) && hasTouristSignals(place);
     if (cat === "montagna") return isMountain(place) && (hasTouristSignals(place) || hasQualitySignals(place));
     if (cat === "hiking") return isHiking(place) && (hasTouristSignals(place) || hasQualitySignals(place));
@@ -1831,3 +1846,4 @@
     getDatasetsUsed: () => DATASETS_USED,
   };
 })();
+```0
