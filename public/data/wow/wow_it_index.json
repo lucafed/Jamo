@@ -1,15 +1,17 @@
 {
-  "version": "wow_v1",
-  "updated_at": "2026-02-23",
-  "region_files": {
-    "piemonte": "/data/wow/wow_it_piemonte.json",
-    "veneto": "/data/wow/wow_it_veneto.json",
-    "abruzzo": "/data/wow/wow_it_abruzzo.json"
-  },
-  "neighbors": {
-    "piemonte": ["liguria", "lombardia", "valle-d-aosta"],
-    "veneto": ["trentino-alto-adige", "lombardia", "friuli-venezia-giulia", "emilia-romagna"],
-    "abruzzo": ["lazio", "marche", "molise"]
-  },
-  "italy_fallback": "/data/wow/wow_it_all.json"
+  "updated_at": "2026-02-24",
+  "schema": "wow_v1",
+  "fallback_all": "/data/wow/wow_it_all.json",
+  "regions": [
+    { "slug": "veneto",    "name": "Veneto",    "url": "/data/wow/wow_it_veneto.json" },
+    { "slug": "lombardia", "name": "Lombardia", "url": "/data/wow/wow_it_lombardia.json" },
+    { "slug": "lazio",     "name": "Lazio",     "url": "/data/wow/wow_it_lazio.json" },
+    { "slug": "toscana",   "name": "Toscana",   "url": "/data/wow/wow_it_toscana.json" },
+    { "slug": "sicilia",   "name": "Sicilia",   "url": "/data/wow/wow_it_sicilia.json" }
+  ],
+  "settings": {
+    "showDatasetCounts": false,
+    "minResultsTarget": 18,
+    "wideningSoftMinutes": 30
+  }
 }
