@@ -1,0 +1,24 @@
+{
+  "updated_at": "2026-02-24",
+  "schema": "wow_v1",
+  "region_slug": "toscana",
+  "items": [
+    { "id":"t_001","title":"Pitigliano","query":"Pitigliano","category":"borghi","wow_level":10,"best_time":["180-240"],"why_wow":"Borgo su tufo: scenico da paura." },
+    { "id":"t_002","title":"Sorano","query":"Sorano borgo","category":"borghi","wow_level":9,"best_time":["180-240"],"why_wow":"Tufo + vicoli + atmosfera, meno pieno di altri." },
+    { "id":"t_003","title":"Anghiari","query":"Anghiari","category":"borghi","wow_level":8,"best_time":["120-180"],"why_wow":"Borgo vero, panorama e centro storico bellissimo." },
+
+    { "id":"t_004","title":"Cascate del Mulino (Saturnia)","query":"Cascate del Mulino Saturnia","category":"relax","wow_level":10,"best_time":["180-240"],"why_wow":"Terme gratuite ‘da film’. WOW puro." },
+    { "id":"t_005","title":"Bagni San Filippo (Balena Bianca)","query":"Bagni San Filippo Balena Bianca","category":"relax","wow_level":9,"best_time":["180-240"],"why_wow":"Terme naturali nel bosco, super sceniche." },
+
+    { "id":"t_006","title":"Orrido di Botri","query":"Orrido di Botri","category":"natura","wow_level":9,"best_time":["240-360"],"why_wow":"Forra vera (controlla accesso/stagione). Esperienza wow." },
+    { "id":"t_007","title":"Val d’Orcia (punti panoramici)","query":"Val d'Orcia punti panoramici","category":"natura","wow_level":9,"best_time":["180-240"],"why_wow":"Panorami iconici, ma in modalità ‘wow hunting’." },
+
+    { "id":"t_008","title":"Via Francigena — tratto easy","query":"Via Francigena Toscana tratto facile","category":"trekking","wow_level":7,"best_time":["120-180"],"why_wow":"Trekking soft con paesaggi toscani da cartolina." },
+
+    { "id":"t_009","title":"Abbazia di San Galgano","query":"Abbazia di San Galgano","category":"storia","wow_level":9,"best_time":["120-180"],"why_wow":"Abbazia senza tetto: sembra set cinematografico." },
+    { "id":"t_010","title":"Populonia (archeologia + mare)","query":"Populonia","category":"storia","wow_level":9,"best_time":["180-240"],"why_wow":"Sito storico e mare vicino: combo fortissima." },
+
+    { "id":"t_011","title":"Cala Violina","query":"Cala Violina","category":"mare","wow_level":9,"best_time":["180-240"],"why_wow":"Mare wow (in stagione può essere regolamentata)." },
+    { "id":"t_012","title":"Isola d’Elba — spiaggia wow","query":"Isola d'Elba spiagge più belle","category":"mare","wow_level":8,"best_time":["360+"],"why_wow":"Se hai tempo, è un ‘wow day’ enorme." }
+  ]
+}
