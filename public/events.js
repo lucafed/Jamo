@@ -1,28 +1,21 @@
 /* public/events.js — JAMO_MAIFATTO bridge (OFFLINE • WOW-first • robust • SMART)
- * Compatibile con app.js v22.2
+ * Compatibile con app.js (payload: origin/maxMinutes/eventType + helpers)
  *
- * ✅ "Eventi" => "✨ Mai fatto"
+ * OBIETTIVO:
+ * ✅ "Eventi" => "✨ Mai fatto" (idee WOW offline)
  * ✅ Subcategorie: relax, famiglia, bici, moto, natura, pioggia, tramonto, mangiare, 1h, 2h
  * ✅ 1h/2h filtrano su duration_bucket (NON su category) + fallback su duration_min
- * ✅ Regione scelta da COORDINATE (bbox), non da origin.region
- * ✅ Anti-famoso SOFT (non blocca)
- * ✅ Mai 0 “per colpa del filtro”: se troppo stretto, si allenta
- * ✅ WIDEN SOFT: se poche idee coerenti entro i minuti, aumenta tolleranza distanza/minuti (senza buttare roba random)
- *
+ * ✅ Regione scelta da COORDINATE via it-regions-index.json (se presente) + fallback hardcoded
+ * ✅ Anti-famoso SOFT
+ * ✅ WIDEN SMART: se poche idee entro i minuti, aumenta tolleranza senza sparare roba random
  * ✅ FIX LINK:
- *    - "🧭 Vai" = directions con ORIGIN (coord) ma DESTINAZIONE testuale (nome+luogo)
+ *    - "🧭 Vai" = directions con ORIGIN (coord) + DESTINAZIONE testuale (nome+luogo)
  *    - "📍 Apri posto" = Google Maps search con nome+luogo
  *    - "🧩 Info" = solo se info_url è un vero link informativo
  *
- * ✅ FIX FAMILY MAI FATTO:
- *    - "famiglia" = SOLO esperienze WOW (zipline, parco avventura, zoo, acquario, safari, waterpark, fattorie didattiche, musei kids)
- *    - blocca i doppioni "family normale" (parco giochi pubblico / area giochi / giardini pubblici / playground)
- *
- * Dataset:
- *  /data/mai_fatto/mai_fatto_it_abruzzo.json
- *  /data/mai_fatto/mai_fatto_it_verona.json
+ * Dataset (attesi):
+ *  /data/mai_fatto/mai_fatto_it_<slug>.json  (slug = id regione index, es: abruzzo, veneto, piemonte...)
  *  /data/mai_fatto/mai_fatto_it_all.json
- *
  * Fallback:
  *  /data/events/events_all.json
  */
@@ -30,22 +23,26 @@
 (() => {
   "use strict";
 
-  const DS = {
-    abruzzo: "/data/mai_fatto/mai_fatto_it_abruzzo.json",
-    verona:  "/data/mai_fatto/mai_fatto_it_verona.json",
-    all:     "/data/mai_fatto/mai_fatto_it_all.json",
-  };
-
-  const FALLBACK_URL = "/data/events/events_all.json";
+  // ------------------ CONFIG ------------------
   const SHOW_LIMIT = 18;
 
-  // anti-ovvio soft (solo per zona VR, puoi estendere)
+  const PATHS = {
+    IT_REGIONS_INDEX_URL: "/data/pois/regions/it-regions-index.json",
+    MAIFATTO_REGION_URL: (slug) => `/data/mai_fatto/mai_fatto_it_${slug}.json`,
+    MAIFATTO_ALL_URL: "/data/mai_fatto/mai_fatto_it_all.json",
+    FALLBACK_EVENTS_URL: "/data/events/events_all.json",
+  };
+
+  // Anti-ovvio SOFT (solo per non intasare di “postcard”. Non blocca mai al 100%)
   const TOO_FAMOUS_WORDS = [
+    // VR/Garda
     "lazise","sirmione","gardaland","lungolago","piazza bra","via mazzini","piazza erbe",
     "arena di verona","juliet","giulietta","casa di giulietta","centro verona",
+    // super generici (soft)
+    "centro storico",
   ];
 
-  // ------------------ helpers ------------------
+  // ------------------ HELPERS ------------------
   const esc = (s) =>
     String(s ?? "")
       .replaceAll("&", "&amp;")
@@ -53,6 +50,19 @@
       .replaceAll(">", "&gt;")
       .replaceAll('"', "&quot;")
       .replaceAll("'", "&#039;");
+
+  const toRad = (x) => (x * Math.PI) / 180;
+  function haversineKmFallback(aLat, aLon, bLat, bLon) {
+    const R = 6371;
+    const dLat = toRad(bLat - aLat);
+    const dLon = toRad(bLon - aLon);
+    const lat1 = toRad(aLat);
+    const lat2 = toRad(bLat);
+    const s =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2;
+    return 2 * R * Math.asin(Math.sqrt(s));
+  }
 
   function fmtDateShort(iso) {
     if (!iso) return "";
@@ -62,6 +72,15 @@
     const mm = String(d.getMonth() + 1).padStart(2, "0");
     const yyyy = d.getFullYear();
     return `${dd}/${mm}/${yyyy}`;
+  }
+
+  function cleanJoin(parts) {
+    return parts
+      .map((x) => String(x || "").trim())
+      .filter(Boolean)
+      .join(" ")
+      .replace(/\s+/g, " ")
+      .trim();
   }
 
   function nicePlaceLine(e) {
@@ -85,17 +104,8 @@
 
   function approxMinutesFromKm(km, estCarMinutesFromKm) {
     if (typeof estCarMinutesFromKm === "function") return estCarMinutesFromKm(km);
-    return Math.round(km + 8);
-  }
-
-  // ------------------ query/link builders (TESTO, non coord) ------------------
-  function cleanJoin(parts) {
-    return parts
-      .map((x) => String(x || "").trim())
-      .filter(Boolean)
-      .join(" ")
-      .replace(/\s+/g, " ")
-      .trim();
+    // fallback grezzo
+    return Math.round((Number(km) || 0) + 8);
   }
 
   function placeQuery(e) {
@@ -128,19 +138,19 @@
     const s = String(u || "").trim();
     if (!s) return false;
     if (!/^https?:\/\//i.test(s)) return false;
-    if (s.includes("google.com/maps/search")) return false;
+    if (s.includes("google.com/maps")) return false;
+    if (s.includes("www.google.com/search")) return false;
     return true;
   }
 
-  // ------------------ Normalizzazione chiavi ------------------
   function normalizeKey(k) {
     const s = String(k || "").toLowerCase().trim();
     if (!s) return "tutti";
-    if (s === "1 ora" || s === "1h" || s === "1_ora" || s === "1ora") return "1h";
-    if (s === "2 ore" || s === "2h" || s === "2_ore" || s === "2ore") return "2h";
+    if (["1 ora","1h","1_ora","1ora","60","60m"].includes(s)) return "1h";
+    if (["2 ore","2h","2_ore","2ore","120","120m"].includes(s)) return "2h";
     if (s === "family") return "famiglia";
     if (s === "food") return "mangiare";
-    if (s === "mangia" || s === "cibo") return "mangiare";
+    if (["mangia","cibo"].includes(s)) return "mangiare";
     return s;
   }
 
@@ -174,7 +184,7 @@
     return TOO_FAMOUS_WORDS.some((w) => hay.includes(w));
   }
 
-  // ------------------ UI patch (safe) ------------------
+  // ------------------ UI PATCH (safe) ------------------
   function safePatchUI() {
     try {
       const catChip = document.querySelector('#categoryChips .chip[data-cat="eventi"]');
@@ -215,11 +225,10 @@
       console.warn("patchUI warning:", e);
     }
   }
-
   safePatchUI();
   setTimeout(safePatchUI, 50);
 
-  // ------------------ MAIFATTO SMART TAGS (inferenza + scoring) ------------------
+  // ------------------ WOW TAGS / FAMILY WOW (anti-playground) ------------------
   const TAG_RULES = [
     // FAMILY WOW
     { tag: "zoo", rx: /\b(zoo|parco faunistico|parco zoologico|bioparco|safari)\b/i },
@@ -230,7 +239,7 @@
     { tag: "fattoria_didattica", rx: /\b(fattoria didattica|agriturismo didattico|fattoria|parco agricolo)\b/i },
     { tag: "museo_bimbi", rx: /\b(museo.*bambin|museo.*ragazz|children.?s\s*museum)\b/i },
 
-    // RELAX REAL
+    // RELAX
     { tag: "spa", rx: /\b(spa|wellness|centro benessere|sauna|bagno turco|hammam)\b/i },
     { tag: "terme", rx: /\b(terme|termal|thermal)\b/i },
 
@@ -248,81 +257,42 @@
     // TRAMONTO / PANORAMI
     { tag: "belvedere", rx: /\b(belvedere|punto panoramico|panoram|terrazza|vedetta)\b/i },
     { tag: "lago", rx: /\b(lago)\b/i },
-    { tag: "mare", rx: /\b(mare|spiaggia|lido|baia|faro|promontorio)\b/i },
+    { tag: "mare", rx: /\b(mare|spiaggia|lido|baia|cala|faro|promontorio)\b/i },
   ];
 
   const NEG_RELAX = [
-    /\b(bivacco|rifugio|vetta|cima|sentiero|trekking|arrampicata|via ferrata)\b/i
+    /\b(bivacco|rifugio|vetta|cima|sentiero|trekking|arrampicata|via ferrata)\b/i,
   ];
 
-  // ✅ blocca “family normale” (playground, parchi pubblici, aree giochi)
   const NEG_FAMILY = [
+    // no roba tecnica
     /\b(piazza|corso|viale|rotonda|svincolo|stazione|fermata|parcheggio)\b/i,
+    // no chiese "a caso"
     /\b(chiesa|duomo|cattedrale|abbazia|monaster|convento|santuario|oratorio)\b/i,
-    /\b(area picnic|picnic|belvedere|centro storico)\b/i,
-
-    // doppioni family normale
+    // no “family normale”
     /\b(giardini pubblici|parco pubblico|villa comunale|giardini comunali)\b/i,
     /\b(parco giochi|area giochi|playground|giochi per bambini|altalena|scivolo)\b/i,
   ];
 
   function inferTags(e) {
     const t = `${e.title || ""} ${e.place || ""} ${e.city || ""} ${e.region || ""}`.toLowerCase();
-    const tags = new Set(Array.isArray(e.tags) ? e.tags.map(x => String(x).toLowerCase().trim()) : []);
+    const tags = new Set(Array.isArray(e.tags) ? e.tags.map((x) => String(x).toLowerCase().trim()) : []);
     for (const r of TAG_RULES) if (r.rx.test(t)) tags.add(r.tag);
     return [...tags];
   }
 
-  function hasAny(hay, needles) {
-    const s = String(hay || "").toLowerCase();
-    for (const n of needles) {
-      if (s.includes(String(n).toLowerCase())) return true;
-    }
-    return false;
-  }
-
-  // ✅ family MAI FATTO = SOLO WOW (no playground, no parchi pubblici)
   function isTrueFamily(e) {
     const text = `${e.title || ""} ${e.place || ""} ${e.city || ""} ${e.region || ""}`.toLowerCase();
-
-    // blocchi rapidi
-    if (NEG_FAMILY.some(rx => rx.test(text))) return false;
+    if (NEG_FAMILY.some((rx) => rx.test(text))) return false;
 
     const tags = inferTags(e);
+    const strong = ["zoo","acquario","parco_avventura","parco_divertimenti","waterpark","fattoria_didattica","museo_bimbi"];
+    if (tags.some((t) => strong.includes(t))) return true;
 
-    // SOLO esperienze WOW
-    const strong = [
-      "zoo",
-      "acquario",
-      "parco_avventura",
-      "parco_divertimenti",
-      "waterpark",
-      "fattoria_didattica",
-      "museo_bimbi",
-    ];
-    if (tags.some(t => strong.includes(t))) return true;
+    // fallback keyword WOW-only
+    if (/\b(parco avventura|zipline|safari|parco faunistico|parco zoologico|zoo|acquario|luna\s*park|giostre|parco divertimenti|aquapark|acquapark|water\s*park|fattoria didattica|museo dei bambini|children museum)\b/i.test(text))
+      return true;
 
-    // fallback keyword (se dataset è povero di tag) — SOLO WOW
-    if (hasAny(text, [
-      "parco avventura",
-      "zipline",
-      "safari",
-      "parco faunistico",
-      "parco zoologico",
-      "zoo",
-      "acquario",
-      "luna park",
-      "giostre",
-      "parco divertimenti",
-      "aquapark",
-      "acquapark",
-      "water park",
-      "fattoria didattica",
-      "museo dei bambini",
-      "children museum"
-    ])) return true;
-
-    // se è solo parco giochi/area giochi -> NO (doppione family normale)
     return false;
   }
 
@@ -332,9 +302,7 @@
     let s = (typeof e.wow_score === "number" ? e.wow_score : 0);
 
     if (etKey === "famiglia") {
-      // prima: elimina doppioni
       if (!isTrueFamily(e)) return -9999;
-
       if (tags.includes("zoo")) s += 12;
       if (tags.includes("parco_avventura")) s += 12;
       if (tags.includes("acquario")) s += 11;
@@ -342,9 +310,7 @@
       if (tags.includes("waterpark")) s += 8;
       if (tags.includes("fattoria_didattica")) s += 7;
       if (tags.includes("museo_bimbi")) s += 7;
-
-      // se contiene “parco” ma non è WOW vero, abbassa (extra safety)
-      if (/\bparco\b/i.test(text) && !tags.some(x => ["zoo","parco_avventura","parco_divertimenti","acquario","waterpark","fattoria_didattica","museo_bimbi"].includes(x))) {
+      if (/\bparco\b/i.test(text) && !tags.some((x) => ["zoo","parco_avventura","parco_divertimenti","acquario","waterpark","fattoria_didattica","museo_bimbi"].includes(x))) {
         s -= 10;
       }
     }
@@ -352,7 +318,7 @@
     if (etKey === "relax") {
       if (tags.includes("terme")) s += 12;
       if (tags.includes("spa")) s += 12;
-      if (NEG_RELAX.some(rx => rx.test(text))) s -= 10;
+      if (NEG_RELAX.some((rx) => rx.test(text))) s -= 10;
     }
 
     if (etKey === "pioggia") {
@@ -385,8 +351,9 @@
     return s;
   }
 
-  // ------------------ cache dataset ------------------
+  // ------------------ DATASET CACHE + REGION PICK ------------------
   const CACHE = new Map(); // url -> { ideas, meta }
+  let IT_REGIONS_INDEX = null; // {items:[{id,name,bbox,...}]}
   let LAST_META = { updated_at: "", count: 0, source: "", area: "" };
 
   async function fetchJson(url) {
@@ -395,30 +362,119 @@
     return await r.json();
   }
 
-  // ✅ regione da coordinate (bbox)
-  function regionKeyFromLatLon(origin) {
+  async function loadItRegionsIndexSafe() {
+    if (IT_REGIONS_INDEX?.items?.length) return IT_REGIONS_INDEX;
+    try {
+      IT_REGIONS_INDEX = await fetchJson(PATHS.IT_REGIONS_INDEX_URL);
+    } catch {
+      IT_REGIONS_INDEX = null;
+    }
+    return IT_REGIONS_INDEX;
+  }
+
+  function withinBBox(lat, lon, bbox) {
+    if (!bbox) return false;
+    return (
+      lat >= bbox.minLat &&
+      lat <= bbox.maxLat &&
+      lon >= bbox.minLon &&
+      lon <= bbox.maxLon
+    );
+  }
+
+  function pickRegionSlugByOrigin(origin) {
     const lat = Number(origin?.lat);
     const lon = Number(origin?.lon);
-    if (!Number.isFinite(lat) || !Number.isFinite(lon)) return "all";
+    if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
 
+    const items = IT_REGIONS_INDEX?.items;
+    if (!Array.isArray(items) || !items.length) return null;
+
+    let best = null;
+    for (const r of items) {
+      const bbox = r?.bbox;
+      if (!bbox) continue;
+      if (!withinBBox(lat, lon, bbox)) continue;
+      // prefer smallest bbox (più specifico)
+      const area = Math.abs((bbox.maxLat - bbox.minLat) * (bbox.maxLon - bbox.minLon));
+      if (!best || area < best.area) best = { r, area };
+    }
+    return best?.r?.id ? String(best.r.id) : null; // id = slug (es: abruzzo, veneto...)
+  }
+
+  // fallback hardcoded (solo se manca index)
+  function pickRegionSlugFallback(origin) {
+    const lat = Number(origin?.lat);
+    const lon = Number(origin?.lon);
+    if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
     const inBox = (w, s, e, n) => lon >= w && lon <= e && lat >= s && lat <= n;
 
     if (inBox(13.0, 41.65, 14.85, 42.95)) return "abruzzo";
-    // Veneto/Verona proxy (larga, volutamente)
-    if (inBox(10.2, 44.7, 12.3, 46.2)) return "verona";
-
-    return "all";
+    if (inBox(10.2, 44.7, 12.3, 46.2)) return "veneto"; // più corretto del vecchio "verona"
+    return null;
   }
 
-  function datasetOrder(origin) {
-    const k = regionKeyFromLatLon(origin);
-    if (k === "abruzzo") return [DS.abruzzo, DS.all, DS.verona];
-    if (k === "verona")  return [DS.verona, DS.all, DS.abruzzo];
-    return [DS.all, DS.verona, DS.abruzzo];
+  function buildDatasetOrder(origin) {
+    const order = [];
+
+    const slug = pickRegionSlugByOrigin(origin) || pickRegionSlugFallback(origin);
+    if (slug) order.push(PATHS.MAIFATTO_REGION_URL(slug));
+
+    // “all” sempre
+    order.push(PATHS.MAIFATTO_ALL_URL);
+
+    // fallback extra (se avevi dataset “verona” specifico)
+    order.push("/data/mai_fatto/mai_fatto_it_verona.json"); // se non esiste, fallisce e si passa oltre
+    order.push("/data/mai_fatto/mai_fatto_it_abruzzo.json"); // idem
+
+    // dedupe
+    const seen = new Set();
+    return order.filter((u) => {
+      const s = String(u || "").trim();
+      if (!s || seen.has(s)) return false;
+      seen.add(s);
+      return true;
+    });
+  }
+
+  function normalizeIdeasPayload(j, url) {
+    // accetta: {ideas:[...]} oppure {events:[...]} oppure array diretto
+    let ideas = [];
+    if (Array.isArray(j?.ideas)) ideas = j.ideas;
+    else if (Array.isArray(j?.events)) {
+      ideas = j.events.map((e) => ({
+        id: e.id,
+        title: e.title,
+        place: e.place,
+        city: e.city,
+        region: e.region,
+        country_code: e.country_code,
+        lat: e.lat,
+        lon: e.lon,
+        category: e.category,
+        duration_bucket: e.duration_bucket,
+        duration_min: e.duration_min,
+        why: e.why,
+        info_url: e.info_url || e.url || "",
+        url: e.url,
+        source: e.source || "events_fallback",
+        wow_score: e.wow_score,
+        tags: e.tags,
+      }));
+    } else if (Array.isArray(j)) ideas = j;
+
+    const meta = {
+      updated_at: j?.updated_at || j?.generated_at || "",
+      count: j?.count ?? ideas.length,
+      source: ideas?.[0]?.source || "curated_mai_fatto",
+      area: j?.area || String(url || "").split("/").pop(),
+    };
+    return { ideas, meta };
   }
 
   async function loadDatasetForOrigin(origin) {
-    const urls = datasetOrder(origin);
+    await loadItRegionsIndexSafe();
+    const urls = buildDatasetOrder(origin);
 
     for (const url of urls) {
       try {
@@ -427,17 +483,9 @@
           LAST_META = cached.meta;
           return cached.ideas;
         }
-
         const j = await fetchJson(url);
-        const ideas = Array.isArray(j?.ideas) ? j.ideas : [];
-
-        if (ideas.length) {
-          const meta = {
-            updated_at: j?.updated_at || "",
-            count: j?.count ?? ideas.length,
-            source: ideas[0]?.source || "curated_mai_fatto",
-            area: j?.area || url.split("/").pop(),
-          };
+        const { ideas, meta } = normalizeIdeasPayload(j, url);
+        if (ideas && ideas.length) {
           CACHE.set(url, { ideas, meta });
           LAST_META = meta;
           return ideas;
@@ -445,61 +493,42 @@
       } catch (_) {}
     }
 
-    // fallback events (per non rompere)
-    const j2 = await fetchJson(FALLBACK_URL);
-    const ev = Array.isArray(j2?.events) ? j2.events : [];
-    const ideas = ev.map((e) => ({
-      id: e.id,
-      title: e.title,
-      place: e.place,
-      city: e.city,
-      region: e.region,
-      country_code: e.country_code,
-      lat: e.lat,
-      lon: e.lon,
-      category: e.category,
-      duration_bucket: e.duration_bucket,
-      duration_min: e.duration_min,
-      why: e.why,
-      info_url: e.info_url || e.url || "",
-      url: e.url,
-      source: e.source || "events_fallback",
-      wow_score: e.wow_score,
-      tags: e.tags,
-    }));
-
-    LAST_META = {
-      updated_at: j2?.updated_at || "",
-      count: j2?.count ?? ideas.length,
-      source: "fallback_events",
-      area: "events_all.json",
-    };
-    return ideas;
+    // fallback ultimo: events_all
+    const j2 = await fetchJson(PATHS.FALLBACK_EVENTS_URL);
+    const { ideas, meta } = normalizeIdeasPayload(j2, PATHS.FALLBACK_EVENTS_URL);
+    LAST_META = { ...meta, source: "fallback_events" };
+    return ideas || [];
   }
 
-  // ------------------ selection ------------------
+  // ------------------ SELEZIONE (FIX: “solo da 2h” -> widen vero) ------------------
   function matchesDurationBucket(e, wantKey) {
     const b = normalizeKey(e.duration_bucket || "");
+    const m = Number(e.duration_min);
+
+    // Nota: 1h/2h QUI sono “durata esperienza”, NON “distanza”.
+    // Non vogliamo uccidere troppo: fallback su duration_min.
     if (wantKey === "1h") {
       if (b === "1h") return true;
-      const m = Number(e.duration_min);
-      if (Number.isFinite(m) && m <= 100) return true;
+      if (Number.isFinite(m) && m > 0 && m <= 100) return true;
       return false;
     }
     if (wantKey === "2h") {
       if (b === "2h") return true;
-      const m = Number(e.duration_min);
-      if (Number.isFinite(m) && m > 100 && m <= 170) return true;
+      if (Number.isFinite(m) && m > 100 && m <= 190) return true;
       return false;
     }
     return true;
   }
 
   function pickIdeas({ all, origin, maxMinutes, eventType, haversineKm, estCarMinutesFromKm }) {
-    let base = Array.isArray(all) ? all.slice() : [];
+    const base = Array.isArray(all) ? all.slice() : [];
     const mm = Math.max(15, Number(maxMinutes) || 120);
     const et = normalizeKey(eventType || "tutti");
 
+    // 0) pulizia minima: coordinate valide
+    const baseValid = base.filter((e) => Number.isFinite(Number(e.lat)) && Number.isFinite(Number(e.lon)));
+
+    // 1) filtro sottocategoria (strict)
     const filterStrict = (arr) => {
       let out = arr;
 
@@ -509,64 +538,74 @@
         out = out.filter((e) => normalizeCategoryFromData(e.category) === et);
       }
 
-      // ✅ family: SOLO WOW (taglio doppioni) anche se dataset è rumoroso
-      if (et === "famiglia") {
-        out = out.filter((e) => isTrueFamily(e));
-      }
-
+      if (et === "famiglia") out = out.filter((e) => isTrueFamily(e));
       return out;
     };
 
-    // 1) filtro per sottocategoria (se presente nel dataset)
-    let list = filterStrict(base);
+    let list = filterStrict(baseValid);
 
-    // 2) anti-famoso soft
+    // 2) anti-famoso SOFT (mai “0 per colpa filtro”)
     const preAnti = list.length;
-    list = list.filter((e) => !isTooFamous(e));
-    if (preAnti > 0 && list.length < Math.min(8, Math.round(preAnti * 0.15))) {
-      list = filterStrict(base);
+    if (preAnti > 10) {
+      const tmp = list.filter((e) => !isTooFamous(e));
+      // se taglia troppo, non applicare
+      if (tmp.length >= Math.max(6, Math.round(preAnti * 0.35))) list = tmp;
     }
 
-    // 3) se troppo poco, allenta filtro sottocategoria (ma resta “mai fatto”)
-    //    NB: per famiglia NON allentiamo verso playground: restiamo su WOW
-    if (list.length < 4) {
-      if (et === "1h" || et === "2h") {
-        list = base.slice();
+    // 3) se troppo poco, allenta SOLO per tipi non-family
+    //    (family resta family WOW)
+    if (list.length < 5) {
+      if (et === "famiglia") {
+        list = baseValid.filter((e) => isTrueFamily(e));
+      } else if (et === "1h" || et === "2h") {
+        // allenta duration filter
+        list = baseValid.slice();
       } else if (et && et !== "tutti") {
-        if (et === "famiglia") {
-          // mantieni “family wow” comunque
-          list = base.filter((e) => isTrueFamily(e));
-        } else {
-          list = base.slice(); // allenta categoria per gli altri tipi
-        }
+        list = baseValid.slice();
       }
     }
 
-    // 4) distanza/minuti con widening SOFT
-    const widenSteps = [1.35, 1.9, 2.6];
-    const hasOrigin = origin && typeof origin.lat === "number" && typeof origin.lon === "number";
+    const hasOrigin = origin && Number.isFinite(Number(origin.lat)) && Number.isFinite(Number(origin.lon));
+    const hKm = typeof haversineKm === "function" ? haversineKm : haversineKmFallback;
 
-    function rankAndFilter(arr, factor) {
-      const cap = Math.round(mm * factor);
+    // 4) Distanza/minuti: widen SMART
+    //    Qui è il FIX che ti serve: non deve “partire da 2h”.
+    //    - prima prova entro mm
+    //    - poi mm*1.15 / 1.35 / 1.60 / 1.95 (soft)
+    //    - se ancora poco, consenti “top wow” anche più lontano ma penalizzato
+    const widenFactors = [1.00, 1.15, 1.35, 1.60, 1.95];
+
+    function rank(arr, capMinutes, { allowOverCap = false } = {}) {
       const items = arr
         .map((e) => {
-          const lat = Number(e.lat);
-          const lon = Number(e.lon);
-          if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
-
-          const km = typeof haversineKm === "function"
-            ? haversineKm(origin.lat, origin.lon, lat, lon)
-            : null;
-
+          const km = hasOrigin ? hKm(origin.lat, origin.lon, Number(e.lat), Number(e.lon)) : null;
           const mins = km == null ? null : approxMinutesFromKm(km, estCarMinutesFromKm);
 
-          const s = scoreForEventType(e, et);
-          return { e, mins, s };
+          const s0 = scoreForEventType(e, et);
+
+          // penalità distanza (leggera)
+          let s = s0;
+          if (mins != null && Number.isFinite(mins)) {
+            const over = mins - capMinutes;
+            if (over > 0) s -= Math.min(18, over / 10); // penalizza ma non elimina
+            // bonus “vicino”
+            s += Math.max(0, 6 - mins / 30);
+          }
+
+          // bonus qualità link/info
+          const infoUrlRaw = (e.info_url || e.url || "").trim();
+          if (isProbablyInfoUrl(infoUrlRaw)) s += 1.2;
+
+          return { e, mins: mins ?? null, s };
         })
-        .filter(Boolean)
-        .filter((x) => (x.mins == null ? true : x.mins <= cap))
+        .filter((x) => {
+          if (!allowOverCap) {
+            return x.mins == null ? true : x.mins <= capMinutes;
+          }
+          return true;
+        })
         .sort((a, b) => {
-          if (Math.abs(b.s - a.s) > 0.5) return b.s - a.s;
+          if (Math.abs(b.s - a.s) > 0.25) return b.s - a.s;
           return (a.mins ?? 999999) - (b.mins ?? 999999);
         })
         .map((x) => x.e);
@@ -576,9 +615,14 @@
 
     let picked = [];
     if (hasOrigin) {
-      for (const f of widenSteps) {
-        picked = rankAndFilter(list, f);
-        if (picked.length >= 6) break;
+      for (const f of widenFactors) {
+        const cap = Math.round(mm * f);
+        picked = rank(list, cap, { allowOverCap: false });
+        if (picked.length >= 8) break;
+      }
+      // se ancora poco, prendi top WOW anche over-cap (penalizzati)
+      if (picked.length < 6) {
+        picked = rank(list, Math.round(mm * 1.35), { allowOverCap: true });
       }
     } else {
       picked = list
@@ -587,10 +631,21 @@
         .map((x) => x.e);
     }
 
-    return picked.slice(0, SHOW_LIMIT);
+    // dedupe “titolo + luogo”
+    const seen = new Set();
+    const out = [];
+    for (const e of picked) {
+      const key = `${String(e.title || "").toLowerCase().trim()}|${String(e.place || "").toLowerCase().trim()}|${String(e.city || "").toLowerCase().trim()}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      out.push(e);
+      if (out.length >= SHOW_LIMIT) break;
+    }
+
+    return out;
   }
 
-  // ------------------ render ------------------
+  // ------------------ RENDER ------------------
   function renderIntoResultArea({ items, maxMinutes, origin }) {
     const area = document.getElementById("resultArea");
     if (!area) return;
@@ -614,73 +669,73 @@
       return;
     }
 
-    const cards = items.map((e) => {
-      const title = e.title || "Idea WOW";
-      const where = nicePlaceLine(e);
-      const why = (e.why || "").trim();
+    const oLat = Number(origin?.lat);
+    const oLon = Number(origin?.lon);
 
-      const catKey = normalizeKey(normalizeCategoryFromData(e.category));
-      const catLabel = labelCategory(catKey);
+    const cards = items
+      .map((e) => {
+        const title = e.title || "Idea WOW";
+        const where = nicePlaceLine(e);
+        const why = (e.why || "").trim();
 
-      const durBucket = normalizeKey(e.duration_bucket || "");
-      const durLine =
-        (durBucket === "1h" || durBucket === "2h")
-          ? `⏱️ ${durBucket.toUpperCase()} • ~${esc(e.duration_min || "")} min`
-          : (e.duration_min ? `⏱️ ~${esc(e.duration_min)} min` : "");
+        const catKey = normalizeKey(normalizeCategoryFromData(e.category));
+        const catLabel = labelCategory(catKey);
 
-      const oLat = Number(origin?.lat);
-      const oLon = Number(origin?.lon);
+        const durBucket = normalizeKey(e.duration_bucket || "");
+        const durLine =
+          durBucket === "1h" || durBucket === "2h"
+            ? `⏱️ ${durBucket.toUpperCase()} • ~${esc(e.duration_min || "")} min`
+            : (e.duration_min ? `⏱️ ~${esc(e.duration_min)} min` : "");
 
-      const q = placeQuery(e);
-      const openPlaceUrl = mapsSearchUrl(q);
-      const goUrl = mapsDirUrlTextDest({ oLat, oLon, destQuery: q, mode: "driving" });
+        const q = placeQuery(e);
+        const openPlaceUrl = mapsSearchUrl(q);
+        const goUrl = mapsDirUrlTextDest({ oLat, oLon, destQuery: q, mode: "driving" });
 
-      const infoUrlRaw = (e.info_url || e.url || "").trim();
-      const infoUrl = isProbablyInfoUrl(infoUrlRaw) ? infoUrlRaw : "";
+        const infoUrlRaw = (e.info_url || e.url || "").trim();
+        const infoUrl = isProbablyInfoUrl(infoUrlRaw) ? infoUrlRaw : "";
 
-      const placeBlock = where
-        ? `<div style="margin-top:10px; font-weight:950; font-size:15px; letter-spacing:.2px;">
-             📍 ${esc(where)}
-           </div>`
-        : "";
+        const placeBlock = where
+          ? `<div style="margin-top:10px; font-weight:950; font-size:15px; letter-spacing:.2px;">📍 ${esc(where)}</div>`
+          : "";
 
-      const durBlock = durLine
-        ? `<div class="small muted" style="margin-top:6px;">${esc(durLine)}</div>`
-        : "";
+        const durBlock = durLine
+          ? `<div class="small muted" style="margin-top:6px;">${esc(durLine)}</div>`
+          : "";
 
-      return `
-        <div class="card clickSafe" style="margin-top:12px; border-color:rgba(0,224,255,.14);">
-          <div style="font-weight:950; font-size:20px; line-height:1.12;">${esc(title)}</div>
+        return `
+          <div class="card clickSafe" style="margin-top:12px; border-color:rgba(0,224,255,.14);">
+            <div style="font-weight:950; font-size:20px; line-height:1.12;">${esc(title)}</div>
 
-          ${placeBlock}
-          ${durBlock}
+            ${placeBlock}
+            ${durBlock}
 
-          <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;">
-            ${pill("Mai fatto")}
-            ${pill(catLabel)}
-            ${(durBucket === "1h" || durBucket === "2h") ? pill(labelCategory(durBucket)) : ""}
+            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;">
+              ${pill("Mai fatto")}
+              ${pill(catLabel)}
+              ${(durBucket === "1h" || durBucket === "2h") ? pill(labelCategory(durBucket)) : ""}
+            </div>
+
+            ${
+              why
+                ? `<div class="small muted" style="margin-top:12px; line-height:1.55;">
+                     <b style="color:#fff;">Perché te lo propongo:</b> ${esc(why)}
+                   </div>`
+                : ""
+            }
+
+            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
+              ${goUrl ? `<a class="btn btnPrimary" href="${esc(goUrl)}" target="_blank" rel="noopener">🧭 Vai</a>` : ""}
+              ${openPlaceUrl ? `<a class="btn" href="${esc(openPlaceUrl)}" target="_blank" rel="noopener">📍 Apri posto</a>` : ""}
+              ${infoUrl ? `<a class="btn" href="${esc(infoUrl)}" target="_blank" rel="noopener">🧩 Info</a>` : ""}
+            </div>
+
+            <div class="small muted" style="margin-top:10px; opacity:.70;">
+              Fonte: ${esc(e.source || LAST_META.source || "mai_fatto")}
+            </div>
           </div>
-
-          ${
-            why
-              ? `<div class="small muted" style="margin-top:12px; line-height:1.55;">
-                   <b style="color:#fff;">Perché te lo propongo:</b> ${esc(why)}
-                 </div>`
-              : ""
-          }
-
-          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
-            ${goUrl ? `<a class="btn btnPrimary" href="${esc(goUrl)}" target="_blank" rel="noopener">🧭 Vai</a>` : ""}
-            ${openPlaceUrl ? `<a class="btn" href="${esc(openPlaceUrl)}" target="_blank" rel="noopener">📍 Apri posto</a>` : ""}
-            ${infoUrl ? `<a class="btn" href="${esc(infoUrl)}" target="_blank" rel="noopener">🧩 Info</a>` : ""}
-          </div>
-
-          <div class="small muted" style="margin-top:10px; opacity:.70;">
-            Fonte: ${esc(e.source || LAST_META.source || "mai_fatto")}
-          </div>
-        </div>
-      `;
-    }).join("");
+        `;
+      })
+      .join("");
 
     area.innerHTML = `
       <div class="card clickSafe" style="box-shadow:none; border-color:rgba(0,224,255,.20); background:rgba(0,224,255,.05);">
@@ -689,14 +744,14 @@
           ${updated ? `Dataset aggiornato ${esc(updated)}` : "Dataset offline"} • totale ${esc(total)}${areaName}
         </div>
         <div class="small muted" style="margin-top:6px;">
-          Mostrate: ${esc(items.length)} • entro ~${esc(maxMinutes)} min (widening soft incluso)
+          Mostrate: ${esc(items.length)} • entro ~${esc(maxMinutes)} min (widening smart incluso)
         </div>
       </div>
       ${cards}
     `;
   }
 
-  // ------------------ public API ------------------
+  // ------------------ PUBLIC API ------------------
   async function run({
     origin,
     maxMinutes,
@@ -704,13 +759,12 @@
     haversineKm,
     estCarMinutesFromKm,
     showStatus,
-    scrollToId
+    scrollToId,
   }) {
     try {
       safePatchUI();
 
       const all = await loadDatasetForOrigin(origin);
-
       if (!Array.isArray(all) || !all.length) {
         showStatus?.("warn", "Dataset MAI FATTO vuoto o mancante.");
         renderIntoResultArea({ items: [], maxMinutes, origin });
@@ -724,7 +778,7 @@
         maxMinutes,
         eventType,
         haversineKm,
-        estCarMinutesFromKm
+        estCarMinutesFromKm,
       });
 
       renderIntoResultArea({ items, maxMinutes, origin });
@@ -740,10 +794,9 @@
           <div class="card clickSafe" style="box-shadow:none; border-color:rgba(255,90,90,.40); background:rgba(255,90,90,.10);">
             <div style="font-weight:950; font-size:18px;">❌ MAI FATTO non disponibile</div>
             <div class="small muted" style="margin-top:8px; line-height:1.45;">
-              Controlla che esista almeno uno tra:
-              <br><b>${esc(DS.abruzzo)}</b>
-              <br><b>${esc(DS.verona)}</b>
-              <br><b>${esc(DS.all)}</b>
+              Controlla che esista almeno:
+              <br><b>${esc(PATHS.MAIFATTO_ALL_URL)}</b>
+              <br>oppure <b>/data/mai_fatto/mai_fatto_it_${esc("REGIONE")}.json</b>
               <br>e che contenga <b>{ ideas: [...] }</b>.
             </div>
           </div>
