@@ -3,7 +3,7 @@
   "country": "IT",
   "area": "Veneto",
   "label_it": "Veneto • Borghi (turistici + piccoli)",
-  "generated_at": "2026-02-17T13:25:15.376Z",
+  "generated_at": "2026-02-24T04:50:05.799Z",
   "places": [
     {
       "id": "node:66503077",
@@ -18931,7 +18931,7 @@
       "tags": [
         "name=Arcè",
         "place=village",
-        "wikidata=Q116423"
+        "wikidata=Q136394749"
       ],
       "score": 85
     },
@@ -43478,8 +43478,8 @@
     {
       "id": "node:64778455",
       "name": "Piove di Sacco",
-      "lat": 45.297692,
-      "lon": 12.036814,
+      "lat": 45.296236,
+      "lon": 12.0356106,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -71583,6 +71583,7 @@
       "tags": [
         "name=Val di Lauco / Val",
         "name:fur=Val",
+        "name:it=Val di Lauco",
         "official_name=Località Val",
         "place=hamlet",
         "wikidata=Q18452602"
@@ -71814,6 +71815,7 @@
         "loc_name:fur=Luvinças",
         "name=Luincis / Luvinças",
         "name:fur=Luvincis",
+        "name:it=Luincis",
         "place=hamlet",
         "population=118",
         "source=Istat 2001 - geodati.gfoss.it",
@@ -77015,6 +77017,7 @@
         "loc_name:fur=Pesaria",
         "name=Pesariis / Pesaria",
         "name:fur=Pesariis",
+        "name:it=Pesariis",
         "place=hamlet",
         "wikidata=Q3900630",
         "wikipedia=it:Pesariis"
@@ -137307,8 +137310,8 @@
     },
     {
       "id": "relation:44934",
-      "name": "Nanto",
-      "lat": 45.427114,
+      "name": "Castegnero Nanto",
+      "lat": 45.4289079,
       "lon": 11.5911519,
       "type": "borgo",
       "borgo_type": "classico",
@@ -137316,15 +137319,13 @@
       "tags": [
         "admin_level=8",
         "boundary=administrative",
-        "gfoss_id=3259",
-        "name=Nanto",
-        "postal_code=36024",
-        "ref:ISTAT=024071",
-        "ref:catasto=F838",
-        "source=geodati.gfoss.it",
+        "name=Castegnero Nanto",
+        "postal_code=36020;36024",
+        "ref:ISTAT=024128",
+        "ref:catasto=M439",
         "type=boundary",
-        "wikidata=Q46532",
-        "wikipedia=it:Nanto"
+        "wikidata=Q138426868",
+        "wikipedia=it:Castegnero Nanto"
       ],
       "score": 12
     },
@@ -137793,27 +137794,6 @@
         "type=boundary",
         "wikidata=Q46410",
         "wikipedia=it:Brendola"
-      ],
-      "score": 12
-    },
-    {
-      "id": "relation:45033",
-      "name": "Castegnero",
-      "lat": 45.4365459,
-      "lon": 11.6003578,
-      "type": "borgo",
-      "borgo_type": "classico",
-      "visibility": "classica",
-      "tags": [
-        "admin_level=8",
-        "boundary=administrative",
-        "name=Castegnero",
-        "postal_code=36020",
-        "ref:ISTAT=024027",
-        "ref:catasto=C056",
-        "type=boundary",
-        "wikidata=Q46336",
-        "wikipedia=it:Castegnero"
       ],
       "score": 12
     },
@@ -153293,6 +153273,7 @@
         "boundary=administrative",
         "name=Raveo / Raviei",
         "name:fur=Raviei",
+        "name:it=Raveo",
         "postal_code=33029",
         "ref:ISTAT=030089",
         "ref:catasto=H200",
@@ -153360,6 +153341,7 @@
         "boundary=administrative",
         "name=Villa Santina / Vile",
         "name:fur=Vile di Cjargne",
+        "name:it=Villa Santina",
         "postal_code=33029",
         "ref:ISTAT=030133",
         "ref:catasto=L909",
