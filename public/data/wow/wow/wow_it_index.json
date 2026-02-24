@@ -1,0 +1,17 @@
+{
+  "updated_at": "2026-02-24",
+  "schema": "wow_v1",
+  "fallback_all": "/data/wow/wow_it_all.json",
+  "regions": [
+    { "slug": "veneto",    "name": "Veneto",    "url": "/data/wow/wow_it_veneto.json" },
+    { "slug": "lombardia", "name": "Lombardia", "url": "/data/wow/wow_it_lombardia.json" },
+    { "slug": "lazio",     "name": "Lazio",     "url": "/data/wow/wow_it_lazio.json" },
+    { "slug": "toscana",   "name": "Toscana",   "url": "/data/wow/wow_it_toscana.json" },
+    { "slug": "sicilia",   "name": "Sicilia",   "url": "/data/wow/wow_it_sicilia.json" }
+  ],
+  "settings": {
+    "showDatasetCounts": false,
+    "minResultsTarget": 18,
+    "wideningSoftMinutes": 30
+  }
+}
