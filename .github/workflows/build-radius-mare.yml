@@ -1,0 +1,25 @@
+name: Build radius-mare
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      - name: Build radius-mare
+        run: node scripts/build-radius-mare.js
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/data/pois/regions/radius-mare.json
+          git commit -m "build: update radius-mare" || echo "No changes"
+          git push
