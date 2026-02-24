@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-02-17T04:58:05.200Z",
+  "generated_at": "2026-02-24T04:57:26.469Z",
   "places": [
     {
       "id": "node:62513426",
@@ -48096,7 +48096,7 @@
       "tags": [
         "name=Arcè",
         "place=village",
-        "wikidata=Q116423"
+        "wikidata=Q136394749"
       ],
       "score": 100
     },
@@ -71135,23 +71135,21 @@
     },
     {
       "id": "relation:44934",
-      "name": "Nanto",
-      "lat": 45.427114,
+      "name": "Castegnero Nanto",
+      "lat": 45.4289079,
       "lon": 11.5911519,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
         "admin_level=8",
         "boundary=administrative",
-        "gfoss_id=3259",
-        "name=Nanto",
-        "postal_code=36024",
-        "ref:ISTAT=024071",
-        "ref:catasto=F838",
-        "source=geodati.gfoss.it",
+        "name=Castegnero Nanto",
+        "postal_code=36020;36024",
+        "ref:ISTAT=024128",
+        "ref:catasto=M439",
         "type=boundary",
-        "wikidata=Q46532",
-        "wikipedia=it:Nanto"
+        "wikidata=Q138426868",
+        "wikipedia=it:Castegnero Nanto"
       ],
       "score": 100
     },
@@ -72103,26 +72101,6 @@
         "type=boundary",
         "wikidata=Q46410",
         "wikipedia=it:Brendola"
-      ],
-      "score": 100
-    },
-    {
-      "id": "relation:45033",
-      "name": "Castegnero",
-      "lat": 45.4365459,
-      "lon": 11.6003578,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "admin_level=8",
-        "boundary=administrative",
-        "name=Castegnero",
-        "postal_code=36020",
-        "ref:ISTAT=024027",
-        "ref:catasto=C056",
-        "type=boundary",
-        "wikidata=Q46336",
-        "wikipedia=it:Castegnero"
       ],
       "score": 100
     },
@@ -99082,8 +99060,8 @@
     {
       "id": "node:845681232",
       "name": "Foppetta",
-      "lat": 45.8445226,
-      "lon": 9.5819855,
+      "lat": 45.8458972,
+      "lon": 9.582364,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -120347,8 +120325,8 @@
     {
       "id": "node:64778455",
       "name": "Piove di Sacco",
-      "lat": 45.297692,
-      "lon": 12.036814,
+      "lat": 45.296236,
+      "lon": 12.0356106,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -147346,20 +147324,6 @@
         "name=Grabiasca",
         "place=hamlet",
         "wikidata=Q18468255"
-      ],
-      "score": 80
-    },
-    {
-      "id": "node:8431098656",
-      "name": "Foppetta",
-      "lat": 45.8458972,
-      "lon": 9.582364,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Foppetta",
-        "place=hamlet",
-        "wikidata=Q18467803"
       ],
       "score": 80
     },
@@ -197376,6 +197340,34 @@
       "visibility": "classica",
       "tags": [
         "name=Trebi",
+        "place=hamlet"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:304937068",
+      "name": "San Donato",
+      "lat": 45.6322514,
+      "lon": 11.7906747,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=San Donato",
+        "name:vec=San Donà",
+        "place=hamlet"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:305263724",
+      "name": "San Valentino",
+      "lat": 45.7827813,
+      "lon": 10.9058813,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "loc_name=San Valentìn",
+        "name=San Valentino",
         "place=hamlet"
       ],
       "score": 55
