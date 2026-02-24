@@ -638,6 +638,11 @@
     const isItaly = cc === "IT" || !!region;
 
     const cat = canonicalCategory(categoryUI);
+
+    // 🔥 Per alcune categorie NON usare macro (mai)
+    // (es: "mare" -> se parti da Torino NON deve buttarti in macro random)
+    const NO_MACRO_CATS = new Set(["mare"]);
+
     const pools = [];
 
     if (isItaly && region?.id) {
@@ -665,37 +670,33 @@
       DATASETS_USED.push({ kind: "radius", source: p3, placesLen: loaded3.places.length });
     }
 
-    // ✅ FIX MARE: NON usare MAI i macro generici per "mare"
-    const DISABLE_MACRO_FOR = new Set(["mare"]);
-    if (DISABLE_MACRO_FOR.has(cat)) {
-      if (!pools.length) throw new Error("Nessun dataset mare valido (region/radius).");
-      return { pools, region };
-    }
+    // ✅ Macro solo se NON è una categoria NO-MACRO
+    if (!NO_MACRO_CATS.has(cat)) {
+      const countryMacro = findCountryMacroPathRobust(cc || (isItaly ? "IT" : ""));
+      const macroUrls = [];
+      if (countryMacro) macroUrls.push(countryMacro);
+      for (const u of CFG.FALLBACK_MACRO_URLS) macroUrls.push(u);
 
-    const countryMacro = findCountryMacroPathRobust(cc || (isItaly ? "IT" : ""));
-    const macroUrls = [];
-    if (countryMacro) macroUrls.push(countryMacro);
-    for (const u of CFG.FALLBACK_MACRO_URLS) macroUrls.push(u);
+      const savedMacro = localStorage.getItem("jamo_macro_url");
+      if (savedMacro) macroUrls.push(savedMacro);
 
-    const savedMacro = localStorage.getItem("jamo_macro_url");
-    if (savedMacro) macroUrls.push(savedMacro);
+      const uniq = [];
+      const seen = new Set();
+      for (const u of macroUrls) {
+        const s = String(u || "").trim();
+        if (!s || seen.has(s)) continue;
+        seen.add(s);
+        uniq.push(s);
+      }
 
-    const uniq = [];
-    const seen = new Set();
-    for (const u of macroUrls) {
-      const s = String(u || "").trim();
-      if (!s || seen.has(s)) continue;
-      seen.add(s);
-      uniq.push(s);
-    }
-
-    for (const u of uniq) {
-      const loaded = await tryLoadPlacesFile(u, signal);
-      if (!loaded) continue;
-      pools.push({ kind: "macro", source: u, places: loaded.places, bbox: null });
-      DATASETS_USED.push({ kind: "macro", source: u, placesLen: loaded.places.length });
-      localStorage.setItem("jamo_macro_url", u);
-      break;
+      for (const u of uniq) {
+        const loaded = await tryLoadPlacesFile(u, signal);
+        if (!loaded) continue;
+        pools.push({ kind: "macro", source: u, places: loaded.places, bbox: null });
+        DATASETS_USED.push({ kind: "macro", source: u, placesLen: loaded.places.length });
+        localStorage.setItem("jamo_macro_url", u);
+        break;
+      }
     }
 
     if (!pools.length) throw new Error("Nessun dataset offline valido disponibile.");
@@ -834,7 +835,11 @@
     const n = normName(place?.name || "");
     const type = normalizeType(place?.type);
 
+    // escludi relax/cantine/robe tecniche
     if (looksWellnessByName(place) || isSpaPlace(place) || hasAny(n, ["terme","spa","wellness","thermal","termale"])) return false;
+    if (t.includes("craft=winery") || t.includes("shop=wine") || t.includes("amenity=wine_bar")) return false;
+
+    // escludi storia “pura” (castelli ecc) per non mischiare categoria
     if (t.includes("historic=castle") || t.includes("historic=fort") || t.includes("historic=citywalls") || t.includes("historic=ruins")) return false;
 
     const isSettlement =
@@ -903,19 +908,16 @@
     const n = normName(place?.name || "");
     const q = hasQualitySignals(place);
 
-    // ✅ meno aggressivo: marina non è "no" a prescindere
-    if (t.includes("waterway=") || t.includes("amenity=ferry_terminal") || t.includes("harbour=")) return false;
+    // tag tecnici/portuali che sporcano (lasciamo marina SOLO se è davvero turistica)
+    if (t.includes("amenity=ferry_terminal") || t.includes("harbour=")) return false;
 
-    // ✅ include marina come segnale mare
     const strongSea =
       t.includes("natural=beach") ||
-      t.includes("natural=coastline") ||
       t.includes("natural=bay") ||
       t.includes("natural=reef") ||
       t.includes("natural=cliff") ||
       t.includes("man_made=pier") ||
-      t.includes("tourism=beach_resort") ||
-      t.includes("leisure=marina");
+      t.includes("tourism=beach_resort");
 
     const touristSignal =
       t.includes("tourism=attraction") ||
@@ -929,10 +931,13 @@
       q;
 
     const nameSea = hasAny(n, ["spiaggia","lido","baia","cala","scogliera","litorale","lungomare","beach"]);
+
+    // marina: ok solo se ha segnali turistici (altrimenti porto tecnico)
+    const marinaOk = t.includes("leisure=marina") && (touristSignal || nameSea || q);
+    if (marinaOk) return true;
+
     if (strongSea && (touristSignal || nameSea)) return true;
     if (nameSea && touristSignal) return true;
-    // ✅ se è spiaggia/lido ecc. anche senza servizi, accetta (molti OSM sono "poveri")
-    if (nameSea && strongSea) return true;
     return false;
   }
 
@@ -1052,16 +1057,12 @@
 
   function isTouristicVisitabile(place, categoryUI) {
     const cat = canonicalCategory(categoryUI);
-
     if (cat === "eventi") return false;
 
     if (cat === "borghi") return isBorgo(place);
     if (cat === "relax") return isSpaPlace(place);
     if (cat === "cantine") return isWinery(place) && (hasQualitySignals(place) || tagsStr(place).includes("website="));
-
-    // ✅ FIX MARE: NON richiedere hasTouristSignals (troppo severo su OSM)
-    if (cat === "mare") return isSea(place);
-
+    if (cat === "mare") return isSea(place) && hasTouristSignals(place);
     if (cat === "lago") return isLake(place) && hasTouristSignals(place);
     if (cat === "montagna") return isMountain(place) && (hasTouristSignals(place) || hasQualitySignals(place));
     if (cat === "hiking") return isHiking(place) && (hasTouristSignals(place) || hasQualitySignals(place));
@@ -1846,4 +1847,3 @@
     getDatasetsUsed: () => DATASETS_USED,
   };
 })();
-```0
