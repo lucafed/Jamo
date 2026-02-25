@@ -36,9 +36,6 @@
 
     MIN_KM_DEFAULT: 1.6,
     MIN_KM_FAMILY: 1.2,
-
-    // 🔥 se dopo strict trovi meno di così, parte la modalità SOFT (sempre anti-rumore)
-    SOFT_MIN_RESULTS: 10,
   };
 
   // -------------------- STATE --------------------
@@ -641,9 +638,13 @@
     const isItaly = cc === "IT" || !!region;
 
     const cat = canonicalCategory(categoryUI);
+
+    // 🔥 Per alcune categorie NON usare macro (mai)
+    // (es: "mare" -> se parti da Torino NON deve buttarti in macro random)
+    const NO_MACRO_CATS = new Set(["mare"]);
+
     const pools = [];
 
-    // 1) IT region datasets (cat + core)
     if (isItaly && region?.id) {
       const rid = String(region.id);
 
@@ -662,7 +663,6 @@
       }
     }
 
-    // 2) radius dataset (per ogni categoria: mare, lago, ecc)
     const p3 = `/data/pois/regions/radius-${cat}.json`;
     const loaded3 = await tryLoadPlacesFile(p3, signal);
     if (loaded3) {
@@ -670,31 +670,33 @@
       DATASETS_USED.push({ kind: "radius", source: p3, placesLen: loaded3.places.length });
     }
 
-    // 3) macro (country + fallback)
-    const countryMacro = findCountryMacroPathRobust(cc || (isItaly ? "IT" : ""));
-    const macroUrls = [];
-    if (countryMacro) macroUrls.push(countryMacro);
-    for (const u of CFG.FALLBACK_MACRO_URLS) macroUrls.push(u);
+    // ✅ Macro solo se NON è una categoria NO-MACRO
+    if (!NO_MACRO_CATS.has(cat)) {
+      const countryMacro = findCountryMacroPathRobust(cc || (isItaly ? "IT" : ""));
+      const macroUrls = [];
+      if (countryMacro) macroUrls.push(countryMacro);
+      for (const u of CFG.FALLBACK_MACRO_URLS) macroUrls.push(u);
 
-    const savedMacro = localStorage.getItem("jamo_macro_url");
-    if (savedMacro) macroUrls.push(savedMacro);
+      const savedMacro = localStorage.getItem("jamo_macro_url");
+      if (savedMacro) macroUrls.push(savedMacro);
 
-    const uniq = [];
-    const seen = new Set();
-    for (const u of macroUrls) {
-      const s = String(u || "").trim();
-      if (!s || seen.has(s)) continue;
-      seen.add(s);
-      uniq.push(s);
-    }
+      const uniq = [];
+      const seen = new Set();
+      for (const u of macroUrls) {
+        const s = String(u || "").trim();
+        if (!s || seen.has(s)) continue;
+        seen.add(s);
+        uniq.push(s);
+      }
 
-    for (const u of uniq) {
-      const loaded = await tryLoadPlacesFile(u, signal);
-      if (!loaded) continue;
-      pools.push({ kind: "macro", source: u, places: loaded.places, bbox: null });
-      DATASETS_USED.push({ kind: "macro", source: u, placesLen: loaded.places.length });
-      localStorage.setItem("jamo_macro_url", u);
-      break;
+      for (const u of uniq) {
+        const loaded = await tryLoadPlacesFile(u, signal);
+        if (!loaded) continue;
+        pools.push({ kind: "macro", source: u, places: loaded.places, bbox: null });
+        DATASETS_USED.push({ kind: "macro", source: u, placesLen: loaded.places.length });
+        localStorage.setItem("jamo_macro_url", u);
+        break;
+      }
     }
 
     if (!pools.length) throw new Error("Nessun dataset offline valido disponibile.");
@@ -733,16 +735,6 @@
     );
   }
 
-  function qualityBoost(place) {
-    const t = tagsStr(place);
-    let b = 0;
-    if (t.includes("wikipedia=") || t.includes("wikidata=")) b += 0.06;
-    if (t.includes("website=") || t.includes("contact:website=")) b += 0.05;
-    if (t.includes("opening_hours=")) b += 0.03;
-    if (t.includes("phone=") || t.includes("contact:phone=")) b += 0.02;
-    return b;
-  }
-
   function hasTouristSignals(place){
     const t = tagsStr(place);
     const n = normName(place?.name || "");
@@ -773,8 +765,7 @@
       "castello","rocca","forte","torre",
       "abbazia","duomo","cattedrale","santuario",
       "riserva","oasi","parco",
-      "cascata","gole","belvedere","panorama",
-      "spiaggia","lido","baia","cala","scogliera","lungomare"
+      "cascata","gole","belvedere","panorama"
     ]);
 
     return quality || osmTourism || services || wowName;
@@ -806,10 +797,6 @@
   function looksLakeByName(place) {
     const n = normName(place?.name || "");
     return hasAny(n, ["lago","laghetto","lake","lac","laguna"]);
-  }
-  function looksSeaByName(place) {
-    const n = normName(place?.name || "");
-    return hasAny(n, ["spiaggia","lido","baia","cala","scogliera","lungomare","beach","mare"]);
   }
 
   function isSpaPlace(place) {
@@ -848,7 +835,12 @@
     const n = normName(place?.name || "");
     const type = normalizeType(place?.type);
 
-    if (looksWellnessByName(place) || isSpaPlace(place)) return false;
+    // escludi relax/cantine/robe tecniche
+    if (looksWellnessByName(place) || isSpaPlace(place) || hasAny(n, ["terme","spa","wellness","thermal","termale"])) return false;
+    if (t.includes("craft=winery") || t.includes("shop=wine") || t.includes("amenity=wine_bar")) return false;
+
+    // escludi storia “pura” (castelli ecc) per non mischiare categoria
+    if (t.includes("historic=castle") || t.includes("historic=fort") || t.includes("historic=citywalls") || t.includes("historic=ruins")) return false;
 
     const isSettlement =
       t.includes("place=village") ||
@@ -860,10 +852,8 @@
     const nameLooksBorgo = hasAny(n, ["borgo","centro storico","frazione","contrada","corte"]);
     const typeSaysBorgo = (type === "borghi" || type === "borgo");
 
-    // ✅ borghi: se è insediamento vero, basta che sia “visitabile” (soft qualità)
-    if (isSettlement) return hasTouristSignals(place) || hasQualitySignals(place) || nameLooksBorgo;
-
-    if ((typeSaysBorgo || nameLooksBorgo) && (hasTouristSignals(place) || hasQualitySignals(place))) return true;
+    if (isSettlement) return hasTouristSignals(place);
+    if ((typeSaysBorgo || nameLooksBorgo) && hasTouristSignals(place)) return true;
     return false;
   }
 
@@ -890,7 +880,7 @@
     return false;
   }
 
-  // Mare (Italia) solo vicino costa — ma con fallback nome (soft) per non morire
+  // Mare (Italia) solo vicino costa
   const COASTAL_BBOXES_IT = [
     { minLat: 44.75, maxLat: 46.30, minLon: 12.00, maxLon: 13.90 },
     { minLat: 44.00, maxLat: 45.15, minLon: 11.80, maxLon: 13.40 },
@@ -912,20 +902,14 @@
     }
     return false;
   }
-
   function isSea(place) {
+    if (!isNearCoast(place)) return false;
     const t = tagsStr(place);
     const n = normName(place?.name || "");
     const q = hasQualitySignals(place);
 
-    // ✅ se non è vicino costa, accetta SOLO se nome+tag forti (soft)
-    const near = isNearCoast(place);
-    if (!near) {
-      if (!looksSeaByName(place)) return false;
-    }
-
-    // no confusione (porti/traghetti)
-    if (t.includes("waterway=") || t.includes("amenity=ferry_terminal") || t.includes("harbour=")) return false;
+    // tag tecnici/portuali che sporcano (lasciamo marina SOLO se è davvero turistica)
+    if (t.includes("amenity=ferry_terminal") || t.includes("harbour=")) return false;
 
     const strongSea =
       t.includes("natural=beach") ||
@@ -933,9 +917,7 @@
       t.includes("natural=reef") ||
       t.includes("natural=cliff") ||
       t.includes("man_made=pier") ||
-      t.includes("leisure=marina") ||
-      t.includes("tourism=beach_resort") ||
-      t.includes("leisure=water_park");
+      t.includes("tourism=beach_resort");
 
     const touristSignal =
       t.includes("tourism=attraction") ||
@@ -948,13 +930,14 @@
       t.includes("sport=swimming") ||
       q;
 
-    const nameSea = looksSeaByName(place);
+    const nameSea = hasAny(n, ["spiaggia","lido","baia","cala","scogliera","litorale","lungomare","beach"]);
 
-    // ✅ regola: mare vero se (strong) o (name+tourist) o (near+name)
+    // marina: ok solo se ha segnali turistici (altrimenti porto tecnico)
+    const marinaOk = t.includes("leisure=marina") && (touristSignal || nameSea || q);
+    if (marinaOk) return true;
+
     if (strongSea && (touristSignal || nameSea)) return true;
     if (nameSea && touristSignal) return true;
-    if (near && nameSea) return true;
-
     return false;
   }
 
@@ -1009,7 +992,6 @@
     return false;
   }
 
-  // 🔥 prima scartavi “troppo” su mare/relax/cantine — ora è intelligente:
   function isLodgingOrFood(place, category) {
     const t = tagsStr(place);
 
@@ -1022,24 +1004,13 @@
       t.includes("amenity=restaurant") || t.includes("amenity=fast_food") || t.includes("amenity=cafe") ||
       t.includes("amenity=bar") || t.includes("amenity=pub") || t.includes("amenity=ice_cream");
 
-    // ✅ MARE: beach club / ristoranti sul mare / resort sono spesso la “meta”
-    if (category === "mare") {
-      if (isSea(place) || looksSeaByName(place)) return false;
-    }
-
-    // ✅ RELAX: hotel ok SOLO se è spa/terme, altrimenti scarta
     if (category === "relax" && lodging) {
       if (isSpaPlace(place) || looksWellnessByName(place)) return false;
-      return true;
     }
-
-    // ✅ CANTINE: ristoranti ok SOLO se è winery
     if (category === "cantine" && food) {
       if (isWinery(place)) return false;
-      return true;
     }
 
-    // altrimenti scarta lodging/food perché non è “meta”
     return lodging || food;
   }
 
@@ -1072,55 +1043,32 @@
     }
 
     if (cat === "family") {
-      const n = normName(place?.name || "");
       return (
         t.includes("tourism=theme_park") ||
         t.includes("leisure=water_park") ||
         t.includes("tourism=zoo") ||
         t.includes("tourism=aquarium") ||
-        n.includes("parco avventura") ||
-        n.includes("zipline") ||
-        n.includes("fattoria didattica")
+        normName(place?.name || "").includes("parco avventura")
       );
     }
 
     return true;
   }
 
-  // 🔥 visitabile: non deve ammazzare i risultati.
-  // modalità STRICT (default) + modalità SOFT (se pochi risultati)
-  function isTouristicVisitabile(place, categoryUI, { soft = false } = {}) {
+  function isTouristicVisitabile(place, categoryUI) {
     const cat = canonicalCategory(categoryUI);
     if (cat === "eventi") return false;
 
-    // SOFT = basta che sia coerente e non-rumore. Non serve per forza website/wiki.
-    if (soft) {
-      if (isClearlyIrrelevantPlace(place)) return false;
-      // per mare/lago basta coerenza + almeno un segnale
-      if (cat === "mare") return isSea(place) || (looksSeaByName(place) && (hasTouristSignals(place) || isNearCoast(place)));
-      if (cat === "lago") return isLake(place) || (looksLakeByName(place) && hasTouristSignals(place));
-      if (cat === "relax") return isSpaPlace(place) || looksWellnessByName(place);
-      if (cat === "borghi") return isBorgo(place);
-      if (cat === "cantine") return isWinery(place);
-      if (cat === "hiking") return isHiking(place);
-      if (cat === "montagna") return isMountain(place);
-      if (cat === "storia") return matchesCategoryStrict(place, "storia") && (hasTouristSignals(place) || hasQualitySignals(place));
-      if (cat === "natura") return isNature(place) && (hasTouristSignals(place) || hasQualitySignals(place));
-      if (cat === "family") return matchesCategoryStrict(place, "family");
-      return hasTouristSignals(place) || hasQualitySignals(place);
-    }
-
-    // STRICT
     if (cat === "borghi") return isBorgo(place);
     if (cat === "relax") return isSpaPlace(place);
     if (cat === "cantine") return isWinery(place) && (hasQualitySignals(place) || tagsStr(place).includes("website="));
-    if (cat === "mare") return isSea(place); // ✅ non più doppio filtro
-    if (cat === "lago") return isLake(place) && (hasTouristSignals(place) || hasQualitySignals(place));
+    if (cat === "mare") return isSea(place) && hasTouristSignals(place);
+    if (cat === "lago") return isLake(place) && hasTouristSignals(place);
     if (cat === "montagna") return isMountain(place) && (hasTouristSignals(place) || hasQualitySignals(place));
     if (cat === "hiking") return isHiking(place) && (hasTouristSignals(place) || hasQualitySignals(place));
     if (cat === "storia") return matchesCategoryStrict(place, "storia") && hasTouristSignals(place);
     if (cat === "natura") return isNature(place) && hasTouristSignals(place);
-    if (cat === "family") return matchesCategoryStrict(place, "family") && (hasTouristSignals(place) || hasQualitySignals(place));
+    if (cat === "family") return matchesCategoryStrict(place, "family") && hasTouristSignals(place);
 
     return hasTouristSignals(place);
   }
@@ -1134,7 +1082,7 @@
   }
 
   // -------------------- SCORING --------------------
-  function baseScorePlace({ driveMin, targetMin, beautyScore, isChicca, place }) {
+  function baseScorePlace({ driveMin, targetMin, beautyScore, isChicca }) {
     const t = clamp(
       1 - Math.abs(driveMin - targetMin) / Math.max(18, targetMin * 0.9),
       0,
@@ -1142,9 +1090,7 @@
     );
     const b = clamp(Number(beautyScore) || 0.72, 0.35, 1);
     const c = isChicca ? 0.06 : 0;
-    const q = qualityBoost(place);
-    const tour = hasTouristSignals(place) ? 0.03 : 0;
-    return 0.58 * t + 0.30 * b + c + q + tour;
+    return 0.62 * t + 0.32 * b + c;
   }
 
   function rotationPenalty(pid, recentSet) {
@@ -1160,18 +1106,17 @@
     const summerThing =
       t.includes("leisure=water_park") ||
       t.includes("natural=beach") ||
-      t.includes("leisure=marina") ||
-      looksSeaByName(place);
+      t.includes("leisure=marina");
     const winterThing =
       t.includes("piste:type=") ||
       t.includes("sport=skiing") ||
       t.includes("aerialway=");
 
-    if (isWinterNow() && summerThing) return -0.14;
+    if (isWinterNow() && summerThing) return -0.18;
     if (isSummerNow() && winterThing) return -0.18;
 
     if (isWinterNow() && isSpaPlace(place)) return +0.12;
-    if (isSummerNow() && summerThing) return +0.08;
+    if (isSummerNow() && summerThing) return +0.06;
 
     return 0;
   }
@@ -1187,12 +1132,7 @@
     maxMinutes,
     categoryUI,
     styles,
-    {
-      ignoreVisited = false,
-      ignoreRotation = false,
-      softVisitability = false,
-      allowFoodLodging = false
-    } = {}
+    { ignoreVisited = false, ignoreRotation = false } = {}
   ) {
     const visited = getVisitedSet();
     const recentSet = getRecentSet();
@@ -1202,7 +1142,6 @@
     const oLon = Number(origin.lon);
 
     const candidates = [];
-    const cat = canonicalCategory(categoryUI);
 
     for (const raw of pool) {
       const p = normalizePlace(raw);
@@ -1212,13 +1151,10 @@
       if (!nm || nm.length < 2) continue;
 
       if (isClearlyIrrelevantPlace(p)) continue;
-
-      // food/lodging: scarta, ma se siamo in SOFT e la categoria è “mare”/“storia” può essere meta
-      if (!allowFoodLodging && isLodgingOrFood(p, cat)) continue;
+      if (isLodgingOrFood(p, canonicalCategory(categoryUI))) continue;
 
       if (!matchesCategoryStrict(p, categoryUI)) continue;
-
-      if (!isTouristicVisitabile(p, categoryUI, { soft: softVisitability })) continue;
+      if (!isTouristicVisitabile(p, categoryUI)) continue;
 
       if (!matchesStyle(p, styles)) continue;
 
@@ -1230,7 +1166,7 @@
       if (!Number.isFinite(driveMin) || driveMin > target) continue;
 
       const minKm =
-        cat === "family"
+        canonicalCategory(categoryUI) === "family"
           ? CFG.MIN_KM_FAMILY
           : CFG.MIN_KM_DEFAULT;
       if (km < minKm) continue;
@@ -1241,7 +1177,6 @@
         targetMin: target,
         beautyScore: p.beauty_score,
         isChicca,
-        place: p
       });
 
       if (!ignoreRotation) s -= rotationPenalty(pid, recentSet);
@@ -1301,41 +1236,21 @@
   }
 
   function pickTopOptions(pool, origin, minutes, categoryUI, styles) {
-    const cat = canonicalCategory(categoryUI);
-
-    // 1) STRICT
     let c = buildCandidatesFromPool(pool, origin, minutes, categoryUI, styles, {
       ignoreVisited: false,
       ignoreRotation: false,
-      softVisitability: false,
-      allowFoodLodging: false
     });
-    if (c.length >= CFG.SOFT_MIN_RESULTS) return { list: c, usedFallback: false };
+    if (c.length) return { list: c, usedFallback: false };
 
-    // 2) STRICT ma senza rotazione (più varietà)
     c = buildCandidatesFromPool(pool, origin, minutes, categoryUI, styles, {
       ignoreVisited: false,
       ignoreRotation: true,
-      softVisitability: false,
-      allowFoodLodging: false
-    });
-    if (c.length >= CFG.SOFT_MIN_RESULTS) return { list: c, usedFallback: true };
-
-    // 3) SOFT visitabilità (sempre anti-rumore)
-    c = buildCandidatesFromPool(pool, origin, minutes, categoryUI, styles, {
-      ignoreVisited: false,
-      ignoreRotation: true,
-      softVisitability: true,
-      allowFoodLodging: (cat === "mare" || cat === "storia")
     });
     if (c.length) return { list: c, usedFallback: true };
 
-    // 4) ultimo: ignora visitati + soft
     c = buildCandidatesFromPool(pool, origin, minutes, categoryUI, styles, {
       ignoreVisited: true,
       ignoreRotation: true,
-      softVisitability: true,
-      allowFoodLodging: (cat === "mare" || cat === "storia")
     });
     return { list: c, usedFallback: true };
   }
@@ -1656,7 +1571,7 @@
 
     const muls =
       category === "family" ? [1.15, 1.30, 1.50] :
-      category === "mare"   ? [1.20, 1.45, 1.70] :
+      category === "mare"   ? [1.15, 1.35, 1.55] :
       category === "hiking" ? [1.15, 1.35, 1.60] :
       category === "montagna"?[1.15, 1.35, 1.60] :
                               [1.20, 1.40, 1.60];
