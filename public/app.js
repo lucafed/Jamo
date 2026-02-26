@@ -133,6 +133,14 @@
     setTimeout(() => el.scrollIntoView({ behavior: "smooth", block: "start" }), 20);
   }
 
+  function isNumericJunkName(name) {
+    const s = String(name || "").trim();
+    if (!s) return true;
+    if (/^\d{2,}$/.test(s)) return true; // "805" "1234"
+    if (/^[\d\s\-_]+$/.test(s) && s.replace(/\D/g, "").length >= 2) return true;
+    return false;
+  }
+
   // -------------------- MINI CSS --------------------
   function injectMiniCssOnce() {
     if (document.getElementById("jamo-mini-css")) return;
@@ -640,7 +648,6 @@
     const cat = canonicalCategory(categoryUI);
 
     // 🔥 Per alcune categorie NON usare macro (mai)
-    // (es: "mare" -> se parti da Torino NON deve buttarti in macro random)
     const NO_MACRO_CATS = new Set(["mare"]);
 
     const pools = [];
@@ -670,7 +677,6 @@
       DATASETS_USED.push({ kind: "radius", source: p3, placesLen: loaded3.places.length });
     }
 
-    // ✅ Macro solo se NON è una categoria NO-MACRO
     if (!NO_MACRO_CATS.has(cat)) {
       const countryMacro = findCountryMacroPathRobust(cc || (isItaly ? "IT" : ""));
       const macroUrls = [];
@@ -750,7 +756,9 @@
       t.includes("leisure=park") ||
       t.includes("leisure=garden") ||
       t.includes("natural=waterfall") ||
-      t.includes("natural=cave_entrance");
+      t.includes("natural=cave_entrance") ||
+      t.includes("natural=beach") ||          // ✅ conta come segnale turistico
+      t.includes("tourism=beach_resort");
 
     const services =
       t.includes("amenity=restaurant") ||
@@ -765,7 +773,8 @@
       "castello","rocca","forte","torre",
       "abbazia","duomo","cattedrale","santuario",
       "riserva","oasi","parco",
-      "cascata","gole","belvedere","panorama"
+      "cascata","gole","belvedere","panorama",
+      "spiaggia","lido","baia","cala","scogliera","lungomare"
     ]);
 
     return quality || osmTourism || services || wowName;
@@ -835,11 +844,9 @@
     const n = normName(place?.name || "");
     const type = normalizeType(place?.type);
 
-    // escludi relax/cantine/robe tecniche
     if (looksWellnessByName(place) || isSpaPlace(place) || hasAny(n, ["terme","spa","wellness","thermal","termale"])) return false;
     if (t.includes("craft=winery") || t.includes("shop=wine") || t.includes("amenity=wine_bar")) return false;
 
-    // escludi storia “pura” (castelli ecc) per non mischiare categoria
     if (t.includes("historic=castle") || t.includes("historic=fort") || t.includes("historic=citywalls") || t.includes("historic=ruins")) return false;
 
     const isSettlement =
@@ -880,19 +887,43 @@
     return false;
   }
 
-  // Mare (Italia) solo vicino costa
+  // -------------------- MARE: COAST FILTER (FIXATO) --------------------
+  // BBox “costiere” italiane (approssimate) + fix forte per LIGURIA ponente/levante
   const COASTAL_BBOXES_IT = [
+    // ✅ LIGURIA completa (ponente + levante) — fondamentale per Torino
+    { minLat: 43.60, maxLat: 44.85, minLon: 7.00, maxLon: 10.85 },
+
+    // Tirreno alto (Toscana / Versilia / Maremma nord)
+    { minLat: 42.30, maxLat: 44.20, minLon: 9.70,  maxLon: 11.80 },
+
+    // Adriatico nord (Veneto/FVG)
     { minLat: 44.75, maxLat: 46.30, minLon: 12.00, maxLon: 13.90 },
-    { minLat: 44.00, maxLat: 45.15, minLon: 11.80, maxLon: 13.40 },
-    { minLat: 42.55, maxLat: 44.20, minLon: 12.90, maxLon: 13.90 },
-    { minLat: 41.98, maxLat: 42.52, minLon: 13.90, maxLon: 14.90 },
-    { minLat: 41.00, maxLat: 42.20, minLon: 11.20, maxLon: 12.90 },
-    { minLat: 42.30, maxLat: 44.10, minLon: 9.70,  maxLon: 11.40 },
-    { minLat: 40.40, maxLat: 41.20, minLon: 13.70, maxLon: 15.10 },
-    { minLat: 39.70, maxLat: 42.20, minLon: 15.00, maxLon: 18.60 },
-    { minLat: 36.60, maxLat: 38.40, minLon: 12.20, maxLon: 15.70 },
-    { minLat: 38.80, maxLat: 41.40, minLon: 8.00,  maxLon: 9.90 },
+
+    // Adriatico centro-nord (Emilia-Romagna/Marche nord)
+    { minLat: 43.70, maxLat: 45.30, minLon: 11.60, maxLon: 13.90 },
+
+    // Adriatico centro (Marche/Abruzzo)
+    { minLat: 41.98, maxLat: 44.20, minLon: 13.10, maxLon: 14.90 },
+
+    // Tirreno centro (Lazio)
+    { minLat: 40.90, maxLat: 42.35, minLon: 10.80, maxLon: 13.00 },
+
+    // Campania / Basilicata tirrenica
+    { minLat: 39.80, maxLat: 41.40, minLon: 13.40, maxLon: 15.20 },
+
+    // Puglia (Adriatico + Ionio)
+    { minLat: 39.40, maxLat: 42.30, minLon: 14.80, maxLon: 18.80 },
+
+    // Calabria
+    { minLat: 37.70, maxLat: 40.40, minLon: 15.00, maxLon: 17.50 },
+
+    // Sicilia
+    { minLat: 36.40, maxLat: 38.70, minLon: 12.00, maxLon: 15.80 },
+
+    // Sardegna
+    { minLat: 38.80, maxLat: 41.60, minLon: 8.00,  maxLon: 9.95 },
   ];
+
   function isNearCoast(place) {
     const lat = Number(place?.lat);
     const lon = Number(place?.lon);
@@ -902,14 +933,37 @@
     }
     return false;
   }
+
   function isSea(place) {
+    // ✅ Se non è vicino costa → NO
     if (!isNearCoast(place)) return false;
+
     const t = tagsStr(place);
     const n = normName(place?.name || "");
     const q = hasQualitySignals(place);
+    const type = normalizeType(place?.type);
 
-    // tag tecnici/portuali che sporcano (lasciamo marina SOLO se è davvero turistica)
+    // tag tecnici/portuali che sporcano
     if (t.includes("amenity=ferry_terminal") || t.includes("harbour=")) return false;
+
+    const nameSea = hasAny(n, ["spiaggia","lido","baia","cala","scogliera","litorale","lungomare","beach"]);
+
+    // ✅ Se il dataset dice già "mare", accetta con condizioni anti-spazzatura:
+    // - nome non numerico
+    // - e almeno 1 segnale: nome marino OR segnali turistici OR quality OR tag mare forte
+    if (type === "mare") {
+      if (isNumericJunkName(place?.name)) return false;
+      const ok =
+        nameSea ||
+        hasTouristSignals(place) ||
+        q ||
+        t.includes("natural=beach") ||
+        t.includes("natural=bay") ||
+        t.includes("tourism=beach_resort") ||
+        t.includes("man_made=pier") ||
+        t.includes("leisure=marina");
+      return !!ok;
+    }
 
     const strongSea =
       t.includes("natural=beach") ||
@@ -920,24 +974,16 @@
       t.includes("tourism=beach_resort");
 
     const touristSignal =
-      t.includes("tourism=attraction") ||
-      t.includes("tourism=viewpoint") ||
-      t.includes("tourism=information") ||
-      t.includes("amenity=bar") ||
-      t.includes("amenity=restaurant") ||
-      t.includes("amenity=cafe") ||
-      t.includes("amenity=toilets") ||
+      hasTouristSignals(place) ||
       t.includes("sport=swimming") ||
       q;
 
-    const nameSea = hasAny(n, ["spiaggia","lido","baia","cala","scogliera","litorale","lungomare","beach"]);
-
-    // marina: ok solo se ha segnali turistici (altrimenti porto tecnico)
     const marinaOk = t.includes("leisure=marina") && (touristSignal || nameSea || q);
     if (marinaOk) return true;
 
     if (strongSea && (touristSignal || nameSea)) return true;
     if (nameSea && touristSignal) return true;
+
     return false;
   }
 
@@ -1062,8 +1108,8 @@
     if (cat === "borghi") return isBorgo(place);
     if (cat === "relax") return isSpaPlace(place);
     if (cat === "cantine") return isWinery(place) && (hasQualitySignals(place) || tagsStr(place).includes("website="));
-    if (cat === "mare") return isSea(place) && hasTouristSignals(place);
-    if (cat === "lago") return isLake(place) && hasTouristSignals(place);
+    if (cat === "mare") return isSea(place) && (hasTouristSignals(place) || hasQualitySignals(place));
+    if (cat === "lago") return isLake(place) && (hasTouristSignals(place) || hasQualitySignals(place));
     if (cat === "montagna") return isMountain(place) && (hasTouristSignals(place) || hasQualitySignals(place));
     if (cat === "hiking") return isHiking(place) && (hasTouristSignals(place) || hasQualitySignals(place));
     if (cat === "storia") return matchesCategoryStrict(place, "storia") && hasTouristSignals(place);
@@ -1149,6 +1195,7 @@
 
       const nm = String(p.name || "").trim();
       if (!nm || nm.length < 2) continue;
+      if (isNumericJunkName(nm)) continue; // ✅ stop nomi spazzatura
 
       if (isClearlyIrrelevantPlace(p)) continue;
       if (isLodgingOrFood(p, canonicalCategory(categoryUI))) continue;
