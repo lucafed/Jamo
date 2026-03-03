@@ -7,7 +7,7 @@
     "lng": 11.9,
     "radius_km": 240
   },
-  "generated_at": "2026-02-24T05:02:45.654Z",
+  "generated_at": "2026-03-03T04:57:20.254Z",
   "places": [
     {
       "id": "osm:w:48528567",
@@ -1608,6 +1608,55 @@
         "name=piscina termale"
       ],
       "score": 25
+    },
+    {
+      "id": "osm:n:8701286579",
+      "name": "Un tempo per Te",
+      "lat": 45.9622358,
+      "lon": 10.9116349,
+      "type": "relax",
+      "visibility": "classica",
+      "beauty_score": 0.86,
+      "country": "IT",
+      "area": "Veneto",
+      "tags": [
+        "addr:city=Dro",
+        "addr:housenumber=6",
+        "addr:postcode=38074",
+        "addr:street=Via Torre",
+        "amenity=restaurant",
+        "appointment=required",
+        "booking=yes",
+        "check_date=2026-02-27",
+        "classes=cooking",
+        "cuisine=home_cooking",
+        "currency:DASH=yes",
+        "currency:XBT=yes",
+        "description=Bed & Breakfast con centro olistico (yoga e massaggi Ayurveda), home restaurant e corsi di cucina. Servizi disponibili solo su prenotazione.",
+        "diet:gluten_free=yes",
+        "diet:vegan=yes",
+        "email=info@untempoperte.it",
+        "guest_house=bed_and_breakfast",
+        "healthcare=massage",
+        "healthcare:speciality=ayurveda",
+        "internet_access=wlan",
+        "internet_access:fee=no",
+        "leisure=fitness_station",
+        "name=Un tempo per Te",
+        "opening_hours=\"by appointment\"",
+        "payment:cash=yes",
+        "payment:gold=yes",
+        "payment:lightning=yes",
+        "payment:lightning_contactless=yes",
+        "payment:onchain=yes",
+        "payment:silver=yes",
+        "phone=+39 333 364 9554",
+        "reservation=only",
+        "sport=yoga",
+        "tourism=guest_house",
+        "website=https://www.untempoperte.it"
+      ],
+      "score": 0
     }
   ]
 }
