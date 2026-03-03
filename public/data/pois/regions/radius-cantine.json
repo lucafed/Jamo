@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-02-24T04:57:35.024Z",
+  "generated_at": "2026-03-03T04:52:22.591Z",
   "places": [
     {
       "id": "node:2692275706",
@@ -7641,7 +7641,7 @@
         "addr:postcode=24122",
         "addr:street=Via Don Luigi Palazzolo",
         "biergarten=yes",
-        "check_date=2025-07-22",
+        "check_date=2026-02-26",
         "contact:facebook=https://www.facebook.com/superbarbergamo/",
         "contact:instagram=https://www.instagram.com/superbarbergamo/",
         "currency:EUR=yes",
@@ -12206,8 +12206,6 @@
       "type": "cantine",
       "visibility": "classica",
       "tags": [
-        "addr:housenumber=7",
-        "addr:street=Vial da la Stazion",
         "check_date=2023-07-06",
         "name=Bondolfi Vini",
         "shop=wine"
@@ -13313,6 +13311,35 @@
       "tags": [
         "description=É lo stesso negozio della macelleria qui vicino.",
         "name=Dalle Fusine",
+        "shop=wine"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:13607254867",
+      "name": "Zona dell'oste",
+      "lat": 44.8418374,
+      "lon": 11.6250794,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=10a",
+        "addr:street=Corso Porta Mare",
+        "check_date=2026-02-28",
+        "name=Zona dell'oste",
+        "shop=wine"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:13607344629",
+      "name": "Enoteca Stradi",
+      "lat": 44.5620041,
+      "lon": 10.8639134,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Enoteca Stradi",
         "shop=wine"
       ],
       "score": 25

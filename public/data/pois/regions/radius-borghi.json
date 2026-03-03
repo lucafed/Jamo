@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-02-24T04:57:26.469Z",
+  "generated_at": "2026-03-03T04:52:06.276Z",
   "places": [
     {
       "id": "node:62513426",
@@ -38706,9 +38706,11 @@
       "visibility": "classica",
       "tags": [
         "gfoss_id=1966",
+        "loc_name=Brignano",
         "name=Brignano Gera d'Adda",
         "place=village",
         "population=4773",
+        "short_name=Brignano",
         "source=geodati.gfoss.it",
         "wikidata=Q30023150"
       ],
@@ -49666,8 +49668,8 @@
     {
       "id": "node:540208138",
       "name": "Arzerello",
-      "lat": 45.2754544,
-      "lon": 12.0280283,
+      "lat": 45.2751579,
+      "lon": 12.0283381,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -71145,7 +71147,7 @@
         "boundary=administrative",
         "name=Castegnero Nanto",
         "postal_code=36020;36024",
-        "ref:ISTAT=024128",
+        "ref:ISTAT=024129",
         "ref:catasto=M439",
         "type=boundary",
         "wikidata=Q138426868",
@@ -74422,10 +74424,12 @@
       "tags": [
         "admin_level=8",
         "boundary=administrative",
+        "loc_name=Brignano",
         "name=Brignano Gera d'Adda",
         "postal_code=24053",
         "ref:ISTAT=016040",
         "ref:catasto=B178",
+        "short_name=Brignano",
         "type=boundary",
         "wikidata=Q100015",
         "wikipedia=it:Brignano Gera d'Adda"
@@ -132692,8 +132696,8 @@
     {
       "id": "node:1547534967",
       "name": "Palazzo Corni",
-      "lat": 45.1310372,
-      "lon": 11.9631584,
+      "lat": 45.1311756,
+      "lon": 11.9626831,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -144120,8 +144124,8 @@
     {
       "id": "node:4437680322",
       "name": "Seo",
-      "lat": 46.057222,
-      "lon": 10.8724528,
+      "lat": 46.0572465,
+      "lon": 10.8724692,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
