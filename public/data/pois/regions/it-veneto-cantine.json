@@ -7,7 +7,7 @@
     "minLon": 10.2,
     "maxLon": 13.2
   },
-  "generated_at": "2026-02-26T04:43:37.898Z",
+  "generated_at": "2026-03-05T04:28:04.033Z",
   "places": [
     {
       "id": "node:12766026527",
@@ -4943,6 +4943,24 @@
         "building=yes",
         "craft=winery",
         "name=Cantina sociale cooperativa di Villa Argine",
+        "source=Regione Emilia Romagna"
+      ],
+      "score": 70,
+      "beauty_score": 1
+    },
+    {
+      "id": "way:168266324",
+      "name": "Cantina Sociale Due Torri",
+      "lat": 44.7660063,
+      "lon": 10.4344402,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=23",
+        "addr:street=Via Emilia",
+        "building=yes",
+        "craft=winery",
+        "name=Cantina Sociale Due Torri",
         "source=Regione Emilia Romagna"
       ],
       "score": 70,
