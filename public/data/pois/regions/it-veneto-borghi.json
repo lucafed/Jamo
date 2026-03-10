@@ -3,7 +3,7 @@
   "country": "IT",
   "area": "Veneto",
   "label_it": "Veneto • Borghi (turistici + piccoli)",
-  "generated_at": "2026-03-03T04:44:16.091Z",
+  "generated_at": "2026-03-10T04:30:23.146Z",
   "places": [
     {
       "id": "node:66503077",
@@ -18931,7 +18931,7 @@
       "tags": [
         "name=Arcè",
         "place=village",
-        "wikidata=Q136394749"
+        "wikidata=Q116423"
       ],
       "score": 85
     },
@@ -22575,8 +22575,8 @@
     {
       "id": "node:540208138",
       "name": "Arzerello",
-      "lat": 45.2751579,
-      "lon": 12.0283381,
+      "lat": 45.2754544,
+      "lon": 12.0280283,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -25749,7 +25749,6 @@
         "istat_id=2147483647",
         "name=San Francesco / San Francesc",
         "name:fur=San Francesc",
-        "name:it=San Francesco",
         "place=village",
         "population=69",
         "wikidata=Q3947088",
@@ -43479,8 +43478,8 @@
     {
       "id": "node:64778455",
       "name": "Piove di Sacco",
-      "lat": 45.296236,
-      "lon": 12.0356106,
+      "lat": 45.297692,
+      "lon": 12.036814,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -71584,7 +71583,6 @@
       "tags": [
         "name=Val di Lauco / Val",
         "name:fur=Val",
-        "name:it=Val di Lauco",
         "official_name=Località Val",
         "place=hamlet",
         "wikidata=Q18452602"
@@ -71816,7 +71814,6 @@
         "loc_name:fur=Luvinças",
         "name=Luincis / Luvinças",
         "name:fur=Luvincis",
-        "name:it=Luincis",
         "place=hamlet",
         "population=118",
         "source=Istat 2001 - geodati.gfoss.it",
@@ -77018,7 +77015,6 @@
         "loc_name:fur=Pesaria",
         "name=Pesariis / Pesaria",
         "name:fur=Pesariis",
-        "name:it=Pesariis",
         "place=hamlet",
         "wikidata=Q3900630",
         "wikipedia=it:Pesariis"
@@ -78930,8 +78926,8 @@
     {
       "id": "node:1547534967",
       "name": "Palazzo Corni",
-      "lat": 45.1311756,
-      "lon": 11.9626831,
+      "lat": 45.1310372,
+      "lon": 11.9631584,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -96796,8 +96792,8 @@
     {
       "id": "node:4437680322",
       "name": "Seo",
-      "lat": 46.0572465,
-      "lon": 10.8724692,
+      "lat": 46.057222,
+      "lon": 10.8724528,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -97167,8 +97163,8 @@
     {
       "id": "node:4581897024",
       "name": "Poiano",
-      "lat": 45.3074712,
-      "lon": 10.4367717,
+      "lat": 45.307441,
+      "lon": 10.4367502,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -137311,8 +137307,8 @@
     },
     {
       "id": "relation:44934",
-      "name": "Castegnero Nanto",
-      "lat": 45.4289079,
+      "name": "Nanto",
+      "lat": 45.427114,
       "lon": 11.5911519,
       "type": "borgo",
       "borgo_type": "classico",
@@ -137320,13 +137316,15 @@
       "tags": [
         "admin_level=8",
         "boundary=administrative",
-        "name=Castegnero Nanto",
-        "postal_code=36020;36024",
-        "ref:ISTAT=024129",
-        "ref:catasto=M439",
+        "gfoss_id=3259",
+        "name=Nanto",
+        "postal_code=36024",
+        "ref:ISTAT=024071",
+        "ref:catasto=F838",
+        "source=geodati.gfoss.it",
         "type=boundary",
-        "wikidata=Q138426868",
-        "wikipedia=it:Castegnero Nanto"
+        "wikidata=Q46532",
+        "wikipedia=it:Nanto"
       ],
       "score": 12
     },
@@ -137795,6 +137793,27 @@
         "type=boundary",
         "wikidata=Q46410",
         "wikipedia=it:Brendola"
+      ],
+      "score": 12
+    },
+    {
+      "id": "relation:45033",
+      "name": "Castegnero",
+      "lat": 45.4365459,
+      "lon": 11.6003578,
+      "type": "borgo",
+      "borgo_type": "classico",
+      "visibility": "classica",
+      "tags": [
+        "admin_level=8",
+        "boundary=administrative",
+        "name=Castegnero",
+        "postal_code=36020",
+        "ref:ISTAT=024027",
+        "ref:catasto=C056",
+        "type=boundary",
+        "wikidata=Q46336",
+        "wikipedia=it:Castegnero"
       ],
       "score": 12
     },
@@ -152962,7 +152981,7 @@
     },
     {
       "id": "relation:179190",
-      "name": "Erto e Casso / Nert e Cjas",
+      "name": "Erto e Casso",
       "lat": 46.277061,
       "lon": 12.3674679,
       "type": "borgo",
@@ -152971,7 +152990,7 @@
       "tags": [
         "admin_level=8",
         "boundary=administrative",
-        "name=Erto e Casso / Nert e Cjas",
+        "name=Erto e Casso",
         "name:fur=Nert e Cjas",
         "name:it=Erto e Casso",
         "population=387",
@@ -153274,7 +153293,6 @@
         "boundary=administrative",
         "name=Raveo / Raviei",
         "name:fur=Raviei",
-        "name:it=Raveo",
         "postal_code=33029",
         "ref:ISTAT=030089",
         "ref:catasto=H200",
@@ -153342,7 +153360,6 @@
         "boundary=administrative",
         "name=Villa Santina / Vile",
         "name:fur=Vile di Cjargne",
-        "name:it=Villa Santina",
         "postal_code=33029",
         "ref:ISTAT=030133",
         "ref:catasto=L909",
@@ -153504,7 +153521,6 @@
         "loc_name:fur=Verzegnas",
         "name=Verzegnis",
         "name:fur=Verzegnis",
-        "name:it=Verzegnis",
         "postal_code=33020",
         "ref:ISTAT=030132",
         "ref:catasto=L801",
