@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-03-03T04:52:06.276Z",
+  "generated_at": "2026-03-10T04:47:31.945Z",
   "places": [
     {
       "id": "node:62513426",
@@ -59077,7 +59077,7 @@
       "id": "relation:43218",
       "name": "Castenaso",
       "lat": 44.5121469,
-      "lon": 11.4666412,
+      "lon": 11.4666644,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -74741,7 +74741,7 @@
       "id": "relation:45296",
       "name": "Carugate",
       "lat": 45.5509314,
-      "lon": 9.3441325,
+      "lon": 9.3441375,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -126158,6 +126158,22 @@
       "score": 80
     },
     {
+      "id": "node:530753435",
+      "name": "Grissian - Grissiano",
+      "lat": 46.5382809,
+      "lon": 11.1806207,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Grissian - Grissiano",
+        "name:de=Grissian",
+        "name:it=Grissiano",
+        "place=hamlet",
+        "wikidata=Q18509615"
+      ],
+      "score": 80
+    },
+    {
       "id": "node:531628078",
       "name": "Villaggio Pineta Bassa",
       "lat": 44.5787611,
@@ -135079,6 +135095,21 @@
         "name:it=Sirmiano di Sotto",
         "place=hamlet",
         "wikidata=Q99611682"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:1730821694",
+      "name": "Obersirmian - Sirmiano di Sopra",
+      "lat": 46.5277851,
+      "lon": 11.1881206,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Obersirmian - Sirmiano di Sopra",
+        "name:de=Obersirmian",
+        "place=hamlet",
+        "wikidata=Q18477470"
       ],
       "score": 80
     },
@@ -147693,6 +147724,22 @@
         "name=Cadignano",
         "place=hamlet",
         "wikidata=Q108122313"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:9026675848",
+      "name": "Naraun - Narano",
+      "lat": 46.5749663,
+      "lon": 11.1616541,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Naraun - Narano",
+        "name:de=Naraun",
+        "name:it=Narano",
+        "place=hamlet",
+        "wikidata=Q18509971"
       ],
       "score": 80
     },
@@ -183267,19 +183314,6 @@
       "score": 75
     },
     {
-      "id": "node:4004456437",
-      "name": "Sovalzo",
-      "lat": 46.139413,
-      "lon": 9.7444039,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Sovalzo",
-        "place=village"
-      ],
-      "score": 75
-    },
-    {
       "id": "node:4116433363",
       "name": "Sant'Antonio",
       "lat": 45.7308012,
@@ -191366,17 +191400,17 @@
     },
     {
       "id": "node:1359000319",
-      "name": "Valle",
+      "name": "Maso Valle",
       "lat": 46.0653888,
       "lon": 11.4371188,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
-        "description=Frazione",
+        "description=Località",
         "ele=675",
         "gfoss_id=23257",
         "istat_id=2147483647",
-        "name=Valle",
+        "name=Maso Valle",
         "place=hamlet",
         "population=21",
         "source=Istat 2001 - geodati.gfoss.it"
@@ -196661,8 +196695,8 @@
     {
       "id": "node:69301539",
       "name": "Novellara",
-      "lat": 44.84297,
-      "lon": 10.727492,
+      "lat": 44.8449819,
+      "lon": 10.7316465,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -197344,34 +197378,6 @@
       "visibility": "classica",
       "tags": [
         "name=Trebi",
-        "place=hamlet"
-      ],
-      "score": 55
-    },
-    {
-      "id": "node:304937068",
-      "name": "San Donato",
-      "lat": 45.6322514,
-      "lon": 11.7906747,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=San Donato",
-        "name:vec=San Donà",
-        "place=hamlet"
-      ],
-      "score": 55
-    },
-    {
-      "id": "node:305263724",
-      "name": "San Valentino",
-      "lat": 45.7827813,
-      "lon": 10.9058813,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "loc_name=San Valentìn",
-        "name=San Valentino",
         "place=hamlet"
       ],
       "score": 55

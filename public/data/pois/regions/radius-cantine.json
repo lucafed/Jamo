@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-03-03T04:52:22.591Z",
+  "generated_at": "2026-03-10T04:47:51.206Z",
   "places": [
     {
       "id": "node:2692275706",
@@ -3247,26 +3247,6 @@
       "score": 96
     },
     {
-      "id": "way:139105328",
-      "name": "Costa Arènte",
-      "lat": 45.5218459,
-      "lon": 11.0283174,
-      "type": "cantine",
-      "visibility": "classica",
-      "tags": [
-        "addr:city=Grezzana",
-        "addr:housenumber=86",
-        "addr:postcode=37023",
-        "addr:street=Località Costa",
-        "building=yes",
-        "craft=winery",
-        "name=Costa Arènte",
-        "phone=+393472111150",
-        "website=http://www.costarente.it/"
-      ],
-      "score": 96
-    },
-    {
       "id": "way:145901502",
       "name": "Sanfeletto",
       "lat": 45.9274374,
@@ -3584,6 +3564,46 @@
       "score": 96
     },
     {
+      "id": "way:1486263077",
+      "name": "Costa Arènte",
+      "lat": 45.5218352,
+      "lon": 11.0281451,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Grezzana",
+        "addr:housenumber=86",
+        "addr:postcode=37023",
+        "addr:street=Località Costa",
+        "building=yes",
+        "craft=winery",
+        "name=Costa Arènte",
+        "phone=+393472111150",
+        "website=http://www.costarente.it/"
+      ],
+      "score": 96
+    },
+    {
+      "id": "node:1651270018",
+      "name": "Acetaia Comunale",
+      "lat": 44.8447682,
+      "lon": 10.7320621,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "access=yes",
+        "email=turismo@comune.novellara.re.it",
+        "industrial=winery",
+        "level=1",
+        "name=Acetaia Comunale",
+        "product=vinegar",
+        "source=local_knowledge",
+        "tourism=attraction",
+        "website=https://www.comune.novellara.re.it/vivere-novellara/luoghi/acetaia-comunale-balsamic-vinegar"
+      ],
+      "score": 95
+    },
+    {
       "id": "node:3711825905",
       "name": "Az. Agr. Mattiazzo Leo di Mattiazzo Jessica - Il Settolo",
       "lat": 45.8839015,
@@ -3855,6 +3875,23 @@
         "building=yes",
         "craft=winery",
         "name=Cantina sociale cooperativa di Villa Argine",
+        "source=Regione Emilia Romagna"
+      ],
+      "score": 92
+    },
+    {
+      "id": "way:168266324",
+      "name": "Cantina Sociale Due Torri",
+      "lat": 44.7660063,
+      "lon": 10.4344402,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=23",
+        "addr:street=Via Emilia",
+        "building=yes",
+        "craft=winery",
+        "name=Cantina Sociale Due Torri",
         "source=Regione Emilia Romagna"
       ],
       "score": 92
@@ -4668,6 +4705,25 @@
         "craft=winery",
         "name=Al Credazzo",
         "website=https://www.alcredazzo.it/"
+      ],
+      "score": 90
+    },
+    {
+      "id": "way:464482381",
+      "name": "Pieropan",
+      "lat": 45.432134,
+      "lon": 11.2518242,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Soave",
+        "addr:postcode=37038",
+        "addr:street=Via Giacomo Matteotti",
+        "building=yes",
+        "craft=winery",
+        "fixme=Building shape is incorrect. (They put a winery on the roof or something like that)",
+        "name=Pieropan",
+        "website=https://pieropan.it/tenute/soave"
       ],
       "score": 90
     },
@@ -6273,23 +6329,6 @@
         "building=yes",
         "craft=winery",
         "name=Ansitz Rynnhof"
-      ],
-      "score": 80
-    },
-    {
-      "id": "way:464482381",
-      "name": "Pieropan",
-      "lat": 45.432134,
-      "lon": 11.2518242,
-      "type": "cantine",
-      "visibility": "classica",
-      "tags": [
-        "addr:city=Soave",
-        "addr:postcode=37038",
-        "addr:street=Via Giacomo Matteotti",
-        "building=yes",
-        "craft=winery",
-        "name=Pieropan"
       ],
       "score": 80
     },
@@ -9964,7 +10003,8 @@
         "addr:postcode=30123",
         "name=Caffè Poggi dal 1919",
         "opening_hours=Tu-Sa 08:00-19:30; Su 09:00-19:30",
-        "shop=wine"
+        "shop=wine",
+        "wheelchair=no"
       ],
       "score": 31
     },
@@ -12208,24 +12248,6 @@
       "tags": [
         "check_date=2023-07-06",
         "name=Bondolfi Vini",
-        "shop=wine"
-      ],
-      "score": 25
-    },
-    {
-      "id": "node:6959462604",
-      "name": "Vineria Fiore",
-      "lat": 45.4784659,
-      "lon": 12.2288914,
-      "type": "cantine",
-      "visibility": "classica",
-      "tags": [
-        "addr:housenumber=51",
-        "addr:street=Via Giorgio Rizzardi",
-        "check_date=2025-06-08",
-        "name=Vineria Fiore",
-        "name:it=Vineria Fiore",
-        "old_name=Bottega del Vino",
         "shop=wine"
       ],
       "score": 25
