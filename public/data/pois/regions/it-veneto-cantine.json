@@ -7,7 +7,7 @@
     "minLon": 10.2,
     "maxLon": 13.2
   },
-  "generated_at": "2026-03-05T04:28:04.033Z",
+  "generated_at": "2026-03-12T04:29:01.278Z",
   "places": [
     {
       "id": "node:12766026527",
@@ -2037,27 +2037,6 @@
       "beauty_score": 1
     },
     {
-      "id": "way:139105328",
-      "name": "Costa Arènte",
-      "lat": 45.5218459,
-      "lon": 11.0283174,
-      "type": "cantine",
-      "visibility": "classica",
-      "tags": [
-        "addr:city=Grezzana",
-        "addr:housenumber=86",
-        "addr:postcode=37023",
-        "addr:street=Località Costa",
-        "building=yes",
-        "craft=winery",
-        "name=Costa Arènte",
-        "phone=+393472111150",
-        "website=http://www.costarente.it/"
-      ],
-      "score": 88,
-      "beauty_score": 1
-    },
-    {
       "id": "way:141028896",
       "name": "Ca' Botta Wine shop",
       "lat": 45.5350707,
@@ -2490,6 +2469,27 @@
         "name=Vini Casarotto",
         "phone=0457450165",
         "website=https://www.vinicasarotto.com/it/"
+      ],
+      "score": 88,
+      "beauty_score": 1
+    },
+    {
+      "id": "way:1486263077",
+      "name": "Costa Arènte",
+      "lat": 45.5218352,
+      "lon": 11.0281451,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Grezzana",
+        "addr:housenumber=86",
+        "addr:postcode=37023",
+        "addr:street=Località Costa",
+        "building=yes",
+        "craft=winery",
+        "name=Costa Arènte",
+        "phone=+393472111150",
+        "website=http://www.costarente.it/"
       ],
       "score": 88,
       "beauty_score": 1
@@ -3338,6 +3338,26 @@
         "fixme=Import CTR Veneto. Sostituire con building=stable (stalla) o building=barn (fienile)",
         "name=Cantina Bravin Davide",
         "website=http://www.cantinabravin.it/"
+      ],
+      "score": 82,
+      "beauty_score": 1
+    },
+    {
+      "id": "way:464482381",
+      "name": "Pieropan",
+      "lat": 45.432134,
+      "lon": 11.2518242,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Soave",
+        "addr:postcode=37038",
+        "addr:street=Via Giacomo Matteotti",
+        "building=yes",
+        "craft=winery",
+        "fixme=Building shape is incorrect. (They put a winery on the roof or something like that)",
+        "name=Pieropan",
+        "website=https://pieropan.it/tenute/soave"
       ],
       "score": 82,
       "beauty_score": 1
@@ -5323,24 +5343,6 @@
         "building=yes",
         "craft=winery",
         "name=Ansitz Rynnhof"
-      ],
-      "score": 70,
-      "beauty_score": 1
-    },
-    {
-      "id": "way:464482381",
-      "name": "Pieropan",
-      "lat": 45.432134,
-      "lon": 11.2518242,
-      "type": "cantine",
-      "visibility": "chicca",
-      "tags": [
-        "addr:city=Soave",
-        "addr:postcode=37038",
-        "addr:street=Via Giacomo Matteotti",
-        "building=yes",
-        "craft=winery",
-        "name=Pieropan"
       ],
       "score": 70,
       "beauty_score": 1
