@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-03-10T04:47:51.206Z",
+  "generated_at": "2026-03-17T04:57:55.551Z",
   "places": [
     {
       "id": "node:2692275706",
@@ -10872,6 +10872,20 @@
         "name=La Bottega del Vino",
         "opening_hours=Mo 15:30-19:30; Tu-Sa 09:00-12:30,15:30-19:30",
         "opening_hours:url=https://www.viverecollecchio.com/la-bottega-del-vino",
+        "shop=wine"
+      ],
+      "score": 31
+    },
+    {
+      "id": "node:13649894277",
+      "name": "Da Piera",
+      "lat": 45.6811252,
+      "lon": 9.4444907,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Da Piera",
+        "opening_hours=Tu-Su 07:45-12:30,16:00-19:00",
         "shop=wine"
       ],
       "score": 31

@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-03-10T04:47:31.945Z",
+  "generated_at": "2026-03-17T04:57:46.002Z",
   "places": [
     {
       "id": "node:62513426",
@@ -27383,8 +27383,8 @@
     {
       "id": "node:1583382639",
       "name": "Canè",
-      "lat": 46.2562828,
-      "lon": 10.4639811,
+      "lat": 46.2563449,
+      "lon": 10.4638336,
       "type": "borghi",
       "visibility": "chicca",
       "tags": [
@@ -42040,8 +42040,8 @@
     {
       "id": "node:64778313",
       "name": "Brugine",
-      "lat": 45.296592,
-      "lon": 11.995113,
+      "lat": 45.2965564,
+      "lon": 11.995124,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -47556,8 +47556,8 @@
     {
       "id": "node:347120275",
       "name": "Campagnola",
-      "lat": 45.2783189,
-      "lon": 11.9979853,
+      "lat": 45.2786676,
+      "lon": 11.9975751,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -75980,7 +75980,7 @@
       "id": "relation:45407",
       "name": "Grezzago",
       "lat": 45.5908299,
-      "lon": 9.4950436,
+      "lon": 9.4949967,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -119015,8 +119015,8 @@
     {
       "id": "node:62508051",
       "name": "Vione",
-      "lat": 46.248402,
-      "lon": 10.447161,
+      "lat": 46.2483811,
+      "lon": 10.4472059,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -129753,8 +129753,8 @@
     {
       "id": "node:1333505318",
       "name": "Moline",
-      "lat": 46.0839297,
-      "lon": 10.923942,
+      "lat": 46.0839308,
+      "lon": 10.9237363,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
