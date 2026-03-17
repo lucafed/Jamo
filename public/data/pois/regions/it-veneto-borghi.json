@@ -3,7 +3,7 @@
   "country": "IT",
   "area": "Veneto",
   "label_it": "Veneto • Borghi (turistici + piccoli)",
-  "generated_at": "2026-03-10T04:30:23.146Z",
+  "generated_at": "2026-03-17T04:49:00.884Z",
   "places": [
     {
       "id": "node:66503077",
@@ -8510,8 +8510,8 @@
     {
       "id": "node:64778313",
       "name": "Brugine",
-      "lat": 45.296592,
-      "lon": 11.995113,
+      "lat": 45.2965564,
+      "lon": 11.995124,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -18349,8 +18349,8 @@
     {
       "id": "node:347120275",
       "name": "Campagnola",
-      "lat": 45.2783189,
-      "lon": 11.9979853,
+      "lat": 45.2786676,
+      "lon": 11.9975751,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -18931,7 +18931,7 @@
       "tags": [
         "name=Arcè",
         "place=village",
-        "wikidata=Q116423"
+        "wikidata=Q136394749"
       ],
       "score": 85
     },
@@ -22575,8 +22575,8 @@
     {
       "id": "node:540208138",
       "name": "Arzerello",
-      "lat": 45.2754544,
-      "lon": 12.0280283,
+      "lat": 45.2751579,
+      "lon": 12.0283381,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -25022,6 +25022,7 @@
       "tags": [
         "name=Cludinico / Cludini",
         "name:fur=Cludini",
+        "name:it=Cludinico",
         "place=village",
         "wikidata=Q3681701",
         "wikipedia=it:Cludinico"
@@ -25283,6 +25284,7 @@
       "tags": [
         "name=Toppo / Top",
         "name:fur=Top",
+        "name:it=Toppo",
         "place=village",
         "wikidata=Q18449189",
         "wikipedia=it:Toppo (Travesio)"
@@ -25749,6 +25751,7 @@
         "istat_id=2147483647",
         "name=San Francesco / San Francesc",
         "name:fur=San Francesc",
+        "name:it=San Francesco",
         "place=village",
         "population=69",
         "wikidata=Q3947088",
@@ -29665,6 +29668,7 @@
       "tags": [
         "name=Zovello / Zuviel",
         "name:fur=Zuviel",
+        "name:it=Zovello",
         "place=village",
         "wikidata=Q4024850",
         "wikipedia=it:Zovello"
@@ -37429,8 +37433,8 @@
     {
       "id": "node:2419115524",
       "name": "Oberinn - Auna di Sopra",
-      "lat": 46.5608793,
-      "lon": 11.4137087,
+      "lat": 46.5608355,
+      "lon": 11.4131273,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -43478,8 +43482,8 @@
     {
       "id": "node:64778455",
       "name": "Piove di Sacco",
-      "lat": 45.297692,
-      "lon": 12.036814,
+      "lat": 45.296236,
+      "lon": 12.0356106,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -47103,6 +47107,7 @@
       "tags": [
         "name=Borgo Mesinis / Borc Mesinis",
         "name:fur=Mesinis",
+        "name:it=Borgo Mesinis",
         "place=hamlet",
         "wikidata=Q18448930"
       ],
@@ -59214,6 +59219,23 @@
       "score": 70
     },
     {
+      "id": "node:530753435",
+      "name": "Grissian - Grissiano",
+      "lat": 46.5382809,
+      "lon": 11.1806207,
+      "type": "borgo",
+      "borgo_type": "classico",
+      "visibility": "classica",
+      "tags": [
+        "name=Grissian - Grissiano",
+        "name:de=Grissian",
+        "name:it=Grissiano",
+        "place=hamlet",
+        "wikidata=Q18509615"
+      ],
+      "score": 70
+    },
+    {
       "id": "node:533903777",
       "name": "Montepeloso",
       "lat": 46.1859426,
@@ -61935,6 +61957,7 @@
         "loc_name:fur=Braida",
         "name=Braida / Braide",
         "name:fur=Braide",
+        "name:it=Braida",
         "place=hamlet",
         "population=42",
         "source=Istat 2001 - geodati.gfoss.it",
@@ -71583,6 +71606,7 @@
       "tags": [
         "name=Val di Lauco / Val",
         "name:fur=Val",
+        "name:it=Val di Lauco",
         "official_name=Località Val",
         "place=hamlet",
         "wikidata=Q18452602"
@@ -71814,6 +71838,7 @@
         "loc_name:fur=Luvinças",
         "name=Luincis / Luvinças",
         "name:fur=Luvincis",
+        "name:it=Luincis",
         "place=hamlet",
         "population=118",
         "source=Istat 2001 - geodati.gfoss.it",
@@ -72312,8 +72337,8 @@
     {
       "id": "node:1333505318",
       "name": "Moline",
-      "lat": 46.0839297,
-      "lon": 10.923942,
+      "lat": 46.0839308,
+      "lon": 10.9237363,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -77015,6 +77040,7 @@
         "loc_name:fur=Pesaria",
         "name=Pesariis / Pesaria",
         "name:fur=Pesariis",
+        "name:it=Pesariis",
         "place=hamlet",
         "wikidata=Q3900630",
         "wikipedia=it:Pesariis"
@@ -78926,8 +78952,8 @@
     {
       "id": "node:1547534967",
       "name": "Palazzo Corni",
-      "lat": 45.1310372,
-      "lon": 11.9631584,
+      "lat": 45.1311756,
+      "lon": 11.9626831,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -80412,8 +80438,8 @@
     {
       "id": "node:1583382639",
       "name": "Canè",
-      "lat": 46.2562828,
-      "lon": 10.4639811,
+      "lat": 46.2563449,
+      "lon": 10.4638336,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -82031,6 +82057,22 @@
         "name:it=Sirmiano di Sotto",
         "place=hamlet",
         "wikidata=Q99611682"
+      ],
+      "score": 70
+    },
+    {
+      "id": "node:1730821694",
+      "name": "Obersirmian - Sirmiano di Sopra",
+      "lat": 46.5277851,
+      "lon": 11.1881206,
+      "type": "borgo",
+      "borgo_type": "classico",
+      "visibility": "classica",
+      "tags": [
+        "name=Obersirmian - Sirmiano di Sopra",
+        "name:de=Obersirmian",
+        "place=hamlet",
+        "wikidata=Q18477470"
       ],
       "score": 70
     },
@@ -96792,8 +96834,8 @@
     {
       "id": "node:4437680322",
       "name": "Seo",
-      "lat": 46.057222,
-      "lon": 10.8724528,
+      "lat": 46.0572465,
+      "lon": 10.8724692,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -97163,8 +97205,8 @@
     {
       "id": "node:4581897024",
       "name": "Poiano",
-      "lat": 45.307441,
-      "lon": 10.4367502,
+      "lat": 45.3074712,
+      "lon": 10.4367717,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -97450,6 +97492,23 @@
         "place=hamlet",
         "population=101",
         "wikidata=Q18477264"
+      ],
+      "score": 70
+    },
+    {
+      "id": "node:4920348669",
+      "name": "Zenoberg - Monte S. Zeno",
+      "lat": 46.6744939,
+      "lon": 11.1704782,
+      "type": "borgo",
+      "borgo_type": "classico",
+      "visibility": "classica",
+      "tags": [
+        "name=Zenoberg - Monte S. Zeno",
+        "name:de=Zenoberg - Tirol",
+        "name:it=Monte S. Zeno - Tirolo",
+        "place=hamlet",
+        "wikidata=Q17128089"
       ],
       "score": 70
     },
@@ -100191,6 +100250,23 @@
         "name=Cadignano",
         "place=hamlet",
         "wikidata=Q108122313"
+      ],
+      "score": 70
+    },
+    {
+      "id": "node:9026675848",
+      "name": "Naraun - Narano",
+      "lat": 46.5749663,
+      "lon": 11.1616541,
+      "type": "borgo",
+      "borgo_type": "classico",
+      "visibility": "classica",
+      "tags": [
+        "name=Naraun - Narano",
+        "name:de=Naraun",
+        "name:it=Narano",
+        "place=hamlet",
+        "wikidata=Q18509971"
       ],
       "score": 70
     },
@@ -128962,8 +129038,8 @@
     {
       "id": "node:69301539",
       "name": "Novellara",
-      "lat": 44.84297,
-      "lon": 10.727492,
+      "lat": 44.8449819,
+      "lon": 10.7316465,
       "type": "borgo",
       "borgo_type": "chicca",
       "visibility": "chicca",
@@ -137307,8 +137383,8 @@
     },
     {
       "id": "relation:44934",
-      "name": "Nanto",
-      "lat": 45.427114,
+      "name": "Castegnero Nanto",
+      "lat": 45.4289079,
       "lon": 11.5911519,
       "type": "borgo",
       "borgo_type": "classico",
@@ -137316,15 +137392,13 @@
       "tags": [
         "admin_level=8",
         "boundary=administrative",
-        "gfoss_id=3259",
-        "name=Nanto",
-        "postal_code=36024",
-        "ref:ISTAT=024071",
-        "ref:catasto=F838",
-        "source=geodati.gfoss.it",
+        "name=Castegnero Nanto",
+        "postal_code=36020;36024",
+        "ref:ISTAT=024129",
+        "ref:catasto=M439",
         "type=boundary",
-        "wikidata=Q46532",
-        "wikipedia=it:Nanto"
+        "wikidata=Q138426868",
+        "wikipedia=it:Castegnero Nanto"
       ],
       "score": 12
     },
@@ -137793,27 +137867,6 @@
         "type=boundary",
         "wikidata=Q46410",
         "wikipedia=it:Brendola"
-      ],
-      "score": 12
-    },
-    {
-      "id": "relation:45033",
-      "name": "Castegnero",
-      "lat": 45.4365459,
-      "lon": 11.6003578,
-      "type": "borgo",
-      "borgo_type": "classico",
-      "visibility": "classica",
-      "tags": [
-        "admin_level=8",
-        "boundary=administrative",
-        "name=Castegnero",
-        "postal_code=36020",
-        "ref:ISTAT=024027",
-        "ref:catasto=C056",
-        "type=boundary",
-        "wikidata=Q46336",
-        "wikipedia=it:Castegnero"
       ],
       "score": 12
     },
@@ -151957,8 +152010,10 @@
       "tags": [
         "admin_level=8",
         "boundary=administrative",
+        "loc_name:fur=Trasagas",
         "name=Trasaghis / Trasagas",
         "name:fur=Trasaghis",
+        "name:it=Trasaghis",
         "postal_code=33010",
         "ref:ISTAT=030124",
         "ref:catasto=L335",
@@ -152236,6 +152291,7 @@
         "boundary=administrative",
         "name=Cavasso Nuovo / Cjavàs",
         "name:fur=Cjavàs",
+        "name:it=Cavasso Nuovo",
         "postal_code=33092",
         "ref:ISTAT=093012",
         "ref:catasto=C385",
@@ -152981,7 +153037,7 @@
     },
     {
       "id": "relation:179190",
-      "name": "Erto e Casso",
+      "name": "Erto e Casso / Nert e Cjas",
       "lat": 46.277061,
       "lon": 12.3674679,
       "type": "borgo",
@@ -152990,7 +153046,7 @@
       "tags": [
         "admin_level=8",
         "boundary=administrative",
-        "name=Erto e Casso",
+        "name=Erto e Casso / Nert e Cjas",
         "name:fur=Nert e Cjas",
         "name:it=Erto e Casso",
         "population=387",
@@ -153293,6 +153349,7 @@
         "boundary=administrative",
         "name=Raveo / Raviei",
         "name:fur=Raviei",
+        "name:it=Raveo",
         "postal_code=33029",
         "ref:ISTAT=030089",
         "ref:catasto=H200",
@@ -153338,6 +153395,7 @@
         "boundary=administrative",
         "name=Camino al Tagliamento / Cjamin dal Tiliment",
         "name:fur=Cjamin dal Tiliment",
+        "name:it=Camino al Tagliamento",
         "postal_code=33030",
         "ref:ISTAT=030015",
         "ref:catasto=B483",
@@ -153360,6 +153418,7 @@
         "boundary=administrative",
         "name=Villa Santina / Vile",
         "name:fur=Vile di Cjargne",
+        "name:it=Villa Santina",
         "postal_code=33029",
         "ref:ISTAT=030133",
         "ref:catasto=L909",
@@ -153521,6 +153580,7 @@
         "loc_name:fur=Verzegnas",
         "name=Verzegnis",
         "name:fur=Verzegnis",
+        "name:it=Verzegnis",
         "postal_code=33020",
         "ref:ISTAT=030132",
         "ref:catasto=L801",
