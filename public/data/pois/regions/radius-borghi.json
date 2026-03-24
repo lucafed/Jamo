@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-03-17T04:57:46.002Z",
+  "generated_at": "2026-03-24T04:59:34.412Z",
   "places": [
     {
       "id": "node:62513426",
@@ -3534,8 +3534,8 @@
     {
       "id": "node:2720748412",
       "name": "Calvenzano",
-      "lat": 45.2694126,
-      "lon": 9.3760935,
+      "lat": 45.2695999,
+      "lon": 9.3752459,
       "type": "borghi",
       "visibility": "chicca",
       "tags": [
@@ -9397,8 +9397,8 @@
     {
       "id": "node:347117070",
       "name": "Vigorovea",
-      "lat": 45.3215889,
-      "lon": 11.9991417,
+      "lat": 45.3217289,
+      "lon": 11.9991482,
       "type": "borghi",
       "visibility": "chicca",
       "tags": [
@@ -24414,8 +24414,8 @@
     {
       "id": "node:390973424",
       "name": "Grano",
-      "lat": 46.2404017,
-      "lon": 10.3875989,
+      "lat": 46.2403632,
+      "lon": 10.38756,
       "type": "borghi",
       "visibility": "chicca",
       "tags": [
@@ -42160,8 +42160,8 @@
     {
       "id": "node:64778335",
       "name": "Codevigo",
-      "lat": 45.2673516,
-      "lon": 12.1013012,
+      "lat": 45.2677006,
+      "lon": 12.1012862,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -65932,7 +65932,7 @@
       "id": "relation:44401",
       "name": "Gazoldo degli Ippoliti",
       "lat": 45.1951761,
-      "lon": 10.5663546,
+      "lon": 10.566368,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -130681,14 +130681,13 @@
     },
     {
       "id": "node:1383251690",
-      "name": "Campigotti",
-      "lat": 46.0414989,
-      "lon": 11.694314,
+      "name": "Campigotti - Campigöt",
+      "lat": 46.0415019,
+      "lon": 11.6942625,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
-        "name=Campigotti",
-        "name:vec=Campigöt",
+        "name=Campigotti - Campigöt",
         "place=hamlet",
         "wikidata=Q18496197"
       ],
@@ -130696,14 +130695,13 @@
     },
     {
       "id": "node:1383264001",
-      "name": "Toffoli",
+      "name": "Toffoli - Tòfui",
       "lat": 46.032632,
       "lon": 11.7131093,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
-        "name=Toffoli",
-        "name:vec=Tòfui",
+        "name=Toffoli - Tòfui",
         "place=hamlet",
         "wikidata=Q119703404"
       ],
@@ -141307,14 +141305,13 @@
     },
     {
       "id": "node:3440143568",
-      "name": "Chiappini",
+      "name": "Chiappini - Ciapìn",
       "lat": 46.0286643,
       "lon": 11.6936045,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
-        "alt_name=Ciapìn",
-        "name=Chiappini",
+        "name=Chiappini - Ciapìn",
         "place=hamlet",
         "wikidata=Q119703589"
       ],
@@ -141322,14 +141319,13 @@
     },
     {
       "id": "node:3440144396",
-      "name": "Moggi",
+      "name": "Moggi - Moj",
       "lat": 46.0424969,
       "lon": 11.7013623,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
-        "name=Moggi",
-        "name:vec=Moj",
+        "name=Moggi - Moj",
         "place=hamlet",
         "wikidata=Q18496688"
       ],
@@ -150573,14 +150569,13 @@
     },
     {
       "id": "node:12954773203",
-      "name": "Geronemoni",
+      "name": "Geronemoni - Jernamoe",
       "lat": 46.0387769,
       "lon": 11.7164553,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
-        "name=Geronemoni",
-        "name:vec=Jernamoe",
+        "name=Geronemoni - Jernamoe",
         "place=hamlet",
         "wikidata=Q18496547"
       ],

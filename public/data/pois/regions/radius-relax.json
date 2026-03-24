@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-01-27T04:11:07.308Z",
+  "generated_at": "2026-03-24T04:59:00.201Z",
   "places": [
     {
       "id": "way:48528567",
@@ -315,6 +315,26 @@
       "score": 155
     },
     {
+      "id": "way:1473925342",
+      "name": "Mioni Luxury Swim & Spa",
+      "lat": 45.32521,
+      "lon": 11.7946029,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "access=yes",
+        "amenity=public_bath",
+        "bath:type=thermal",
+        "check_date=2026-01-26",
+        "fee=yes",
+        "min_age=18",
+        "name=Mioni Luxury Swim & Spa",
+        "shower=yes",
+        "unisex=yes"
+      ],
+      "score": 153
+    },
+    {
       "id": "node:1783595018",
       "name": "Bormio Terme",
       "lat": 46.4699722,
@@ -404,33 +424,6 @@
       "score": 151
     },
     {
-      "id": "relation:2428656",
-      "name": "Terme Berzieri",
-      "lat": 44.8161157,
-      "lon": 9.9798504,
-      "type": "relax",
-      "visibility": "classica",
-      "tags": [
-        "addr:city=Salsomaggiore Terme",
-        "addr:housenumber=1",
-        "addr:postcode=43039",
-        "addr:street=Piazza Lorenzo Berzieri",
-        "amenity=public_bath",
-        "brand=QC Terme",
-        "brand:wikidata=Q115543071",
-        "building=yes",
-        "fee=yes",
-        "name=Terme Berzieri",
-        "phone=+39 0524 758410",
-        "source=Regione Emilia Romagna",
-        "type=multipolygon",
-        "website=https://www.qcterme.com/it/destinazioni/salsomaggiore/qc-spa-salsomaggiore-terme",
-        "wikidata=Q24934178",
-        "wikipedia=it:Terme Berzieri"
-      ],
-      "score": 151
-    },
-    {
       "id": "node:12308269875",
       "name": "QC Terme San Pellegrino",
       "lat": 45.8414835,
@@ -503,15 +496,14 @@
     {
       "id": "way:182288771",
       "name": "Terme Luigi Zoja",
-      "lat": 44.8163124,
-      "lon": 9.9839409,
+      "lat": 44.8163833,
+      "lon": 9.9839163,
       "type": "relax",
       "visibility": "classica",
       "tags": [
         "amenity=public_bath",
-        "building=yes",
+        "building=bath",
         "name=Terme Luigi Zoja",
-        "source=Regione Emilia Romagna",
         "wikidata=Q130535203"
       ],
       "score": 135
@@ -648,6 +640,31 @@
       "score": 115
     },
     {
+      "id": "way:1489166817",
+      "name": "QC Spa Salsomaggiore",
+      "lat": 44.8161647,
+      "lon": 9.979954,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Salsomaggiore Terme",
+        "addr:housenumber=1",
+        "addr:postcode=43039",
+        "addr:street=Piazza Lorenzo Berzieri",
+        "amenity=public_bath",
+        "brand=QC Terme",
+        "brand:wikidata=Q115543071",
+        "fee=yes",
+        "name=QC Spa Salsomaggiore",
+        "phone=+39 0524 758410",
+        "reservation=required",
+        "website=https://www.qcterme.com/it/destinazioni/salsomaggiore/qc-spa-salsomaggiore-terme",
+        "wikidata=Q24934178",
+        "wikipedia=it:Terme Berzieri"
+      ],
+      "score": 114
+    },
+    {
       "id": "node:311389293",
       "name": "Albergo Ristorante Da Carla Failela",
       "lat": 45.7554245,
@@ -703,8 +720,8 @@
     {
       "id": "node:11381869247",
       "name": "La pozza Bassa",
-      "lat": 46.4921488,
-      "lon": 10.3583132,
+      "lat": 46.4921832,
+      "lon": 10.358302,
       "type": "relax",
       "visibility": "classica",
       "tags": [
@@ -909,6 +926,86 @@
         "bath:type=hammam",
         "fee=yes",
         "name=Camelot Club"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:13650025309",
+      "name": "Idrogetti Cisterba",
+      "lat": 44.8162315,
+      "lon": 9.9805178,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "access=customers",
+        "amenity=public_bath",
+        "fixme=location on floor, possibly name",
+        "level=0",
+        "name=Idrogetti Cisterba"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:13650025408",
+      "name": "La grotta polare",
+      "lat": 44.8162488,
+      "lon": 9.9800208,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "access=customers",
+        "amenity=public_bath",
+        "bath:type=ice",
+        "level=1",
+        "name=La grotta polare"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:13650025411",
+      "name": "Le saline",
+      "lat": 44.8161706,
+      "lon": 9.9800599,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "access=customers",
+        "amenity=public_bath",
+        "bath:type=salt",
+        "level=1",
+        "name=Le saline"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:1489166782",
+      "name": "Quadrel",
+      "lat": 44.8162772,
+      "lon": 9.9803629,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "access=customers",
+        "amenity=public_bath",
+        "bath:type=steam",
+        "level=2",
+        "name=Quadrel"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:1489166785",
+      "name": "Le nuvole",
+      "lat": 44.8163761,
+      "lon": 9.9802919,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "access=customers",
+        "amenity=public_bath",
+        "description=Vichy showers",
+        "level=2",
+        "name=Le nuvole"
       ],
       "score": 80
     },
@@ -1391,7 +1488,7 @@
         "addr:city=Trento",
         "addr:country=IT",
         "addr:housenumber=25",
-        "addr:postcode=38122",
+        "addr:postcode=31822",
         "addr:street=Via Torre D'Augusto",
         "bath:type=thermal",
         "leisure=fitness_centre",
@@ -1550,8 +1647,9 @@
       "visibility": "classica",
       "tags": [
         "addr:city=Trento",
+        "addr:country=IT",
         "addr:housenumber=31",
-        "addr:postcode=38122",
+        "addr:postcode=31822",
         "addr:street=Via Bolghera",
         "name=Intermedia Immobiliare",
         "office=estate_agent",
@@ -2237,6 +2335,30 @@
       "score": 65
     },
     {
+      "id": "relation:10979036",
+      "name": "Linea B: Bergamo -> San Pellegrino Terme -> Piazza Brembana",
+      "lat": 45.820354,
+      "lon": 9.6424353,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "colour=blue",
+        "from=Bergamo - Terminal Arriva",
+        "name=Linea B: Bergamo -> San Pellegrino Terme -> Piazza Brembana",
+        "network=Arriva",
+        "network:wikidata=Q680991",
+        "operator=Arriva",
+        "public_transport:version=2",
+        "ref=B",
+        "route=bus",
+        "to=Piazza brembana - via locatelli (sab)",
+        "type=route",
+        "via=San Pellegrino Terme",
+        "website=https://www.bergamotrasporti.it/percorsi/invernale/linea-b.pdf"
+      ],
+      "score": 65
+    },
+    {
       "id": "relation:19270874",
       "name": "Bus B302: Garniga Terme>Aldeno->Mattarello->Ravina",
       "lat": 46.0210039,
@@ -2383,6 +2505,30 @@
       "score": 65
     },
     {
+      "id": "relation:20272096",
+      "name": "Linea B: Piazza Brembana-> San Pellegrino Terme ->Bergamo",
+      "lat": 45.8197677,
+      "lon": 9.6423286,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "colour=blue",
+        "from=Piazza brembana - via locatelli (sab)",
+        "name=Linea B: Piazza Brembana-> San Pellegrino Terme ->Bergamo",
+        "network=Arriva",
+        "network:wikidata=Q680991",
+        "operator=Arriva",
+        "public_transport:version=2",
+        "ref=B",
+        "route=bus",
+        "to=Bergamo - Terminal Arriva",
+        "type=route",
+        "via=San Pellegrino Terme",
+        "website=https://www.bergamotrasporti.it/percorsi/invernale/linea-b.pdf"
+      ],
+      "score": 65
+    },
+    {
       "id": "node:11392168566",
       "name": "Terme Formentin",
       "lat": 45.3520418,
@@ -2390,7 +2536,7 @@
       "type": "relax",
       "visibility": "classica",
       "tags": [
-        "check_date=2023-12-03",
+        "check_date=2026-02-20",
         "name=Terme Formentin",
         "payment:cash=yes",
         "payment:credit_cards=yes",
@@ -2410,7 +2556,7 @@
       "type": "relax",
       "visibility": "classica",
       "tags": [
-        "check_date=2023-12-03",
+        "check_date=2026-02-20",
         "name=Aurora Terme",
         "payment:cash=yes",
         "payment:credit_cards=yes",
@@ -3172,7 +3318,7 @@
         "place=village",
         "population=906",
         "reg_name=Sant'Orsola",
-        "wikidata=Q30030398"
+        "wikidata=Q18482837"
       ],
       "score": 55
     },
@@ -3349,8 +3495,8 @@
     {
       "id": "node:259719243",
       "name": "Neumarkt-Auer-Tramin - Egna-Ora-Termeno",
-      "lat": 46.3322305,
-      "lon": 11.277933,
+      "lat": 46.3322411,
+      "lon": 11.2779158,
       "type": "relax",
       "visibility": "classica",
       "tags": [
@@ -3493,6 +3639,19 @@
         "operator=Arma dei Carabinieri",
         "operator:short=Carabinieri",
         "operator:wikidata=Q54852"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:633200681",
+      "name": "Terme Euganee",
+      "lat": 45.2940204,
+      "lon": 11.801498,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "barrier=toll_booth",
+        "name=Terme Euganee"
       ],
       "score": 55
     },
@@ -3754,6 +3913,19 @@
       "score": 55
     },
     {
+      "id": "node:1573799681",
+      "name": "Terme Euganee",
+      "lat": 45.293935,
+      "lon": 11.801927,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "barrier=toll_booth",
+        "name=Terme Euganee"
+      ],
+      "score": 55
+    },
+    {
       "id": "node:1583359753",
       "name": "Battaglia Terme",
       "lat": 45.2866285,
@@ -3985,6 +4157,7 @@
       "tags": [
         "addr:housename=Farmacia Alle Terme",
         "addr:housenumber=5",
+        "addr:street=Via Roma",
         "amenity=pharmacy",
         "dispensing=yes",
         "drive_through=no",
@@ -4034,19 +4207,6 @@
         "operator=EI Towers S.p.A.",
         "ref=12355",
         "tower:type=communication"
-      ],
-      "score": 55
-    },
-    {
-      "id": "node:4072137848",
-      "name": "Istituto comprensivo di Battaglia Terme",
-      "lat": 45.2925751,
-      "lon": 11.7831617,
-      "type": "relax",
-      "visibility": "classica",
-      "tags": [
-        "amenity=school",
-        "name=Istituto comprensivo di Battaglia Terme"
       ],
       "score": 55
     },
@@ -4316,7 +4476,7 @@
         "addr:city=Trento",
         "addr:country=IT",
         "addr:housenumber=23",
-        "addr:postcode=38122",
+        "addr:postcode=31822",
         "addr:street=Vicolo del Vò",
         "name=InterMedia",
         "office=estate_agent"
@@ -4825,22 +4985,6 @@
       "score": 55
     },
     {
-      "id": "node:9989897116",
-      "name": "Sorgente Fontane 1,2,3 Vallio Terme",
-      "lat": 45.6068825,
-      "lon": 10.3692983,
-      "type": "relax",
-      "visibility": "classica",
-      "tags": [
-        "access=private",
-        "covered=yes",
-        "drinking_water=no",
-        "name=Sorgente Fontane 1,2,3 Vallio Terme",
-        "natural=spring"
-      ],
-      "score": 55
-    },
-    {
       "id": "node:10767168666",
       "name": "Club Alpino Italiano - Sezione Recoaro Terme",
       "lat": 45.7049334,
@@ -4855,26 +4999,6 @@
         "operator:wikidata=Q795273",
         "source=survey:CAI",
         "source:ref=9220045"
-      ],
-      "score": 55
-    },
-    {
-      "id": "node:10797219336",
-      "name": "Biblioteca Civica di Abano Terme",
-      "lat": 45.3617465,
-      "lon": 11.7892864,
-      "type": "relax",
-      "visibility": "classica",
-      "tags": [
-        "addr:city=Abano Terme",
-        "addr:housenumber=71",
-        "addr:street=Via Giacomo Matteotti",
-        "amenity=library",
-        "building=civic",
-        "description=Biblioteca (Public library)",
-        "internet_access=yes",
-        "name=Biblioteca Civica di Abano Terme",
-        "wikidata=Q112959419"
       ],
       "score": 55
     },
@@ -5101,7 +5225,7 @@
       "type": "relax",
       "visibility": "classica",
       "tags": [
-        "alt_name=Parco delle Terme;Parco Asburgico",
+        "alt_name=Parco delle Terme;Parco Asburgico;Localita' Parco Terme",
         "historic=garden",
         "leisure=park",
         "name=Parco delle Terme di Levico",
@@ -5137,7 +5261,8 @@
         "amenity=townhall",
         "building=civic",
         "name=Municipio di Comano Terme",
-        "operator=Comune di Comano Terme"
+        "operator=Comune di Comano Terme",
+        "wikidata=Q134626918"
       ],
       "score": 55
     },
@@ -5167,6 +5292,23 @@
       "tags": [
         "leisure=park",
         "name=Parco delle Terme di Boario"
+      ],
+      "score": 55
+    },
+    {
+      "id": "way:70431438",
+      "name": "Cimitero di Garniga Terme",
+      "lat": 46.0042576,
+      "lon": 11.0916442,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "amenity=grave_yard",
+        "denomination=catholic",
+        "name=Cimitero di Garniga Terme",
+        "religion=christian",
+        "source=PCN ortofoto_colore 2006 - autorizzazione 10687/TRI",
+        "wikidata=Q89340916"
       ],
       "score": 55
     },
@@ -5216,7 +5358,8 @@
       "tags": [
         "landuse=cemetery",
         "name=Cimitero nuovo di Caderzone Terme",
-        "religion=christian"
+        "religion=christian",
+        "wikidata=Q89274373"
       ],
       "score": 55
     },
@@ -5666,19 +5809,19 @@
       "type": "relax",
       "visibility": "classica",
       "tags": [
+        "addr:city=Tramin an der Weinstraße - Termeno sulla Strada del Vino",
+        "addr:housenumber=11",
+        "addr:postcode=39040",
+        "addr:street=Rathausplatz - Piazza Municipio",
         "alt_name:it=Municipio di Termeno sulla Strada del Vino",
         "amenity=townhall",
         "building=yes",
-        "contact:city=Tramin an der Weinstraße - Termeno sulla Strada del Vino",
-        "contact:housenumber=11",
-        "contact:postcode=39040",
-        "contact:street=Rathausplatz - Piazza Municipio",
         "name=Rathaus Tramin an der Weinstraße - Comune di Termeno sulla Strada del Vino",
         "name:de=Rathaus Tramin an der Weinstraße",
         "name:it=Comune di Termeno sulla Strada del Vino",
-        "note:contact:addr=Charlieu's Schema",
         "short_name:de=Rathaus Tramin",
-        "short_name:it=Comune di Termeno"
+        "short_name:it=Comune di Termeno",
+        "wikidata=Q134626883"
       ],
       "score": 55
     },
@@ -5695,6 +5838,19 @@
         "name=Cimitero di Montegrotto Terme",
         "religion=christian",
         "wikidata=Q109365075"
+      ],
+      "score": 55
+    },
+    {
+      "id": "way:375280305",
+      "name": "Istituto comprensivo di Battaglia Terme",
+      "lat": 45.2925654,
+      "lon": 11.783204,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "amenity=school",
+        "name=Istituto comprensivo di Battaglia Terme"
       ],
       "score": 55
     },
@@ -6188,6 +6344,23 @@
         "building=service",
         "man_made=water_well",
         "name=Pozzo Fontane Vallio Terme",
+        "noref=yes",
+        "operator=A2A Ciclo Idrico S.p.A."
+      ],
+      "score": 55
+    },
+    {
+      "id": "way:991003923",
+      "name": "Sorgente Fontane 1,2,3 Vallio Terme",
+      "lat": 45.6068808,
+      "lon": 10.3693036,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "building=service",
+        "man_made=water_works",
+        "name=Sorgente Fontane 1,2,3 Vallio Terme",
+        "noref=yes",
         "operator=A2A Ciclo Idrico S.p.A."
       ],
       "score": 55
@@ -6233,7 +6406,7 @@
       "type": "relax",
       "visibility": "classica",
       "tags": [
-        "building=yes",
+        "building=house",
         "building:material=wood",
         "name=Casa delle Associazioni Vallio Terme"
       ],
@@ -6250,6 +6423,7 @@
         "building=service",
         "man_made=water_works",
         "name=Sorgente Sengla 1 Vallio Terme",
+        "noref=yes",
         "operator=A2A Ciclo Idrico S.p.A."
       ],
       "score": 55
@@ -6257,8 +6431,8 @@
     {
       "id": "way:1180964767",
       "name": "Hangar Sporting Avioclub Terme di Comano",
-      "lat": 46.009058,
-      "lon": 10.8291929,
+      "lat": 46.0090512,
+      "lon": 10.8292262,
       "type": "relax",
       "visibility": "classica",
       "tags": [
@@ -6774,6 +6948,23 @@
       "score": 55
     },
     {
+      "id": "relation:2428656",
+      "name": "Terme Berzieri",
+      "lat": 44.8161262,
+      "lon": 9.9798491,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "building=bath",
+        "name=Terme Berzieri",
+        "source=Regione Emilia Romagna",
+        "type=multipolygon",
+        "wikidata=Q24934178",
+        "wikipedia=it:Terme Berzieri"
+      ],
+      "score": 55
+    },
+    {
       "id": "relation:4770908",
       "name": "Vallio Terme (Barcolo) - Gavardo (Osteria Monte Magno)",
       "lat": 45.6200543,
@@ -6826,20 +7017,18 @@
     },
     {
       "id": "relation:5642741",
-      "name": "S1A (Porretta Terme)",
+      "name": "S1 (Porretta Terme)",
       "lat": 44.3369254,
-      "lon": 11.1584831,
+      "lon": 11.1743637,
       "type": "relax",
       "visibility": "classica",
       "tags": [
         "colour=#ed1d24",
-        "from=Bologna Centrale",
-        "name=S1A (Porretta Terme)",
-        "network=RFI",
-        "not:network:wikidata=Q1060049",
-        "operator=Trenitalia-Tper",
+        "from=Pianoro",
+        "name=S1 (Porretta Terme)",
+        "operator=Trenitalia Tper",
         "public_transport:version=2",
-        "ref=S1A",
+        "ref=S1",
         "route=train",
         "service=commuter",
         "to=Porretta Terme",
@@ -6858,27 +7047,6 @@
       "tags": [
         "name=Intermedia di Pianura",
         "route=detour",
-        "type=route"
-      ],
-      "score": 55
-    },
-    {
-      "id": "relation:6559572",
-      "name": "Darfo Boario Terme - Lago Moro - Gorzone",
-      "lat": 45.8844933,
-      "lon": 10.1669861,
-      "type": "relax",
-      "visibility": "classica",
-      "tags": [
-        "cai_scale=E",
-        "from=Via Lago Moro (Darfo Boario Terme)",
-        "name=Darfo Boario Terme - Lago Moro - Gorzone",
-        "network=lwn",
-        "osmc:symbol=red:red:white_bar:153:black",
-        "ref=153",
-        "route=hiking",
-        "source=survey:CAI;REL;survey:CAIOSM",
-        "to=Gorzone",
         "type=route"
       ],
       "score": 55
@@ -6949,35 +7117,12 @@
         "operator=Azienda Trasporti Bergamo",
         "public_transport:version=2",
         "ref=FUNV",
-        "route=train",
+        "route=funicular",
         "service=tourism",
         "to=Vetta",
         "type=route",
         "wikidata=Q28669952",
         "wikipedia=it:Funicolare di San Pellegrino"
-      ],
-      "score": 55
-    },
-    {
-      "id": "relation:10979036",
-      "name": "Linea B: Bergamo -> San Pellegrino Terme -> Piazza Brembana",
-      "lat": 45.820354,
-      "lon": 9.6424353,
-      "type": "relax",
-      "visibility": "classica",
-      "tags": [
-        "colour=blue",
-        "from=Bergamo",
-        "name=Linea B: Bergamo -> San Pellegrino Terme -> Piazza Brembana",
-        "network=Arriva",
-        "network:wikidata=Q680991",
-        "operator=Arriva",
-        "public_transport:version=2",
-        "ref=B",
-        "route=bus",
-        "to=Piazza Brembana",
-        "type=route",
-        "via=San Pellegrino Terme"
       ],
       "score": 55
     },
@@ -7006,26 +7151,6 @@
       "score": 55
     },
     {
-      "id": "relation:12575443",
-      "name": "Linea S70c Castro->Lovere->Boario Terme->Angolo Terme->Schilpario",
-      "lat": 45.9096111,
-      "lon": 10.1291955,
-      "type": "relax",
-      "visibility": "classica",
-      "tags": [
-        "from=Castro (stabilimento Lucchini)",
-        "name=Linea S70c Castro->Lovere->Boario Terme->Angolo Terme->Schilpario",
-        "operator=Arriva SAB",
-        "public_transport:version=2",
-        "ref=S70c",
-        "route=bus",
-        "to=Schilpario",
-        "type=route",
-        "via=Lovere->Boario->Angolo"
-      ],
-      "score": 55
-    },
-    {
       "id": "relation:16552450",
       "name": "Vetta - San Pellegrino Terme",
       "lat": 45.8401148,
@@ -7039,7 +7164,7 @@
         "operator=Azienda Trasporti Bergamo",
         "public_transport:version=2",
         "ref=FUNV",
-        "route=train",
+        "route=funicular",
         "service=tourism",
         "to=San Pellegrino Terme",
         "type=route",
