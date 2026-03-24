@@ -3,7 +3,7 @@
   "country": "IT",
   "area": "Veneto",
   "label_it": "Veneto • Borghi (turistici + piccoli)",
-  "generated_at": "2026-03-17T04:49:00.884Z",
+  "generated_at": "2026-03-24T04:51:26.360Z",
   "places": [
     {
       "id": "node:66503077",
@@ -2353,6 +2353,7 @@
         "loc_name:fur=Valnunsiel",
         "name=Vallenoncello / Valnunciel",
         "name:fur=Valnunciel",
+        "name:it=Vallenoncello",
         "place=village",
         "wikidata=Q28668309",
         "wikipedia=it:Vallenoncello"
@@ -8637,8 +8638,8 @@
     {
       "id": "node:64778335",
       "name": "Codevigo",
-      "lat": 45.2673516,
-      "lon": 12.1013012,
+      "lat": 45.2677006,
+      "lon": 12.1012862,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -14214,6 +14215,7 @@
         "gfoss_id=7535",
         "name=Pinzano al Tagliamento / Pinçan",
         "name:fur=Pinçan",
+        "name:it=Pinzano al Tagliamento",
         "place=village",
         "population=1608",
         "source=geodati.gfoss.it",
@@ -17006,7 +17008,8 @@
       "tags": [
         "loc_name:fur=San Foca",
         "name=San Foca / San Foche",
-        "name:fur=Sant Foche",
+        "name:fur=San Foche",
+        "name:it=San Foca",
         "place=village",
         "wikidata=Q18449085"
       ],
@@ -18333,8 +18336,8 @@
     {
       "id": "node:347117070",
       "name": "Vigorovea",
-      "lat": 45.3215889,
-      "lon": 11.9991417,
+      "lat": 45.3217289,
+      "lon": 11.9991482,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -21172,6 +21175,7 @@
       "tags": [
         "name=Beano / Bean",
         "name:fur=Bean",
+        "name:it=Beano",
         "place=village",
         "wikipedia=it:Beano (Codroipo) / Bean"
       ],
@@ -21646,6 +21650,7 @@
       "tags": [
         "name=Istrago / Distrà",
         "name:fur=Distrà",
+        "name:it=Istrago",
         "place=village",
         "postal_code=33097",
         "wikidata=Q18448844"
@@ -21871,6 +21876,7 @@
         "loc_name:fur=Versuta",
         "name=Versutta / Versuta",
         "name:fur=Versute",
+        "name:it=Versutta",
         "place=village",
         "wikidata=Q2365398",
         "wikipedia=it:Versuta"
@@ -22114,6 +22120,7 @@
         "loc_name:fur=Dovoleit",
         "name=Ovoledo / Dovolêt",
         "name:fur=Dovolêt",
+        "name:it=Ovoledo",
         "place=village",
         "wikidata=Q3887715",
         "wikipedia=it:Ovoledo"
@@ -25621,6 +25628,7 @@
       "tags": [
         "name=Valeriano / Valarian",
         "name:fur=Valarian",
+        "name:it=Valeriano",
         "place=village",
         "wikidata=Q18449216",
         "wikipedia=it:Valeriano (Pinzano al Tagliamento)"
@@ -26415,6 +26423,7 @@
         "loc_name:fur=Salinart",
         "name=San Leonardo Valcellina / Salinart",
         "name:fur=San Lenart",
+        "name:it=San Leonardo Valcellina",
         "place=village",
         "population=651",
         "source=Istat 2001 - geodati.gfoss.it",
@@ -55722,8 +55731,8 @@
     {
       "id": "node:390973424",
       "name": "Grano",
-      "lat": 46.2404017,
-      "lon": 10.3875989,
+      "lat": 46.2403632,
+      "lon": 10.38756,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -61647,6 +61656,7 @@
         "loc_name:fur=Cerdevol",
         "name=Cerdevol / Cerdevul",
         "name:fur=Cerdevul",
+        "name:it=Cerdevol",
         "place=hamlet",
         "population=6",
         "source=Istat 2001 - geodati.gfoss.it",
@@ -74168,15 +74178,14 @@
     },
     {
       "id": "node:1383251690",
-      "name": "Campigotti",
-      "lat": 46.0414989,
-      "lon": 11.694314,
+      "name": "Campigotti - Campigöt",
+      "lat": 46.0415019,
+      "lon": 11.6942625,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Campigotti",
-        "name:vec=Campigöt",
+        "name=Campigotti - Campigöt",
         "place=hamlet",
         "wikidata=Q18496197"
       ],
@@ -74184,15 +74193,14 @@
     },
     {
       "id": "node:1383264001",
-      "name": "Toffoli",
+      "name": "Toffoli - Tòfui",
       "lat": 46.032632,
       "lon": 11.7131093,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Toffoli",
-        "name:vec=Tòfui",
+        "name=Toffoli - Tòfui",
         "place=hamlet",
         "wikidata=Q119703404"
       ],
@@ -92718,15 +92726,14 @@
     },
     {
       "id": "node:3440143568",
-      "name": "Chiappini",
+      "name": "Chiappini - Ciapìn",
       "lat": 46.0286643,
       "lon": 11.6936045,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "alt_name=Ciapìn",
-        "name=Chiappini",
+        "name=Chiappini - Ciapìn",
         "place=hamlet",
         "wikidata=Q119703589"
       ],
@@ -92734,15 +92741,14 @@
     },
     {
       "id": "node:3440144396",
-      "name": "Moggi",
+      "name": "Moggi - Moj",
       "lat": 46.0424969,
       "lon": 11.7013623,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Moggi",
-        "name:vec=Moj",
+        "name=Moggi - Moj",
         "place=hamlet",
         "wikidata=Q18496688"
       ],
@@ -102879,15 +102885,14 @@
     },
     {
       "id": "node:12954773203",
-      "name": "Geronemoni",
+      "name": "Geronemoni - Jernamoe",
       "lat": 46.0387769,
       "lon": 11.7164553,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Geronemoni",
-        "name:vec=Jernamoe",
+        "name=Geronemoni - Jernamoe",
         "place=hamlet",
         "wikidata=Q18496547"
       ],
@@ -128970,6 +128975,7 @@
         "gfoss_id=7523",
         "name=Cordenons",
         "name:fur=Cordenons",
+        "name:it=Cordenons",
         "note=riclassificato da \"suburb\" a \"town\" in quanto nonostante Cordenons sia conurbata con Pordenone è un comune a sé stante. (https://wiki.openstreetmap.org/wiki/IT:Tag:place=suburb)",
         "place=town",
         "population=18308",
@@ -134365,7 +134371,7 @@
       "id": "relation:44401",
       "name": "Gazoldo degli Ippoliti",
       "lat": 45.1951761,
-      "lon": 10.5663546,
+      "lon": 10.566368,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -153949,6 +153955,7 @@
         "boundary=administrative",
         "name=Maniago / Manià",
         "name:fur=Manià",
+        "name:it=Maniago",
         "postal_code=33085",
         "ref:ISTAT=093025",
         "ref:catasto=E889",
