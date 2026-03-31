@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-03-24T04:59:34.412Z",
+  "generated_at": "2026-03-31T05:15:11.887Z",
   "places": [
     {
       "id": "node:62513426",
@@ -4998,6 +4998,26 @@
         "source=geodati.gfoss.it",
         "wikidata=Q42481",
         "wikipedia=it:Cingia de' Botti"
+      ],
+      "score": 135
+    },
+    {
+      "id": "node:62511607",
+      "name": "Lomagna",
+      "lat": 45.667978,
+      "lon": 9.376047,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "ele=255",
+        "gfoss_id=7813",
+        "name=Lomagna",
+        "place=village",
+        "population=5115",
+        "source=geodati.gfoss.it",
+        "website=https://www.comune.lomagna.lc.it",
+        "wikidata=Q43000",
+        "wikipedia=en:Lomagna"
       ],
       "score": 135
     },
@@ -30724,6 +30744,22 @@
         "place=hamlet",
         "wikidata=Q2154965",
         "wikipedia=it:Xino"
+      ],
+      "score": 115
+    },
+    {
+      "id": "node:12064764222",
+      "name": "Sabbioncello",
+      "lat": 45.7075991,
+      "lon": 9.4104445,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "name=Sabbioncello",
+        "place=hamlet",
+        "wikidata=Q16599465",
+        "wikimedia_commons=Category:Sabbioncello (Merate)",
+        "wikipedia=it:Sabbioncello (Merate)"
       ],
       "score": 115
     },
@@ -87650,7 +87686,7 @@
     {
       "id": "relation:46912",
       "name": "Lavis",
-      "lat": 46.1543631,
+      "lat": 46.1543623,
       "lon": 11.1049235,
       "type": "borghi",
       "visibility": "classica",
@@ -109990,8 +110026,8 @@
     {
       "id": "node:1368443227",
       "name": "Corso",
-      "lat": 45.6052672,
-      "lon": 10.9863633,
+      "lat": 45.6052597,
+      "lon": 10.9863418,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -140534,8 +140570,8 @@
     {
       "id": "node:3045447830",
       "name": "Filolungo",
-      "lat": 45.1191188,
-      "lon": 9.7173393,
+      "lat": 45.1191822,
+      "lon": 9.717578,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -174753,22 +174789,6 @@
       "score": 75
     },
     {
-      "id": "node:62511607",
-      "name": "Lomagna",
-      "lat": 45.667978,
-      "lon": 9.376047,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=7813",
-        "name=Lomagna",
-        "place=village",
-        "population=4068",
-        "source=geodati.gfoss.it"
-      ],
-      "score": 75
-    },
-    {
       "id": "node:62511616",
       "name": "Olginate",
       "lat": 45.8009379,
@@ -197360,19 +197380,6 @@
       "visibility": "classica",
       "tags": [
         "name=Mama d'Avio",
-        "place=hamlet"
-      ],
-      "score": 55
-    },
-    {
-      "id": "node:304350917",
-      "name": "Trebi",
-      "lat": 45.9913677,
-      "lon": 10.9486689,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Trebi",
         "place=hamlet"
       ],
       "score": 55

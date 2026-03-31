@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-03-24T04:59:45.463Z",
+  "generated_at": "2026-03-31T05:15:21.984Z",
   "places": [
     {
       "id": "node:2692275706",
@@ -1798,7 +1798,7 @@
         "mobile=+39 348 7389217",
         "name=Casa Gialla",
         "opening_hours=Lunedì – Domenica: 8.00 – 12.00 / 13.30 – 18.30",
-        "phone=+39 0423.981138",
+        "phone=+39 0423 981138",
         "website=https://casagiallaspumanti.it/"
       ],
       "score": 102
@@ -3166,6 +3166,25 @@
       "score": 96
     },
     {
+      "id": "node:13690458600",
+      "name": "Nepos Villae",
+      "lat": 45.5395901,
+      "lon": 10.9464998,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Negrar",
+        "addr:housenumber=1",
+        "addr:postcode=37024",
+        "addr:street=Via Rita Rosani",
+        "craft=winery",
+        "name=Nepos Villae",
+        "phone=+393295345126",
+        "website=https://neposvillae.it/"
+      ],
+      "score": 96
+    },
+    {
       "id": "way:109935476",
       "name": "Maso Thaler",
       "lat": 46.3177713,
@@ -3282,7 +3301,7 @@
         "building=yes",
         "craft=winery",
         "name=SOCIETA' AGRICOLA DA LOZZO",
-        "phone=+39 0438.486665",
+        "phone=+39 0438 486665",
         "website=https://www.proseccozinto.it/"
       ],
       "score": 96
@@ -3518,7 +3537,7 @@
         "contact:street=Via Mantovana",
         "craft=winery",
         "name=CASEIFICIO ZUCCHELLI",
-        "phone=377-804115",
+        "phone=+39 377 804 115",
         "website=https://www.caseificiozucchelli.com"
       ],
       "score": 96
@@ -6934,6 +6953,24 @@
         "opening_hours=Mo 16:00-20:00, Tu-Sa 8:30-13:00, 16:00-20:00",
         "operator=Lunardi Gianpietro",
         "phone=+39 328 637 5755",
+        "shop=wine"
+      ],
+      "score": 49
+    },
+    {
+      "id": "node:13684289501",
+      "name": "Cantina Bernardi Giovanni",
+      "lat": 45.3263315,
+      "lon": 11.7299588,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=48",
+        "addr:postcode=35038",
+        "addr:street=Via Castelletto",
+        "name=Cantina Bernardi Giovanni",
+        "opening_hours=Fr-Su 09:30-23:30; Tu, Th 09:30-19:30; We 09:30-12:30",
+        "phone=049 521 1006",
         "shop=wine"
       ],
       "score": 49
