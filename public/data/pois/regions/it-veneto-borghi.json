@@ -3,7 +3,7 @@
   "country": "IT",
   "area": "Veneto",
   "label_it": "Veneto • Borghi (turistici + piccoli)",
-  "generated_at": "2026-03-24T04:51:26.360Z",
+  "generated_at": "2026-03-31T05:06:09.791Z",
   "places": [
     {
       "id": "node:66503077",
@@ -14299,6 +14299,7 @@
         "gfoss_id=3783",
         "name=Sutrio / Sudri",
         "name:fur=Sudri",
+        "name:it=Sutrio",
         "place=village",
         "population=1392",
         "source=geodati.gfoss.it",
@@ -45673,6 +45674,7 @@
       "tags": [
         "name=Illegio / Dieç",
         "name:fur=Dieç",
+        "name:it=Illegio",
         "place=hamlet",
         "website=https://illegio.it/",
         "wikidata=Q18451747",
@@ -73729,8 +73731,8 @@
     {
       "id": "node:1368443227",
       "name": "Corso",
-      "lat": 45.6052672,
-      "lon": 10.9863633,
+      "lat": 45.6052597,
+      "lon": 10.9863418,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -147044,7 +147046,7 @@
     {
       "id": "relation:46912",
       "name": "Lavis",
-      "lat": 46.1543631,
+      "lat": 46.1543623,
       "lon": 11.1049235,
       "type": "borgo",
       "borgo_type": "classico",
