@@ -7,7 +7,7 @@
     "minLon": 10.2,
     "maxLon": 13.2
   },
-  "generated_at": "2026-03-26T04:59:09.338Z",
+  "generated_at": "2026-04-02T04:55:39.338Z",
   "places": [
     {
       "id": "node:12766026527",
@@ -1876,6 +1876,26 @@
         "name=Antonutti E. Casa Vinicola S.N.C.",
         "phone=+39 0432 662001",
         "website=https://www.antonuttivini.it/it/home/"
+      ],
+      "score": 88,
+      "beauty_score": 1
+    },
+    {
+      "id": "node:13690458600",
+      "name": "Nepos Villae",
+      "lat": 45.5395901,
+      "lon": 10.9464998,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Negrar",
+        "addr:housenumber=1",
+        "addr:postcode=37024",
+        "addr:street=Via Rita Rosani",
+        "craft=winery",
+        "name=Nepos Villae",
+        "phone=+393295345126",
+        "website=https://neposvillae.it/"
       ],
       "score": 88,
       "beauty_score": 1
