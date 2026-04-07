@@ -3,7 +3,7 @@
   "country": "IT",
   "area": "Veneto",
   "label_it": "Veneto • Borghi (turistici + piccoli)",
-  "generated_at": "2026-03-31T05:06:09.791Z",
+  "generated_at": "2026-04-07T05:06:02.637Z",
   "places": [
     {
       "id": "node:66503077",
@@ -41876,6 +41876,22 @@
       "score": 85
     },
     {
+      "id": "node:8194541162",
+      "name": "Grumolo Pedemonte",
+      "lat": 45.7277166,
+      "lon": 11.4968491,
+      "type": "borgo",
+      "borgo_type": "classico",
+      "visibility": "classica",
+      "tags": [
+        "name=Grumolo Pedemonte",
+        "place=village",
+        "wikidata=Q18506398",
+        "wikipedia=it:Grumolo Pedemonte"
+      ],
+      "score": 85
+    },
+    {
       "id": "node:8195943598",
       "name": "Mas",
       "lat": 46.1511661,
@@ -59661,6 +59677,7 @@
       "tags": [
         "name=Cabia / Cjabie",
         "name:fur=Cjabie",
+        "name:it=Cabia",
         "place=hamlet",
         "wikidata=Q3547923",
         "wikipedia=it:Cabia"
@@ -64514,8 +64531,8 @@
     {
       "id": "node:1163850951",
       "name": "Corte Zanetti",
-      "lat": 44.9584833,
-      "lon": 10.5853946,
+      "lat": 44.9584558,
+      "lon": 10.5853886,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -64534,8 +64551,8 @@
     {
       "id": "node:1163851162",
       "name": "La Zuccona",
-      "lat": 44.956382,
-      "lon": 10.568729,
+      "lat": 44.956372,
+      "lon": 10.5687806,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -75061,6 +75078,7 @@
         "loc_name:fur=Faidona",
         "name=Faidona / Faidone",
         "name:fur=Faidone",
+        "name:it=Faidona",
         "place=hamlet",
         "population=36",
         "source=Istat 2001 - geodati.gfoss.it",
@@ -99758,21 +99776,6 @@
         "name=Spino Lusia",
         "place=hamlet",
         "wikidata=Q18498926"
-      ],
-      "score": 70
-    },
-    {
-      "id": "node:8194541162",
-      "name": "Grumolo Pedemonte",
-      "lat": 45.7277166,
-      "lon": 11.4968491,
-      "type": "borgo",
-      "borgo_type": "classico",
-      "visibility": "classica",
-      "tags": [
-        "name=Grumolo Pedemonte",
-        "place=hamlet",
-        "wikidata=Q18506398"
       ],
       "score": 70
     },
@@ -141391,7 +141394,7 @@
     {
       "id": "relation:45606",
       "name": "San Michele al Tagliamento",
-      "lat": 45.7354614,
+      "lat": 45.7357384,
       "lon": 13.019393,
       "type": "borgo",
       "borgo_type": "classico",
@@ -147218,7 +147221,7 @@
     {
       "id": "relation:46939",
       "name": "Giovo",
-      "lat": 46.186678,
+      "lat": 46.1866102,
       "lon": 11.1597206,
       "type": "borgo",
       "borgo_type": "classico",
