@@ -7,7 +7,7 @@
     "lng": 11.9,
     "radius_km": 240
   },
-  "generated_at": "2026-03-31T05:19:53.382Z",
+  "generated_at": "2026-04-07T05:20:22.097Z",
   "places": [
     {
       "id": "osm:w:48528567",
@@ -905,7 +905,7 @@
         "fee=yes",
         "leisure=sauna",
         "name=City Event Sauna",
-        "opening_hours=Mo-Th 14:00-22:30; Fr 14:00-24:00; Sa-Su 10:00-22:30",
+        "opening_hours=Mo-Sa 14:00-21:00; Su 11:00-21:00",
         "operator=Hotel Ideal Park",
         "payment:cash=yes",
         "phone=+39 0471 590 600"
