@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-04-14T05:31:32.993Z",
+  "generated_at": "2026-04-21T05:32:40.582Z",
   "places": [
     {
       "id": "node:2692275706",
@@ -3298,12 +3298,11 @@
       "type": "cantine",
       "visibility": "classica",
       "tags": [
-        "addr:housenumber=2",
         "building=yes",
+        "contact:website=https://www.contithun.com/",
         "craft=winery",
         "name=Conti Thun",
-        "phone=+39 0365 651757",
-        "website=https://www.contithun.com/"
+        "phone=+39 0365 651757"
       ],
       "score": 96
     },
@@ -13624,8 +13623,8 @@
     {
       "id": "way:541853186",
       "name": "EnoValsugana Trento",
-      "lat": 46.0859583,
-      "lon": 11.1177304,
+      "lat": 46.08597,
+      "lon": 11.1177233,
       "type": "cantine",
       "visibility": "classica",
       "tags": [

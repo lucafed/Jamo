@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-04-14T05:31:03.040Z",
+  "generated_at": "2026-04-21T05:32:31.255Z",
   "places": [
     {
       "id": "node:62513426",
@@ -65,6 +65,23 @@
         "population=603",
         "wikidata=Q39150",
         "wikipedia=it:Castello dell'Acqua"
+      ],
+      "score": 153
+    },
+    {
+      "id": "node:390959006",
+      "name": "Santicolo",
+      "lat": 46.167591,
+      "lon": 10.2737522,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "ele=900",
+        "name=Santicolo",
+        "place=village",
+        "population=445",
+        "wikidata=Q1808612",
+        "wikipedia=it:Santicolo"
       ],
       "score": 153
     },
@@ -1718,6 +1735,23 @@
         "population=400",
         "wikidata=Q3862060",
         "wikipedia=it:Monte Terlago"
+      ],
+      "score": 145
+    },
+    {
+      "id": "node:390959110",
+      "name": "Galleno",
+      "lat": 46.1667684,
+      "lon": 10.2324782,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "ele=985",
+        "name=Galleno",
+        "place=village",
+        "population=366",
+        "wikidata=Q929431",
+        "wikipedia=it:Galleno"
       ],
       "score": 145
     },
@@ -4139,21 +4173,6 @@
         "source=geodati.gfoss.it",
         "wikidata=Q100902",
         "wikipedia=it:Roccabianca"
-      ],
-      "score": 143
-    },
-    {
-      "id": "node:390959006",
-      "name": "Santicolo",
-      "lat": 46.1678777,
-      "lon": 10.2736937,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "name=Santicolo",
-        "place=village",
-        "wikidata=Q1808612",
-        "wikipedia=it:Santicolo"
       ],
       "score": 143
     },
@@ -9618,6 +9637,23 @@
       "score": 135
     },
     {
+      "id": "node:370947907",
+      "name": "Mù",
+      "lat": 46.1813369,
+      "lon": 10.3390779,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "ele=717",
+        "loc_name=Mö",
+        "name=Mù",
+        "place=village",
+        "wikidata=Q3869257",
+        "wikipedia=it:Mù"
+      ],
+      "score": 135
+    },
+    {
       "id": "node:378203269",
       "name": "Quinto",
       "lat": 45.4933218,
@@ -9853,36 +9889,6 @@
         "place=village",
         "wikidata=Q3683405",
         "wikipedia=it:Colombaro (Formigine)"
-      ],
-      "score": 135
-    },
-    {
-      "id": "node:390959005",
-      "name": "Lombro",
-      "lat": 46.1697157,
-      "lon": 10.2570864,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "name=Lombro",
-        "place=village",
-        "wikidata=Q3006448",
-        "wikipedia=it:Lombro"
-      ],
-      "score": 135
-    },
-    {
-      "id": "node:390959109",
-      "name": "Ronco",
-      "lat": 46.1701108,
-      "lon": 10.2500792,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "name=Ronco",
-        "place=village",
-        "wikidata=Q1911821",
-        "wikipedia=it:Ronco (Corteno Golgi)"
       ],
       "score": 135
     },
@@ -12507,36 +12513,6 @@
       "score": 135
     },
     {
-      "id": "node:892537790",
-      "name": "Doverio",
-      "lat": 46.1735814,
-      "lon": 10.2561469,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "name=Doverio",
-        "place=village",
-        "wikidata=Q3714734",
-        "wikipedia=it:Doverio"
-      ],
-      "score": 135
-    },
-    {
-      "id": "node:892538259",
-      "name": "Megno",
-      "lat": 46.1733656,
-      "lon": 10.262332,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "name=Megno",
-        "place=village",
-        "wikidata=Q1982782",
-        "wikipedia=it:Megno"
-      ],
-      "score": 135
-    },
-    {
       "id": "node:893020031",
       "name": "Cortenedolo",
       "lat": 46.1741543,
@@ -12716,8 +12692,8 @@
     {
       "id": "node:910983798",
       "name": "Caionvico",
-      "lat": 45.5255772,
-      "lon": 10.2884446,
+      "lat": 45.525306,
+      "lon": 10.288554,
       "type": "borghi",
       "visibility": "chicca",
       "tags": [
@@ -17526,21 +17502,6 @@
       "score": 135
     },
     {
-      "id": "node:3026295239",
-      "name": "Modignano",
-      "lat": 45.3477808,
-      "lon": 9.3907701,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "name=Modignano",
-        "place=village",
-        "wikidata=Q3860014",
-        "wikipedia=it:Modignano"
-      ],
-      "score": 135
-    },
-    {
       "id": "node:3026339492",
       "name": "Roncadello",
       "lat": 45.3653684,
@@ -19172,22 +19133,6 @@
       "score": 135
     },
     {
-      "id": "node:6901067143",
-      "name": "Botticino",
-      "lat": 45.5432619,
-      "lon": 10.3231835,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "description:it=Il Municipio si trova nella frazione di Botticino Mattina.",
-        "name=Botticino",
-        "place=village",
-        "wikidata=Q103582",
-        "wikipedia=it:Botticino"
-      ],
-      "score": 135
-    },
-    {
       "id": "node:6973762120",
       "name": "Maerne",
       "lat": 45.5229174,
@@ -19893,6 +19838,40 @@
       "score": 125
     },
     {
+      "id": "node:390959005",
+      "name": "Lombro",
+      "lat": 46.1696241,
+      "lon": 10.2573698,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "ele=857",
+        "name=Lombro",
+        "place=hamlet",
+        "population=162",
+        "wikidata=Q3006448",
+        "wikipedia=it:Lombro"
+      ],
+      "score": 125
+    },
+    {
+      "id": "node:390959109",
+      "name": "Ronco",
+      "lat": 46.1701108,
+      "lon": 10.2500792,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "ele=950",
+        "name=Ronco",
+        "place=hamlet",
+        "population=46",
+        "wikidata=Q1911821",
+        "wikipedia=it:Ronco (Corteno Golgi)"
+      ],
+      "score": 125
+    },
+    {
       "id": "node:391104638",
       "name": "Bocca d'Enza",
       "lat": 44.9071345,
@@ -19924,6 +19903,23 @@
         "source=ISTAT - Censimento 2011",
         "wikidata=Q1136480",
         "wikipedia=it:Costasavina"
+      ],
+      "score": 125
+    },
+    {
+      "id": "node:442513283",
+      "name": "Sant'Antonio",
+      "lat": 46.151876,
+      "lon": 10.2097317,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "ele=1124",
+        "name=Sant'Antonio",
+        "place=hamlet",
+        "population=11",
+        "wikidata=Q2870600",
+        "wikipedia=it:Sant'Antonio (Corteno Golgi)"
       ],
       "score": 125
     },
@@ -20195,6 +20191,23 @@
         "source=Istat 2001 - geodati.gfoss.it",
         "wikidata=Q4024833",
         "wikipedia=it:Zorzone"
+      ],
+      "score": 125
+    },
+    {
+      "id": "node:892538259",
+      "name": "Megno",
+      "lat": 46.1733656,
+      "lon": 10.262332,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "ele=969",
+        "name=Megno",
+        "place=hamlet",
+        "population=124",
+        "wikidata=Q1982782",
+        "wikipedia=it:Megno"
       ],
       "score": 125
     },
@@ -21623,6 +21636,23 @@
         "source=www.resitalica.it",
         "wikidata=Q3761741",
         "wikipedia=it:Ghiare Bonvisi"
+      ],
+      "score": 125
+    },
+    {
+      "id": "node:3026295239",
+      "name": "Modignano",
+      "lat": 45.3472955,
+      "lon": 9.3909876,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "ele=85",
+        "name=Modignano",
+        "place=hamlet",
+        "population=272",
+        "wikidata=Q3860014",
+        "wikipedia=it:Modignano"
       ],
       "score": 125
     },
@@ -23538,16 +23568,17 @@
     {
       "id": "node:1398660664",
       "name": "Sirmione",
-      "lat": 45.4688494,
-      "lon": 10.6078237,
+      "lat": 45.492869,
+      "lon": 10.6077258,
       "type": "borghi",
       "visibility": "chicca",
       "tags": [
+        "ele=66",
         "name=Sirmione",
         "place=town",
         "population=7646",
         "wikidata=Q112019",
-        "wikipedia=en:Sirmione"
+        "wikipedia=it:Sirmione"
       ],
       "score": 120
     },
@@ -23709,6 +23740,21 @@
         "website=https://www.comune.sancolombanoallambro.mi.it/",
         "wikidata=Q42404",
         "wikipedia=it:San Colombano al Lambro"
+      ],
+      "score": 120
+    },
+    {
+      "id": "node:6901067143",
+      "name": "Botticino",
+      "lat": 45.5360232,
+      "lon": 10.3009461,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "name=Botticino",
+        "place=town",
+        "wikidata=Q103582",
+        "wikipedia=it:Botticino"
       ],
       "score": 120
     },
@@ -24299,23 +24345,6 @@
       "score": 115
     },
     {
-      "id": "node:370947907",
-      "name": "Mù",
-      "lat": 46.1811272,
-      "lon": 10.3393663,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "name=Mù",
-        "place=hamlet",
-        "population=4291",
-        "source=geodati.gfoss.it",
-        "wikidata=Q3869257",
-        "wikipedia=it:Mù"
-      ],
-      "score": 115
-    },
-    {
       "id": "node:385718733",
       "name": "Fontanella",
       "lat": 45.7160319,
@@ -24390,21 +24419,6 @@
         "place=hamlet",
         "wikidata=Q2523214",
         "wikipedia=it:Loritto"
-      ],
-      "score": 115
-    },
-    {
-      "id": "node:390959110",
-      "name": "Galleno",
-      "lat": 46.1667684,
-      "lon": 10.2324782,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "name=Galleno",
-        "place=hamlet",
-        "wikidata=Q929431",
-        "wikipedia=it:Galleno"
       ],
       "score": 115
     },
@@ -24975,21 +24989,6 @@
         "place=hamlet",
         "wikidata=Q18442435",
         "wikipedia=it:Eia (Parma)"
-      ],
-      "score": 115
-    },
-    {
-      "id": "node:442513283",
-      "name": "Sant'Antonio",
-      "lat": 46.1517106,
-      "lon": 10.2093041,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "name=Sant'Antonio",
-        "place=hamlet",
-        "wikidata=Q2870600",
-        "wikipedia=it:Sant'Antonio (Corteno Golgi)"
       ],
       "score": 115
     },
@@ -25908,6 +25907,22 @@
       "score": 115
     },
     {
+      "id": "node:768418635",
+      "name": "Respiccio",
+      "lat": 44.6724022,
+      "lon": 10.1089518,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "is_in=Fornovo, Parma, Emilia-Romagna",
+        "name=Respiccio",
+        "place=hamlet",
+        "wikidata=Q18443093",
+        "wikipedia=it:Respiccio"
+      ],
+      "score": 115
+    },
+    {
       "id": "node:776973723",
       "name": "Lodetto",
       "lat": 45.5468007,
@@ -26153,21 +26168,6 @@
         "place=hamlet",
         "wikidata=Q18480851",
         "wikipedia=it:Maurina (Spormaggiore)"
-      ],
-      "score": 115
-    },
-    {
-      "id": "node:892981305",
-      "name": "San Pietro in Aprica",
-      "lat": 46.1568466,
-      "lon": 10.1700078,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "name=San Pietro in Aprica",
-        "place=hamlet",
-        "wikidata=Q3947816",
-        "wikipedia=it:San Pietro in Aprica"
       ],
       "score": 115
     },
@@ -27610,6 +27610,21 @@
         "place=hamlet",
         "wikidata=Q25710711",
         "wikipedia=it:Vianino"
+      ],
+      "score": 115
+    },
+    {
+      "id": "node:1818900147",
+      "name": "Piantonia",
+      "lat": 44.6647505,
+      "lon": 10.0934895,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "name=Piantonia",
+        "place=hamlet",
+        "wikidata=Q18442954",
+        "wikipedia=it:Piantonia"
       ],
       "score": 115
     },
@@ -33158,6 +33173,22 @@
       "score": 110
     },
     {
+      "id": "node:479220306",
+      "name": "Monteleone",
+      "lat": 45.1923919,
+      "lon": 9.4084428,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "ele=79",
+        "name=Monteleone",
+        "place=village",
+        "population=588",
+        "wikidata=Q18493089"
+      ],
+      "score": 110
+    },
+    {
       "id": "node:492103618",
       "name": "Sant'Antonio d'Adda",
       "lat": 45.7567022,
@@ -33659,6 +33690,23 @@
         "place=village",
         "population=550",
         "wikidata=Q2693549"
+      ],
+      "score": 110
+    },
+    {
+      "id": "node:892981305",
+      "name": "San Pietro",
+      "lat": 46.1568466,
+      "lon": 10.1700078,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "alt_name=San Pietro in Aprica",
+        "ele=1175",
+        "name=San Pietro",
+        "place=village",
+        "population=232",
+        "wikidata=Q3947816"
       ],
       "score": 110
     },
@@ -35707,6 +35755,22 @@
         "population=164",
         "source=http://www.resitalica.it/",
         "wikidata=Q18439807"
+      ],
+      "score": 110
+    },
+    {
+      "id": "node:3026295238",
+      "name": "Villavesco",
+      "lat": 45.3370742,
+      "lon": 9.4041557,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "ele=83",
+        "name=Villavesco",
+        "place=village",
+        "population=476",
+        "wikidata=Q18489839"
       ],
       "score": 110
     },
@@ -38867,16 +38931,14 @@
     {
       "id": "node:62507526",
       "name": "Corteno Golgi",
-      "lat": 46.166198,
-      "lon": 10.243457,
+      "lat": 46.1651686,
+      "lon": 10.2395423,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
-        "gfoss_id=2233",
         "name=Corteno Golgi",
         "place=village",
         "population=2036",
-        "source=ISTAT - Bilancio mensile marzo 2010 - demo.istat.it",
         "wikidata=Q30025175"
       ],
       "score": 100
@@ -39082,6 +39144,21 @@
         "population=2849",
         "source=geodati.gfoss.it",
         "wikidata=Q30030607"
+      ],
+      "score": 100
+    },
+    {
+      "id": "node:62508340",
+      "name": "Botticino Sera",
+      "lat": 45.535983,
+      "lon": 10.301871,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Botticino Sera",
+        "place=village",
+        "population=9730",
+        "wikidata=Q28669785"
       ],
       "score": 100
     },
@@ -39916,6 +39993,24 @@
       "score": 100
     },
     {
+      "id": "node:62512110",
+      "name": "Spino d’Adda",
+      "lat": 45.3999068,
+      "lon": 9.4926751,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=84",
+        "name=Spino d’Adda",
+        "place=village",
+        "population=7013",
+        "population:date=2025-12-31",
+        "source:population=wikipedia;ISTAT",
+        "wikidata=Q30030886"
+      ],
+      "score": 100
+    },
+    {
       "id": "node:62512133",
       "name": "Cornegliano Laudense",
       "lat": 45.286169,
@@ -39969,16 +40064,15 @@
     {
       "id": "node:62512212",
       "name": "Tavazzano",
-      "lat": 45.32727,
-      "lon": 9.406354,
+      "lat": 45.3288316,
+      "lon": 9.4042193,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
-        "gfoss_id=7915",
+        "ele=82",
         "name=Tavazzano",
         "place=village",
         "population=5183",
-        "source=geodati.gfoss.it",
         "wikidata=Q18489797"
       ],
       "score": 100
@@ -40513,8 +40607,8 @@
     {
       "id": "node:62516731",
       "name": "Aprica",
-      "lat": 46.152697,
-      "lon": 10.151656,
+      "lat": 46.1540136,
+      "lon": 10.152581,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -49194,20 +49288,6 @@
       "score": 100
     },
     {
-      "id": "node:479220306",
-      "name": "Monteleone",
-      "lat": 45.1923865,
-      "lon": 9.4092169,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Monteleone",
-        "place=village",
-        "wikidata=Q18493089"
-      ],
-      "score": 100
-    },
-    {
       "id": "node:480101013",
       "name": "Birbesi",
       "lat": 45.2898989,
@@ -50897,14 +50977,13 @@
     {
       "id": "node:795952297",
       "name": "Botticino Mattina",
-      "lat": 45.5425033,
-      "lon": 10.3246987,
+      "lat": 45.5429099,
+      "lon": 10.3235463,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
         "name=Botticino Mattina",
         "place=village",
-        "population=10919",
         "website=https://enciclopediabresciana.it/enciclopedia/index.php?title=BOTTICINO_Mattina",
         "wikidata=Q113676213"
       ],
@@ -61008,7 +61087,7 @@
     {
       "id": "relation:43646",
       "name": "Ariano nel Polesine",
-      "lat": 44.893191,
+      "lat": 44.8931245,
       "lon": 12.2295277,
       "type": "borghi",
       "visibility": "classica",
@@ -75822,7 +75901,7 @@
         "ref:catasto=F851",
         "type=boundary",
         "wikidata=Q105303",
-        "wikipedia=it:Nave (Italia)"
+        "wikipedia=it:Nave (comune)"
       ],
       "score": 100
     },
@@ -79893,6 +79972,7 @@
         "ref:catasto=H046",
         "type=boundary",
         "wikidata=Q101481",
+        "wikimedia_commons=Category:Santi Fermo e Rustico (Presezzo)",
         "wikipedia=it:Presezzo"
       ],
       "score": 100
@@ -99593,6 +99673,22 @@
         "population=113",
         "source=Istat 2001 - geodati.gfoss.it",
         "wikidata=Q18442714"
+      ],
+      "score": 90
+    },
+    {
+      "id": "node:892537790",
+      "name": "Doverio",
+      "lat": 46.1735814,
+      "lon": 10.2561469,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=1112",
+        "name=Doverio",
+        "place=hamlet",
+        "population=111",
+        "wikidata=Q3714734"
       ],
       "score": 90
     },
@@ -123035,23 +123131,6 @@
       "score": 83
     },
     {
-      "id": "node:62508340",
-      "name": "Botticino Sera",
-      "lat": 45.535983,
-      "lon": 10.301871,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=2193",
-        "name=Botticino Sera",
-        "place=hamlet",
-        "population=9730",
-        "source=geodati.gfoss.it",
-        "wikidata=Q28669785"
-      ],
-      "score": 80
-    },
-    {
       "id": "node:62508419",
       "name": "Pieve",
       "lat": 45.7712312,
@@ -128666,8 +128745,8 @@
     {
       "id": "node:1100598444",
       "name": "Roncio",
-      "lat": 46.3213263,
-      "lon": 10.8088281,
+      "lat": 46.3214053,
+      "lon": 10.8088429,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -140406,20 +140485,6 @@
         "name=Poggiridenti Piano",
         "place=hamlet",
         "wikidata=Q18494588"
-      ],
-      "score": 80
-    },
-    {
-      "id": "node:3026295238",
-      "name": "Villavesco",
-      "lat": 45.336749,
-      "lon": 9.4050729,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Villavesco",
-        "place=hamlet",
-        "wikidata=Q18489839"
       ],
       "score": 80
     },
@@ -173156,8 +173221,9 @@
         "gfoss_id=2232",
         "name=Corte Franca",
         "place=village",
-        "population=6282",
-        "source=geodati.gfoss.it"
+        "population=7150",
+        "source=geodati.gfoss.it",
+        "source:population=wikipedia"
       ],
       "score": 75
     },
@@ -173927,22 +173993,6 @@
       "score": 75
     },
     {
-      "id": "node:62508624",
-      "name": "Edolo",
-      "lat": 46.1793752,
-      "lon": 10.3307572,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=2238",
-        "name=Edolo",
-        "place=village",
-        "population=4291",
-        "source=geodati.gfoss.it"
-      ],
-      "score": 75
-    },
-    {
       "id": "node:62508634",
       "name": "Esine",
       "lat": 45.9258392,
@@ -173969,8 +174019,9 @@
         "gfoss_id=2210",
         "name=Castegnato",
         "place=village",
-        "population=6666",
-        "source=geodati.gfoss.it"
+        "population=8457",
+        "source=geodati.gfoss.it",
+        "source:population=wikipedia"
       ],
       "score": 75
     },
@@ -174801,22 +174852,6 @@
       "score": 75
     },
     {
-      "id": "node:62511591",
-      "name": "Ballabio",
-      "lat": 45.898184,
-      "lon": 9.423444,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=7773",
-        "name=Ballabio",
-        "place=village",
-        "population=3330",
-        "source=geodati.gfoss.it"
-      ],
-      "score": 75
-    },
-    {
       "id": "node:62511616",
       "name": "Olginate",
       "lat": 45.8009379,
@@ -174990,22 +175025,6 @@
         "name=Sospiro",
         "place=village",
         "population=3255",
-        "source=geodati.gfoss.it"
-      ],
-      "score": 75
-    },
-    {
-      "id": "node:62512110",
-      "name": "Spino d’Adda",
-      "lat": 45.398872,
-      "lon": 9.492255,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=2668",
-        "name=Spino d’Adda",
-        "place=village",
-        "population=5905",
         "source=geodati.gfoss.it"
       ],
       "score": 75
@@ -179720,8 +179739,8 @@
     {
       "id": "node:924578477",
       "name": "Lugana",
-      "lat": 45.4600534,
-      "lon": 10.6196897,
+      "lat": 45.4614596,
+      "lon": 10.6227792,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -180284,6 +180303,21 @@
       "visibility": "classica",
       "tags": [
         "name=San Vito",
+        "place=village"
+      ],
+      "score": 75
+    },
+    {
+      "id": "node:1402807545",
+      "name": "Morterone",
+      "lat": 45.8737061,
+      "lon": 9.4830221,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=1070",
+        "loc_name=Murterun",
+        "name=Morterone",
         "place=village"
       ],
       "score": 75
@@ -182847,6 +182881,19 @@
       "visibility": "classica",
       "tags": [
         "name=Battaglione",
+        "place=village"
+      ],
+      "score": 75
+    },
+    {
+      "id": "node:2939792188",
+      "name": "Colombare",
+      "lat": 45.4673512,
+      "lon": 10.6073047,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Colombare",
         "place=village"
       ],
       "score": 75
@@ -188169,6 +188216,21 @@
       "score": 65
     },
     {
+      "id": "node:893020032",
+      "name": "Le Fucine",
+      "lat": 46.1657562,
+      "lon": 10.2159216,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=911",
+        "name=Le Fucine",
+        "place=hamlet",
+        "population=50"
+      ],
+      "score": 65
+    },
+    {
       "id": "node:897968984",
       "name": "Castelvecchio",
       "lat": 44.4501425,
@@ -191387,22 +191449,6 @@
         "place=hamlet",
         "population=97",
         "source=http://www.resitalica.it/"
-      ],
-      "score": 65
-    },
-    {
-      "id": "node:1402807545",
-      "name": "Morterone",
-      "lat": 45.8737061,
-      "lon": 9.4830221,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "ele=1070",
-        "loc_name=Murterun",
-        "name=Morterone",
-        "place=hamlet",
-        "population=4"
       ],
       "score": 65
     },
@@ -196424,6 +196470,21 @@
       "score": 60
     },
     {
+      "id": "node:62508624",
+      "name": "Edolo",
+      "lat": 46.1806346,
+      "lon": 10.3332567,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=720",
+        "name=Edolo",
+        "place=town",
+        "population=4291"
+      ],
+      "score": 60
+    },
+    {
       "id": "node:62508692",
       "name": "Cazzago San Martino",
       "lat": 45.580508,
@@ -196516,6 +196577,20 @@
         "place=town",
         "population=13867",
         "source=geodati.gfoss.it"
+      ],
+      "score": 60
+    },
+    {
+      "id": "node:62511591",
+      "name": "Ballabio",
+      "lat": 45.8960629,
+      "lon": 9.4239921,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Ballabio",
+        "place=town",
+        "population=3330"
       ],
       "score": 60
     },
@@ -197311,60 +197386,6 @@
       "visibility": "classica",
       "tags": [
         "name=Cascina Oliva",
-        "place=hamlet"
-      ],
-      "score": 55
-    },
-    {
-      "id": "node:303626845",
-      "name": "Mama d'Avio",
-      "lat": 45.7051654,
-      "lon": 10.92163,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Mama d'Avio",
-        "place=hamlet"
-      ],
-      "score": 55
-    },
-    {
-      "id": "node:304350917",
-      "name": "Trebi",
-      "lat": 45.9913677,
-      "lon": 10.9486689,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Trebi",
-        "place=hamlet"
-      ],
-      "score": 55
-    },
-    {
-      "id": "node:304937068",
-      "name": "San Donato",
-      "lat": 45.6322514,
-      "lon": 11.7906747,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=San Donato",
-        "name:vec=San Donà",
-        "place=hamlet"
-      ],
-      "score": 55
-    },
-    {
-      "id": "node:305263724",
-      "name": "San Valentino",
-      "lat": 45.7827813,
-      "lon": 10.9058813,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "loc_name=San Valentìn",
-        "name=San Valentino",
         "place=hamlet"
       ],
       "score": 55

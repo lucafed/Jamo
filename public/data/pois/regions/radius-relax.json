@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-03-24T04:59:00.201Z",
+  "generated_at": "2026-04-21T05:32:04.019Z",
   "places": [
     {
       "id": "way:48528567",
@@ -368,7 +368,7 @@
         "healthcare:speciality=hydrotherapy",
         "name=Terme di Trescore",
         "operator=Terme di Trescore S.P.A.",
-        "phone=035 4255511",
+        "phone=+39 035 425 5511",
         "website=https://www.termeditrescore.it/"
       ],
       "score": 151
@@ -1488,7 +1488,7 @@
         "addr:city=Trento",
         "addr:country=IT",
         "addr:housenumber=25",
-        "addr:postcode=31822",
+        "addr:postcode=38122",
         "addr:street=Via Torre D'Augusto",
         "bath:type=thermal",
         "leisure=fitness_centre",
@@ -1649,7 +1649,7 @@
         "addr:city=Trento",
         "addr:country=IT",
         "addr:housenumber=31",
-        "addr:postcode=31822",
+        "addr:postcode=38122",
         "addr:street=Via Bolghera",
         "name=Intermedia Immobiliare",
         "office=estate_agent",
@@ -1819,6 +1819,28 @@
         "sport=swimming",
         "tourism=attraction",
         "website=https://www.termedigiunone.it"
+      ],
+      "score": 71
+    },
+    {
+      "id": "way:130025069",
+      "name": "Piscina Comunale di Abano Terme",
+      "lat": 45.3588467,
+      "lon": 11.7815621,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "access=customers",
+        "addr:housenumber=+39 049 812418",
+        "check_date=2026-04-10",
+        "check_date:opening_hours=2026-04-10",
+        "covered=no",
+        "leisure=swimming_pool",
+        "location=outdoor",
+        "name=Piscina Comunale di Abano Terme",
+        "opening_hours=Sa-Su 09:00-19:00; Mo-Fr 09:00-21:30",
+        "sport=swimming",
+        "website=https://www.abanopiscina.com/Home/"
       ],
       "score": 71
     },
@@ -2156,24 +2178,6 @@
         "ref=1",
         "start_date=2005",
         "website=https://www.montepora.com/"
-      ],
-      "score": 65
-    },
-    {
-      "id": "way:130025069",
-      "name": "Piscina Comunale di Abano Terme",
-      "lat": 45.3588121,
-      "lon": 11.7815646,
-      "type": "relax",
-      "visibility": "classica",
-      "tags": [
-        "access=yes",
-        "covered=no",
-        "fixme=Verificare access=*",
-        "leisure=swimming_pool",
-        "name=Piscina Comunale di Abano Terme",
-        "sport=swimming",
-        "website=https://www.abanopiscina.com/Home/"
       ],
       "score": 65
     },
@@ -2652,6 +2656,8 @@
       "type": "relax",
       "visibility": "classica",
       "tags": [
+        "addr:housenumber=21",
+        "addr:street=Via Neroniana",
         "building=yes",
         "name=Terme Neroniane",
         "tourism=hotel"
@@ -3080,28 +3086,6 @@
         "loc_ref=52700",
         "name=Thai Star",
         "origin=thai",
-        "source=survey"
-      ],
-      "score": 60
-    },
-    {
-      "id": "node:4690641399",
-      "name": "Talea",
-      "lat": 44.7999988,
-      "lon": 10.3272695,
-      "type": "relax",
-      "visibility": "classica",
-      "tags": [
-        "addr:city=Parma",
-        "addr:country=IT",
-        "addr:housenumber=3",
-        "addr:postcode=43121",
-        "addr:street=Via Pietro Torrigiani",
-        "amenity=spa",
-        "entrance=main",
-        "level=0",
-        "loc_ref=1016",
-        "name=Talea",
         "source=survey"
       ],
       "score": 60
@@ -3726,21 +3710,6 @@
         "population=2879",
         "wikidata=Q300962",
         "wikipedia=it:Roncegno Terme"
-      ],
-      "score": 55
-    },
-    {
-      "id": "node:1164001315",
-      "name": "Bikepark Tramin - Bikepark Termeno",
-      "lat": 46.3382906,
-      "lon": 11.2320982,
-      "type": "relax",
-      "visibility": "classica",
-      "tags": [
-        "name=Bikepark Tramin - Bikepark Termeno",
-        "name:de=Bikepark Tramin",
-        "name:it=Bikepark Termeno",
-        "sport=cycling"
       ],
       "score": 55
     },
@@ -4476,7 +4445,7 @@
         "addr:city=Trento",
         "addr:country=IT",
         "addr:housenumber=23",
-        "addr:postcode=31822",
+        "addr:postcode=38122",
         "addr:street=Vicolo del Vò",
         "name=InterMedia",
         "office=estate_agent"
@@ -5842,6 +5811,22 @@
       "score": 55
     },
     {
+      "id": "way:375086949",
+      "name": "Poste Italiane - Montegrotto Terme",
+      "lat": 45.3308275,
+      "lon": 11.7924026,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "amenity=post_office",
+        "building=public",
+        "name=Poste Italiane - Montegrotto Terme",
+        "operator=Poste Italiane",
+        "operator:wikidata=Q495026"
+      ],
+      "score": 55
+    },
+    {
       "id": "way:375280305",
       "name": "Istituto comprensivo di Battaglia Terme",
       "lat": 45.2925654,
@@ -6491,6 +6476,36 @@
         "seasonal=no",
         "surface=asphalt",
         "tourism=caravan_site"
+      ],
+      "score": 55
+    },
+    {
+      "id": "way:1493884851",
+      "name": "Darfo Boario Terme",
+      "lat": 45.8755879,
+      "lon": 10.1875748,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "aeroway=helipad",
+        "name=Darfo Boario Terme",
+        "operator=Camunia Soccorso"
+      ],
+      "score": 55
+    },
+    {
+      "id": "way:1495856666",
+      "name": "Comando di Polizia Locale - Abano Terme",
+      "lat": 45.3586615,
+      "lon": 11.7883992,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "amenity=police",
+        "building=yes",
+        "name=Comando di Polizia Locale - Abano Terme",
+        "operator=Polizia di Stato",
+        "operator:wikidata=Q897817"
       ],
       "score": 55
     },
@@ -7821,6 +7836,21 @@
         "building=yes",
         "name=Luna Wellness Hotel",
         "tourism=hotel"
+      ],
+      "score": 33
+    },
+    {
+      "id": "relation:1895642",
+      "name": "Columbus Thermal Pool",
+      "lat": 45.3485867,
+      "lon": 11.7875252,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "building=yes",
+        "name=Columbus Thermal Pool",
+        "tourism=hotel",
+        "type=multipolygon"
       ],
       "score": 33
     },
