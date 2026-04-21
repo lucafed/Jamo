@@ -3,7 +3,7 @@
   "country": "IT",
   "area": "Veneto",
   "label_it": "Veneto • Borghi (turistici + piccoli)",
-  "generated_at": "2026-04-14T05:19:58.010Z",
+  "generated_at": "2026-04-21T05:23:48.857Z",
   "places": [
     {
       "id": "node:66503077",
@@ -1313,15 +1313,14 @@
     {
       "id": "node:795952297",
       "name": "Botticino Mattina",
-      "lat": 45.5425033,
-      "lon": 10.3246987,
+      "lat": 45.5429099,
+      "lon": 10.3235463,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
         "name=Botticino Mattina",
         "place=village",
-        "population=10919",
         "website=https://enciclopediabresciana.it/enciclopedia/index.php?title=BOTTICINO_Mattina",
         "wikidata=Q113676213"
       ],
@@ -2670,6 +2669,22 @@
         "population=2849",
         "source=geodati.gfoss.it",
         "wikidata=Q30030607"
+      ],
+      "score": 85
+    },
+    {
+      "id": "node:62508340",
+      "name": "Botticino Sera",
+      "lat": 45.535983,
+      "lon": 10.301871,
+      "type": "borgo",
+      "borgo_type": "classico",
+      "visibility": "classica",
+      "tags": [
+        "name=Botticino Sera",
+        "place=village",
+        "population=9730",
+        "wikidata=Q28669785"
       ],
       "score": 85
     },
@@ -18953,6 +18968,24 @@
         "place=village",
         "wikidata=Q2420057",
         "wikipedia=it:Zazza"
+      ],
+      "score": 85
+    },
+    {
+      "id": "node:370947907",
+      "name": "Mù",
+      "lat": 46.1813369,
+      "lon": 10.3390779,
+      "type": "borgo",
+      "borgo_type": "classico",
+      "visibility": "classica",
+      "tags": [
+        "ele=717",
+        "loc_name=Mö",
+        "name=Mù",
+        "place=village",
+        "wikidata=Q3869257",
+        "wikipedia=it:Mù"
       ],
       "score": 85
     },
@@ -41720,23 +41753,6 @@
       "score": 85
     },
     {
-      "id": "node:6901067143",
-      "name": "Botticino",
-      "lat": 45.5432619,
-      "lon": 10.3231835,
-      "type": "borgo",
-      "borgo_type": "classico",
-      "visibility": "classica",
-      "tags": [
-        "description:it=Il Municipio si trova nella frazione di Botticino Mattina.",
-        "name=Botticino",
-        "place=village",
-        "wikidata=Q103582",
-        "wikipedia=it:Botticino"
-      ],
-      "score": 85
-    },
-    {
       "id": "node:6973762120",
       "name": "Maerne",
       "lat": 45.5229174,
@@ -45334,17 +45350,18 @@
     {
       "id": "node:1398660664",
       "name": "Sirmione",
-      "lat": 45.4688494,
-      "lon": 10.6078237,
+      "lat": 45.492869,
+      "lon": 10.6077258,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
+        "ele=66",
         "name=Sirmione",
         "place=town",
         "population=7646",
         "wikidata=Q112019",
-        "wikipedia=en:Sirmione"
+        "wikipedia=it:Sirmione"
       ],
       "score": 80
     },
@@ -45562,6 +45579,22 @@
         "name=Bettola",
         "place=hamlet",
         "wikidata=Q18496129"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:6901067143",
+      "name": "Botticino",
+      "lat": 45.5360232,
+      "lon": 10.3009461,
+      "type": "borgo",
+      "borgo_type": "classico",
+      "visibility": "classica",
+      "tags": [
+        "name=Botticino",
+        "place=town",
+        "wikidata=Q103582",
+        "wikipedia=it:Botticino"
       ],
       "score": 80
     },
@@ -47968,24 +48001,6 @@
         "place=hamlet",
         "wikidata=Q2015124",
         "wikipedia=it:Rio San Martino"
-      ],
-      "score": 70
-    },
-    {
-      "id": "node:62508340",
-      "name": "Botticino Sera",
-      "lat": 45.535983,
-      "lon": 10.301871,
-      "type": "borgo",
-      "borgo_type": "classico",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=2193",
-        "name=Botticino Sera",
-        "place=hamlet",
-        "population=9730",
-        "source=geodati.gfoss.it",
-        "wikidata=Q28669785"
       ],
       "score": 70
     },
@@ -55553,24 +55568,6 @@
         "name=Lugo",
         "place=hamlet",
         "wikidata=Q18503395"
-      ],
-      "score": 70
-    },
-    {
-      "id": "node:370947907",
-      "name": "Mù",
-      "lat": 46.1811272,
-      "lon": 10.3393663,
-      "type": "borgo",
-      "borgo_type": "classico",
-      "visibility": "classica",
-      "tags": [
-        "name=Mù",
-        "place=hamlet",
-        "population=4291",
-        "source=geodati.gfoss.it",
-        "wikidata=Q3869257",
-        "wikipedia=it:Mù"
       ],
       "score": 70
     },
@@ -63539,8 +63536,8 @@
     {
       "id": "node:1100598444",
       "name": "Roncio",
-      "lat": 46.3213263,
-      "lon": 10.8088281,
+      "lat": 46.3214053,
+      "lon": 10.8088429,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -66286,8 +66283,8 @@
     {
       "id": "node:1165053609",
       "name": "Ca' Venier",
-      "lat": 44.9602351,
-      "lon": 12.3370244,
+      "lat": 44.959124,
+      "lon": 12.3342557,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -66406,8 +66403,8 @@
     {
       "id": "node:1165053657",
       "name": "Ca' Zuliani",
-      "lat": 44.9586166,
-      "lon": 12.422434,
+      "lat": 44.9585013,
+      "lon": 12.4232574,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -128879,6 +128876,22 @@
       "score": 50
     },
     {
+      "id": "node:62508624",
+      "name": "Edolo",
+      "lat": 46.1806346,
+      "lon": 10.3332567,
+      "type": "borgo",
+      "borgo_type": "chicca",
+      "visibility": "chicca",
+      "tags": [
+        "ele=720",
+        "name=Edolo",
+        "place=town",
+        "population=4291"
+      ],
+      "score": 50
+    },
+    {
       "id": "node:62508708",
       "name": "Calcinato",
       "lat": 45.457182,
@@ -130645,7 +130658,7 @@
     {
       "id": "relation:43646",
       "name": "Ariano nel Polesine",
-      "lat": 44.893191,
+      "lat": 44.8931245,
       "lon": 12.2295277,
       "type": "borgo",
       "borgo_type": "classico",
@@ -130837,7 +130850,7 @@
       "id": "relation:43680",
       "name": "Goro",
       "lat": 44.8391658,
-      "lon": 12.3251876,
+      "lon": 12.3253151,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -140012,7 +140025,7 @@
         "ref:catasto=F851",
         "type=boundary",
         "wikidata=Q105303",
-        "wikipedia=it:Nave (Italia)"
+        "wikipedia=it:Nave (comune)"
       ],
       "score": 12
     },
