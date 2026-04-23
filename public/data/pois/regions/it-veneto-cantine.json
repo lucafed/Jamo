@@ -7,7 +7,7 @@
     "minLon": 10.2,
     "maxLon": 13.2
   },
-  "generated_at": "2026-04-16T05:21:35.584Z",
+  "generated_at": "2026-04-23T05:20:25.156Z",
   "places": [
     {
       "id": "node:12766026527",
@@ -657,7 +657,7 @@
         "craft=winery",
         "name=TENUTA GUIDA",
         "opening_hours=Mo-Sa 08:00-12:00; Mo-Sa 13:00-17:00",
-        "phone=0421287106",
+        "phone=+39 0421 287106",
         "website=https://www.tenutaguida.com/"
       ],
       "score": 94,
@@ -724,7 +724,7 @@
         "mobile=+39 348 7389217",
         "name=Casa Gialla",
         "opening_hours=Lunedì – Domenica: 8.00 – 12.00 / 13.30 – 18.30",
-        "phone=+39 0423.981138",
+        "phone=+39 0423 981138",
         "website=https://casagiallaspumanti.it/"
       ],
       "score": 94,
@@ -998,6 +998,38 @@
         "website=http://www.giustiwine.com"
       ],
       "score": 94,
+      "beauty_score": 1
+    },
+    {
+      "id": "node:2159956231",
+      "name": "Weingut Peter Sölva und Söhne - Tenuta Peter Sölva e Figli",
+      "lat": 46.411829,
+      "lon": 11.2436595,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Kaltern an der Weinstraße - Caldaro sulla Strada del Vino",
+        "addr:city:de=Kaltern an der Weinstraße",
+        "addr:city:it=Caldaro sulla Strada del Vino",
+        "addr:housename=Weingut Peter Sölva",
+        "addr:housenumber=33",
+        "addr:postcode=39052",
+        "addr:street=Goldgasse - Via D'Oro",
+        "addr:street:de=Goldgasse",
+        "addr:street:it=Via D'Oro",
+        "craft=winery",
+        "currency:EUR=yes",
+        "name=Weingut Peter Sölva und Söhne - Tenuta Peter Sölva e Figli",
+        "name:de=Weingut Peter Sölva und Söhne",
+        "name:it=Tenuta Peter Sölva e Figli",
+        "opening_hours=Mo-Fr 10:00-13:00,15:00-20:00; Sa 10:00-20:00; Jul,Aug Th 10:00-13:00,15:00-23:00; Jul Fr off; Sep-Oct Su 11:00-17:00; Dec Fr 10:00-13:00,15:00-23:00",
+        "operator=Weingut Peter Sölva",
+        "outdoor_seating=yes",
+        "ref:vatin=IT02213140219",
+        "start_date=1731",
+        "website=https://www.soelva.com/"
+      ],
+      "score": 88,
       "beauty_score": 1
     },
     {
@@ -1797,26 +1829,6 @@
       "beauty_score": 1
     },
     {
-      "id": "node:12925776824",
-      "name": "Bertani",
-      "lat": 45.5173424,
-      "lon": 11.0226882,
-      "type": "cantine",
-      "visibility": "classica",
-      "tags": [
-        "addr:city=Grezzana",
-        "addr:housenumber=1",
-        "addr:postcode=37023",
-        "addr:street=Via Asiago",
-        "craft=winery",
-        "name=Bertani",
-        "phone=+39 0458 658444",
-        "website=https://www.bertani.net/"
-      ],
-      "score": 88,
-      "beauty_score": 1
-    },
-    {
       "id": "node:13359173265",
       "name": "Sui Nui Spumanti Società Agricola",
       "lat": 45.889449,
@@ -1881,6 +1893,66 @@
       "beauty_score": 1
     },
     {
+      "id": "node:13690458600",
+      "name": "Nepos Villae",
+      "lat": 45.5395901,
+      "lon": 10.9464998,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Negrar",
+        "addr:housenumber=1",
+        "addr:postcode=37024",
+        "addr:street=Via Rita Rosani",
+        "craft=winery",
+        "name=Nepos Villae",
+        "phone=+393295345126",
+        "website=https://neposvillae.it/"
+      ],
+      "score": 88,
+      "beauty_score": 1
+    },
+    {
+      "id": "node:13727444951",
+      "name": "Weingut | Tenuta Oberfurner",
+      "lat": 46.6268884,
+      "lon": 11.5429915,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Villanders - Villandro",
+        "addr:housenumber=4",
+        "addr:postcode=39040",
+        "addr:street=Unter St. Stefan",
+        "contact:instagram=https://www.instagram.com/weingut_oberfurner?igsh=MXM4Z2JnZXZlZjg2cQ==",
+        "craft=winery",
+        "email=info@oberfurner.com",
+        "name=Weingut | Tenuta Oberfurner",
+        "phone=+39 351 450 5710",
+        "website=https://www.oberfurner.com/"
+      ],
+      "score": 88,
+      "beauty_score": 1
+    },
+    {
+      "id": "node:13727906450",
+      "name": "Azienda vitivinicola Turetta Ca' Bianca",
+      "lat": 45.2878516,
+      "lon": 11.6616475,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=5",
+        "addr:street=Via Cinto",
+        "craft=winery",
+        "name=Azienda vitivinicola Turetta Ca' Bianca",
+        "phone=+39042994288ti",
+        "website=https://www.turettacabianca.it/cantina/"
+      ],
+      "score": 88,
+      "beauty_score": 1
+    },
+    {
       "id": "way:67375703",
       "name": "Azienda Agricola Letrari",
       "lat": 45.8893863,
@@ -1916,6 +1988,7 @@
         "addr:housenumber=7",
         "addr:postcode=38015",
         "addr:street=Via del Carmine",
+        "check_date=2026-04-22",
         "contact:facebook=https://www.facebook.com/GruppoLaVis",
         "contact:phone=+39 0461 440150",
         "contact:website=https://la-vis.com/",
@@ -2002,12 +2075,11 @@
       "type": "cantine",
       "visibility": "classica",
       "tags": [
-        "addr:housenumber=2",
         "building=yes",
+        "contact:website=https://www.contithun.com/",
         "craft=winery",
         "name=Conti Thun",
-        "phone=+39 0365 651757",
-        "website=https://www.contithun.com/"
+        "phone=+39 0365 651757"
       ],
       "score": 88,
       "beauty_score": 1
@@ -2095,7 +2167,7 @@
         "building=yes",
         "craft=winery",
         "name=SOCIETA' AGRICOLA DA LOZZO",
-        "phone=+39 0438.486665",
+        "phone=+39 0438 486665",
         "website=https://www.proseccozinto.it/"
       ],
       "score": 88,
@@ -3278,7 +3350,7 @@
         "addr:city=Trento",
         "addr:country=IT",
         "addr:housenumber=52",
-        "addr:postcode=31821",
+        "addr:postcode=38121",
         "addr:street=Via dell'Albera",
         "building=yes",
         "craft=winery",
@@ -4833,6 +4905,50 @@
         "addr:street=Via Udine",
         "craft=winery",
         "name=Azienda Vinicola - Andrea Lunardelli"
+      ],
+      "score": 70,
+      "beauty_score": 1
+    },
+    {
+      "id": "node:13701696901",
+      "name": "Cristina",
+      "lat": 45.1982142,
+      "lon": 10.5847989,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=27",
+        "addr:street=Via Giosuè Carducci",
+        "craft=winery",
+        "name=Cristina"
+      ],
+      "score": 70,
+      "beauty_score": 1
+    },
+    {
+      "id": "node:13703530771",
+      "name": "Gut Kaltenburg",
+      "lat": 46.3892274,
+      "lon": 11.2565648,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Gut Kaltenburg"
+      ],
+      "score": 70,
+      "beauty_score": 1
+    },
+    {
+      "id": "node:13706101145",
+      "name": "Vineria Castel Sallegg",
+      "lat": 46.4142186,
+      "lon": 11.2406344,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Vineria Castel Sallegg"
       ],
       "score": 70,
       "beauty_score": 1
