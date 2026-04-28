@@ -7,7 +7,7 @@
     "lng": 11.9,
     "radius_km": 240
   },
-  "generated_at": "2026-04-07T05:20:22.097Z",
+  "generated_at": "2026-04-28T06:14:14.908Z",
   "places": [
     {
       "id": "osm:w:48528567",
@@ -851,7 +851,7 @@
         "addr:city=Trento",
         "addr:country=IT",
         "addr:housenumber=25",
-        "addr:postcode=31822",
+        "addr:postcode=38122",
         "addr:street=Via Torre D'Augusto",
         "bath:type=thermal",
         "leisure=fitness_centre",
@@ -1144,31 +1144,6 @@
       "tags": [
         "leisure=spa",
         "name=New Suadis"
-      ],
-      "score": 55
-    },
-    {
-      "id": "osm:n:4690641399",
-      "name": "Talea",
-      "lat": 44.7999988,
-      "lon": 10.3272695,
-      "type": "relax",
-      "visibility": "classica",
-      "beauty_score": 0.86,
-      "country": "IT",
-      "area": "Veneto",
-      "tags": [
-        "addr:city=Parma",
-        "addr:country=IT",
-        "addr:housenumber=3",
-        "addr:postcode=43121",
-        "addr:street=Via Pietro Torrigiani",
-        "amenity=spa",
-        "entrance=main",
-        "level=0",
-        "loc_ref=1016",
-        "name=Talea",
-        "source=survey"
       ],
       "score": 55
     },
@@ -1540,19 +1515,23 @@
     {
       "id": "osm:w:130025069",
       "name": "Piscina Comunale di Abano Terme",
-      "lat": 45.3588121,
-      "lon": 11.7815646,
+      "lat": 45.3588467,
+      "lon": 11.7815621,
       "type": "relax",
       "visibility": "classica",
       "beauty_score": 0.86,
       "country": "IT",
       "area": "Veneto",
       "tags": [
-        "access=yes",
+        "access=customers",
+        "addr:housenumber=+39 049 812418",
+        "check_date=2026-04-10",
+        "check_date:opening_hours=2026-04-10",
         "covered=no",
-        "fixme=Verificare access=*",
         "leisure=swimming_pool",
+        "location=outdoor",
         "name=Piscina Comunale di Abano Terme",
+        "opening_hours=Sa-Su 09:00-19:00; Mo-Fr 09:00-21:30",
         "sport=swimming",
         "website=https://www.abanopiscina.com/Home/"
       ],
