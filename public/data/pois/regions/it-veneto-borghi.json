@@ -3,7 +3,7 @@
   "country": "IT",
   "area": "Veneto",
   "label_it": "Veneto • Borghi (turistici + piccoli)",
-  "generated_at": "2026-04-21T05:23:48.857Z",
+  "generated_at": "2026-04-28T05:55:39.805Z",
   "places": [
     {
       "id": "node:66503077",
@@ -349,6 +349,28 @@
         "population=1451",
         "source=geodati.gfoss.it",
         "wikidata=Q30029450"
+      ],
+      "score": 93
+    },
+    {
+      "id": "node:64778403",
+      "name": "Bovolenta",
+      "lat": 45.2703747,
+      "lon": 11.9350857,
+      "type": "borgo",
+      "borgo_type": "classico",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=3531",
+        "name=Bovolenta",
+        "name:vec=Bovołenta",
+        "place=village",
+        "population=3.404",
+        "population:date=2026-01-31",
+        "source=geodati.gfoss.it",
+        "source:population=Istat",
+        "website=http://comune.bovolenta.pd.it/",
+        "wikidata=Q30023080"
       ],
       "score": 93
     },
@@ -9048,27 +9070,6 @@
         "population=4113",
         "source=geodati.gfoss.it",
         "wikidata=Q30022389"
-      ],
-      "score": 85
-    },
-    {
-      "id": "node:64778403",
-      "name": "Bovolenta",
-      "lat": 45.2703747,
-      "lon": 11.9350857,
-      "type": "borgo",
-      "borgo_type": "classico",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=3531",
-        "name=Bovolenta",
-        "name:vec=Bovołenta",
-        "place=village",
-        "population=3419",
-        "population:date=2024-11-31",
-        "source=geodati.gfoss.it",
-        "source:population=Istat",
-        "wikidata=Q30023080"
       ],
       "score": 85
     },
@@ -27977,8 +27978,8 @@
     {
       "id": "node:1165053616",
       "name": "Pila",
-      "lat": 44.9672657,
-      "lon": 12.4824704,
+      "lat": 44.9667388,
+      "lon": 12.482369,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -28984,8 +28985,8 @@
     {
       "id": "node:1177773250",
       "name": "Boccasette",
-      "lat": 45.0014565,
-      "lon": 12.4220993,
+      "lat": 45.0013999,
+      "lon": 12.4220179,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -39817,8 +39818,8 @@
     {
       "id": "node:3600286914",
       "name": "Vicobellignano",
-      "lat": 45.003652,
-      "lon": 10.4122342,
+      "lat": 45.0037478,
+      "lon": 10.4121363,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -129854,7 +129855,7 @@
       "id": "relation:43410",
       "name": "Comacchio",
       "lat": 44.6851452,
-      "lon": 12.1223626,
+      "lon": 12.1226422,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -130784,7 +130785,7 @@
       "id": "relation:43668",
       "name": "Porto Tolle",
       "lat": 44.9162336,
-      "lon": 12.425847,
+      "lon": 12.4261849,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -130849,7 +130850,7 @@
     {
       "id": "relation:43680",
       "name": "Goro",
-      "lat": 44.8391658,
+      "lat": 44.8391333,
       "lon": 12.3253151,
       "type": "borgo",
       "borgo_type": "classico",
