@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-04-21T05:32:31.255Z",
+  "generated_at": "2026-04-28T06:12:03.909Z",
   "places": [
     {
       "id": "node:62513426",
@@ -22129,8 +22129,8 @@
     {
       "id": "node:62505616",
       "name": "Sondrio",
-      "lat": 46.1713553,
-      "lon": 9.8734274,
+      "lat": 46.1712084,
+      "lon": 9.8716216,
       "type": "borghi",
       "visibility": "chicca",
       "tags": [
@@ -32386,6 +32386,27 @@
       "score": 110
     },
     {
+      "id": "node:64778403",
+      "name": "Bovolenta",
+      "lat": 45.2703747,
+      "lon": 11.9350857,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "gfoss_id=3531",
+        "name=Bovolenta",
+        "name:vec=Bovołenta",
+        "place=village",
+        "population=3.404",
+        "population:date=2026-01-31",
+        "source=geodati.gfoss.it",
+        "source:population=Istat",
+        "website=http://comune.bovolenta.pd.it/",
+        "wikidata=Q30023080"
+      ],
+      "score": 110
+    },
+    {
       "id": "node:64778475",
       "name": "Calto",
       "lat": 44.9914983,
@@ -42619,26 +42640,6 @@
         "population=4113",
         "source=geodati.gfoss.it",
         "wikidata=Q30022389"
-      ],
-      "score": 100
-    },
-    {
-      "id": "node:64778403",
-      "name": "Bovolenta",
-      "lat": 45.2703747,
-      "lon": 11.9350857,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=3531",
-        "name=Bovolenta",
-        "name:vec=Bovołenta",
-        "place=village",
-        "population=3419",
-        "population:date=2024-11-31",
-        "source=geodati.gfoss.it",
-        "source:population=Istat",
-        "wikidata=Q30023080"
       ],
       "score": 100
     },
@@ -57388,8 +57389,8 @@
     {
       "id": "node:3600286914",
       "name": "Vicobellignano",
-      "lat": 45.003652,
-      "lon": 10.4122342,
+      "lat": 45.0037478,
+      "lon": 10.4121363,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -91791,15 +91792,17 @@
         "admin_level=8",
         "boundary=administrative",
         "name=Brusio",
+        "name:it=Brusio",
+        "ref:CH:UID=CHE-115.082.183",
+        "ref:CH:hls-dhs=001432",
         "source=swissBOUNDARIES3D swisstopo 2011",
-        "swisstopo:BEZIRKSNUM=1822",
         "swisstopo:BFS_NUMMER=3551",
-        "swisstopo:KANTONSNUM=18",
         "swisstopo:OBJEKTART=Gemeindegebiet",
         "swisstopo:SHN=CH18223551",
         "type=boundary",
         "wikidata=Q64580",
-        "wikipedia=de:Brusio"
+        "wikimedia_commons=Category:Brusio",
+        "wikipedia=it:Brusio"
       ],
       "score": 100
     },
@@ -91838,15 +91841,17 @@
         "admin_level=8",
         "boundary=administrative",
         "name=Poschiavo",
+        "name:it=Poschiavo",
+        "ref:CH:UID=CHE-115.057.699",
+        "ref:CH:hls-dhs=001433",
         "source=swissBOUNDARIES3D swisstopo 2011",
-        "swisstopo:BEZIRKSNUM=1822",
         "swisstopo:BFS_NUMMER=3561",
-        "swisstopo:KANTONSNUM=18",
         "swisstopo:OBJEKTART=Gemeindegebiet",
         "swisstopo:SHN=CH18223561",
         "type=boundary",
         "wikidata=Q69503",
-        "wikipedia=de:Poschiavo"
+        "wikimedia_commons=Category:Poschiavo (municipality)",
+        "wikipedia=it:Poschiavo"
       ],
       "score": 100
     },
@@ -195764,7 +195769,7 @@
     {
       "id": "relation:3429010",
       "name": "Zona Ovest",
-      "lat": 45.5539832,
+      "lat": 45.553959,
       "lon": 10.1805509,
       "type": "borghi",
       "visibility": "classica",

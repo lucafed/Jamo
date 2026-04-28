@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-04-21T05:32:40.582Z",
+  "generated_at": "2026-04-28T06:12:13.217Z",
   "places": [
     {
       "id": "node:2692275706",
@@ -975,6 +975,7 @@
         "addr:housenumber=7",
         "addr:postcode=38015",
         "addr:street=Via del Carmine",
+        "check_date=2026-04-22",
         "contact:facebook=https://www.facebook.com/GruppoLaVis",
         "contact:phone=+39 0461 440150",
         "contact:website=https://la-vis.com/",
@@ -6679,12 +6680,12 @@
         "addr:city=Goito",
         "addr:housenumber=347",
         "addr:postcode=46044",
-        "addr:street=Strada Provinciale exSS236 Goitese",
+        "addr:street=Strada Provinciale ex Strada Statale 236 Goitese",
         "branch=Goito",
         "email=pv.goito@collisgroup.it",
         "name=Cantina veneta",
         "opening_hours=Mo 15:30-19:00; Tu-Fr 09:00-12:30, 15:30-19:00; Sa 09:00-12:30, 13:30-18:30; Su off",
-        "phone=+3903761290013",
+        "phone=+39 037 61290013",
         "shop=wine",
         "website=https://www.cantinaveneta.com/punto_vendita/goito/"
       ],
@@ -11070,6 +11071,26 @@
       "score": 31
     },
     {
+      "id": "node:13763019564",
+      "name": "Enoteca La Cantinetta",
+      "lat": 45.6090541,
+      "lon": 9.5208568,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Trezzo sull'Adda",
+        "addr:housenumber=28",
+        "addr:postcode=20056",
+        "addr:street=Piazza Della Libertà",
+        "contact:phone=+39 347 576 7044",
+        "level=0",
+        "name=Enoteca La Cantinetta",
+        "shop=wine",
+        "wheelchair=no"
+      ],
+      "score": 31
+    },
+    {
       "id": "way:70404207",
       "name": "Osteria Marinai di Strada",
       "lat": 45.598804,
@@ -13565,6 +13586,19 @@
       "tags": [
         "check_date=2026-04-12",
         "name=Caffettiera Enoteca Candian",
+        "shop=wine"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:13758054878",
+      "name": "Boccondivino vineria",
+      "lat": 45.6262847,
+      "lon": 10.582429,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Boccondivino vineria",
         "shop=wine"
       ],
       "score": 25
