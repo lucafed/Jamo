@@ -7,7 +7,7 @@
     "minLon": 10.2,
     "maxLon": 13.2
   },
-  "generated_at": "2026-04-23T05:20:25.156Z",
+  "generated_at": "2026-04-30T05:47:58.940Z",
   "places": [
     {
       "id": "node:12766026527",
@@ -995,7 +995,7 @@
         "name=Cantina Giusti Wine",
         "opening_hours=Mo-Fr 09:00-18:00; Sa-Su 10:00-18:00",
         "phone=+390423720198",
-        "website=http://www.giustiwine.com"
+        "website=https://www.giustiwine.com/"
       ],
       "score": 94,
       "beauty_score": 1
@@ -1663,7 +1663,7 @@
         "contact:phone=+39 0423 900139",
         "craft=winery",
         "name=Marsuret Azienda Agricola",
-        "website=http://www.marsuret.it"
+        "website=https://www.marsuret.it/"
       ],
       "score": 88,
       "beauty_score": 1
@@ -3187,7 +3187,7 @@
         "addr:street=Via Santo Stefano",
         "craft=winery",
         "name=Portinari Vini",
-        "website=http://www.portinarivini.com"
+        "website=https://www.portinarivini.com/"
       ],
       "score": 82,
       "beauty_score": 1
