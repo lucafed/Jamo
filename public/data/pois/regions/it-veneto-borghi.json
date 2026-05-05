@@ -3,7 +3,7 @@
   "country": "IT",
   "area": "Veneto",
   "label_it": "Veneto • Borghi (turistici + piccoli)",
-  "generated_at": "2026-04-28T05:55:39.805Z",
+  "generated_at": "2026-05-05T05:39:43.975Z",
   "places": [
     {
       "id": "node:66503077",
@@ -369,7 +369,7 @@
         "population:date=2026-01-31",
         "source=geodati.gfoss.it",
         "source:population=Istat",
-        "website=http://comune.bovolenta.pd.it/",
+        "website=https://comune.bovolenta.pd.it/",
         "wikidata=Q30023080"
       ],
       "score": 93
@@ -3729,8 +3729,8 @@
     {
       "id": "node:64776581",
       "name": "Calavino",
-      "lat": 46.046702,
-      "lon": 10.985077,
+      "lat": 46.0467402,
+      "lon": 10.985074,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -22695,8 +22695,8 @@
     {
       "id": "node:541123134",
       "name": "Valli",
-      "lat": 45.2228308,
-      "lon": 12.192922,
+      "lat": 45.2228504,
+      "lon": 12.1931518,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -30199,12 +30199,13 @@
     {
       "id": "node:1280143909",
       "name": "Fornase",
-      "lat": 45.4769021,
-      "lon": 12.1609246,
+      "lat": 45.4771332,
+      "lon": 12.1611539,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
+        "alt_name=Quartiere Fornase",
         "name=Fornase",
         "place=village",
         "wikidata=Q3748416",
@@ -65220,8 +65221,8 @@
     {
       "id": "node:1164754133",
       "name": "Contane",
-      "lat": 44.927994,
-      "lon": 12.0486915,
+      "lat": 44.926308,
+      "lon": 12.0485588,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -129523,6 +129524,31 @@
       "score": 20
     },
     {
+      "id": "relation:47300",
+      "name": "Brixen - Bressanone",
+      "lat": 46.7034826,
+      "lon": 11.6889511,
+      "type": "borgo",
+      "borgo_type": "classico",
+      "visibility": "classica",
+      "tags": [
+        "admin_centre:postal_code=39042",
+        "admin_level=8",
+        "boundary=administrative",
+        "name=Brixen - Bressanone",
+        "name:de=Brixen",
+        "name:it=Bressanone",
+        "name:sk=Brixen",
+        "ref:ISTAT=021011",
+        "ref:catasto=B160",
+        "type=boundary",
+        "website=https://www.gemeinde.brixen.bz.it/",
+        "wikidata=Q185541",
+        "wikipedia=it:Bressanone"
+      ],
+      "score": 20
+    },
+    {
       "id": "relation:1684200",
       "name": "Val Müstair",
       "lat": 46.6106346,
@@ -151429,30 +151455,6 @@
         "type=boundary",
         "wikidata=Q499688",
         "wikipedia=it:Senales"
-      ],
-      "score": 12
-    },
-    {
-      "id": "relation:47300",
-      "name": "Brixen - Bressanone",
-      "lat": 46.7034826,
-      "lon": 11.6889511,
-      "type": "borgo",
-      "borgo_type": "classico",
-      "visibility": "classica",
-      "tags": [
-        "admin_centre:postal_code=39042",
-        "admin_level=8",
-        "boundary=administrative",
-        "name=Brixen - Bressanone",
-        "name:de=Brixen",
-        "name:it=Bressanone",
-        "name:sk=Brixen",
-        "ref:ISTAT=021011",
-        "ref:catasto=B160",
-        "type=boundary",
-        "wikidata=Q185541",
-        "wikipedia=it:Bressanone"
       ],
       "score": 12
     },
