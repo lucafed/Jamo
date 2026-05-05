@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-04-28T06:12:13.217Z",
+  "generated_at": "2026-05-05T05:49:02.689Z",
   "places": [
     {
       "id": "node:2692275706",
@@ -556,7 +556,7 @@
         "phone=+39 0423 975408",
         "province=TV",
         "toilets=yes",
-        "website=http://www.benottoprosecco.it",
+        "website=https://www.benottoprosecco.it",
         "wheelchair=yes"
       ],
       "score": 120
@@ -579,7 +579,7 @@
         "name=Cantina Giusti Wine",
         "opening_hours=Mo-Fr 09:00-18:00; Sa-Su 10:00-18:00",
         "phone=+390423720198",
-        "website=http://www.giustiwine.com"
+        "website=https://www.giustiwine.com/"
       ],
       "score": 120
     },
@@ -1737,7 +1737,7 @@
         "contact:phone=+39 0423 900139",
         "craft=winery",
         "name=Marsuret Azienda Agricola",
-        "website=http://www.marsuret.it"
+        "website=https://www.marsuret.it/"
       ],
       "score": 102
     },
@@ -2072,7 +2072,7 @@
         "fixme=Import CTR Veneto. Sostituire con building=stable (stalla) o building=barn (fienile)",
         "name=Azienda Agricola La Farra",
         "phone=+39 0438 801242",
-        "website=www.lafarra.it"
+        "website=https://www.lafarra.it/"
       ],
       "score": 102
     },
@@ -2645,7 +2645,7 @@
         "name=Quota 101",
         "organic=yes",
         "phone=+39 049 5211322",
-        "website=www.quota101.com"
+        "website=https://www.quota101.com/"
       ],
       "score": 96
     },
@@ -3227,7 +3227,7 @@
         "addr:street=Via Cinto",
         "craft=winery",
         "name=Azienda vitivinicola Turetta Ca' Bianca",
-        "phone=+39042994288ti",
+        "phone=+39 0429 94288",
         "website=https://www.turettacabianca.it/cantina/"
       ],
       "score": 96
@@ -3386,7 +3386,7 @@
         "email=marketing@lacanevadeibiasio.it",
         "name=La Caneva dei Biasio",
         "phone=+39 0423 483160",
-        "website=http://www.lacanevadeibiasio.it"
+        "website=https://www.lacanevadeibiasio.it/"
       ],
       "score": 96
     },
@@ -4678,7 +4678,7 @@
         "addr:street=Via Santo Stefano",
         "craft=winery",
         "name=Portinari Vini",
-        "website=http://www.portinarivini.com"
+        "website=https://www.portinarivini.com/"
       ],
       "score": 90
     },
@@ -7751,6 +7751,26 @@
       "score": 47
     },
     {
+      "id": "node:13792888001",
+      "name": "Colli Vicentini Vitevis",
+      "lat": 45.4960948,
+      "lon": 11.4293129,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=151",
+        "addr:postcode=36075",
+        "addr:street=Viale Europa",
+        "email=wineshopmontecchio@vitevis.com",
+        "name=Colli Vicentini Vitevis",
+        "opening_hours=Mo-Sa 08:30-12:15, 14:30-18:30",
+        "phone=+39 0444 491360",
+        "shop=wine",
+        "website=https://www.vitevis.com/"
+      ],
+      "score": 47
+    },
+    {
       "id": "way:189459353",
       "name": "Conselve Vigneti e Cantine",
       "lat": 45.271602,
@@ -8592,7 +8612,7 @@
         "operator=Michel Thoulouze",
         "phone=+393488727500",
         "shop=wine",
-        "website=http://ortodivenezia.com"
+        "website=https://ortodivenezia.com/"
       ],
       "score": 41
     },
@@ -9215,8 +9235,10 @@
         "addr:housenumber=13",
         "addr:postcode=40018",
         "addr:street=Piazza Sauro Testoni",
+        "check_date=2026-04-28",
+        "level=0",
         "name=La Bottega dal Vèn Bán",
-        "opening_hours=Mo 16:00-20:00; Tu-Sa 08:30-13:00,16:00-20:00; Su 08:30-13:00",
+        "opening_hours=Mo off; Tu-Sa 09:00-13:00,16:00-20:00; Su 09:00-13:00",
         "phone=+39 335 474311",
         "shop=wine"
       ],
@@ -10655,8 +10677,8 @@
     {
       "id": "node:7515782661",
       "name": "Enoteca Spirito Divino",
-      "lat": 44.5163169,
-      "lon": 11.3250857,
+      "lat": 44.5163437,
+      "lon": 11.3251078,
       "type": "cantine",
       "visibility": "classica",
       "tags": [
@@ -10928,7 +10950,7 @@
         "addr:street=Via Garibaldi",
         "email=info@bortolomiol.com",
         "name=Bortolomiol",
-        "phone=04239749",
+        "phone=+39 0423 9749",
         "shop=wine"
       ],
       "score": 31

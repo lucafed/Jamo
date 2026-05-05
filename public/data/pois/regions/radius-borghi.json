@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-04-28T06:12:03.909Z",
+  "generated_at": "2026-05-05T05:48:52.639Z",
   "places": [
     {
       "id": "node:62513426",
@@ -4411,22 +4411,6 @@
       "score": 135
     },
     {
-      "id": "node:62506394",
-      "name": "Comun Nuovo",
-      "lat": 45.6229111,
-      "lon": 9.6631272,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "name=Comun Nuovo",
-        "place=village",
-        "population=4397",
-        "wikidata=Q100404",
-        "wikipedia=it:Comun Nuovo"
-      ],
-      "score": 135
-    },
-    {
       "id": "node:62506445",
       "name": "Fara Gera d'Adda",
       "lat": 45.555676,
@@ -5705,8 +5689,8 @@
     {
       "id": "node:64776581",
       "name": "Calavino",
-      "lat": 46.046702,
-      "lon": 10.985077,
+      "lat": 46.0467402,
+      "lon": 10.985074,
       "type": "borghi",
       "visibility": "chicca",
       "tags": [
@@ -11125,8 +11109,8 @@
     {
       "id": "node:541123134",
       "name": "Valli",
-      "lat": 45.2228308,
-      "lon": 12.192922,
+      "lat": 45.2228504,
+      "lon": 12.1931518,
       "type": "borghi",
       "visibility": "chicca",
       "tags": [
@@ -12397,21 +12381,6 @@
         "place=village",
         "wikidata=Q3909837",
         "wikipedia=it:Premadio"
-      ],
-      "score": 135
-    },
-    {
-      "id": "node:872481200",
-      "name": "Piazzalunga",
-      "lat": 46.1730252,
-      "lon": 9.6380417,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "name=Piazzalunga",
-        "place=village",
-        "wikidata=Q2559126",
-        "wikipedia=it:Piazzalunga"
       ],
       "score": 135
     },
@@ -13786,11 +13755,12 @@
     {
       "id": "node:1280143909",
       "name": "Fornase",
-      "lat": 45.4769021,
-      "lon": 12.1609246,
+      "lat": 45.4771332,
+      "lon": 12.1611539,
       "type": "borghi",
       "visibility": "chicca",
       "tags": [
+        "alt_name=Quartiere Fornase",
         "name=Fornase",
         "place=village",
         "wikidata=Q3748416",
@@ -20553,8 +20523,8 @@
     {
       "id": "node:1164754133",
       "name": "Contane",
-      "lat": 44.927994,
-      "lon": 12.0486915,
+      "lat": 44.926308,
+      "lon": 12.0485588,
       "type": "borghi",
       "visibility": "chicca",
       "tags": [
@@ -26168,6 +26138,21 @@
         "place=hamlet",
         "wikidata=Q18480851",
         "wikipedia=it:Maurina (Spormaggiore)"
+      ],
+      "score": 115
+    },
+    {
+      "id": "node:872481200",
+      "name": "Piazzalunga",
+      "lat": 46.1730252,
+      "lon": 9.6380417,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "name=Piazzalunga",
+        "place=hamlet",
+        "wikidata=Q2559126",
+        "wikipedia=it:Piazzalunga"
       ],
       "score": 115
     },
@@ -32401,7 +32386,7 @@
         "population:date=2026-01-31",
         "source=geodati.gfoss.it",
         "source:population=Istat",
-        "website=http://comune.bovolenta.pd.it/",
+        "website=https://comune.bovolenta.pd.it/",
         "wikidata=Q30023080"
       ],
       "score": 110
@@ -38060,6 +38045,21 @@
         "population=933",
         "source=geodati.gfoss.it",
         "wikidata=Q30025120"
+      ],
+      "score": 100
+    },
+    {
+      "id": "node:62506394",
+      "name": "Comun Nuovo",
+      "lat": 45.6229111,
+      "lon": 9.6631272,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Comun Nuovo",
+        "place=village",
+        "population=4397",
+        "wikidata=Q30025014"
       ],
       "score": 100
     },
@@ -56226,34 +56226,6 @@
       "score": 100
     },
     {
-      "id": "node:2409827671",
-      "name": "Rodolo",
-      "lat": 46.1537552,
-      "lon": 9.6987146,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Rodolo",
-        "place=village",
-        "wikidata=Q18494663"
-      ],
-      "score": 100
-    },
-    {
-      "id": "node:2409827691",
-      "name": "Selvetta",
-      "lat": 46.1578823,
-      "lon": 9.6875966,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Selvetta",
-        "place=village",
-        "wikidata=Q18494749"
-      ],
-      "score": 100
-    },
-    {
       "id": "node:2411831430",
       "name": "Ossimo Superiore",
       "lat": 45.9459848,
@@ -58498,6 +58470,21 @@
         "name=Piazza",
         "place=village",
         "wikidata=Q18509638"
+      ],
+      "score": 100
+    },
+    {
+      "id": "node:8397956355",
+      "name": "Villapinta",
+      "lat": 46.1782444,
+      "lon": 9.6786757,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=325",
+        "name=Villapinta",
+        "place=village",
+        "wikidata=Q18494851"
       ],
       "score": 100
     },
@@ -117629,6 +117616,22 @@
       "score": 90
     },
     {
+      "id": "node:13120004792",
+      "name": "Rodolo",
+      "lat": 46.1531078,
+      "lon": 9.6971874,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=685",
+        "name=Rodolo",
+        "place=hamlet",
+        "population=19",
+        "wikidata=Q18494663"
+      ],
+      "score": 90
+    },
+    {
       "id": "node:13261695623",
       "name": "Urida",
       "lat": 45.7855166,
@@ -120129,6 +120132,22 @@
         "name=Gerola Alta",
         "place=village",
         "population=100"
+      ],
+      "score": 85
+    },
+    {
+      "id": "node:62516980",
+      "name": "Buglio in Monte",
+      "lat": 46.1830555,
+      "lon": 9.6765266,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=577",
+        "loc_name=Böi",
+        "name=Buglio in Monte",
+        "place=village",
+        "population=720"
       ],
       "score": 85
     },
@@ -138596,6 +138615,21 @@
       "score": 80
     },
     {
+      "id": "node:2409827691",
+      "name": "Selvetta",
+      "lat": 46.1578154,
+      "lon": 9.6876411,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=278",
+        "name=Selvetta",
+        "place=hamlet",
+        "wikidata=Q18494749"
+      ],
+      "score": 80
+    },
+    {
       "id": "node:2412078596",
       "name": "Menotti",
       "lat": 45.5950301,
@@ -147461,20 +147495,6 @@
         "name=Fontana",
         "place=hamlet",
         "wikidata=Q18506309"
-      ],
-      "score": 80
-    },
-    {
-      "id": "node:8397956355",
-      "name": "Villapinta",
-      "lat": 46.1770966,
-      "lon": 9.6767449,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Villapinta",
-        "place=hamlet",
-        "wikidata=Q18494851"
       ],
       "score": 80
     },
@@ -176683,22 +176703,6 @@
       "score": 75
     },
     {
-      "id": "node:62516285",
-      "name": "Forcola",
-      "lat": 46.1587741,
-      "lon": 9.6708477,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=1688",
-        "name=Forcola",
-        "place=village",
-        "population=874",
-        "source=geodati.gfoss.it"
-      ],
-      "score": 75
-    },
-    {
       "id": "node:62516411",
       "name": "Teglio",
       "lat": 46.172675,
@@ -176719,8 +176723,8 @@
     {
       "id": "node:62516663",
       "name": "Ardenno",
-      "lat": 46.164292,
-      "lon": 9.644944,
+      "lat": 46.1715712,
+      "lon": 9.6519439,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -176746,23 +176750,6 @@
         "name=Berbenno di Valtellina",
         "place=village",
         "population=4000"
-      ],
-      "score": 75
-    },
-    {
-      "id": "node:62516980",
-      "name": "Buglio in Monte",
-      "lat": 46.1827877,
-      "lon": 9.6748279,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "ele=577",
-        "fixme=Verificare se tutti gli abitanti di Buglio in Monte vivono nel capoluogo o ci sono dei paesini montani con almeno 1 abitante stabile",
-        "loc_name=Böi",
-        "name=Buglio in Monte",
-        "place=village",
-        "population=1982"
       ],
       "score": 75
     },
@@ -183936,6 +183923,19 @@
       "score": 75
     },
     {
+      "id": "node:9249921605",
+      "name": "Marani",
+      "lat": 45.7806806,
+      "lon": 11.017885,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Marani",
+        "place=village"
+      ],
+      "score": 75
+    },
+    {
       "id": "node:9476388230",
       "name": "Comezzano",
       "lat": 45.4679979,
@@ -184643,7 +184643,7 @@
       "id": "relation:1928733",
       "name": "Besenello",
       "lat": 45.9427649,
-      "lon": 11.1095715,
+      "lon": 11.1096122,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -184759,7 +184759,7 @@
       "id": "relation:3276895",
       "name": "Malcontenta",
       "lat": 45.4297216,
-      "lon": 12.2085506,
+      "lon": 12.2085047,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -187669,8 +187669,8 @@
     {
       "id": "node:834163574",
       "name": "Palazzo",
-      "lat": 45.8806983,
-      "lon": 9.6640387,
+      "lat": 45.8802483,
+      "lon": 9.6647441,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -189708,7 +189708,7 @@
     },
     {
       "id": "node:1068809419",
-      "name": "Morti dell'Ossa",
+      "name": "Morti dell'ossa",
       "lat": 45.6753903,
       "lon": 9.605506,
       "type": "borghi",
@@ -189717,7 +189717,7 @@
         "ele=227",
         "gfoss_id=15430",
         "istat_id=1622020003",
-        "name=Morti dell'Ossa",
+        "name=Morti dell'ossa",
         "place=hamlet",
         "population=38",
         "source=Istat 2001 - geodati.gfoss.it"
@@ -195571,6 +195571,21 @@
       "score": 65
     },
     {
+      "id": "node:13775721523",
+      "name": "Piani",
+      "lat": 46.1663226,
+      "lon": 9.681504,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "alt_name=Piani Selvetta",
+        "name=Piani",
+        "place=hamlet",
+        "population=22"
+      ],
+      "score": 65
+    },
+    {
       "id": "way:84013281",
       "name": "Matassone",
       "lat": 45.8154683,
@@ -196243,6 +196258,19 @@
       "visibility": "classica",
       "tags": [
         "name=Castello di Mancasale",
+        "place=hamlet"
+      ],
+      "score": 63
+    },
+    {
+      "id": "node:13770759333",
+      "name": "La Rocca",
+      "lat": 44.7724169,
+      "lon": 10.6384412,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=La Rocca",
         "place=hamlet"
       ],
       "score": 63
@@ -197365,32 +197393,6 @@
       "visibility": "classica",
       "tags": [
         "name=Castelcies",
-        "place=hamlet"
-      ],
-      "score": 55
-    },
-    {
-      "id": "node:302695382",
-      "name": "Nogarè",
-      "lat": 45.8234875,
-      "lon": 12.017992,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Nogarè",
-        "place=hamlet"
-      ],
-      "score": 55
-    },
-    {
-      "id": "node:303203079",
-      "name": "Cascina Oliva",
-      "lat": 45.7068245,
-      "lon": 9.3544863,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Cascina Oliva",
         "place=hamlet"
       ],
       "score": 55
