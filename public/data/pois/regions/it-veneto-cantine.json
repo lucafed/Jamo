@@ -7,7 +7,7 @@
     "minLon": 10.2,
     "maxLon": 13.2
   },
-  "generated_at": "2026-04-30T05:47:58.940Z",
+  "generated_at": "2026-05-07T05:50:45.809Z",
   "places": [
     {
       "id": "node:12766026527",
@@ -124,7 +124,7 @@
         "name=Quota 101",
         "organic=yes",
         "phone=+39 049 5211322",
-        "website=www.quota101.com"
+        "website=https://www.quota101.com/"
       ],
       "score": 98,
       "beauty_score": 1
@@ -678,7 +678,7 @@
         "craft=winery",
         "name=Fattoria del Graspo",
         "opening_hours=Mo-Sa 08:30-12:30; Mo-Sa 14:30-13:30; Su 08:30-12:30",
-        "phone=049793274",
+        "phone=+39 049 793274",
         "website=https://www.fattoriadelgraspo.com/"
       ],
       "score": 94,
@@ -919,7 +919,7 @@
         "phone=+39 0423 975408",
         "province=TV",
         "toilets=yes",
-        "website=http://www.benottoprosecco.it",
+        "website=https://www.benottoprosecco.it",
         "wheelchair=yes"
       ],
       "score": 94,
@@ -1946,7 +1946,7 @@
         "addr:street=Via Cinto",
         "craft=winery",
         "name=Azienda vitivinicola Turetta Ca' Bianca",
-        "phone=+39042994288ti",
+        "phone=+39 0429 94288",
         "website=https://www.turettacabianca.it/cantina/"
       ],
       "score": 88,
@@ -2188,7 +2188,7 @@
         "email=marketing@lacanevadeibiasio.it",
         "name=La Caneva dei Biasio",
         "phone=+39 0423 483160",
-        "website=http://www.lacanevadeibiasio.it"
+        "website=https://www.lacanevadeibiasio.it/"
       ],
       "score": 88,
       "beauty_score": 1
@@ -2322,7 +2322,7 @@
         "fixme=Import CTR Veneto. Sostituire con building=stable (stalla) o building=barn (fienile)",
         "name=Azienda Agricola La Farra",
         "phone=+39 0438 801242",
-        "website=www.lafarra.it"
+        "website=https://www.lafarra.it/"
       ],
       "score": 88,
       "beauty_score": 1
@@ -2539,7 +2539,7 @@
         "building=yes",
         "craft=winery",
         "name=Vini Casarotto",
-        "phone=0457450165",
+        "phone=+39 045 745 0165",
         "website=https://www.vinicasarotto.com/it/"
       ],
       "score": 88,
@@ -2829,7 +2829,7 @@
         "addr:street=Via San Lorenzetto",
         "craft=winery",
         "name=CANTINA BRAVIN DAVIDE",
-        "website=http://www.cantinabravin.it/"
+        "website=https://www.cantinabravin.it/"
       ],
       "score": 82,
       "beauty_score": 1
@@ -3409,7 +3409,7 @@
         "craft=winery",
         "fixme=Import CTR Veneto. Sostituire con building=stable (stalla) o building=barn (fienile)",
         "name=Cantina Bravin Davide",
-        "website=http://www.cantinabravin.it/"
+        "website=https://www.cantinabravin.it/"
       ],
       "score": 82,
       "beauty_score": 1
@@ -4239,6 +4239,23 @@
         "check_date=2025-12-21",
         "craft=winery",
         "name=nonSoloVino"
+      ],
+      "score": 70,
+      "beauty_score": 1
+    },
+    {
+      "id": "node:8319856655",
+      "name": "Corvezzo - Italia 1955",
+      "lat": 45.7362956,
+      "lon": 12.6324032,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Cessalto",
+        "addr:housenumber=17",
+        "addr:street=Via Palù",
+        "craft=winery",
+        "name=Corvezzo - Italia 1955"
       ],
       "score": 70,
       "beauty_score": 1
@@ -5182,6 +5199,25 @@
         "building=yes",
         "craft=winery",
         "name=Cantina sociale di Meolo"
+      ],
+      "score": 70,
+      "beauty_score": 1
+    },
+    {
+      "id": "way:194314416",
+      "name": "Vignepiane",
+      "lat": 45.7578974,
+      "lon": 12.6373953,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Motta di Livenza",
+        "addr:housenumber=6",
+        "addr:postcode=31045",
+        "addr:street=Via Lorenzaga Trevigiana",
+        "building=yes",
+        "craft=winery",
+        "name=Vignepiane"
       ],
       "score": 70,
       "beauty_score": 1
