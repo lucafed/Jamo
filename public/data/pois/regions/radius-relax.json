@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-04-28T06:11:32.493Z",
+  "generated_at": "2026-05-12T06:18:53.352Z",
   "places": [
     {
       "id": "way:48528567",
@@ -1224,9 +1224,9 @@
         "building=hotel",
         "internet_access=yes",
         "name=Hotel La Serenissima Terme",
-        "phone=0498669100",
+        "phone=+39 049 866 9100",
         "tourism=hotel",
-        "website=http://www.hotellaserenissima.it/"
+        "website=https://www.hotellaserenissima.it/"
       ],
       "score": 79
     },
@@ -1245,9 +1245,9 @@
         "building=yes",
         "internet_access=yes",
         "name=Hotel La Serenissima Terme",
-        "phone=0498669100",
+        "phone=+39 049 866 9100",
         "tourism=hotel",
-        "website=http://www.hotellaserenissima.it/"
+        "website=https://www.hotellaserenissima.it/"
       ],
       "score": 79
     },
@@ -1515,7 +1515,7 @@
         "craft=plumber",
         "name=HydrossTico Montegrotto Terme",
         "opening_hours=Mo-Fr 08:00-12:30; Mo-Fr 14:00-18:30; Sa 08:00-12:00",
-        "phone=049795833",
+        "phone=+39 049 795833",
         "website=https://www.hydrosstico.com/?utm_campaign=gmb-listing&utm_medium=organic&utm_source=google&utm_term=montegrotto_terme"
       ],
       "score": 77
@@ -2852,6 +2852,7 @@
         "addr:postcode=43022",
         "addr:street=Via Ponticelle",
         "amenity=police",
+        "check_date=2026-05-10",
         "email=stpr526190@carabinieri.it",
         "name=Comando Stazione Carabinieri Monticelli Terme",
         "operator=Arma dei Carabinieri",

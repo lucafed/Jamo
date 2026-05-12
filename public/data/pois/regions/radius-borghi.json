@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-05-05T05:48:52.639Z",
+  "generated_at": "2026-05-12T06:19:18.551Z",
   "places": [
     {
       "id": "node:62513426",
@@ -4105,8 +4105,8 @@
     {
       "id": "node:8222523703",
       "name": "Sirta",
-      "lat": 46.1582923,
-      "lon": 9.6617882,
+      "lat": 46.1574765,
+      "lon": 9.6621614,
       "type": "borghi",
       "visibility": "chicca",
       "tags": [
@@ -4118,22 +4118,6 @@
         "wikidata=Q18494757",
         "wikimedia_commons=File:2007-422-DSCN2132-Sirta-Forcola_Valtellina+Chiesa-S-Giuseppe.jpg",
         "wikipedia=ceb:Sirta"
-      ],
-      "score": 145
-    },
-    {
-      "id": "node:9944747181",
-      "name": "Marilleva",
-      "lat": 46.30428,
-      "lon": 10.8105041,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "name=Marilleva",
-        "place=village",
-        "population=25",
-        "wikidata=Q2278797",
-        "wikipedia=it:Marilleva"
       ],
       "score": 145
     },
@@ -7196,7 +7180,7 @@
         "ref:ISTAT=037056",
         "ref:catasto=I191",
         "source=geodati.gfoss.it",
-        "website=http://www.comune.santagatabolognese.bo.it/",
+        "website=https://www.comune.santagatabolognese.bo.it/",
         "wikidata=Q94996",
         "wikipedia=it:Sant'Agata Bolognese"
       ],
@@ -7635,7 +7619,7 @@
         "ref:LOCODE=ITZOG",
         "ref:catasto=E905",
         "source=geodati.gfoss.it",
-        "website=http://www.comune.marano-sul-panaro.mo.it/",
+        "website=https://www.comune.marano-sul-panaro.mo.it/",
         "wikidata=Q100061",
         "wikipedia=it:Marano sul Panaro"
       ],
@@ -7709,7 +7693,7 @@
         "ref:LOCODE=ITBTG",
         "ref:catasto=A713",
         "source=geodati.gfoss.it",
-        "website=http://www.comune.bastiglia.mo.it/",
+        "website=https://www.comune.bastiglia.mo.it/",
         "wikidata=Q100036",
         "wikipedia=it:Bastiglia (Italia)"
       ],
@@ -7734,7 +7718,7 @@
         "ref:LOCODE=ITRAV",
         "ref:catasto=H195",
         "source=geodati.gfoss.it",
-        "website=http://www.comune.ravarino.mo.it/",
+        "website=https://www.comune.ravarino.mo.it/",
         "wikidata=Q100089",
         "wikipedia=it:Ravarino"
       ],
@@ -7808,7 +7792,7 @@
         "ref:LOCODE=ITSCS",
         "ref:catasto=H794",
         "source=geodati.gfoss.it",
-        "website=http://www.comune.sancesariosulpanaro.mo.it/",
+        "website=https://www.comune.sancesariosulpanaro.mo.it/",
         "wikidata=Q100092",
         "wikipedia=it:San Cesario sul Panaro"
       ],
@@ -22243,8 +22227,8 @@
     {
       "id": "node:62511253",
       "name": "Crema",
-      "lat": 45.362828,
-      "lon": 9.6874573,
+      "lat": 45.3629199,
+      "lon": 9.6874338,
       "type": "borghi",
       "visibility": "chicca",
       "tags": [
@@ -23093,7 +23077,7 @@
         "ref:ISTAT=036006",
         "ref:catasto=C107",
         "source=geodati.gfoss.it",
-        "website=http://www.comune.castelfranco-emilia.mo.it/",
+        "website=https://www.comune.castelfranco-emilia.mo.it/",
         "wikidata=Q100043",
         "wikipedia=it:Castelfranco Emilia"
       ],
@@ -23117,7 +23101,7 @@
         "ref:ISTAT=036027",
         "ref:catasto=F930",
         "source=geodati.gfoss.it",
-        "website=http://www.comune.nonantola.mo.it/",
+        "website=https://www.comune.nonantola.mo.it/",
         "wikidata=Q100080",
         "wikipedia=it:Nonantola"
       ],
@@ -23240,7 +23224,7 @@
         "ref:ISTAT=036002",
         "ref:catasto=A959",
         "source=geodati.gfoss.it",
-        "website=http://www.comune.bomporto.mo.it/",
+        "website=https://www.comune.bomporto.mo.it/",
         "wikidata=Q100038",
         "wikipedia=it:Bomporto"
       ],
@@ -38000,8 +37984,8 @@
     {
       "id": "node:62506383",
       "name": "Covo",
-      "lat": 45.5003219,
-      "lon": 9.7701068,
+      "lat": 45.5003933,
+      "lon": 9.7696562,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -96538,6 +96522,40 @@
       "score": 90
     },
     {
+      "id": "node:331259364",
+      "name": "Marilleva 1400",
+      "lat": 46.3024327,
+      "lon": 10.8101466,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=1400",
+        "name=Marilleva 1400",
+        "place=hamlet",
+        "population=14",
+        "url=http://italia.indettaglio.it/ita/trentinoaltoadige/trento_mezzana_marilleva1400.html",
+        "wikidata=Q18480567"
+      ],
+      "score": 90
+    },
+    {
+      "id": "node:331259493",
+      "name": "Marilleva 900",
+      "lat": 46.3144534,
+      "lon": 10.8127255,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=900",
+        "name=Marilleva 900",
+        "place=hamlet",
+        "population=11",
+        "url=http://italia.indettaglio.it/ita/trentinoaltoadige/trento_mezzana_marilleva900.html",
+        "wikidata=Q18480571"
+      ],
+      "score": 90
+    },
+    {
       "id": "node:332113908",
       "name": "Canova-Montanari",
       "lat": 45.5560271,
@@ -141784,8 +141802,8 @@
     {
       "id": "node:3554590355",
       "name": "Sostìla",
-      "lat": 46.1446576,
-      "lon": 9.6589752,
+      "lat": 46.1443668,
+      "lon": 9.6593861,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -177301,7 +177319,7 @@
         "postal_code=43011",
         "ref:ISTAT=034007",
         "source=geodati.gfoss.it",
-        "website=http://www.comune.busseto.pr.it/"
+        "website=https://comune.busseto.pr.it/"
       ],
       "score": 75
     },
@@ -177875,23 +177893,6 @@
         "name:egl=Rezōl",
         "place=village",
         "population=9178",
-        "source=geodati.gfoss.it"
-      ],
-      "score": 75
-    },
-    {
-      "id": "node:69301646",
-      "name": "Rio Saliceto",
-      "lat": 44.8100097,
-      "lon": 10.8030993,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=3968",
-        "name=Rio Saliceto",
-        "name:egl=Ré Salsêr",
-        "place=village",
-        "population=5258",
         "source=geodati.gfoss.it"
       ],
       "score": 75
@@ -182885,6 +182886,7 @@
       "type": "borghi",
       "visibility": "classica",
       "tags": [
+        "ele=66",
         "name=Colombare",
         "place=village"
       ],

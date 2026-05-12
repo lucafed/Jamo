@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-05-05T05:49:02.689Z",
+  "generated_at": "2026-05-12T06:19:28.886Z",
   "places": [
     {
       "id": "node:2692275706",
@@ -1587,7 +1587,7 @@
         "craft=winery",
         "name=Azienda Vitivinicola Bulli",
         "opening_hours=Mo-Sa 08:30-18:30; Su 08:30-12:30, 14:30-18:30",
-        "phone=+ 39 0523 895126",
+        "phone=+39 0523 895126",
         "website=https://bullivini.jimdofree.com/"
       ],
       "score": 102
@@ -1720,7 +1720,7 @@
         "craft=winery",
         "name=Fattoria del Graspo",
         "opening_hours=Mo-Sa 08:30-12:30; Mo-Sa 14:30-13:30; Su 08:30-12:30",
-        "phone=049793274",
+        "phone=+39 049 793274",
         "website=https://www.fattoriadelgraspo.com/"
       ],
       "score": 102
@@ -3642,7 +3642,7 @@
         "building=yes",
         "craft=winery",
         "name=Vini Casarotto",
-        "phone=0457450165",
+        "phone=+39 045 745 0165",
         "website=https://www.vinicasarotto.com/it/"
       ],
       "score": 96
@@ -6212,6 +6212,19 @@
       "score": 80
     },
     {
+      "id": "node:13807216831",
+      "name": "Pravis",
+      "lat": 46.0307735,
+      "lon": 10.9878744,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "craft=winery",
+        "name=Pravis"
+      ],
+      "score": 80
+    },
+    {
       "id": "way:81085412",
       "name": "Cantine naturali Torboli",
       "lat": 45.9222755,
@@ -6722,7 +6735,7 @@
       "tags": [
         "building=yes",
         "name=CANTINA / WINERY & TASTING - Tenuta Sant'Antonio di Castagnedi Massimo Armando, Tiziano e Paolo",
-        "phone=0458740682",
+        "phone=+39 045 874 0682",
         "shop=wine",
         "website=https://www.tenutasantantonio.it/"
       ],
@@ -7077,7 +7090,7 @@
         "addr:street=Via Castelletto",
         "name=Cantina Bernardi Giovanni",
         "opening_hours=Fr-Su 09:30-23:30; Tu, Th 09:30-19:30; We 09:30-12:30",
-        "phone=049 521 1006",
+        "phone=+39 049 521 1006",
         "shop=wine"
       ],
       "score": 49
@@ -11500,10 +11513,9 @@
       "type": "cantine",
       "visibility": "classica",
       "tags": [
-        "addr:housenumber=466d",
-        "addr:place=Santa Croce",
-        "addr:postcode=30135",
-        "addr:street=Rio Terà Sant'Andrea",
+        "contact:housenumber=466d",
+        "contact:place=Santa Croce",
+        "contact:postcode=30135",
         "name=Enoteca Busodurello",
         "shop=wine"
       ],
@@ -13111,6 +13123,22 @@
       "visibility": "classica",
       "tags": [
         "name=Corte Saibante",
+        "shop=wine"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:11279246750",
+      "name": "Enoteca Bella Vita",
+      "lat": 45.2310781,
+      "lon": 11.8731095,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=17",
+        "addr:street=Via Giuseppe Verdi",
+        "contact:facebook=https://www.facebook.com/enotecabellavita/",
+        "name=Enoteca Bella Vita",
         "shop=wine"
       ],
       "score": 25
