@@ -3,7 +3,7 @@
   "country": "IT",
   "area": "Veneto",
   "label_it": "Veneto • Borghi (turistici + piccoli)",
-  "generated_at": "2026-05-05T05:39:43.975Z",
+  "generated_at": "2026-05-12T06:11:39.192Z",
   "places": [
     {
       "id": "node:66503077",
@@ -1016,7 +1016,7 @@
         "ref:LOCODE=ITBTG",
         "ref:catasto=A713",
         "source=geodati.gfoss.it",
-        "website=http://www.comune.bastiglia.mo.it/",
+        "website=https://www.comune.bastiglia.mo.it/",
         "wikidata=Q100036",
         "wikipedia=it:Bastiglia (Italia)"
       ],
@@ -1042,7 +1042,7 @@
         "ref:LOCODE=ITRAV",
         "ref:catasto=H195",
         "source=geodati.gfoss.it",
-        "website=http://www.comune.ravarino.mo.it/",
+        "website=https://www.comune.ravarino.mo.it/",
         "wikidata=Q100089",
         "wikipedia=it:Ravarino"
       ],
@@ -2129,7 +2129,7 @@
         "ref:ISTAT=036002",
         "ref:catasto=A959",
         "source=geodati.gfoss.it",
-        "website=http://www.comune.bomporto.mo.it/",
+        "website=https://www.comune.bomporto.mo.it/",
         "wikidata=Q100038",
         "wikipedia=it:Bomporto"
       ],
@@ -42077,23 +42077,6 @@
       "score": 85
     },
     {
-      "id": "node:9944747181",
-      "name": "Marilleva",
-      "lat": 46.30428,
-      "lon": 10.8105041,
-      "type": "borgo",
-      "borgo_type": "classico",
-      "visibility": "classica",
-      "tags": [
-        "name=Marilleva",
-        "place=village",
-        "population=25",
-        "wikidata=Q2278797",
-        "wikipedia=it:Marilleva"
-      ],
-      "score": 85
-    },
-    {
       "id": "node:9984028836",
       "name": "Villaga",
       "lat": 46.0040029,
@@ -54846,6 +54829,42 @@
         "name=Lupiola",
         "place=hamlet",
         "wikidata=Q18506471"
+      ],
+      "score": 70
+    },
+    {
+      "id": "node:331259364",
+      "name": "Marilleva 1400",
+      "lat": 46.3024327,
+      "lon": 10.8101466,
+      "type": "borgo",
+      "borgo_type": "classico",
+      "visibility": "classica",
+      "tags": [
+        "ele=1400",
+        "name=Marilleva 1400",
+        "place=hamlet",
+        "population=14",
+        "url=http://italia.indettaglio.it/ita/trentinoaltoadige/trento_mezzana_marilleva1400.html",
+        "wikidata=Q18480567"
+      ],
+      "score": 70
+    },
+    {
+      "id": "node:331259493",
+      "name": "Marilleva 900",
+      "lat": 46.3144534,
+      "lon": 10.8127255,
+      "type": "borgo",
+      "borgo_type": "classico",
+      "visibility": "classica",
+      "tags": [
+        "ele=900",
+        "name=Marilleva 900",
+        "place=hamlet",
+        "population=11",
+        "url=http://italia.indettaglio.it/ita/trentinoaltoadige/trento_mezzana_marilleva900.html",
+        "wikidata=Q18480571"
       ],
       "score": 70
     },
@@ -130811,7 +130830,7 @@
       "id": "relation:43668",
       "name": "Porto Tolle",
       "lat": 44.9162336,
-      "lon": 12.4261849,
+      "lon": 12.4266216,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
