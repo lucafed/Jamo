@@ -7,7 +7,7 @@
     "minLon": 10.2,
     "maxLon": 13.2
   },
-  "generated_at": "2026-05-07T05:50:45.809Z",
+  "generated_at": "2026-05-14T06:13:11.793Z",
   "places": [
     {
       "id": "node:12766026527",
@@ -1953,6 +1953,27 @@
       "beauty_score": 1
     },
     {
+      "id": "way:36087425",
+      "name": "Cantina Bulfon",
+      "lat": 46.1698313,
+      "lon": 12.9248217,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "building=yes",
+        "craft=winery",
+        "email=bulfon@bulfon.it",
+        "height=5 m",
+        "it:fvg:ctrn:code=4AED",
+        "it:fvg:ctrn:revision=000",
+        "name=Cantina Bulfon",
+        "phone=+39 0432 950061",
+        "website=https://www.bulfon.it/"
+      ],
+      "score": 88,
+      "beauty_score": 1
+    },
+    {
       "id": "way:67375703",
       "name": "Azienda Agricola Letrari",
       "lat": 45.8893863,
@@ -3241,6 +3262,25 @@
         "craft=winery",
         "name=Cantina Mezzacorona",
         "operator=Gruppo Mezzacorona"
+      ],
+      "score": 82,
+      "beauty_score": 1
+    },
+    {
+      "id": "way:36087211",
+      "name": "Albino Armani Terre di Plovia",
+      "lat": 46.1701087,
+      "lon": 12.9254336,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "building=yes",
+        "craft=winery",
+        "height=8 m",
+        "it:fvg:ctrn:code=4AED",
+        "it:fvg:ctrn:revision=000",
+        "name=Albino Armani Terre di Plovia",
+        "website=https://www.terrediplovia.it/"
       ],
       "score": 82,
       "beauty_score": 1
@@ -4966,6 +5006,20 @@
       "tags": [
         "craft=winery",
         "name=Vineria Castel Sallegg"
+      ],
+      "score": 70,
+      "beauty_score": 1
+    },
+    {
+      "id": "node:13807216831",
+      "name": "Pravis",
+      "lat": 46.0307735,
+      "lon": 10.9878744,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Pravis"
       ],
       "score": 70,
       "beauty_score": 1
