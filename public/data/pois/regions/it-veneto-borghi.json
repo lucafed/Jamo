@@ -3,7 +3,7 @@
   "country": "IT",
   "area": "Veneto",
   "label_it": "Veneto • Borghi (turistici + piccoli)",
-  "generated_at": "2026-05-12T06:11:39.192Z",
+  "generated_at": "2026-05-19T06:44:55.265Z",
   "places": [
     {
       "id": "node:66503077",
@@ -562,7 +562,7 @@
         "ref:ISTAT=037035",
         "ref:catasto=E844",
         "source=geodati.gfoss.it",
-        "website=http://www.comune.malalbergo.bo.it/",
+        "website=https://www.comune.malalbergo.bo.it/",
         "wikidata=Q94935",
         "wikipedia=it:Malalbergo"
       ],
@@ -637,7 +637,7 @@
         "ref:ISTAT=038023",
         "ref:catasto=M110",
         "source=geodati.gfoss.it",
-        "website=http://www.comune.voghiera.fe.it/",
+        "website=https://www.comune.voghiera.fe.it/",
         "wikidata=Q95147",
         "wikipedia=it:Voghiera"
       ],
@@ -3383,17 +3383,14 @@
     {
       "id": "node:62516170",
       "name": "Sant'Antonio",
-      "lat": 46.4587059,
-      "lon": 10.4244451,
+      "lat": 46.4584435,
+      "lon": 10.4250245,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "gfoss_id=1732",
         "name=Sant'Antonio",
         "place=village",
-        "population=2742",
-        "source=geodati.gfoss.it",
         "wikidata=Q18494732"
       ],
       "score": 85
@@ -8676,8 +8673,8 @@
     {
       "id": "node:64778335",
       "name": "Codevigo",
-      "lat": 45.2677006,
-      "lon": 12.1012862,
+      "lat": 45.2676569,
+      "lon": 12.1012874,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -20200,35 +20197,19 @@
     },
     {
       "id": "node:429477460",
-      "name": "Santa Caterina",
-      "lat": 46.4117021,
-      "lon": 10.496566,
+      "name": "Santa Caterina Valfurva",
+      "lat": 46.4121459,
+      "lon": 10.4951981,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
         "ele=1734",
-        "name=Santa Caterina",
-        "official_name=Santa Caterina Valfurva",
+        "name=Santa Caterina Valfurva",
         "place=village",
+        "short_name=Santa Caterina",
         "wikidata=Q2141665",
         "wikipedia=it:Santa Caterina Valfurva"
-      ],
-      "score": 85
-    },
-    {
-      "id": "node:429537059",
-      "name": "Uzza",
-      "lat": 46.465222,
-      "lon": 10.3987199,
-      "type": "borgo",
-      "borgo_type": "classico",
-      "visibility": "classica",
-      "tags": [
-        "name=Uzza",
-        "place=village",
-        "postal_code=23030",
-        "wikidata=Q18494817"
       ],
       "score": 85
     },
@@ -20430,16 +20411,15 @@
     {
       "id": "node:443354952",
       "name": "San Nicolò",
-      "lat": 46.4625986,
-      "lon": 10.4117855,
+      "lat": 46.4626503,
+      "lon": 10.4106,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "fixme=Il dato sulla popolazione è un'approssimazione. Verificare.",
+        "ele=1339",
         "name=San Nicolò",
         "place=village",
-        "population=500",
         "wikidata=Q18494711"
       ],
       "score": 85
@@ -23610,8 +23590,8 @@
     {
       "id": "node:605877451",
       "name": "Cepina",
-      "lat": 46.4278763,
-      "lon": 10.3561648,
+      "lat": 46.4278426,
+      "lon": 10.3559643,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -25912,8 +25892,8 @@
     {
       "id": "node:870860908",
       "name": "Premadio",
-      "lat": 46.485571,
-      "lon": 10.3520111,
+      "lat": 46.4849246,
+      "lon": 10.3528614,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -25922,21 +25902,6 @@
         "place=village",
         "wikidata=Q3909837",
         "wikipedia=it:Premadio"
-      ],
-      "score": 85
-    },
-    {
-      "id": "node:870889318",
-      "name": "San Gallo",
-      "lat": 46.479901,
-      "lon": 10.3588261,
-      "type": "borgo",
-      "borgo_type": "classico",
-      "visibility": "classica",
-      "tags": [
-        "name=San Gallo",
-        "place=village",
-        "wikidata=Q18494698"
       ],
       "score": 85
     },
@@ -26357,21 +26322,6 @@
         "place=village",
         "wikidata=Q3647593",
         "wikipedia=it:Buso"
-      ],
-      "score": 85
-    },
-    {
-      "id": "node:904607626",
-      "name": "Santa Lucia",
-      "lat": 46.4589697,
-      "lon": 10.3569096,
-      "type": "borgo",
-      "borgo_type": "classico",
-      "visibility": "classica",
-      "tags": [
-        "name=Santa Lucia",
-        "place=village",
-        "wikidata=Q18494722"
       ],
       "score": 85
     },
@@ -34337,8 +34287,8 @@
     {
       "id": "node:1631619525",
       "name": "Veternigo",
-      "lat": 45.5143489,
-      "lon": 12.055117,
+      "lat": 45.5142257,
+      "lon": 12.0547652,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -35914,26 +35864,6 @@
         "name=Soccol",
         "place=village",
         "wikidata=Q18497015"
-      ],
-      "score": 85
-    },
-    {
-      "id": "node:1937335802",
-      "name": "Turripiano",
-      "lat": 46.4840706,
-      "lon": 10.3419415,
-      "type": "borgo",
-      "borgo_type": "classico",
-      "visibility": "classica",
-      "tags": [
-        "alt_name=Fior d'Alpe",
-        "capital=12",
-        "ele=1300",
-        "name=Turripiano",
-        "place=village",
-        "population=215",
-        "url=http://italia.indettaglio.it/ita/lombardia/sondrio_valdidentro_turripiano.html",
-        "wikidata=Q18494813"
       ],
       "score": 85
     },
@@ -38474,22 +38404,6 @@
       "score": 85
     },
     {
-      "id": "node:2650768126",
-      "name": "Santa Maria Maddalena",
-      "lat": 46.4081727,
-      "lon": 10.3450513,
-      "type": "borgo",
-      "borgo_type": "classico",
-      "visibility": "classica",
-      "tags": [
-        "name=Santa Maria Maddalena",
-        "place=village",
-        "source=CTR al tratto",
-        "wikidata=Q18494724"
-      ],
-      "score": 85
-    },
-    {
       "id": "node:2658276647",
       "name": "Alleghe",
       "lat": 46.4066372,
@@ -39700,6 +39614,21 @@
       "score": 85
     },
     {
+      "id": "node:3525828060",
+      "name": "Caselle di Pressana",
+      "lat": 45.2751012,
+      "lon": 11.361729,
+      "type": "borgo",
+      "borgo_type": "classico",
+      "visibility": "classica",
+      "tags": [
+        "name=Caselle di Pressana",
+        "place=village",
+        "wikidata=Q33429075"
+      ],
+      "score": 85
+    },
+    {
       "id": "node:3582826229",
       "name": "Cicognara",
       "lat": 44.9437867,
@@ -40310,6 +40239,23 @@
       "score": 85
     },
     {
+      "id": "node:3966576104",
+      "name": "Piatta",
+      "lat": 46.4525981,
+      "lon": 10.3736684,
+      "type": "borgo",
+      "borgo_type": "classico",
+      "visibility": "classica",
+      "tags": [
+        "ele=1322",
+        "name=Piatta",
+        "place=village",
+        "population=482",
+        "wikidata=Q18494563"
+      ],
+      "score": 85
+    },
+    {
       "id": "node:3970891589",
       "name": "Casoni",
       "lat": 44.9391755,
@@ -40587,21 +40533,6 @@
         "name=Mondadizza",
         "place=village",
         "wikidata=Q18494451"
-      ],
-      "score": 85
-    },
-    {
-      "id": "node:4236655848",
-      "name": "Sommacologna",
-      "lat": 46.3306954,
-      "lon": 10.3065928,
-      "type": "borgo",
-      "borgo_type": "classico",
-      "visibility": "classica",
-      "tags": [
-        "name=Sommacologna",
-        "place=village",
-        "wikidata=Q18494762"
       ],
       "score": 85
     },
@@ -42796,21 +42727,20 @@
     {
       "id": "node:62516985",
       "name": "Bormio",
-      "lat": 46.4692482,
-      "lon": 10.3721712,
+      "lat": 46.4676705,
+      "lon": 10.3774659,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
         "ele=1225",
         "name=Bormio",
+        "name:de=Worms im Veltlin",
         "name:rm=Buorm",
-        "name:ru=Бормио",
-        "old_name=Worms im Veltlin",
         "place=town",
         "population=4096",
         "wikidata=Q40516",
-        "wikipedia=en:Bormio"
+        "wikipedia=it:Bormio"
       ],
       "score": 80
     },
@@ -43154,6 +43084,7 @@
         "name:de=Cortina d'Ampezzo",
         "name:it=Cortina d'Ampezzo",
         "name:lld=Anpezo",
+        "name:uk=Кортіна-д'Ампеццо",
         "old_name:de=Hayden",
         "place=town",
         "population=5907",
@@ -56518,6 +56449,21 @@
       "score": 70
     },
     {
+      "id": "node:429537059",
+      "name": "Uzza",
+      "lat": 46.465222,
+      "lon": 10.3987199,
+      "type": "borgo",
+      "borgo_type": "classico",
+      "visibility": "classica",
+      "tags": [
+        "name=Uzza",
+        "place=hamlet",
+        "wikidata=Q18494817"
+      ],
+      "score": 70
+    },
+    {
       "id": "node:429864791",
       "name": "Tavani",
       "lat": 45.7480074,
@@ -62465,6 +62411,21 @@
         "name=Scorgnano",
         "place=hamlet",
         "wikidata=Q18505564"
+      ],
+      "score": 70
+    },
+    {
+      "id": "node:904607626",
+      "name": "Santa Lucia",
+      "lat": 46.4589697,
+      "lon": 10.3569096,
+      "type": "borgo",
+      "borgo_type": "classico",
+      "visibility": "classica",
+      "tags": [
+        "name=Santa Lucia",
+        "place=hamlet",
+        "wikidata=Q18494722"
       ],
       "score": 70
     },
@@ -78549,8 +78510,8 @@
     {
       "id": "node:1526453554",
       "name": "Barchessa",
-      "lat": 45.1344063,
-      "lon": 11.0235956,
+      "lat": 45.1338034,
+      "lon": 11.0230492,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -81187,8 +81148,8 @@
     {
       "id": "node:1616718179",
       "name": "Comugne",
-      "lat": 45.800153,
-      "lon": 12.7455713,
+      "lat": 45.8001056,
+      "lon": 12.7453712,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -84540,6 +84501,26 @@
         "name:lld=Valcozena",
         "place=hamlet",
         "wikidata=Q18497122"
+      ],
+      "score": 70
+    },
+    {
+      "id": "node:1937335802",
+      "name": "Turripiano",
+      "lat": 46.4840706,
+      "lon": 10.3419415,
+      "type": "borgo",
+      "borgo_type": "classico",
+      "visibility": "classica",
+      "tags": [
+        "alt_name=Fior d'Alpe",
+        "capital=12",
+        "ele=1300",
+        "name=Turripiano",
+        "place=hamlet",
+        "population=215",
+        "url=http://italia.indettaglio.it/ita/lombardia/sondrio_valdidentro_turripiano.html",
+        "wikidata=Q18494813"
       ],
       "score": 70
     },
@@ -89335,6 +89316,22 @@
         "place=hamlet",
         "source=CTR al tratto",
         "wikidata=Q18494454"
+      ],
+      "score": 70
+    },
+    {
+      "id": "node:2650768126",
+      "name": "Santa Maria Maddalena",
+      "lat": 46.4081727,
+      "lon": 10.3450513,
+      "type": "borgo",
+      "borgo_type": "classico",
+      "visibility": "classica",
+      "tags": [
+        "name=Santa Maria Maddalena",
+        "place=hamlet",
+        "source=CTR al tratto",
+        "wikidata=Q18494724"
       ],
       "score": 70
     },
@@ -95104,22 +95101,6 @@
       "score": 70
     },
     {
-      "id": "node:3966576104",
-      "name": "Piatta",
-      "lat": 46.4525981,
-      "lon": 10.3736684,
-      "type": "borgo",
-      "borgo_type": "classico",
-      "visibility": "classica",
-      "tags": [
-        "name=Piatta",
-        "place=hamlet",
-        "source=PGT 2012 Valdisotto",
-        "wikidata=Q18494563"
-      ],
-      "score": 70
-    },
-    {
       "id": "node:3979506086",
       "name": "Bogliaco",
       "lat": 45.6745299,
@@ -95971,6 +95952,23 @@
         "name:lld=Ciadin de Sote",
         "place=hamlet",
         "wikidata=Q18496175"
+      ],
+      "score": 70
+    },
+    {
+      "id": "node:4236655848",
+      "name": "Sommacologna",
+      "lat": 46.3306954,
+      "lon": 10.3065928,
+      "type": "borgo",
+      "borgo_type": "classico",
+      "visibility": "classica",
+      "tags": [
+        "ele=1020",
+        "name=Sommacologna",
+        "place=hamlet",
+        "population=113",
+        "wikidata=Q18494762"
       ],
       "score": 70
     },
@@ -128040,7 +128038,7 @@
     {
       "id": "relation:1989836",
       "name": "Santa Massenza",
-      "lat": 46.0683677,
+      "lat": 46.0682576,
       "lon": 10.9822484,
       "type": "borgo",
       "borgo_type": "classico",
@@ -128117,6 +128115,7 @@
         "name:la=Mantua",
         "name:nl=Mantua",
         "name:pl=Mantua",
+        "name:uk=Мантуя",
         "name:vec=Màntoa",
         "old_name:lat=Mantua",
         "place=city",
@@ -128592,6 +128591,7 @@
         "name:ro=Pordenone",
         "name:sk=Pordenone",
         "name:sl=Pordenon",
+        "name:uk=Порденоне",
         "name:vec=Pordenon",
         "name:vi=Pordenone",
         "name:vo=Pordenone",
@@ -128809,23 +128809,6 @@
         "population=1480",
         "source=geodati.gfoss.it",
         "website=https://www.comune.montagna.bz.it/"
-      ],
-      "score": 63
-    },
-    {
-      "id": "node:3777855719",
-      "name": "Valdisotto",
-      "lat": 46.4252151,
-      "lon": 10.3574185,
-      "type": "borgo",
-      "borgo_type": "chicca",
-      "visibility": "chicca",
-      "tags": [
-        "addr:postcode=23030",
-        "name=Valdisotto",
-        "place=village",
-        "population=3569",
-        "website=https://www.comune.valdisotto.so.it/"
       ],
       "score": 63
     },
@@ -129275,7 +129258,7 @@
         "ref:ISTAT=037028",
         "ref:catasto=D878",
         "type=boundary",
-        "website=http://www.comune.galliera.bo.it/",
+        "website=https://www.comune.galliera.bo.it/",
         "wikidata=Q94880",
         "wikipedia=it:Galliera"
       ],
@@ -130830,7 +130813,7 @@
       "id": "relation:43668",
       "name": "Porto Tolle",
       "lat": 44.9162336,
-      "lon": 12.4266216,
+      "lon": 12.4263957,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -145444,8 +145427,8 @@
     {
       "id": "relation:46645",
       "name": "Dro",
-      "lat": 45.9865287,
-      "lon": 10.9221671,
+      "lat": 45.9863151,
+      "lon": 10.9219992,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -150204,6 +150187,7 @@
         "name:fur=Cortine Dimpeç",
         "name:it=Cortina d'Ampezzo",
         "name:lld=Anpezo",
+        "name:uk=Кортіна-д'Ампеццо",
         "name:vec=Cortina d'Anpezo",
         "postal_code=32043",
         "ref:ISTAT=025016",
@@ -153272,6 +153256,7 @@
         "name=Pordenone / Pordenon",
         "name:fur=Pordenon",
         "name:it=Pordenone",
+        "name:uk=Порденоне",
         "old_name:de=Portenau",
         "postal_code=33170",
         "ref:ISTAT=093033",
@@ -154392,7 +154377,7 @@
       "id": "relation:570334",
       "name": "Comano Terme",
       "lat": 46.0558934,
-      "lon": 10.8646921,
+      "lon": 10.8642093,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
