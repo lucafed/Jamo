@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-05-12T06:19:28.886Z",
+  "generated_at": "2026-05-19T06:53:41.775Z",
   "places": [
     {
       "id": "node:2692275706",
@@ -2015,7 +2015,7 @@
         "name=Bertani",
         "opening_hours=Tu-Sa 9:30-13:00 14:00-18:00",
         "phone=+390458658444",
-        "website=http://www.bertani.net/"
+        "website=https://www.bertani.net/"
       ],
       "score": 102
     },
@@ -3251,6 +3251,25 @@
       "score": 96
     },
     {
+      "id": "node:13846864094",
+      "name": "Meggiolaro Vini",
+      "lat": 45.5049649,
+      "lon": 11.2863416,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Roncà",
+        "addr:housenumber=43/B",
+        "addr:postcode=37030",
+        "addr:street=via Roncolati",
+        "craft=winery",
+        "name=Meggiolaro Vini",
+        "phone=+39 045 65 45 067",
+        "website=https://meggiolarovini.it"
+      ],
+      "score": 96
+    },
+    {
       "id": "way:109935476",
       "name": "Maso Thaler",
       "lat": 46.3177713,
@@ -4355,7 +4374,7 @@
       "tags": [
         "craft=winery",
         "name=Cooperativa Triasso e Sassella",
-        "website=http://cooptriasso.it"
+        "website=https://cooptriasso.it/"
       ],
       "score": 90
     },
@@ -7818,7 +7837,7 @@
         "name=Cantina Salim",
         "roof:shape=flat",
         "shop=wine",
-        "website=http://www.cantinasalim.it/"
+        "website=https://www.cantinasalim.it/"
       ],
       "score": 47
     },
@@ -9935,7 +9954,7 @@
         "addr:street=Via Ca' del Pipa",
         "name=Farm Zyme Celestino Gaspari",
         "shop=wine",
-        "website=http://www.zyme.it/contatti/"
+        "website=https://www.zyme.it/contatti/"
       ],
       "score": 35
     },
