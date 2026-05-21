@@ -7,7 +7,7 @@
     "minLon": 10.2,
     "maxLon": 13.2
   },
-  "generated_at": "2026-05-14T06:13:11.793Z",
+  "generated_at": "2026-05-21T06:39:31.470Z",
   "places": [
     {
       "id": "node:12766026527",
@@ -840,7 +840,7 @@
         "name=Bertani",
         "opening_hours=Tu-Sa 9:30-13:00 14:00-18:00",
         "phone=+390458658444",
-        "website=http://www.bertani.net/"
+        "website=https://www.bertani.net/"
       ],
       "score": 94,
       "beauty_score": 1
@@ -1948,6 +1948,26 @@
         "name=Azienda vitivinicola Turetta Ca' Bianca",
         "phone=+39 0429 94288",
         "website=https://www.turettacabianca.it/cantina/"
+      ],
+      "score": 88,
+      "beauty_score": 1
+    },
+    {
+      "id": "node:13846864094",
+      "name": "Meggiolaro Vini",
+      "lat": 45.5049649,
+      "lon": 11.2863416,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Roncà",
+        "addr:housenumber=43/B",
+        "addr:postcode=37030",
+        "addr:street=via Roncolati",
+        "craft=winery",
+        "name=Meggiolaro Vini",
+        "phone=+39 045 65 45 067",
+        "website=https://meggiolarovini.it"
       ],
       "score": 88,
       "beauty_score": 1
@@ -5052,6 +5072,24 @@
         "craft=winery",
         "name=Cantina Rotari",
         "operator=Gruppo Mezzacorona"
+      ],
+      "score": 70,
+      "beauty_score": 1
+    },
+    {
+      "id": "way:36087605",
+      "name": "La Concha",
+      "lat": 46.1527096,
+      "lon": 12.9198572,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=yes",
+        "craft=winery",
+        "height=3 m",
+        "it:fvg:ctrn:code=4AED",
+        "it:fvg:ctrn:revision=000",
+        "name=La Concha"
       ],
       "score": 70,
       "beauty_score": 1
