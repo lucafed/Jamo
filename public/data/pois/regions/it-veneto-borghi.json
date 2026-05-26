@@ -3,7 +3,7 @@
   "country": "IT",
   "area": "Veneto",
   "label_it": "Veneto • Borghi (turistici + piccoli)",
-  "generated_at": "2026-05-19T06:44:55.265Z",
+  "generated_at": "2026-05-26T06:43:01.431Z",
   "places": [
     {
       "id": "node:66503077",
@@ -2826,6 +2826,28 @@
       "score": 85
     },
     {
+      "id": "node:62508723",
+      "name": "Breno",
+      "lat": 45.9552271,
+      "lon": 10.3011661,
+      "type": "borgo",
+      "borgo_type": "classico",
+      "visibility": "classica",
+      "tags": [
+        "ele=343",
+        "loc_name=Bré",
+        "name=Breno",
+        "name:de=Brenn",
+        "name:it=Breno",
+        "name:lmo=Bré",
+        "place=village",
+        "population=4962",
+        "wikidata=Q30023123",
+        "wikipedia=it:Breno (Italia)"
+      ],
+      "score": 85
+    },
+    {
       "id": "node:62508743",
       "name": "Capo di Ponte",
       "lat": 46.030996,
@@ -2920,8 +2942,8 @@
     {
       "id": "node:62508939",
       "name": "Niardo",
-      "lat": 45.975994,
-      "lon": 10.333263,
+      "lat": 45.9772918,
+      "lon": 10.3365042,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -19070,8 +19092,8 @@
     {
       "id": "node:380787789",
       "name": "Castellaro Lagusello",
-      "lat": 45.3745528,
-      "lon": 10.636609,
+      "lat": 45.3725965,
+      "lon": 10.6354229,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -20372,21 +20394,6 @@
         "place=village",
         "wikidata=Q576418",
         "wikipedia=it:Cemmo"
-      ],
-      "score": 85
-    },
-    {
-      "id": "node:442892733",
-      "name": "Campogrande",
-      "lat": 45.948419,
-      "lon": 10.306972,
-      "type": "borgo",
-      "borgo_type": "classico",
-      "visibility": "classica",
-      "tags": [
-        "name=Campogrande",
-        "place=village",
-        "wikidata=Q18472985"
       ],
       "score": 85
     },
@@ -25924,8 +25931,8 @@
     {
       "id": "node:873845076",
       "name": "Portegrandi",
-      "lat": 45.5589498,
-      "lon": 12.4485421,
+      "lat": 45.5595349,
+      "lon": 12.4342422,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -56576,6 +56583,21 @@
       "score": 70
     },
     {
+      "id": "node:442892733",
+      "name": "Campogrande",
+      "lat": 45.948419,
+      "lon": 10.306972,
+      "type": "borgo",
+      "borgo_type": "classico",
+      "visibility": "classica",
+      "tags": [
+        "name=Campogrande",
+        "place=hamlet",
+        "wikidata=Q18472985"
+      ],
+      "score": 70
+    },
+    {
       "id": "node:442980258",
       "name": "Zambana Vecchia",
       "lat": 46.1580297,
@@ -59919,8 +59941,8 @@
     {
       "id": "node:656406864",
       "name": "Lon",
-      "lat": 46.0852324,
-      "lon": 10.9915508,
+      "lat": 46.0851445,
+      "lon": 10.9913891,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -61900,6 +61922,8 @@
         "gfoss_id=34378",
         "istat_id=2147483647",
         "name=Sottocolli",
+        "name:fur=Sotcuei",
+        "name:it=Sottocolli",
         "place=hamlet",
         "population=24",
         "source=Istat 2001 - geodati.gfoss.it",
@@ -72407,7 +72431,7 @@
     },
     {
       "id": "node:1340369820",
-      "name": "Fraine di Sotto",
+      "name": "Fraine Basse",
       "lat": 45.6670589,
       "lon": 10.8561655,
       "type": "borgo",
@@ -72417,7 +72441,7 @@
         "ele=879",
         "gfoss_id=24208",
         "istat_id=2147483647",
-        "name=Fraine di Sotto",
+        "name=Fraine Basse",
         "place=hamlet",
         "population=13",
         "source=Istat 2001 - geodati.gfoss.it",
@@ -72427,7 +72451,7 @@
     },
     {
       "id": "node:1342056012",
-      "name": "Fraine di Sopra",
+      "name": "Fraine Alte",
       "lat": 45.6630535,
       "lon": 10.857608,
       "type": "borgo",
@@ -72437,7 +72461,7 @@
         "ele=909",
         "gfoss_id=24207",
         "istat_id=2147483647",
-        "name=Fraine di Sopra",
+        "name=Fraine Alte",
         "place=hamlet",
         "population=5",
         "source=Istat 2001 - geodati.gfoss.it",
@@ -104119,8 +104143,8 @@
     {
       "id": "node:13479457140",
       "name": "Bosco di Monte Magrè",
-      "lat": 45.6868014,
-      "lon": 11.3428906,
+      "lat": 45.6871512,
+      "lon": 11.3454739,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -130688,7 +130712,7 @@
       "id": "relation:43646",
       "name": "Ariano nel Polesine",
       "lat": 44.8931245,
-      "lon": 12.2295277,
+      "lon": 12.2291509,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -130812,7 +130836,7 @@
     {
       "id": "relation:43668",
       "name": "Porto Tolle",
-      "lat": 44.9162336,
+      "lat": 44.9169773,
       "lon": 12.4263957,
       "type": "borgo",
       "borgo_type": "classico",
@@ -138621,7 +138645,7 @@
     {
       "id": "relation:45161",
       "name": "Jesolo",
-      "lat": 45.5348238,
+      "lat": 45.5348034,
       "lon": 12.6443051,
       "type": "borgo",
       "borgo_type": "classico",
@@ -141405,7 +141429,7 @@
       "id": "relation:45606",
       "name": "San Michele al Tagliamento",
       "lat": 45.7357384,
-      "lon": 13.019393,
+      "lon": 13.0193509,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -151834,7 +151858,7 @@
     {
       "id": "relation:179088",
       "name": "Lignano Sabbiadoro / Lignan",
-      "lat": 45.6718983,
+      "lat": 45.6712088,
       "lon": 13.1075136,
       "type": "borgo",
       "borgo_type": "classico",
