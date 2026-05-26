@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-05-19T06:53:41.775Z",
+  "generated_at": "2026-05-26T06:52:45.428Z",
   "places": [
     {
       "id": "node:2692275706",
@@ -1636,6 +1636,7 @@
       "type": "cantine",
       "visibility": "classica",
       "tags": [
+        "check_date=2026-05-18",
         "contact:website=http://www.vinitorreggiani.it/la-villa/",
         "craft=winery",
         "name=Cantina Torreggiani"
@@ -2566,6 +2567,7 @@
       "type": "cantine",
       "visibility": "classica",
       "tags": [
+        "check_date=2026-05-21",
         "contact:email=info@turinavini.it",
         "contact:phone=+39 0365 502103",
         "contact:website=https://www.turinavini.it/",
@@ -3891,6 +3893,19 @@
         "alt_name=Vivo Viticoltori Veneto Orientale",
         "craft=winery",
         "name=Cantina Sociale di Premaore"
+      ],
+      "score": 92
+    },
+    {
+      "id": "node:13864588998",
+      "name": "Cantina Marsadri",
+      "lat": 45.5692993,
+      "lon": 10.5298836,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "craft=winery",
+        "name=Cantina Marsadri"
       ],
       "score": 92
     },
@@ -9035,6 +9050,27 @@
       "score": 41
     },
     {
+      "id": "node:13859012321",
+      "name": "Badef",
+      "lat": 45.5943576,
+      "lon": 10.0935964,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=13",
+        "addr:postcode=25050",
+        "addr:street=Via Marrocco",
+        "contact:email=ordini@badef.it",
+        "contact:website=https://badef.it/",
+        "name=Badef",
+        "opening_hours=Mo-Fr 09:00-12:00,14:00-24:00; Sa 09:00-12:00,17:00-24:00; Su 17:00-24:00",
+        "operator=Birrificio Badef s.r.l.",
+        "ref:vatin=IT03250670985",
+        "shop=wine"
+      ],
+      "score": 41
+    },
+    {
       "id": "way:81025169",
       "name": "Zeni",
       "lat": 46.1943586,
@@ -9612,6 +9648,22 @@
       "score": 37
     },
     {
+      "id": "node:13867081201",
+      "name": "La Cantina di Bacco di Renato de Rosa",
+      "lat": 45.8926767,
+      "lon": 10.001781,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=269",
+        "addr:postcode=24020",
+        "addr:street=Via Spluss",
+        "name=La Cantina di Bacco di Renato de Rosa",
+        "shop=wine"
+      ],
+      "score": 37
+    },
+    {
       "id": "way:30691707",
       "name": "Rivendita Cantina Rotari-Mezzocorona",
       "lat": 46.2023401,
@@ -10154,8 +10206,8 @@
     {
       "id": "node:3526762194",
       "name": "Casa Mattiazzi",
-      "lat": 45.4442277,
-      "lon": 12.3247998,
+      "lat": 45.4442336,
+      "lon": 12.3248075,
       "type": "cantine",
       "visibility": "classica",
       "tags": [
@@ -10368,6 +10420,7 @@
         "addr:housenumber=96a",
         "addr:postcode=24121",
         "addr:street=Via San Tomaso",
+        "check_date=2026-05-24",
         "entrance=yes",
         "level=0",
         "loc_ref=71107",
@@ -10936,6 +10989,7 @@
       "type": "cantine",
       "visibility": "classica",
       "tags": [
+        "check_date=2026-05-23",
         "level=0",
         "name=Enoteca da Guido",
         "opening_hours=Mo-Sa 11:00-14:00,17:00-23:00",
@@ -11141,6 +11195,24 @@
         "name=Enoteca La Cantinetta",
         "shop=wine",
         "wheelchair=no"
+      ],
+      "score": 31
+    },
+    {
+      "id": "node:13870911181",
+      "name": "Cantine di Verona SCA",
+      "lat": 45.3341334,
+      "lon": 11.0024,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Buttapietra",
+        "addr:housenumber=2",
+        "addr:postcode=37060",
+        "addr:street=Via Provinciale Sud",
+        "name=Cantine di Verona SCA",
+        "phone=+390454856538",
+        "shop=wine"
       ],
       "score": 31
     },
@@ -12089,7 +12161,7 @@
         "addr:housenumber=22a",
         "addr:postcode=24129",
         "addr:street=Via Bartolomeo Colleoni",
-        "check_date=2025-06-22",
+        "check_date=2026-05-25",
         "entrance=yes",
         "level=0",
         "loc_ref=19901",
@@ -13668,6 +13740,23 @@
       "visibility": "classica",
       "tags": [
         "name=Boccondivino vineria",
+        "shop=wine"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:13869620905",
+      "name": "Nave de Oro",
+      "lat": 45.443829,
+      "lon": 12.3275426,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Venezia",
+        "addr:housenumber=1370",
+        "addr:place=Cannaregio",
+        "addr:postcode=30121",
+        "name=Nave de Oro",
         "shop=wine"
       ],
       "score": 25

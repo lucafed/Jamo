@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-05-19T06:53:31.622Z",
+  "generated_at": "2026-05-26T06:52:32.806Z",
   "places": [
     {
       "id": "node:62513426",
@@ -468,7 +468,7 @@
         "place=village",
         "population=561",
         "wikidata=Q30025928",
-        "wikipedia=ceb:Fusine (kapital sa munisipyo sa Italya, Lombardia, Provincia di Sondrio, lat 46,15, long 9,75)"
+        "wikipedia=it:Fusine"
       ],
       "score": 145
     },
@@ -4419,17 +4419,14 @@
     {
       "id": "node:62506445",
       "name": "Fara Gera d'Adda",
-      "lat": 45.555676,
-      "lon": 9.537853,
+      "lat": 45.5533218,
+      "lon": 9.5316037,
       "type": "borghi",
       "visibility": "chicca",
       "tags": [
-        "gfoss_id=2019",
         "name=Fara Gera d'Adda",
         "place=village",
         "population=6748",
-        "postal_code=24045",
-        "source=geodati.gfoss.it",
         "wikidata=Q30025630",
         "wikipedia=it:Fara Gera d'Adda"
       ],
@@ -4718,24 +4715,6 @@
       "score": 135
     },
     {
-      "id": "node:62508024",
-      "name": "Ossimo",
-      "lat": 45.946192,
-      "lon": 10.230561,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "gfoss_id=2298",
-        "name=Ossimo",
-        "place=village",
-        "population=1434",
-        "source=geodati.gfoss.it",
-        "wikidata=Q105423",
-        "wikipedia=it:Ossimo"
-      ],
-      "score": 135
-    },
-    {
       "id": "node:62508196",
       "name": "Pozzolengo",
       "lat": 45.4059696,
@@ -4769,6 +4748,27 @@
         "source=geodati.gfoss.it",
         "wikidata=Q111626",
         "wikipedia=it:Rodengo-Saiano"
+      ],
+      "score": 135
+    },
+    {
+      "id": "node:62508723",
+      "name": "Breno",
+      "lat": 45.9552271,
+      "lon": 10.3011661,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "ele=343",
+        "loc_name=Bré",
+        "name=Breno",
+        "name:de=Brenn",
+        "name:it=Breno",
+        "name:lmo=Bré",
+        "place=village",
+        "population=4962",
+        "wikidata=Q30023123",
+        "wikipedia=it:Breno (Italia)"
       ],
       "score": 135
     },
@@ -5602,10 +5602,29 @@
       "score": 135
     },
     {
+      "id": "node:62516300",
+      "name": "Castione",
+      "lat": 46.1734386,
+      "lon": 9.7992961,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "alt_name=Castione Andevenno",
+        "ele=468",
+        "loc_name=Castiùn",
+        "name=Castione",
+        "place=village",
+        "population=1553",
+        "wikidata=Q30024382",
+        "wikipedia=it:Castione Andevenno"
+      ],
+      "score": 135
+    },
+    {
       "id": "node:62516443",
       "name": "Lanzada",
-      "lat": 46.269297,
-      "lon": 9.869247,
+      "lat": 46.2695995,
+      "lon": 9.8724176,
       "type": "borghi",
       "visibility": "chicca",
       "tags": [
@@ -5615,7 +5634,7 @@
         "place=village",
         "population=1200",
         "wikidata=Q30026494",
-        "wikipedia=ceb:Lanzada (kapital sa munisipyo)"
+        "wikipedia=it:Lanzada"
       ],
       "score": 135
     },
@@ -9248,6 +9267,23 @@
         "place=village",
         "wikidata=Q17625928",
         "wikipedia=it:Colnago (Cornate d'Adda)"
+      ],
+      "score": 135
+    },
+    {
+      "id": "node:343709435",
+      "name": "Geromìna",
+      "lat": 45.5366251,
+      "lon": 9.5753874,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "ele=132",
+        "name=Geromìna",
+        "place=village",
+        "population=3000",
+        "wikidata=Q2735537",
+        "wikipedia=it:Geromina"
       ],
       "score": 135
     },
@@ -14796,6 +14832,22 @@
         "place=village",
         "wikidata=Q3929869",
         "wikipedia=it:Ramera"
+      ],
+      "score": 135
+    },
+    {
+      "id": "node:1446860522",
+      "name": "Castel Cerreto",
+      "lat": 45.5505259,
+      "lon": 9.57711,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "alt_name=Cerreto",
+        "name=Castel Cerreto",
+        "place=village",
+        "wikidata=Q1840534",
+        "wikipedia=it:Castel Cerreto"
       ],
       "score": 135
     },
@@ -39418,8 +39470,8 @@
     {
       "id": "node:62508939",
       "name": "Niardo",
-      "lat": 45.975994,
-      "lon": 10.333263,
+      "lat": 45.9772918,
+      "lon": 10.3365042,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -40523,24 +40575,6 @@
         "name=Sant'Antonio",
         "place=village",
         "wikidata=Q18494732"
-      ],
-      "score": 100
-    },
-    {
-      "id": "node:62516300",
-      "name": "Castione Andevenno",
-      "lat": 46.172794,
-      "lon": 9.800247,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "ele=468",
-        "loc_name=Castiùn",
-        "name=Castione Andevenno",
-        "place=village",
-        "population=1553",
-        "wikidata=Q30024382",
-        "wikimedia_commons=File:Castione_Andevenno_centro.JPG"
       ],
       "score": 100
     },
@@ -47449,21 +47483,6 @@
       "score": 100
     },
     {
-      "id": "node:344476511",
-      "name": "Bueggio",
-      "lat": 45.9984251,
-      "lon": 10.0753803,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Bueggio",
-        "place=village",
-        "postal_code=24020",
-        "wikidata=Q18464879"
-      ],
-      "score": 100
-    },
-    {
       "id": "node:344715275",
       "name": "Galta",
       "lat": 45.3923072,
@@ -48216,8 +48235,8 @@
     {
       "id": "node:380787789",
       "name": "Castellaro Lagusello",
-      "lat": 45.3745528,
-      "lon": 10.636609,
+      "lat": 45.3725965,
+      "lon": 10.6354229,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -48739,20 +48758,6 @@
         "name=San Floriano",
         "place=village",
         "wikidata=Q42373784"
-      ],
-      "score": 100
-    },
-    {
-      "id": "node:442892733",
-      "name": "Campogrande",
-      "lat": 45.948419,
-      "lon": 10.306972,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Campogrande",
-        "place=village",
-        "wikidata=Q18472985"
       ],
       "score": 100
     },
@@ -50505,20 +50510,6 @@
         "name=Chiesa Nuova",
         "place=village",
         "wikidata=Q18439183"
-      ],
-      "score": 100
-    },
-    {
-      "id": "node:710097127",
-      "name": "Pianezza",
-      "lat": 46.0006805,
-      "lon": 10.0832526,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Pianezza",
-        "place=village",
-        "wikidata=Q18468594"
       ],
       "score": 100
     },
@@ -54115,35 +54106,6 @@
       "score": 100
     },
     {
-      "id": "node:1507732314",
-      "name": "Dosso",
-      "lat": 45.9585496,
-      "lon": 10.1128606,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Dosso",
-        "place=village",
-        "wikidata=Q18509523"
-      ],
-      "score": 100
-    },
-    {
-      "id": "node:1507822086",
-      "name": "Nona",
-      "lat": 46.0031789,
-      "lon": 10.053647,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "ele=1340",
-        "name=Nona",
-        "place=village",
-        "wikidata=Q18468504"
-      ],
-      "score": 100
-    },
-    {
       "id": "node:1512580528",
       "name": "Ono Degno",
       "lat": 45.7516192,
@@ -56043,8 +56005,8 @@
     {
       "id": "node:2411831430",
       "name": "Ossimo Superiore",
-      "lat": 45.9459848,
-      "lon": 10.2279335,
+      "lat": 45.9461805,
+      "lon": 10.2289906,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -58276,8 +58238,8 @@
     {
       "id": "node:8397956355",
       "name": "Villapinta",
-      "lat": 46.1782444,
-      "lon": 9.6786757,
+      "lat": 46.176298,
+      "lon": 9.6769801,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -58464,20 +58426,6 @@
         "name=Pradibondo",
         "place=village",
         "wikidata=Q18482175"
-      ],
-      "score": 100
-    },
-    {
-      "id": "node:10207399659",
-      "name": "Valle Richetti",
-      "lat": 45.9555926,
-      "lon": 10.1039696,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Valle Richetti",
-        "place=village",
-        "wikidata=Q18470840"
       ],
       "score": 100
     },
@@ -60876,7 +60824,7 @@
       "id": "relation:43646",
       "name": "Ariano nel Polesine",
       "lat": 44.8931245,
-      "lon": 12.2295277,
+      "lon": 12.2291509,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -96583,6 +96531,22 @@
       "score": 90
     },
     {
+      "id": "node:344476511",
+      "name": "Bueggio",
+      "lat": 45.9973835,
+      "lon": 10.0756289,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=1045",
+        "name=Bueggio",
+        "place=hamlet",
+        "population=94",
+        "wikidata=Q18464879"
+      ],
+      "score": 90
+    },
+    {
       "id": "node:348326699",
       "name": "Babato",
       "lat": 45.4335965,
@@ -97147,8 +97111,8 @@
     {
       "id": "node:656406864",
       "name": "Lon",
-      "lat": 46.0852324,
-      "lon": 10.9915508,
+      "lat": 46.0851445,
+      "lon": 10.9913891,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -97494,6 +97458,22 @@
         "population=17",
         "source=Istat 2001 - geodati.gfoss.it",
         "wikidata=Q18479430"
+      ],
+      "score": 90
+    },
+    {
+      "id": "node:710097127",
+      "name": "Pianezza",
+      "lat": 46.0008179,
+      "lon": 10.0828276,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=1263",
+        "name=Pianezza",
+        "place=hamlet",
+        "population=36",
+        "wikidata=Q18468594"
       ],
       "score": 90
     },
@@ -109309,7 +109289,7 @@
     },
     {
       "id": "node:1340369820",
-      "name": "Fraine di Sotto",
+      "name": "Fraine Basse",
       "lat": 45.6670589,
       "lon": 10.8561655,
       "type": "borghi",
@@ -109318,7 +109298,7 @@
         "ele=879",
         "gfoss_id=24208",
         "istat_id=2147483647",
-        "name=Fraine di Sotto",
+        "name=Fraine Basse",
         "place=hamlet",
         "population=13",
         "source=Istat 2001 - geodati.gfoss.it",
@@ -109328,7 +109308,7 @@
     },
     {
       "id": "node:1342056012",
-      "name": "Fraine di Sopra",
+      "name": "Fraine Alte",
       "lat": 45.6630535,
       "lon": 10.857608,
       "type": "borghi",
@@ -109337,7 +109317,7 @@
         "ele=909",
         "gfoss_id=24207",
         "istat_id=2147483647",
-        "name=Fraine di Sopra",
+        "name=Fraine Alte",
         "place=hamlet",
         "population=5",
         "source=Istat 2001 - geodati.gfoss.it",
@@ -110800,6 +110780,22 @@
       "score": 90
     },
     {
+      "id": "node:1507822086",
+      "name": "Nona",
+      "lat": 46.0027929,
+      "lon": 10.0544114,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=1340",
+        "name=Nona",
+        "place=hamlet",
+        "population=92",
+        "wikidata=Q18468504"
+      ],
+      "score": 90
+    },
+    {
       "id": "node:1526418104",
       "name": "Pradelle",
       "lat": 45.1433091,
@@ -111167,25 +111163,6 @@
       "score": 90
     },
     {
-      "id": "node:1603301279",
-      "name": "Andevenno-Balzarro",
-      "lat": 46.1670727,
-      "lon": 9.7926493,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "ele=357",
-        "gfoss_id=12241",
-        "istat_id=1401520001",
-        "name=Andevenno-Balzarro",
-        "place=hamlet",
-        "population=183",
-        "source=Istat 2001 - geodati.gfoss.it",
-        "wikidata=Q18493934"
-      ],
-      "score": 90
-    },
-    {
       "id": "node:1603301280",
       "name": "Arboledo",
       "lat": 46.1772031,
@@ -111299,19 +111276,18 @@
     },
     {
       "id": "node:1603301292",
-      "name": "Ca' Spinedi",
-      "lat": 46.1608393,
-      "lon": 9.7768024,
+      "name": "Spinedi",
+      "lat": 46.161168,
+      "lon": 9.776834,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
+        "alt_name=Ca' Spinedi",
         "ele=300",
-        "gfoss_id=12556",
         "istat_id=1405320001",
-        "name=Ca' Spinedi",
+        "name=Spinedi",
         "place=hamlet",
         "population=307",
-        "source=Istat 2001 - geodati.gfoss.it",
         "wikidata=Q18494032"
       ],
       "score": 90
@@ -118904,17 +118880,15 @@
     {
       "id": "node:62507440",
       "name": "Lumezzane",
-      "lat": 45.6482576,
-      "lon": 10.2645464,
+      "lat": 45.6499145,
+      "lon": 10.2615018,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
-        "gfoss_id=2266",
         "loc_name=Lömedhane",
         "name=Lumezzane",
         "place=town",
-        "population=23712",
-        "source=geodati.gfoss.it",
+        "population=21000",
         "wikidata=Q105070"
       ],
       "score": 85
@@ -119903,18 +119877,16 @@
     {
       "id": "node:62514526",
       "name": "Cernusco sul Naviglio",
-      "lat": 45.5245578,
-      "lon": 9.330925,
+      "lat": 45.5248115,
+      "lon": 9.3305739,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
-        "gfoss_id=1790",
+        "ele=134",
         "name=Cernusco sul Naviglio",
         "old_name=Cernusco Asinario",
         "place=town",
         "population=26958",
-        "postal_code=20063",
-        "source=geodati.gfoss.it",
         "wikidata=Q185619"
       ],
       "score": 85
@@ -125514,6 +125486,20 @@
         "name:it=Carbonare",
         "place=hamlet",
         "wikidata=Q18478818"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:442892733",
+      "name": "Campogrande",
+      "lat": 45.948419,
+      "lon": 10.306972,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Campogrande",
+        "place=hamlet",
+        "wikidata=Q18472985"
       ],
       "score": 80
     },
@@ -132422,6 +132408,20 @@
         "name=Binati",
         "place=hamlet",
         "wikidata=Q18500788"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:1507732314",
+      "name": "Dosso",
+      "lat": 45.9585496,
+      "lon": 10.1128606,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Dosso",
+        "place=hamlet",
+        "wikidata=Q18509523"
       ],
       "score": 80
     },
@@ -149868,6 +149868,20 @@
       "score": 80
     },
     {
+      "id": "node:10207399659",
+      "name": "Valle Richetti",
+      "lat": 45.9555926,
+      "lon": 10.1039696,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Valle Richetti",
+        "place=hamlet",
+        "wikidata=Q18470840"
+      ],
+      "score": 80
+    },
+    {
       "id": "node:10222429817",
       "name": "Xausa",
       "lat": 45.7833611,
@@ -151875,8 +151889,8 @@
     {
       "id": "node:13479457140",
       "name": "Bosco di Monte Magrè",
-      "lat": 45.6868014,
-      "lon": 11.3428906,
+      "lat": 45.6871512,
+      "lon": 11.3454739,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -172407,17 +172421,15 @@
     {
       "id": "node:62506332",
       "name": "Casazza",
-      "lat": 45.749184,
-      "lon": 9.907258,
+      "lat": 45.7516741,
+      "lon": 9.9065404,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
-        "created_by=JOSM",
-        "gfoss_id=1982",
+        "ele=349",
         "name=Casazza",
         "place=village",
-        "population=3478",
-        "source=geodati.gfoss.it"
+        "population=3478"
       ],
       "score": 75
     },
@@ -173155,16 +173167,14 @@
     {
       "id": "node:62507464",
       "name": "Cividate Camuno",
-      "lat": 45.942493,
-      "lon": 10.277462,
+      "lat": 45.9447793,
+      "lon": 10.2786105,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
-        "gfoss_id=2225",
         "name=Cividate Camuno",
         "place=village",
-        "population=2637",
-        "source=geodati.gfoss.it"
+        "population=2637"
       ],
       "score": 75
     },
@@ -173510,16 +173520,14 @@
     {
       "id": "node:62508003",
       "name": "Malegno",
-      "lat": 45.9506025,
-      "lon": 10.2733393,
+      "lat": 45.9515969,
+      "lon": 10.2709778,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
-        "gfoss_id=2270",
         "name=Malegno",
         "place=village",
-        "population=2111",
-        "source=geodati.gfoss.it"
+        "population=2111"
       ],
       "score": 75
     },
@@ -173756,16 +173764,14 @@
     {
       "id": "node:62508384",
       "name": "Bovezzo",
-      "lat": 45.5931372,
-      "lon": 10.2434802,
+      "lat": 45.5925731,
+      "lon": 10.2435207,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
-        "gfoss_id=2195",
         "name=Bovezzo",
         "place=village",
-        "population=7407",
-        "source=geodati.gfoss.it"
+        "population=7407"
       ],
       "score": 75
     },
@@ -174128,24 +174134,6 @@
         "population:date=2024-06-30",
         "source=geodati.gfoss.it",
         "source:population=wikipedia"
-      ],
-      "score": 75
-    },
-    {
-      "id": "node:62508723",
-      "name": "Breno",
-      "lat": 45.9563241,
-      "lon": 10.3040404,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=2198",
-        "name=Breno",
-        "name:it=Breno",
-        "old_name:de=Brenn",
-        "place=village",
-        "population=4962",
-        "source=geodati.gfoss.it"
       ],
       "score": 75
     },
@@ -178687,19 +178675,6 @@
       "score": 75
     },
     {
-      "id": "node:442892998",
-      "name": "Degna",
-      "lat": 45.9340871,
-      "lon": 10.3339226,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Degna",
-        "place=village"
-      ],
-      "score": 75
-    },
-    {
       "id": "node:445467981",
       "name": "Castagnolo Minore",
       "lat": 44.6079275,
@@ -180789,6 +180764,23 @@
       "score": 75
     },
     {
+      "id": "node:1603301339",
+      "name": "Montagna Piano",
+      "lat": 46.1696365,
+      "lon": 9.9040832,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "alt_name=Montagna in Valtellina Piano",
+        "ele=290",
+        "istat_id=1404410003",
+        "name=Montagna Piano",
+        "place=village",
+        "population=801"
+      ],
+      "score": 75
+    },
+    {
       "id": "node:1603301361",
       "name": "Torchione",
       "lat": 46.1542702,
@@ -181308,19 +181300,6 @@
       "score": 75
     },
     {
-      "id": "node:1939782972",
-      "name": "Mezzaluna",
-      "lat": 45.652512,
-      "lon": 10.2412463,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Mezzaluna",
-        "place=village"
-      ],
-      "score": 75
-    },
-    {
       "id": "node:1941387884",
       "name": "Beretta",
       "lat": 45.5980627,
@@ -181620,19 +181599,6 @@
       "score": 75
     },
     {
-      "id": "node:2098927985",
-      "name": "Mosniga",
-      "lat": 45.6521626,
-      "lon": 10.286849,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Mosniga",
-        "place=village"
-      ],
-      "score": 75
-    },
-    {
       "id": "node:2101402496",
       "name": "Crescenzaga",
       "lat": 45.7333404,
@@ -181713,19 +181679,6 @@
       "visibility": "classica",
       "tags": [
         "name=Fondo Reno",
-        "place=village"
-      ],
-      "score": 75
-    },
-    {
-      "id": "node:2141549681",
-      "name": "Renzo",
-      "lat": 45.6557933,
-      "lon": 10.2564564,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Renzo",
         "place=village"
       ],
       "score": 75
@@ -182236,8 +182189,8 @@
     {
       "id": "node:2547060395",
       "name": "Valle",
-      "lat": 45.6520753,
-      "lon": 10.2369101,
+      "lat": 45.6520066,
+      "lon": 10.236529,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -182762,26 +182715,13 @@
     {
       "id": "node:2721244610",
       "name": "Pieve",
-      "lat": 45.6585812,
-      "lon": 10.2395827,
+      "lat": 45.6583556,
+      "lon": 10.242648,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
         "ele=494",
         "name=Pieve",
-        "place=village"
-      ],
-      "score": 75
-    },
-    {
-      "id": "node:2721254260",
-      "name": "Gombaiolo",
-      "lat": 45.6538124,
-      "lon": 10.2379924,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Gombaiolo",
         "place=village"
       ],
       "score": 75
@@ -182990,19 +182930,6 @@
       "score": 75
     },
     {
-      "id": "node:3235260281",
-      "name": "Montagnone",
-      "lat": 45.6486559,
-      "lon": 10.2780743,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Montagnone",
-        "place=village"
-      ],
-      "score": 75
-    },
-    {
       "id": "node:3251899136",
       "name": "Sacchetti",
       "lat": 45.3480444,
@@ -183180,20 +183107,6 @@
       "score": 75
     },
     {
-      "id": "node:3875195798",
-      "name": "Piatucco",
-      "lat": 45.65578,
-      "lon": 10.2486415,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "ele=485",
-        "name=Piatucco",
-        "place=village"
-      ],
-      "score": 75
-    },
-    {
       "id": "node:3890810958",
       "name": "Brugneto",
       "lat": 44.9225044,
@@ -183284,19 +183197,6 @@
         "name=Caprara",
         "place=village",
         "population=1300"
-      ],
-      "score": 75
-    },
-    {
-      "id": "node:4116433363",
-      "name": "Sant'Antonio",
-      "lat": 45.7308012,
-      "lon": 9.9394137,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Sant'Antonio",
-        "place=village"
       ],
       "score": 75
     },
@@ -192028,6 +191928,22 @@
       "score": 65
     },
     {
+      "id": "node:1603301279",
+      "name": "Andevenno",
+      "lat": 46.1656906,
+      "lon": 9.7933524,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=357",
+        "istat_id=1401520001",
+        "name=Andevenno",
+        "place=hamlet",
+        "population=183"
+      ],
+      "score": 65
+    },
+    {
       "id": "node:1603301283",
       "name": "Bachet",
       "lat": 46.1591438,
@@ -195502,8 +195418,8 @@
     {
       "id": "way:990938102",
       "name": "Bosco di Monte Magrè",
-      "lat": 45.6872154,
-      "lon": 11.3457503,
+      "lat": 45.6872496,
+      "lon": 11.3439422,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -197391,6 +197307,87 @@
       "visibility": "classica",
       "tags": [
         "name=Bus",
+        "place=hamlet"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:306673691",
+      "name": "Folaso",
+      "lat": 45.8868035,
+      "lon": 11.001153,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "loc_name=Folas",
+        "name=Folaso",
+        "place=hamlet"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:308834576",
+      "name": "Ponte Croce",
+      "lat": 45.7346522,
+      "lon": 11.271855,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Ponte Croce",
+        "place=hamlet"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:309741955",
+      "name": "Costapiana di Sotto",
+      "lat": 45.7499953,
+      "lon": 11.2415066,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Costapiana di Sotto",
+        "place=hamlet"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:309742068",
+      "name": "Manozzo",
+      "lat": 45.7496051,
+      "lon": 11.2823899,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "created_by=Potlatch 0.10f",
+        "name=Manozzo",
+        "place=hamlet"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:309742091",
+      "name": "Cortivo",
+      "lat": 45.7456908,
+      "lon": 11.2874787,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Cortivo",
+        "place=hamlet"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:309742124",
+      "name": "Puglia",
+      "lat": 45.7383575,
+      "lon": 11.2726869,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "created_by=Potlatch 0.10f",
+        "name=Puglia",
         "place=hamlet"
       ],
       "score": 55
