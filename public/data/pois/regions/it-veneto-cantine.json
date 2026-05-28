@@ -7,7 +7,7 @@
     "minLon": 10.2,
     "maxLon": 13.2
   },
-  "generated_at": "2026-05-21T06:39:31.470Z",
+  "generated_at": "2026-05-28T06:41:21.540Z",
   "places": [
     {
       "id": "node:12766026527",
@@ -1335,6 +1335,7 @@
       "type": "cantine",
       "visibility": "classica",
       "tags": [
+        "check_date=2026-05-21",
         "contact:email=info@turinavini.it",
         "contact:phone=+39 0365 502103",
         "contact:website=https://www.turinavini.it/",
@@ -1968,6 +1969,29 @@
         "name=Meggiolaro Vini",
         "phone=+39 045 65 45 067",
         "website=https://meggiolarovini.it"
+      ],
+      "score": 88,
+      "beauty_score": 1
+    },
+    {
+      "id": "node:13885238596",
+      "name": "Cantina Pisoni",
+      "lat": 46.0273845,
+      "lon": 10.9610153,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Sarche - Pergolese di Lasino",
+        "addr:country=IT",
+        "addr:housename=Pisoni",
+        "addr:housenumber=7B",
+        "addr:postcode=38076",
+        "addr:street=Via San Siro",
+        "craft=winery",
+        "email=info@pisonivini.it",
+        "name=Cantina Pisoni",
+        "phone=+ 39 0461 563216",
+        "website=http://www.pisoni.net"
       ],
       "score": 88,
       "beauty_score": 1
@@ -2951,6 +2975,7 @@
       "type": "cantine",
       "visibility": "classica",
       "tags": [
+        "check_date=2026-05-18",
         "contact:website=http://www.vinitorreggiani.it/la-villa/",
         "craft=winery",
         "name=Cantina Torreggiani"
@@ -5045,6 +5070,20 @@
       "beauty_score": 1
     },
     {
+      "id": "node:13864588998",
+      "name": "Cantina Marsadri",
+      "lat": 45.5692993,
+      "lon": 10.5298836,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Cantina Marsadri"
+      ],
+      "score": 70,
+      "beauty_score": 1
+    },
+    {
       "id": "way:30691669",
       "name": "Cantina Rotari",
       "lat": 46.202523,
@@ -5770,6 +5809,40 @@
         "building=yes",
         "craft=winery",
         "name=Podere dei Folli"
+      ],
+      "score": 70,
+      "beauty_score": 1
+    },
+    {
+      "id": "way:1523523924",
+      "name": "Meana Bonomi",
+      "lat": 45.9893299,
+      "lon": 10.3269756,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=8",
+        "addr:street=Via Meana",
+        "building=yes",
+        "craft=winery",
+        "name=Meana Bonomi"
+      ],
+      "score": 70,
+      "beauty_score": 1
+    },
+    {
+      "id": "way:1523523925",
+      "name": "Azienda Vitivinicola Le Grotte",
+      "lat": 45.9888323,
+      "lon": 10.3276072,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=6",
+        "addr:street=Via Meana",
+        "building=yes",
+        "craft=winery",
+        "name=Azienda Vitivinicola Le Grotte"
       ],
       "score": 70,
       "beauty_score": 1
