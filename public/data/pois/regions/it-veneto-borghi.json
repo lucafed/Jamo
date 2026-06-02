@@ -3,7 +3,7 @@
   "country": "IT",
   "area": "Veneto",
   "label_it": "Veneto • Borghi (turistici + piccoli)",
-  "generated_at": "2026-05-26T06:43:01.431Z",
+  "generated_at": "2026-06-02T07:22:08.226Z",
   "places": [
     {
       "id": "node:66503077",
@@ -13463,8 +13463,8 @@
     {
       "id": "node:64779137",
       "name": "Laghi",
-      "lat": 45.824387,
-      "lon": 11.2723119,
+      "lat": 45.8244848,
+      "lon": 11.2725262,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -19929,6 +19929,21 @@
         "name=Monticelli",
         "place=village",
         "wikidata=Q18498399"
+      ],
+      "score": 85
+    },
+    {
+      "id": "node:417676646",
+      "name": "San Bortolo",
+      "lat": 45.2149876,
+      "lon": 11.7595337,
+      "type": "borgo",
+      "borgo_type": "classico",
+      "visibility": "classica",
+      "tags": [
+        "name=San Bortolo",
+        "place=village",
+        "wikidata=Q123505229"
       ],
       "score": 85
     },
@@ -84935,8 +84950,8 @@
     {
       "id": "node:2097363604",
       "name": "Livemmo",
-      "lat": 45.74188,
-      "lon": 10.3434796,
+      "lat": 45.7418866,
+      "lon": 10.3434817,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -145452,7 +145467,7 @@
       "id": "relation:46645",
       "name": "Dro",
       "lat": 45.9863151,
-      "lon": 10.9219992,
+      "lon": 10.9220068,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -145472,7 +145487,7 @@
     {
       "id": "relation:46646",
       "name": "Cavedine",
-      "lat": 45.9816015,
+      "lat": 45.9816013,
       "lon": 10.9889231,
       "type": "borgo",
       "borgo_type": "classico",
@@ -154431,6 +154446,7 @@
         "boundary=administrative",
         "name=Sillian",
         "name:prefix:at=Marktgemeinde",
+        "name:ru=Зиллиан",
         "note=Marktgemeinde",
         "official_name=Marktgemeinde Sillian",
         "ref:at:gkz=70728",
@@ -154474,6 +154490,7 @@
         "boundary=administrative",
         "name=Obertilliach",
         "name:prefix:at=Gemeinde",
+        "name:ru=Обертиллиах",
         "official_name=Gemeinde Obertilliach",
         "ref:at:gkz=70721",
         "type=boundary",
