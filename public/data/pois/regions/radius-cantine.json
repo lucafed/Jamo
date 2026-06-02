@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-05-26T06:52:45.428Z",
+  "generated_at": "2026-06-02T07:30:28.713Z",
   "places": [
     {
       "id": "node:2692275706",
@@ -960,6 +960,28 @@
         "phone=+39 0423 980432",
         "tourism=agritourism",
         "website=https://campionspumanti.it/it/"
+      ],
+      "score": 108
+    },
+    {
+      "id": "node:13885238596",
+      "name": "Cantina Pisoni",
+      "lat": 46.0273845,
+      "lon": 10.9610153,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Sarche - Pergolese di Lasino",
+        "addr:country=IT",
+        "addr:housename=Pisoni",
+        "addr:housenumber=7B",
+        "addr:postcode=38076",
+        "addr:street=Via San Siro",
+        "craft=winery",
+        "email=info@pisonivini.it",
+        "name=Cantina Pisoni",
+        "phone=+ 39 0461 563216",
+        "website=http://www.pisoni.net"
       ],
       "score": 108
     },
@@ -4694,7 +4716,7 @@
         "addr:street=Via Crosara",
         "craft=winery",
         "name=I Stefanini - Società Agricola",
-        "website=http://www.istefanini.it"
+        "website=https://www.istefanini.it/"
       ],
       "score": 90
     },
@@ -6619,6 +6641,38 @@
         "building=yes",
         "craft=winery",
         "name=La fioca"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:1523523924",
+      "name": "Meana Bonomi",
+      "lat": 45.9893299,
+      "lon": 10.3269756,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=8",
+        "addr:street=Via Meana",
+        "building=yes",
+        "craft=winery",
+        "name=Meana Bonomi"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:1523523925",
+      "name": "Azienda Vitivinicola Le Grotte",
+      "lat": 45.9888323,
+      "lon": 10.3276072,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=6",
+        "addr:street=Via Meana",
+        "building=yes",
+        "craft=winery",
+        "name=Azienda Vitivinicola Le Grotte"
       ],
       "score": 80
     },
@@ -9071,6 +9125,24 @@
       "score": 41
     },
     {
+      "id": "node:13897541208",
+      "name": "Timon Wine",
+      "lat": 45.4455259,
+      "lon": 12.3285868,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Venezia",
+        "addr:housenumber=2750",
+        "addr:place=Cannaregio",
+        "addr:postcode=30121",
+        "name=Timon Wine",
+        "shop=wine",
+        "website=https://www.altimon.it"
+      ],
+      "score": 41
+    },
+    {
       "id": "way:81025169",
       "name": "Zeni",
       "lat": 46.1943586,
@@ -9450,28 +9522,6 @@
       "score": 37
     },
     {
-      "id": "node:7410884020",
-      "name": "Enoteca Venezia S.r.l.",
-      "lat": 45.4418252,
-      "lon": 12.3230778,
-      "type": "cantine",
-      "visibility": "classica",
-      "tags": [
-        "addr:housenumber=122c",
-        "addr:place=Cannaregio",
-        "addr:postcode=30121",
-        "addr:street=Rio Terà Lista di Spagna",
-        "delivery:description:it=Attivazione servizio a domicilio di generi di prima necessità per COVID-19",
-        "email=venezia@retevinipro.it",
-        "name=Enoteca Venezia S.r.l.",
-        "opening_hours=Mo 10:00-23:00; Tu 10:00-23:00; We 10:00-23:00; Th 10:00-23:00; Fr 10:00-23:00; Sa 10:00-23:00; Su 10:00-23:00",
-        "payment:online_payment=yes",
-        "phone=+39 389 5138879",
-        "shop=wine"
-      ],
-      "score": 37
-    },
-    {
       "id": "node:7655399385",
       "name": "Kellerei Haderburg - Cantina Haderburg",
       "lat": 46.2399341,
@@ -9659,6 +9709,25 @@
         "addr:postcode=24020",
         "addr:street=Via Spluss",
         "name=La Cantina di Bacco di Renato de Rosa",
+        "shop=wine"
+      ],
+      "score": 37
+    },
+    {
+      "id": "node:13870911181",
+      "name": "Cantine di Verona SCA",
+      "lat": 45.3341334,
+      "lon": 11.0024,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Buttapietra",
+        "addr:housenumber=2",
+        "addr:postcode=37060",
+        "addr:street=Via Provinciale Sud",
+        "name=Cantine di Verona SCA",
+        "opening_hours=Tu-Sa 08:30-12:30; 15:00-19:00",
+        "phone=+390454856538",
         "shop=wine"
       ],
       "score": 37
@@ -11195,24 +11264,6 @@
         "name=Enoteca La Cantinetta",
         "shop=wine",
         "wheelchair=no"
-      ],
-      "score": 31
-    },
-    {
-      "id": "node:13870911181",
-      "name": "Cantine di Verona SCA",
-      "lat": 45.3341334,
-      "lon": 11.0024,
-      "type": "cantine",
-      "visibility": "classica",
-      "tags": [
-        "addr:city=Buttapietra",
-        "addr:housenumber=2",
-        "addr:postcode=37060",
-        "addr:street=Via Provinciale Sud",
-        "name=Cantine di Verona SCA",
-        "phone=+390454856538",
-        "shop=wine"
       ],
       "score": 31
     },
