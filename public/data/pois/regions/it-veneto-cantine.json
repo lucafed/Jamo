@@ -7,7 +7,7 @@
     "minLon": 10.2,
     "maxLon": 13.2
   },
-  "generated_at": "2026-05-28T06:41:21.540Z",
+  "generated_at": "2026-06-04T07:12:03.793Z",
   "places": [
     {
       "id": "node:12766026527",
@@ -1787,6 +1787,26 @@
       "beauty_score": 1
     },
     {
+      "id": "node:12561033817",
+      "name": "Adagio",
+      "lat": 45.4095585,
+      "lon": 11.5427841,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Barbarano Mossano",
+        "addr:housenumber=47",
+        "addr:postcode=36048",
+        "addr:street=Via Quattro Novembre",
+        "craft=winery",
+        "name=Adagio",
+        "phone=+39 3403186742",
+        "website=https://www.adagiovini.it/"
+      ],
+      "score": 88,
+      "beauty_score": 1
+    },
+    {
       "id": "node:12698701968",
       "name": "Val D'Oca",
       "lat": 45.8733867,
@@ -3196,7 +3216,7 @@
         "addr:street=Via Crosara",
         "craft=winery",
         "name=I Stefanini - Società Agricola",
-        "website=http://www.istefanini.it"
+        "website=https://www.istefanini.it/"
       ],
       "score": 82,
       "beauty_score": 1
@@ -4646,23 +4666,6 @@
       "beauty_score": 1
     },
     {
-      "id": "node:10588761332",
-      "name": "Adriano Shehata",
-      "lat": 45.4402266,
-      "lon": 12.3389714,
-      "type": "cantine",
-      "visibility": "chicca",
-      "tags": [
-        "addr:city=Venezia",
-        "addr:housenumber=5516",
-        "addr:street=Campiello Crosetta",
-        "craft=winery",
-        "name=Adriano Shehata"
-      ],
-      "score": 70,
-      "beauty_score": 1
-    },
-    {
       "id": "node:10609082829",
       "name": "Azienda Agricola Sperti",
       "lat": 46.1351771,
@@ -4785,20 +4788,6 @@
       "tags": [
         "craft=winery",
         "name=cantina sociale rolo"
-      ],
-      "score": 70,
-      "beauty_score": 1
-    },
-    {
-      "id": "node:12561033817",
-      "name": "Adagio",
-      "lat": 45.4095585,
-      "lon": 11.5427841,
-      "type": "cantine",
-      "visibility": "chicca",
-      "tags": [
-        "craft=winery",
-        "name=Adagio"
       ],
       "score": 70,
       "beauty_score": 1
