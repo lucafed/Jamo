@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-06-02T07:30:28.713Z",
+  "generated_at": "2026-06-09T06:57:28.170Z",
   "places": [
     {
       "id": "node:2692275706",
@@ -3030,6 +3030,25 @@
       "score": 96
     },
     {
+      "id": "node:12561033817",
+      "name": "Adagio",
+      "lat": 45.4095585,
+      "lon": 11.5427841,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Barbarano Mossano",
+        "addr:housenumber=47",
+        "addr:postcode=36048",
+        "addr:street=Via Quattro Novembre",
+        "craft=winery",
+        "name=Adagio",
+        "phone=+39 3403186742",
+        "website=https://www.adagiovini.it/"
+      ],
+      "score": 96
+    },
+    {
       "id": "node:12698701968",
       "name": "Val D'Oca",
       "lat": 45.8733867,
@@ -5967,22 +5986,6 @@
       "score": 80
     },
     {
-      "id": "node:10588761332",
-      "name": "Adriano Shehata",
-      "lat": 45.4402266,
-      "lon": 12.3389714,
-      "type": "cantine",
-      "visibility": "classica",
-      "tags": [
-        "addr:city=Venezia",
-        "addr:housenumber=5516",
-        "addr:street=Campiello Crosetta",
-        "craft=winery",
-        "name=Adriano Shehata"
-      ],
-      "score": 80
-    },
-    {
       "id": "node:10980860338",
       "name": "Gregoletto",
       "lat": 45.9381003,
@@ -6061,19 +6064,6 @@
       "tags": [
         "craft=winery",
         "name=Le Driadi"
-      ],
-      "score": 80
-    },
-    {
-      "id": "node:12561033817",
-      "name": "Adagio",
-      "lat": 45.4095585,
-      "lon": 11.5427841,
-      "type": "cantine",
-      "visibility": "classica",
-      "tags": [
-        "craft=winery",
-        "name=Adagio"
       ],
       "score": 80
     },
@@ -7668,7 +7658,7 @@
         "addr:housenumber=13",
         "addr:postcode=40121",
         "addr:street=Via Monte Grappa",
-        "check_date=2023-06-11",
+        "check_date=2026-06-06",
         "email=montegrappa13@gmail.com",
         "name=La Bottega di Via Montegrappa",
         "opening_hours=Tu-Th 10:30-00:00; Fr 10:30-01:30; Sa 10:00-01:30; Su 11:00-23:00",
@@ -7868,6 +7858,30 @@
         "phone=+39 0444 491360",
         "shop=wine",
         "website=https://www.vitevis.com/"
+      ],
+      "score": 47
+    },
+    {
+      "id": "node:13918026928",
+      "name": "Villa la Bagatta",
+      "lat": 45.4869923,
+      "lon": 10.7291955,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Lazise",
+        "addr:country=IT",
+        "addr:housenumber=5",
+        "addr:postcode=37017",
+        "addr:street=Località Bagatta 5",
+        "contact:instagram=@wingut_villa_la_bagatta",
+        "email=wine@la-bagatta.it",
+        "name=Villa la Bagatta",
+        "opening_hours=Mo-Su 09:30-12:00,14:00-17:00",
+        "opening_hours:conditional=Mo-Su 08:00-12:00,14:00-18:00 @ (May-Sep)",
+        "phone=+39 345 9371858",
+        "shop=wine",
+        "website=www.la-bagatta.it"
       ],
       "score": 47
     },
@@ -9698,6 +9712,27 @@
       "score": 37
     },
     {
+      "id": "node:13763019564",
+      "name": "Enoteca La Cantinetta",
+      "lat": 45.6090541,
+      "lon": 9.5208568,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Trezzo sull'Adda",
+        "addr:housenumber=28",
+        "addr:postcode=20056",
+        "addr:street=Piazza Della Libertà",
+        "contact:phone=+39 347 576 7044",
+        "level=0",
+        "name=Enoteca La Cantinetta",
+        "opening_hours=Tu-Sa 10:00-12:30,16:00-19:00; Mo off",
+        "shop=wine",
+        "wheelchair=no"
+      ],
+      "score": 37
+    },
+    {
       "id": "node:13867081201",
       "name": "La Cantina di Bacco di Renato de Rosa",
       "lat": 45.8926767,
@@ -10682,6 +10717,7 @@
       "type": "cantine",
       "visibility": "classica",
       "tags": [
+        "addr:city=Venezia",
         "addr:housenumber=4657",
         "addr:street=Rio Terà Santi Apostoli",
         "name=Da Tellero",
@@ -11248,22 +11284,19 @@
       "score": 31
     },
     {
-      "id": "node:13763019564",
-      "name": "Enoteca La Cantinetta",
-      "lat": 45.6090541,
-      "lon": 9.5208568,
+      "id": "node:13913141202",
+      "name": "Zanze Wine Shop",
+      "lat": 45.4384729,
+      "lon": 12.321528,
       "type": "cantine",
       "visibility": "classica",
       "tags": [
-        "addr:city=Trezzo sull'Adda",
-        "addr:housenumber=28",
-        "addr:postcode=20056",
-        "addr:street=Piazza Della Libertà",
-        "contact:phone=+39 347 576 7044",
-        "level=0",
-        "name=Enoteca La Cantinetta",
-        "shop=wine",
-        "wheelchair=no"
+        "addr:city=Venezia",
+        "addr:housenumber=218",
+        "addr:postcode=30135",
+        "addr:street=Santa Croce",
+        "name=Zanze Wine Shop",
+        "shop=wine"
       ],
       "score": 31
     },
