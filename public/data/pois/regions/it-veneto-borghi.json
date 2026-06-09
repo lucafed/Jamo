@@ -3,7 +3,7 @@
   "country": "IT",
   "area": "Veneto",
   "label_it": "Veneto • Borghi (turistici + piccoli)",
-  "generated_at": "2026-06-02T07:22:08.226Z",
+  "generated_at": "2026-06-09T06:46:12.275Z",
   "places": [
     {
       "id": "node:66503077",
@@ -1904,8 +1904,7 @@
         "source=geodati.gfoss.it",
         "source:population=wikipedia",
         "website=https://www.comune.cassola.vi.it/home",
-        "wikidata=Q30024063",
-        "wikipedia=it:Cassola"
+        "wikidata=Q30024063"
       ],
       "score": 88
     },
@@ -2568,17 +2567,15 @@
     {
       "id": "node:62507937",
       "name": "Incudine",
-      "lat": 46.2203,
-      "lon": 10.358759,
+      "lat": 46.222109,
+      "lon": 10.3576794,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "gfoss_id=2253",
         "name=Incudine",
         "place=village",
         "population=451",
-        "source=geodati.gfoss.it",
         "wikidata=Q30026344"
       ],
       "score": 85
@@ -8388,17 +8385,16 @@
     {
       "id": "node:64778278",
       "name": "Villanova di Camposampiero",
-      "lat": 45.4904556,
-      "lon": 11.9730203,
+      "lat": 45.4905741,
+      "lon": 11.9723095,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "gfoss_id=3619",
+        "ele=12",
         "name=Villanova di Camposampiero",
         "place=village",
-        "population=6139",
-        "source=geodati.gfoss.it",
+        "population=4467",
         "wikidata=Q34350",
         "wikipedia=it:Villanova di Camposampiero"
       ],
@@ -11147,6 +11143,23 @@
       "score": 85
     },
     {
+      "id": "node:64778750",
+      "name": "Santa Maria di Sala",
+      "lat": 45.5048942,
+      "lon": 12.0350959,
+      "type": "borgo",
+      "borgo_type": "classico",
+      "visibility": "classica",
+      "tags": [
+        "ele=13",
+        "name=Santa Maria di Sala",
+        "place=village",
+        "population=2408",
+        "wikidata=Q30030266"
+      ],
+      "score": 85
+    },
+    {
       "id": "node:64778753",
       "name": "Cinto Caomaggiore",
       "lat": 45.8258929,
@@ -11377,6 +11390,24 @@
         "place=village",
         "population=301",
         "wikidata=Q33464082"
+      ],
+      "score": 85
+    },
+    {
+      "id": "node:64778795",
+      "name": "Pianiga",
+      "lat": 45.4558746,
+      "lon": 12.0301483,
+      "type": "borgo",
+      "borgo_type": "classico",
+      "visibility": "classica",
+      "tags": [
+        "ele=8",
+        "name=Pianiga",
+        "place=village",
+        "population=3400",
+        "wikidata=Q46950",
+        "wikipedia=it:Pianiga"
       ],
       "score": 85
     },
@@ -19756,14 +19787,16 @@
     {
       "id": "node:408011689",
       "name": "Mussolini",
-      "lat": 45.5102797,
-      "lon": 11.9771689,
+      "lat": 45.5102703,
+      "lon": 11.9779843,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
+        "ele=12",
         "name=Mussolini",
         "place=village",
+        "population=597",
         "wikidata=Q18498426"
       ],
       "score": 85
@@ -23269,14 +23302,17 @@
     {
       "id": "node:573424171",
       "name": "Caselle de' Ruffi",
-      "lat": 45.489684,
-      "lon": 12.0090548,
+      "lat": 45.4896652,
+      "lon": 12.0090521,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
+        "alt_name=Caselle",
+        "ele=13",
         "name=Caselle de' Ruffi",
         "place=village",
+        "population=2967",
         "wikidata=Q2497499",
         "wikipedia=it:Caselle de' Ruffi"
       ],
@@ -24274,8 +24310,8 @@
     {
       "id": "node:685822808",
       "name": "Vigo Cavedine",
-      "lat": 45.9789075,
-      "lon": 10.9809915,
+      "lat": 45.9789583,
+      "lon": 10.9810773,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -34294,14 +34330,16 @@
     {
       "id": "node:1631619521",
       "name": "Stigliano",
-      "lat": 45.5248967,
-      "lon": 12.0465251,
+      "lat": 45.5254717,
+      "lon": 12.0449641,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
+        "ele=15",
         "name=Stigliano",
         "place=village",
+        "population=1632",
         "wikidata=Q18503692"
       ],
       "score": 85
@@ -34309,14 +34347,16 @@
     {
       "id": "node:1631619525",
       "name": "Veternigo",
-      "lat": 45.5142257,
-      "lon": 12.0547652,
+      "lat": 45.514361,
+      "lon": 12.0548403,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
+        "ele=13",
         "name=Veternigo",
         "place=village",
+        "population=3356",
         "wikidata=Q4010464",
         "wikipedia=it:Veternigo"
       ],
@@ -38633,14 +38673,16 @@
     {
       "id": "node:2764412634",
       "name": "Caltana",
-      "lat": 45.4793328,
-      "lon": 12.0299496,
+      "lat": 45.4792632,
+      "lon": 12.0298235,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
+        "ele=12",
         "name=Caltana",
         "place=village",
+        "population=2838",
         "wikidata=Q18503049"
       ],
       "score": 85
@@ -40527,6 +40569,24 @@
       "score": 85
     },
     {
+      "id": "node:4192332451",
+      "name": "Tiolo",
+      "lat": 46.3126487,
+      "lon": 10.3013916,
+      "type": "borgo",
+      "borgo_type": "classico",
+      "visibility": "classica",
+      "tags": [
+        "ele=750",
+        "name=Tiolo",
+        "place=village",
+        "population=380",
+        "wikidata=Q2797477",
+        "wikipedia=it:Tiolo"
+      ],
+      "score": 85
+    },
+    {
       "id": "node:4234472389",
       "name": "Kuppelwies - Pracupola",
       "lat": 46.531114,
@@ -40639,14 +40699,16 @@
     {
       "id": "node:4314628832",
       "name": "Sant'Angelo di Sala",
-      "lat": 45.5209517,
-      "lon": 12.0172013,
+      "lat": 45.5212167,
+      "lon": 12.017381,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
+        "ele=14",
         "name=Sant'Angelo di Sala",
         "place=village",
+        "population=1407",
         "wikidata=Q18503620"
       ],
       "score": 85
@@ -43889,24 +43951,6 @@
       "score": 80
     },
     {
-      "id": "node:64778750",
-      "name": "Santa Maria di Sala",
-      "lat": 45.5054111,
-      "lon": 12.0339479,
-      "type": "borgo",
-      "borgo_type": "classico",
-      "visibility": "classica",
-      "tags": [
-        "name=Santa Maria di Sala",
-        "place=town",
-        "population=17458",
-        "population:date=2025-11-14",
-        "source:population=ISTAT 2025 (Intero Comune)",
-        "wikidata=Q30030266"
-      ],
-      "score": 80
-    },
-    {
       "id": "node:64778751",
       "name": "Dolo",
       "lat": 45.4234356,
@@ -44079,26 +44123,6 @@
         "population:date=2025-04-11",
         "source:population=ISTAT 2025 (Intero Comune)",
         "wikidata=Q46799"
-      ],
-      "score": 80
-    },
-    {
-      "id": "node:64778795",
-      "name": "Pianiga",
-      "lat": 45.4559602,
-      "lon": 12.0301919,
-      "type": "borgo",
-      "borgo_type": "classico",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=350t1",
-        "name=Pianiga",
-        "note=12280 (Comune) 3400 (Capoluogo comunale)",
-        "place=town",
-        "population=12280",
-        "source=ISTAT",
-        "wikidata=Q46950",
-        "wikipedia=it:Pianiga"
       ],
       "score": 80
     },
@@ -48782,13 +48806,12 @@
     {
       "id": "node:272274733",
       "name": "Lago",
-      "lat": 45.9818152,
-      "lon": 10.9248262,
+      "lat": 45.9819867,
+      "lon": 10.9243694,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "created_by=Potlatch 0.9c",
         "name=Lago",
         "place=hamlet",
         "wikidata=Q133995681"
@@ -85681,7 +85704,7 @@
     {
       "id": "node:2242684131",
       "name": "Coste",
-      "lat": 45.9702538,
+      "lat": 45.9702298,
       "lon": 10.9647045,
       "type": "borgo",
       "borgo_type": "classico",
@@ -89319,9 +89342,10 @@
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
+        "ele=1260",
         "name=Fontane",
         "place=hamlet",
-        "source=CTR al tratto",
+        "population=32",
         "wikidata=Q18494286"
       ],
       "score": 70
@@ -89329,15 +89353,16 @@
     {
       "id": "node:2650768122",
       "name": "Massaniga",
-      "lat": 46.4121658,
-      "lon": 10.341729,
+      "lat": 46.4113234,
+      "lon": 10.3418199,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
+        "ele=1341",
         "name=Massaniga",
         "place=hamlet",
-        "source=CTR al tratto",
+        "population=15",
         "wikidata=Q18494420"
       ],
       "score": 70
@@ -89345,12 +89370,13 @@
     {
       "id": "node:2650768123",
       "name": "Monte",
-      "lat": 46.4037727,
-      "lon": 10.3365351,
+      "lat": 46.4037454,
+      "lon": 10.3364163,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
+        "ele=1619",
         "name=Monte",
         "place=hamlet",
         "source=CTR al tratto",
@@ -89367,9 +89393,10 @@
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
+        "ele=1271",
         "name=Santa Maria Maddalena",
         "place=hamlet",
-        "source=CTR al tratto",
+        "population=23",
         "wikidata=Q18494724"
       ],
       "score": 70
@@ -89377,15 +89404,16 @@
     {
       "id": "node:2650768127",
       "name": "Tiola",
-      "lat": 46.4022212,
-      "lon": 10.3399541,
+      "lat": 46.4022717,
+      "lon": 10.3397163,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
+        "ele=1511",
         "name=Tiola",
         "place=hamlet",
-        "source=CTR al tratto",
+        "population=14",
         "wikidata=Q18494789"
       ],
       "score": 70
@@ -95749,24 +95777,6 @@
         "place=hamlet",
         "wikidata=Q1885804",
         "wikipedia=it:Lava (Malonno)"
-      ],
-      "score": 70
-    },
-    {
-      "id": "node:4192332451",
-      "name": "Tiolo",
-      "lat": 46.3124299,
-      "lon": 10.3008151,
-      "type": "borgo",
-      "borgo_type": "classico",
-      "visibility": "classica",
-      "tags": [
-        "ele=750",
-        "name=Tiolo",
-        "place=hamlet",
-        "population=380",
-        "wikidata=Q2797477",
-        "wikipedia=it:Tiolo"
       ],
       "score": 70
     },
@@ -122698,14 +122708,16 @@
     {
       "id": "node:13482454153",
       "name": "Zinaldo",
-      "lat": 45.49299,
-      "lon": 12.0259,
+      "lat": 45.4931677,
+      "lon": 12.0256345,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
+        "ele=10",
         "name=Zinaldo",
         "place=hamlet",
+        "population=155",
         "wikidata=Q18503793"
       ],
       "score": 70
@@ -154953,7 +154965,7 @@
       "id": "relation:1651599",
       "name": "Cassola",
       "lat": 45.7473229,
-      "lon": 11.7833757,
+      "lon": 11.7833812,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
