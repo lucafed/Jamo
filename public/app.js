@@ -1448,12 +1448,12 @@
           </div>
 
           <div class="small muted" style="margin-top:6px;">
-            📍 ${escapeHtml(areaLabel)} • ${lat.toFixed(5)}, ${lon.toFixed(5)}
-          </div>
+  📍 ${escapeHtml(areaLabel && areaLabel !== "IT" ? areaLabel : "Costa italiana")}
+</div>
 
-          <div class="small muted" style="margin-top:8px;">
-            Dataset: ${escapeHtml(datasetInfo || "offline")} • score: ${chosen.score}${escapeHtml(widenText)}
-          </div>
+<div class="small muted" style="margin-top:8px;">
+  🌟 Meta scelta in base a distanza, tempo e qualità del posto
+</div>
 
           <div style="margin-top:12px; font-weight:950;">Cos’è (subito chiaro)</div>
           <div class="small muted" style="margin-top:6px; line-height:1.45;">
