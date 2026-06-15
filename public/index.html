@@ -20,35 +20,27 @@
       --surface:#1A1A1F;
       --text:#F6F6F6;
       --muted:#B9B2A9;
-
-      /* ✅ accent dinamici */
       --acc:#3B82F6;
       --acc2:#93C5FD;
       --border:rgba(255,255,255,.10);
       --shadow: rgba(0,0,0,.35);
-
-      /* ✅ chip theme dinamico (active “piena”) */
       --chipActiveBg: rgba(59,130,246,.18);
       --chipActiveRing: rgba(59,130,246,.32);
       --chipActiveFg: #F6F6F6;
-
-      /* ✅ CTA (btnPrimary) dinamico */
       --cta1: rgba(59,130,246,1);
       --cta2: rgba(147,197,253,1);
-
-      /* ✅ SOS accent */
       --sos1: rgba(59,130,246,.92);
       --sos2: rgba(147,197,253,.92);
     }
 
     .accent{ color: var(--acc2); }
 
-    /* ✅ anti-accavallamento testi */
     .heroTitle, .cardTitle, .brandTitle{
       line-height: 1.12;
       overflow-wrap:anywhere;
       word-break: break-word;
     }
+
     .heroDesc, .cardHint, .small, .muted{
       overflow-wrap:anywhere;
       word-break: break-word;
@@ -64,16 +56,15 @@
       pointer-events: none;
     }
 
-    /* ✅ tasto principale agganciato alla categoria */
     .btnPrimary{
       background: linear-gradient(135deg, var(--cta1), var(--cta2));
       border-color: rgba(255,255,255,.12);
       color:#141214;
       font-weight: 950;
     }
+
     .btnPrimary:active{ transform: scale(.99); }
 
-    /* ✅ chip active “piena” */
     .chip.active{
       background: var(--chipActiveBg);
       color: var(--chipActiveFg);
@@ -81,7 +72,6 @@
       box-shadow: 0 0 0 2px rgba(0,0,0,.18) inset;
     }
 
-    /* ✅ categorie più immediate: 2 righe, scroll orizzontale */
     #categoryChips{
       display:grid;
       grid-auto-flow: column;
@@ -95,12 +85,14 @@
       mask-image: linear-gradient(to right, transparent 0, black 18px, black calc(100% - 18px), transparent 100%);
       -webkit-mask-image: linear-gradient(to right, transparent 0, black 18px, black calc(100% - 18px), transparent 100%);
     }
+
     #categoryChips .chip{
       scroll-snap-align: start;
       white-space: nowrap;
-      min-width: 132px;
+      min-width: 150px;
       transition: background .16s ease, border-color .16s ease, transform .12s ease;
     }
+
     #categoryChips .chip:active{ transform: scale(.99); }
 
     .hScrollHint{
@@ -110,6 +102,7 @@
       gap:8px;
       opacity:.9;
     }
+
     .hScrollHint .dot{
       width:6px;height:6px;border-radius:50%;
       background: rgba(255,255,255,.65);
@@ -117,7 +110,6 @@
       flex:0 0 auto;
     }
 
-    /* ✅ rende "Cosa c’è" più visibile (btn nel risultato) */
     #btnWhatsThere{
       border-color: rgba(255,255,255,.22);
       box-shadow: 0 0 0 2px rgba(0,0,0,.18) inset;
@@ -125,9 +117,9 @@
       padding: 10px 14px;
       background: rgba(255,255,255,.06);
     }
+
     #btnWhatsThere:active{ transform: scale(.99); }
 
-    /* ✅ FAB SOS */
     .fabSOS{
       position: fixed;
       right: 14px;
@@ -147,6 +139,7 @@
       font-weight: 950;
       letter-spacing: .2px;
     }
+
     .fabSOS .b{
       width:34px;height:34px;border-radius:12px;
       display:flex;align-items:center;justify-content:center;
@@ -155,9 +148,9 @@
       flex:0 0 auto;
       box-shadow: 0 10px 18px rgba(0,0,0,.25);
     }
+
     .fabSOS:active{ transform: scale(.99); }
 
-    /* ✅ FAB "Cosa c’è" (super visibile quando c'è destinazione) */
     .fabWhats{
       position: fixed;
       left: 14px;
@@ -177,6 +170,7 @@
       font-weight: 950;
       letter-spacing: .2px;
     }
+
     .fabWhats .b{
       width:34px;height:34px;border-radius:12px;
       display:flex;align-items:center;justify-content:center;
@@ -185,15 +179,16 @@
       flex:0 0 auto;
       box-shadow: 0 10px 18px rgba(0,0,0,.25);
     }
+
     .fabWhats:active{ transform: scale(.99); }
 
-    /* ✅ Bottom sheet SOS */
     .sheetMask{
       position: fixed; inset: 0;
       background: rgba(0,0,0,.55);
       display:none;
       z-index: 9998;
     }
+
     .sheet{
       position: fixed;
       left: 0; right: 0;
@@ -209,33 +204,48 @@
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
     }
+
     .sheet.open{ bottom: 0; }
+
     .sheetTop{
       display:flex; align-items:center; justify-content:space-between;
       gap:10px;
     }
+
     .sheetTitle{ font-weight: 950; font-size: 16px; }
+
     .sheetDesc{
       margin-top:8px;
       color: var(--muted);
       line-height: 1.35;
       font-size: 13px;
     }
+
     .sheetGrid{
       margin-top: 12px;
       display:grid;
       grid-template-columns: 1fr;
       gap: 10px;
     }
+
     .ideaCard{
       border: 1px solid rgba(255,255,255,.10);
       background: rgba(255,255,255,.04);
       border-radius: 14px;
       padding: 12px;
     }
+
     .ideaCard .t{ font-weight: 950; }
-    .ideaCard .d{ margin-top:6px; color: var(--muted); line-height:1.35; font-size:13px; }
+
+    .ideaCard .d{
+      margin-top:6px;
+      color: var(--muted);
+      line-height:1.35;
+      font-size:13px;
+    }
+
     .sheetActions{ margin-top: 12px; display:flex; gap:10px; flex-wrap:wrap; }
+
     .ideaCard .t, .ideaCard .d{ overflow-wrap:anywhere; word-break: break-word; }
   </style>
 </head>
@@ -248,7 +258,7 @@
       <div class="logoMark" aria-hidden="true">J</div>
       <div class="brandText">
         <div class="brandTitle">Jamo</div>
-        <div class="brandSub">Offline-first • Smart flow • Tap-safe</div>
+        <div class="brandSub">Non sai dove andare? Ci pensa Jamo.</div>
       </div>
     </div>
     <div class="topActions">
@@ -268,14 +278,14 @@
         <div class="heroBadge">✨ WOW Finder</div>
         <h1 class="heroTitle">Trova una meta <span class="accent">perfetta</span> in pochi secondi.</h1>
         <p class="heroDesc">
-          Imposta la partenza, scegli <b>tempo</b> e <b>vibe</b>, poi premi <b>CERCA</b>.
-          Nessun GPS. Risultato al centro. Subito.
+          Dimmi da dove parti, quanto tempo hai e che giornata vuoi.
+          Jamo ti trova una meta bella, sensata e raggiungibile.
         </p>
 
         <div class="heroKpis">
           <div class="kpi"><div class="kpiN">1</div><div class="kpiT">Partenza</div></div>
-          <div class="kpi"><div class="kpiN">2</div><div class="kpiT">Categoria</div></div>
-          <div class="kpi"><div class="kpiN">3</div><div class="kpiT">Cerca</div></div>
+          <div class="kpi"><div class="kpiN">2</div><div class="kpiT">Vibe</div></div>
+          <div class="kpi"><div class="kpiN">3</div><div class="kpiT">Meta</div></div>
         </div>
       </div>
     </section>
@@ -310,7 +320,7 @@
     <section id="searchCard" class="card clickSafe">
       <div class="cardTitleRow">
         <div class="cardTitle">🎯 Ricerca</div>
-        <div class="cardHint">Scegli tempo + categoria + stile</div>
+        <div class="cardHint">Tempo + vibe + stile</div>
       </div>
 
       <div class="subTitle">⏱️ Quanto tempo hai?</div>
@@ -330,30 +340,30 @@
 
       <div class="divider"></div>
 
-      <div class="subTitle">🧭 Che vibe vuoi?</div>
+      <div class="subTitle">🧭 Che giornata vuoi?</div>
       <div id="categoryChips" class="chips chipsGrid">
-        <div class="chip active" data-cat="natura">🌿 Natura</div>
-        <div class="chip" data-cat="hiking">🥾 Trekking</div>
-        <div class="chip" data-cat="borghi">🏘️ Borghi</div>
-        <div class="chip" data-cat="storia">🏛️ Storia</div>
-        <div class="chip" data-cat="montagna">🏔️ Montagna</div>
-        <div class="chip" data-cat="mare">🌊 Mare</div>
-        <div class="chip" data-cat="lago">🏞️ Lago</div>
-        <div class="chip" data-cat="relax">🧖 Relax</div>
-        <div class="chip" data-cat="family">👨‍👩‍👧‍👦 Family</div>
-        <div class="chip" data-cat="cantine">🍷 Cantine</div>
-        <div class="chip" data-cat="eventi">✨ Mai fatto</div>
+        <div class="chip active" data-cat="natura">🌿 Stacca la spina</div>
+        <div class="chip" data-cat="hiking">🥾 Cammina un po'</div>
+        <div class="chip" data-cat="borghi">🏰 Borghi nascosti</div>
+        <div class="chip" data-cat="storia">🏛️ Viaggio nel tempo</div>
+        <div class="chip" data-cat="montagna">🏔️ Aria di montagna</div>
+        <div class="chip" data-cat="mare">🌊 Voglia di mare</div>
+        <div class="chip" data-cat="lago">🏞️ Lago e relax</div>
+        <div class="chip" data-cat="relax">🧖 Relax vero</div>
+        <div class="chip" data-cat="family">👨‍👩‍👧‍👦 Con i bambini</div>
+        <div class="chip" data-cat="cantine">🍷 Buon vino</div>
+        <div class="chip" data-cat="eventi">🎲 Sorprendimi</div>
       </div>
 
       <div class="hScrollHint small muted">
         <span class="dot" aria-hidden="true"></span>
-        Scorri a destra per vedere tutte le vibe
+        Scorri a destra per vedere tutte le idee
       </div>
 
       <div id="eventsSubfilters" class="eventsSubfilters">
-        <div class="small">Mai fatto (scegli il tipo di WOW)</div>
+        <div class="small">Sorprendimi: scegli il tipo di esperienza</div>
         <div class="small muted" style="margin-top:6px;">
-          Offline: idee WOW • filtri soft • widening automatico • link Maps precisi.
+          Idee WOW, filtri leggeri e link Maps precisi.
         </div>
 
         <div style="margin-top:12px;">
@@ -361,7 +371,7 @@
           <div id="eventTypeChips" class="chips">
             <div class="chip active" data-etype="tutti">⭐ Tutti</div>
             <div class="chip" data-etype="relax">🧠 Reset</div>
-            <div class="chip" data-etype="famiglia">👨‍👩‍👧‍👦 Family</div>
+            <div class="chip" data-etype="famiglia">👨‍👩‍👧‍👦 Bambini</div>
             <div class="chip" data-etype="bici">🚴 Bici</div>
             <div class="chip" data-etype="moto">🏍️ Moto</div>
             <div class="chip" data-etype="natura">🌿 Natura</div>
@@ -382,8 +392,8 @@
 
       <div class="subTitle">✨ Preferisci?</div>
       <div id="styleChips" class="chips">
-        <div class="chip active" data-style="chicche">✨ Chicche</div>
-        <div class="chip active" data-style="classici">✅ Classici</div>
+        <div class="chip active" data-style="chicche">💎 Tesori nascosti</div>
+        <div class="chip active" data-style="classici">⭐ Da vedere almeno una volta</div>
       </div>
 
       <div class="ctaRow">
@@ -391,7 +401,7 @@
       </div>
 
       <div class="small muted" style="margin-top:10px;">
-        Tip: se trovi sempre “troppo lontano”, abbassa minuti oppure togli widening in events.js.
+        Consiglio: se le mete sono troppo lontane, abbassa il tempo o cambia vibe.
       </div>
     </section>
 
@@ -416,16 +426,15 @@
 
     <footer class="footer clickSafe">
       <div class="footerLine">
-        <span class="dot"></span> Jamo • build UI v6.1 • category colors
+        <span class="dot"></span> Jamo • build UI v6.2 • discovery labels
       </div>
       <div class="footerLine small muted">
-        Offline-first (best effort). Nessun tracciamento GPS. Link esterni: Maps / Wiki / Foto.
+        Offline-first. Nessun tracciamento GPS. Link esterni: Maps / Wiki / Foto.
       </div>
     </footer>
 
   </main>
 
-  <!-- ✅ FAB "Cosa c’è" (super visibile) -->
   <button id="fabWhatsThere" class="fabWhats" type="button" aria-label="Cosa c’è nella destinazione">
     <span class="b" aria-hidden="true">👀</span>
     <span>Cosa c’è</span>
@@ -439,11 +448,11 @@
   <div id="sheetMask" class="sheetMask" aria-hidden="true"></div>
   <div id="sheetSOS" class="sheet" role="dialog" aria-modal="true" aria-label="SOS Family">
     <div class="sheetTop">
-      <div class="sheetTitle">🏠 SOS Family — idee a casa (zero sbatti)</div>
+      <div class="sheetTitle">🏠 SOS Family — idee a casa</div>
       <button id="btnCloseSheet" class="btnGhost" type="button">✕</button>
     </div>
     <div class="sheetDesc">
-      Idee <b>pratiche</b>, <b>veloci</b>, con possibilità di <b>risata</b>. Niente doppioni: ogni “Cambia idee” pesca dal pool senza ripetere.
+      Idee pratiche, veloci e leggere per quando sei con i bambini e non vuoi impazzire.
     </div>
 
     <div class="row wraprow" style="gap:10px; margin-top:10px;">
@@ -459,15 +468,15 @@
     </div>
   </div>
 
+  <script src="/lib/jamo-utils.js?v=1.0"></script>
   <script src="/events.js?v=1.0"></script>
-  <script src="/app.js?v=22.2"></script>
+  <script src="/app.js?v=22.3"></script>
 
   <script>
   (() => {
     "use strict";
     const $ = (id) => document.getElementById(id);
 
-    /* ------------------ mini status helper (no popup) ------------------ */
     let _statusTimer = null;
     function showStatus(msg, ms = 2200){
       const box = $("statusBox");
@@ -479,7 +488,6 @@
       _statusTimer = setTimeout(() => { box.style.display = "none"; }, ms);
     }
 
-    /* ------------------ scroll smart ------------------ */
     const scrollTo = (id, block = "start") => {
       const el = $(id);
       if (!el) return;
@@ -494,7 +502,6 @@
 
       const cat = String(chip.dataset.cat || "").toLowerCase();
 
-      // FAB SOS solo in family
       const fab = $("fabSOS");
       if (fab) fab.style.display = (cat === "family") ? "flex" : "none";
 
@@ -520,7 +527,6 @@
       setTimeout(() => scrollTo("resultCard"), 250);
       if (navigator.vibrate) navigator.vibrate(20);
 
-      // ✅ dopo che app.js ha renderizzato, aggancia destinazione e aggiorna FAB
       setTimeout(() => {
         syncSelectedQueryFromPrimaryCard();
         updateWhatsThereUI();
@@ -529,7 +535,6 @@
 
     $("btnResetVisited")?.addEventListener("click", () => setTimeout(() => scrollTo("searchCard"), 200));
 
-    /* ------------------ THEMES ------------------ */
     const THEMES = {
       mare:     { c1:"#3B82F6", c2:"#93C5FD", chip:"rgba(59,130,246,.12)", ring:"rgba(59,130,246,.24)" },
       lago:     { c1:"#0EA5E9", c2:"#7DD3FC", chip:"rgba(14,165,233,.12)", ring:"rgba(14,165,233,.24)" },
@@ -557,13 +562,10 @@
     function setVars(t){
       document.documentElement.style.setProperty("--acc", t.c1);
       document.documentElement.style.setProperty("--acc2", t.c2);
-
       document.documentElement.style.setProperty("--cta1", t.c1);
       document.documentElement.style.setProperty("--cta2", t.c2);
-
       document.documentElement.style.setProperty("--chipActiveBg", t.chip);
       document.documentElement.style.setProperty("--chipActiveRing", t.ring);
-
       document.documentElement.style.setProperty("--sos1", t.c1 + "E8");
       document.documentElement.style.setProperty("--sos2", t.c2 + "E8");
 
@@ -606,7 +608,6 @@
     const active0 = document.querySelector("#categoryChips .chip.active");
     applyCategoryTheme(String(active0?.dataset?.cat || "natura").toLowerCase());
 
-    /* ------------------ “Cosa c’è” — SOLO NOME DESTINAZIONE (ANTI "vicino a me") ------------------ */
     let LAST_SELECTED_QUERY = "";
 
     function cleanText(s){
@@ -623,30 +624,26 @@
 
     function extractTitleFromCard(card){
       const titleEl =
-        card.querySelector("h1,h2,h3") ||
-        card.querySelector("[data-title]") ||
-        card.querySelector("div[style*='font-weight:950']") ||
-        card.querySelector("div[style*='font-weight: 950']");
+        card?.querySelector("h1,h2,h3") ||
+        card?.querySelector("[data-title]") ||
+        card?.querySelector("div[style*='font-weight:950']") ||
+        card?.querySelector("div[style*='font-weight: 950']");
       return cleanText(titleEl?.textContent || "");
     }
 
     function extractWhereFromCard(card){
-      const whereEl = Array.from(card.querySelectorAll("div,span,p"))
+      const whereEl = Array.from(card?.querySelectorAll("div,span,p") || [])
         .find(el => (el.textContent || "").trim().startsWith("📍"));
       return cleanText(whereEl?.textContent || "");
     }
 
-    // ✅ SOLO "Titolo, Luogo" (Niente coordinate, niente link maps)
     function bestDestinationQueryForCard(card){
       if (!card) return "";
       const title = extractTitleFromCard(card);
       const where = extractWhereFromCard(card);
-
       const combo = [title, where].filter(Boolean).join(", ").trim();
 
-      // serve almeno 1 lettera (così Google NON usa la tua posizione)
       if (combo && /[a-zA-ZÀ-ÿ]/.test(combo) && !looksLikeCoordinates(combo)) return combo;
-
       return "";
     }
 
@@ -667,8 +664,8 @@
       const t = cleanText(q);
       if (!t) return false;
       if (t.length < 3) return false;
-      if (looksLikeCoordinates(t)) return false;         // ❌ blocco duro
-      if (!/[a-zA-ZÀ-ÿ]/.test(t)) return false;          // deve avere lettere
+      if (looksLikeCoordinates(t)) return false;
+      if (!/[a-zA-ZÀ-ÿ]/.test(t)) return false;
       return true;
     }
 
@@ -678,7 +675,6 @@
       if (isUsableDestination(q)) LAST_SELECTED_QUERY = cleanText(q);
     }
 
-    // ✅ A PROVA DI BOMBA: se non c'è un nome chiaro -> NON apre
     function openGoogleForDestination(){
       let q = cleanText(LAST_SELECTED_QUERY);
 
@@ -703,11 +699,9 @@
       if (fab) fab.style.display = ok ? "flex" : "none";
     }
 
-    // Bottoni
     $("btnWhatsThere")?.addEventListener("click", openGoogleForDestination);
     $("fabWhatsThere")?.addEventListener("click", openGoogleForDestination);
 
-    // inject bottone anche nelle card
     function injectWhatIsButtons(){
       const area = $("resultArea");
       if (!area) return;
@@ -783,7 +777,6 @@
       enableCardSelectionCapture();
     }
 
-    /* ------------------ SOS: CASA + AUTO (NO RIPETIZIONI) ------------------ */
     const fabSOS = $("fabSOS");
     const mask = $("sheetMask");
     const sheet = $("sheetSOS");
@@ -793,6 +786,7 @@
       sheet.classList.add("open");
       if (navigator.vibrate) navigator.vibrate(14);
     };
+
     const closeSheet = () => {
       sheet.classList.remove("open");
       setTimeout(() => { mask.style.display = "none"; }, 180);
@@ -805,52 +799,25 @@
     mask?.addEventListener("click", closeSheet);
 
     const SOS_HOME_POOL = [
-      ["🎯 Tiro al bersaglio con la carta","3 fogli appallottolati + un secchio. 10 tiri a testa. Se fai centro: scegli la prossima “regola”."],
-      ["🧊 Missione “Ghiaccio in salvo”","Un cubetto su un cucchiaio: devi portarlo in cucina senza farlo cadere. Gara a tempo."],
-      ["🧦 Calcio-calzino","Palla fatta con calzino arrotolato. Porta da “porta” a “porta” tra sedie senza usare le mani."],
-      ["🕵️ Caccia al tesoro “3 cose”","Portami: una cosa morbida, una cosa rossa, una cosa che fa rumore. Chi torna prima vince."],
-      ["⏱️ Sfida 60 secondi","Imposta timer 60s: “quante mollette metti su una maglietta?”, “quanti tappi impili?”, “quanti salti fai?”"],
-      ["🧱 Torre instabile","Bicchieri di plastica o rotoli carta. Obiettivo: torre più alta in 2 minuti. Se cade: risata gratis."],
-      ["🧠 Indovina l’oggetto (al tatto)","Metti 5 oggetti in una busta/stoffa. Occhi chiusi: indovina cosa tocchi in 10 secondi."],
-      ["🎭 Mimo velocissimo","1 minuto: mima “lavarsi i denti”, “guidare”, “dormire”, “fare la spesa”. L’altro deve indovinare."],
-      ["📢 Commentatore sportivo","Uno fa una cosa normalissima (bere, mettere scarpe), l’altro la commenta come finale mondiale."],
-      ["🚦 Semaforo","Tu dici: “verde” = cammina, “giallo” = rallenta, “rosso” = statua. Chi si muove perde."],
-      ["🐢 Rallentatore serio","“Devi prendere un bicchiere e posarlo… ma in slow-motion estremo.” Chi ride perde, ma perde bene."],
-      ["🧩 Puzzle lampo","Prendi 10 oggetti, guardali 10 sec, coprili: “dimmi quali mancano” (ne togli 2)."],
-      ["🧺 Basket lavanderia","Cesto bucato come canestro. Tiri da 3 posizioni (vicino/medio/lontano). Segnapunti semplice."],
-      ["🧽 Pulizie sprint","2 minuti: “raccogli 10 cose e rimettili al posto giusto”. Se finisci: scegli tu la prossima sfida."],
-      ["📦 Percorso ad ostacoli “serio”","Cuscini a terra come isole. Devi arrivare al divano senza “toccare il pavimento”."],
-      ["🎵 Karaoke del nonsense","Metti una canzone e cantala… sostituendo una parola sempre con “PIZZA”."],
-      ["🧻 Bowling corridoio","Rotolo di carta come palla + bottigliette/rotoli come birilli. 2 tiri a testa."],
-      ["🧠 “Vero o falso” lampo","10 domande rapidissime inventate. Chi sbaglia fa 3 saltelli."],
-      ["🖍️ Disegno bendato","Uno descrive “una casa con albero”, l’altro disegna senza guardare."],
-      ["👂 Indovina il suono","Fai suoni con oggetti (chiavi, bottiglia, carta). L’altro indovina in 3 tentativi."],
-      ["🧍 Statua con missione","“Resti fermo… ma devi fare una faccia assurda.” Se ridi o ti muovi, perdi."],
-      ["🧠 Parole vietate","2 minuti conversazione dove è vietato dire “io” o “sì”. Se lo dici: penalità (1 salto)."],
-      ["🧲 Il magnete umano","“Raccogli 5 cose che non sono al loro posto.” Chi completa prima vince."],
-      ["🧑‍🍳 Chef velocissimo","“Prepara una merenda semplice”. L’altro fa il giudice severissimo ma simpatico."],
-      ["🧠 Sequenza inversa","Io faccio 4 gesti. Tu li ripeti al contrario. Aumenta di 1 ogni turno."],
-      ["🧠 If/Then reale","SE succede X → ALLORA fai Y. Cambiate regola ogni 60s."],
-      ["🧠 Debug umano","Fai un’azione saltando un passaggio. L’altro trova l’errore."],
-      ["🎲 Dado del caos","Scrivi 6 azioni su foglietti. Numero a caso. Azione 20 sec."]
+      ["🎯 Tiro al bersaglio con la carta","3 fogli appallottolati + un secchio. 10 tiri a testa. Se fai centro: scegli la prossima regola."],
+      ["🧊 Missione ghiaccio","Un cubetto su un cucchiaio: devi portarlo in cucina senza farlo cadere. Gara a tempo."],
+      ["🧦 Calcio-calzino","Palla fatta con calzino arrotolato. Porta tra sedie senza usare le mani."],
+      ["🕵️ Caccia al tesoro","Portami: una cosa morbida, una cosa rossa, una cosa che fa rumore. Chi torna prima vince."],
+      ["⏱️ Sfida 60 secondi","Timer 60s: quante mollette metti su una maglietta? Quanti tappi impili? Quanti salti fai?"],
+      ["🧱 Torre instabile","Bicchieri di plastica o rotoli carta. Torre più alta in 2 minuti."],
+      ["🧠 Indovina l’oggetto","5 oggetti in una busta. Occhi chiusi: indovina cosa tocchi in 10 secondi."],
+      ["🎭 Mimo velocissimo","1 minuto: mima lavarsi i denti, guidare, dormire, fare la spesa."],
+      ["📢 Commentatore sportivo","Uno fa una cosa normalissima, l’altro la commenta come finale mondiale."],
+      ["🚦 Semaforo","Verde cammina, giallo rallenta, rosso statua. Chi si muove perde."]
     ];
 
     const SOS_CAR_POOL = [
-      ["🔤 Targa Bingo","Scegli 3 lettere (es. M-A-R). Ogni targa che le contiene = 1 punto. A 5 punti cambi gioco."],
-      ["🎨 Caccia al colore","Trova 5 auto rosse / 3 camion bianchi. A turno. Timer 60s."],
-      ["👀 Occhio d’aquila","Chi vede per primo: ponte / rotonda / autobus / ambulanza. 1 punto."],
-      ["⏱️ Tre cose in 10 secondi","‘3 cose blu!’ ‘3 insegne!’ ‘3 alberi strani!’ A turno, ritmo veloce."],
-      ["🧠 Catena di parole (2 lettere)","Ogni parola deve iniziare con le ultime 2 lettere della precedente."],
-      ["🧠 Pattern audio","Uno fa un ritmo (mani sulle cosce), l’altro ripete e aggiunge 1 colpo."],
-      ["🧠 Regola che cambia","Regola: ogni volta che dici ‘ok’ → clap. Dopo 2 minuti cambi regola."],
-      ["🎙️ Speaker radio","Uno fa DJ: presenta una canzone e una ‘pubblicità’ di 15 secondi di un oggetto in auto."],
-      ["⭐ Recensione della strada","Recensione stile TripAdvisor di una rotonda/ponte: stelle + 1 motivo serio + 1 assurdo."],
-      ["🧠 Memory strada","Ricorda le ultime 3 cose viste. Dopo 1 min ripeti e aggiungi 1 cosa."],
-      ["🧠 Categorie sprint","Animali / cibi / città: 20 secondi. Chi si blocca = 1 punto all’altro."],
-      ["🔎 Trova la parola","Scegli una parola (es. ‘BAR’). Cercatela nelle insegne. Chi la vede prima = 1 punto."],
-      ["🧠 Due cose in comune","Scegli 2 cose viste fuori. Trova 2 cose in comune (anche assurde)."],
-      ["🗣️ Voce proibita (soft)","Per 60s si parla solo ‘robot’ o ‘super serio’. Se sbagli: 1 punto all’altro."],
-      ["✅ Vero/Falso lampo","10 domande veloci inventate. Chi sbaglia fa ‘beep beep’ da robot."]
+      ["🔤 Targa Bingo","Scegli 3 lettere. Ogni targa che le contiene vale 1 punto."],
+      ["🎨 Caccia al colore","Trova 5 auto rosse o 3 camion bianchi. Timer 60s."],
+      ["👀 Occhio d’aquila","Chi vede per primo ponte, rotonda, autobus o ambulanza prende 1 punto."],
+      ["⏱️ Tre cose in 10 secondi","Tre cose blu, tre insegne, tre alberi strani. A turno."],
+      ["🧠 Catena di parole","Ogni parola deve iniziare con le ultime due lettere della precedente."],
+      ["🎙️ Speaker radio","Uno fa il DJ e presenta una canzone o una pubblicità inventata."]
     ];
 
     let SOS_MODE = "home";
@@ -866,6 +833,7 @@
         [arr[i], arr[j]] = [arr[j], arr[i]];
       }
     }
+
     function refillHome(){ bagHome = SOS_HOME_POOL.map((_,i)=>i); shuffleBag(bagHome); }
     function refillCar(){ bagCar = SOS_CAR_POOL.map((_,i)=>i); shuffleBag(bagCar); }
 
@@ -875,6 +843,7 @@
         for (let i = 0; i < pool.length; i++) bag.push(i);
         shuffleBag(bag);
       }
+
       const picks = [];
       while (picks.length < n){
         if (bag.length === 0){
@@ -883,6 +852,7 @@
         }
         picks.push(bag.pop());
       }
+
       return picks.map(i => pool[i]);
     }
 
@@ -910,7 +880,8 @@
     chipHome?.addEventListener("click", () => setSOSMode("home"));
     chipCar?.addEventListener("click", () => setSOSMode("car"));
 
-    refillHome(); refillCar();
+    refillHome();
+    refillCar();
     renderSOS();
 
     $("btnSOSShuffle")?.addEventListener("click", () => {
@@ -918,7 +889,6 @@
       if (navigator.vibrate) navigator.vibrate(12);
     });
 
-    // aggiorna idee quando apri SOS
     fabSOS?.addEventListener("click", () => setTimeout(renderSOS, 80));
 
   })();
