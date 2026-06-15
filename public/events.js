@@ -423,9 +423,6 @@
     // “all” sempre
     order.push(PATHS.MAIFATTO_ALL_URL);
 
-    // fallback extra (se avevi dataset “verona” specifico)
-    order.push("/data/mai_fatto/mai_fatto_it_verona.json"); // se non esiste, fallisce e si passa oltre
-    order.push("/data/mai_fatto/mai_fatto_it_abruzzo.json"); // idem
 
     // dedupe
     const seen = new Set();
