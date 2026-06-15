@@ -1363,7 +1363,8 @@
         const p = x.place;
         const name = escapeHtml(p.name || "");
         const time = `~${x.driveMin} min`;
-        const areaLabel = escapeHtml((p.area || p.country || "—").trim());
+       const rawArea = (p.area || p.country || "—").trim();
+const areaLabel = escapeHtml(rawArea === "IT" ? "Costa italiana" : rawArea);
         const vis = escapeHtml(visibilityLabel(p));
 
         return `
