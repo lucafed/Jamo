@@ -920,6 +920,17 @@ if (cat !== "mare") {
     if (!isNearCoast(place)) return false;
     const t = tagsStr(place);
     const n = normName(place?.name || "");
+    if (hasAny(n, [
+  "scala santa",
+  "bagno borbonico",
+  "golfo di venere",
+  "rupe",
+  "cascata",
+  "acqua",
+  "gola",
+  "grotte"
+])) return false;
+    
     const q = hasQualitySignals(place);
 
     // tag tecnici/portuali che sporcano (lasciamo marina SOLO se è davvero turistica)
