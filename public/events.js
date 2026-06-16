@@ -659,7 +659,7 @@
             Aumenta i minuti (ora: <b>${esc(maxMinutes)}</b>) oppure cambia tipo di WOW.
           </div>
           <div class="small muted" style="margin-top:10px;">
-            ${updated ? `Dataset aggiornato ${esc(updated)}` : "Dataset offline"} • totale ${esc(total)}${areaName}
+           ✨ Idee sorprendenti vicino a te
           </div>
         </div>
       `;
@@ -738,7 +738,7 @@
       <div class="card clickSafe" style="box-shadow:none; border-color:rgba(0,224,255,.20); background:rgba(0,224,255,.05);">
         <div style="font-weight:950; font-size:18px;">✨ MAI FATTO — WOW vicini</div>
         <div class="small muted" style="margin-top:6px;">
-          ${updated ? `Dataset aggiornato ${esc(updated)}` : "Dataset offline"} • totale ${esc(total)}${areaName}
+         ✨ Idee sorprendenti vicino a te
         </div>
         <div class="small muted" style="margin-top:6px;">
           Mostrate: ${esc(items.length)} • entro ~${esc(maxMinutes)} min (widening smart incluso)
