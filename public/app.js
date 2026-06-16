@@ -651,7 +651,9 @@
 console.log("CAT =", cat);
 console.log("PATH =", region?.paths?.[cat]);
 
-      const p1 = region.paths?.[cat] || `/data/pois/regions/${rid}-${cat}.json`;
+     const p1 =
+  region.paths?.[cat] ||
+  `/data/pois/it/${rid}/${cat}.json`;
       const loaded1 = await tryLoadPlacesFile(p1, signal);
       if (loaded1) {
         pools.push({ kind: "region", source: p1, places: loaded1.places, bbox: region.bbox || null });
