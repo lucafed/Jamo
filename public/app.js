@@ -635,6 +635,9 @@
 
     const cc = String(origin?.country_code || "").toUpperCase();
     const region = pickItalyRegionByOrigin(origin);
+    console.log("ORIGIN =", origin);
+console.log("REGION PICKED =", region);
+console.log("CATEGORY =", canonicalCategory(categoryUI));
     const isItaly = cc === "IT" || !!region;
 
     const cat = canonicalCategory(categoryUI);
