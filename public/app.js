@@ -821,6 +821,35 @@ if (cat !== "mare") {
       t.includes("leisure=swimming_pool") && (nm.includes("terme") || nm.includes("spa") || nm.includes("thermal") || nm.includes("wellness"));
     return spaTags || looksWellnessByName(place) || poolSpaLike;
   }
+  function isRelaxPlace(place) {
+  const t = tagsStr(place);
+  const n = normName(place?.name || "");
+
+  if (isSpaPlace(place)) return true;
+
+  if (hasAny(n, [
+    "terme",
+    "spa",
+    "wellness",
+    "benessere",
+    "relax",
+    "resort",
+    "giardino",
+    "parco",
+    "oasi",
+    "lago",
+    "belvedere"
+  ])) return true;
+
+  if (
+    t.includes("leisure=garden") ||
+    t.includes("leisure=park") ||
+    t.includes("tourism=spa") ||
+    t.includes("natural=hot_spring")
+  ) return true;
+
+  return false;
+}
 
   function isNature(place) {
     const t = tagsStr(place);
