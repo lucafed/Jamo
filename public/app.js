@@ -927,7 +927,8 @@
       t.includes("sport=swimming") ||
       q;
 
-    const nameSea = hasAny(n, ["spiaggia","lido","baia","cala","scogliera","litorale","lungomare","beach"]);
+    const nameSea = hasAny(n, ["spiaggia","lido","baia","cala","arenile",
+"bagno","litorale","lungomare","beach"]);
 
     // marina: ok solo se ha segnali turistici (altrimenti porto tecnico)
     const marinaOk = t.includes("leisure=marina") && (touristSignal || nameSea || q);
