@@ -54,13 +54,26 @@ out center tags;
 }
 
 async function fetchOverpass(q){
-  const r = await fetch(OVERPASS, {
-    method: "POST",
-    headers: { "content-type": "application/x-www-form-urlencoded" },
-    body: "data=" + encodeURIComponent(q),
-  });
-  if(!r.ok) throw new Error("Overpass error");
-  return r.json();
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const r = await fetch(OVERPASS, {
+        method: "POST",
+        headers: { "content-type": "application/x-www-form-urlencoded" },
+        body: "data=" + encodeURIComponent(q),
+      });
+
+      if (r.ok) return await r.json();
+
+      console.warn(`Overpass error HTTP ${r.status} - tentativo ${attempt}/3`);
+    } catch (e) {
+      console.warn(`Overpass fetch failed - tentativo ${attempt}/3`, e.message);
+    }
+
+    await sleep(3000 * attempt);
+  }
+
+  console.warn("BBox saltata: Overpass non disponibile dopo 3 tentativi");
+  return { elements: [] };
 }
 
 function elementToPlace(el){
