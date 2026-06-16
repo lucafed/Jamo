@@ -726,9 +726,6 @@
               ${infoUrl ? `<a class="btn" href="${esc(infoUrl)}" target="_blank" rel="noopener">🧩 Info</a>` : ""}
             </div>
 
-            <div class="small muted" style="margin-top:10px; opacity:.70;">
-              Fonte: ${esc(e.source || LAST_META.source || "mai_fatto")}
-            </div>
           </div>
         `;
       })
