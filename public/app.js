@@ -566,6 +566,9 @@ const lon = Number(origin?.lon);
 
     let best = null;
     for (const r of items) {
+      if (label.includes(String(r.name || "").toLowerCase())) {
+  return r;
+}
       if (!r?.bbox) continue;
       if (!withinBBox(lat, lon, r.bbox)) continue;
       const area = Math.abs((r.bbox.maxLat - r.bbox.minLat) * (r.bbox.maxLon - r.bbox.minLon));
