@@ -647,6 +647,9 @@
 
     if (isItaly && region?.id) {
       const rid = String(region.id);
+      console.log("REGION =", region);
+console.log("CAT =", cat);
+console.log("PATH =", region?.paths?.[cat]);
 
       const p1 = region.paths?.[cat] || `/data/pois/regions/${rid}-${cat}.json`;
       const loaded1 = await tryLoadPlacesFile(p1, signal);
