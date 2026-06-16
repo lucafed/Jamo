@@ -652,8 +652,7 @@
   region.paths?.[cat] ||
   `/data/pois/areas/${rid.replace("-", "_")}/${cat}.json`;
       const loaded1 = await tryLoadPlacesFile(p1, signal);
-      console.log("P1 =", p1);
-console.log("LOADED1 =", loaded1?.places?.length || 0);
+    
       if (loaded1) {
         pools.push({ kind: "region", source: p1, places: loaded1.places, bbox: region.bbox || null });
         DATASETS_USED.push({ kind: "region", source: p1, placesLen: loaded1.places.length });
