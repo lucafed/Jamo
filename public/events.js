@@ -766,6 +766,8 @@ title = title
       safePatchUI();
 
       const all = await loadDatasetForOrigin(origin);
+      console.log("MAIFATTO DATASET:", all.length);
+console.log(all.slice(0,20));
       if (!Array.isArray(all) || !all.length) {
         showStatus?.("warn", "Dataset MAI FATTO vuoto o mancante.");
         renderIntoResultArea({ items: [], maxMinutes, origin });
