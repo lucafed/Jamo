@@ -741,7 +741,7 @@
          ✨ Idee sorprendenti vicino a te
         </div>
         <div class="small muted" style="margin-top:6px;">
-          Mostrate: ${esc(items.length)} • entro ~${esc(maxMinutes)} min (widening smart incluso)
+          Ti mostro ${esc(items.length)} proposte selezionate per tempo e distanza.
         </div>
       </div>
       ${cards}
