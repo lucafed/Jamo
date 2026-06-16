@@ -16,7 +16,7 @@ const COASTAL_BBOXES_IT = [
   { minLat: 38.80, maxLat: 41.40, minLon: 8.00,  maxLon: 9.90 },
 ];
 
-const OVERPASS = "https://overpass-api.de/api/interpreter";
+const OVERPASS = "https://overpass.kumi.systems/api/interpreter";
 
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 
