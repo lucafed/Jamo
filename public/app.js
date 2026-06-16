@@ -653,7 +653,7 @@ console.log("PATH =", region?.paths?.[cat]);
 
      const p1 =
   region.paths?.[cat] ||
-  `/data/pois/it/${rid}/${cat}.json`;
+  `/data/pois/areas/${rid.replace("-", "_")}/${cat}.json`;
       const loaded1 = await tryLoadPlacesFile(p1, signal);
       console.log("P1 =", p1);
 console.log("LOADED1 =", loaded1?.places?.length || 0);
