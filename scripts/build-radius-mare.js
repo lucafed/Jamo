@@ -36,7 +36,8 @@ function isRealSeaName(name){
     n.includes("lido") ||
     n.includes("baia") ||
     n.includes("cala") ||
-    n.includes("scogliera") ||
+   n.includes("bagno") ||
+n.includes("arenile") ||
     n.includes("litorale")
   );
 }
