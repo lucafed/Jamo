@@ -554,28 +554,37 @@
     return IT_REGIONS_INDEX;
   }
 
-  function pickItalyRegionByOrigin(origin) {
-    const lat = Number(origin?.lat);
-    const lon = Number(origin?.lon);
-    if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
-    const lat = Number(origin?.lat);
-const lon = Number(origin?.lon);
+ function pickItalyRegionByOrigin(origin) {
+  const lat = Number(origin?.lat);
+  const lon = Number(origin?.lon);
 
-    const items = IT_REGIONS_INDEX?.items;
-    if (!Array.isArray(items) || !items.length) return null;
+  const label = String(origin?.label || "").toLowerCase();
 
-    let best = null;
-    for (const r of items) {
-      if (label.includes(String(r.name || "").toLowerCase())) {
-  return r;
-}
-      if (!r?.bbox) continue;
-      if (!withinBBox(lat, lon, r.bbox)) continue;
-      const area = Math.abs((r.bbox.maxLat - r.bbox.minLat) * (r.bbox.maxLon - r.bbox.minLon));
-      if (!best || area < best.area) best = { r, area };
+  if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
+
+  const items = IT_REGIONS_INDEX?.items;
+  if (!Array.isArray(items) || !items.length) return null;
+
+  let best = null;
+
+  for (const r of items) {
+    if (label.includes(String(r.name || "").toLowerCase())) {
+      return r;
     }
-    return best?.r || null;
+
+    if (!r?.bbox) continue;
+    if (!withinBBox(lat, lon, r.bbox)) continue;
+
+    const area = Math.abs(
+      (r.bbox.maxLat - r.bbox.minLat) *
+      (r.bbox.maxLon - r.bbox.minLon)
+    );
+
+    if (!best || area < best.area) best = { r, area };
   }
+
+  return best?.r || null;
+}
 
   // -------------------- MACROS INDEX --------------------
   async function loadMacrosIndexSafe(signal) {
