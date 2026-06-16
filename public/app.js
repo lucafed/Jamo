@@ -1107,7 +1107,7 @@ if (cat !== "mare") {
     if (cat === "eventi") return false;
 
     if (cat === "borghi") return isBorgo(place);
-    if (cat === "relax") return isSpaPlace(place);
+  if (cat === "relax") return isRelaxPlace(place);
     if (cat === "cantine") return isWinery(place) && (hasQualitySignals(place) || tagsStr(place).includes("website="));
     if (cat === "mare") return isSea(place) && hasTouristSignals(place);
     if (cat === "lago") return isLake(place) && hasTouristSignals(place);
