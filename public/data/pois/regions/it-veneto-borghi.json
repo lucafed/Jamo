@@ -3,7 +3,7 @@
   "country": "IT",
   "area": "Veneto",
   "label_it": "Veneto • Borghi (turistici + piccoli)",
-  "generated_at": "2026-06-09T06:46:12.275Z",
+  "generated_at": "2026-06-16T08:43:19.672Z",
   "places": [
     {
       "id": "node:66503077",
@@ -21478,8 +21478,8 @@
     {
       "id": "node:480637862",
       "name": "San Biagio",
-      "lat": 45.0955366,
-      "lon": 10.8501313,
+      "lat": 45.0965152,
+      "lon": 10.8498788,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -31626,8 +31626,8 @@
     {
       "id": "node:1412962093",
       "name": "San Benedetto Po",
-      "lat": 45.0417651,
-      "lon": 10.9271683,
+      "lat": 45.0419489,
+      "lon": 10.9273024,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -73252,15 +73252,15 @@
     },
     {
       "id": "node:1363045416",
-      "name": "Cies",
-      "lat": 46.038815,
-      "lon": 11.7569318,
+      "name": "Cies - Ziés",
+      "lat": 46.03873,
+      "lon": 11.7576077,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Cies",
-        "name:vec=Zies",
+        "name=Cies - Ziés",
+        "name:vec=Cies - Ziés",
         "place=hamlet",
         "wikidata=Q18496337"
       ],
