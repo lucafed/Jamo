@@ -660,7 +660,9 @@ console.log("PATH =", region?.paths?.[cat]);
         DATASETS_USED.push({ kind: "region", source: p1, placesLen: loaded1.places.length });
       }
 
-      const p2 = region.paths?.core || `/data/pois/regions/${rid}.json`;
+     const p2 =
+  region.paths?.core ||
+  `/data/pois/it/${rid}/index.json`;
       const loaded2 = await tryLoadPlacesFile(p2, signal);
       if (loaded2) {
         pools.push({ kind: "region", source: p2, places: loaded2.places, bbox: region.bbox || null });
