@@ -671,7 +671,14 @@
 
     const cards = items
       .map((e) => {
-        const title = e.title || "Idea WOW";
+        let title = e.title || "Idea WOW";
+
+title = title
+  .replace("Degustazione easy:", "🍷 Degustazione ad")
+  .replace("Mai visto così:", "✨ Scopri")
+  .replace("Moto: curve + vista partendo da", "🏍️ Giro panoramico da")
+  .replace("Bici: pedalata bella e semplice da", "🚴 Pedalata da")
+  .replace("Piove? Fai questo:", "🌧️ Quando piove visita");
         const where = nicePlaceLine(e);
         const why = (e.why || "").trim();
 
