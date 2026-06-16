@@ -1645,7 +1645,7 @@ const areaLabel = escapeHtml(rawArea === "IT" ? "Costa italiana" : rawArea);
       const a = attempt(regionPools);
       if (a.list.length) {
         for (const x of a.list) {
-          if (regionBBox && withinBBox(x.place.lat, x.place.lon, regionBBox)) x.score += 0.05;
+          if (regionBBox && withinBBox(x.place.lat, x.place.lon, regionBBox)) x.score += 0.20;
         }
         a.list.sort((u, v) => (v.score - u.score) || (u.driveMin - v.driveMin));
       }
