@@ -111,7 +111,7 @@ async function main(){
     const els = j.elements || [];
     const places = els.map(elementToPlace).filter(Boolean);
     all = all.concat(places);
-    await sleep(400);
+    await sleep(1500);
   }
 
   // dedupe
