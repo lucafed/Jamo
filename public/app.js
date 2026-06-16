@@ -1069,7 +1069,7 @@ if (cat !== "mare") {
     if (cat === "hiking") return isHiking(place);
     if (cat === "mare") return isSea(place);
     if (cat === "lago") return isLake(place);
-    if (cat === "relax") return isSpaPlace(place);
+   if (cat === "relax") return isRelaxPlace(place);
     if (cat === "borghi") return isBorgo(place);
     if (cat === "cantine") return isWinery(place);
     if (cat === "montagna") return isMountain(place);
