@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-06-09T06:55:09.161Z",
+  "generated_at": "2026-06-16T08:51:17.163Z",
   "places": [
     {
       "id": "node:62513426",
@@ -14549,8 +14549,8 @@
     {
       "id": "node:1412962093",
       "name": "San Benedetto Po",
-      "lat": 45.0417651,
-      "lon": 10.9271683,
+      "lat": 45.0419489,
+      "lon": 10.9273024,
       "type": "borghi",
       "visibility": "chicca",
       "tags": [
@@ -37470,7 +37470,7 @@
     {
       "id": "relation:45023",
       "name": "Roccafranca",
-      "lat": 45.4563089,
+      "lat": 45.4563014,
       "lon": 9.9182845,
       "type": "borghi",
       "visibility": "classica",
@@ -49219,8 +49219,8 @@
     {
       "id": "node:480637862",
       "name": "San Biagio",
-      "lat": 45.0955366,
-      "lon": 10.8501313,
+      "lat": 45.0965152,
+      "lon": 10.8498788,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -58523,6 +58523,7 @@
       "type": "borghi",
       "visibility": "classica",
       "tags": [
+        "landuse=residential",
         "name=Rossa",
         "place=village",
         "wikidata=Q18476740"
@@ -70290,7 +70291,7 @@
     {
       "id": "relation:44852",
       "name": "Orzinuovi",
-      "lat": 45.3980011,
+      "lat": 45.3979935,
       "lon": 9.9572339,
       "type": "borghi",
       "visibility": "classica",
@@ -130325,14 +130326,14 @@
     },
     {
       "id": "node:1363045416",
-      "name": "Cies",
-      "lat": 46.038815,
-      "lon": 11.7569318,
+      "name": "Cies - Ziés",
+      "lat": 46.03873,
+      "lon": 11.7576077,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
-        "name=Cies",
-        "name:vec=Zies",
+        "name=Cies - Ziés",
+        "name:vec=Cies - Ziés",
         "place=hamlet",
         "wikidata=Q18496337"
       ],
@@ -178780,8 +178781,8 @@
     {
       "id": "node:480638714",
       "name": "Sant'Antonio",
-      "lat": 45.188619,
-      "lon": 10.7919897,
+      "lat": 45.1886681,
+      "lon": 10.7918314,
       "type": "borghi",
       "visibility": "classica",
       "tags": [

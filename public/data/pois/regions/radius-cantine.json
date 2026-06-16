@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-06-09T06:57:28.170Z",
+  "generated_at": "2026-06-16T08:51:43.535Z",
   "places": [
     {
       "id": "node:2692275706",
@@ -2223,6 +2223,26 @@
         "contact:website=https://cantinemonchieri.it/",
         "craft=winery",
         "name=Cantina Monchieri"
+      ],
+      "score": 102
+    },
+    {
+      "id": "way:1529870782",
+      "name": "Le Vigne Terre di Confine",
+      "lat": 45.7252556,
+      "lon": 11.5822851,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Fara Vicentino",
+        "addr:postcode=36030",
+        "addr:street=Via Perlena",
+        "building=yes",
+        "craft=winery",
+        "name=Le Vigne Terre di Confine",
+        "opening_hours=Fr 17:30-00:00, Sa 09-12:30 17:30-00:00, Su 17:30-00:00",
+        "phone=+3904451670127",
+        "website=https://www.levigneterrediconfine.it"
       ],
       "score": 102
     },
@@ -7881,7 +7901,7 @@
         "opening_hours:conditional=Mo-Su 08:00-12:00,14:00-18:00 @ (May-Sep)",
         "phone=+39 345 9371858",
         "shop=wine",
-        "website=www.la-bagatta.it"
+        "website=https://www.la-bagatta.it/"
       ],
       "score": 47
     },
