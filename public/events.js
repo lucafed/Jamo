@@ -632,7 +632,7 @@
     const seen = new Set();
     const out = [];
     for (const e of picked) {
-      const key = `${String(e.title || "").toLowerCase().trim()}|${String(e.place || "").toLowerCase().trim()}|${String(e.city || "").toLowerCase().trim()}`;
+     const key = `${String(e.place || e.title || "").toLowerCase().trim()}|${String(e.city || "").toLowerCase().trim()}`;
       if (seen.has(key)) continue;
       seen.add(key);
       out.push(e);
