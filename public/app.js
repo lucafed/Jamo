@@ -914,9 +914,6 @@
     const strongSea =
       t.includes("natural=beach") ||
       t.includes("natural=bay") ||
-      t.includes("natural=reef") ||
-      t.includes("natural=cliff") ||
-      t.includes("man_made=pier") ||
       t.includes("tourism=beach_resort");
 
     const touristSignal =
