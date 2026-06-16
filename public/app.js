@@ -663,12 +663,15 @@
       }
     }
 
-    const p3 = `/data/pois/regions/radius-${cat}.json`;
-    const loaded3 = await tryLoadPlacesFile(p3, signal);
-    if (loaded3) {
-      pools.push({ kind: "radius", source: p3, places: loaded3.places, bbox: null });
-      DATASETS_USED.push({ kind: "radius", source: p3, placesLen: loaded3.places.length });
-    }
+   // Radius nazionale: NON usarlo per Mare, perché radius-mare.json è troppo sporco
+if (cat !== "mare") {
+  const p3 = `/data/pois/regions/radius-${cat}.json`;
+  const loaded3 = await tryLoadPlacesFile(p3, signal);
+  if (loaded3) {
+    pools.push({ kind: "radius", source: p3, places: loaded3.places, bbox: null });
+    DATASETS_USED.push({ kind: "radius", source: p3, placesLen: loaded3.places.length });
+  }
+}
 
     // ✅ Macro solo se NON è una categoria NO-MACRO
     if (!NO_MACRO_CATS.has(cat)) {
