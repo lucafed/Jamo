@@ -558,6 +558,8 @@
     const lat = Number(origin?.lat);
     const lon = Number(origin?.lon);
     if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
+    const lat = Number(origin?.lat);
+const lon = Number(origin?.lon);
 
     const items = IT_REGIONS_INDEX?.items;
     if (!Array.isArray(items) || !items.length) return null;
