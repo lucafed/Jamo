@@ -664,7 +664,7 @@
     }
 
    // Radius nazionale: NON usarlo per Mare, perché radius-mare.json è troppo sporco
-if (cat !== "mare") {
+if (cat !== "mare" || pools.length < 2) {
   const p3 = `/data/pois/regions/radius-${cat}.json`;
   const loaded3 = await tryLoadPlacesFile(p3, signal);
   if (loaded3) {
