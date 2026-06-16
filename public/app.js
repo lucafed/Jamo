@@ -666,6 +666,8 @@ console.log("LOADED1 =", loaded1?.places?.length || 0);
   region.paths?.core ||
   `/data/pois/it/${rid}/index.json`;
       const loaded2 = await tryLoadPlacesFile(p2, signal);
+      console.log("P2 =", p2);
+console.log("LOADED2 =", loaded2?.places?.length || 0);
       if (loaded2) {
         pools.push({ kind: "region", source: p2, places: loaded2.places, bbox: region.bbox || null });
         DATASETS_USED.push({ kind: "region", source: p2, placesLen: loaded2.places.length });
