@@ -47,9 +47,6 @@ function makeQuery(b){
 (
   nwr["natural"="beach"](${b.minLat},${b.minLon},${b.maxLat},${b.maxLon});
   nwr["natural"="bay"](${b.minLat},${b.minLon},${b.maxLat},${b.maxLon});
-  nwr["natural"="cliff"](${b.minLat},${b.minLon},${b.maxLat},${b.maxLon});
-  nwr["natural"="reef"](${b.minLat},${b.minLon},${b.maxLat},${b.maxLon});
-  nwr["natural"="cape"](${b.minLat},${b.minLon},${b.maxLat},${b.maxLon});
 );
 out center tags;
 `;
