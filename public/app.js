@@ -1323,6 +1323,21 @@ if (cat !== "mare") {
       });
     }
 
+    if (canonicalCategory(categoryUI) === "borghi") {
+  console.log(
+    "BORGHI TOP RAW",
+    candidates
+      .slice()
+      .sort((a, b) => b.score - a.score || a.driveMin - b.driveMin)
+      .slice(0, 15)
+      .map(x => ({
+        name: x.place.name,
+        score: x.score,
+        driveMin: x.driveMin,
+        tags: x.place.tags
+      }))
+  );
+}
     candidates.sort(
       (a, b) => b.score - a.score || a.driveMin - b.driveMin
     );
