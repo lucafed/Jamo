@@ -1200,6 +1200,39 @@ if (cat !== "mare") {
 
     return 0;
   }
+  function categoryScoreAdjust(place, categoryUI) {
+  const cat = canonicalCategory(categoryUI);
+  const t = tagsStr(place);
+  const n = normName(place?.name || "");
+
+  let s = 0;
+
+  if (cat === "borghi") {
+    if (t.includes("wikipedia=") || t.includes("wikidata=")) s += 0.18;
+    if (t.includes("historic=") || t.includes("heritage=")) s += 0.16;
+    if (t.includes("tourism=attraction")) s += 0.12;
+
+    if (hasAny(n, [
+      "centro storico",
+      "borgo medievale",
+      "borgo medioevale",
+      "castello",
+      "rocca"
+    ])) s += 0.18;
+
+    if (t.includes("place=town")) s -= 0.18;
+    if (t.includes("place=suburb") || t.includes("place=neighbourhood")) s -= 0.28;
+
+    if (hasAny(n, [
+      "solvay",
+      "zona industriale",
+      "belvedere",
+      "il borgo"
+    ])) s -= 0.25;
+  }
+
+  return s;
+}
 
   function jitter() {
     return (Math.random() - 0.5) * 0.06;
