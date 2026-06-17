@@ -125,6 +125,18 @@ function scoreBorgo(p) {
   const t = p.tags || {};
   const name = lower(p.name);
   let s = 0;
+  const ICONIC_BORGHI = [
+  "bolgheri",
+  "monteriggioni",
+  "san gimignano",
+  "pienza",
+  "pitigliano",
+  "volterra"
+];
+
+if (ICONIC_BORGHI.includes(name)) {
+  s += 50;
+}
 
   // Base: preferiamo village/hamlet come “borgo”
   const placeType = lower(t.place);
