@@ -1294,6 +1294,7 @@ if (cat !== "mare") {
 
       if (!ignoreRotation) s -= rotationPenalty(pid, recentSet);
       s += seasonAdjust(p);
+      s += categoryScoreAdjust(p, categoryUI);
       s += jitter();
 
       candidates.push({
