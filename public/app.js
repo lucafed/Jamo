@@ -188,6 +188,14 @@
     const a = String(area || "").trim();
     return a ? `"${n}" ${a}` : `"${n}"`;
   }
+  function originContextLabel(origin) {
+  const label = String(origin?.label || "").trim();
+  const parts = label.split(",").map(x => x.trim()).filter(Boolean);
+
+  if (parts.length >= 2) return parts[1];
+
+  return label || "";
+}
   function googleSearchUrl(q) {
     return `https://www.google.com/search?q=${encodeURIComponent(q)}`;
   }
