@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-06-16T08:51:43.535Z",
+  "generated_at": "2026-06-17T07:55:24.809Z",
   "places": [
     {
       "id": "node:2692275706",
@@ -2045,8 +2045,8 @@
     {
       "id": "way:141028896",
       "name": "Ca' Botta Wine shop",
-      "lat": 45.5350707,
-      "lon": 11.0049664,
+      "lat": 45.535286,
+      "lon": 11.0047891,
       "type": "cantine",
       "visibility": "classica",
       "tags": [
