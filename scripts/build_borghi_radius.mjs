@@ -128,9 +128,9 @@ function scoreBorgo(p) {
 
   // Base: preferiamo village/hamlet come “borgo”
   const placeType = lower(t.place);
-  if (placeType === "hamlet") s += 55;
-  if (placeType === "village") s += 75;
-  if (placeType === "town") s += 60;
+  if (placeType === "hamlet") s += 25;
+if (placeType === "village") s += 55;
+if (placeType === "town") s += 25;
 
   // Admin boundary (comune) -> buono ma meno “borgo” di village
   if (lower(t.boundary) === "administrative") s += 40;
@@ -152,11 +152,35 @@ function scoreBorgo(p) {
     if (pop > 200000) s -= 120;
     else if (pop > 100000) s -= 80;
     else if (pop > 50000) s -= 35;
-    else if (pop < 800) s += 10; // molto piccolo -> spesso borgo vero
+    else if (pop < 800) s += 5; // molto piccolo -> spesso borgo vero
   }
 
   // Extra: se ha “tourism” ma resta un place/boundary, ok (qualche comune lo mette)
   if (hasAnyTag(t, ["tourism"])) s += 10;
+  const iconic = [
+  "bolgheri",
+  "san gimignano",
+  "certaldo",
+  "monteriggioni",
+  "volterra",
+  "anghiari",
+  "suvereto",
+  "pienza",
+  "pitigliano",
+  "montepulciano",
+  "poppi",
+  "barga",
+  "castelmuzio",
+  "castiglion del bosco",
+  "montefioralle",
+  "sabbioneta",
+  "borghetto",
+  "soave",
+  "arqua petrarca",
+  "castellaro lagusello"
+];
+
+if (iconic.some((x) => name.includes(x))) s += 120;
 
   return s;
 }
@@ -229,7 +253,7 @@ async function main() {
       };
     })
     .sort((a, b) => b.score - a.score)
-    .slice(0, 12000); // largo: l’app poi prende le 5 migliori nel tempo scelto
+    .slice(0, 3000); // largo: l’app poi prende le 5 migliori nel tempo scelto
 
   await writeJson(OUT, {
     region_id: "radius-borghi",
