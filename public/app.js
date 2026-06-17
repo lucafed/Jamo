@@ -907,7 +907,23 @@ if (cat !== "mare") {
     const nameLooksBorgo = hasAny(n, ["borgo","centro storico","frazione","contrada","corte"]);
     const typeSaysBorgo = (type === "borghi" || type === "borgo");
 
-    if (isSettlement) return hasTouristSignals(place);
+    if (isSettlement) {
+  return (
+    hasTouristSignals(place) &&
+    (
+      typeSaysBorgo ||
+      nameLooksBorgo ||
+      hasAny(n, [
+        "centro storico",
+        "borgo",
+        "castello",
+        "rocca",
+        "medioevale",
+        "medievale"
+      ])
+    )
+  );
+}
     if ((typeSaysBorgo || nameLooksBorgo) && hasTouristSignals(place)) return true;
     return false;
   }
