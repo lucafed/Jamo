@@ -932,13 +932,11 @@ if (cat !== "mare") {
       typeSaysBorgo ||
       nameLooksBorgo ||
       hasAny(n, [
-        "centro storico",
-        "borgo",
-        "castello",
-        "rocca",
-        "medioevale",
-        "medievale"
-      ])
+  "centro storico",
+  "borgo",
+  "borgo medievale",
+  "borgo medioevale"
+])
     )
   );
 }
