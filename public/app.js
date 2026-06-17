@@ -1543,6 +1543,9 @@ const areaLabel = escapeHtml(rawArea === "IT" ? "Costa italiana" : rawArea);
 
     const p = chosen.place;
     const pid = chosen.pid;
+    console.log("CHOSEN PLACE =", p);
+console.log("CHOSEN TAGS =", p.tags);
+console.log("CHOSEN TYPE =", p.type);
 
     const tb = typeBadge(canonicalCategory(categoryUI));
     const areaLabel = (p.area || p.country || "").trim() || "—";
