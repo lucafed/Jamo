@@ -900,6 +900,7 @@ if (cat !== "mare") {
   t.includes("historic=monument") ||
   t.includes("historic=memorial") ||
   t.includes("historic=aqueduct") ||
+      t.includes("historic=monastery") ||
   t.includes("tourism=museum") ||
   t.includes("amenity=place_of_worship") ||
   hasAny(n, [
@@ -912,6 +913,11 @@ if (cat !== "mare") {
     "locomotiva",
     "tumulo",
     "mercato"
+    "eremo",
+"abbazia",
+"monastero",
+"santuario",
+"convento"
   ])
 ) return false;
 
