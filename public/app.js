@@ -942,7 +942,7 @@ if (cat !== "mare") {
     )
   );
 }
-    if ((typeSaysBorgo || nameLooksBorgo) && hasTouristSignals(place)) return true;
+    if (nameLooksBorgo && hasTouristSignals(place)) return true;
     return false;
   }
 
