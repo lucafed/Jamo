@@ -136,8 +136,8 @@ if (placeType === "town") s += 25;
   if (lower(t.boundary) === "administrative") s += 40;
 
   // Segnali turistico-storici “puliti”
-  if (hasAnyTag(t, ["wikipedia"])) s += 35;
-  if (hasAnyTag(t, ["wikidata"])) s += 25;
+  if (hasAnyTag(t, ["wikipedia"])) s += 10;
+  if (hasAnyTag(t, ["wikidata"])) s += 5;
   if (hasAnyTag(t, ["heritage"])) s += 18;
   if (hasAnyTag(t, ["historic"])) s += 20;
 
@@ -192,8 +192,8 @@ function computeVisibility(score, p) {
     hasAnyTag(t, ["wikipedia", "wikidata", "heritage", "historic"]) ||
     lower(p.name).includes("borgo");
 
-  if (score >= 110 && strong) return "chicca";
-  if (score >= 135) return "chicca";
+  if (score >= 150 && strong) return "chicca";
+  if (score >= 180) return "chicca";
   return "classica";
 }
 
