@@ -1570,7 +1570,12 @@ console.log("CHOSEN TAGS =", p.tags);
 console.log("CHOSEN TYPE =", p.type);
 
     const tb = typeBadge(canonicalCategory(categoryUI));
-    const areaLabel = (p.area || p.country || "").trim() || "—";
+    const contextLabel = originContextLabel(origin);
+
+const areaLabel =
+  (p.area && p.area !== "IT")
+    ? String(p.area).trim()
+    : (contextLabel || "Italia");
     const name = p.name || "";
 
     const lat = Number(p.lat);
