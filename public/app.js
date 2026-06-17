@@ -1187,7 +1187,7 @@ if (cat !== "mare") {
     );
     const b = clamp(Number(beautyScore) || 0.72, 0.35, 1);
     const c = isChicca ? 0.06 : 0;
-    return 0.62 * t + 0.32 * b + c;
+    return 0.45 * t + 0.50 * b + c;
   }
 
   function rotationPenalty(pid, recentSet) {
