@@ -896,6 +896,24 @@ if (cat !== "mare") {
 
     // escludi storia “pura” (castelli ecc) per non mischiare categoria
     if (t.includes("historic=castle") || t.includes("historic=fort") || t.includes("historic=citywalls") || t.includes("historic=ruins")) return false;
+    if (
+  t.includes("historic=monument") ||
+  t.includes("historic=memorial") ||
+  t.includes("historic=aqueduct") ||
+  t.includes("tourism=museum") ||
+  t.includes("amenity=place_of_worship") ||
+  hasAny(n, [
+    "torre",
+    "basilica",
+    "chiesa",
+    "palazzo",
+    "acquedotto",
+    "bagni",
+    "locomotiva",
+    "tumulo",
+    "mercato"
+  ])
+) return false;
 
     const isSettlement =
       t.includes("place=village") ||
