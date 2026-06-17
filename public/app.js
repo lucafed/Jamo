@@ -932,7 +932,15 @@ if (cat !== "mare") {
 
     const nameLooksBorgo = hasAny(n, ["borgo","centro storico","frazione","contrada","corte"]);
     const typeSaysBorgo = (type === "borghi" || type === "borgo");
-    if (["rocca", "belvedere", "il borgo", "castellaccio"].includes(n)) return false;
+    if ([
+  "rocca",
+  "belvedere",
+  "il borgo",
+  "castellaccio",
+  "castello",
+  "il mulino",
+  "mulino"
+].includes(n)) return false;
 
     if (isSettlement) {
   return (
