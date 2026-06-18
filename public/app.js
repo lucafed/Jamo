@@ -1582,7 +1582,12 @@ console.log("CHOSEN TYPE =", p.type);
     const tb = typeBadge(canonicalCategory(categoryUI));
     const contextLabel = originContextLabel(origin);
 
-const areaLabel =
+const datasetRegion =
+  datasetInfo?.region?.name ||
+  datasetInfo?.name ||
+  datasetInfo?.label ||
+  "";
+    const areaLabel =
   (p.area && p.area !== "IT")
     ? String(p.area).trim()
     : (contextLabel || "Italia");
