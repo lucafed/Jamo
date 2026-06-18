@@ -336,11 +336,12 @@ function originContextLabel(origin) {
       const o = JSON.parse(raw);
       if (Number.isFinite(Number(o?.lat)) && Number.isFinite(Number(o?.lon))) {
         setOrigin({
-          label: o.label,
-          lat: o.lat,
-          lon: o.lon,
-          country_code: o.country_code || "",
-        });
+  label: o.label,
+  display_label: o.display_label || o.label,
+  lat: o.lat,
+  lon: o.lon,
+  country_code: o.country_code || "",
+});
         collapseOriginCard(true);
       }
     } catch {}
