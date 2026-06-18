@@ -1954,7 +1954,8 @@ const areaLabel =
 
         const result = await geocodeLabel(label);
         setOrigin({
-          label: result.label || label,
+          label: label || result.label,
+display_label: label || result.label,
           lat: result.lat,
           lon: result.lon,
           country_code: result.country_code || "",
