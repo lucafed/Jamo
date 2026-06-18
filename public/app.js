@@ -927,12 +927,10 @@ if (cat !== "mare") {
   ])
 ) return false;
 
-    const isSettlement =
-      t.includes("place=village") ||
-      t.includes("place=hamlet") ||
-      t.includes("place=town") ||
-      t.includes("place=suburb") ||
-      t.includes("place=neighbourhood");
+   const isSettlement =
+  t.includes("place=village") ||
+  t.includes("place=hamlet") ||
+  t.includes("place=town");
 
     const nameLooksBorgo = hasAny(n, ["borgo","centro storico","frazione","contrada","corte"]);
     const typeSaysBorgo = (type === "borghi" || type === "borgo");
@@ -945,6 +943,13 @@ if (cat !== "mare") {
   "il mulino",
   "mulino"
 ].includes(n)) return false;
+    if (
+  n.startsWith("zona ") ||
+  n.startsWith("localita ") ||
+  n.startsWith("regione ") ||
+  n.startsWith("contrada ") ||
+  n.startsWith("case ")
+) return false;
 
     if (isSettlement) {
   return (
