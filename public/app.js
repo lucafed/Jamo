@@ -232,8 +232,8 @@ function originContextLabel(origin) {
   }
 
   // -------------------- ORIGIN STORAGE --------------------
-  function setOrigin({ label, lat, lon, country_code }) {
-    $("originLabel") && ($("originLabel").value = label ?? "");
+  function setOrigin({ label, display_label, lat, lon, country_code }) {
+   $("originLabel") && ($("originLabel").value = display_label || label || "");
     $("originLat") && ($("originLat").value = String(lat));
     $("originLon") && ($("originLon").value = String(lon));
 
@@ -242,7 +242,7 @@ function originContextLabel(origin) {
 
     localStorage.setItem(
       "jamo_origin",
-      JSON.stringify({ label, lat, lon, country_code: cc })
+      JSON.stringify({ label, display_label: display_label || label, lat, lon, country_code: cc })
     );
 
     if ($("originStatus")) {
