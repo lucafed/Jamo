@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-06-18T14:28:04.282Z",
+  "generated_at": "2026-06-18T14:36:01.016Z",
   "places": [
     {
       "id": "node:62513274",
@@ -29,7 +29,7 @@
         "wikidata=Q43014",
         "wikipedia=it:Sabbioneta"
       ],
-      "score": 295
+      "score": 395
     },
     {
       "id": "node:3880134851",
@@ -46,7 +46,7 @@
         "wikidata=Q2910854",
         "wikipedia=it:Borghetto (Piacenza)"
       ],
-      "score": 240
+      "score": 340
     },
     {
       "id": "node:337546297",
@@ -61,7 +61,7 @@
         "wikidata=Q2910855",
         "wikipedia=it:Borghetto (Valeggio sul Mincio)"
       ],
-      "score": 235
+      "score": 335
     },
     {
       "id": "node:1246161396",
@@ -76,7 +76,7 @@
         "wikidata=Q18497367",
         "wikipedia=it:Borghetto (San Martino di Lupari)"
       ],
-      "score": 235
+      "score": 335
     },
     {
       "id": "node:1388402818",
@@ -93,7 +93,22 @@
         "wikidata=Q2438806",
         "wikipedia=it:Malborghetto di Boara"
       ],
-      "score": 235
+      "score": 335
+    },
+    {
+      "id": "node:1409597919",
+      "name": "Villa d'Asolo",
+      "lat": 45.7717882,
+      "lon": 11.90074,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "name=Villa d'Asolo",
+        "place=village",
+        "wikidata=Q2580067",
+        "wikipedia=it:Villa d'Asolo"
+      ],
+      "score": 335
     },
     {
       "id": "node:1425100894",
@@ -109,7 +124,42 @@
         "wikidata=Q3634964",
         "wikipedia=it:Bargano"
       ],
-      "score": 235
+      "score": 335
+    },
+    {
+      "id": "node:4431492600",
+      "name": "Gratacasolo",
+      "lat": 45.8323222,
+      "lon": 10.130961,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "name=Gratacasolo",
+        "place=village",
+        "wikidata=Q2298140",
+        "wikipedia=it:Gratacasolo"
+      ],
+      "score": 335
+    },
+    {
+      "id": "relation:43968",
+      "name": "Bosaro",
+      "lat": 45.0071714,
+      "lon": 11.7800519,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "admin_level=8",
+        "boundary=administrative",
+        "name=Bosaro",
+        "postal_code=45033",
+        "ref:ISTAT=029007",
+        "ref:catasto=B069",
+        "type=boundary",
+        "wikidata=Q34517",
+        "wikipedia=it:Bosaro"
+      ],
+      "score": 320
     },
     {
       "id": "relation:44001",
@@ -130,7 +180,7 @@
         "wikidata=Q43014",
         "wikipedia=it:Sabbioneta"
       ],
-      "score": 220
+      "score": 320
     },
     {
       "id": "relation:44442",
@@ -149,7 +199,47 @@
         "wikidata=Q42376",
         "wikipedia=it:Borghetto Lodigiano"
       ],
-      "score": 220
+      "score": 320
+    },
+    {
+      "id": "relation:44467",
+      "name": "Montagnana",
+      "lat": 45.2340387,
+      "lon": 11.4764222,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "admin_level=8",
+        "boundary=administrative",
+        "name=Montagnana",
+        "postal_code=35044",
+        "ref:ISTAT=028056",
+        "ref:catasto=F394",
+        "type=boundary",
+        "wikidata=Q34605",
+        "wikipedia=it:Montagnana"
+      ],
+      "score": 320
+    },
+    {
+      "id": "relation:44699",
+      "name": "Valeggio sul Mincio",
+      "lat": 45.3543793,
+      "lon": 10.7385947,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "admin_level=8",
+        "boundary=administrative",
+        "name=Valeggio sul Mincio",
+        "postal_code=37067",
+        "ref:ISTAT=023089",
+        "ref:catasto=L567",
+        "type=boundary",
+        "wikidata=Q48033",
+        "wikipedia=it:Valeggio sul Mincio"
+      ],
+      "score": 320
     },
     {
       "id": "relation:44920",
@@ -169,7 +259,169 @@
         "wikidata=Q47876",
         "wikipedia=it:Soave"
       ],
-      "score": 220
+      "score": 320
+    },
+    {
+      "id": "relation:45072",
+      "name": "Sirmione",
+      "lat": 45.4784875,
+      "lon": 10.6123782,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "admin_level=8",
+        "boundary=administrative",
+        "name=Sirmione",
+        "postal_code=25019",
+        "ref:ISTAT=017179",
+        "ref:catasto=I633",
+        "type=boundary",
+        "wikidata=Q112019",
+        "wikipedia=it:Sirmione"
+      ],
+      "score": 320
+    },
+    {
+      "id": "relation:45105",
+      "name": "Lazise",
+      "lat": 45.4788076,
+      "lon": 10.7104401,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "admin_level=8",
+        "boundary=administrative",
+        "name=Lazise",
+        "postal_code=37017",
+        "ref:ISTAT=023043",
+        "ref:catasto=E502",
+        "type=boundary",
+        "wikidata=Q46935",
+        "wikipedia=it:Lazise"
+      ],
+      "score": 320
+    },
+    {
+      "id": "relation:45820",
+      "name": "Marostica",
+      "lat": 45.7501855,
+      "lon": 11.6413287,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "admin_level=8",
+        "boundary=administrative",
+        "name=Marostica",
+        "postal_code=36063",
+        "ref:ISTAT=024057",
+        "ref:catasto=E970",
+        "type=boundary",
+        "wikidata=Q48090",
+        "wikipedia=it:Marostica"
+      ],
+      "score": 320
+    },
+    {
+      "id": "relation:45871",
+      "name": "Malcesine",
+      "lat": 45.7689083,
+      "lon": 10.8253008,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "admin_level=8",
+        "boundary=administrative",
+        "name=Malcesine",
+        "postal_code=37018",
+        "ref:ISTAT=023045",
+        "ref:catasto=E848",
+        "type=boundary",
+        "wikidata=Q47821",
+        "wikipedia=it:Malcesine"
+      ],
+      "score": 320
+    },
+    {
+      "id": "relation:46014",
+      "name": "Asolo",
+      "lat": 45.789694,
+      "lon": 11.911536,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "admin_level=8",
+        "boundary=administrative",
+        "name=Asolo",
+        "name:ru=Азоло",
+        "postal_code=31011",
+        "ref:ISTAT=026003",
+        "ref:catasto=A471",
+        "type=boundary",
+        "wikidata=Q29371",
+        "wikipedia=it:Asolo"
+      ],
+      "score": 320
+    },
+    {
+      "id": "relation:46562",
+      "name": "Cison di Valmarino",
+      "lat": 45.9756301,
+      "lon": 12.1678267,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "admin_level=8",
+        "boundary=administrative",
+        "name=Cison di Valmarino",
+        "postal_code=31030",
+        "ref:ISTAT=026018",
+        "ref:catasto=C735",
+        "type=boundary",
+        "wikidata=Q29402",
+        "wikipedia=it:Cison di Valmarino"
+      ],
+      "score": 320
+    },
+    {
+      "id": "relation:46894",
+      "name": "Albosaggia",
+      "lat": 46.106246,
+      "lon": 9.8630437,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "admin_level=8",
+        "boundary=administrative",
+        "name=Albosaggia",
+        "population=3013",
+        "population:date=2020",
+        "postal_code=23010",
+        "ref:ISTAT=014002",
+        "ref:catasto=A172",
+        "type=boundary",
+        "wikidata=Q39901",
+        "wikipedia=it:Albosaggia"
+      ],
+      "score": 320
+    },
+    {
+      "id": "node:64778877",
+      "name": "Valeggio sul Mincio",
+      "lat": 45.3537509,
+      "lon": 10.734546,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "gfoss_id=3179",
+        "name=Valeggio sul Mincio",
+        "place=town",
+        "population=15098",
+        "postal_code=37067",
+        "source=geodati.gfoss.it",
+        "wikidata=Q30031463",
+        "wikipedia=it:Valeggio sul Mincio"
+      ],
+      "score": 305
     },
     {
       "id": "node:303626554",
@@ -185,7 +437,39 @@
         "wikidata=Q16533212",
         "wikipedia=it:Borghetto sull'Adige"
       ],
-      "score": 205
+      "score": 305
+    },
+    {
+      "id": "node:449542981",
+      "name": "Crosara di Marostica",
+      "lat": 45.774045,
+      "lon": 11.613388,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "name=Crosara di Marostica",
+        "place=hamlet",
+        "wikidata=Q18506248",
+        "wikipedia=it:Crosara (Marostica)"
+      ],
+      "score": 305
+    },
+    {
+      "id": "node:1398660664",
+      "name": "Sirmione",
+      "lat": 45.492869,
+      "lon": 10.6077258,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "ele=66",
+        "name=Sirmione",
+        "place=town",
+        "population=7646",
+        "wikidata=Q112019",
+        "wikipedia=it:Sirmione"
+      ],
+      "score": 305
     },
     {
       "id": "node:1913706869",
@@ -200,7 +484,75 @@
         "wikidata=Q18441967",
         "wikipedia=it:Borghetto (Noceto)"
       ],
-      "score": 205
+      "score": 305
+    },
+    {
+      "id": "node:3755166040",
+      "name": "Piani di Bobbio",
+      "lat": 45.9609435,
+      "lon": 9.495932,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "ele=1660",
+        "name=Piani di Bobbio",
+        "place=hamlet",
+        "wikidata=Q3901958",
+        "wikipedia=it:Piani di Bobbio"
+      ],
+      "score": 305
+    },
+    {
+      "id": "node:62516117",
+      "name": "Albosaggia",
+      "lat": 46.1472316,
+      "lon": 9.8531698,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "ele=490",
+        "loc_name=Busasgia",
+        "name=Albosaggia",
+        "place=village",
+        "population=3000",
+        "wikidata=Q30022100"
+      ],
+      "score": 300
+    },
+    {
+      "id": "node:64778473",
+      "name": "Bosaro",
+      "lat": 45.0007997,
+      "lon": 11.7665362,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "gfoss_id=3628",
+        "name=Bosaro",
+        "place=village",
+        "population=1500",
+        "ref:ISTAT=029007",
+        "source=geodati.gfoss.it",
+        "wikidata=Q30023038"
+      ],
+      "score": 300
+    },
+    {
+      "id": "node:64778678",
+      "name": "Cison di Valmarino",
+      "lat": 45.9699873,
+      "lon": 12.1431366,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "gfoss_id=3396",
+        "name=Cison di Valmarino",
+        "place=village",
+        "population=2553",
+        "source=geodati.gfoss.it",
+        "wikidata=Q30024798"
+      ],
+      "score": 300
     },
     {
       "id": "node:64778889",
@@ -217,7 +569,24 @@
         "source=geodati.gfoss.it",
         "wikidata=Q30030755"
       ],
-      "score": 200
+      "score": 300
+    },
+    {
+      "id": "node:64778921",
+      "name": "Malcesine",
+      "lat": 45.7643442,
+      "lon": 10.8100598,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "gfoss_id=3135",
+        "name=Malcesine",
+        "place=village",
+        "population=3417",
+        "source=geodati.gfoss.it",
+        "wikidata=Q30027133"
+      ],
+      "score": 300
     },
     {
       "id": "node:380787789",
@@ -231,7 +600,7 @@
         "place=village",
         "wikidata=Q3662253"
       ],
-      "score": 200
+      "score": 300
     },
     {
       "id": "node:469862145",
@@ -245,7 +614,36 @@
         "place=village",
         "wikidata=Q18490915"
       ],
-      "score": 200
+      "score": 300
+    },
+    {
+      "id": "node:1080680713",
+      "name": "Lazise",
+      "lat": 45.5052005,
+      "lon": 10.7330245,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "name=Lazise",
+        "place=village",
+        "population=6901",
+        "wikidata=Q30026549"
+      ],
+      "score": 300
+    },
+    {
+      "id": "node:1674952842",
+      "name": "Montagnana",
+      "lat": 44.4767762,
+      "lon": 10.8246973,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "name=Montagnana",
+        "place=village",
+        "wikidata=Q18441350"
+      ],
+      "score": 300
     },
     {
       "id": "node:2775004516",
@@ -259,7 +657,21 @@
         "place=village",
         "wikidata=Q18439455"
       ],
-      "score": 200
+      "score": 300
+    },
+    {
+      "id": "node:7396085696",
+      "name": "Stilo de' Mariani",
+      "lat": 45.1633303,
+      "lon": 10.2514948,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "name=Stilo de' Mariani",
+        "place=village",
+        "wikidata=Q18488764"
+      ],
+      "score": 300
     },
     {
       "id": "node:62512974",
@@ -267,7 +679,7 @@
       "lat": 45.2132677,
       "lon": 9.4996828,
       "type": "borghi",
-      "visibility": "classica",
+      "visibility": "chicca",
       "tags": [
         "gfoss_id=7863",
         "name=Borghetto Lodigiano",
@@ -275,7 +687,7 @@
         "population=3740",
         "source=geodati.gfoss.it"
       ],
-      "score": 175
+      "score": 275
     },
     {
       "id": "node:2192564491",
@@ -291,7 +703,74 @@
         "source=http://www.resitalica.it/",
         "wikidata=Q18439458"
       ],
-      "score": 175
+      "score": 275
+    },
+    {
+      "id": "node:2717304726",
+      "name": "Dozza",
+      "lat": 44.5283198,
+      "lon": 11.3656189,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "name=Dozza",
+        "place=village"
+      ],
+      "score": 275
+    },
+    {
+      "id": "node:64779072",
+      "name": "Marostica",
+      "lat": 45.7453924,
+      "lon": 11.6568938,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "gfoss_id=3245",
+        "name=Marostica",
+        "name:vec=Marostega",
+        "place=town",
+        "population=13989",
+        "source=geodati.gfoss.it",
+        "wikidata=Q30027279"
+      ],
+      "score": 270
+    },
+    {
+      "id": "node:1374462942",
+      "name": "Asolo",
+      "lat": 45.8007265,
+      "lon": 11.9142444,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "name=Asolo",
+        "name:it=Asolo",
+        "name:la=Acelum",
+        "name:ru=Азоло",
+        "name:vec=Àxol",
+        "place=town",
+        "population=9128",
+        "wikidata=Q29371"
+      ],
+      "score": 270
+    },
+    {
+      "id": "node:1600857901",
+      "name": "Montagnana",
+      "lat": 45.2333207,
+      "lon": 11.4657779,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "gfoss_id=3571",
+        "name=Montagnana",
+        "place=town",
+        "population=9214",
+        "source=geodati.gfoss.it",
+        "wikidata=Q30027707"
+      ],
+      "score": 270
     },
     {
       "id": "node:8046384461",
@@ -305,7 +784,21 @@
         "place=hamlet",
         "wikidata=Q18464515"
       ],
-      "score": 170
+      "score": 270
+    },
+    {
+      "id": "node:13481490821",
+      "name": "Case Crema-Fasolo",
+      "lat": 45.1628,
+      "lon": 11.46402,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "name=Case Crema-Fasolo",
+        "place=hamlet",
+        "wikidata=Q18497666"
+      ],
+      "score": 270
     },
     {
       "id": "node:13481490900",
@@ -319,7 +812,7 @@
         "place=hamlet",
         "wikidata=Q18496141"
       ],
-      "score": 170
+      "score": 270
     },
     {
       "id": "node:62513426",
@@ -14713,21 +15206,6 @@
       "score": 115
     },
     {
-      "id": "node:1409597919",
-      "name": "Villa d'Asolo",
-      "lat": 45.7717882,
-      "lon": 11.90074,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Villa d'Asolo",
-        "place=village",
-        "wikidata=Q2580067",
-        "wikipedia=it:Villa d'Asolo"
-      ],
-      "score": 115
-    },
-    {
       "id": "node:1411057987",
       "name": "Col San Martino",
       "lat": 45.8944326,
@@ -18841,21 +19319,6 @@
         "wikidata=Q52437",
         "wikimedia_commons=Category:Murano",
         "wikipedia=it:Murano"
-      ],
-      "score": 115
-    },
-    {
-      "id": "node:4431492600",
-      "name": "Gratacasolo",
-      "lat": 45.8323222,
-      "lon": 10.130961,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Gratacasolo",
-        "place=village",
-        "wikidata=Q2298140",
-        "wikipedia=it:Gratacasolo"
       ],
       "score": 115
     },
@@ -24918,26 +25381,6 @@
       "score": 100
     },
     {
-      "id": "relation:43968",
-      "name": "Bosaro",
-      "lat": 45.0071714,
-      "lon": 11.7800519,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "admin_level=8",
-        "boundary=administrative",
-        "name=Bosaro",
-        "postal_code=45033",
-        "ref:ISTAT=029007",
-        "ref:catasto=B069",
-        "type=boundary",
-        "wikidata=Q34517",
-        "wikipedia=it:Bosaro"
-      ],
-      "score": 100
-    },
-    {
       "id": "relation:43971",
       "name": "Pontecchio Polesine",
       "lat": 45.0149275,
@@ -28740,26 +29183,6 @@
       "score": 100
     },
     {
-      "id": "relation:44467",
-      "name": "Montagnana",
-      "lat": 45.2340387,
-      "lon": 11.4764222,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "admin_level=8",
-        "boundary=administrative",
-        "name=Montagnana",
-        "postal_code=35044",
-        "ref:ISTAT=028056",
-        "ref:catasto=F394",
-        "type=boundary",
-        "wikidata=Q34605",
-        "wikipedia=it:Montagnana"
-      ],
-      "score": 100
-    },
-    {
       "id": "relation:44469",
       "name": "Fiesse",
       "lat": 45.2278097,
@@ -31064,26 +31487,6 @@
         "type=boundary",
         "wikidata=Q34545",
         "wikipedia=it:Vo'"
-      ],
-      "score": 100
-    },
-    {
-      "id": "relation:44699",
-      "name": "Valeggio sul Mincio",
-      "lat": 45.3543793,
-      "lon": 10.7385947,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "admin_level=8",
-        "boundary=administrative",
-        "name=Valeggio sul Mincio",
-        "postal_code=37067",
-        "ref:ISTAT=023089",
-        "ref:catasto=L567",
-        "type=boundary",
-        "wikidata=Q48033",
-        "wikipedia=it:Valeggio sul Mincio"
       ],
       "score": 100
     },
@@ -34552,26 +34955,6 @@
       "score": 100
     },
     {
-      "id": "relation:45072",
-      "name": "Sirmione",
-      "lat": 45.4784875,
-      "lon": 10.6123782,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "admin_level=8",
-        "boundary=administrative",
-        "name=Sirmione",
-        "postal_code=25019",
-        "ref:ISTAT=017179",
-        "ref:catasto=I633",
-        "type=boundary",
-        "wikidata=Q112019",
-        "wikipedia=it:Sirmione"
-      ],
-      "score": 100
-    },
-    {
       "id": "relation:45074",
       "name": "Castenedolo",
       "lat": 45.4654188,
@@ -34847,26 +35230,6 @@
         "type=boundary",
         "wikidata=Q100129",
         "wikipedia=it:Calvenzano"
-      ],
-      "score": 100
-    },
-    {
-      "id": "relation:45105",
-      "name": "Lazise",
-      "lat": 45.4788076,
-      "lon": 10.7104401,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "admin_level=8",
-        "boundary=administrative",
-        "name=Lazise",
-        "postal_code=37017",
-        "ref:ISTAT=023043",
-        "ref:catasto=E502",
-        "type=boundary",
-        "wikidata=Q46935",
-        "wikipedia=it:Lazise"
       ],
       "score": 100
     },
@@ -42075,26 +42438,6 @@
       "score": 100
     },
     {
-      "id": "relation:45820",
-      "name": "Marostica",
-      "lat": 45.7501855,
-      "lon": 11.6413287,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "admin_level=8",
-        "boundary=administrative",
-        "name=Marostica",
-        "postal_code=36063",
-        "ref:ISTAT=024057",
-        "ref:catasto=E970",
-        "type=boundary",
-        "wikidata=Q48090",
-        "wikipedia=it:Marostica"
-      ],
-      "score": 100
-    },
-    {
       "id": "relation:45824",
       "name": "Scanzorosciate",
       "lat": 45.7136546,
@@ -42395,26 +42738,6 @@
         "type=boundary",
         "wikidata=Q47658",
         "wikipedia=it:Zanè"
-      ],
-      "score": 100
-    },
-    {
-      "id": "relation:45871",
-      "name": "Malcesine",
-      "lat": 45.7689083,
-      "lon": 10.8253008,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "admin_level=8",
-        "boundary=administrative",
-        "name=Malcesine",
-        "postal_code=37018",
-        "ref:ISTAT=023045",
-        "ref:catasto=E848",
-        "type=boundary",
-        "wikidata=Q47821",
-        "wikipedia=it:Malcesine"
       ],
       "score": 100
     },
@@ -43580,27 +43903,6 @@
         "type=boundary",
         "wikidata=Q46752",
         "wikipedia=it:Fonte (Italia)"
-      ],
-      "score": 100
-    },
-    {
-      "id": "relation:46014",
-      "name": "Asolo",
-      "lat": 45.789694,
-      "lon": 11.911536,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "admin_level=8",
-        "boundary=administrative",
-        "name=Asolo",
-        "name:ru=Азоло",
-        "postal_code=31011",
-        "ref:ISTAT=026003",
-        "ref:catasto=A471",
-        "type=boundary",
-        "wikidata=Q29371",
-        "wikipedia=it:Asolo"
       ],
       "score": 100
     },
@@ -47194,26 +47496,6 @@
       "score": 100
     },
     {
-      "id": "relation:46562",
-      "name": "Cison di Valmarino",
-      "lat": 45.9756301,
-      "lon": 12.1678267,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "admin_level=8",
-        "boundary=administrative",
-        "name=Cison di Valmarino",
-        "postal_code=31030",
-        "ref:ISTAT=026018",
-        "ref:catasto=C735",
-        "type=boundary",
-        "wikidata=Q29402",
-        "wikipedia=it:Cison di Valmarino"
-      ],
-      "score": 100
-    },
-    {
       "id": "relation:46563",
       "name": "Tarzo",
       "lat": 45.9654764,
@@ -49525,28 +49807,6 @@
         "type=boundary",
         "wikidata=Q40798",
         "wikipedia=it:Sospirolo"
-      ],
-      "score": 100
-    },
-    {
-      "id": "relation:46894",
-      "name": "Albosaggia",
-      "lat": 46.106246,
-      "lon": 9.8630437,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "admin_level=8",
-        "boundary=administrative",
-        "name=Albosaggia",
-        "population=3013",
-        "population:date=2020",
-        "postal_code=23010",
-        "ref:ISTAT=014002",
-        "ref:catasto=A172",
-        "type=boundary",
-        "wikidata=Q39901",
-        "wikipedia=it:Albosaggia"
       ],
       "score": 100
     },
@@ -56407,281 +56667,6 @@
         "population=60",
         "wikidata=Q3662264",
         "wikipedia=it:Castelletto (Polpenazze del Garda)"
-      ],
-      "score": 90
-    },
-    {
-      "id": "node:3080029767",
-      "name": "Paniga",
-      "lat": 46.1453529,
-      "lon": 9.6117014,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "ele=241",
-        "name=Paniga",
-        "place=hamlet",
-        "population=376",
-        "wikidata=Q3893295",
-        "wikipedia=it:Paniga"
-      ],
-      "score": 90
-    },
-    {
-      "id": "node:3164529402",
-      "name": "Forcello",
-      "lat": 45.0959299,
-      "lon": 10.0916648,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Forcello",
-        "place=hamlet",
-        "population=29",
-        "wikidata=Q3747949",
-        "wikipedia=it:Forcello"
-      ],
-      "score": 90
-    },
-    {
-      "id": "node:3216443093",
-      "name": "Cassignanica",
-      "lat": 45.4561622,
-      "lon": 9.3455536,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "ele=108",
-        "loc_name=Cassgnanega",
-        "loc_name:pronunciation=kazɲaˈneːɡa",
-        "name=Cassignanica",
-        "place=hamlet",
-        "population=163",
-        "population:date=2001",
-        "wikidata=Q3662002",
-        "wikimedia_commons=Category:Cassignanica",
-        "wikipedia=it:Cassignanica"
-      ],
-      "score": 90
-    },
-    {
-      "id": "node:3329879776",
-      "name": "Bocca Chiavica",
-      "lat": 45.036916,
-      "lon": 10.5968561,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Bocca Chiavica",
-        "place=hamlet",
-        "population=17",
-        "source=www.resitalica.it",
-        "wikidata=Q3641456",
-        "wikipedia=it:Bocca Chiavica"
-      ],
-      "score": 90
-    },
-    {
-      "id": "node:3398303435",
-      "name": "Corte Sant'Andrea",
-      "lat": 45.1322932,
-      "lon": 9.5566578,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Corte Sant'Andrea",
-        "place=hamlet",
-        "population=22",
-        "source=Censimento ISTAT 2001",
-        "wikidata=Q655461",
-        "wikipedia=it:Corte Sant'Andrea"
-      ],
-      "score": 90
-    },
-    {
-      "id": "node:3612597622",
-      "name": "Taranta",
-      "lat": 45.5254982,
-      "lon": 9.5363446,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "loc_name=Cascina Taranta",
-        "name=Taranta",
-        "official_name=Località Taranta",
-        "place=hamlet",
-        "population=115",
-        "wikidata=Q2266879",
-        "wikipedia=it:Taranta (Cassano d'Adda)"
-      ],
-      "score": 90
-    },
-    {
-      "id": "node:3854638897",
-      "name": "Roncarolo",
-      "lat": 45.0657271,
-      "lon": 9.8440527,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "is_in=Coarso",
-        "loc_name=Roncaröl",
-        "name=Roncarolo",
-        "place=hamlet",
-        "population=87",
-        "wikidata=Q3941043",
-        "wikipedia=it:Roncarolo"
-      ],
-      "score": 90
-    },
-    {
-      "id": "node:3859038528",
-      "name": "Zerbio",
-      "lat": 45.0635139,
-      "lon": 9.8602653,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "is_in=Coarso",
-        "name=Zerbio",
-        "place=hamlet",
-        "population=226",
-        "source=www.resitalica.it",
-        "wikidata=Q191510",
-        "wikipedia=it:Zerbio"
-      ],
-      "score": 90
-    },
-    {
-      "id": "node:3891872536",
-      "name": "Enzola",
-      "lat": 44.8401507,
-      "lon": 10.4808513,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Enzola",
-        "place=hamlet",
-        "population=162",
-        "wikidata=Q3726672",
-        "wikipedia=it:Enzola"
-      ],
-      "score": 90
-    },
-    {
-      "id": "node:3891905194",
-      "name": "Casalpò",
-      "lat": 44.8336075,
-      "lon": 10.5155611,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Casalpò",
-        "place=hamlet",
-        "population=150",
-        "wikidata=Q18416872",
-        "wikipedia=it:Casalpò"
-      ],
-      "score": 90
-    },
-    {
-      "id": "node:4194185212",
-      "name": "Desco",
-      "lat": 46.1473798,
-      "lon": 9.626209,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "ele=290",
-        "name=Desco",
-        "place=hamlet",
-        "population=101",
-        "wikidata=Q3705917",
-        "wikipedia=it:Desco (Morbegno)"
-      ],
-      "score": 90
-    },
-    {
-      "id": "node:4290487932",
-      "name": "Centa San Nicolò",
-      "lat": 45.9682716,
-      "lon": 11.2325705,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=2920",
-        "loc_name=Zenta",
-        "name=Centa San Nicolò",
-        "name:cim=Tschint",
-        "name:it=Centa San Nicolò",
-        "place=hamlet",
-        "population=194",
-        "wikidata=Q267518",
-        "wikipedia=it:Centa San Nicolò"
-      ],
-      "score": 90
-    },
-    {
-      "id": "node:4429692930",
-      "name": "Santa Maria del Mare",
-      "lat": 45.3301236,
-      "lon": 12.3260529,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Santa Maria del Mare",
-        "place=hamlet",
-        "population=140",
-        "wikidata=Q2184285",
-        "wikipedia=it:San Pietro in Volta"
-      ],
-      "score": 90
-    },
-    {
-      "id": "node:4446265120",
-      "name": "Santa Maria",
-      "lat": 45.952539,
-      "lon": 11.9270915,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Santa Maria",
-        "place=hamlet",
-        "population=62",
-        "wikidata=Q17456833",
-        "wikipedia=it:Santa Maria (Quero Vas)"
-      ],
-      "score": 90
-    },
-    {
-      "id": "node:4487739802",
-      "name": "Breda Guazzona",
-      "lat": 45.1096158,
-      "lon": 10.3067574,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Breda Guazzona",
-        "place=hamlet",
-        "population=16",
-        "wikidata=Q3644154",
-        "wikipedia=it:Breda Guazzona"
-      ],
-      "score": 90
-    },
-    {
-      "id": "node:4529129743",
-      "name": "Brolpasino",
-      "lat": 45.1277028,
-      "lon": 10.2946022,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Brolpasino",
-        "place=hamlet",
-        "population=15",
-        "wikidata=Q3645266",
-        "wikipedia=it:Brolpasino"
       ],
       "score": 90
     }
