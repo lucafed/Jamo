@@ -1588,6 +1588,9 @@ const datasetRegion =
   datasetInfo?.name ||
   datasetInfo?.label ||
   "";
+    console.log("DATASET REGION =", datasetRegion);
+console.log("CONTEXT LABEL =", contextLabel);
+console.log("PLACE AREA =", p.area);
    const areaLabel =
   (p.area && p.area !== "IT")
     ? String(p.area).trim()
