@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-06-18T14:08:10.779Z",
+  "generated_at": "2026-06-18T14:28:04.282Z",
   "places": [
     {
       "id": "node:62513274",
@@ -320,45 +320,6 @@
         "wikidata=Q18496141"
       ],
       "score": 170
-    },
-    {
-      "id": "node:418865058",
-      "name": "Borghetto",
-      "lat": 44.8604804,
-      "lon": 10.3402582,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Borghetto",
-        "place=hamlet"
-      ],
-      "score": 145
-    },
-    {
-      "id": "node:6292128396",
-      "name": "Borghetto",
-      "lat": 45.7021663,
-      "lon": 9.6153814,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Borghetto",
-        "place=hamlet"
-      ],
-      "score": 145
-    },
-    {
-      "id": "node:9388712682",
-      "name": "Borghetto",
-      "lat": 44.780538,
-      "lon": 10.1784277,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Borghetto",
-        "place=hamlet"
-      ],
-      "score": 145
     },
     {
       "id": "node:62513426",
@@ -36760,26 +36721,6 @@
       "score": 100
     },
     {
-      "id": "relation:45290",
-      "name": "Campo San Martino",
-      "lat": 45.5560718,
-      "lon": 11.8318681,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "admin_level=8",
-        "boundary=administrative",
-        "name=Campo San Martino",
-        "postal_code=35010",
-        "ref:ISTAT=028020",
-        "ref:catasto=B564",
-        "type=boundary",
-        "wikidata=Q34473",
-        "wikipedia=it:Campo San Martino"
-      ],
-      "score": 100
-    },
-    {
       "id": "relation:45291",
       "name": "Pontoglio",
       "lat": 45.5632047,
@@ -54439,22 +54380,6 @@
       "score": 90
     },
     {
-      "id": "node:64776516",
-      "name": "Campo Lomaso",
-      "lat": 46.0241478,
-      "lon": 10.8660956,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Campo Lomaso",
-        "place=hamlet",
-        "population=232",
-        "wikidata=Q44181653",
-        "wikipedia=it:Campo (Comano Terme)"
-      ],
-      "score": 90
-    },
-    {
       "id": "node:64776700",
       "name": "Zuclo",
       "lat": 46.0346974,
@@ -56673,6 +56598,90 @@
         "population=101",
         "wikidata=Q3705917",
         "wikipedia=it:Desco (Morbegno)"
+      ],
+      "score": 90
+    },
+    {
+      "id": "node:4290487932",
+      "name": "Centa San Nicolò",
+      "lat": 45.9682716,
+      "lon": 11.2325705,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=2920",
+        "loc_name=Zenta",
+        "name=Centa San Nicolò",
+        "name:cim=Tschint",
+        "name:it=Centa San Nicolò",
+        "place=hamlet",
+        "population=194",
+        "wikidata=Q267518",
+        "wikipedia=it:Centa San Nicolò"
+      ],
+      "score": 90
+    },
+    {
+      "id": "node:4429692930",
+      "name": "Santa Maria del Mare",
+      "lat": 45.3301236,
+      "lon": 12.3260529,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Santa Maria del Mare",
+        "place=hamlet",
+        "population=140",
+        "wikidata=Q2184285",
+        "wikipedia=it:San Pietro in Volta"
+      ],
+      "score": 90
+    },
+    {
+      "id": "node:4446265120",
+      "name": "Santa Maria",
+      "lat": 45.952539,
+      "lon": 11.9270915,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Santa Maria",
+        "place=hamlet",
+        "population=62",
+        "wikidata=Q17456833",
+        "wikipedia=it:Santa Maria (Quero Vas)"
+      ],
+      "score": 90
+    },
+    {
+      "id": "node:4487739802",
+      "name": "Breda Guazzona",
+      "lat": 45.1096158,
+      "lon": 10.3067574,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Breda Guazzona",
+        "place=hamlet",
+        "population=16",
+        "wikidata=Q3644154",
+        "wikipedia=it:Breda Guazzona"
+      ],
+      "score": 90
+    },
+    {
+      "id": "node:4529129743",
+      "name": "Brolpasino",
+      "lat": 45.1277028,
+      "lon": 10.2946022,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Brolpasino",
+        "place=hamlet",
+        "population=15",
+        "wikidata=Q3645266",
+        "wikipedia=it:Brolpasino"
       ],
       "score": 90
     }
