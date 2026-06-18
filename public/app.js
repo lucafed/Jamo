@@ -54,6 +54,7 @@
   let CURRENT_CHOSEN = null;
 
   let LAST_DATASET_INFO = "";
+  let LAST_REGION_NAME = "";
   let LAST_USED_MINUTES = null;
   let LAST_MAX_MINUTES_INPUT = null;
 
