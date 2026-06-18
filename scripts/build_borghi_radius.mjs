@@ -199,29 +199,79 @@ if (hasAnyTag(t, ["historic"]) && hasAnyTag(t, ["wikipedia"])) s += 20;
   // Extra: se ha “tourism” ma resta un place/boundary, ok (qualche comune lo mette)
   if (hasAnyTag(t, ["tourism"])) s += 10;
   const iconic = [
+  // Veneto / Lombardia / Nord
+  "borghetto sul mincio",
+  "borghetto",
+  "valeggio sul mincio",
+  "sirmione",
+  "malcesine",
+  "lazise",
+  "soave",
+  "asolo",
+  "cison di valmarino",
+  "arqua petrarca",
+  "montagnana",
+  "marostica",
+  "castellaro lagusello",
+  "sabbioneta",
+  "orta san giulio",
+  "dozza",
+  "bobbio",
+
+  // Toscana / Umbria / Lazio
   "bolgheri",
   "san gimignano",
   "certaldo",
   "monteriggioni",
   "volterra",
-  "anghiari",
-  "suvereto",
   "pienza",
   "pitigliano",
   "montepulciano",
+  "anghiari",
+  "suvereto",
   "poppi",
   "barga",
   "castelmuzio",
   "castiglion del bosco",
   "montefioralle",
-  "sabbioneta",
-  "borghetto",
-  "soave",
-  "arqua petrarca",
-  "castellaro lagusello"
+  "civita di bagnoregio",
+  "spello",
+  "rasiglia",
+  "calcata",
+  "sermoneta",
+  "vico nel lazio",
+
+  // Abruzzo / Molise / Marche
+  "santo stefano di sessanio",
+  "scanno",
+  "pescocostanzo",
+  "castel del monte",
+  "civitella del tronto",
+  "pacentro",
+  "atri",
+  "gradara",
+  "corinaldo",
+  "offagna",
+  "treia",
+  "montefiore dell aso",
+
+  // Sud e isole
+  "castelmezzano",
+  "pietrapertosa",
+  "rocca imperiale",
+  "gerace",
+  "stilo",
+  "savoca",
+  "castelmola",
+  "erice",
+  "sambuca di sicilia",
+  "cefalu",
+  "bosa",
+  "castelsardo",
+  "orgosolo"
 ];
 
-if (iconic.some((x) => name.includes(x))) s += 120;
+if (iconic.some((x) => name.includes(x))) s += 220;
 
   return s;
 }
