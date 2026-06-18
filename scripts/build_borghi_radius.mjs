@@ -97,6 +97,28 @@ function isNotBorgo(place) {
   const isAdmin = lower(t.boundary) === "administrative" && ["8", "9"].includes(str(t.admin_level));
 
   if (!isSettlement && !isAdmin) return true;
+  const placeType = lower(t.place);
+
+const hasTouristProof =
+  hasAnyTag(t, ["wikipedia", "wikidata", "heritage", "historic", "tourism", "website"]) ||
+  name.includes("borgo") ||
+  name.includes("castello") ||
+  name.includes("rocca");
+
+if (placeType === "hamlet" && !hasTouristProof) return true;
+
+if (
+  placeType === "village" &&
+  !hasTouristProof &&
+  (
+    name.includes("cascina") ||
+    name.includes("maso") ||
+    name.includes("case ") ||
+    name.startsWith("case ") ||
+    name.startsWith("corte ") ||
+    name.startsWith("contrada ")
+  )
+) return true;
 
   // Nomi palesemente non-meta
   if (!name) return true;
@@ -104,6 +126,10 @@ function isNotBorgo(place) {
   if (name.includes("case sparse")) return true;
   if (name.includes("zona industriale")) return true;
   if (name.includes("area industriale")) return true;
+  if (name.startsWith("zona ")) return true;
+if (name.startsWith("regione ")) return true;
+if (name.startsWith("localita ")) return true;
+if (name.startsWith("campo ")) return true;
 
   // “città grandi” fuori concetto di borgo (le vogliamo fuori dai borghi)
   if (BIG_CITIES.has(name)) return true;
