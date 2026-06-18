@@ -1588,10 +1588,10 @@ const datasetRegion =
   datasetInfo?.name ||
   datasetInfo?.label ||
   "";
-    const areaLabel =
+   const areaLabel =
   (p.area && p.area !== "IT")
     ? String(p.area).trim()
-    : (contextLabel || "Italia");
+    : (datasetRegion || contextLabel || "Italia");
     const name = p.name || "";
 
     const lat = Number(p.lat);
