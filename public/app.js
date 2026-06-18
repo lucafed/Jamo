@@ -1923,6 +1923,7 @@ console.log("PLACE AREA =", p.area);
       VISIBLE_ALTS = Math.min(CFG.ALTS_INITIAL, maxAlts);
 
       LAST_DATASET_INFO = chosenDatasetInfo;
+      LAST_REGION_NAME = region?.name || "";
       LAST_USED_MINUTES = usedMinutes;
       LAST_MAX_MINUTES_INPUT = maxMinutesInput;
 
