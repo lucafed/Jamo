@@ -1251,27 +1251,38 @@ if (cat !== "mare") {
   let s = 0;
 
   if (cat === "borghi") {
-    if (t.includes("wikipedia=") || t.includes("wikidata=")) s += 0.18;
-    if (t.includes("historic=") || t.includes("heritage=")) s += 0.16;
-    if (t.includes("tourism=attraction")) s += 0.12;
+    const hasWiki = t.includes("wikipedia=") || t.includes("wikidata=");
+    const hasHistoric = t.includes("historic=") || t.includes("heritage=");
+    const hasTourism = t.includes("tourism=attraction");
+
+    if (hasWiki) s += 0.18;
+    if (hasHistoric) s += 0.18;
+    if (hasTourism) s += 0.10;
+
+    if (hasWiki && hasHistoric) s += 0.18;
+    if (hasWiki && hasTourism) s += 0.10;
 
     if (hasAny(n, [
-      "centro storico",
       "borgo medievale",
       "borgo medioevale",
-      "castello",
-      "rocca"
-    ])) s += 0.18;
+      "centro storico",
+      "borgo antico"
+    ])) s += 0.22;
 
-    if (t.includes("place=town")) s -= 0.18;
-    if (t.includes("place=suburb") || t.includes("place=neighbourhood")) s -= 0.28;
+    if (t.includes("place=hamlet") && !hasWiki && !hasHistoric && !hasTourism) s -= 0.18;
 
     if (hasAny(n, [
-      "solvay",
-      "zona industriale",
-      "belvedere",
-      "il borgo"
-    ])) s -= 0.25;
+      "cascina",
+      "case ",
+      "ponte ",
+      "campo ",
+      "zona ",
+      "regione ",
+      "localita "
+    ])) s -= 0.20;
+
+    if (t.includes("place=town")) s -= 0.08;
+    if (t.includes("place=suburb") || t.includes("place=neighbourhood")) s -= 0.30;
   }
 
   return s;
