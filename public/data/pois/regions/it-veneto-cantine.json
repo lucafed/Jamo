@@ -7,7 +7,7 @@
     "minLon": 10.2,
     "maxLon": 13.2
   },
-  "generated_at": "2026-06-11T07:19:47.494Z",
+  "generated_at": "2026-06-18T07:23:10.870Z",
   "places": [
     {
       "id": "node:12766026527",
@@ -996,6 +996,27 @@
         "opening_hours=Mo-Fr 09:00-18:00; Sa-Su 10:00-18:00",
         "phone=+390423720198",
         "website=https://www.giustiwine.com/"
+      ],
+      "score": 94,
+      "beauty_score": 1
+    },
+    {
+      "id": "way:1529870782",
+      "name": "Le Vigne Terre di Confine",
+      "lat": 45.7252556,
+      "lon": 11.5822851,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Fara Vicentino",
+        "addr:postcode=36030",
+        "addr:street=Via Perlena",
+        "building=yes",
+        "craft=winery",
+        "name=Le Vigne Terre di Confine",
+        "opening_hours=Fr 17:30-00:00, Sa 09-12:30 17:30-00:00, Su 17:30-00:00",
+        "phone=+3904451670127",
+        "website=https://www.levigneterrediconfine.it"
       ],
       "score": 94,
       "beauty_score": 1
@@ -2196,8 +2217,8 @@
     {
       "id": "way:141028896",
       "name": "Ca' Botta Wine shop",
-      "lat": 45.5350707,
-      "lon": 11.0049664,
+      "lat": 45.535286,
+      "lon": 11.0047891,
       "type": "cantine",
       "visibility": "classica",
       "tags": [
