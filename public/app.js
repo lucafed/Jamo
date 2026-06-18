@@ -1585,6 +1585,7 @@ console.log("CHOSEN TYPE =", p.type);
     const contextLabel = originContextLabel(origin);
 
 const datasetRegion =
+  LAST_REGION_NAME ||
   datasetInfo?.region?.name ||
   datasetInfo?.name ||
   datasetInfo?.label ||
