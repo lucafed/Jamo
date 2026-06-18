@@ -941,7 +941,8 @@ if (cat !== "mare") {
   "castellaccio",
   "castello",
   "il mulino",
-  "mulino"
+  "mulino",
+      "centro storico"
 ].includes(n)) return false;
     if (
   n.startsWith("zona ") ||
