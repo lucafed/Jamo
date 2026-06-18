@@ -148,16 +148,18 @@ if (placeType === "town") s += 25;
   if (lower(t.boundary) === "administrative") s += 40;
 
   // Segnali turistico-storici “puliti”
-  if (hasAnyTag(t, ["wikipedia"])) s += 25;
-  if (hasAnyTag(t, ["wikidata"])) s += 15;
-  if (hasAnyTag(t, ["heritage"])) s += 25;
-  if (hasAnyTag(t, ["historic"])) s += 25;
+  if (hasAnyTag(t, ["wikipedia"])) s += 35;
+  if (hasAnyTag(t, ["wikidata"])) s += 25;
+  if (hasAnyTag(t, ["heritage"])) s += 35;
+  if (hasAnyTag(t, ["historic"])) s += 30;
 
   // Se ha un centro storico dichiarato (a volte)
   if (name.includes("borgo")) s += 10;
   if (name.includes("castello") || name.includes("rocca")) s += 8; // spesso borghi con castello
   if (name.includes("antico") || name.includes("medieval")) s += 8;
   if (name.includes("storico")) s += 10;
+  if (hasAnyTag(t, ["heritage"]) && hasAnyTag(t, ["wikipedia"])) s += 25;
+if (hasAnyTag(t, ["historic"]) && hasAnyTag(t, ["wikipedia"])) s += 20;
 
   // Penalità per “troppo grande” se abbiamo popolazione
   const pop = numOrNull(t.population);
