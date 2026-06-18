@@ -247,8 +247,8 @@ function originContextLabel(origin) {
 
     if ($("originStatus")) {
       $("originStatus").textContent = `✅ Partenza impostata: ${
-        label || "posizione"
-      } (${Number(lat).toFixed(4)}, ${Number(lon).toFixed(4)})${
+  display_label || label || "posizione"
+} (${Number(lat).toFixed(4)}, ${Number(lon).toFixed(4)})${
         cc ? " • " + cc : ""
       }`;
     }
