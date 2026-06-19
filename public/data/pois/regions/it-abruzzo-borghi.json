@@ -1,7 +1,7 @@
 {
   "region_id": "it-abruzzo-borghi",
   "label_it": "Abruzzo • borghi",
-  "generated_at": "2026-06-19T09:08:07.567Z",
+  "generated_at": "2026-06-19T09:14:54.752Z",
   "places": [
     {
       "id": "curated:borgo:scanno",
@@ -148,6 +148,192 @@
       "score": 2660
     },
     {
+      "id": "node:70993833",
+      "name": "Atri",
+      "lat": 42.5797836,
+      "lon": 13.97535,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "facebook=https://www.facebook.com/comune.atri",
+        "gfoss_id=5819",
+        "name=Atri",
+        "place=town",
+        "population=10772",
+        "source=geodati.gfoss.it",
+        "website=https://www.comune.atri.te.it",
+        "wikidata=Q51420",
+        "wikipedia=it:Atri"
+      ],
+      "score": 1573
+    },
+    {
+      "id": "node:70992685",
+      "name": "Pescasseroli",
+      "lat": 41.808401,
+      "lon": 13.789282,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "gfoss_id=5775",
+        "name=Pescasseroli",
+        "place=town",
+        "population=2130",
+        "source=geodati.gfoss.it",
+        "wikidata=Q30028737",
+        "wikimedia_commons=Category:Pescasseroli",
+        "wikipedia=it:Pescasseroli"
+      ],
+      "score": 1567
+    },
+    {
+      "id": "node:70992933",
+      "name": "Tagliacozzo",
+      "lat": 42.069327,
+      "lon": 13.254692,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "gfoss_id=5806",
+        "name=Tagliacozzo",
+        "place=town",
+        "population=6532",
+        "source=geodati.gfoss.it",
+        "wikidata=Q30030985",
+        "wikimedia_commons=Category:Tagliacozzo",
+        "wikipedia=it:Tagliacozzo"
+      ],
+      "score": 1567
+    },
+    {
+      "id": "node:70993164",
+      "name": "Roccaraso",
+      "lat": 41.8502606,
+      "lon": 14.0782574,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "gfoss_id=5791",
+        "name=Roccaraso",
+        "place=village",
+        "population=1604",
+        "source=geodati.gfoss.it",
+        "wikidata=Q30029488",
+        "wikipedia=it:Roccaraso"
+      ],
+      "score": 1567
+    },
+    {
+      "id": "node:70993279",
+      "name": "Città Sant'Angelo",
+      "lat": 42.518144,
+      "lon": 14.059203,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "ele=317",
+        "gfoss_id=5874",
+        "name=Città Sant'Angelo",
+        "place=town",
+        "population=14969",
+        "source=geodati.gfoss.it",
+        "source:ele=guidepost",
+        "twin_town=Nicolosi (Catania)",
+        "wikidata=Q51356",
+        "wikipedia=it:Città Sant'Angelo"
+      ],
+      "score": 1567
+    },
+    {
+      "id": "node:70993297",
+      "name": "Loreto Aprutino",
+      "lat": 42.434634,
+      "lon": 13.9832322,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "gfoss_id=5883",
+        "name=Loreto Aprutino",
+        "place=town",
+        "population=7123",
+        "source=geodati.gfoss.it",
+        "source:population=ISTAT",
+        "wikidata=Q51369",
+        "wikipedia=it:Loreto Aprutino"
+      ],
+      "score": 1567
+    },
+    {
+      "id": "node:70993456",
+      "name": "Penne",
+      "lat": 42.4582153,
+      "lon": 13.9273256,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "gfoss_id=5889",
+        "name=Penne",
+        "note=coordinates by geodati.gfoss.it",
+        "place=town",
+        "population=11972",
+        "source=https://dati.istat.it/",
+        "source:date=2021-01-01",
+        "wikidata=Q51376",
+        "wikipedia=it:Penne (Italia)"
+      ],
+      "score": 1567
+    },
+    {
+      "id": "node:70993765",
+      "name": "Civitella del Tronto",
+      "lat": 42.773446,
+      "lon": 13.672291,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "gfoss_id=5832",
+        "name=Civitella del Tronto",
+        "place=town",
+        "population=5244",
+        "source=geodati.gfoss.it",
+        "wikidata=Q51440",
+        "wikipedia=it:Civitella del Tronto"
+      ],
+      "score": 1567
+    },
+    {
+      "id": "node:70991848",
+      "name": "Guardiagrele",
+      "lat": 42.1954758,
+      "lon": 14.2197122,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "gfoss_id=5951",
+        "name=Guardiagrele",
+        "place=town",
+        "population=8820",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 1555
+    },
+    {
+      "id": "node:70991936",
+      "name": "Roccascalegna",
+      "lat": 42.062536,
+      "lon": 14.306815,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "gfoss_id=5983",
+        "name=Roccascalegna",
+        "place=village",
+        "population=1423",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 1555
+    },
+    {
       "id": "node:6160109142",
       "name": "Rocca Calascio",
       "lat": 42.3280296,
@@ -162,36 +348,6 @@
         "wikipedia=it:Rocca Calascio"
       ],
       "score": 1537
-    },
-    {
-      "id": "node:5848259448",
-      "name": "Borgo San Lorenzo",
-      "lat": 42.3077065,
-      "lon": 13.5083062,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "name=Borgo San Lorenzo",
-        "place=village",
-        "wikidata=Q3642527"
-      ],
-      "score": 97
-    },
-    {
-      "id": "node:2427292466",
-      "name": "Borgo Faraone",
-      "lat": 42.80484,
-      "lon": 13.6811451,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "historic=ruins",
-        "name=Borgo Faraone",
-        "place=hamlet",
-        "wikidata=Q17280261",
-        "wikipedia=it:Faraone (Sant'Egidio alla Vibrata)"
-      ],
-      "score": 92
     },
     {
       "id": "node:70992342",
@@ -230,43 +386,6 @@
         "wikidata=Q50134",
         "wikimedia_commons=Category:Rocca di Botte",
         "wikipedia=it:Rocca di Botte"
-      ],
-      "score": 73
-    },
-    {
-      "id": "node:70993833",
-      "name": "Atri",
-      "lat": 42.5797836,
-      "lon": 13.97535,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "facebook=https://www.facebook.com/comune.atri",
-        "gfoss_id=5819",
-        "name=Atri",
-        "place=town",
-        "population=10772",
-        "source=geodati.gfoss.it",
-        "website=https://www.comune.atri.te.it",
-        "wikidata=Q51420",
-        "wikipedia=it:Atri"
-      ],
-      "score": 73
-    },
-    {
-      "id": "node:1594837749",
-      "name": "Borgo Santa Maria Immacolata",
-      "lat": 42.611094,
-      "lon": 14.0442568,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "ele=25",
-        "name=Borgo Santa Maria Immacolata",
-        "place=hamlet",
-        "population=2421",
-        "website=https://italia.indettaglio.it/ita/abruzzo/teramo_pineto_borgosantamariaimmacolata.html",
-        "wikidata=Q18427785"
       ],
       "score": 73
     },
@@ -361,25 +480,6 @@
       "score": 67
     },
     {
-      "id": "node:70992685",
-      "name": "Pescasseroli",
-      "lat": 41.808401,
-      "lon": 13.789282,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=5775",
-        "name=Pescasseroli",
-        "place=town",
-        "population=2130",
-        "source=geodati.gfoss.it",
-        "wikidata=Q30028737",
-        "wikimedia_commons=Category:Pescasseroli",
-        "wikipedia=it:Pescasseroli"
-      ],
-      "score": 67
-    },
-    {
       "id": "node:70992731",
       "name": "Pratola Peligna",
       "lat": 42.098314,
@@ -417,43 +517,6 @@
       "score": 67
     },
     {
-      "id": "node:70992933",
-      "name": "Tagliacozzo",
-      "lat": 42.069327,
-      "lon": 13.254692,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=5806",
-        "name=Tagliacozzo",
-        "place=town",
-        "population=6532",
-        "source=geodati.gfoss.it",
-        "wikidata=Q30030985",
-        "wikimedia_commons=Category:Tagliacozzo",
-        "wikipedia=it:Tagliacozzo"
-      ],
-      "score": 67
-    },
-    {
-      "id": "node:70993164",
-      "name": "Roccaraso",
-      "lat": 41.8502606,
-      "lon": 14.0782574,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=5791",
-        "name=Roccaraso",
-        "place=village",
-        "population=1604",
-        "source=geodati.gfoss.it",
-        "wikidata=Q30029488",
-        "wikipedia=it:Roccaraso"
-      ],
-      "score": 67
-    },
-    {
       "id": "node:70993170",
       "name": "Rocca Pia",
       "lat": 41.93343,
@@ -467,46 +530,6 @@
         "population=189",
         "source=geodati.gfoss.it",
         "wikidata=Q30029449"
-      ],
-      "score": 67
-    },
-    {
-      "id": "node:70993279",
-      "name": "Città Sant'Angelo",
-      "lat": 42.518144,
-      "lon": 14.059203,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "ele=317",
-        "gfoss_id=5874",
-        "name=Città Sant'Angelo",
-        "place=town",
-        "population=14969",
-        "source=geodati.gfoss.it",
-        "source:ele=guidepost",
-        "twin_town=Nicolosi (Catania)",
-        "wikidata=Q51356",
-        "wikipedia=it:Città Sant'Angelo"
-      ],
-      "score": 67
-    },
-    {
-      "id": "node:70993297",
-      "name": "Loreto Aprutino",
-      "lat": 42.434634,
-      "lon": 13.9832322,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=5883",
-        "name=Loreto Aprutino",
-        "place=town",
-        "population=7123",
-        "source=geodati.gfoss.it",
-        "source:population=ISTAT",
-        "wikidata=Q51369",
-        "wikipedia=it:Loreto Aprutino"
       ],
       "score": 67
     },
@@ -567,26 +590,6 @@
       "score": 67
     },
     {
-      "id": "node:70993456",
-      "name": "Penne",
-      "lat": 42.4582153,
-      "lon": 13.9273256,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=5889",
-        "name=Penne",
-        "note=coordinates by geodati.gfoss.it",
-        "place=town",
-        "population=11972",
-        "source=https://dati.istat.it/",
-        "source:date=2021-01-01",
-        "wikidata=Q51376",
-        "wikipedia=it:Penne (Italia)"
-      ],
-      "score": 67
-    },
-    {
       "id": "node:70993620",
       "name": "Montorio al Vomano",
       "lat": 42.5827062,
@@ -620,24 +623,6 @@
         "wikidata=Q51467",
         "wikimedia_commons=Category:Silvi",
         "wikipedia=it:Silvi"
-      ],
-      "score": 67
-    },
-    {
-      "id": "node:70993765",
-      "name": "Civitella del Tronto",
-      "lat": 42.773446,
-      "lon": 13.672291,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=5832",
-        "name=Civitella del Tronto",
-        "place=town",
-        "population=5244",
-        "source=geodati.gfoss.it",
-        "wikidata=Q51440",
-        "wikipedia=it:Civitella del Tronto"
       ],
       "score": 67
     },
@@ -697,35 +682,6 @@
       "score": 67
     },
     {
-      "id": "node:1070718733",
-      "name": "Borgonovo",
-      "lat": 42.6454241,
-      "lon": 13.6086821,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Borgonovo",
-        "place=hamlet",
-        "wikidata=Q3642587",
-        "wikipedia=it:Borgonovo (Torricella Sicura)"
-      ],
-      "score": 67
-    },
-    {
-      "id": "node:3675033954",
-      "name": "Borgo Ottomila",
-      "lat": 42.0004507,
-      "lon": 13.5446968,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Borgo Ottomila",
-        "place=hamlet",
-        "wikidata=Q18426460"
-      ],
-      "score": 67
-    },
-    {
       "id": "node:3715237646",
       "name": "Pineto",
       "lat": 42.6077714,
@@ -769,34 +725,6 @@
         "wikidata=Q3939514",
         "wikimedia_commons=Category:Roccavivi",
         "wikipedia=it:Roccavivi"
-      ],
-      "score": 67
-    },
-    {
-      "id": "node:4702443020",
-      "name": "Borgo Incile",
-      "lat": 41.9903373,
-      "lon": 13.4379944,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Borgo Incile",
-        "place=hamlet",
-        "wikidata=Q18426572"
-      ],
-      "score": 67
-    },
-    {
-      "id": "node:5858957904",
-      "name": "Borgo Strada 14",
-      "lat": 42.0454701,
-      "lon": 13.5427797,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Borgo Strada 14",
-        "place=hamlet",
-        "wikidata=Q18426465"
       ],
       "score": 67
     },
@@ -897,38 +825,6 @@
       "score": 55
     },
     {
-      "id": "node:70991848",
-      "name": "Guardiagrele",
-      "lat": 42.1954758,
-      "lon": 14.2197122,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=5951",
-        "name=Guardiagrele",
-        "place=town",
-        "population=8820",
-        "source=geodati.gfoss.it"
-      ],
-      "score": 55
-    },
-    {
-      "id": "node:70991936",
-      "name": "Roccascalegna",
-      "lat": 42.062536,
-      "lon": 14.306815,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=5983",
-        "name=Roccascalegna",
-        "place=village",
-        "population=1423",
-        "source=geodati.gfoss.it"
-      ],
-      "score": 55
-    },
-    {
       "id": "node:70993508",
       "name": "Roccamorice",
       "lat": 42.2134993,
@@ -1022,32 +918,6 @@
         "place=village",
         "population=698",
         "source=geodati.gfoss.it"
-      ],
-      "score": 55
-    },
-    {
-      "id": "node:6480662081",
-      "name": "Borgo di Acquabella",
-      "lat": 42.3313094,
-      "lon": 14.4235009,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Borgo di Acquabella",
-        "place=hamlet"
-      ],
-      "score": 55
-    },
-    {
-      "id": "node:10285034084",
-      "name": "Borgo Petricca",
-      "lat": 42.2762351,
-      "lon": 14.002043,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Borgo Petricca",
-        "place=hamlet"
       ],
       "score": 55
     },
