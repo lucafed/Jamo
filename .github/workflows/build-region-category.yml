@@ -1,0 +1,46 @@
+name: Build Region Category
+
+on:
+  workflow_dispatch:
+    inputs:
+      region_id:
+        description: "Region ID es: it-abruzzo"
+        required: true
+        default: "it-abruzzo"
+      category:
+        description: "Category es: borghi"
+        required: true
+        default: "borghi"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Build region category
+        env:
+          REGION_ID: ${{ inputs.region_id }}
+          CATEGORY: ${{ inputs.category }}
+        run: node scripts/build_region_category.mjs
+
+      - name: Commit data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add public/data/pois/regions/*.json
+
+          git commit -m "build: region category ${{ inputs.region_id }} ${{ inputs.category }}" || echo "No changes to commit"
+          git push
