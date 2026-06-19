@@ -470,6 +470,25 @@ if (FAKE_BORGO_NAMES.includes(n)) return true;
 
   // ✅ se è un’attività => fuori (anche se qualcuno l’ha taggata place=hamlet)
   if (isActivityLike(t)) return true;
+  const BAD_WORDS = [
+  "borgoricco",
+  "borgoforte",
+  "resana",
+  "favaro veneto",
+  "mestrino",
+  "villorba",
+  "sedico",
+  "piombino dese",
+  "vigodarzere",
+  "ponzano",
+  "silea",
+  "torri di quartesolo",
+  "camisano vicentino",
+  "noventa padovana",
+  "noventa vicentina"
+];
+
+if (BAD_WORDS.includes(n)) return true;
 
   // museo/attrazione singola NON è un borgo
   if (ts.includes("tourism=museum")) return true;
