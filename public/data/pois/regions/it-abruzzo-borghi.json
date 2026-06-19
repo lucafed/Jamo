@@ -1,8 +1,152 @@
 {
   "region_id": "it-abruzzo-borghi",
   "label_it": "Abruzzo • borghi",
-  "generated_at": "2026-06-19T08:53:09.501Z",
+  "generated_at": "2026-06-19T08:59:50.309Z",
   "places": [
+    {
+      "id": "curated:borgo:scanno",
+      "name": "Scanno",
+      "lat": 41.9038608,
+      "lon": 13.880213,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "name=Scanno",
+        "place=village",
+        "tourism=attraction",
+        "historic=old_town",
+        "curated=true"
+      ],
+      "score": 1660
+    },
+    {
+      "id": "curated:borgo:pescocostanzo",
+      "name": "Pescocostanzo",
+      "lat": 41.88633,
+      "lon": 14.065612,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "name=Pescocostanzo",
+        "place=village",
+        "tourism=attraction",
+        "historic=old_town",
+        "curated=true"
+      ],
+      "score": 1660
+    },
+    {
+      "id": "curated:borgo:pacentro",
+      "name": "Pacentro",
+      "lat": 42.0499635,
+      "lon": 13.9910727,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "name=Pacentro",
+        "place=village",
+        "tourism=attraction",
+        "historic=old_town",
+        "curated=true"
+      ],
+      "score": 1660
+    },
+    {
+      "id": "curated:borgo:barrea",
+      "name": "Barrea",
+      "lat": 41.7584905,
+      "lon": 13.9907295,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "name=Barrea",
+        "place=village",
+        "tourism=attraction",
+        "historic=old_town",
+        "curated=true"
+      ],
+      "score": 1660
+    },
+    {
+      "id": "curated:borgo:villetta-barrea",
+      "name": "Villetta Barrea",
+      "lat": 41.775827,
+      "lon": 13.938511,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "name=Villetta Barrea",
+        "place=village",
+        "tourism=attraction",
+        "historic=old_town",
+        "curated=true"
+      ],
+      "score": 1660
+    },
+    {
+      "id": "curated:borgo:opi",
+      "name": "Opi",
+      "lat": 41.7808732,
+      "lon": 13.8295241,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "name=Opi",
+        "place=village",
+        "tourism=attraction",
+        "historic=old_town",
+        "curated=true"
+      ],
+      "score": 1660
+    },
+    {
+      "id": "curated:borgo:navelli",
+      "name": "Navelli",
+      "lat": 42.2378643,
+      "lon": 13.729027,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "name=Navelli",
+        "place=village",
+        "tourism=attraction",
+        "historic=old_town",
+        "curated=true"
+      ],
+      "score": 1660
+    },
+    {
+      "id": "curated:borgo:castelvecchio-calvisio",
+      "name": "Castelvecchio Calvisio",
+      "lat": 42.3106488,
+      "lon": 13.6886152,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "name=Castelvecchio Calvisio",
+        "place=village",
+        "tourism=attraction",
+        "historic=old_town",
+        "curated=true"
+      ],
+      "score": 1660
+    },
+    {
+      "id": "curated:borgo:santo-stefano-di-sessanio",
+      "name": "Santo Stefano di Sessanio",
+      "lat": 42.343,
+      "lon": 13.644,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "name=Santo Stefano di Sessanio",
+        "place=village",
+        "tourism=attraction",
+        "historic=old_town",
+        "curated=true"
+      ],
+      "score": 1660
+    },
     {
       "id": "node:5848259448",
       "name": "Borgo San Lorenzo",
