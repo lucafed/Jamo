@@ -448,6 +448,17 @@ const hasTouristProof =
 
 if (place === "hamlet" && !hasTouristProof) return true;
   if (place === "village" && !hasTouristProof) return true;
+  const GENERIC_NAMES = [
+  "sant'andrea",
+  "san polo",
+  "sant'eufemia",
+  "castelnuovo",
+  "rustega",
+  "roro",
+  "monaro"
+];
+
+if (GENERIC_NAMES.includes(n)) return true;
 
 if (
   place === "village" &&
