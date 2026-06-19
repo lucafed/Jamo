@@ -470,6 +470,11 @@ const isSettlement = ["town", "village", "hamlet"].includes(place);
 const isOldTown = tagEq(t, "historic", "old_town");
 
 if (!isSettlement && !isOldTown) return true;
+  const pop = Number(t.population || 0);
+
+if (place === "town" && pop > 15000) return true;
+
+if (place === "hamlet" && pop < 300) return true;
 
 const ICONIC_BORGHI = [
   "borghetto",
