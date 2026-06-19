@@ -432,12 +432,40 @@ function isBorgoNoise(p) {
   if (hasAny(ts, ["natural=peak", "tourism=alpine_hut", "amenity=shelter"])) return true;
 
   // extra: se non è un settlement vero e non è old_town => fuori
-  const place = String(t.place || "").toLowerCase();
-  const isSettlement = ["town", "village", "hamlet", "suburb"].includes(place);
-  const isOldTown = tagEq(t, "historic", "old_town");
-  if (!isSettlement && !isOldTown) return true;
+ const place = String(t.place || "").toLowerCase();
+const isSettlement = ["town", "village", "hamlet"].includes(place);
+const isOldTown = tagEq(t, "historic", "old_town");
 
-  return false;
+if (!isSettlement && !isOldTown) return true;
+
+const hasTouristProof =
+  hasTag(t, "wikipedia") ||
+  hasTag(t, "wikidata") ||
+  hasTag(t, "heritage") ||
+  hasTag(t, "historic") ||
+  hasTag(t, "tourism") ||
+  hasTag(t, "website") ||
+  hasTag(t, "contact:website") ||
+  hasAny(n, ["borgo", "castello", "rocca", "medievale", "medioevale", "storico"]);
+
+if (place === "hamlet" && !hasTouristProof) return true;
+
+if (
+  place === "village" &&
+  !hasTouristProof &&
+  (
+    n.includes("cascina") ||
+    n.includes("maso") ||
+    n.startsWith("case ") ||
+    n.startsWith("corte ") ||
+    n.startsWith("contrada ") ||
+    n.startsWith("zona ") ||
+    n.startsWith("regione ") ||
+    n.startsWith("localita ")
+  )
+) return true;
+
+return false;
 }
 
 function isCittaNoise(p) {
