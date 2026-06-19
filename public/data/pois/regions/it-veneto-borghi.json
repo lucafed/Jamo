@@ -1,7 +1,7 @@
 {
   "region_id": "it-veneto-borghi",
   "label_it": "Veneto • borghi",
-  "generated_at": "2026-06-19T13:14:03.198Z",
+  "generated_at": "2026-06-19T13:30:29.614Z",
   "places": [
     {
       "id": "curated:borgo:sirmione",
@@ -181,23 +181,6 @@
       "score": 1567
     },
     {
-      "id": "node:64778889",
-      "name": "Soave",
-      "lat": 45.4202303,
-      "lon": 11.247722,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "gfoss_id=3171",
-        "name=Soave",
-        "place=village",
-        "population=7116",
-        "source=geodati.gfoss.it",
-        "wikidata=Q30030755"
-      ],
-      "score": 1567
-    },
-    {
       "id": "node:64778921",
       "name": "Malcesine",
       "lat": 45.7643442,
@@ -226,21 +209,6 @@
         "place=village",
         "wikidata=Q2910855",
         "wikipedia=it:Borghetto (Valeggio sul Mincio)"
-      ],
-      "score": 1567
-    },
-    {
-      "id": "node:1080680713",
-      "name": "Lazise",
-      "lat": 45.5052005,
-      "lon": 10.7330245,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "name=Lazise",
-        "place=village",
-        "population=6901",
-        "wikidata=Q30026549"
       ],
       "score": 1567
     },
@@ -288,6 +256,38 @@
       "score": 1555
     },
     {
+      "id": "node:64778889",
+      "name": "Soave",
+      "lat": 45.4202303,
+      "lon": 11.247722,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "gfoss_id=3171",
+        "name=Soave",
+        "place=village",
+        "population=7116",
+        "source=geodati.gfoss.it",
+        "wikidata=Q30030755"
+      ],
+      "score": 1517
+    },
+    {
+      "id": "node:1080680713",
+      "name": "Lazise",
+      "lat": 45.5052005,
+      "lon": 10.7330245,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "name=Lazise",
+        "place=village",
+        "population=6901",
+        "wikidata=Q30026549"
+      ],
+      "score": 1517
+    },
+    {
       "id": "node:1374462942",
       "name": "Asolo",
       "lat": 45.8007265,
@@ -304,7 +304,7 @@
         "population=9128",
         "wikidata=Q29371"
       ],
-      "score": 1527
+      "score": 1477
     },
     {
       "id": "node:1600857901",
@@ -321,7 +321,7 @@
         "source=geodati.gfoss.it",
         "wikidata=Q30027707"
       ],
-      "score": 1527
+      "score": 1477
     },
     {
       "id": "curated:borgo:arqua-petrarca",
@@ -617,7 +617,7 @@
         "wikidata=Q30028742",
         "wikipedia=it:Peschiera del Garda"
       ],
-      "score": 27
+      "score": -123
     },
     {
       "id": "node:64778383",
@@ -636,7 +636,7 @@
         "wikidata=Q30024812",
         "wikipedia=it:Cittadella (Italia)"
       ],
-      "score": -17
+      "score": -267
     }
   ]
 }
