@@ -487,6 +487,10 @@ if (FAKE_BORGO_NAMES.includes(n)) return true;
   "silea",
   "torri di quartesolo",
   "camisano vicentino",
+    "occhiobello",
+"conselve",
+"borgo eger",
+"lago di borgo eger",
   "noventa padovana",
   "noventa vicentina"
 ];
