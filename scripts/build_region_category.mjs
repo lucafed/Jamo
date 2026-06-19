@@ -36,6 +36,20 @@ const region = (cfg.regions || []).find((r) => String(r.id) === REGION_ID);
 if (!region) throw new Error(`Region not found in configs: ${REGION_ID}`);
 
 const OUT = path.join(__dirname, "..", "public", "data", "pois", "regions", `${REGION_ID}-${CATEGORY}.json`);
+const CURATED_BORGHI_BY_REGION = {
+  "it-abruzzo": [
+    { name: "Scanno", lat: 41.9038608, lon: 13.880213 },
+    { name: "Pescocostanzo", lat: 41.88633, lon: 14.065612 },
+    { name: "Pacentro", lat: 42.0499635, lon: 13.9910727 },
+    { name: "Barrea", lat: 41.7584905, lon: 13.9907295 },
+    { name: "Villetta Barrea", lat: 41.775827, lon: 13.938511 },
+    { name: "Opi", lat: 41.7808732, lon: 13.8295241 },
+    { name: "Navelli", lat: 42.2378643, lon: 13.729027 },
+    { name: "Castelvecchio Calvisio", lat: 42.3106488, lon: 13.6886152 },
+    { name: "Rocca Calascio", lat: 42.3280296, lon: 13.6907679 },
+    { name: "Santo Stefano di Sessanio", lat: 42.343, lon: 13.644 }
+  ]
+};
 
 // ---------------------- UTIL ----------------------
 function normName(s) {
