@@ -433,6 +433,19 @@ function isBorgoNoise(p) {
   const t = p.tags || {};
   const ts = tagsToStr(t);
   const n = normName(p.name || "");
+  const FAKE_BORGO_NAMES = [
+  "borgo san lorenzo",
+  "borgo faraone",
+  "borgo santa maria immacolata",
+  "borgonovo",
+  "borgo ottomila",
+  "borgo incile",
+  "borgo strada 14",
+  "borgo di acquabella",
+  "borgo petricca"
+];
+
+if (FAKE_BORGO_NAMES.includes(n)) return true;
 
   // ✅ se è un’attività => fuori (anche se qualcuno l’ha taggata place=hamlet)
   if (isActivityLike(t)) return true;
