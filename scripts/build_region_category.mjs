@@ -448,6 +448,9 @@ function isBorgoNoise(p) {
   const t = p.tags || {};
   const ts = tagsToStr(t);
   const n = normName(p.name || "");
+  if (n.includes("castello di godego")) return true;
+if (n.includes("borgo eger")) return true;
+if (n.includes("corte dei bissari")) return true;
   const FAKE_BORGO_NAMES = [
   "borgo san lorenzo",
   "borgo faraone",
