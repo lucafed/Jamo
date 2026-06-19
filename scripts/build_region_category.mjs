@@ -658,6 +658,10 @@ function scoreBorghi(p) {
   }
 
   const place = String(t.place || "").toLowerCase();
+  const pop = Number(t.population || 0);
+
+if (pop > 30000) s -= 100;
+else if (pop > 15000) s -= 50;
 if (place === "town") s += 55;
 if (place === "village") s += 55;
 if (place === "hamlet") s += 25;
