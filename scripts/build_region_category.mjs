@@ -629,6 +629,7 @@ function scoreBorghi(p) {
     "castel del monte",
     "navelli",
     "castelvecchio calvisio",
+    "rocca calascio",
     "opi",
 
     // Veneto
@@ -653,7 +654,7 @@ function scoreBorghi(p) {
   ];
 
   if (ICONIC_BORGHI.some((x) => n.includes(normName(x)))) {
-    s += 500;
+    s += 1500;
   }
 
   const place = String(t.place || "").toLowerCase();
