@@ -1,7 +1,7 @@
 {
   "region_id": "it-veneto-borghi",
   "label_it": "Veneto • borghi",
-  "generated_at": "2026-06-19T12:45:23.921Z",
+  "generated_at": "2026-06-19T13:00:52.081Z",
   "places": [
     {
       "id": "curated:borgo:sirmione",
@@ -356,20 +356,6 @@
       "score": 1160
     },
     {
-      "id": "node:540237684",
-      "name": "Borgoforte",
-      "lat": 45.1460538,
-      "lon": 11.942499,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "name=Borgoforte",
-        "place=village",
-        "wikidata=Q18497376"
-      ],
-      "score": 97
-    },
-    {
       "id": "node:1516845680",
       "name": "Borgo Bonavicina",
       "lat": 45.2476364,
@@ -383,37 +369,6 @@
         "wikipedia=it:Bonavicina"
       ],
       "score": 97
-    },
-    {
-      "id": "node:4431892147",
-      "name": "Borgoforte",
-      "lat": 45.5207469,
-      "lon": 12.2549419,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "name=Borgoforte",
-        "place=village",
-        "population=224",
-        "wikidata=Q18502886"
-      ],
-      "score": 97
-    },
-    {
-      "id": "node:64778263",
-      "name": "Borgoricco",
-      "lat": 45.5335614,
-      "lon": 11.9658789,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "gfoss_id=3530",
-        "name=Borgoricco",
-        "place=village",
-        "population=8755",
-        "source=geodati.gfoss.it"
-      ],
-      "score": 85
     },
     {
       "id": "node:540228231",
@@ -450,19 +405,6 @@
       "visibility": "chicca",
       "tags": [
         "name=Borgo Santa Maria Maddalena",
-        "place=village"
-      ],
-      "score": 85
-    },
-    {
-      "id": "node:4048984748",
-      "name": "Borgo Eger",
-      "lat": 45.7946847,
-      "lon": 11.797172,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "name=Borgo Eger",
         "place=village"
       ],
       "score": 85
@@ -543,23 +485,6 @@
         "population=1876",
         "source=geodati.gfoss.it",
         "wikidata=Q30022363"
-      ],
-      "score": 67
-    },
-    {
-      "id": "node:64778679",
-      "name": "Castello di Godego",
-      "lat": 45.6923801,
-      "lon": 11.8810438,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=3391",
-        "name=Castello di Godego",
-        "place=village",
-        "population=6347",
-        "source=geodati.gfoss.it",
-        "wikidata=Q30024248"
       ],
       "score": 67
     },
@@ -761,23 +686,6 @@
       "score": 27
     },
     {
-      "id": "node:64778231",
-      "name": "Sedico",
-      "lat": 46.11098,
-      "lon": 12.0971545,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=3362",
-        "name=Sedico",
-        "name:ru=Седико",
-        "place=town",
-        "population=10119",
-        "wikidata=Q30030539"
-      ],
-      "score": 27
-    },
-    {
       "id": "node:64778237",
       "name": "Pieve di Cadore",
       "lat": 46.4287086,
@@ -795,76 +703,6 @@
         "source=geodati.gfoss.it",
         "wikidata=Q30028858",
         "wikipedia=it:Pieve di Cadore"
-      ],
-      "score": 27
-    },
-    {
-      "id": "node:64778254",
-      "name": "Noventa Padovana",
-      "lat": 45.4142322,
-      "lon": 11.9507999,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=3573",
-        "name=Noventa Padovana",
-        "place=town",
-        "population=11265",
-        "wikidata=Q34330",
-        "wikipedia=it:Noventa Padovana"
-      ],
-      "score": 27
-    },
-    {
-      "id": "node:64778351",
-      "name": "Mestrino",
-      "lat": 45.4427579,
-      "lon": 11.7582537,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=3569",
-        "name=Mestrino",
-        "place=town",
-        "population=11431",
-        "source=ISTAT",
-        "wikidata=Q30027488"
-      ],
-      "score": 27
-    },
-    {
-      "id": "node:64778446",
-      "name": "Vigodarzere",
-      "lat": 45.4581932,
-      "lon": 11.8828635,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=3614",
-        "name=Vigodarzere",
-        "name:vec=Vigodarxare",
-        "place=town",
-        "population=6278",
-        "source=geodati.gfoss.it;ISTAT Censimento 2011",
-        "wikidata=Q30031742"
-      ],
-      "score": 27
-    },
-    {
-      "id": "node:64778458",
-      "name": "Piombino Dese",
-      "lat": 45.6075204,
-      "lon": 11.9994148,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=3579",
-        "name=Piombino Dese",
-        "name:ru=Пьомбино-Дезе",
-        "place=town",
-        "population=9534",
-        "source=geodati.gfoss.it",
-        "wikidata=Q30028900"
       ],
       "score": 27
     },
@@ -903,41 +741,6 @@
         "population=11873",
         "source=geodati.gfoss.it",
         "wikidata=Q30026562"
-      ],
-      "score": 27
-    },
-    {
-      "id": "node:64778587",
-      "name": "Villorba",
-      "lat": 45.7393807,
-      "lon": 12.2326974,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=3469",
-        "name=Villorba",
-        "name:vec=Viłorba",
-        "place=town",
-        "source=geodati.gfoss.it",
-        "wikidata=Q46665"
-      ],
-      "score": 27
-    },
-    {
-      "id": "node:64778610",
-      "name": "Ponzano",
-      "lat": 45.710824,
-      "lon": 12.2237501,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=3437",
-        "name=Ponzano",
-        "name:vec=Ponzan",
-        "place=town",
-        "population=10238",
-        "source=ISTAT Censimento 2011",
-        "wikidata=Q30029057"
       ],
       "score": 27
     },
@@ -1024,23 +827,6 @@
         "population=10768",
         "source=ISTAT",
         "wikidata=Q30028076"
-      ],
-      "score": 27
-    },
-    {
-      "id": "node:64778708",
-      "name": "Silea",
-      "lat": 45.6533706,
-      "lon": 12.2959606,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=3459",
-        "name=Silea",
-        "place=town",
-        "population=10167",
-        "source=ISTAT",
-        "wikidata=Q30030711"
       ],
       "score": 27
     },
@@ -1234,76 +1020,6 @@
         "population=10214",
         "source=ISTAT",
         "wikidata=Q30026391"
-      ],
-      "score": 27
-    },
-    {
-      "id": "node:64779182",
-      "name": "Noventa Vicentina",
-      "lat": 45.2906283,
-      "lon": 11.5398835,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=3262",
-        "name=Noventa Vicentina",
-        "name:it=Noventa Vicentina",
-        "name:ru=Новента-Вичентина",
-        "place=town",
-        "population=9015",
-        "source=local knowledge",
-        "wikidata=Q30028267"
-      ],
-      "score": 27
-    },
-    {
-      "id": "node:64779213",
-      "name": "Torri di Quartesolo",
-      "lat": 45.5192662,
-      "lon": 11.6171199,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=3296",
-        "name=Torri di Quartesolo",
-        "place=town",
-        "population=11809",
-        "source=ISTAT",
-        "wikidata=Q30031217"
-      ],
-      "score": 27
-    },
-    {
-      "id": "node:64779229",
-      "name": "Camisano Vicentino",
-      "lat": 45.5220266,
-      "lon": 11.7134998,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=3209",
-        "name=Camisano Vicentino",
-        "name:vec=Camixan",
-        "place=town",
-        "population=11115",
-        "source=ISTAT",
-        "wikidata=Q30023460"
-      ],
-      "score": 27
-    },
-    {
-      "id": "node:697239111",
-      "name": "Favaro Veneto",
-      "lat": 45.5046266,
-      "lon": 12.2820457,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Favaro Veneto",
-        "place=town",
-        "population=10720",
-        "wikidata=Q1398889",
-        "wikipedia=it:Favaro Veneto"
       ],
       "score": 27
     },
