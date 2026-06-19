@@ -472,9 +472,24 @@ const isOldTown = tagEq(t, "historic", "old_town");
 if (!isSettlement && !isOldTown) return true;
   const pop = Number(t.population || 0);
 
-if (place === "town" && pop > 15000) return true;
+if (place === "town" && pop > 12000) return true;
 
 if (place === "hamlet" && pop < 300) return true;
+
+const NON_BORGHI_ABRUZZO = [
+  "alba adriatica",
+  "san giovanni teatino",
+  "silvi marina",
+  "tortoreto",
+  "nereto",
+  "sant egidio alla vibrata",
+  "cepagatti",
+  "pianella",
+  "mosciano sant angelo",
+  "popoli terme"
+];
+
+if (REGION_ID === "it-abruzzo" && NON_BORGHI_ABRUZZO.includes(n)) return true;
 
 const ICONIC_BORGHI = [
   "borghetto",
