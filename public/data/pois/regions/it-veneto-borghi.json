@@ -1,7 +1,7 @@
 {
   "region_id": "it-veneto-borghi",
   "label_it": "Veneto • borghi",
-  "generated_at": "2026-06-19T13:00:52.081Z",
+  "generated_at": "2026-06-19T13:08:40.173Z",
   "places": [
     {
       "id": "curated:borgo:sirmione",
@@ -707,26 +707,6 @@
       "score": 27
     },
     {
-      "id": "node:64778523",
-      "name": "Occhiobello",
-      "lat": 44.9212498,
-      "lon": 11.5813996,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=3652",
-        "name=Occhiobello",
-        "name:egl=Uǧbèl",
-        "place=town",
-        "population=11979",
-        "postal_code=45030",
-        "ref:ISTAT=029033",
-        "source=geodati.gfoss.it",
-        "wikidata=Q30028298"
-      ],
-      "score": 27
-    },
-    {
       "id": "node:64778559",
       "name": "Lendinara",
       "lat": 45.0832589,
@@ -1020,24 +1000,6 @@
         "population=10214",
         "source=ISTAT",
         "wikidata=Q30026391"
-      ],
-      "score": 27
-    },
-    {
-      "id": "node:1612250684",
-      "name": "Conselve",
-      "lat": 45.2337438,
-      "lon": 11.8740131,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "addr:postcode=35026",
-        "gfoss_id=3549",
-        "name=Conselve",
-        "place=town",
-        "population=10302",
-        "source=geodati.gfoss.it",
-        "wikidata=Q30025050"
       ],
       "score": 27
     },
