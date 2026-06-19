@@ -1,7 +1,7 @@
 {
   "region_id": "it-abruzzo-borghi",
   "label_it": "Abruzzo • borghi",
-  "generated_at": "2026-06-19T12:22:12.224Z",
+  "generated_at": "2026-06-19T12:31:39.721Z",
   "places": [
     {
       "id": "curated:borgo:scanno",
@@ -164,64 +164,6 @@
       "score": 2660
     },
     {
-      "id": "node:70993833",
-      "name": "Atri",
-      "lat": 42.5797836,
-      "lon": 13.97535,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "facebook=https://www.facebook.com/comune.atri",
-        "gfoss_id=5819",
-        "name=Atri",
-        "place=town",
-        "population=10772",
-        "source=geodati.gfoss.it",
-        "website=https://www.comune.atri.te.it",
-        "wikidata=Q51420",
-        "wikipedia=it:Atri"
-      ],
-      "score": 1573
-    },
-    {
-      "id": "node:70992685",
-      "name": "Pescasseroli",
-      "lat": 41.808401,
-      "lon": 13.789282,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "gfoss_id=5775",
-        "name=Pescasseroli",
-        "place=town",
-        "population=2130",
-        "source=geodati.gfoss.it",
-        "wikidata=Q30028737",
-        "wikimedia_commons=Category:Pescasseroli",
-        "wikipedia=it:Pescasseroli"
-      ],
-      "score": 1567
-    },
-    {
-      "id": "node:70992933",
-      "name": "Tagliacozzo",
-      "lat": 42.069327,
-      "lon": 13.254692,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "gfoss_id=5806",
-        "name=Tagliacozzo",
-        "place=town",
-        "population=6532",
-        "source=geodati.gfoss.it",
-        "wikidata=Q30030985",
-        "wikimedia_commons=Category:Tagliacozzo",
-        "wikipedia=it:Tagliacozzo"
-      ],
-      "score": 1567
-    },
-    {
       "id": "node:70993164",
       "name": "Roccaraso",
       "lat": 41.8502606,
@@ -240,25 +182,78 @@
       "score": 1567
     },
     {
-      "id": "node:70993279",
-      "name": "Città Sant'Angelo",
-      "lat": 42.518144,
-      "lon": 14.059203,
+      "id": "node:70991936",
+      "name": "Roccascalegna",
+      "lat": 42.062536,
+      "lon": 14.306815,
       "type": "borghi",
       "visibility": "chicca",
       "tags": [
-        "ele=317",
-        "gfoss_id=5874",
-        "name=Città Sant'Angelo",
-        "place=town",
-        "population=14969",
-        "source=geodati.gfoss.it",
-        "source:ele=guidepost",
-        "twin_town=Nicolosi (Catania)",
-        "wikidata=Q51356",
-        "wikipedia=it:Città Sant'Angelo"
+        "gfoss_id=5983",
+        "name=Roccascalegna",
+        "place=village",
+        "population=1423",
+        "source=geodati.gfoss.it"
       ],
-      "score": 1567
+      "score": 1555
+    },
+    {
+      "id": "node:70993833",
+      "name": "Atri",
+      "lat": 42.5797836,
+      "lon": 13.97535,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "facebook=https://www.facebook.com/comune.atri",
+        "gfoss_id=5819",
+        "name=Atri",
+        "place=town",
+        "population=10772",
+        "source=geodati.gfoss.it",
+        "website=https://www.comune.atri.te.it",
+        "wikidata=Q51420",
+        "wikipedia=it:Atri"
+      ],
+      "score": 1533
+    },
+    {
+      "id": "node:70992685",
+      "name": "Pescasseroli",
+      "lat": 41.808401,
+      "lon": 13.789282,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "gfoss_id=5775",
+        "name=Pescasseroli",
+        "place=town",
+        "population=2130",
+        "source=geodati.gfoss.it",
+        "wikidata=Q30028737",
+        "wikimedia_commons=Category:Pescasseroli",
+        "wikipedia=it:Pescasseroli"
+      ],
+      "score": 1527
+    },
+    {
+      "id": "node:70992933",
+      "name": "Tagliacozzo",
+      "lat": 42.069327,
+      "lon": 13.254692,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "gfoss_id=5806",
+        "name=Tagliacozzo",
+        "place=town",
+        "population=6532",
+        "source=geodati.gfoss.it",
+        "wikidata=Q30030985",
+        "wikimedia_commons=Category:Tagliacozzo",
+        "wikipedia=it:Tagliacozzo"
+      ],
+      "score": 1527
     },
     {
       "id": "node:70993297",
@@ -277,7 +272,7 @@
         "wikidata=Q51369",
         "wikipedia=it:Loreto Aprutino"
       ],
-      "score": 1567
+      "score": 1527
     },
     {
       "id": "node:70993456",
@@ -297,7 +292,7 @@
         "wikidata=Q51376",
         "wikipedia=it:Penne (Italia)"
       ],
-      "score": 1567
+      "score": 1527
     },
     {
       "id": "node:70993765",
@@ -315,7 +310,7 @@
         "wikidata=Q51440",
         "wikipedia=it:Civitella del Tronto"
       ],
-      "score": 1567
+      "score": 1527
     },
     {
       "id": "node:70991848",
@@ -331,43 +326,7 @@
         "population=8820",
         "source=geodati.gfoss.it"
       ],
-      "score": 1555
-    },
-    {
-      "id": "node:70991936",
-      "name": "Roccascalegna",
-      "lat": 42.062536,
-      "lon": 14.306815,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "gfoss_id=5983",
-        "name=Roccascalegna",
-        "place=village",
-        "population=1423",
-        "source=geodati.gfoss.it"
-      ],
-      "score": 1555
-    },
-    {
-      "id": "node:70992342",
-      "name": "Castel di Sangro",
-      "lat": 41.7842727,
-      "lon": 14.1080639,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "gfoss_id=5735",
-        "name=Castel di Sangro",
-        "place=town",
-        "population=6538",
-        "source=geodati.gfoss.it",
-        "website=https://www.comune.casteldisangro.aq.it",
-        "wikidata=Q30024110",
-        "wikimedia_commons=Category:Castel di Sangro",
-        "wikipedia=it:Castel di Sangro"
-      ],
-      "score": 73
+      "score": 1515
     },
     {
       "id": "node:70992608",
@@ -408,43 +367,6 @@
       "score": 67
     },
     {
-      "id": "node:70992371",
-      "name": "Carsoli",
-      "lat": 42.098927,
-      "lon": 13.084888,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=5732",
-        "name=Carsoli",
-        "place=town",
-        "population=5086",
-        "source=geodati.gfoss.it",
-        "wikidata=Q30023852",
-        "wikimedia_commons=Category:Carsoli",
-        "wikipedia=it:Carsoli"
-      ],
-      "score": 67
-    },
-    {
-      "id": "node:70992527",
-      "name": "Celano",
-      "lat": 42.0843238,
-      "lon": 13.5462069,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=5739",
-        "name=Celano",
-        "place=town",
-        "population=11017",
-        "source=geodati.gfoss.it",
-        "wikidata=Q50079",
-        "wikipedia=it:Celano"
-      ],
-      "score": 67
-    },
-    {
       "id": "node:70992621",
       "name": "Rocca di Cambio",
       "lat": 42.2350354,
@@ -476,26 +398,6 @@
         "population=1426",
         "source=geodati.gfoss.it",
         "wikidata=Q30029441"
-      ],
-      "score": 67
-    },
-    {
-      "id": "node:70992731",
-      "name": "Pratola Peligna",
-      "lat": 42.098314,
-      "lon": 13.8739802,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "ele=342",
-        "loc_name=Pratëlë",
-        "name=Pratola Peligna",
-        "name:nap=Pratëlë",
-        "place=town",
-        "population=7000",
-        "wikidata=Q30029153",
-        "wikimedia_commons=Category:Pratola Peligna",
-        "wikipedia=it:Pratola Peligna"
       ],
       "score": 67
     },
@@ -534,170 +436,6 @@
       "score": 67
     },
     {
-      "id": "node:70993325",
-      "name": "Cepagatti",
-      "lat": 42.3643016,
-      "lon": 14.0717952,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=5873",
-        "name=Cepagatti",
-        "place=town",
-        "population=10887",
-        "source=geodati.gfoss.it",
-        "wikidata=Q51355",
-        "wikipedia=it:Cepagatti"
-      ],
-      "score": 67
-    },
-    {
-      "id": "node:70993435",
-      "name": "Popoli Terme",
-      "lat": 42.1713106,
-      "lon": 13.832817,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=5895",
-        "name=Popoli Terme",
-        "old_name=Popoli",
-        "place=town",
-        "population=5566",
-        "source=geodati.gfoss.it",
-        "source:name=Legge Regionale Abruzzo n. 32 del 10/7/2023",
-        "wikidata=Q30029064"
-      ],
-      "score": 67
-    },
-    {
-      "id": "node:70993449",
-      "name": "Pianella",
-      "lat": 42.3960111,
-      "lon": 14.0462697,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=5892",
-        "name=Pianella",
-        "place=town",
-        "population=8633",
-        "source=geodati.gfoss.it",
-        "twin_town=Donnas (Aosta)",
-        "wikidata=Q51378",
-        "wikipedia=it:Pianella"
-      ],
-      "score": 67
-    },
-    {
-      "id": "node:70993620",
-      "name": "Montorio al Vomano",
-      "lat": 42.5827062,
-      "lon": 13.6325193,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=5843",
-        "name=Montorio al Vomano",
-        "place=town",
-        "population=8048",
-        "source=geodati.gfoss.it",
-        "wikidata=Q51454",
-        "wikipedia=it:Montorio al Vomano"
-      ],
-      "score": 67
-    },
-    {
-      "id": "node:70993644",
-      "name": "Silvi Marina",
-      "lat": 42.5527448,
-      "lon": 14.1173634,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=5855",
-        "name=Silvi Marina",
-        "place=town",
-        "source=geodati.gfoss.it",
-        "twin_town=Dulcigno (Ulcinj - ME)",
-        "wikidata=Q51467",
-        "wikimedia_commons=Category:Silvi",
-        "wikipedia=it:Silvi"
-      ],
-      "score": 67
-    },
-    {
-      "id": "node:70993885",
-      "name": "Mosciano Sant'Angelo",
-      "lat": 42.7493491,
-      "lon": 13.8880309,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=5845",
-        "name=Mosciano Sant'Angelo",
-        "name:uk=Мошано-Сант'Анджело",
-        "place=town",
-        "population=9308",
-        "source=geodati.gfoss.it",
-        "wikidata=Q51456",
-        "wikipedia=it:Mosciano Sant'Angelo"
-      ],
-      "score": 67
-    },
-    {
-      "id": "node:70993891",
-      "name": "Nereto",
-      "lat": 42.8189452,
-      "lon": 13.8160547,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=5846",
-        "name=Nereto",
-        "place=town",
-        "population=4425",
-        "source=geodati.gfoss.it",
-        "wikidata=Q51457",
-        "wikipedia=it:Nereto"
-      ],
-      "score": 67
-    },
-    {
-      "id": "node:70993912",
-      "name": "Sant'Egidio alla Vibrata",
-      "lat": 42.821048,
-      "lon": 13.717891,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=5853",
-        "name=Sant'Egidio alla Vibrata",
-        "place=town",
-        "population=9811",
-        "source=geodati.gfoss.it",
-        "wikidata=Q51464",
-        "wikipedia=it:Sant'Egidio alla Vibrata"
-      ],
-      "score": 67
-    },
-    {
-      "id": "node:3715237646",
-      "name": "Pineto",
-      "lat": 42.6077714,
-      "lon": 14.0671028,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Pineto",
-        "place=town",
-        "population=14904",
-        "wikidata=Q51462",
-        "wikipedia=it:Pineto"
-      ],
-      "score": 67
-    },
-    {
       "id": "node:4391227813",
       "name": "Rocca Santo Stefano",
       "lat": 42.3369414,
@@ -729,38 +467,6 @@
       "score": 67
     },
     {
-      "id": "node:70990260",
-      "name": "Casalbordino",
-      "lat": 42.1506013,
-      "lon": 14.5847977,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=5923",
-        "name=Casalbordino",
-        "place=town",
-        "population=6478",
-        "source=geodati.gfoss.it"
-      ],
-      "score": 55
-    },
-    {
-      "id": "node:70990598",
-      "name": "Fossacesia",
-      "lat": 42.2446332,
-      "lon": 14.4829037,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=5941",
-        "name=Fossacesia",
-        "place=town",
-        "population=5349",
-        "source=geodati.gfoss.it"
-      ],
-      "score": 55
-    },
-    {
       "id": "node:70990918",
       "name": "Roccaspinalveti",
       "lat": 41.937178,
@@ -772,54 +478,6 @@
         "name=Roccaspinalveti",
         "place=village",
         "population=1671",
-        "source=geodati.gfoss.it"
-      ],
-      "score": 55
-    },
-    {
-      "id": "node:70991478",
-      "name": "Atessa",
-      "lat": 42.0718059,
-      "lon": 14.4489025,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=5913",
-        "name=Atessa",
-        "place=town",
-        "population=10639",
-        "source=geodati.gfoss.it"
-      ],
-      "score": 55
-    },
-    {
-      "id": "node:70991551",
-      "name": "Casoli",
-      "lat": 42.1147159,
-      "lon": 14.290695,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=5925",
-        "name=Casoli",
-        "place=town",
-        "population=5971",
-        "source=geodati.gfoss.it"
-      ],
-      "score": 55
-    },
-    {
-      "id": "node:70991841",
-      "name": "Gissi",
-      "lat": 42.0212271,
-      "lon": 14.5457485,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=5949",
-        "name=Gissi",
-        "place=town",
-        "population=2670",
         "source=geodati.gfoss.it"
       ],
       "score": 55
@@ -841,23 +499,6 @@
       "score": 55
     },
     {
-      "id": "node:70993807",
-      "name": "Alba Adriatica",
-      "lat": 42.8343422,
-      "lon": 13.927816,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=5816",
-        "name=Alba Adriatica",
-        "old_name=Tortoreto Stazione",
-        "place=town",
-        "population=12353",
-        "source=geodati.gfoss.it"
-      ],
-      "score": 55
-    },
-    {
       "id": "node:551687576",
       "name": "Roccafinadamo",
       "lat": 42.4790002,
@@ -870,37 +511,6 @@
         "note=comune di Penne",
         "place=village",
         "population=44"
-      ],
-      "score": 55
-    },
-    {
-      "id": "node:1221403361",
-      "name": "San Giovanni Teatino",
-      "lat": 42.4105412,
-      "lon": 14.2010296,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=5989",
-        "name=San Giovanni Teatino",
-        "old_name=Forca Bobolina",
-        "place=town",
-        "population=14100",
-        "source=geodati.gfoss.it"
-      ],
-      "score": 55
-    },
-    {
-      "id": "node:1395445928",
-      "name": "Tortoreto",
-      "lat": 42.8039462,
-      "lon": 13.9136469,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Tortoreto",
-        "place=town",
-        "population=11542"
       ],
       "score": 55
     },
@@ -920,6 +530,181 @@
         "source=geodati.gfoss.it"
       ],
       "score": 55
+    },
+    {
+      "id": "node:70992342",
+      "name": "Castel di Sangro",
+      "lat": 41.7842727,
+      "lon": 14.1080639,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=5735",
+        "name=Castel di Sangro",
+        "place=town",
+        "population=6538",
+        "source=geodati.gfoss.it",
+        "website=https://www.comune.casteldisangro.aq.it",
+        "wikidata=Q30024110",
+        "wikimedia_commons=Category:Castel di Sangro",
+        "wikipedia=it:Castel di Sangro"
+      ],
+      "score": 33
+    },
+    {
+      "id": "node:70992371",
+      "name": "Carsoli",
+      "lat": 42.098927,
+      "lon": 13.084888,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=5732",
+        "name=Carsoli",
+        "place=town",
+        "population=5086",
+        "source=geodati.gfoss.it",
+        "wikidata=Q30023852",
+        "wikimedia_commons=Category:Carsoli",
+        "wikipedia=it:Carsoli"
+      ],
+      "score": 27
+    },
+    {
+      "id": "node:70992527",
+      "name": "Celano",
+      "lat": 42.0843238,
+      "lon": 13.5462069,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=5739",
+        "name=Celano",
+        "place=town",
+        "population=11017",
+        "source=geodati.gfoss.it",
+        "wikidata=Q50079",
+        "wikipedia=it:Celano"
+      ],
+      "score": 27
+    },
+    {
+      "id": "node:70992731",
+      "name": "Pratola Peligna",
+      "lat": 42.098314,
+      "lon": 13.8739802,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=342",
+        "loc_name=Pratëlë",
+        "name=Pratola Peligna",
+        "name:nap=Pratëlë",
+        "place=town",
+        "population=7000",
+        "wikidata=Q30029153",
+        "wikimedia_commons=Category:Pratola Peligna",
+        "wikipedia=it:Pratola Peligna"
+      ],
+      "score": 27
+    },
+    {
+      "id": "node:70993620",
+      "name": "Montorio al Vomano",
+      "lat": 42.5827062,
+      "lon": 13.6325193,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=5843",
+        "name=Montorio al Vomano",
+        "place=town",
+        "population=8048",
+        "source=geodati.gfoss.it",
+        "wikidata=Q51454",
+        "wikipedia=it:Montorio al Vomano"
+      ],
+      "score": 27
+    },
+    {
+      "id": "node:70990260",
+      "name": "Casalbordino",
+      "lat": 42.1506013,
+      "lon": 14.5847977,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=5923",
+        "name=Casalbordino",
+        "place=town",
+        "population=6478",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 15
+    },
+    {
+      "id": "node:70990598",
+      "name": "Fossacesia",
+      "lat": 42.2446332,
+      "lon": 14.4829037,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=5941",
+        "name=Fossacesia",
+        "place=town",
+        "population=5349",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 15
+    },
+    {
+      "id": "node:70991478",
+      "name": "Atessa",
+      "lat": 42.0718059,
+      "lon": 14.4489025,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=5913",
+        "name=Atessa",
+        "place=town",
+        "population=10639",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 15
+    },
+    {
+      "id": "node:70991551",
+      "name": "Casoli",
+      "lat": 42.1147159,
+      "lon": 14.290695,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=5925",
+        "name=Casoli",
+        "place=town",
+        "population=5971",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 15
+    },
+    {
+      "id": "node:70991841",
+      "name": "Gissi",
+      "lat": 42.0212271,
+      "lon": 14.5457485,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=5949",
+        "name=Gissi",
+        "place=town",
+        "population=2670",
+        "source=geodati.gfoss.it"
+      ],
+      "score": 15
     }
   ]
 }
