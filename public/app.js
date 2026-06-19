@@ -571,50 +571,11 @@ function originContextLabel(origin) {
   const lon = Number(origin?.lon);
 
   const label = String(origin?.label || "").toLowerCase();
-   const CITY_REGION_FIX = {
-  firenze: "Toscana",
-  roma: "Lazio",
-  milano: "Lombardia",
-  torino: "Piemonte",
-  genova: "Liguria",
-  bologna: "Emilia-Romagna",
-  venezia: "Veneto",
-  verona: "Veneto",
-  bari: "Puglia",
-  napoli: "Campania",
-  palermo: "Sicilia",
-  cagliari: "Sardegna",
-  ancona: "Marche",
-  perugia: "Umbria",
-  laquila: "Abruzzo",
-  "l aquila": "Abruzzo",
-  campobasso: "Molise",
-  potenza: "Basilicata",
-  catanzaro: "Calabria",
-  trento: "Trentino-Alto Adige",
-  aosta: "Valle d'Aosta"
-};
-
-const fixedRegionName = CITY_REGION_FIX[normName(label)];
-if (fixedRegionName) {
-  const fixed = items.find(
-    r => normName(r.name) === normName(fixedRegionName)
-  );
-  if (fixed) return fixed;
-}
 
   if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
 
-const items = IT_REGIONS_INDEX?.items;
-if (!Array.isArray(items) || !items.length) return null;
-
-const fixedRegionName = CITY_REGION_FIX[normName(label)];
-if (fixedRegionName) {
-  const fixed = items.find(
-    r => normName(r.name) === normName(fixedRegionName)
-  );
-  if (fixed) return fixed;
-}
+  const items = IT_REGIONS_INDEX?.items;
+  if (!Array.isArray(items) || !items.length) return null;
 
   let best = null;
 
