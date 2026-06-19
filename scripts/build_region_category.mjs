@@ -631,6 +631,16 @@ function scoreBorghi(p) {
     "castelvecchio calvisio",
     "rocca calascio",
     "opi",
+      "civitella del tronto",
+"guardiagrele",
+"tagliacozzo",
+"pescasseroli",
+"roccaraso",
+"roccascalegna",
+"atri",
+"citta sant angelo",
+"penne",
+"loreto aprutino",
 
     // Veneto
     "sirmione",
