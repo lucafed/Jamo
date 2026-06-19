@@ -1,7 +1,7 @@
 {
   "region_id": "it-abruzzo-borghi",
   "label_it": "Abruzzo • borghi",
-  "generated_at": "2026-06-19T12:07:58.980Z",
+  "generated_at": "2026-06-19T12:22:12.224Z",
   "places": [
     {
       "id": "curated:borgo:scanno",
@@ -124,6 +124,22 @@
       "visibility": "chicca",
       "tags": [
         "name=Castelvecchio Calvisio",
+        "place=village",
+        "tourism=attraction",
+        "historic=old_town",
+        "curated=true"
+      ],
+      "score": 2660
+    },
+    {
+      "id": "curated:borgo:rocca-calascio",
+      "name": "Rocca Calascio",
+      "lat": 42.3280296,
+      "lon": 13.6907679,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "name=Rocca Calascio",
         "place=village",
         "tourism=attraction",
         "historic=old_town",
@@ -332,22 +348,6 @@
         "source=geodati.gfoss.it"
       ],
       "score": 1555
-    },
-    {
-      "id": "node:6160109142",
-      "name": "Rocca Calascio",
-      "lat": 42.3280296,
-      "lon": 13.6907679,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "name=Rocca Calascio",
-        "place=hamlet",
-        "wikidata=Q7353689",
-        "wikimedia_commons=File:Rocca Calascio Borgo.jpg",
-        "wikipedia=it:Rocca Calascio"
-      ],
-      "score": 1537
     },
     {
       "id": "node:70992342",
@@ -920,386 +920,6 @@
         "source=geodati.gfoss.it"
       ],
       "score": 55
-    },
-    {
-      "id": "node:452631226",
-      "name": "Roccacaramanico",
-      "lat": 42.103315,
-      "lon": 14.0141662,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "ele=1050",
-        "gfoss_id=59329",
-        "istat_id=2147483647",
-        "name=Roccacaramanico",
-        "place=hamlet",
-        "population=6",
-        "source=Istat 2001 - geodati.gfoss.it",
-        "wikidata=Q2160151",
-        "wikipedia=it:Roccacaramanico"
-      ],
-      "score": 37
-    },
-    {
-      "id": "node:777998161",
-      "name": "Castello",
-      "lat": 42.251849,
-      "lon": 13.5887657,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "ele=876",
-        "gfoss_id=57774",
-        "istat_id=2147483647",
-        "name=Castello",
-        "place=hamlet",
-        "population=28",
-        "source=Istat 2001 - geodati.gfoss.it",
-        "wikidata=Q18426596"
-      ],
-      "score": 37
-    },
-    {
-      "id": "node:2282532051",
-      "name": "Roccapreturo",
-      "lat": 42.1963044,
-      "lon": 13.6973393,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Roccapreturo",
-        "place=hamlet",
-        "population=100",
-        "wikidata=Q7353699"
-      ],
-      "score": 37
-    },
-    {
-      "id": "node:2343474500",
-      "name": "Roccacerro",
-      "lat": 42.0664097,
-      "lon": 13.2083216,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Roccacerro",
-        "place=hamlet",
-        "wikidata=Q16597518",
-        "wikipedia=it:Roccacerro"
-      ],
-      "score": 37
-    },
-    {
-      "id": "node:3923961374",
-      "name": "Rocca Ceppino",
-      "lat": 42.7497829,
-      "lon": 13.6637737,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "ele=484",
-        "gfoss_id=58500",
-        "istat_id=6701720010",
-        "name=Rocca Ceppino",
-        "place=hamlet",
-        "population=45",
-        "source=Istat 2001 - geodati.gfoss.it",
-        "wikidata=Q18428476"
-      ],
-      "score": 37
-    },
-    {
-      "id": "node:3923961375",
-      "name": "Rocca Ischiano",
-      "lat": 42.7508236,
-      "lon": 13.6537055,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "ele=530",
-        "gfoss_id=58501",
-        "istat_id=6701720011",
-        "name=Rocca Ischiano",
-        "place=hamlet",
-        "population=40",
-        "source=Istat 2001 - geodati.gfoss.it",
-        "wikidata=Q18428477"
-      ],
-      "score": 37
-    },
-    {
-      "id": "node:4828661267",
-      "name": "Roccacinquemiglia",
-      "lat": 41.8119245,
-      "lon": 14.1207175,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "ele=1100",
-        "name=Roccacinquemiglia",
-        "place=hamlet",
-        "population=200",
-        "wikidata=Q18426954"
-      ],
-      "score": 37
-    },
-    {
-      "id": "node:6342876584",
-      "name": "Piani della Rocca",
-      "lat": 42.231522,
-      "lon": 14.445623,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Piani della Rocca",
-        "place=hamlet"
-      ],
-      "score": 25
-    },
-    {
-      "id": "node:8264666819",
-      "name": "Salle Vecchia (Castello)",
-      "lat": 42.1660864,
-      "lon": 13.9579659,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Salle Vecchia (Castello)",
-        "place=hamlet"
-      ],
-      "score": 25
-    },
-    {
-      "id": "node:8392199033",
-      "name": "Castello Due Valloni",
-      "lat": 42.1084797,
-      "lon": 14.6798436,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Castello Due Valloni",
-        "place=hamlet"
-      ],
-      "score": 25
-    },
-    {
-      "id": "node:10575202449",
-      "name": "Castello",
-      "lat": 42.3714211,
-      "lon": 14.2198052,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Castello",
-        "place=hamlet"
-      ],
-      "score": 25
-    },
-    {
-      "id": "node:70992946",
-      "name": "Sulmona",
-      "lat": 42.0474231,
-      "lon": 13.927011,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=5805",
-        "name=Sulmona",
-        "place=town",
-        "population=24557",
-        "source=geodati.gfoss.it",
-        "website=https://www.comune.sulmona.aq.it/",
-        "wikidata=Q50157",
-        "wikimedia_commons=Category:Sulmona",
-        "wikipedia=it:Sulmona"
-      ],
-      "score": 23
-    },
-    {
-      "id": "node:70993908",
-      "name": "Roseto degli Abruzzi",
-      "lat": 42.677577,
-      "lon": 14.0144636,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "check_date=2023-01-01",
-        "gfoss_id=5852",
-        "name=Roseto degli Abruzzi",
-        "place=town",
-        "population=25501",
-        "postal_code=64026",
-        "source=geodati.gfoss.it",
-        "website=https://www.comune.roseto.te.it/",
-        "wikidata=Q2081",
-        "wikimedia_commons=Category:Roseto degli Abruzzi",
-        "wikipedia=it:Roseto degli Abruzzi"
-      ],
-      "score": 23
-    },
-    {
-      "id": "node:70990636",
-      "name": "Francavilla al Mare",
-      "lat": 42.4168011,
-      "lon": 14.2914819,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=5943",
-        "name=Francavilla al Mare",
-        "place=town",
-        "population=25422",
-        "source=geodati.gfoss.it",
-        "wikidata=Q51225"
-      ],
-      "score": 17
-    },
-    {
-      "id": "node:70990834",
-      "name": "Ortona",
-      "lat": 42.349643,
-      "lon": 14.403913,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=5966",
-        "name=Ortona",
-        "place=town",
-        "population=23446",
-        "source=geodati.gfoss.it",
-        "wikidata=Q51256"
-      ],
-      "score": 17
-    },
-    {
-      "id": "node:70991066",
-      "name": "San Salvo",
-      "lat": 42.0433265,
-      "lon": 14.7272302,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=5991",
-        "name=San Salvo",
-        "place=town",
-        "population=20016",
-        "source=geodati.gfoss.it",
-        "wikidata=Q51288"
-      ],
-      "score": 17
-    },
-    {
-      "id": "node:70993479",
-      "name": "Spoltore",
-      "lat": 42.4552037,
-      "lon": 14.1406198,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=5903",
-        "name=Spoltore",
-        "place=town",
-        "population=19366",
-        "source=geodati.gfoss.it",
-        "wikidata=Q51400"
-      ],
-      "score": 17
-    },
-    {
-      "id": "node:70993632",
-      "name": "Giulianova",
-      "lat": 42.7535708,
-      "lon": 13.9667861,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=5840",
-        "name=Giulianova",
-        "place=town",
-        "population=24050",
-        "source=geodati.gfoss.it",
-        "wikidata=Q51450",
-        "wikipedia=it:Giulianova"
-      ],
-      "score": 17
-    },
-    {
-      "id": "node:70993666",
-      "name": "Martinsicuro",
-      "lat": 42.8851442,
-      "lon": 13.9155354,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=5862",
-        "name=Martinsicuro",
-        "place=town",
-        "population=16033",
-        "source=geodati.gfoss.it",
-        "wikidata=Q51452"
-      ],
-      "score": 17
-    },
-    {
-      "id": "node:70992107",
-      "name": "Vasto",
-      "lat": 42.12434,
-      "lon": 14.705923,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=6007",
-        "name=Vasto",
-        "place=town",
-        "population=41087",
-        "source=geodati.gfoss.it",
-        "website=http://www.comune.vasto.ch.it/",
-        "wikidata=Q51313",
-        "wikimedia_commons=Category:Vasto",
-        "wikipedia=it:Vasto"
-      ],
-      "score": -27
-    },
-    {
-      "id": "node:70991800",
-      "name": "Lanciano",
-      "lat": 42.2305316,
-      "lon": 14.3907794,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=5954",
-        "name=Lanciano",
-        "name:it=Lanciano",
-        "name:la=Anxsanum",
-        "name:pronunciation=laŋ̩ˈt͡ʃaːno",
-        "place=town",
-        "population=35444",
-        "source=geodati.gfoss.it",
-        "wikidata=Q8645"
-      ],
-      "score": -33
-    },
-    {
-      "id": "node:70992240",
-      "name": "Avezzano",
-      "lat": 42.0347963,
-      "lon": 13.4265048,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "description=Comune abruzzese di oltre 42000 abitanti situato in provincia dell'Aquila.",
-        "gfoss_id=5713",
-        "name=Avezzano",
-        "place=town",
-        "population=42515",
-        "source=geodati.gfoss.it",
-        "wikidata=Q30022445",
-        "wikimedia_commons=Category:Avezzano",
-        "wikipedia=it:Avezzano"
-      ],
-      "score": -33
     }
   ]
 }
