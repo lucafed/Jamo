@@ -711,7 +711,7 @@ function scoreBorghi(p) {
 
 if (pop > 30000) s -= 100;
 else if (pop > 15000) s -= 50;
-if (place === "town") s += 55;
+if (place === "town") s += 15;
 if (place === "village") s += 55;
 if (place === "hamlet") s += 25;
 
