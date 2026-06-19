@@ -569,7 +569,6 @@ function originContextLabel(origin) {
  function pickItalyRegionByOrigin(origin) {
   const lat = Number(origin?.lat);
   const lon = Number(origin?.lon);
-
   const label = String(origin?.label || "").toLowerCase();
 
   if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
@@ -577,12 +576,30 @@ function originContextLabel(origin) {
   const items = IT_REGIONS_INDEX?.items;
   if (!Array.isArray(items) || !items.length) return null;
 
+  const cityFix = {
+    firenze: "toscana",
+    bari: "puglia",
+    verona: "veneto",
+    milano: "lombardia",
+    roma: "lazio",
+    napoli: "campania",
+    torino: "piemonte",
+    genova: "liguria",
+    bologna: "emilia romagna",
+    palermo: "sicilia",
+    cagliari: "sardegna"
+  };
+
+  const fixed = cityFix[normName(label)];
+  if (fixed) {
+    const found = items.find((r) => normName(r.name) === fixed);
+    if (found) return found;
+  }
+
   let best = null;
 
   for (const r of items) {
-    if (label.includes(String(r.name || "").toLowerCase())) {
-      return r;
-    }
+    if (label.includes(String(r.name || "").toLowerCase())) return r;
 
     if (!r?.bbox) continue;
     if (!withinBBox(lat, lon, r.bbox)) continue;
@@ -597,7 +614,6 @@ function originContextLabel(origin) {
 
   return best?.r || null;
 }
-
   // -------------------- MACROS INDEX --------------------
   async function loadMacrosIndexSafe(signal) {
     if (MACROS_INDEX?.items?.length) return MACROS_INDEX;
