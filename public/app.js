@@ -605,8 +605,16 @@ if (fixedRegionName) {
 
   if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
 
-  const items = IT_REGIONS_INDEX?.items;
-  if (!Array.isArray(items) || !items.length) return null;
+const items = IT_REGIONS_INDEX?.items;
+if (!Array.isArray(items) || !items.length) return null;
+
+const fixedRegionName = CITY_REGION_FIX[normName(label)];
+if (fixedRegionName) {
+  const fixed = items.find(
+    r => normName(r.name) === normName(fixedRegionName)
+  );
+  if (fixed) return fixed;
+}
 
   let best = null;
 
