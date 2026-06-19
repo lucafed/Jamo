@@ -1,7 +1,7 @@
 {
   "region_id": "it-abruzzo-borghi",
   "label_it": "Abruzzo • borghi",
-  "generated_at": "2026-06-19T08:59:50.309Z",
+  "generated_at": "2026-06-19T09:08:07.567Z",
   "places": [
     {
       "id": "curated:borgo:scanno",
@@ -17,7 +17,7 @@
         "historic=old_town",
         "curated=true"
       ],
-      "score": 1660
+      "score": 2660
     },
     {
       "id": "curated:borgo:pescocostanzo",
@@ -33,7 +33,7 @@
         "historic=old_town",
         "curated=true"
       ],
-      "score": 1660
+      "score": 2660
     },
     {
       "id": "curated:borgo:pacentro",
@@ -49,7 +49,7 @@
         "historic=old_town",
         "curated=true"
       ],
-      "score": 1660
+      "score": 2660
     },
     {
       "id": "curated:borgo:barrea",
@@ -65,7 +65,7 @@
         "historic=old_town",
         "curated=true"
       ],
-      "score": 1660
+      "score": 2660
     },
     {
       "id": "curated:borgo:villetta-barrea",
@@ -81,7 +81,7 @@
         "historic=old_town",
         "curated=true"
       ],
-      "score": 1660
+      "score": 2660
     },
     {
       "id": "curated:borgo:opi",
@@ -97,7 +97,7 @@
         "historic=old_town",
         "curated=true"
       ],
-      "score": 1660
+      "score": 2660
     },
     {
       "id": "curated:borgo:navelli",
@@ -113,7 +113,7 @@
         "historic=old_town",
         "curated=true"
       ],
-      "score": 1660
+      "score": 2660
     },
     {
       "id": "curated:borgo:castelvecchio-calvisio",
@@ -129,7 +129,7 @@
         "historic=old_town",
         "curated=true"
       ],
-      "score": 1660
+      "score": 2660
     },
     {
       "id": "curated:borgo:santo-stefano-di-sessanio",
@@ -145,7 +145,23 @@
         "historic=old_town",
         "curated=true"
       ],
-      "score": 1660
+      "score": 2660
+    },
+    {
+      "id": "node:6160109142",
+      "name": "Rocca Calascio",
+      "lat": 42.3280296,
+      "lon": 13.6907679,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "name=Rocca Calascio",
+        "place=hamlet",
+        "wikidata=Q7353689",
+        "wikimedia_commons=File:Rocca Calascio Borgo.jpg",
+        "wikipedia=it:Rocca Calascio"
+      ],
+      "score": 1537
     },
     {
       "id": "node:5848259448",
@@ -176,26 +192,6 @@
         "wikipedia=it:Faraone (Sant'Egidio alla Vibrata)"
       ],
       "score": 92
-    },
-    {
-      "id": "node:70992107",
-      "name": "Vasto",
-      "lat": 42.12434,
-      "lon": 14.705923,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "gfoss_id=6007",
-        "name=Vasto",
-        "place=town",
-        "population=41087",
-        "source=geodati.gfoss.it",
-        "website=http://www.comune.vasto.ch.it/",
-        "wikidata=Q51313",
-        "wikimedia_commons=Category:Vasto",
-        "wikipedia=it:Vasto"
-      ],
-      "score": 73
     },
     {
       "id": "node:70992342",
@@ -238,26 +234,6 @@
       "score": 73
     },
     {
-      "id": "node:70992946",
-      "name": "Sulmona",
-      "lat": 42.0474231,
-      "lon": 13.927011,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "gfoss_id=5805",
-        "name=Sulmona",
-        "place=town",
-        "population=24557",
-        "source=geodati.gfoss.it",
-        "website=https://www.comune.sulmona.aq.it/",
-        "wikidata=Q50157",
-        "wikimedia_commons=Category:Sulmona",
-        "wikipedia=it:Sulmona"
-      ],
-      "score": 73
-    },
-    {
       "id": "node:70993833",
       "name": "Atri",
       "lat": 42.5797836,
@@ -274,28 +250,6 @@
         "website=https://www.comune.atri.te.it",
         "wikidata=Q51420",
         "wikipedia=it:Atri"
-      ],
-      "score": 73
-    },
-    {
-      "id": "node:70993908",
-      "name": "Roseto degli Abruzzi",
-      "lat": 42.677577,
-      "lon": 14.0144636,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "check_date=2023-01-01",
-        "gfoss_id=5852",
-        "name=Roseto degli Abruzzi",
-        "place=town",
-        "population=25501",
-        "postal_code=64026",
-        "source=geodati.gfoss.it",
-        "website=https://www.comune.roseto.te.it/",
-        "wikidata=Q2081",
-        "wikimedia_commons=Category:Roseto degli Abruzzi",
-        "wikipedia=it:Roseto degli Abruzzi"
       ],
       "score": 73
     },
@@ -317,77 +271,6 @@
       "score": 73
     },
     {
-      "id": "node:70990636",
-      "name": "Francavilla al Mare",
-      "lat": 42.4168011,
-      "lon": 14.2914819,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=5943",
-        "name=Francavilla al Mare",
-        "place=town",
-        "population=25422",
-        "source=geodati.gfoss.it",
-        "wikidata=Q51225"
-      ],
-      "score": 67
-    },
-    {
-      "id": "node:70990834",
-      "name": "Ortona",
-      "lat": 42.349643,
-      "lon": 14.403913,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=5966",
-        "name=Ortona",
-        "place=town",
-        "population=23446",
-        "source=geodati.gfoss.it",
-        "wikidata=Q51256"
-      ],
-      "score": 67
-    },
-    {
-      "id": "node:70991066",
-      "name": "San Salvo",
-      "lat": 42.0433265,
-      "lon": 14.7272302,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=5991",
-        "name=San Salvo",
-        "place=town",
-        "population=20016",
-        "source=geodati.gfoss.it",
-        "wikidata=Q51288"
-      ],
-      "score": 67
-    },
-    {
-      "id": "node:70991800",
-      "name": "Lanciano",
-      "lat": 42.2305316,
-      "lon": 14.3907794,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=5954",
-        "name=Lanciano",
-        "name:it=Lanciano",
-        "name:la=Anxsanum",
-        "name:pronunciation=laŋ̩ˈt͡ʃaːno",
-        "place=town",
-        "population=35444",
-        "source=geodati.gfoss.it",
-        "wikidata=Q8645"
-      ],
-      "score": 67
-    },
-    {
       "id": "node:70991987",
       "name": "Rocca San Giovanni",
       "lat": 42.2507698,
@@ -402,26 +285,6 @@
         "source=geodati.gfoss.it",
         "wikidata=Q51275",
         "wikipedia=it:Rocca San Giovanni"
-      ],
-      "score": 67
-    },
-    {
-      "id": "node:70992240",
-      "name": "Avezzano",
-      "lat": 42.0347963,
-      "lon": 13.4265048,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "description=Comune abruzzese di oltre 42000 abitanti situato in provincia dell'Aquila.",
-        "gfoss_id=5713",
-        "name=Avezzano",
-        "place=town",
-        "population=42515",
-        "source=geodati.gfoss.it",
-        "wikidata=Q30022445",
-        "wikimedia_commons=Category:Avezzano",
-        "wikipedia=it:Avezzano"
       ],
       "score": 67
     },
@@ -724,23 +587,6 @@
       "score": 67
     },
     {
-      "id": "node:70993479",
-      "name": "Spoltore",
-      "lat": 42.4552037,
-      "lon": 14.1406198,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=5903",
-        "name=Spoltore",
-        "place=town",
-        "population=19366",
-        "source=geodati.gfoss.it",
-        "wikidata=Q51400"
-      ],
-      "score": 67
-    },
-    {
       "id": "node:70993620",
       "name": "Montorio al Vomano",
       "lat": 42.5827062,
@@ -755,24 +601,6 @@
         "source=geodati.gfoss.it",
         "wikidata=Q51454",
         "wikipedia=it:Montorio al Vomano"
-      ],
-      "score": 67
-    },
-    {
-      "id": "node:70993632",
-      "name": "Giulianova",
-      "lat": 42.7535708,
-      "lon": 13.9667861,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=5840",
-        "name=Giulianova",
-        "place=town",
-        "population=24050",
-        "source=geodati.gfoss.it",
-        "wikidata=Q51450",
-        "wikipedia=it:Giulianova"
       ],
       "score": 67
     },
@@ -792,23 +620,6 @@
         "wikidata=Q51467",
         "wikimedia_commons=Category:Silvi",
         "wikipedia=it:Silvi"
-      ],
-      "score": 67
-    },
-    {
-      "id": "node:70993666",
-      "name": "Martinsicuro",
-      "lat": 42.8851442,
-      "lon": 13.9155354,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=5862",
-        "name=Martinsicuro",
-        "place=town",
-        "population=16033",
-        "source=geodati.gfoss.it",
-        "wikidata=Q51452"
       ],
       "score": 67
     },
@@ -1364,22 +1175,6 @@
       "score": 37
     },
     {
-      "id": "node:6160109142",
-      "name": "Rocca Calascio",
-      "lat": 42.3280296,
-      "lon": 13.6907679,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Rocca Calascio",
-        "place=hamlet",
-        "wikidata=Q7353689",
-        "wikimedia_commons=File:Rocca Calascio Borgo.jpg",
-        "wikipedia=it:Rocca Calascio"
-      ],
-      "score": 37
-    },
-    {
       "id": "node:6342876584",
       "name": "Piani della Rocca",
       "lat": 42.231522,
@@ -1430,6 +1225,211 @@
         "place=hamlet"
       ],
       "score": 25
+    },
+    {
+      "id": "node:70992946",
+      "name": "Sulmona",
+      "lat": 42.0474231,
+      "lon": 13.927011,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=5805",
+        "name=Sulmona",
+        "place=town",
+        "population=24557",
+        "source=geodati.gfoss.it",
+        "website=https://www.comune.sulmona.aq.it/",
+        "wikidata=Q50157",
+        "wikimedia_commons=Category:Sulmona",
+        "wikipedia=it:Sulmona"
+      ],
+      "score": 23
+    },
+    {
+      "id": "node:70993908",
+      "name": "Roseto degli Abruzzi",
+      "lat": 42.677577,
+      "lon": 14.0144636,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "check_date=2023-01-01",
+        "gfoss_id=5852",
+        "name=Roseto degli Abruzzi",
+        "place=town",
+        "population=25501",
+        "postal_code=64026",
+        "source=geodati.gfoss.it",
+        "website=https://www.comune.roseto.te.it/",
+        "wikidata=Q2081",
+        "wikimedia_commons=Category:Roseto degli Abruzzi",
+        "wikipedia=it:Roseto degli Abruzzi"
+      ],
+      "score": 23
+    },
+    {
+      "id": "node:70990636",
+      "name": "Francavilla al Mare",
+      "lat": 42.4168011,
+      "lon": 14.2914819,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=5943",
+        "name=Francavilla al Mare",
+        "place=town",
+        "population=25422",
+        "source=geodati.gfoss.it",
+        "wikidata=Q51225"
+      ],
+      "score": 17
+    },
+    {
+      "id": "node:70990834",
+      "name": "Ortona",
+      "lat": 42.349643,
+      "lon": 14.403913,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=5966",
+        "name=Ortona",
+        "place=town",
+        "population=23446",
+        "source=geodati.gfoss.it",
+        "wikidata=Q51256"
+      ],
+      "score": 17
+    },
+    {
+      "id": "node:70991066",
+      "name": "San Salvo",
+      "lat": 42.0433265,
+      "lon": 14.7272302,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=5991",
+        "name=San Salvo",
+        "place=town",
+        "population=20016",
+        "source=geodati.gfoss.it",
+        "wikidata=Q51288"
+      ],
+      "score": 17
+    },
+    {
+      "id": "node:70993479",
+      "name": "Spoltore",
+      "lat": 42.4552037,
+      "lon": 14.1406198,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=5903",
+        "name=Spoltore",
+        "place=town",
+        "population=19366",
+        "source=geodati.gfoss.it",
+        "wikidata=Q51400"
+      ],
+      "score": 17
+    },
+    {
+      "id": "node:70993632",
+      "name": "Giulianova",
+      "lat": 42.7535708,
+      "lon": 13.9667861,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=5840",
+        "name=Giulianova",
+        "place=town",
+        "population=24050",
+        "source=geodati.gfoss.it",
+        "wikidata=Q51450",
+        "wikipedia=it:Giulianova"
+      ],
+      "score": 17
+    },
+    {
+      "id": "node:70993666",
+      "name": "Martinsicuro",
+      "lat": 42.8851442,
+      "lon": 13.9155354,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=5862",
+        "name=Martinsicuro",
+        "place=town",
+        "population=16033",
+        "source=geodati.gfoss.it",
+        "wikidata=Q51452"
+      ],
+      "score": 17
+    },
+    {
+      "id": "node:70992107",
+      "name": "Vasto",
+      "lat": 42.12434,
+      "lon": 14.705923,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=6007",
+        "name=Vasto",
+        "place=town",
+        "population=41087",
+        "source=geodati.gfoss.it",
+        "website=http://www.comune.vasto.ch.it/",
+        "wikidata=Q51313",
+        "wikimedia_commons=Category:Vasto",
+        "wikipedia=it:Vasto"
+      ],
+      "score": -27
+    },
+    {
+      "id": "node:70991800",
+      "name": "Lanciano",
+      "lat": 42.2305316,
+      "lon": 14.3907794,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=5954",
+        "name=Lanciano",
+        "name:it=Lanciano",
+        "name:la=Anxsanum",
+        "name:pronunciation=laŋ̩ˈt͡ʃaːno",
+        "place=town",
+        "population=35444",
+        "source=geodati.gfoss.it",
+        "wikidata=Q8645"
+      ],
+      "score": -33
+    },
+    {
+      "id": "node:70992240",
+      "name": "Avezzano",
+      "lat": 42.0347963,
+      "lon": 13.4265048,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "description=Comune abruzzese di oltre 42000 abitanti situato in provincia dell'Aquila.",
+        "gfoss_id=5713",
+        "name=Avezzano",
+        "place=town",
+        "population=42515",
+        "source=geodati.gfoss.it",
+        "wikidata=Q30022445",
+        "wikimedia_commons=Category:Avezzano",
+        "wikipedia=it:Avezzano"
+      ],
+      "score": -33
     }
   ]
 }
