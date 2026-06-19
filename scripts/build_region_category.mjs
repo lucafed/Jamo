@@ -547,6 +547,7 @@ const ICONIC_BORGHI = [
   "borghetto",
   "valeggio sul mincio",
   "sirmione",
+  "cittadella",
   "soave",
   "lazise",
   "malcesine",
