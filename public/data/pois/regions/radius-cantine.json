@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-06-18T14:37:25.079Z",
+  "generated_at": "2026-06-19T06:52:11.606Z",
   "places": [
     {
       "id": "node:2692275706",
@@ -556,7 +556,7 @@
         "phone=+39 0423 975408",
         "province=TV",
         "toilets=yes",
-        "website=http://www.benottoprosecco.it",
+        "website=https://www.benottoprosecco.it",
         "wheelchair=yes"
       ],
       "score": 120
@@ -579,7 +579,7 @@
         "name=Cantina Giusti Wine",
         "opening_hours=Mo-Fr 09:00-18:00; Sa-Su 10:00-18:00",
         "phone=+390423720198",
-        "website=http://www.giustiwine.com"
+        "website=https://www.giustiwine.com/"
       ],
       "score": 120
     },
@@ -964,6 +964,28 @@
       "score": 108
     },
     {
+      "id": "node:13885238596",
+      "name": "Cantina Pisoni",
+      "lat": 46.0273845,
+      "lon": 10.9610153,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Sarche - Pergolese di Lasino",
+        "addr:country=IT",
+        "addr:housename=Pisoni",
+        "addr:housenumber=7B",
+        "addr:postcode=38076",
+        "addr:street=Via San Siro",
+        "craft=winery",
+        "email=info@pisonivini.it",
+        "name=Cantina Pisoni",
+        "phone=+ 39 0461 563216",
+        "website=http://www.pisoni.net"
+      ],
+      "score": 108
+    },
+    {
       "id": "way:72457503",
       "name": "Cantina La Vis",
       "lat": 46.1371637,
@@ -975,6 +997,7 @@
         "addr:housenumber=7",
         "addr:postcode=38015",
         "addr:street=Via del Carmine",
+        "check_date=2026-04-22",
         "contact:facebook=https://www.facebook.com/GruppoLaVis",
         "contact:phone=+39 0461 440150",
         "contact:website=https://la-vis.com/",
@@ -1586,7 +1609,7 @@
         "craft=winery",
         "name=Azienda Vitivinicola Bulli",
         "opening_hours=Mo-Sa 08:30-18:30; Su 08:30-12:30, 14:30-18:30",
-        "phone=+ 39 0523 895126",
+        "phone=+39 0523 895126",
         "website=https://bullivini.jimdofree.com/"
       ],
       "score": 102
@@ -1635,6 +1658,7 @@
       "type": "cantine",
       "visibility": "classica",
       "tags": [
+        "check_date=2026-05-18",
         "contact:website=http://www.vinitorreggiani.it/la-villa/",
         "craft=winery",
         "name=Cantina Torreggiani"
@@ -1719,7 +1743,7 @@
         "craft=winery",
         "name=Fattoria del Graspo",
         "opening_hours=Mo-Sa 08:30-12:30; Mo-Sa 14:30-13:30; Su 08:30-12:30",
-        "phone=049793274",
+        "phone=+39 049 793274",
         "website=https://www.fattoriadelgraspo.com/"
       ],
       "score": 102
@@ -1736,7 +1760,7 @@
         "contact:phone=+39 0423 900139",
         "craft=winery",
         "name=Marsuret Azienda Agricola",
-        "website=http://www.marsuret.it"
+        "website=https://www.marsuret.it/"
       ],
       "score": 102
     },
@@ -2014,15 +2038,15 @@
         "name=Bertani",
         "opening_hours=Tu-Sa 9:30-13:00 14:00-18:00",
         "phone=+390458658444",
-        "website=http://www.bertani.net/"
+        "website=https://www.bertani.net/"
       ],
       "score": 102
     },
     {
       "id": "way:141028896",
       "name": "Ca' Botta Wine shop",
-      "lat": 45.5350707,
-      "lon": 11.0049664,
+      "lat": 45.535286,
+      "lon": 11.0047891,
       "type": "cantine",
       "visibility": "classica",
       "tags": [
@@ -2071,7 +2095,7 @@
         "fixme=Import CTR Veneto. Sostituire con building=stable (stalla) o building=barn (fienile)",
         "name=Azienda Agricola La Farra",
         "phone=+39 0438 801242",
-        "website=www.lafarra.it"
+        "website=https://www.lafarra.it/"
       ],
       "score": 102
     },
@@ -2199,6 +2223,26 @@
         "contact:website=https://cantinemonchieri.it/",
         "craft=winery",
         "name=Cantina Monchieri"
+      ],
+      "score": 102
+    },
+    {
+      "id": "way:1529870782",
+      "name": "Le Vigne Terre di Confine",
+      "lat": 45.7252556,
+      "lon": 11.5822851,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Fara Vicentino",
+        "addr:postcode=36030",
+        "addr:street=Via Perlena",
+        "building=yes",
+        "craft=winery",
+        "name=Le Vigne Terre di Confine",
+        "opening_hours=Fr 17:30-00:00, Sa 09-12:30 17:30-00:00, Su 17:30-00:00",
+        "phone=+3904451670127",
+        "website=https://www.levigneterrediconfine.it"
       ],
       "score": 102
     },
@@ -2565,6 +2609,7 @@
       "type": "cantine",
       "visibility": "classica",
       "tags": [
+        "check_date=2026-05-21",
         "contact:email=info@turinavini.it",
         "contact:phone=+39 0365 502103",
         "contact:website=https://www.turinavini.it/",
@@ -2644,7 +2689,7 @@
         "name=Quota 101",
         "organic=yes",
         "phone=+39 049 5211322",
-        "website=www.quota101.com"
+        "website=https://www.quota101.com/"
       ],
       "score": 96
     },
@@ -3005,6 +3050,25 @@
       "score": 96
     },
     {
+      "id": "node:12561033817",
+      "name": "Adagio",
+      "lat": 45.4095585,
+      "lon": 11.5427841,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Barbarano Mossano",
+        "addr:housenumber=47",
+        "addr:postcode=36048",
+        "addr:street=Via Quattro Novembre",
+        "craft=winery",
+        "name=Adagio",
+        "phone=+39 3403186742",
+        "website=https://www.adagiovini.it/"
+      ],
+      "score": 96
+    },
+    {
       "id": "node:12698701968",
       "name": "Val D'Oca",
       "lat": 45.8733867,
@@ -3226,7 +3290,7 @@
         "addr:street=Via Cinto",
         "craft=winery",
         "name=Azienda vitivinicola Turetta Ca' Bianca",
-        "phone=+39042994288ti",
+        "phone=+39 0429 94288",
         "website=https://www.turettacabianca.it/cantina/"
       ],
       "score": 96
@@ -3246,6 +3310,25 @@
         "name=Cleto Chiarli",
         "phone=+39059702761",
         "website=https://www.chiarli.it/"
+      ],
+      "score": 96
+    },
+    {
+      "id": "node:13846864094",
+      "name": "Meggiolaro Vini",
+      "lat": 45.5049649,
+      "lon": 11.2863416,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Roncà",
+        "addr:housenumber=43/B",
+        "addr:postcode=37030",
+        "addr:street=via Roncolati",
+        "craft=winery",
+        "name=Meggiolaro Vini",
+        "phone=+39 045 65 45 067",
+        "website=https://meggiolarovini.it"
       ],
       "score": 96
     },
@@ -3385,7 +3468,7 @@
         "email=marketing@lacanevadeibiasio.it",
         "name=La Caneva dei Biasio",
         "phone=+39 0423 483160",
-        "website=http://www.lacanevadeibiasio.it"
+        "website=https://www.lacanevadeibiasio.it/"
       ],
       "score": 96
     },
@@ -3641,7 +3724,7 @@
         "building=yes",
         "craft=winery",
         "name=Vini Casarotto",
-        "phone=0457450165",
+        "phone=+39 045 745 0165",
         "website=https://www.vinicasarotto.com/it/"
       ],
       "score": 96
@@ -3871,6 +3954,19 @@
         "alt_name=Vivo Viticoltori Veneto Orientale",
         "craft=winery",
         "name=Cantina Sociale di Premaore"
+      ],
+      "score": 92
+    },
+    {
+      "id": "node:13864588998",
+      "name": "Cantina Marsadri",
+      "lat": 45.5692993,
+      "lon": 10.5298836,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "craft=winery",
+        "name=Cantina Marsadri"
       ],
       "score": 92
     },
@@ -4354,7 +4450,7 @@
       "tags": [
         "craft=winery",
         "name=Cooperativa Triasso e Sassella",
-        "website=http://cooptriasso.it"
+        "website=https://cooptriasso.it/"
       ],
       "score": 90
     },
@@ -4659,7 +4755,7 @@
         "addr:street=Via Crosara",
         "craft=winery",
         "name=I Stefanini - Società Agricola",
-        "website=http://www.istefanini.it"
+        "website=https://www.istefanini.it/"
       ],
       "score": 90
     },
@@ -4677,7 +4773,7 @@
         "addr:street=Via Santo Stefano",
         "craft=winery",
         "name=Portinari Vini",
-        "website=http://www.portinarivini.com"
+        "website=https://www.portinarivini.com/"
       ],
       "score": 90
     },
@@ -5910,22 +6006,6 @@
       "score": 80
     },
     {
-      "id": "node:10588761332",
-      "name": "Adriano Shehata",
-      "lat": 45.4402266,
-      "lon": 12.3389714,
-      "type": "cantine",
-      "visibility": "classica",
-      "tags": [
-        "addr:city=Venezia",
-        "addr:housenumber=5516",
-        "addr:street=Campiello Crosetta",
-        "craft=winery",
-        "name=Adriano Shehata"
-      ],
-      "score": 80
-    },
-    {
       "id": "node:10980860338",
       "name": "Gregoletto",
       "lat": 45.9381003,
@@ -6004,19 +6084,6 @@
       "tags": [
         "craft=winery",
         "name=Le Driadi"
-      ],
-      "score": 80
-    },
-    {
-      "id": "node:12561033817",
-      "name": "Adagio",
-      "lat": 45.4095585,
-      "lon": 11.5427841,
-      "type": "cantine",
-      "visibility": "classica",
-      "tags": [
-        "craft=winery",
-        "name=Adagio"
       ],
       "score": 80
     },
@@ -6207,6 +6274,19 @@
       "tags": [
         "craft=winery",
         "name=I Vitari"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:13807216831",
+      "name": "Pravis",
+      "lat": 46.0307735,
+      "lon": 10.9878744,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "craft=winery",
+        "name=Pravis"
       ],
       "score": 80
     },
@@ -6575,6 +6655,38 @@
       "score": 80
     },
     {
+      "id": "way:1523523924",
+      "name": "Meana Bonomi",
+      "lat": 45.9893299,
+      "lon": 10.3269756,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=8",
+        "addr:street=Via Meana",
+        "building=yes",
+        "craft=winery",
+        "name=Meana Bonomi"
+      ],
+      "score": 80
+    },
+    {
+      "id": "way:1523523925",
+      "name": "Azienda Vitivinicola Le Grotte",
+      "lat": 45.9888323,
+      "lon": 10.3276072,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=6",
+        "addr:street=Via Meana",
+        "building=yes",
+        "craft=winery",
+        "name=Azienda Vitivinicola Le Grotte"
+      ],
+      "score": 80
+    },
+    {
       "id": "relation:2230774",
       "name": "Civ&Civ",
       "lat": 44.6653494,
@@ -6679,12 +6791,12 @@
         "addr:city=Goito",
         "addr:housenumber=347",
         "addr:postcode=46044",
-        "addr:street=Strada Provinciale exSS236 Goitese",
+        "addr:street=Strada Provinciale ex Strada Statale 236 Goitese",
         "branch=Goito",
         "email=pv.goito@collisgroup.it",
         "name=Cantina veneta",
         "opening_hours=Mo 15:30-19:00; Tu-Fr 09:00-12:30, 15:30-19:00; Sa 09:00-12:30, 13:30-18:30; Su off",
-        "phone=+3903761290013",
+        "phone=+39 037 61290013",
         "shop=wine",
         "website=https://www.cantinaveneta.com/punto_vendita/goito/"
       ],
@@ -6721,7 +6833,7 @@
       "tags": [
         "building=yes",
         "name=CANTINA / WINERY & TASTING - Tenuta Sant'Antonio di Castagnedi Massimo Armando, Tiziano e Paolo",
-        "phone=0458740682",
+        "phone=+39 045 874 0682",
         "shop=wine",
         "website=https://www.tenutasantantonio.it/"
       ],
@@ -7076,7 +7188,7 @@
         "addr:street=Via Castelletto",
         "name=Cantina Bernardi Giovanni",
         "opening_hours=Fr-Su 09:30-23:30; Tu, Th 09:30-19:30; We 09:30-12:30",
-        "phone=049 521 1006",
+        "phone=+39 049 521 1006",
         "shop=wine"
       ],
       "score": 49
@@ -7566,7 +7678,7 @@
         "addr:housenumber=13",
         "addr:postcode=40121",
         "addr:street=Via Monte Grappa",
-        "check_date=2023-06-11",
+        "check_date=2026-06-06",
         "email=montegrappa13@gmail.com",
         "name=La Bottega di Via Montegrappa",
         "opening_hours=Tu-Th 10:30-00:00; Fr 10:30-01:30; Sa 10:00-01:30; Su 11:00-23:00",
@@ -7750,6 +7862,65 @@
       "score": 47
     },
     {
+      "id": "node:13792888001",
+      "name": "Colli Vicentini Vitevis",
+      "lat": 45.4960948,
+      "lon": 11.4293129,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=151",
+        "addr:postcode=36075",
+        "addr:street=Viale Europa",
+        "email=wineshopmontecchio@vitevis.com",
+        "name=Colli Vicentini Vitevis",
+        "opening_hours=Mo-Sa 08:30-12:15, 14:30-18:30",
+        "phone=+39 0444 491360",
+        "shop=wine",
+        "website=https://www.vitevis.com/"
+      ],
+      "score": 47
+    },
+    {
+      "id": "node:13918026928",
+      "name": "Villa la Bagatta",
+      "lat": 45.4869923,
+      "lon": 10.7291955,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Lazise",
+        "addr:country=IT",
+        "addr:housenumber=5",
+        "addr:postcode=37017",
+        "addr:street=Località Bagatta 5",
+        "contact:instagram=@wingut_villa_la_bagatta",
+        "email=wine@la-bagatta.it",
+        "name=Villa la Bagatta",
+        "opening_hours=Mo-Su 09:30-12:00,14:00-17:00",
+        "opening_hours:conditional=Mo-Su 08:00-12:00,14:00-18:00 @ (May-Sep)",
+        "phone=+39 345 9371858",
+        "shop=wine",
+        "website=https://www.la-bagatta.it/"
+      ],
+      "score": 47
+    },
+    {
+      "id": "way:174478054",
+      "name": "Cantina San Martino",
+      "lat": 45.8937737,
+      "lon": 12.0911086,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "building=farm_auxiliary",
+        "name=Cantina San Martino",
+        "shop=wine",
+        "website=https://www.cantinasanmartino.it/"
+      ],
+      "score": 47
+    },
+    {
       "id": "way:189459353",
       "name": "Conselve Vigneti e Cantine",
       "lat": 45.271602,
@@ -7784,7 +7955,7 @@
         "name=Cantina Salim",
         "roof:shape=flat",
         "shop=wine",
-        "website=http://www.cantinasalim.it/"
+        "website=https://www.cantinasalim.it/"
       ],
       "score": 47
     },
@@ -8591,7 +8762,7 @@
         "operator=Michel Thoulouze",
         "phone=+393488727500",
         "shop=wine",
-        "website=http://ortodivenezia.com"
+        "website=https://ortodivenezia.com/"
       ],
       "score": 41
     },
@@ -8982,6 +9153,45 @@
       "score": 41
     },
     {
+      "id": "node:13859012321",
+      "name": "Badef",
+      "lat": 45.5943576,
+      "lon": 10.0935964,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=13",
+        "addr:postcode=25050",
+        "addr:street=Via Marrocco",
+        "contact:email=ordini@badef.it",
+        "contact:website=https://badef.it/",
+        "name=Badef",
+        "opening_hours=Mo-Fr 09:00-12:00,14:00-24:00; Sa 09:00-12:00,17:00-24:00; Su 17:00-24:00",
+        "operator=Birrificio Badef s.r.l.",
+        "ref:vatin=IT03250670985",
+        "shop=wine"
+      ],
+      "score": 41
+    },
+    {
+      "id": "node:13897541208",
+      "name": "Timon Wine",
+      "lat": 45.4455259,
+      "lon": 12.3285868,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Venezia",
+        "addr:housenumber=2750",
+        "addr:place=Cannaregio",
+        "addr:postcode=30121",
+        "name=Timon Wine",
+        "shop=wine",
+        "website=https://www.altimon.it"
+      ],
+      "score": 41
+    },
+    {
       "id": "way:81025169",
       "name": "Zeni",
       "lat": 46.1943586,
@@ -9214,8 +9424,10 @@
         "addr:housenumber=13",
         "addr:postcode=40018",
         "addr:street=Piazza Sauro Testoni",
+        "check_date=2026-04-28",
+        "level=0",
         "name=La Bottega dal Vèn Bán",
-        "opening_hours=Mo 16:00-20:00; Tu-Sa 08:30-13:00,16:00-20:00; Su 08:30-13:00",
+        "opening_hours=Mo off; Tu-Sa 09:00-13:00,16:00-20:00; Su 09:00-13:00",
         "phone=+39 335 474311",
         "shop=wine"
       ],
@@ -9354,28 +9566,6 @@
         "name=Enoteca Non Solo Bacco Sas",
         "opening_hours=Mo-Sa 08:00-13:00; Mo-Tu 16:00-19:30; Th-Sa 08:00-19:30",
         "phone=+39 041 5460711",
-        "shop=wine"
-      ],
-      "score": 37
-    },
-    {
-      "id": "node:7410884020",
-      "name": "Enoteca Venezia S.r.l.",
-      "lat": 45.4418252,
-      "lon": 12.3230778,
-      "type": "cantine",
-      "visibility": "classica",
-      "tags": [
-        "addr:housenumber=122c",
-        "addr:place=Cannaregio",
-        "addr:postcode=30121",
-        "addr:street=Rio Terà Lista di Spagna",
-        "delivery:description:it=Attivazione servizio a domicilio di generi di prima necessità per COVID-19",
-        "email=venezia@retevinipro.it",
-        "name=Enoteca Venezia S.r.l.",
-        "opening_hours=Mo 10:00-23:00; Tu 10:00-23:00; We 10:00-23:00; Th 10:00-23:00; Fr 10:00-23:00; Sa 10:00-23:00; Su 10:00-23:00",
-        "payment:online_payment=yes",
-        "phone=+39 389 5138879",
         "shop=wine"
       ],
       "score": 37
@@ -9552,6 +9742,62 @@
       "visibility": "classica",
       "tags": [
         "name=Cantina di Custoza",
+        "shop=wine"
+      ],
+      "score": 37
+    },
+    {
+      "id": "node:13763019564",
+      "name": "Enoteca La Cantinetta",
+      "lat": 45.6090541,
+      "lon": 9.5208568,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Trezzo sull'Adda",
+        "addr:housenumber=28",
+        "addr:postcode=20056",
+        "addr:street=Piazza Della Libertà",
+        "contact:phone=+39 347 576 7044",
+        "level=0",
+        "name=Enoteca La Cantinetta",
+        "opening_hours=Tu-Sa 10:00-12:30,16:00-19:00; Mo off",
+        "shop=wine",
+        "wheelchair=no"
+      ],
+      "score": 37
+    },
+    {
+      "id": "node:13867081201",
+      "name": "La Cantina di Bacco di Renato de Rosa",
+      "lat": 45.8926767,
+      "lon": 10.001781,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=269",
+        "addr:postcode=24020",
+        "addr:street=Via Spluss",
+        "name=La Cantina di Bacco di Renato de Rosa",
+        "shop=wine"
+      ],
+      "score": 37
+    },
+    {
+      "id": "node:13870911181",
+      "name": "Cantine di Verona SCA",
+      "lat": 45.3341334,
+      "lon": 11.0024,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Buttapietra",
+        "addr:housenumber=2",
+        "addr:postcode=37060",
+        "addr:street=Via Provinciale Sud",
+        "name=Cantine di Verona SCA",
+        "opening_hours=Tu-Sa 08:30-12:30; 15:00-19:00",
+        "phone=+390454856538",
         "shop=wine"
       ],
       "score": 37
@@ -9899,7 +10145,7 @@
         "addr:street=Via Ca' del Pipa",
         "name=Farm Zyme Celestino Gaspari",
         "shop=wine",
-        "website=http://www.zyme.it/contatti/"
+        "website=https://www.zyme.it/contatti/"
       ],
       "score": 35
     },
@@ -10099,8 +10345,8 @@
     {
       "id": "node:3526762194",
       "name": "Casa Mattiazzi",
-      "lat": 45.4442277,
-      "lon": 12.3247998,
+      "lat": 45.4442336,
+      "lon": 12.3248075,
       "type": "cantine",
       "visibility": "classica",
       "tags": [
@@ -10313,6 +10559,7 @@
         "addr:housenumber=96a",
         "addr:postcode=24121",
         "addr:street=Via San Tomaso",
+        "check_date=2026-05-24",
         "entrance=yes",
         "level=0",
         "loc_ref=71107",
@@ -10505,6 +10752,7 @@
       "type": "cantine",
       "visibility": "classica",
       "tags": [
+        "addr:city=Venezia",
         "addr:housenumber=4657",
         "addr:street=Rio Terà Santi Apostoli",
         "name=Da Tellero",
@@ -10654,8 +10902,8 @@
     {
       "id": "node:7515782661",
       "name": "Enoteca Spirito Divino",
-      "lat": 44.5163169,
-      "lon": 11.3250857,
+      "lat": 44.5163437,
+      "lon": 11.3251078,
       "type": "cantine",
       "visibility": "classica",
       "tags": [
@@ -10881,6 +11129,7 @@
       "type": "cantine",
       "visibility": "classica",
       "tags": [
+        "check_date=2026-05-23",
         "level=0",
         "name=Enoteca da Guido",
         "opening_hours=Mo-Sa 11:00-14:00,17:00-23:00",
@@ -10927,7 +11176,7 @@
         "addr:street=Via Garibaldi",
         "email=info@bortolomiol.com",
         "name=Bortolomiol",
-        "phone=04239749",
+        "phone=+39 0423 9749",
         "shop=wine"
       ],
       "score": 31
@@ -11065,6 +11314,23 @@
       "tags": [
         "name=Da Piera",
         "opening_hours=Tu-Su 07:45-12:30,16:00-19:00",
+        "shop=wine"
+      ],
+      "score": 31
+    },
+    {
+      "id": "node:13913141202",
+      "name": "Zanze Wine Shop",
+      "lat": 45.4384729,
+      "lon": 12.321528,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Venezia",
+        "addr:housenumber=218",
+        "addr:postcode=30135",
+        "addr:street=Santa Croce",
+        "name=Zanze Wine Shop",
         "shop=wine"
       ],
       "score": 31
@@ -11457,10 +11723,9 @@
       "type": "cantine",
       "visibility": "classica",
       "tags": [
-        "addr:housenumber=466d",
-        "addr:place=Santa Croce",
-        "addr:postcode=30135",
-        "addr:street=Rio Terà Sant'Andrea",
+        "contact:housenumber=466d",
+        "contact:place=Santa Croce",
+        "contact:postcode=30135",
         "name=Enoteca Busodurello",
         "shop=wine"
       ],
@@ -12015,7 +12280,7 @@
         "addr:housenumber=22a",
         "addr:postcode=24129",
         "addr:street=Via Bartolomeo Colleoni",
-        "check_date=2025-06-22",
+        "check_date=2026-05-25",
         "entrance=yes",
         "level=0",
         "loc_ref=19901",
@@ -13073,6 +13338,22 @@
       "score": 25
     },
     {
+      "id": "node:11279246750",
+      "name": "Enoteca Bella Vita",
+      "lat": 45.2310781,
+      "lon": 11.8731095,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=17",
+        "addr:street=Via Giuseppe Verdi",
+        "contact:facebook=https://www.facebook.com/enotecabellavita/",
+        "name=Enoteca Bella Vita",
+        "shop=wine"
+      ],
+      "score": 25
+    },
+    {
       "id": "node:11286035283",
       "name": "Farmacia da Bacco",
       "lat": 45.3538352,
@@ -13565,6 +13846,36 @@
       "tags": [
         "check_date=2026-04-12",
         "name=Caffettiera Enoteca Candian",
+        "shop=wine"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:13758054878",
+      "name": "Boccondivino vineria",
+      "lat": 45.6262847,
+      "lon": 10.582429,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Boccondivino vineria",
+        "shop=wine"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:13869620905",
+      "name": "Nave de Oro",
+      "lat": 45.443829,
+      "lon": 12.3275426,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Venezia",
+        "addr:housenumber=1370",
+        "addr:place=Cannaregio",
+        "addr:postcode=30121",
+        "name=Nave de Oro",
         "shop=wine"
       ],
       "score": 25

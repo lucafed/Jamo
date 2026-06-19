@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-06-18T14:36:01.016Z",
+  "generated_at": "2026-06-19T06:52:01.009Z",
   "places": [
     {
       "id": "node:62513274",
@@ -29,7 +29,7 @@
         "wikidata=Q43014",
         "wikipedia=it:Sabbioneta"
       ],
-      "score": 395
+      "score": 475
     },
     {
       "id": "node:3880134851",
@@ -46,7 +46,7 @@
         "wikidata=Q2910854",
         "wikipedia=it:Borghetto (Piacenza)"
       ],
-      "score": 340
+      "score": 420
     },
     {
       "id": "node:337546297",
@@ -61,7 +61,7 @@
         "wikidata=Q2910855",
         "wikipedia=it:Borghetto (Valeggio sul Mincio)"
       ],
-      "score": 335
+      "score": 415
     },
     {
       "id": "node:1246161396",
@@ -76,7 +76,7 @@
         "wikidata=Q18497367",
         "wikipedia=it:Borghetto (San Martino di Lupari)"
       ],
-      "score": 335
+      "score": 415
     },
     {
       "id": "node:1388402818",
@@ -93,7 +93,7 @@
         "wikidata=Q2438806",
         "wikipedia=it:Malborghetto di Boara"
       ],
-      "score": 335
+      "score": 415
     },
     {
       "id": "node:1409597919",
@@ -108,23 +108,7 @@
         "wikidata=Q2580067",
         "wikipedia=it:Villa d'Asolo"
       ],
-      "score": 335
-    },
-    {
-      "id": "node:1425100894",
-      "name": "Bargano",
-      "lat": 45.2409504,
-      "lon": 9.4459551,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "name=Bargano",
-        "place=village",
-        "population=817",
-        "wikidata=Q3634964",
-        "wikipedia=it:Bargano"
-      ],
-      "score": 335
+      "score": 415
     },
     {
       "id": "node:4431492600",
@@ -139,27 +123,7 @@
         "wikidata=Q2298140",
         "wikipedia=it:Gratacasolo"
       ],
-      "score": 335
-    },
-    {
-      "id": "relation:43968",
-      "name": "Bosaro",
-      "lat": 45.0071714,
-      "lon": 11.7800519,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "admin_level=8",
-        "boundary=administrative",
-        "name=Bosaro",
-        "postal_code=45033",
-        "ref:ISTAT=029007",
-        "ref:catasto=B069",
-        "type=boundary",
-        "wikidata=Q34517",
-        "wikipedia=it:Bosaro"
-      ],
-      "score": 320
+      "score": 415
     },
     {
       "id": "relation:44001",
@@ -180,7 +144,7 @@
         "wikidata=Q43014",
         "wikipedia=it:Sabbioneta"
       ],
-      "score": 320
+      "score": 400
     },
     {
       "id": "relation:44442",
@@ -199,7 +163,7 @@
         "wikidata=Q42376",
         "wikipedia=it:Borghetto Lodigiano"
       ],
-      "score": 320
+      "score": 400
     },
     {
       "id": "relation:44467",
@@ -219,7 +183,7 @@
         "wikidata=Q34605",
         "wikipedia=it:Montagnana"
       ],
-      "score": 320
+      "score": 400
     },
     {
       "id": "relation:44699",
@@ -239,7 +203,7 @@
         "wikidata=Q48033",
         "wikipedia=it:Valeggio sul Mincio"
       ],
-      "score": 320
+      "score": 400
     },
     {
       "id": "relation:44920",
@@ -259,7 +223,7 @@
         "wikidata=Q47876",
         "wikipedia=it:Soave"
       ],
-      "score": 320
+      "score": 400
     },
     {
       "id": "relation:45072",
@@ -279,7 +243,7 @@
         "wikidata=Q112019",
         "wikipedia=it:Sirmione"
       ],
-      "score": 320
+      "score": 400
     },
     {
       "id": "relation:45105",
@@ -299,7 +263,7 @@
         "wikidata=Q46935",
         "wikipedia=it:Lazise"
       ],
-      "score": 320
+      "score": 400
     },
     {
       "id": "relation:45820",
@@ -319,7 +283,7 @@
         "wikidata=Q48090",
         "wikipedia=it:Marostica"
       ],
-      "score": 320
+      "score": 400
     },
     {
       "id": "relation:45871",
@@ -339,7 +303,7 @@
         "wikidata=Q47821",
         "wikipedia=it:Malcesine"
       ],
-      "score": 320
+      "score": 400
     },
     {
       "id": "relation:46014",
@@ -360,7 +324,7 @@
         "wikidata=Q29371",
         "wikipedia=it:Asolo"
       ],
-      "score": 320
+      "score": 400
     },
     {
       "id": "relation:46562",
@@ -380,29 +344,7 @@
         "wikidata=Q29402",
         "wikipedia=it:Cison di Valmarino"
       ],
-      "score": 320
-    },
-    {
-      "id": "relation:46894",
-      "name": "Albosaggia",
-      "lat": 46.106246,
-      "lon": 9.8630437,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "admin_level=8",
-        "boundary=administrative",
-        "name=Albosaggia",
-        "population=3013",
-        "population:date=2020",
-        "postal_code=23010",
-        "ref:ISTAT=014002",
-        "ref:catasto=A172",
-        "type=boundary",
-        "wikidata=Q39901",
-        "wikipedia=it:Albosaggia"
-      ],
-      "score": 320
+      "score": 400
     },
     {
       "id": "node:64778877",
@@ -421,7 +363,7 @@
         "wikidata=Q30031463",
         "wikipedia=it:Valeggio sul Mincio"
       ],
-      "score": 305
+      "score": 385
     },
     {
       "id": "node:303626554",
@@ -437,7 +379,7 @@
         "wikidata=Q16533212",
         "wikipedia=it:Borghetto sull'Adige"
       ],
-      "score": 305
+      "score": 385
     },
     {
       "id": "node:449542981",
@@ -452,7 +394,7 @@
         "wikidata=Q18506248",
         "wikipedia=it:Crosara (Marostica)"
       ],
-      "score": 305
+      "score": 385
     },
     {
       "id": "node:1398660664",
@@ -469,7 +411,7 @@
         "wikidata=Q112019",
         "wikipedia=it:Sirmione"
       ],
-      "score": 305
+      "score": 385
     },
     {
       "id": "node:1913706869",
@@ -484,58 +426,7 @@
         "wikidata=Q18441967",
         "wikipedia=it:Borghetto (Noceto)"
       ],
-      "score": 305
-    },
-    {
-      "id": "node:3755166040",
-      "name": "Piani di Bobbio",
-      "lat": 45.9609435,
-      "lon": 9.495932,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "ele=1660",
-        "name=Piani di Bobbio",
-        "place=hamlet",
-        "wikidata=Q3901958",
-        "wikipedia=it:Piani di Bobbio"
-      ],
-      "score": 305
-    },
-    {
-      "id": "node:62516117",
-      "name": "Albosaggia",
-      "lat": 46.1472316,
-      "lon": 9.8531698,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "ele=490",
-        "loc_name=Busasgia",
-        "name=Albosaggia",
-        "place=village",
-        "population=3000",
-        "wikidata=Q30022100"
-      ],
-      "score": 300
-    },
-    {
-      "id": "node:64778473",
-      "name": "Bosaro",
-      "lat": 45.0007997,
-      "lon": 11.7665362,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "gfoss_id=3628",
-        "name=Bosaro",
-        "place=village",
-        "population=1500",
-        "ref:ISTAT=029007",
-        "source=geodati.gfoss.it",
-        "wikidata=Q30023038"
-      ],
-      "score": 300
+      "score": 385
     },
     {
       "id": "node:64778678",
@@ -552,7 +443,7 @@
         "source=geodati.gfoss.it",
         "wikidata=Q30024798"
       ],
-      "score": 300
+      "score": 380
     },
     {
       "id": "node:64778889",
@@ -569,7 +460,7 @@
         "source=geodati.gfoss.it",
         "wikidata=Q30030755"
       ],
-      "score": 300
+      "score": 380
     },
     {
       "id": "node:64778921",
@@ -586,7 +477,7 @@
         "source=geodati.gfoss.it",
         "wikidata=Q30027133"
       ],
-      "score": 300
+      "score": 380
     },
     {
       "id": "node:380787789",
@@ -600,7 +491,7 @@
         "place=village",
         "wikidata=Q3662253"
       ],
-      "score": 300
+      "score": 380
     },
     {
       "id": "node:469862145",
@@ -614,7 +505,7 @@
         "place=village",
         "wikidata=Q18490915"
       ],
-      "score": 300
+      "score": 380
     },
     {
       "id": "node:1080680713",
@@ -629,7 +520,7 @@
         "population=6901",
         "wikidata=Q30026549"
       ],
-      "score": 300
+      "score": 380
     },
     {
       "id": "node:1674952842",
@@ -643,7 +534,7 @@
         "place=village",
         "wikidata=Q18441350"
       ],
-      "score": 300
+      "score": 380
     },
     {
       "id": "node:2775004516",
@@ -657,21 +548,7 @@
         "place=village",
         "wikidata=Q18439455"
       ],
-      "score": 300
-    },
-    {
-      "id": "node:7396085696",
-      "name": "Stilo de' Mariani",
-      "lat": 45.1633303,
-      "lon": 10.2514948,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "name=Stilo de' Mariani",
-        "place=village",
-        "wikidata=Q18488764"
-      ],
-      "score": 300
+      "score": 380
     },
     {
       "id": "node:62512974",
@@ -687,7 +564,7 @@
         "population=3740",
         "source=geodati.gfoss.it"
       ],
-      "score": 275
+      "score": 355
     },
     {
       "id": "node:2192564491",
@@ -703,7 +580,7 @@
         "source=http://www.resitalica.it/",
         "wikidata=Q18439458"
       ],
-      "score": 275
+      "score": 355
     },
     {
       "id": "node:2717304726",
@@ -716,7 +593,7 @@
         "name=Dozza",
         "place=village"
       ],
-      "score": 275
+      "score": 355
     },
     {
       "id": "node:64779072",
@@ -734,7 +611,7 @@
         "source=geodati.gfoss.it",
         "wikidata=Q30027279"
       ],
-      "score": 270
+      "score": 350
     },
     {
       "id": "node:1374462942",
@@ -753,7 +630,7 @@
         "population=9128",
         "wikidata=Q29371"
       ],
-      "score": 270
+      "score": 350
     },
     {
       "id": "node:1600857901",
@@ -770,7 +647,7 @@
         "source=geodati.gfoss.it",
         "wikidata=Q30027707"
       ],
-      "score": 270
+      "score": 350
     },
     {
       "id": "node:8046384461",
@@ -784,7 +661,7 @@
         "place=hamlet",
         "wikidata=Q18464515"
       ],
-      "score": 270
+      "score": 350
     },
     {
       "id": "node:13481490821",
@@ -798,7 +675,7 @@
         "place=hamlet",
         "wikidata=Q18497666"
       ],
-      "score": 270
+      "score": 350
     },
     {
       "id": "node:13481490900",
@@ -812,7 +689,7 @@
         "place=hamlet",
         "wikidata=Q18496141"
       ],
-      "score": 270
+      "score": 350
     },
     {
       "id": "node:62513426",
@@ -15390,6 +15267,22 @@
       "score": 115
     },
     {
+      "id": "node:1425100894",
+      "name": "Bargano",
+      "lat": 45.2409504,
+      "lon": 9.4459551,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Bargano",
+        "place=village",
+        "population=817",
+        "wikidata=Q3634964",
+        "wikipedia=it:Bargano"
+      ],
+      "score": 115
+    },
+    {
       "id": "node:1425104702",
       "name": "Motta Vigana",
       "lat": 45.2552471,
@@ -25377,6 +25270,26 @@
         "type=boundary",
         "wikidata=Q34742",
         "wikipedia=it:Arquà Polesine"
+      ],
+      "score": 100
+    },
+    {
+      "id": "relation:43968",
+      "name": "Bosaro",
+      "lat": 45.0071714,
+      "lon": 11.7800519,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "admin_level=8",
+        "boundary=administrative",
+        "name=Bosaro",
+        "postal_code=45033",
+        "ref:ISTAT=029007",
+        "ref:catasto=B069",
+        "type=boundary",
+        "wikidata=Q34517",
+        "wikipedia=it:Bosaro"
       ],
       "score": 100
     },
@@ -49811,6 +49724,28 @@
       "score": 100
     },
     {
+      "id": "relation:46894",
+      "name": "Albosaggia",
+      "lat": 46.106246,
+      "lon": 9.8630437,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "admin_level=8",
+        "boundary=administrative",
+        "name=Albosaggia",
+        "population=3013",
+        "population:date=2020",
+        "postal_code=23010",
+        "ref:ISTAT=014002",
+        "ref:catasto=A172",
+        "type=boundary",
+        "wikidata=Q39901",
+        "wikipedia=it:Albosaggia"
+      ],
+      "score": 100
+    },
+    {
       "id": "relation:46896",
       "name": "Strembo",
       "lat": 46.1673389,
@@ -56667,6 +56602,77 @@
         "population=60",
         "wikidata=Q3662264",
         "wikipedia=it:Castelletto (Polpenazze del Garda)"
+      ],
+      "score": 90
+    },
+    {
+      "id": "node:3080029767",
+      "name": "Paniga",
+      "lat": 46.1453529,
+      "lon": 9.6117014,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=241",
+        "name=Paniga",
+        "place=hamlet",
+        "population=376",
+        "wikidata=Q3893295",
+        "wikipedia=it:Paniga"
+      ],
+      "score": 90
+    },
+    {
+      "id": "node:3164529402",
+      "name": "Forcello",
+      "lat": 45.0959299,
+      "lon": 10.0916648,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Forcello",
+        "place=hamlet",
+        "population=29",
+        "wikidata=Q3747949",
+        "wikipedia=it:Forcello"
+      ],
+      "score": 90
+    },
+    {
+      "id": "node:3216443093",
+      "name": "Cassignanica",
+      "lat": 45.4561622,
+      "lon": 9.3455536,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=108",
+        "loc_name=Cassgnanega",
+        "loc_name:pronunciation=kazɲaˈneːɡa",
+        "name=Cassignanica",
+        "place=hamlet",
+        "population=163",
+        "population:date=2001",
+        "wikidata=Q3662002",
+        "wikimedia_commons=Category:Cassignanica",
+        "wikipedia=it:Cassignanica"
+      ],
+      "score": 90
+    },
+    {
+      "id": "node:3329879776",
+      "name": "Bocca Chiavica",
+      "lat": 45.036916,
+      "lon": 10.5968561,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Bocca Chiavica",
+        "place=hamlet",
+        "population=17",
+        "source=www.resitalica.it",
+        "wikidata=Q3641456",
+        "wikipedia=it:Bocca Chiavica"
       ],
       "score": 90
     }
