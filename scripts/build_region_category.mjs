@@ -875,6 +875,26 @@ async function main() {
   if (CATEGORY === "relax") cleaned = raw.filter((p) => !isRelaxNoise(p));
   if (CATEGORY === "borghi") cleaned = raw.filter((p) => !isBorgoNoise(p));
   if (CATEGORY === "citta") cleaned = raw.filter((p) => !isCittaNoise(p));
+  if (CATEGORY === "borghi") {
+  const curated = CURATED_BORGHI_BY_REGION[REGION_ID] || [];
+
+  cleaned = [
+    ...cleaned,
+    ...curated.map((p) => ({
+      id: `curated:borgo:${normName(p.name).replace(/\s+/g, "-")}`,
+      name: p.name,
+      lat: p.lat,
+      lon: p.lon,
+      tags: {
+        name: p.name,
+        place: "village",
+        tourism: "attraction",
+        historic: "old_town",
+        curated: "true"
+      }
+    }))
+  ];
+}
 
   // dedupe: nome + coordinate
   const seen = new Set();
