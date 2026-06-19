@@ -48,6 +48,21 @@ const CURATED_BORGHI_BY_REGION = {
     { name: "Castelvecchio Calvisio", lat: 42.3106488, lon: 13.6886152 },
     { name: "Rocca Calascio", lat: 42.3280296, lon: 13.6907679 },
     { name: "Santo Stefano di Sessanio", lat: 42.343, lon: 13.644 }
+  ],
+
+  "it-veneto": [
+    { name: "Sirmione", lat: 45.4924, lon: 10.6099 },
+    { name: "Soave", lat: 45.4208, lon: 11.2453 },
+    { name: "Malcesine", lat: 45.7622, lon: 10.8086 },
+    { name: "Lazise", lat: 45.5057, lon: 10.7325 },
+    { name: "Asolo", lat: 45.7998, lon: 11.9148 },
+    { name: "Marostica", lat: 45.7463, lon: 11.6558 },
+    { name: "Montagnana", lat: 45.2329, lon: 11.4636 },
+    { name: "Cison di Valmarino", lat: 45.9696, lon: 12.1429 },
+    { name: "Borghetto", lat: 45.3536, lon: 10.7364 },
+    { name: "Castellaro Lagusello", lat: 45.3661, lon: 10.6648 },
+    { name: "Arquà Petrarca", lat: 45.2672, lon: 11.7186 },
+    { name: "Burano", lat: 45.4859, lon: 12.4167 }
   ]
 };
 
