@@ -601,6 +601,43 @@ function scoreBorghi(p) {
   const n = normName(p.name || "");
   const ts = tagsToStr(t);
   let s = 0;
+    const ICONIC_BORGHI = [
+    // Abruzzo
+    "scanno",
+    "pescocostanzo",
+    "santo stefano di sessanio",
+    "barrea",
+    "villetta barrea",
+    "pacentro",
+    "castel del monte",
+    "navelli",
+    "castelvecchio calvisio",
+    "opi",
+
+    // Veneto
+    "sirmione",
+    "soave",
+    "malcesine",
+    "lazise",
+    "asolo",
+    "marostica",
+    "montagnana",
+    "cison di valmarino",
+    "borghetto",
+    "castellaro lagusello",
+
+    // Toscana
+    "san gimignano",
+    "monteriggioni",
+    "volterra",
+    "pienza",
+    "pitigliano",
+    "bolgheri"
+  ];
+
+  if (ICONIC_BORGHI.some((x) => n.includes(normName(x)))) {
+    s += 500;
+  }
 
   const place = String(t.place || "").toLowerCase();
 if (place === "town") s += 55;
