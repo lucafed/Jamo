@@ -513,7 +513,18 @@ const isOldTown = tagEq(t, "historic", "old_town");
 if (!isSettlement && !isOldTown) return true;
   const pop = Number(t.population || 0);
 
-if (place === "town" && pop > 12000) return true;
+const TOWN_OK = [
+  "asolo",
+  "montagnana",
+  "cittadella",
+  "sirmione",
+  "peschiera del garda"
+];
+
+if (
+  place === "town" &&
+  !TOWN_OK.some((x) => n.includes(normName(x)))
+) return true;
 
 if (place === "hamlet" && pop < 300) return true;
 
