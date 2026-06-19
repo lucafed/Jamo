@@ -438,13 +438,32 @@ const isOldTown = tagEq(t, "historic", "old_town");
 
 if (!isSettlement && !isOldTown) return true;
 
+const ICONIC_BORGHI = [
+  "borghetto",
+  "valeggio sul mincio",
+  "sirmione",
+  "soave",
+  "lazise",
+  "malcesine",
+  "marostica",
+  "asolo",
+  "montagnana",
+  "cittadella",
+  "burano",
+  "arqua petrarca",
+  "cison di valmarino",
+  "castellaro lagusello",
+  "sabbioneta"
+];
+
+const isIconic = ICONIC_BORGHI.some(x => n.includes(normName(x)));
+
 const hasTouristProof =
-  hasTag(t, "wikipedia") ||
-  hasTag(t, "heritage") ||
-  hasTag(t, "historic") ||
+  isIconic ||
   tagEq(t, "historic", "old_town") ||
+  hasTag(t, "heritage") ||
   tagEq(t, "tourism", "attraction") ||
-  hasAny(n, ["borgo", "castello", "rocca", "medievale", "medioevale", "storico"]);
+  hasAny(n, ["borgo", "centro storico", "castello", "rocca", "medievale", "medioevale", "storico"]);
 
 if (place === "hamlet" && !hasTouristProof) return true;
   if (place === "village" && !hasTouristProof) return true;
