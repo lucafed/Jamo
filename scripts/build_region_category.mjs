@@ -444,6 +444,12 @@ function isBorgoNoise(p) {
   "borgo di acquabella",
   "borgo petricca"
 ];
+  if (
+  n.includes("porta del sole") ||
+  n.includes("porta ") ||
+  n.includes("ingresso ") ||
+  n.includes("accesso ")
+) return true;
 
 if (FAKE_BORGO_NAMES.includes(n)) return true;
 
