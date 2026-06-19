@@ -440,15 +440,14 @@ if (!isSettlement && !isOldTown) return true;
 
 const hasTouristProof =
   hasTag(t, "wikipedia") ||
-  hasTag(t, "wikidata") ||
   hasTag(t, "heritage") ||
   hasTag(t, "historic") ||
-  hasTag(t, "tourism") ||
-  hasTag(t, "website") ||
-  hasTag(t, "contact:website") ||
+  tagEq(t, "historic", "old_town") ||
+  tagEq(t, "tourism", "attraction") ||
   hasAny(n, ["borgo", "castello", "rocca", "medievale", "medioevale", "storico"]);
 
 if (place === "hamlet" && !hasTouristProof) return true;
+  if (place === "village" && !hasTouristProof) return true;
 
 if (
   place === "village" &&
