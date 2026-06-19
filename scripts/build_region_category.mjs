@@ -615,6 +615,9 @@ function scoreBorghi(p) {
   const n = normName(p.name || "");
   const ts = tagsToStr(t);
   let s = 0;
+  if (String(t.curated || "").toLowerCase() === "true") {
+  s += 1000;
+}
     const ICONIC_BORGHI = [
     // Abruzzo
     "scanno",
