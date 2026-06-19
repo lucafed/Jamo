@@ -674,7 +674,7 @@ console.log("CATEGORY =", canonicalCategory(categoryUI));
 
     const pools = [];
 
-    if (isItaly && region?.id && cat !== "borghi") {
+    if (isItaly && region?.id) {
       const rid = String(region.id);
 
      const p1 =
