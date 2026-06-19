@@ -574,15 +574,16 @@ function scoreBorghi(p) {
   let s = 0;
 
   const place = String(t.place || "").toLowerCase();
-  if (place === "town") s += 60;
-  if (place === "village") s += 55;
-  if (place === "hamlet") s += 48;
-  if (place === "suburb") s += 18;
+if (place === "town") s += 55;
+if (place === "village") s += 55;
+if (place === "hamlet") s += 25;
 
   if (ts.includes("historic=old_town")) s += 80;
 
   if (hasAny(n, ["borgo", "centro storico", "frazione", "paese"])) s += 30;
   if (hasTag(t, "wikipedia") || hasTag(t, "wikidata")) s += 12;
+  if (hasTag(t, "heritage")) s += 25;
+if (hasTag(t, "historic")) s += 25;
   if (hasTag(t, "website") || hasTag(t, "contact:website")) s += 6;
 
   // bonus: confini amministrativi = più “paese vero”
