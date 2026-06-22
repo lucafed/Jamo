@@ -1,7 +1,7 @@
 {
   "region_id": "it-veneto-borghi",
   "label_it": "Veneto • borghi",
-  "generated_at": "2026-06-19T13:30:29.614Z",
+  "generated_at": "2026-06-22T13:55:12.677Z",
   "places": [
     {
       "id": "curated:borgo:sirmione",
@@ -356,60 +356,6 @@
       "score": 1160
     },
     {
-      "id": "node:1516845680",
-      "name": "Borgo Bonavicina",
-      "lat": 45.2476364,
-      "lon": 11.1837231,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "name=Borgo Bonavicina",
-        "place=village",
-        "wikidata=Q3642061",
-        "wikipedia=it:Bonavicina"
-      ],
-      "score": 97
-    },
-    {
-      "id": "node:540228231",
-      "name": "Borgo San Marco",
-      "lat": 45.2236515,
-      "lon": 11.4309417,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "name=Borgo San Marco",
-        "place=village"
-      ],
-      "score": 85
-    },
-    {
-      "id": "node:703154332",
-      "name": "Borgo Frassine",
-      "lat": 45.2504772,
-      "lon": 11.4803728,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "name=Borgo Frassine",
-        "place=village"
-      ],
-      "score": 85
-    },
-    {
-      "id": "node:2422728776",
-      "name": "Borgo Santa Maria Maddalena",
-      "lat": 45.1019745,
-      "lon": 12.0598777,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "name=Borgo Santa Maria Maddalena",
-        "place=village"
-      ],
-      "score": 85
-    },
-    {
       "id": "node:4429692928",
       "name": "Burano",
       "lat": 45.4866354,
@@ -535,6 +481,21 @@
       "score": 67
     },
     {
+      "id": "node:1516845680",
+      "name": "Borgo Bonavicina",
+      "lat": 45.2476364,
+      "lon": 11.1837231,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Borgo Bonavicina",
+        "place=village",
+        "wikidata=Q3642061",
+        "wikipedia=it:Bonavicina"
+      ],
+      "score": 67
+    },
+    {
       "id": "node:1954458274",
       "name": "Rocca d'Arsiè",
       "lat": 45.9522121,
@@ -575,6 +536,19 @@
       "score": 55
     },
     {
+      "id": "node:2422728776",
+      "name": "Borgo Santa Maria Maddalena",
+      "lat": 45.1019745,
+      "lon": 12.0598777,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Borgo Santa Maria Maddalena",
+        "place=village"
+      ],
+      "score": 55
+    },
+    {
       "id": "node:2611213703",
       "name": "Col di Rocca",
       "lat": 46.4296899,
@@ -599,7 +573,7 @@
         "place=hamlet",
         "population=355"
       ],
-      "score": 55
+      "score": 25
     },
     {
       "id": "node:64778923",
