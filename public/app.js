@@ -703,16 +703,20 @@ console.log("CATEGORY =", canonicalCategory(categoryUI));
         DATASETS_USED.push({ kind: "region", source: p1, placesLen: loaded1.places.length });
       }
 
-     const p2 =
-  region.paths?.core ||
-  `/data/pois/it/${rid}/index.json`;
-      const loaded2 = await tryLoadPlacesFile(p2, signal);
-      
-      if (loaded2) {
-        pools.push({ kind: "region", source: p2, places: loaded2.places, bbox: region.bbox || null });
-        DATASETS_USED.push({ kind: "region", source: p2, placesLen: loaded2.places.length });
-      }
-    }
+   if (cat !== "borghi") {
+
+  const p2 =
+    region.paths?.core ||
+    `/data/pois/it/${rid}/index.json`;
+
+  const loaded2 = await tryLoadPlacesFile(p2, signal);
+
+  if (loaded2) {
+    pools.push({ kind: "region", source: p2, places: loaded2.places, bbox: region.bbox || null });
+    DATASETS_USED.push({ kind: "region", source: p2, placesLen: loaded2.places.length });
+  }
+
+}
 
    // Radius nazionale: NON usarlo per Mare, perché radius-mare.json è troppo sporco
 if (cat !== "mare" && cat !== "borghi") {
