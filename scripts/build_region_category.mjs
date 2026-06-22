@@ -448,6 +448,24 @@ function isBorgoNoise(p) {
   const t = p.tags || {};
   const ts = tagsToStr(t);
   const n = normName(p.name || "");
+  const FAKE_BORGHI = [
+  "borgo incile",
+  "borgo ottomila",
+  "borgo san lorenzo",
+  "borgo santa maria immacolata",
+  "borgo petricca",
+  "borgo strada 14",
+  "borgo eger",
+  "lago di borgo eger",
+  "borgo san marco",
+  "borgo frassine",
+  "borgo dei gatti",
+  "borgo chiavica",
+  "borgo furo",
+  "borgo serragli"
+];
+
+if (FAKE_BORGHI.includes(n)) return true;
   if (n.includes("castello di godego")) return true;
 if (n.includes("borgo eger")) return true;
 if (n.includes("corte dei bissari")) return true;
