@@ -448,6 +448,8 @@ function isBorgoNoise(p) {
   const t = p.tags || {};
   const ts = tagsToStr(t);
   const n = normName(p.name || "");
+  if (n.includes("borgo eger")) return true;
+if (n.includes("corte dei bissari")) return true;
   const FAKE_BORGHI = [
   "borgo incile",
   "borgo ottomila",
