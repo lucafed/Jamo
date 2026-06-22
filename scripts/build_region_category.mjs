@@ -789,7 +789,7 @@ if (place === "hamlet") s += 25;
 
   if (ts.includes("historic=old_town")) s += 80;
 
-  if (hasAny(n, ["borgo", "centro storico", "frazione", "paese"])) s += 30;
+  if (hasAny(n, ["centro storico", "paese"])) s += 30;
   if (hasTag(t, "wikipedia") || hasTag(t, "wikidata")) s += 12;
   if (hasTag(t, "heritage")) s += 25;
 if (hasTag(t, "historic")) s += 25;
