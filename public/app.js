@@ -715,7 +715,7 @@ console.log("CATEGORY =", canonicalCategory(categoryUI));
     }
 
    // Radius nazionale: NON usarlo per Mare, perché radius-mare.json è troppo sporco
-if (cat !== "mare") {
+if (cat !== "mare" && cat !== "borghi") {
   const p3 = `/data/pois/regions/radius-${cat}.json`;
   const loaded3 = await tryLoadPlacesFile(p3, signal);
   if (loaded3) {
