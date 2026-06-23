@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-06-19T06:52:01.009Z",
+  "generated_at": "2026-06-23T06:56:11.634Z",
   "places": [
     {
       "id": "node:62513274",
@@ -22346,7 +22346,9 @@
         "boundary=administrative",
         "name=Reggio Emilia",
         "name:ca=Reggio de l'Emília",
+        "name:uk=Реджо-Емілія",
         "official_name=Comune di Reggio nell'Emilia",
+        "official_name:uk=Реджо-нель-Емілія",
         "ref:ISTAT=035033",
         "ref:catasto=H223",
         "type=boundary",
