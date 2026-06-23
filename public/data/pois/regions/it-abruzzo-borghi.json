@@ -1,7 +1,7 @@
 {
   "region_id": "it-abruzzo-borghi",
   "label_it": "Abruzzo • borghi",
-  "generated_at": "2026-06-22T13:58:11.929Z",
+  "generated_at": "2026-06-23T19:39:00.656Z",
   "places": [
     {
       "id": "curated:borgo:scanno",
@@ -156,6 +156,166 @@
       "visibility": "chicca",
       "tags": [
         "name=Santo Stefano di Sessanio",
+        "place=village",
+        "tourism=attraction",
+        "historic=old_town",
+        "curated=true"
+      ],
+      "score": 2660
+    },
+    {
+      "id": "curated:borgo:civitella-del-tronto",
+      "name": "Civitella del Tronto",
+      "lat": 42.7717,
+      "lon": 13.6651,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "name=Civitella del Tronto",
+        "place=village",
+        "tourism=attraction",
+        "historic=old_town",
+        "curated=true"
+      ],
+      "score": 2660
+    },
+    {
+      "id": "curated:borgo:guardiagrele",
+      "name": "Guardiagrele",
+      "lat": 42.1918,
+      "lon": 14.2195,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "name=Guardiagrele",
+        "place=village",
+        "tourism=attraction",
+        "historic=old_town",
+        "curated=true"
+      ],
+      "score": 2660
+    },
+    {
+      "id": "curated:borgo:tagliacozzo",
+      "name": "Tagliacozzo",
+      "lat": 42.0695,
+      "lon": 13.2542,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "name=Tagliacozzo",
+        "place=village",
+        "tourism=attraction",
+        "historic=old_town",
+        "curated=true"
+      ],
+      "score": 2660
+    },
+    {
+      "id": "curated:borgo:pescasseroli",
+      "name": "Pescasseroli",
+      "lat": 41.8087,
+      "lon": 13.7897,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "name=Pescasseroli",
+        "place=village",
+        "tourism=attraction",
+        "historic=old_town",
+        "curated=true"
+      ],
+      "score": 2660
+    },
+    {
+      "id": "curated:borgo:roccascalegna",
+      "name": "Roccascalegna",
+      "lat": 42.0625,
+      "lon": 14.3068,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "name=Roccascalegna",
+        "place=village",
+        "tourism=attraction",
+        "historic=old_town",
+        "curated=true"
+      ],
+      "score": 2660
+    },
+    {
+      "id": "curated:borgo:atri",
+      "name": "Atri",
+      "lat": 42.5777,
+      "lon": 13.9759,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "name=Atri",
+        "place=village",
+        "tourism=attraction",
+        "historic=old_town",
+        "curated=true"
+      ],
+      "score": 2660
+    },
+    {
+      "id": "curated:borgo:citta-sant-angelo",
+      "name": "Città Sant'Angelo",
+      "lat": 42.5208,
+      "lon": 14.0599,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "name=Città Sant'Angelo",
+        "place=village",
+        "tourism=attraction",
+        "historic=old_town",
+        "curated=true"
+      ],
+      "score": 2660
+    },
+    {
+      "id": "curated:borgo:penne",
+      "name": "Penne",
+      "lat": 42.4542,
+      "lon": 13.9274,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "name=Penne",
+        "place=village",
+        "tourism=attraction",
+        "historic=old_town",
+        "curated=true"
+      ],
+      "score": 2660
+    },
+    {
+      "id": "curated:borgo:loreto-aprutino",
+      "name": "Loreto Aprutino",
+      "lat": 42.4315,
+      "lon": 13.9836,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "name=Loreto Aprutino",
+        "place=village",
+        "tourism=attraction",
+        "historic=old_town",
+        "curated=true"
+      ],
+      "score": 2660
+    },
+    {
+      "id": "curated:borgo:roccaraso",
+      "name": "Roccaraso",
+      "lat": 41.8503,
+      "lon": 14.0783,
+      "type": "borghi",
+      "visibility": "chicca",
+      "tags": [
+        "name=Roccaraso",
         "place=village",
         "tourism=attraction",
         "historic=old_town",
