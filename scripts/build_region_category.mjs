@@ -470,12 +470,26 @@ function isBorgoNoise(p) {
   const t = p.tags || {};
   const ts = tagsToStr(t);
   const n = normName(p.name || "");
+
   if (n.includes("borgo eger")) return true;
-if (n.includes("corte dei bissari")) return true;
+
   if (
-  n === "borghetto" &&
-  !String(p.id || "").startsWith("curated:")
-) return true;
+    n.startsWith("borgo ") &&
+    !n.includes("borghetto")
+  ) return true;
+
+  if (
+    n === "il borgo" ||
+    n === "borgo" ||
+    n === "paesetto"
+  ) return true;
+
+  if (n.includes("corte dei bissari")) return true;
+
+  if (
+    n === "borghetto" &&
+    !String(p.id || "").startsWith("curated:")
+  ) return true;
   const FAKE_BORGHI = [
   "borgo incile",
   "borgo ottomila",
