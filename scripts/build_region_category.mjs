@@ -63,7 +63,29 @@ const CURATED_BORGHI_BY_REGION = {
     { name: "Castellaro Lagusello", lat: 45.3661, lon: 10.6648 },
     { name: "Arquà Petrarca", lat: 45.2672, lon: 11.7186 },
     { name: "Burano", lat: 45.4859, lon: 12.4167 }
-  ]
+  ],
+  
+  "it-toscana": [
+  { name: "San Gimignano", lat: 43.4678, lon: 11.0432 },
+  { name: "Monteriggioni", lat: 43.3896, lon: 11.2235 },
+  { name: "Volterra", lat: 43.4017, lon: 10.8615 },
+  { name: "Pienza", lat: 43.0776, lon: 11.6794 },
+  { name: "Pitigliano", lat: 42.6346, lon: 11.6694 },
+  { name: "Montepulciano", lat: 43.0987, lon: 11.7871 },
+  { name: "Montalcino", lat: 43.0561, lon: 11.4893 },
+  { name: "Anghiari", lat: 43.5414, lon: 12.0565 },
+  { name: "Cortona", lat: 43.2745, lon: 11.9850 },
+  { name: "Suvereto", lat: 43.0789, lon: 10.6785 },
+  { name: "Buonconvento", lat: 43.1382, lon: 11.4821 },
+  { name: "Radicofani", lat: 42.8965, lon: 11.7697 },
+  { name: "Castiglione d'Orcia", lat: 43.0071, lon: 11.6155 },
+  { name: "Barga", lat: 44.0739, lon: 10.4843 },
+  { name: "Certaldo", lat: 43.5475, lon: 11.0396 },
+  { name: "Poppi", lat: 43.7238, lon: 11.7657 },
+  { name: "Lucignano", lat: 43.2740, lon: 11.7444 },
+  { name: "Radda in Chianti", lat: 43.4871, lon: 11.3747 },
+  { name: "Castellina in Chianti", lat: 43.4692, lon: 11.2873 }
+]
 };
 
 // ---------------------- UTIL ----------------------
