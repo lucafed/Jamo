@@ -691,28 +691,33 @@ console.log("CATEGORY =", canonicalCategory(categoryUI));
     const pools = [];
 
     if (isItaly && region?.id) {
-      const rid = String(region.id);
+  const rid = String(region.id);
 
-     const p1 =
-  region.paths?.[cat] ||
-  `/data/pois/areas/${rid.replace("-", "_")}/${cat}.json`;
-      const loaded1 = await tryLoadPlacesFile(p1, signal);
-    
-      if (loaded1) {
-        pools.push({ kind: "region", source: p1, places: loaded1.places, bbox: region.bbox || null });
-        DATASETS_USED.push({ kind: "region", source: p1, placesLen: loaded1.places.length });
-      }
+  const p1 =
+    region.paths?.[cat] ||
+    `/data/pois/areas/${rid.replace("-", "_")}/${cat}.json`;
 
-     const p2 =
-  region.paths?.core ||
-  `/data/pois/it/${rid}/index.json`;
-      const loaded2 = await tryLoadPlacesFile(p2, signal);
-      
-      if (loaded2) {
-        pools.push({ kind: "region", source: p2, places: loaded2.places, bbox: region.bbox || null });
-        DATASETS_USED.push({ kind: "region", source: p2, placesLen: loaded2.places.length });
-      }
+  const loaded1 = await tryLoadPlacesFile(p1, signal);
+
+  if (loaded1) {
+    pools.push({ kind: "region", source: p1, places: loaded1.places, bbox: region.bbox || null });
+    DATASETS_USED.push({ kind: "region", source: p1, placesLen: loaded1.places.length });
+  }
+
+  // Core regionale: NON usarlo per Borghi
+  if (cat !== "borghi") {
+    const p2 =
+      region.paths?.core ||
+      `/data/pois/it/${rid}/index.json`;
+
+    const loaded2 = await tryLoadPlacesFile(p2, signal);
+
+    if (loaded2) {
+      pools.push({ kind: "region", source: p2, places: loaded2.places, bbox: region.bbox || null });
+      DATASETS_USED.push({ kind: "region", source: p2, placesLen: loaded2.places.length });
     }
+  }
+}
 
    // Radius nazionale: NON usarlo per Mare, perché radius-mare.json è troppo sporco
 if (cat !== "mare" && cat !== "borghi") {
