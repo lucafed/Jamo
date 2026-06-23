@@ -694,8 +694,8 @@ console.log("CATEGORY =", canonicalCategory(categoryUI));
   const rid = String(region.id);
 
   const p1 =
-    region.paths?.[cat] ||
-    `/data/pois/areas/${rid.replace("-", "_")}/${cat}.json`;
+  region.paths?.[cat] ||
+  `/data/pois/regions/${rid}-${cat}.json`;
 
   const loaded1 = await tryLoadPlacesFile(p1, signal);
 
