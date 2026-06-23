@@ -1,7 +1,7 @@
 {
   "region_id": "it-veneto-borghi",
   "label_it": "Veneto • borghi",
-  "generated_at": "2026-06-23T18:24:31.919Z",
+  "generated_at": "2026-06-23T18:36:33.968Z",
   "places": [
     {
       "id": "curated:borgo:sirmione",
@@ -198,36 +198,6 @@
       "score": 1567
     },
     {
-      "id": "node:337546297",
-      "name": "Borghetto",
-      "lat": 45.3525151,
-      "lon": 10.7245935,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "name=Borghetto",
-        "place=village",
-        "wikidata=Q2910855",
-        "wikipedia=it:Borghetto (Valeggio sul Mincio)"
-      ],
-      "score": 1567
-    },
-    {
-      "id": "node:1246161396",
-      "name": "Borghetto",
-      "lat": 45.6083048,
-      "lon": 11.8856671,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "name=Borghetto",
-        "place=village",
-        "wikidata=Q18497367",
-        "wikipedia=it:Borghetto (San Martino di Lupari)"
-      ],
-      "score": 1567
-    },
-    {
       "id": "node:1409597919",
       "name": "Villa d'Asolo",
       "lat": 45.7717882,
@@ -241,19 +211,6 @@
         "wikipedia=it:Villa d'Asolo"
       ],
       "score": 1567
-    },
-    {
-      "id": "node:1599266663",
-      "name": "Borghetto",
-      "lat": 45.6526024,
-      "lon": 12.8111593,
-      "type": "borghi",
-      "visibility": "chicca",
-      "tags": [
-        "name=Borghetto",
-        "place=village"
-      ],
-      "score": 1555
     },
     {
       "id": "node:64778889",
@@ -435,23 +392,6 @@
       "score": 67
     },
     {
-      "id": "node:64778928",
-      "name": "Nogarole Rocca",
-      "lat": 45.291882,
-      "lon": 10.883788,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=3144",
-        "name=Nogarole Rocca",
-        "place=village",
-        "population=2850",
-        "source=geodati.gfoss.it",
-        "wikidata=Q30028224"
-      ],
-      "score": 67
-    },
-    {
       "id": "node:561667801",
       "name": "Castello Roganzuolo",
       "lat": 45.9219782,
@@ -481,21 +421,6 @@
       "score": 67
     },
     {
-      "id": "node:1516845680",
-      "name": "Borgo Bonavicina",
-      "lat": 45.2476364,
-      "lon": 11.1837231,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Borgo Bonavicina",
-        "place=village",
-        "wikidata=Q3642061",
-        "wikipedia=it:Bonavicina"
-      ],
-      "score": 67
-    },
-    {
       "id": "node:1954458274",
       "name": "Rocca d'Arsiè",
       "lat": 45.9522121,
@@ -510,19 +435,6 @@
       "score": 67
     },
     {
-      "id": "node:1400006041",
-      "name": "Sopracastello",
-      "lat": 45.7915201,
-      "lon": 11.8360111,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Sopracastello",
-        "place=village"
-      ],
-      "score": 55
-    },
-    {
       "id": "node:1555547654",
       "name": "Castello",
       "lat": 45.5252612,
@@ -531,19 +443,6 @@
       "visibility": "classica",
       "tags": [
         "name=Castello",
-        "place=village"
-      ],
-      "score": 55
-    },
-    {
-      "id": "node:2422728776",
-      "name": "Borgo Santa Maria Maddalena",
-      "lat": 45.1019745,
-      "lon": 12.0598777,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Borgo Santa Maria Maddalena",
         "place=village"
       ],
       "score": 55
@@ -560,20 +459,6 @@
         "place=village"
       ],
       "score": 55
-    },
-    {
-      "id": "node:4428325849",
-      "name": "Borgo Vecchio",
-      "lat": 45.4090702,
-      "lon": 12.1496672,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Borgo Vecchio",
-        "place=hamlet",
-        "population=355"
-      ],
-      "score": 25
     },
     {
       "id": "node:64778923",
