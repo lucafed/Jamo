@@ -37,17 +37,58 @@ if (!region) throw new Error(`Region not found in configs: ${REGION_ID}`);
 
 const OUT = path.join(__dirname, "..", "public", "data", "pois", "regions", `${REGION_ID}-${CATEGORY}.json`);
 const CURATED_BORGHI_BY_REGION = {
-  "it-abruzzo": [
-    { name: "Scanno", lat: 41.9038608, lon: 13.880213 },
-    { name: "Pescocostanzo", lat: 41.88633, lon: 14.065612 },
-    { name: "Pacentro", lat: 42.0499635, lon: 13.9910727 },
-    { name: "Barrea", lat: 41.7584905, lon: 13.9907295 },
-    { name: "Villetta Barrea", lat: 41.775827, lon: 13.938511 },
-    { name: "Opi", lat: 41.7808732, lon: 13.8295241 },
-    { name: "Navelli", lat: 42.2378643, lon: 13.729027 },
-    { name: "Castelvecchio Calvisio", lat: 42.3106488, lon: 13.6886152 },
-    { name: "Rocca Calascio", lat: 42.3280296, lon: 13.6907679 },
-    { name: "Santo Stefano di Sessanio", lat: 42.343, lon: 13.644 }
+  "it-piemonte": [
+    { name: "Orta San Giulio", lat: 45.7976, lon: 8.4147 },
+    { name: "Ricetto di Candelo", lat: 45.5467, lon: 8.1073 },
+    { name: "Neive", lat: 44.7246, lon: 8.1164 },
+    { name: "Barolo", lat: 44.6109, lon: 7.9427 },
+    { name: "La Morra", lat: 44.6387, lon: 7.9306 },
+    { name: "Monforte d'Alba", lat: 44.5829, lon: 7.9671 },
+    { name: "Serralunga d'Alba", lat: 44.6101, lon: 8.0003 },
+    { name: "Vogogna", lat: 46.0101, lon: 8.2932 },
+    { name: "Mombaldone", lat: 44.5706, lon: 8.3336 },
+    { name: "Usseaux", lat: 45.0483, lon: 7.0276 },
+    { name: "Chianale", lat: 44.6527, lon: 6.9967 },
+    { name: "Saluzzo", lat: 44.6454, lon: 7.4931 }
+  ],
+
+  "it-valle-d-aosta": [
+    { name: "Bard", lat: 45.6096, lon: 7.7454 },
+    { name: "Étroubles", lat: 45.8198, lon: 7.2305 },
+    { name: "Saint-Rhémy-en-Bosses", lat: 45.8357, lon: 7.1828 },
+    { name: "Verrès", lat: 45.6668, lon: 7.6890 },
+    { name: "Fénis", lat: 45.7358, lon: 7.4968 },
+    { name: "Arnad", lat: 45.6431, lon: 7.7217 },
+    { name: "Introd", lat: 45.6927, lon: 7.1837 },
+    { name: "Avise", lat: 45.7083, lon: 7.1407 }
+  ],
+
+  "it-lombardia": [
+    { name: "Bellagio", lat: 45.9875, lon: 9.2616 },
+    { name: "Varenna", lat: 46.0101, lon: 9.2837 },
+    { name: "Tremezzo", lat: 45.9846, lon: 9.2186 },
+    { name: "Borghetto sul Mincio", lat: 45.3536, lon: 10.7364 },
+    { name: "Castellaro Lagusello", lat: 45.3661, lon: 10.6648 },
+    { name: "Sabbioneta", lat: 44.9976, lon: 10.4886 },
+    { name: "Bienno", lat: 45.9357, lon: 10.2953 },
+    { name: "Lovere", lat: 45.8114, lon: 10.0698 },
+    { name: "Monte Isola", lat: 45.7172, lon: 10.0816 },
+    { name: "Soncino", lat: 45.4007, lon: 9.8697 },
+    { name: "Grazie di Curtatone", lat: 45.1552, lon: 10.6934 },
+    { name: "Morimondo", lat: 45.3543, lon: 8.9561 }
+  ],
+
+  "it-trentino-alto-adige": [
+    { name: "Canale di Tenno", lat: 45.9388, lon: 10.8154 },
+    { name: "Rango", lat: 46.0021, lon: 10.8656 },
+    { name: "San Lorenzo in Banale", lat: 46.0757, lon: 10.9072 },
+    { name: "Mezzano", lat: 46.1558, lon: 11.8074 },
+    { name: "Vigo di Fassa", lat: 46.4201, lon: 11.6746 },
+    { name: "Glorenza", lat: 46.6715, lon: 10.5566 },
+    { name: "Chiusa", lat: 46.6403, lon: 11.5651 },
+    { name: "Castelrotto", lat: 46.5666, lon: 11.5601 },
+    { name: "Egna", lat: 46.3172, lon: 11.2725 },
+    { name: "Vipiteno", lat: 46.8936, lon: 11.4307 }
   ],
 
   "it-veneto": [
@@ -62,32 +103,279 @@ const CURATED_BORGHI_BY_REGION = {
     { name: "Borghetto", lat: 45.3536, lon: 10.7364 },
     { name: "Castellaro Lagusello", lat: 45.3661, lon: 10.6648 },
     { name: "Arquà Petrarca", lat: 45.2672, lon: 11.7186 },
-    { name: "Burano", lat: 45.4859, lon: 12.4167 }
+    { name: "Burano", lat: 45.4859, lon: 12.4167 },
+    { name: "Cittadella", lat: 45.6488, lon: 11.7836 },
+    { name: "Peschiera del Garda", lat: 45.4389, lon: 10.6920 }
   ],
-  
-  "it-toscana": [
-  { name: "San Gimignano", lat: 43.4678, lon: 11.0432 },
-  { name: "Monteriggioni", lat: 43.3896, lon: 11.2235 },
-  { name: "Volterra", lat: 43.4017, lon: 10.8615 },
-  { name: "Pienza", lat: 43.0776, lon: 11.6794 },
-  { name: "Pitigliano", lat: 42.6346, lon: 11.6694 },
-  { name: "Montepulciano", lat: 43.0987, lon: 11.7871 },
-  { name: "Montalcino", lat: 43.0561, lon: 11.4893 },
-  { name: "Anghiari", lat: 43.5414, lon: 12.0565 },
-  { name: "Cortona", lat: 43.2745, lon: 11.9850 },
-  { name: "Suvereto", lat: 43.0789, lon: 10.6785 },
-  { name: "Buonconvento", lat: 43.1382, lon: 11.4821 },
-  { name: "Radicofani", lat: 42.8965, lon: 11.7697 },
-  { name: "Castiglione d'Orcia", lat: 43.0071, lon: 11.6155 },
-  { name: "Barga", lat: 44.0739, lon: 10.4843 },
-  { name: "Certaldo", lat: 43.5475, lon: 11.0396 },
-  { name: "Poppi", lat: 43.7238, lon: 11.7657 },
-  { name: "Lucignano", lat: 43.2740, lon: 11.7444 },
-  { name: "Radda in Chianti", lat: 43.4871, lon: 11.3747 },
-  { name: "Castellina in Chianti", lat: 43.4692, lon: 11.2873 }
-]
-};
 
+  "it-friuli-venezia-giulia": [
+    { name: "Venzone", lat: 46.3337, lon: 13.1397 },
+    { name: "Cividale del Friuli", lat: 46.0919, lon: 13.4322 },
+    { name: "Palmanova", lat: 45.9064, lon: 13.3097 },
+    { name: "Gradisca d'Isonzo", lat: 45.8909, lon: 13.5012 },
+    { name: "Sesto al Reghena", lat: 45.8495, lon: 12.8128 },
+    { name: "Clauiano", lat: 45.8754, lon: 13.3304 },
+    { name: "Toppo", lat: 46.1892, lon: 12.8136 },
+    { name: "Fagagna", lat: 46.1137, lon: 13.0849 },
+    { name: "Valvasone", lat: 45.9961, lon: 12.8644 },
+    { name: "Cordovado", lat: 45.8452, lon: 12.8815 },
+    { name: "Muggia", lat: 45.6048, lon: 13.7675 }
+  ],
+
+  "it-liguria": [
+    { name: "Tellaro", lat: 44.0569, lon: 9.9304 },
+    { name: "Finalborgo", lat: 44.1760, lon: 8.3284 },
+    { name: "Apricale", lat: 43.8804, lon: 7.6604 },
+    { name: "Dolceacqua", lat: 43.8515, lon: 7.6231 },
+    { name: "Cervo", lat: 43.9259, lon: 8.1158 },
+    { name: "Noli", lat: 44.2061, lon: 8.4145 },
+    { name: "Vernazza", lat: 44.1350, lon: 9.6840 },
+    { name: "Manarola", lat: 44.1075, lon: 9.7280 },
+    { name: "Portovenere", lat: 44.0508, lon: 9.8346 },
+    { name: "Triora", lat: 43.9952, lon: 7.7632 },
+    { name: "Varese Ligure", lat: 44.3765, lon: 9.5922 },
+    { name: "Bussana Vecchia", lat: 43.8376, lon: 7.8289 }
+  ],
+
+  "it-emilia-romagna": [
+    { name: "Brisighella", lat: 44.2218, lon: 11.7692 },
+    { name: "Dozza", lat: 44.3597, lon: 11.6295 },
+    { name: "Castell'Arquato", lat: 44.8523, lon: 9.8694 },
+    { name: "Vigoleno", lat: 44.8166, lon: 9.8983 },
+    { name: "Bobbio", lat: 44.7698, lon: 9.3867 },
+    { name: "Grazzano Visconti", lat: 44.9349, lon: 9.6745 },
+    { name: "San Leo", lat: 43.8967, lon: 12.3436 },
+    { name: "Santarcangelo di Romagna", lat: 44.0634, lon: 12.4463 },
+    { name: "Montegridolfo", lat: 43.8587, lon: 12.6898 },
+    { name: "Bertinoro", lat: 44.1484, lon: 12.1340 },
+    { name: "Compiano", lat: 44.4967, lon: 9.6622 },
+    { name: "Castelvetro di Modena", lat: 44.5048, lon: 10.9430 },
+    { name: "Longiano", lat: 44.0748, lon: 12.3278 },
+    { name: "Verucchio", lat: 43.9842, lon: 12.4217 }
+  ],
+
+  "it-toscana": [
+    { name: "San Gimignano", lat: 43.4678, lon: 11.0432 },
+    { name: "Monteriggioni", lat: 43.3896, lon: 11.2235 },
+    { name: "Volterra", lat: 43.4017, lon: 10.8615 },
+    { name: "Pienza", lat: 43.0776, lon: 11.6794 },
+    { name: "Pitigliano", lat: 42.6346, lon: 11.6694 },
+    { name: "Montepulciano", lat: 43.0987, lon: 11.7871 },
+    { name: "Montalcino", lat: 43.0561, lon: 11.4893 },
+    { name: "Anghiari", lat: 43.5414, lon: 12.0565 },
+    { name: "Cortona", lat: 43.2745, lon: 11.9850 },
+    { name: "Suvereto", lat: 43.0789, lon: 10.6785 },
+    { name: "Buonconvento", lat: 43.1382, lon: 11.4821 },
+    { name: "Radicofani", lat: 42.8965, lon: 11.7697 },
+    { name: "Castiglione d'Orcia", lat: 43.0071, lon: 11.6155 },
+    { name: "Barga", lat: 44.0739, lon: 10.4843 },
+    { name: "Certaldo", lat: 43.5475, lon: 11.0396 },
+    { name: "Poppi", lat: 43.7238, lon: 11.7657 },
+    { name: "Lucignano", lat: 43.2740, lon: 11.7444 },
+    { name: "Radda in Chianti", lat: 43.4871, lon: 11.3747 },
+    { name: "Castellina in Chianti", lat: 43.4692, lon: 11.2873 },
+    { name: "Casale Marittimo", lat: 43.2971, lon: 10.6153 },
+    { name: "Bolgheri", lat: 43.2341, lon: 10.6170 },
+    { name: "Capalbio", lat: 42.4536, lon: 11.4213 }
+  ],
+
+  "it-umbria": [
+    { name: "Assisi", lat: 43.0707, lon: 12.6177 },
+    { name: "Spello", lat: 42.9905, lon: 12.6718 },
+    { name: "Bevagna", lat: 42.9378, lon: 12.6093 },
+    { name: "Montefalco", lat: 42.8929, lon: 12.6504 },
+    { name: "Spoleto", lat: 42.7340, lon: 12.7384 },
+    { name: "Todi", lat: 42.7828, lon: 12.4066 },
+    { name: "Narni", lat: 42.5173, lon: 12.5158 },
+    { name: "Trevi", lat: 42.8765, lon: 12.7495 },
+    { name: "Rasiglia", lat: 43.0256, lon: 12.8631 },
+    { name: "Castiglione del Lago", lat: 43.1275, lon: 12.0474 },
+    { name: "Panicale", lat: 43.0289, lon: 12.0998 },
+    { name: "Montone", lat: 43.3617, lon: 12.3269 },
+    { name: "Corciano", lat: 43.1287, lon: 12.2860 },
+    { name: "Bettona", lat: 43.0115, lon: 12.4851 },
+    { name: "Deruta", lat: 42.9846, lon: 12.4181 }
+  ],
+
+  "it-marche": [
+    { name: "Gradara", lat: 43.9399, lon: 12.7584 },
+    { name: "Corinaldo", lat: 43.6486, lon: 13.0468 },
+    { name: "Offagna", lat: 43.5278, lon: 13.4408 },
+    { name: "Torre di Palme", lat: 43.1575, lon: 13.7927 },
+    { name: "Sarnano", lat: 43.0340, lon: 13.2990 },
+    { name: "Ripatransone", lat: 43.0007, lon: 13.7628 },
+    { name: "Grottammare Alta", lat: 42.9880, lon: 13.8686 },
+    { name: "Mondavio", lat: 43.6726, lon: 12.9694 },
+    { name: "Moresco", lat: 43.0856, lon: 13.7277 },
+    { name: "Cingoli", lat: 43.3746, lon: 13.2178 },
+    { name: "Frontino", lat: 43.7644, lon: 12.3778 },
+    { name: "Montefiore dell'Aso", lat: 43.0514, lon: 13.7515 },
+    { name: "San Ginesio", lat: 43.1080, lon: 13.3145 },
+    { name: "Fiorenzuola di Focara", lat: 43.9470, lon: 12.8227 },
+    { name: "Castel Trosino", lat: 42.8430, lon: 13.6105 },
+    { name: "Recanati", lat: 43.4038, lon: 13.5537 },
+    { name: "Urbino", lat: 43.7262, lon: 12.6363 },
+    { name: "Arquata del Tronto", lat: 42.7725, lon: 13.2966 }
+  ],
+
+  "it-lazio": [
+    { name: "Civita di Bagnoregio", lat: 42.6277, lon: 12.1136 },
+    { name: "Calcata", lat: 42.2195, lon: 12.4262 },
+    { name: "Sermoneta", lat: 41.5496, lon: 12.9845 },
+    { name: "Subiaco", lat: 41.9269, lon: 13.0893 },
+    { name: "Castel Gandolfo", lat: 41.7466, lon: 12.6505 },
+    { name: "Nemi", lat: 41.7211, lon: 12.7178 },
+    { name: "Greccio", lat: 42.4481, lon: 12.7518 },
+    { name: "Bolsena", lat: 42.6444, lon: 11.9855 },
+    { name: "Caprarola", lat: 42.3263, lon: 12.2384 },
+    { name: "Sperlonga", lat: 41.2589, lon: 13.4344 },
+    { name: "Gaeta", lat: 41.2141, lon: 13.5708 },
+    { name: "Anagni", lat: 41.7435, lon: 13.1554 },
+    { name: "Arpino", lat: 41.6474, lon: 13.6112 },
+    { name: "Fumone", lat: 41.7273, lon: 13.2724 },
+    { name: "Tuscania", lat: 42.4203, lon: 11.8746 },
+    { name: "Vitorchiano", lat: 42.4659, lon: 12.1747 }
+  ],
+
+  "it-abruzzo": [
+    { name: "Scanno", lat: 41.9038608, lon: 13.880213 },
+    { name: "Pescocostanzo", lat: 41.88633, lon: 14.065612 },
+    { name: "Pacentro", lat: 42.0499635, lon: 13.9910727 },
+    { name: "Barrea", lat: 41.7584905, lon: 13.9907295 },
+    { name: "Villetta Barrea", lat: 41.775827, lon: 13.938511 },
+    { name: "Opi", lat: 41.7808732, lon: 13.8295241 },
+    { name: "Navelli", lat: 42.2378643, lon: 13.729027 },
+    { name: "Castelvecchio Calvisio", lat: 42.3106488, lon: 13.6886152 },
+    { name: "Rocca Calascio", lat: 42.3280296, lon: 13.6907679 },
+    { name: "Santo Stefano di Sessanio", lat: 42.343, lon: 13.644 },
+    { name: "Civitella del Tronto", lat: 42.7717, lon: 13.6651 },
+    { name: "Guardiagrele", lat: 42.1918, lon: 14.2195 },
+    { name: "Tagliacozzo", lat: 42.0695, lon: 13.2542 },
+    { name: "Pescasseroli", lat: 41.8087, lon: 13.7897 },
+    { name: "Roccascalegna", lat: 42.0625, lon: 14.3068 },
+    { name: "Atri", lat: 42.5777, lon: 13.9759 },
+    { name: "Città Sant'Angelo", lat: 42.5208, lon: 14.0599 },
+    { name: "Penne", lat: 42.4542, lon: 13.9274 },
+    { name: "Loreto Aprutino", lat: 42.4315, lon: 13.9836 },
+    { name: "Roccaraso", lat: 41.8503, lon: 14.0783 }
+  ],
+
+  "it-molise": [
+    { name: "Sepino", lat: 41.4078, lon: 14.6198 },
+    { name: "Fornelli", lat: 41.6067, lon: 14.1396 },
+    { name: "Frosolone", lat: 41.6021, lon: 14.4460 },
+    { name: "Oratino", lat: 41.5868, lon: 14.5942 },
+    { name: "Ferrazzano", lat: 41.5304, lon: 14.6715 },
+    { name: "Agnone", lat: 41.8106, lon: 14.3757 },
+    { name: "Scapoli", lat: 41.6143, lon: 14.0595 },
+    { name: "Castelpetroso", lat: 41.5619, lon: 14.3447 },
+    { name: "Bagnoli del Trigno", lat: 41.7050, lon: 14.4584 },
+    { name: "Venafro", lat: 41.4832, lon: 14.0479 }
+  ],
+
+  "it-campania": [
+    { name: "Atrani", lat: 40.6363, lon: 14.6085 },
+    { name: "Furore", lat: 40.6205, lon: 14.5499 },
+    { name: "Ravello", lat: 40.6496, lon: 14.6117 },
+    { name: "Cetara", lat: 40.6478, lon: 14.7009 },
+    { name: "Vietri sul Mare", lat: 40.6721, lon: 14.7278 },
+    { name: "Castellabate", lat: 40.2815, lon: 14.9560 },
+    { name: "Acciaroli", lat: 40.1756, lon: 15.0267 },
+    { name: "Sant'Agata de' Goti", lat: 41.0906, lon: 14.4994 },
+    { name: "Cusano Mutri", lat: 41.3387, lon: 14.5071 },
+    { name: "Zungoli", lat: 41.1245, lon: 15.2025 },
+    { name: "Pietrelcina", lat: 41.1970, lon: 14.8445 },
+    { name: "Padula", lat: 40.3373, lon: 15.6566 },
+    { name: "Teggiano", lat: 40.3795, lon: 15.5403 },
+    { name: "Conca dei Marini", lat: 40.6172, lon: 14.5735 }
+  ],
+
+  "it-puglia": [
+    { name: "Alberobello", lat: 40.7864, lon: 17.2406 },
+    { name: "Locorotondo", lat: 40.7561, lon: 17.3257 },
+    { name: "Cisternino", lat: 40.7437, lon: 17.4253 },
+    { name: "Ostuni", lat: 40.7291, lon: 17.5770 },
+    { name: "Polignano a Mare", lat: 40.9954, lon: 17.2193 },
+    { name: "Monopoli", lat: 40.9525, lon: 17.2986 },
+    { name: "Otranto", lat: 40.1460, lon: 18.4910 },
+    { name: "Specchia", lat: 39.9391, lon: 18.2970 },
+    { name: "Presicce", lat: 39.8996, lon: 18.2621 },
+    { name: "Vico del Gargano", lat: 41.8958, lon: 15.9569 },
+    { name: "Peschici", lat: 41.9460, lon: 16.0167 },
+    { name: "Vieste", lat: 41.8825, lon: 16.1764 },
+    { name: "Ceglie Messapica", lat: 40.6457, lon: 17.5180 },
+    { name: "Martina Franca", lat: 40.7033, lon: 17.3336 },
+    { name: "Gallipoli", lat: 40.0559, lon: 17.9926 }
+  ],
+
+  "it-basilicata": [
+    { name: "Castelmezzano", lat: 40.5286, lon: 16.0456 },
+    { name: "Pietrapertosa", lat: 40.5181, lon: 16.0627 },
+    { name: "Matera", lat: 40.6664, lon: 16.6043 },
+    { name: "Craco", lat: 40.3794, lon: 16.4382 },
+    { name: "Venosa", lat: 40.9635, lon: 15.8127 },
+    { name: "Acerenza", lat: 40.7937, lon: 15.9376 },
+    { name: "Melfi", lat: 40.9961, lon: 15.6518 },
+    { name: "Maratea", lat: 39.9942, lon: 15.7188 },
+    { name: "Tursi", lat: 40.2467, lon: 16.4693 },
+    { name: "Aliano", lat: 40.3137, lon: 16.2298 },
+    { name: "Viggianello", lat: 39.9738, lon: 16.0866 },
+    { name: "Rotondella", lat: 40.1715, lon: 16.5254 }
+  ],
+
+  "it-calabria": [
+    { name: "Gerace", lat: 38.2717, lon: 16.2203 },
+    { name: "Scilla", lat: 38.2528, lon: 15.7180 },
+    { name: "Chianalea", lat: 38.2535, lon: 15.7157 },
+    { name: "Stilo", lat: 38.4758, lon: 16.4677 },
+    { name: "Altomonte", lat: 39.6991, lon: 16.1297 },
+    { name: "Morano Calabro", lat: 39.8419, lon: 16.1390 },
+    { name: "Civita", lat: 39.8281, lon: 16.3134 },
+    { name: "Rocca Imperiale", lat: 40.1105, lon: 16.5787 },
+    { name: "Tropea", lat: 38.6786, lon: 15.8970 },
+    { name: "Pentedattilo", lat: 37.9512, lon: 15.7586 },
+    { name: "Bova", lat: 37.9964, lon: 15.9324 },
+    { name: "Fiumefreddo Bruzio", lat: 39.2356, lon: 16.0706 },
+    { name: "Aieta", lat: 39.9285, lon: 15.8230 },
+    { name: "Santa Severina", lat: 39.1474, lon: 16.9134 }
+  ],
+
+  "it-sicilia": [
+    { name: "Erice", lat: 38.0370, lon: 12.5865 },
+    { name: "Castelmola", lat: 37.8586, lon: 15.2776 },
+    { name: "Cefalù", lat: 38.0394, lon: 14.0229 },
+    { name: "Savoca", lat: 37.9533, lon: 15.3400 },
+    { name: "Forza d'Agrò", lat: 37.9156, lon: 15.3342 },
+    { name: "Marzamemi", lat: 36.7416, lon: 15.1189 },
+    { name: "Scicli", lat: 36.7934, lon: 14.7064 },
+    { name: "Ragusa Ibla", lat: 36.9257, lon: 14.7429 },
+    { name: "Modica", lat: 36.8586, lon: 14.7601 },
+    { name: "Noto", lat: 36.8924, lon: 15.0698 },
+    { name: "Sperlinga", lat: 37.7665, lon: 14.3506 },
+    { name: "Gangi", lat: 37.7974, lon: 14.2040 },
+    { name: "Petralia Soprana", lat: 37.7984, lon: 14.1078 },
+    { name: "Montalbano Elicona", lat: 38.0238, lon: 15.0134 },
+    { name: "Castiglione di Sicilia", lat: 37.8826, lon: 15.1201 },
+    { name: "Sambuca di Sicilia", lat: 37.6516, lon: 13.1113 }
+  ],
+
+  "it-sardegna": [
+    { name: "Bosa", lat: 40.2993, lon: 8.4983 },
+    { name: "Castelsardo", lat: 40.9128, lon: 8.7146 },
+    { name: "Carloforte", lat: 39.1450, lon: 8.3058 },
+    { name: "Posada", lat: 40.6324, lon: 9.7150 },
+    { name: "Atzara", lat: 39.9922, lon: 9.0765 },
+    { name: "Santu Lussurgiu", lat: 40.1414, lon: 8.6553 },
+    { name: "Laconi", lat: 39.8535, lon: 9.0510 },
+    { name: "Sadali", lat: 39.8148, lon: 9.2730 },
+    { name: "Galtellì", lat: 40.3843, lon: 9.6154 },
+    { name: "Orgosolo", lat: 40.2050, lon: 9.3548 },
+    { name: "Gavoi", lat: 40.1618, lon: 9.1946 },
+    { name: "Tempio Pausania", lat: 40.9006, lon: 9.1040 },
+    { name: "Oliena", lat: 40.2761, lon: 9.4045 },
+    { name: "Cuglieri", lat: 40.1882, lon: 8.5682 }
+  ]
+};
 // ---------------------- UTIL ----------------------
 function normName(s) {
   return String(s ?? "")
