@@ -450,6 +450,10 @@ function isBorgoNoise(p) {
   const n = normName(p.name || "");
   if (n.includes("borgo eger")) return true;
 if (n.includes("corte dei bissari")) return true;
+  if (
+  n === "borghetto" &&
+  !String(p.id || "").startsWith("curated:")
+) return true;
   const FAKE_BORGHI = [
   "borgo incile",
   "borgo ottomila",
@@ -480,6 +484,11 @@ if (n.includes("corte dei bissari")) return true;
   "borgo incile",
   "borgo strada 14",
   "borgo di acquabella",
+    "nogarole rocca",
+"sopracastello",
+"borgo bonavicina",
+"borgo vecchio",
+"borgo santa maria maddalena",
   "borgo petricca"
 ];
   if (
