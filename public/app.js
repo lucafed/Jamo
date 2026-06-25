@@ -704,8 +704,8 @@ console.log("CATEGORY =", canonicalCategory(categoryUI));
     DATASETS_USED.push({ kind: "region", source: p1, placesLen: loaded1.places.length });
   }
 
-  // Core regionale: NON usarlo per Borghi
-  if (cat !== "borghi") {
+  // Core regionale: NON usarlo per categorie curate
+if (!["borghi", "montagna"].includes(cat)) {
     const p2 =
       region.paths?.core ||
       `/data/pois/it/${rid}/index.json`;
