@@ -720,7 +720,7 @@ if (!["borghi", "montagna"].includes(cat)) {
 }
 
    // Radius nazionale: NON usarlo per Mare, perché radius-mare.json è troppo sporco
-if (cat !== "mare" && cat !== "borghi") {
+if (cat !== "mare" && cat !== "borghi" && cat !== "montagna") {
   const p3 = `/data/pois/regions/radius-${cat}.json`;
   const loaded3 = await tryLoadPlacesFile(p3, signal);
   if (loaded3) {
