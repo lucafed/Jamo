@@ -686,7 +686,7 @@ console.log("CATEGORY =", canonicalCategory(categoryUI));
 
     // 🔥 Per alcune categorie NON usare macro (mai)
     // (es: "mare" -> se parti da Torino NON deve buttarti in macro random)
-   const NO_MACRO_CATS = new Set(["mare", "borghi", "montagna"]);
+   const NO_MACRO_CATS = new Set(["mare", "borghi"]);
 
     const pools = [];
 
@@ -704,8 +704,8 @@ console.log("CATEGORY =", canonicalCategory(categoryUI));
     DATASETS_USED.push({ kind: "region", source: p1, placesLen: loaded1.places.length });
   }
 
-  // Core regionale: NON usarlo per categorie curate
-if (!["borghi", "montagna"].includes(cat)) {
+  // Core regionale: NON usarlo per Borghi
+  if (cat !== "borghi") {
     const p2 =
       region.paths?.core ||
       `/data/pois/it/${rid}/index.json`;
@@ -720,7 +720,7 @@ if (!["borghi", "montagna"].includes(cat)) {
 }
 
    // Radius nazionale: NON usarlo per Mare, perché radius-mare.json è troppo sporco
-if (cat !== "mare" && cat !== "borghi" && cat !== "montagna") {
+if (cat !== "mare" && cat !== "borghi") {
   const p3 = `/data/pois/regions/radius-${cat}.json`;
   const loaded3 = await tryLoadPlacesFile(p3, signal);
   if (loaded3) {
