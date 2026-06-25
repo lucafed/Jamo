@@ -7,7 +7,7 @@
     "minLon": 10.2,
     "maxLon": 13.2
   },
-  "generated_at": "2026-06-18T07:23:10.870Z",
+  "generated_at": "2026-06-25T06:37:05.803Z",
   "places": [
     {
       "id": "node:12766026527",
@@ -5330,10 +5330,10 @@
       "beauty_score": 1
     },
     {
-      "id": "way:188510417",
+      "id": "way:188510200",
       "name": "Cantina sociale di Meolo",
-      "lat": 45.5934793,
-      "lon": 12.4739243,
+      "lat": 45.5934412,
+      "lon": 12.4738549,
       "type": "cantine",
       "visibility": "chicca",
       "tags": [
