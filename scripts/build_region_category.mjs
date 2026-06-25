@@ -376,6 +376,34 @@ const CURATED_BORGHI_BY_REGION = {
     { name: "Cuglieri", lat: 40.1882, lon: 8.5682 }
   ]
 };
+};
+
+const CURATED_MOUNTAINS_BY_REGION = {
+  "it-sicilia": [
+    { name: "Etna", lat: 37.7510, lon: 14.9934 },
+    { name: "Rifugio Sapienza", lat: 37.6995, lon: 14.9989 },
+    { name: "Crateri Silvestri", lat: 37.6990, lon: 14.9959 },
+    { name: "Piano Provenzana", lat: 37.7996, lon: 15.0417 },
+    { name: "Piano Battaglia", lat: 37.8754, lon: 14.0234 },
+    { name: "Pizzo Carbonara", lat: 37.8750, lon: 14.0250 },
+    { name: "Madonie", lat: 37.8833, lon: 14.0167 },
+    { name: "Nebrodi", lat: 37.9500, lon: 14.7000 }
+  ],
+
+  "it-abruzzo": [
+    { name: "Campo Imperatore", lat: 42.4429, lon: 13.5587 },
+    { name: "Gran Sasso", lat: 42.4699, lon: 13.5654 },
+    { name: "Corno Grande", lat: 42.4693, lon: 13.5657 },
+    { name: "Prati di Tivo", lat: 42.5067, lon: 13.5566 },
+    { name: "Monte Sirente", lat: 42.2150, lon: 13.6750 },
+    { name: "Monte Velino", lat: 42.1780, lon: 13.3810 },
+    { name: "Passo delle Capannelle", lat: 42.4350, lon: 13.3490 },
+    { name: "Majella", lat: 42.0860, lon: 14.0850 },
+    { name: "Blockhaus", lat: 42.1560, lon: 14.1180 }
+  ]
+};
+
+// ---------------------- UTIL ----------------------
 // ---------------------- UTIL ----------------------
 function normName(s) {
   return String(s ?? "")
