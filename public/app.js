@@ -1370,10 +1370,15 @@ if (cat !== "mare" && cat !== "borghi") {
         isChicca,
       });
 
-      if (!ignoreRotation) s -= rotationPenalty(pid, recentSet);
-      s += seasonAdjust(p);
-      s += categoryScoreAdjust(p, categoryUI);
-      s += jitter();
+     if (!ignoreRotation) s -= rotationPenalty(pid, recentSet);
+s += seasonAdjust(p);
+s += categoryScoreAdjust(p, categoryUI);
+
+if (p.tags?.includes("curated=true")) {
+  s += 5;
+}
+
+s += jitter();
 
       candidates.push({
         place: p,
