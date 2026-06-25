@@ -718,7 +718,7 @@ const NO_MACRO_CATS = CURATED_ONLY_CATS;
   }
 
   // Core regionale: NON usarlo per Borghi
-  if (cat !== "borghi") {
+  if (!CURATED_ONLY_CATS.has(cat)) {
     const p2 =
       region.paths?.core ||
       `/data/pois/it/${rid}/index.json`;
