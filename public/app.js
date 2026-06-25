@@ -686,7 +686,7 @@ console.log("CATEGORY =", canonicalCategory(categoryUI));
 
     // 🔥 Per alcune categorie NON usare macro (mai)
     // (es: "mare" -> se parti da Torino NON deve buttarti in macro random)
-   const NO_MACRO_CATS = new Set(["mare", "borghi"]);
+   const NO_MACRO_CATS = new Set(["mare", "borghi", "montagna"]);
 
     const pools = [];
 
