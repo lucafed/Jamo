@@ -378,6 +378,18 @@ const CURATED_BORGHI_BY_REGION = {
 };
 
 const CURATED_MOUNTAINS_BY_REGION = {
+  "it-abruzzo": [
+    { name: "Campo Imperatore", lat: 42.4429, lon: 13.5587 },
+    { name: "Gran Sasso", lat: 42.4699, lon: 13.5654 },
+    { name: "Corno Grande", lat: 42.4693, lon: 13.5657 },
+    { name: "Prati di Tivo", lat: 42.5067, lon: 13.5566 },
+    { name: "Monte Sirente", lat: 42.2150, lon: 13.6750 },
+    { name: "Monte Velino", lat: 42.1780, lon: 13.3810 },
+    { name: "Passo delle Capannelle", lat: 42.4350, lon: 13.3490 },
+    { name: "Majella", lat: 42.0860, lon: 14.0850 },
+    { name: "Blockhaus", lat: 42.1560, lon: 14.1180 }
+  ],
+
   "it-sicilia": [
     { name: "Etna", lat: 37.7510, lon: 14.9934 },
     { name: "Rifugio Sapienza", lat: 37.6995, lon: 14.9989 },
@@ -389,16 +401,159 @@ const CURATED_MOUNTAINS_BY_REGION = {
     { name: "Nebrodi", lat: 37.9500, lon: 14.7000 }
   ],
 
-  "it-abruzzo": [
-    { name: "Campo Imperatore", lat: 42.4429, lon: 13.5587 },
-    { name: "Gran Sasso", lat: 42.4699, lon: 13.5654 },
-    { name: "Corno Grande", lat: 42.4693, lon: 13.5657 },
-    { name: "Prati di Tivo", lat: 42.5067, lon: 13.5566 },
-    { name: "Monte Sirente", lat: 42.2150, lon: 13.6750 },
-    { name: "Monte Velino", lat: 42.1780, lon: 13.3810 },
-    { name: "Passo delle Capannelle", lat: 42.4350, lon: 13.3490 },
-    { name: "Majella", lat: 42.0860, lon: 14.0850 },
-    { name: "Blockhaus", lat: 42.1560, lon: 14.1180 }
+  "it-veneto": [
+    { name: "Tre Cime di Lavaredo", lat: 46.6187, lon: 12.3020 },
+    { name: "Cortina d'Ampezzo", lat: 46.5405, lon: 12.1357 },
+    { name: "Passo Giau", lat: 46.4831, lon: 12.0560 },
+    { name: "Cinque Torri", lat: 46.5085, lon: 12.0488 },
+    { name: "Monte Grappa", lat: 45.8736, lon: 11.7992 },
+    { name: "Marmolada", lat: 46.4347, lon: 11.8519 }
+  ],
+
+  "it-trentino-alto-adige": [
+    { name: "Seceda", lat: 46.5976, lon: 11.7242 },
+    { name: "Alpe di Siusi", lat: 46.5410, lon: 11.6170 },
+    { name: "Lago di Braies", lat: 46.6943, lon: 12.0859 },
+    { name: "Passo Sella", lat: 46.5086, lon: 11.7570 },
+    { name: "Val di Funes", lat: 46.6370, lon: 11.7200 },
+    { name: "Catinaccio", lat: 46.4560, lon: 11.6400 },
+    { name: "Madonna di Campiglio", lat: 46.2306, lon: 10.8262 }
+  ],
+
+  "it-valle-d-aosta": [
+    { name: "Monte Bianco", lat: 45.8326, lon: 6.8652 },
+    { name: "Courmayeur", lat: 45.7928, lon: 6.9713 },
+    { name: "Cervinia", lat: 45.9340, lon: 7.6290 },
+    { name: "Gran Paradiso", lat: 45.5180, lon: 7.2660 },
+    { name: "Val Ferret", lat: 45.8500, lon: 7.0500 },
+    { name: "Pila", lat: 45.6820, lon: 7.3120 }
+  ],
+
+  "it-piemonte": [
+    { name: "Monviso", lat: 44.6675, lon: 7.0900 },
+    { name: "Monte Rosa", lat: 45.9369, lon: 7.8669 },
+    { name: "Macugnaga", lat: 45.9690, lon: 7.9670 },
+    { name: "Alpe Devero", lat: 46.3140, lon: 8.2610 },
+    { name: "Sestriere", lat: 44.9584, lon: 6.8780 },
+    { name: "Bardonecchia", lat: 45.0780, lon: 6.7040 }
+  ],
+
+  "it-lombardia": [
+    { name: "Passo dello Stelvio", lat: 46.5287, lon: 10.4534 },
+    { name: "Livigno", lat: 46.5385, lon: 10.1356 },
+    { name: "Bormio", lat: 46.4676, lon: 10.3705 },
+    { name: "Piani di Bobbio", lat: 45.9590, lon: 9.4970 },
+    { name: "Monte Resegone", lat: 45.8367, lon: 9.4483 },
+    { name: "Grigna", lat: 45.9500, lon: 9.3833 }
+  ],
+
+  "it-friuli-venezia-giulia": [
+    { name: "Monte Lussari", lat: 46.4800, lon: 13.5230 },
+    { name: "Tarvisio", lat: 46.5058, lon: 13.5869 },
+    { name: "Sella Nevea", lat: 46.3890, lon: 13.4750 },
+    { name: "Lago del Predil", lat: 46.4200, lon: 13.5700 },
+    { name: "Forni di Sopra", lat: 46.4245, lon: 12.5784 },
+    { name: "Piancavallo", lat: 46.1060, lon: 12.5190 },
+    { name: "Monte Zoncolan", lat: 46.5020, lon: 12.9250 },
+    { name: "Dolomiti Friulane", lat: 46.3500, lon: 12.5000 }
+  ],
+
+  "it-emilia-romagna": [
+    { name: "Corno alle Scale", lat: 44.1260, lon: 10.8130 },
+    { name: "Monte Cimone", lat: 44.1936, lon: 10.7003 },
+    { name: "Lago Santo Modenese", lat: 44.2300, lon: 10.6100 },
+    { name: "Pietra di Bismantova", lat: 44.4160, lon: 10.4140 },
+    { name: "Monte Fumaiolo", lat: 43.7870, lon: 12.0750 },
+    { name: "Parco dei Cento Laghi", lat: 44.3900, lon: 10.1000 }
+  ],
+
+  "it-toscana": [
+    { name: "Abetone", lat: 44.1445, lon: 10.6645 },
+    { name: "Monte Amiata", lat: 42.8900, lon: 11.6260 },
+    { name: "Alpi Apuane", lat: 44.0670, lon: 10.2500 },
+    { name: "Monte Forato", lat: 44.0310, lon: 10.3210 },
+    { name: "Garfagnana", lat: 44.1000, lon: 10.4000 },
+    { name: "Pratomagno", lat: 43.6500, lon: 11.6500 }
+  ],
+
+  "it-marche": [
+    { name: "Monte Conero", lat: 43.5500, lon: 13.6200 },
+    { name: "Monte Vettore", lat: 42.8270, lon: 13.2670 },
+    { name: "Monti Sibillini", lat: 42.9000, lon: 13.2500 },
+    { name: "Lago di Pilato", lat: 42.8240, lon: 13.2700 },
+    { name: "Gola dell'Infernaccio", lat: 42.9470, lon: 13.2580 },
+    { name: "Monte Catria", lat: 43.5470, lon: 12.7160 },
+    { name: "Monte Nerone", lat: 43.5660, lon: 12.5340 }
+  ],
+
+  "it-umbria": [
+    { name: "Monte Subasio", lat: 43.0450, lon: 12.6500 },
+    { name: "Castelluccio di Norcia", lat: 42.8280, lon: 13.2060 },
+    { name: "Piano Grande", lat: 42.8200, lon: 13.2000 },
+    { name: "Monte Cucco", lat: 43.3500, lon: 12.7500 },
+    { name: "Valnerina", lat: 42.7500, lon: 12.9000 },
+    { name: "Monti Sibillini", lat: 42.9000, lon: 13.2500 }
+  ],
+
+  "it-lazio": [
+    { name: "Monte Terminillo", lat: 42.4690, lon: 12.9970 },
+    { name: "Monte Livata", lat: 41.9500, lon: 13.1000 },
+    { name: "Campo Staffi", lat: 41.8890, lon: 13.3230 },
+    { name: "Campo Catino", lat: 41.8500, lon: 13.3500 },
+    { name: "Monti Simbruini", lat: 41.9500, lon: 13.1500 },
+    { name: "Monte Circeo", lat: 41.2340, lon: 13.0500 }
+  ],
+
+  "it-molise": [
+    { name: "Campitello Matese", lat: 41.4600, lon: 14.3900 },
+    { name: "Monte Miletto", lat: 41.4670, lon: 14.3900 },
+    { name: "Capracotta", lat: 41.8330, lon: 14.2650 },
+    { name: "Prato Gentile", lat: 41.8500, lon: 14.2500 },
+    { name: "Monti del Matese", lat: 41.4500, lon: 14.4000 }
+  ],
+
+  "it-campania": [
+    { name: "Vesuvio", lat: 40.8220, lon: 14.4280 },
+    { name: "Monte Faito", lat: 40.6500, lon: 14.4500 },
+    { name: "Sentiero degli Dei", lat: 40.6200, lon: 14.5400 },
+    { name: "Laceno", lat: 40.8100, lon: 15.1000 },
+    { name: "Monte Cervati", lat: 40.2800, lon: 15.4400 },
+    { name: "Monti Lattari", lat: 40.6500, lon: 14.5200 }
+  ],
+
+  "it-puglia": [
+    { name: "Foresta Umbra", lat: 41.8000, lon: 15.9830 },
+    { name: "Monte Sant'Angelo", lat: 41.7050, lon: 15.9600 },
+    { name: "Gargano", lat: 41.8000, lon: 15.9000 },
+    { name: "Monti Dauni", lat: 41.4000, lon: 15.2000 },
+    { name: "Faeto", lat: 41.3240, lon: 15.1600 }
+  ],
+
+  "it-basilicata": [
+    { name: "Dolomiti Lucane", lat: 40.5250, lon: 16.0500 },
+    { name: "Castelmezzano", lat: 40.5286, lon: 16.0456 },
+    { name: "Pietrapertosa", lat: 40.5181, lon: 16.0627 },
+    { name: "Monte Pollino", lat: 39.9160, lon: 16.1800 },
+    { name: "Monte Sirino", lat: 40.1500, lon: 15.8500 },
+    { name: "Parco del Pollino", lat: 39.9500, lon: 16.1000 }
+  ],
+
+  "it-calabria": [
+    { name: "Sila", lat: 39.3300, lon: 16.5000 },
+    { name: "Camigliatello Silano", lat: 39.3300, lon: 16.4500 },
+    { name: "Lorica", lat: 39.2500, lon: 16.4800 },
+    { name: "Aspromonte", lat: 38.1600, lon: 15.9400 },
+    { name: "Gambarie", lat: 38.1700, lon: 15.8300 },
+    { name: "Pollino", lat: 39.9160, lon: 16.1800 }
+  ],
+
+  "it-sardegna": [
+    { name: "Gennargentu", lat: 40.0300, lon: 9.3200 },
+    { name: "Punta La Marmora", lat: 39.9880, lon: 9.3240 },
+    { name: "Supramonte", lat: 40.2200, lon: 9.5000 },
+    { name: "Gola di Gorropu", lat: 40.1800, lon: 9.5150 },
+    { name: "Monte Limbara", lat: 40.8500, lon: 9.1800 },
+    { name: "Monte Ortobene", lat: 40.3200, lon: 9.3400 }
   ]
 };
 
