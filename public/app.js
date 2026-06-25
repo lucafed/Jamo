@@ -1270,6 +1270,9 @@ if (cat !== "mare" && cat !== "borghi") {
   const n = normName(place?.name || "");
 
   let s = 0;
+      if (t.includes("curated=true")) {
+    s += 2.5;
+  }
 
   if (cat === "borghi") {
     const hasWiki = t.includes("wikipedia=") || t.includes("wikidata=");
