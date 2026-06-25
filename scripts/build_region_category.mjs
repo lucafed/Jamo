@@ -1288,6 +1288,9 @@ function scoreMontagna(p) {
   const t = p.tags || {};
   const n = normName(p.name || "");
   let s = 0;
+    if (String(t.curated || "").toLowerCase() === "true") {
+    s += 3000;
+  }
 
   if (tagEq(t, "natural", "peak")) s += 80;
   if (tagEq(t, "tourism", "alpine_hut")) s += 75;
