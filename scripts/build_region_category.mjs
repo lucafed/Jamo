@@ -376,7 +376,6 @@ const CURATED_BORGHI_BY_REGION = {
     { name: "Cuglieri", lat: 40.1882, lon: 8.5682 }
   ]
 };
-};
 
 const CURATED_MOUNTAINS_BY_REGION = {
   "it-sicilia": [
