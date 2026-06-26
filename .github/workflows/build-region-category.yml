@@ -35,7 +35,7 @@ jobs:
           CATEGORY: ${{ inputs.category }}
         run: node scripts/build_region_category.mjs
 
-      - name: Commit data
+            - name: Commit data
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -43,4 +43,6 @@ jobs:
           git add public/data/pois/regions/*.json
 
           git commit -m "build: region category ${{ inputs.region_id }} ${{ inputs.category }}" || echo "No changes to commit"
+
+          git pull --rebase origin main
           git push
