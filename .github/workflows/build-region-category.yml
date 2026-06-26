@@ -35,7 +35,7 @@ jobs:
           CATEGORY: ${{ inputs.category }}
         run: node scripts/build_region_category.mjs
 
-            - name: Commit data
+      - name: Commit data
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
