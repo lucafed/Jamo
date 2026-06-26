@@ -29,7 +29,7 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Build region category
+           - name: Build region category
         env:
           REGION_ID: ${{ inputs.region_id }}
           CATEGORY: ${{ inputs.category }}
