@@ -1558,12 +1558,11 @@ async function main() {
     }))
   ];
 }
-  if (CATEGORY === "montagna") {
+if (CATEGORY === "montagna") {
   const curated = CURATED_MOUNTAINS_BY_REGION[REGION_ID] || [];
 
-  cleaned = [
-    ...cleaned,
-    ...curated.map((p) => ({
+  if (curated.length) {
+    cleaned = curated.map((p) => ({
       id: `curated:mountain:${normName(p.name).replace(/\s+/g, "-")}`,
       name: p.name,
       lat: p.lat,
@@ -1574,8 +1573,8 @@ async function main() {
         tourism: "attraction",
         curated: "true"
       }
-    }))
-  ];
+    }));
+  }
 }
 
   // dedupe: nome + coordinate
