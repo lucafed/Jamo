@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-06-23T06:56:11.634Z",
+  "generated_at": "2026-06-30T07:02:19.202Z",
   "places": [
     {
       "id": "node:62513274",
@@ -7095,8 +7095,8 @@
     {
       "id": "node:64776988",
       "name": "Molveno",
-      "lat": 46.1421057,
-      "lon": 10.9637773,
+      "lat": 46.1423294,
+      "lon": 10.9637861,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -36499,8 +36499,8 @@
     {
       "id": "relation:45238",
       "name": "Morengo",
-      "lat": 45.539343,
-      "lon": 9.7126846,
+      "lat": 45.5393411,
+      "lon": 9.7126745,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -51350,7 +51350,7 @@
     {
       "id": "relation:47079",
       "name": "Lanzada",
-      "lat": 46.3126009,
+      "lat": 46.3125791,
       "lon": 9.9114445,
       "type": "borghi",
       "visibility": "classica",
@@ -52336,8 +52336,8 @@
     {
       "id": "relation:47189",
       "name": "Valdidentro",
-      "lat": 46.508909,
-      "lon": 10.2821375,
+      "lat": 46.5089095,
+      "lon": 10.2821359,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -52613,7 +52613,7 @@
     {
       "id": "relation:47222",
       "name": "Bormio",
-      "lat": 46.492726,
+      "lat": 46.4927351,
       "lon": 10.4151907,
       "type": "borghi",
       "visibility": "classica",
@@ -53010,8 +53010,8 @@
     {
       "id": "relation:47273",
       "name": "Livigno",
-      "lat": 46.5234981,
-      "lon": 10.1291285,
+      "lat": 46.5234971,
+      "lon": 10.1291256,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -53036,7 +53036,7 @@
       "id": "relation:47280",
       "name": "Prad am Stilfserjoch - Prato allo Stelvio",
       "lat": 46.6038834,
-      "lon": 10.5701953,
+      "lon": 10.5700799,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -53871,8 +53871,8 @@
     {
       "id": "relation:1684131",
       "name": "Pontresina",
-      "lat": 46.4391641,
-      "lon": 9.9619916,
+      "lat": 46.4391209,
+      "lon": 9.9620585,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -53880,12 +53880,8 @@
         "boundary=administrative",
         "name=Pontresina",
         "postal_code=7504",
-        "source=swissBOUNDARIES3D swisstopo 2011",
-        "swisstopo:BEZIRKSNUM=1827",
+        "source=swissBOUNDARIES3D swisstopo 2026",
         "swisstopo:BFS_NUMMER=3784",
-        "swisstopo:KANTONSNUM=18",
-        "swisstopo:OBJEKTART=Gemeindegebiet",
-        "swisstopo:SHN=CH18273784",
         "type=boundary",
         "wikidata=Q69259",
         "wikipedia=de:Pontresina"
@@ -53895,7 +53891,7 @@
     {
       "id": "relation:1684132",
       "name": "Poschiavo",
-      "lat": 46.3431279,
+      "lat": 46.3431391,
       "lon": 10.0612938,
       "type": "borghi",
       "visibility": "classica",
@@ -53920,8 +53916,8 @@
     {
       "id": "relation:1684200",
       "name": "Val Müstair",
-      "lat": 46.6106346,
-      "lon": 10.3652842,
+      "lat": 46.6106208,
+      "lon": 10.3652293,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -53933,12 +53929,8 @@
         "name:rm=Val Müstair",
         "name:uk=Валь-Мюштайр",
         "population=1565",
-        "source=swissBOUNDARIES3D swisstopo 2011",
-        "swisstopo:BEZIRKSNUM=1825",
+        "source=swissBOUNDARIES3D swisstopo 2026",
         "swisstopo:BFS_NUMMER=3847",
-        "swisstopo:KANTONSNUM=18",
-        "swisstopo:OBJEKTART=Gemeindegebiet",
-        "swisstopo:SHN=CH18253847",
         "type=boundary",
         "website=https://www.cdvm.ch/",
         "wikidata=Q70513",

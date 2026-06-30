@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-06-19T06:52:11.606Z",
+  "generated_at": "2026-06-30T07:02:32.311Z",
   "places": [
     {
       "id": "node:2692275706",
@@ -1821,7 +1821,7 @@
         "email=info@casagiallaspumanti.it",
         "mobile=+39 348 7389217",
         "name=Casa Gialla",
-        "opening_hours=Lunedì – Domenica: 8.00 – 12.00 / 13.30 – 18.30",
+        "opening_hours=Lunedì - Domenica: 8.00 - 12.00 / 13.30 - 18.30",
         "phone=+39 0423 981138",
         "website=https://casagiallaspumanti.it/"
       ],
@@ -2115,7 +2115,7 @@
         "check_date=2025-09-08",
         "craft=winery",
         "name=Villa Maria Spumanti",
-        "opening_hours=Estivo: Dal lunedi al sabato 08:00–19:00; Invernale: Dal lunedi al sabato 08:00–12:30, 14:00–18:00",
+        "opening_hours=Estivo: Dal lunedi al sabato 08:00-19:00; Invernale: Dal lunedi al sabato 08:00-12:30, 14:00-18:00",
         "phone=+39 0438 801121",
         "website=https://www.villamaria-spumanti.it"
       ],
@@ -3082,7 +3082,7 @@
         "addr:street=Via San Giovanni",
         "craft=winery",
         "name=Val D'Oca",
-        "opening_hours=Lunedì–Sabato: 10 – 18.30 Domenica: 10 – 16",
+        "opening_hours=Lunedì-Sabato: 10 - 18.30 Domenica: 10 - 16",
         "website=https://www.valdoca.com/",
         "wheelchair=yes"
       ],
@@ -3750,24 +3750,26 @@
       "score": 96
     },
     {
-      "id": "node:1651270018",
-      "name": "Acetaia Comunale",
-      "lat": 44.8447682,
-      "lon": 10.7320621,
+      "id": "way:1533493977",
+      "name": "Nani Rizzi",
+      "lat": 45.9056893,
+      "lon": 12.0589047,
       "type": "cantine",
       "visibility": "classica",
       "tags": [
-        "access=yes",
-        "email=turismo@comune.novellara.re.it",
-        "industrial=winery",
-        "level=1",
-        "name=Acetaia Comunale",
-        "product=vinegar",
-        "source=local_knowledge",
-        "tourism=attraction",
-        "website=https://www.comune.novellara.re.it/vivere-novellara/luoghi/acetaia-comunale-balsamic-vinegar"
+        "addr:city=Guia di Valdobbiadene",
+        "addr:housenumber=22",
+        "addr:postcode=31049",
+        "addr:street=Via Stanghe",
+        "building=yes",
+        "contact:email=info@nanirizzi.it",
+        "craft=winery",
+        "name=Nani Rizzi",
+        "official_name=Nani Rizzi Società Agricola S.S.",
+        "phone=+39 0423 900645",
+        "website=https://www.nanirizzi.it/"
       ],
-      "score": 95
+      "score": 96
     },
     {
       "id": "node:3711825905",
@@ -5183,13 +5185,13 @@
     {
       "id": "node:8049957042",
       "name": "Dal martedì al sabato",
-      "lat": 45.438645,
-      "lon": 12.33489,
+      "lat": 45.4386449,
+      "lon": 12.3349197,
       "type": "cantine",
       "visibility": "classica",
       "tags": [
         "addr:housenumber=59",
-        "addr:street=Sotoportego de Rialto",
+        "addr:place=San Polo",
         "craft=winery",
         "name=Dal martedì al sabato",
         "opening_hours=Mo-Sa 10:00-13:00,17:00-19:30"
@@ -5632,6 +5634,19 @@
       "tags": [
         "craft=winery",
         "name=Vini di Valtellina"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:5686070036",
+      "name": "Vero Vino",
+      "lat": 45.2895876,
+      "lon": 11.7785231,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "craft=winery",
+        "name=Vero Vino"
       ],
       "score": 80
     },
@@ -8246,7 +8261,7 @@
         "phone=+39 045 8009031",
         "price=€12 mains",
         "shop=wine",
-        "website=https://www.signorvino.com/it/negozi/verona",
+        "website=https://www.signorvino.com/it/negozi/veneto/verona/verona_corso_porta_nuova_n._2%2Fa/B105.html",
         "wheelchair=yes"
       ],
       "score": 41
@@ -8561,27 +8576,6 @@
         "contact:website=https://www.lazzarivini.it/",
         "name=Lazzari",
         "shop=wine"
-      ],
-      "score": 41
-    },
-    {
-      "id": "node:6955171076",
-      "name": "La Cantinetta",
-      "lat": 44.5117264,
-      "lon": 11.3499414,
-      "type": "cantine",
-      "visibility": "classica",
-      "tags": [
-        "addr:city=Bologna",
-        "addr:housenumber=18",
-        "addr:postcode=40128",
-        "addr:street=Via Ferrarese",
-        "name=La Cantinetta",
-        "payment:cash=yes",
-        "payment:credit_cards=yes",
-        "phone=+39 051 097 3734",
-        "shop=wine",
-        "website=http://lacantinettabologna.it"
       ],
       "score": 41
     },
@@ -12515,6 +12509,23 @@
         "addr:street=Via Quattro Novembre",
         "addr:unit=a",
         "name=Enoteca Le Rughe - Centopercento vino",
+        "shop=wine"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:5865536286",
+      "name": "Enoteca La bidule",
+      "lat": 45.5225701,
+      "lon": 9.5928282,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=5",
+        "addr:street=Via Oreste Mozzali",
+        "check_date=2026-06-24",
+        "level=0",
+        "name=Enoteca La bidule",
         "shop=wine"
       ],
       "score": 25
