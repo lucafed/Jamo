@@ -7,7 +7,7 @@
     "minLon": 10.2,
     "maxLon": 13.2
   },
-  "generated_at": "2026-06-25T06:37:05.803Z",
+  "generated_at": "2026-07-02T06:27:32.411Z",
   "places": [
     {
       "id": "node:12766026527",
@@ -723,7 +723,7 @@
         "email=info@casagiallaspumanti.it",
         "mobile=+39 348 7389217",
         "name=Casa Gialla",
-        "opening_hours=Lunedì – Domenica: 8.00 – 12.00 / 13.30 – 18.30",
+        "opening_hours=Lunedì - Domenica: 8.00 - 12.00 / 13.30 - 18.30",
         "phone=+39 0423 981138",
         "website=https://casagiallaspumanti.it/"
       ],
@@ -889,7 +889,7 @@
         "check_date=2025-09-08",
         "craft=winery",
         "name=Villa Maria Spumanti",
-        "opening_hours=Estivo: Dal lunedi al sabato 08:00–19:00; Invernale: Dal lunedi al sabato 08:00–12:30, 14:00–18:00",
+        "opening_hours=Estivo: Dal lunedi al sabato 08:00-19:00; Invernale: Dal lunedi al sabato 08:00-12:30, 14:00-18:00",
         "phone=+39 0438 801121",
         "website=https://www.villamaria-spumanti.it"
       ],
@@ -1841,7 +1841,7 @@
         "addr:street=Via San Giovanni",
         "craft=winery",
         "name=Val D'Oca",
-        "opening_hours=Lunedì–Sabato: 10 – 18.30 Domenica: 10 – 16",
+        "opening_hours=Lunedì-Sabato: 10 - 18.30 Domenica: 10 - 16",
         "website=https://www.valdoca.com/",
         "wheelchair=yes"
       ],
@@ -2668,6 +2668,29 @@
         "name=Costa Arènte",
         "phone=+393472111150",
         "website=http://www.costarente.it/"
+      ],
+      "score": 88,
+      "beauty_score": 1
+    },
+    {
+      "id": "way:1533493977",
+      "name": "Nani Rizzi",
+      "lat": 45.9056893,
+      "lon": 12.0589047,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Guia di Valdobbiadene",
+        "addr:housenumber=22",
+        "addr:postcode=31049",
+        "addr:street=Via Stanghe",
+        "building=yes",
+        "contact:email=info@nanirizzi.it",
+        "craft=winery",
+        "name=Nani Rizzi",
+        "official_name=Nani Rizzi Società Agricola S.S.",
+        "phone=+39 0423 900645",
+        "website=https://www.nanirizzi.it/"
       ],
       "score": 88,
       "beauty_score": 1
@@ -3803,13 +3826,13 @@
     {
       "id": "node:8049957042",
       "name": "Dal martedì al sabato",
-      "lat": 45.438645,
-      "lon": 12.33489,
+      "lat": 45.4386449,
+      "lon": 12.3349197,
       "type": "cantine",
       "visibility": "classica",
       "tags": [
         "addr:housenumber=59",
-        "addr:street=Sotoportego de Rialto",
+        "addr:place=San Polo",
         "craft=winery",
         "name=Dal martedì al sabato",
         "opening_hours=Mo-Sa 10:00-13:00,17:00-19:30"
@@ -4216,6 +4239,20 @@
       "tags": [
         "craft=winery",
         "name=Cantine Ca' Corniani"
+      ],
+      "score": 70,
+      "beauty_score": 1
+    },
+    {
+      "id": "node:5686070036",
+      "name": "Vero Vino",
+      "lat": 45.2895876,
+      "lon": 11.7785231,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Vero Vino"
       ],
       "score": 70,
       "beauty_score": 1
@@ -5089,6 +5126,20 @@
       "tags": [
         "craft=winery",
         "name=Cantina Marsadri"
+      ],
+      "score": 70,
+      "beauty_score": 1
+    },
+    {
+      "id": "node:13979903780",
+      "name": "Medici Ermete e Figli",
+      "lat": 44.7433655,
+      "lon": 10.5028793,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Medici Ermete e Figli"
       ],
       "score": 70,
       "beauty_score": 1
