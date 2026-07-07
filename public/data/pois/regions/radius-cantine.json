@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-06-30T07:02:32.311Z",
+  "generated_at": "2026-07-07T06:53:57.599Z",
   "places": [
     {
       "id": "node:2692275706",
@@ -6306,6 +6306,19 @@
       "score": 80
     },
     {
+      "id": "node:13979903780",
+      "name": "Medici Ermete e Figli",
+      "lat": 44.7433655,
+      "lon": 10.5028793,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "craft=winery",
+        "name=Medici Ermete e Figli"
+      ],
+      "score": 80
+    },
+    {
       "id": "way:81085412",
       "name": "Cantine naturali Torboli",
       "lat": 45.9222755,
@@ -8190,30 +8203,6 @@
         "man_made=winery",
         "name=Conte Giordano Emo Capodilista",
         "ref=14",
-        "shop=wine"
-      ],
-      "score": 41
-    },
-    {
-      "id": "node:2749775163",
-      "name": "Weingut Dominikus",
-      "lat": 46.3837108,
-      "lon": 11.2473896,
-      "type": "cantine",
-      "visibility": "classica",
-      "tags": [
-        "addr:city=Kaltern an der Weinstraße - Caldaro sulla Strada del Vino",
-        "addr:city:de=Kaltern an der Weinstraße",
-        "addr:city:it=Caldaro sulla Strada del Vino",
-        "addr:housenumber=39",
-        "addr:place=St. Josef am See - San Giuseppe al Lago",
-        "addr:place:de=St. Josef am See",
-        "addr:place:it=San Giuseppe al Lago",
-        "addr:postcode=39052",
-        "contact:email=info@dominikus.it",
-        "contact:phone=+39 0471 960576",
-        "contact:website=https://www.dominikus.it/",
-        "name=Weingut Dominikus",
         "shop=wine"
       ],
       "score": 41
@@ -10186,22 +10175,6 @@
       "score": 35
     },
     {
-      "id": "node:10727936230",
-      "name": "Vinothek caldarum",
-      "lat": 46.4177701,
-      "lon": 11.2499128,
-      "type": "cantine",
-      "visibility": "classica",
-      "tags": [
-        "name=Vinothek caldarum",
-        "name:de=Vinothek caldarum",
-        "name:it=Enoteca caldarum",
-        "shop=wine",
-        "website=https://www.vinothekcaldarum.it/"
-      ],
-      "score": 35
-    },
-    {
       "id": "node:12204844646",
       "name": "Fra' Luca",
       "lat": 45.8135905,
@@ -11325,6 +11298,19 @@
         "addr:postcode=30135",
         "addr:street=Santa Croce",
         "name=Zanze Wine Shop",
+        "shop=wine"
+      ],
+      "score": 31
+    },
+    {
+      "id": "node:13979903779",
+      "name": "Wine Shop Medici Ermete & Figli",
+      "lat": 44.7438647,
+      "lon": 10.5038133,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Wine Shop Medici Ermete & Figli",
         "shop=wine"
       ],
       "score": 31

@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-06-30T07:02:19.202Z",
+  "generated_at": "2026-07-07T06:53:38.407Z",
   "places": [
     {
       "id": "node:62513274",
@@ -18324,8 +18324,8 @@
     {
       "id": "node:3229569409",
       "name": "Giazza",
-      "lat": 45.6549152,
-      "lon": 11.1229369,
+      "lat": 45.6533043,
+      "lon": 11.1229242,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -48963,7 +48963,7 @@
     {
       "id": "relation:46787",
       "name": "Teglio",
-      "lat": 46.1392663,
+      "lat": 46.1392595,
       "lon": 10.0957377,
       "type": "borghi",
       "visibility": "classica",
@@ -50160,8 +50160,8 @@
     {
       "id": "relation:46956",
       "name": "Villa di Tirano",
-      "lat": 46.1916195,
-      "lon": 10.144499,
+      "lat": 46.1916187,
+      "lon": 10.1445045,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -50203,8 +50203,8 @@
     {
       "id": "relation:46960",
       "name": "Chiuro",
-      "lat": 46.220465,
-      "lon": 10.0108279,
+      "lat": 46.2204569,
+      "lon": 10.0108574,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -50580,7 +50580,7 @@
       "id": "relation:47003",
       "name": "Tirano",
       "lat": 46.2190123,
-      "lon": 10.1810014,
+      "lon": 10.1810069,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -50783,7 +50783,7 @@
     {
       "id": "relation:47026",
       "name": "Val Masino",
-      "lat": 46.2456309,
+      "lat": 46.2456091,
       "lon": 9.6480585,
       "type": "borghi",
       "visibility": "classica",
@@ -50867,8 +50867,8 @@
     {
       "id": "relation:47038",
       "name": "Bianzone",
-      "lat": 46.2000937,
-      "lon": 10.0986386,
+      "lat": 46.2001016,
+      "lon": 10.0986141,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -51138,7 +51138,7 @@
       "id": "relation:47067",
       "name": "Vervio",
       "lat": 46.2595763,
-      "lon": 10.2063809,
+      "lon": 10.2063745,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -51329,7 +51329,7 @@
       "id": "relation:47078",
       "name": "Chiesa in Valmalenco",
       "lat": 46.2957909,
-      "lon": 9.7990264,
+      "lon": 9.7990612,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -51350,8 +51350,8 @@
     {
       "id": "relation:47079",
       "name": "Lanzada",
-      "lat": 46.3125791,
-      "lon": 9.9114445,
+      "lat": 46.3125815,
+      "lon": 9.9114539,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -51455,7 +51455,7 @@
       "id": "relation:47087",
       "name": "Grosotto",
       "lat": 46.2955955,
-      "lon": 10.2270954,
+      "lon": 10.2271052,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -51586,7 +51586,7 @@
       "id": "relation:47094",
       "name": "Grosio",
       "lat": 46.3460096,
-      "lon": 10.2248222,
+      "lon": 10.2248091,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -52337,7 +52337,7 @@
       "id": "relation:47189",
       "name": "Valdidentro",
       "lat": 46.5089095,
-      "lon": 10.2821359,
+      "lon": 10.282163,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -53010,7 +53010,7 @@
     {
       "id": "relation:47273",
       "name": "Livigno",
-      "lat": 46.5234971,
+      "lat": 46.5234818,
       "lon": 10.1291256,
       "type": "borghi",
       "visibility": "classica",
@@ -53846,8 +53846,8 @@
     {
       "id": "relation:1684052",
       "name": "Brusio",
-      "lat": 46.2591361,
-      "lon": 10.110223,
+      "lat": 46.2591336,
+      "lon": 10.1101373,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -53857,10 +53857,8 @@
         "name:it=Brusio",
         "ref:CH:UID=CHE-115.082.183",
         "ref:CH:hls-dhs=001432",
-        "source=swissBOUNDARIES3D swisstopo 2011",
+        "source=swissBOUNDARIES3D swisstopo 2026",
         "swisstopo:BFS_NUMMER=3551",
-        "swisstopo:OBJEKTART=Gemeindegebiet",
-        "swisstopo:SHN=CH18223551",
         "type=boundary",
         "wikidata=Q64580",
         "wikimedia_commons=Category:Brusio",
@@ -53891,8 +53889,8 @@
     {
       "id": "relation:1684132",
       "name": "Poschiavo",
-      "lat": 46.3431391,
-      "lon": 10.0612938,
+      "lat": 46.3431377,
+      "lon": 10.0612455,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -53902,10 +53900,8 @@
         "name:it=Poschiavo",
         "ref:CH:UID=CHE-115.057.699",
         "ref:CH:hls-dhs=001433",
-        "source=swissBOUNDARIES3D swisstopo 2011",
+        "source=swissBOUNDARIES3D swisstopo 2026",
         "swisstopo:BFS_NUMMER=3561",
-        "swisstopo:OBJEKTART=Gemeindegebiet",
-        "swisstopo:SHN=CH18223561",
         "type=boundary",
         "wikidata=Q69503",
         "wikimedia_commons=Category:Poschiavo (municipality)",
