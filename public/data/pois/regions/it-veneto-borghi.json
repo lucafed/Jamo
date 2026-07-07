@@ -3,7 +3,7 @@
   "country": "IT",
   "area": "Veneto",
   "label_it": "Veneto • Borghi (turistici + piccoli)",
-  "generated_at": "2026-06-30T06:53:58.833Z",
+  "generated_at": "2026-07-07T06:42:52.473Z",
   "places": [
     {
       "id": "node:66503077",
@@ -39365,8 +39365,8 @@
     {
       "id": "node:3229569409",
       "name": "Giazza",
-      "lat": 45.6549152,
-      "lon": 11.1229369,
+      "lat": 45.6533043,
+      "lon": 11.1229242,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -78765,21 +78765,6 @@
       "score": 70
     },
     {
-      "id": "node:1531627052",
-      "name": "Ponte Redigole",
-      "lat": 45.7696718,
-      "lon": 12.5937897,
-      "type": "borgo",
-      "borgo_type": "classico",
-      "visibility": "classica",
-      "tags": [
-        "name=Ponte Redigole",
-        "place=hamlet",
-        "wikidata=Q18502218"
-      ],
-      "score": 70
-    },
-    {
       "id": "node:1531651930",
       "name": "Redigole",
       "lat": 45.7642378,
@@ -80545,8 +80530,8 @@
     {
       "id": "node:1584019527",
       "name": "Montello",
-      "lat": 45.3199417,
-      "lon": 12.0825029,
+      "lat": 45.3199514,
+      "lon": 12.0828646,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -103149,6 +103134,8 @@
       "visibility": "classica",
       "tags": [
         "name=Sankt Florian - San Floriano",
+        "name:de=Sankt Florian",
+        "name:it=San Floriano",
         "place=hamlet",
         "wikidata=Q135907001"
       ],
@@ -148417,7 +148404,7 @@
       "id": "relation:47087",
       "name": "Grosotto",
       "lat": 46.2955955,
-      "lon": 10.2270954,
+      "lon": 10.2271052,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -148554,7 +148541,7 @@
       "id": "relation:47094",
       "name": "Grosio",
       "lat": 46.3460096,
-      "lon": 10.2248222,
+      "lon": 10.2248091,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -149577,7 +149564,7 @@
       "id": "relation:47189",
       "name": "Valdidentro",
       "lat": 46.5089095,
-      "lon": 10.2821359,
+      "lon": 10.282163,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
