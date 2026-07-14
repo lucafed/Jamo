@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-07-07T06:53:57.599Z",
+  "generated_at": "2026-07-14T05:39:42.960Z",
   "places": [
     {
       "id": "node:2692275706",
@@ -282,6 +282,31 @@
         "shop=wine"
       ],
       "score": 133
+    },
+    {
+      "id": "node:1530984361",
+      "name": "Conte Giordano Emo Capodilista",
+      "lat": 45.3856882,
+      "lon": 11.7624135,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Selvazzano Dentro",
+        "addr:country=IT",
+        "addr:housenumber=16",
+        "addr:postcode=35030",
+        "addr:street=Via Montecchia",
+        "alt_name=La Montecchia",
+        "contact:email=lamontecchia@lamontecchia.it",
+        "contact:fax=+39 049 8055826",
+        "contact:phone=+39 049 637294",
+        "contact:website=http://www.lamontecchia.it/",
+        "craft=winery",
+        "name=Conte Giordano Emo Capodilista",
+        "ref=14",
+        "shop=wine"
+      ],
+      "score": 131
     },
     {
       "id": "node:2079121246",
@@ -8183,31 +8208,6 @@
       "score": 41
     },
     {
-      "id": "node:1530984361",
-      "name": "Conte Giordano Emo Capodilista",
-      "lat": 45.3856882,
-      "lon": 11.7624135,
-      "type": "cantine",
-      "visibility": "classica",
-      "tags": [
-        "addr:city=Selvazzano Dentro",
-        "addr:country=IT",
-        "addr:housenumber=16",
-        "addr:postcode=35030",
-        "addr:street=Via Montecchia",
-        "alt_name=La Montecchia",
-        "contact:email=lamontecchia@lamontecchia.it",
-        "contact:fax=+39 049 8055826",
-        "contact:phone=+39 049 637294",
-        "contact:website=http://www.lamontecchia.it/",
-        "man_made=winery",
-        "name=Conte Giordano Emo Capodilista",
-        "ref=14",
-        "shop=wine"
-      ],
-      "score": 41
-    },
-    {
       "id": "node:2953791018",
       "name": "Evi Enoteca Veneta",
       "lat": 45.5477093,
@@ -9175,6 +9175,20 @@
       "score": 41
     },
     {
+      "id": "node:14003911661",
+      "name": "Bacco Wine Shop",
+      "lat": 45.324756,
+      "lon": 10.0770271,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Bacco Wine Shop",
+        "shop=wine",
+        "website=https://www.instagram.com/baccowineshop/"
+      ],
+      "score": 41
+    },
+    {
       "id": "way:81025169",
       "name": "Zeni",
       "lat": 46.1943586,
@@ -9786,6 +9800,27 @@
       "score": 37
     },
     {
+      "id": "node:13996831667",
+      "name": "Osteria Pizol",
+      "lat": 45.2711782,
+      "lon": 11.1003525,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=340",
+        "addr:street=Via del Ciclamino",
+        "contact:facebook=https://www.facebook.com/OsteriaPizol/",
+        "email=osteriapizol@gmail.com",
+        "level=0",
+        "name=Osteria Pizol",
+        "opening_hours=Mo 16:00-19:30; Tu-Sa 09:30-12:30,16:00-19:30; Su 09:30-12:30; PH closed",
+        "phone=+39 388 158 1483",
+        "shop=wine",
+        "wheelchair=yes"
+      ],
+      "score": 37
+    },
+    {
       "id": "way:30691707",
       "name": "Rivendita Cantina Rotari-Mezzocorona",
       "lat": 46.2023401,
@@ -10251,6 +10286,26 @@
         "website=https://enotecamastore.com/"
       ],
       "score": 35
+    },
+    {
+      "id": "node:1514580922",
+      "name": "in Vineria",
+      "lat": 46.0668728,
+      "lon": 11.1203213,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Trento",
+        "addr:country=IT",
+        "addr:housenumber=71",
+        "addr:postcode=38122",
+        "addr:street=Via Giuseppe Verdi",
+        "name=in Vineria",
+        "opening_hours=Tu 11:30-23:00; We 11:30-00:00; Th 17:00-23:00; Fr-Sa 11:30-00:00; Su 11:00-23:00",
+        "shop=wine",
+        "wheelchair=yes"
+      ],
+      "score": 31
     },
     {
       "id": "node:1854309387",
@@ -10844,6 +10899,7 @@
         "addr:housenumber=1614",
         "addr:postcode=30123",
         "addr:street=Calle de l'Avogaria",
+        "check_date=2026-07-07",
         "email=danilo.agricolaborga@gmail.com",
         "name=DANILO AGRICOLA BORGA",
         "name:it=DANILO AGRICOLA BORGA Vini e Spumanti",
@@ -11390,6 +11446,25 @@
         "tourism=wine_cellar"
       ],
       "score": 31
+    },
+    {
+      "id": "node:359545566",
+      "name": "Tavernacolo",
+      "lat": 44.6464286,
+      "lon": 11.3753187,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=San Giorgio di Piano",
+        "addr:housenumber=58",
+        "addr:postcode=40016",
+        "addr:street=Via Libertà",
+        "check_date=2026-07-09",
+        "level=0",
+        "name=Tavernacolo",
+        "shop=wine"
+      ],
+      "score": 25
     },
     {
       "id": "node:522825641",
@@ -12460,6 +12535,21 @@
       "tags": [
         "name=La Cantineta",
         "shop=wine"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:5693501224",
+      "name": "Nave de Oro",
+      "lat": 45.4337829,
+      "lon": 12.3227913,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "cuisine=italian_pizza",
+        "name=Nave de Oro",
+        "shop=wine",
+        "wheelchair=no"
       ],
       "score": 25
     },
