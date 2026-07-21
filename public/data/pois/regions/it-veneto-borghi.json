@@ -3,7 +3,7 @@
   "country": "IT",
   "area": "Veneto",
   "label_it": "Veneto • Borghi (turistici + piccoli)",
-  "generated_at": "2026-07-14T05:25:39.695Z",
+  "generated_at": "2026-07-21T05:47:47.429Z",
   "places": [
     {
       "id": "node:66503077",
@@ -318,8 +318,8 @@
     {
       "id": "node:64778126",
       "name": "Pieve d'Alpago",
-      "lat": 46.1673774,
-      "lon": 12.3517838,
+      "lat": 46.1673674,
+      "lon": 12.3518414,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -1904,7 +1904,8 @@
         "source=geodati.gfoss.it",
         "source:population=wikipedia",
         "website=https://www.comune.cassola.vi.it/home",
-        "wikidata=Q30024063"
+        "wikidata=Q30024063",
+        "wikipedia=it:Cassola"
       ],
       "score": 88
     },
@@ -2567,15 +2568,17 @@
     {
       "id": "node:62507937",
       "name": "Incudine",
-      "lat": 46.222109,
-      "lon": 10.3576794,
+      "lat": 46.2203,
+      "lon": 10.358759,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
+        "gfoss_id=2253",
         "name=Incudine",
         "place=village",
         "population=451",
+        "source=geodati.gfoss.it",
         "wikidata=Q30026344"
       ],
       "score": 85
@@ -6548,8 +6551,8 @@
     {
       "id": "node:64776988",
       "name": "Molveno",
-      "lat": 46.1423294,
-      "lon": 10.9637861,
+      "lat": 46.1421057,
+      "lon": 10.9637773,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -8385,16 +8388,17 @@
     {
       "id": "node:64778278",
       "name": "Villanova di Camposampiero",
-      "lat": 45.4905741,
-      "lon": 11.9723095,
+      "lat": 45.4904556,
+      "lon": 11.9730203,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "ele=12",
+        "gfoss_id=3619",
         "name=Villanova di Camposampiero",
         "place=village",
-        "population=4467",
+        "population=6139",
+        "source=geodati.gfoss.it",
         "wikidata=Q34350",
         "wikipedia=it:Villanova di Camposampiero"
       ],
@@ -11143,23 +11147,6 @@
       "score": 85
     },
     {
-      "id": "node:64778750",
-      "name": "Santa Maria di Sala",
-      "lat": 45.5048942,
-      "lon": 12.0350959,
-      "type": "borgo",
-      "borgo_type": "classico",
-      "visibility": "classica",
-      "tags": [
-        "ele=13",
-        "name=Santa Maria di Sala",
-        "place=village",
-        "population=2408",
-        "wikidata=Q30030266"
-      ],
-      "score": 85
-    },
-    {
       "id": "node:64778753",
       "name": "Cinto Caomaggiore",
       "lat": 45.8258929,
@@ -11390,24 +11377,6 @@
         "place=village",
         "population=301",
         "wikidata=Q33464082"
-      ],
-      "score": 85
-    },
-    {
-      "id": "node:64778795",
-      "name": "Pianiga",
-      "lat": 45.4558746,
-      "lon": 12.0301483,
-      "type": "borgo",
-      "borgo_type": "classico",
-      "visibility": "classica",
-      "tags": [
-        "ele=8",
-        "name=Pianiga",
-        "place=village",
-        "population=3400",
-        "wikidata=Q46950",
-        "wikipedia=it:Pianiga"
       ],
       "score": 85
     },
@@ -19787,16 +19756,14 @@
     {
       "id": "node:408011689",
       "name": "Mussolini",
-      "lat": 45.5102703,
-      "lon": 11.9779843,
+      "lat": 45.5102797,
+      "lon": 11.9771689,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "ele=12",
         "name=Mussolini",
         "place=village",
-        "population=597",
         "wikidata=Q18498426"
       ],
       "score": 85
@@ -19962,21 +19929,6 @@
         "name=Monticelli",
         "place=village",
         "wikidata=Q18498399"
-      ],
-      "score": 85
-    },
-    {
-      "id": "node:417676646",
-      "name": "San Bortolo",
-      "lat": 45.2149876,
-      "lon": 11.7595337,
-      "type": "borgo",
-      "borgo_type": "classico",
-      "visibility": "classica",
-      "tags": [
-        "name=San Bortolo",
-        "place=village",
-        "wikidata=Q123505229"
       ],
       "score": 85
     },
@@ -21478,8 +21430,8 @@
     {
       "id": "node:480637862",
       "name": "San Biagio",
-      "lat": 45.0965152,
-      "lon": 10.8498788,
+      "lat": 45.0955366,
+      "lon": 10.8501313,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -23302,17 +23254,14 @@
     {
       "id": "node:573424171",
       "name": "Caselle de' Ruffi",
-      "lat": 45.4896652,
-      "lon": 12.0090521,
+      "lat": 45.489684,
+      "lon": 12.0090548,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "alt_name=Caselle",
-        "ele=13",
         "name=Caselle de' Ruffi",
         "place=village",
-        "population=2967",
         "wikidata=Q2497499",
         "wikipedia=it:Caselle de' Ruffi"
       ],
@@ -24310,8 +24259,8 @@
     {
       "id": "node:685822808",
       "name": "Vigo Cavedine",
-      "lat": 45.9789583,
-      "lon": 10.9810773,
+      "lat": 45.9789075,
+      "lon": 10.9809915,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -25678,8 +25627,8 @@
     {
       "id": "node:855680405",
       "name": "Valeriano / Valarian",
-      "lat": 46.1682736,
-      "lon": 12.9206195,
+      "lat": 46.168289,
+      "lon": 12.9207289,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -31626,8 +31575,8 @@
     {
       "id": "node:1412962093",
       "name": "San Benedetto Po",
-      "lat": 45.0419489,
-      "lon": 10.9273024,
+      "lat": 45.0417651,
+      "lon": 10.9271683,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -34330,16 +34279,14 @@
     {
       "id": "node:1631619521",
       "name": "Stigliano",
-      "lat": 45.5254717,
-      "lon": 12.0449641,
+      "lat": 45.5248967,
+      "lon": 12.0465251,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "ele=15",
         "name=Stigliano",
         "place=village",
-        "population=1632",
         "wikidata=Q18503692"
       ],
       "score": 85
@@ -34347,16 +34294,14 @@
     {
       "id": "node:1631619525",
       "name": "Veternigo",
-      "lat": 45.514361,
-      "lon": 12.0548403,
+      "lat": 45.5142257,
+      "lon": 12.0547652,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "ele=13",
         "name=Veternigo",
         "place=village",
-        "population=3356",
         "wikidata=Q4010464",
         "wikipedia=it:Veternigo"
       ],
@@ -38673,16 +38618,14 @@
     {
       "id": "node:2764412634",
       "name": "Caltana",
-      "lat": 45.4793093,
-      "lon": 12.029929,
+      "lat": 45.4793328,
+      "lon": 12.0299496,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "ele=12",
         "name=Caltana",
         "place=village",
-        "population=2838",
         "wikidata=Q18503049"
       ],
       "score": 85
@@ -39365,8 +39308,8 @@
     {
       "id": "node:3229569409",
       "name": "Giazza",
-      "lat": 45.6533043,
-      "lon": 11.1229242,
+      "lat": 45.6549152,
+      "lon": 11.1229369,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -40569,24 +40512,6 @@
       "score": 85
     },
     {
-      "id": "node:4192332451",
-      "name": "Tiolo",
-      "lat": 46.3126487,
-      "lon": 10.3013916,
-      "type": "borgo",
-      "borgo_type": "classico",
-      "visibility": "classica",
-      "tags": [
-        "ele=750",
-        "name=Tiolo",
-        "place=village",
-        "population=380",
-        "wikidata=Q2797477",
-        "wikipedia=it:Tiolo"
-      ],
-      "score": 85
-    },
-    {
       "id": "node:4234472389",
       "name": "Kuppelwies - Pracupola",
       "lat": 46.531114,
@@ -40699,16 +40624,14 @@
     {
       "id": "node:4314628832",
       "name": "Sant'Angelo di Sala",
-      "lat": 45.5212167,
-      "lon": 12.017381,
+      "lat": 45.5209517,
+      "lon": 12.0172013,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "ele=14",
         "name=Sant'Angelo di Sala",
         "place=village",
-        "population=1407",
         "wikidata=Q18503620"
       ],
       "score": 85
@@ -43951,6 +43874,24 @@
       "score": 80
     },
     {
+      "id": "node:64778750",
+      "name": "Santa Maria di Sala",
+      "lat": 45.5054111,
+      "lon": 12.0339479,
+      "type": "borgo",
+      "borgo_type": "classico",
+      "visibility": "classica",
+      "tags": [
+        "name=Santa Maria di Sala",
+        "place=town",
+        "population=17458",
+        "population:date=2025-11-14",
+        "source:population=ISTAT 2025 (Intero Comune)",
+        "wikidata=Q30030266"
+      ],
+      "score": 80
+    },
+    {
       "id": "node:64778751",
       "name": "Dolo",
       "lat": 45.4234356,
@@ -44123,6 +44064,26 @@
         "population:date=2025-04-11",
         "source:population=ISTAT 2025 (Intero Comune)",
         "wikidata=Q46799"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:64778795",
+      "name": "Pianiga",
+      "lat": 45.4559602,
+      "lon": 12.0301919,
+      "type": "borgo",
+      "borgo_type": "classico",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=350t1",
+        "name=Pianiga",
+        "note=12280 (Comune) 3400 (Capoluogo comunale)",
+        "place=town",
+        "population=12280",
+        "source=ISTAT",
+        "wikidata=Q46950",
+        "wikipedia=it:Pianiga"
       ],
       "score": 80
     },
@@ -44974,7 +44935,7 @@
     },
     {
       "id": "node:66502887",
-      "name": "Fiume Veneto / Fiume",
+      "name": "Fiume Veneto",
       "lat": 45.9279427,
       "lon": 12.7321755,
       "type": "borgo",
@@ -44982,12 +44943,9 @@
       "visibility": "classica",
       "tags": [
         "gfoss_id=7527",
-        "loc_name:fur=Flum;Vildiflùm",
-        "name=Fiume Veneto / Fiume",
+        "name=Fiume Veneto",
         "name:fur=Vile di Flum",
         "name:it=Fiume Veneto",
-        "name:vec=Fiume",
-        "note=nel capoluogo è parlato il veneto, nelle frazioni di Bannia e Pescincana il friulano.",
         "place=town",
         "population=11677",
         "source=ISTAT",
@@ -44997,7 +44955,7 @@
     },
     {
       "id": "node:66502917",
-      "name": "Sacile / Sacìl - Sazhìl",
+      "name": "Sacile / Sacîl",
       "lat": 45.9548046,
       "lon": 12.5034415,
       "type": "borgo",
@@ -45005,12 +44963,9 @@
       "visibility": "classica",
       "tags": [
         "gfoss_id=7542",
-        "loc_name:vec=Sazhìl",
-        "name=Sacile / Sacìl - Sazhìl",
+        "name=Sacile / Sacîl",
         "name:fur=Sacîl",
         "name:it=Sacile",
-        "name:vec=Sacìl",
-        "note=comune non friulanofono",
         "place=town",
         "population=19837",
         "source=local knowledge",
@@ -45021,23 +44976,16 @@
     },
     {
       "id": "node:66502967",
-      "name": "Azzano Decimo / Athan / Dassan",
+      "name": "Azzano Decimo / Daçan di Pordenon",
       "lat": 45.8814199,
       "lon": 12.7143145,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "alt_name:fur=Daçàn",
-        "loc:_name:fur=Dassan",
-        "loc_name=Azzano",
-        "loc_name:fur=Dassan",
-        "loc_name:vec=Athan",
-        "name=Azzano Decimo / Athan / Dassan",
-        "name:fur=Daçàn di Pordenòn",
+        "name=Azzano Decimo / Daçan di Pordenon",
+        "name:fur=Daçan di Pordenon",
         "name:it=Azzano Decimo",
-        "name:vec=Azan",
-        "note=nell'etichetta 'name' l'ordine è it/vec.loc/fur.loc e non it/fur.loc/vec.loc in quanto in tale comune è parlato prevalentamente il veneto.",
         "place=town",
         "population=12880",
         "wikidata=Q30022463"
@@ -45130,7 +45078,7 @@
     },
     {
       "id": "node:66503374",
-      "name": "Latisana / Tisane - Tisana / Łatixana",
+      "name": "Latisana / Tisane",
       "lat": 45.7776908,
       "lon": 12.9967006,
       "type": "borgo",
@@ -45140,10 +45088,9 @@
         "capital=8",
         "ele=7",
         "loc_name:fur=Tisana",
-        "name=Latisana / Tisane - Tisana / Łatixana",
+        "name=Latisana / Tisane",
         "name:fur=Tisane",
         "name:it=Latisana",
-        "name:vec=Łatixana",
         "place=town",
         "population=8896",
         "wikidata=Q53269",
@@ -48820,12 +48767,13 @@
     {
       "id": "node:272274733",
       "name": "Lago",
-      "lat": 45.9819867,
-      "lon": 10.9243694,
+      "lat": 45.9818152,
+      "lon": 10.9248262,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
+        "created_by=Potlatch 0.9c",
         "name=Lago",
         "place=hamlet",
         "wikidata=Q133995681"
@@ -73266,15 +73214,15 @@
     },
     {
       "id": "node:1363045416",
-      "name": "Cies - Ziés",
-      "lat": 46.03873,
-      "lon": 11.7576077,
+      "name": "Cies",
+      "lat": 46.038815,
+      "lon": 11.7569318,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Cies - Ziés",
-        "name:vec=Cies - Ziés",
+        "name=Cies",
+        "name:vec=Zies",
         "place=hamlet",
         "wikidata=Q18496337"
       ],
@@ -78779,6 +78727,21 @@
       "score": 70
     },
     {
+      "id": "node:1531627052",
+      "name": "Ponte Redigole",
+      "lat": 45.7696718,
+      "lon": 12.5937897,
+      "type": "borgo",
+      "borgo_type": "classico",
+      "visibility": "classica",
+      "tags": [
+        "name=Ponte Redigole",
+        "place=hamlet",
+        "wikidata=Q18502218"
+      ],
+      "score": 70
+    },
+    {
       "id": "node:1531651930",
       "name": "Redigole",
       "lat": 45.7642378,
@@ -80544,8 +80507,8 @@
     {
       "id": "node:1584019527",
       "name": "Montello",
-      "lat": 45.3199514,
-      "lon": 12.0828646,
+      "lat": 45.3199417,
+      "lon": 12.0825029,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -85703,7 +85666,7 @@
     {
       "id": "node:2242684131",
       "name": "Coste",
-      "lat": 45.9702298,
+      "lat": 45.9702538,
       "lon": 10.9647045,
       "type": "borgo",
       "borgo_type": "classico",
@@ -89341,10 +89304,9 @@
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "ele=1260",
         "name=Fontane",
         "place=hamlet",
-        "population=32",
+        "source=CTR al tratto",
         "wikidata=Q18494286"
       ],
       "score": 70
@@ -89352,16 +89314,15 @@
     {
       "id": "node:2650768122",
       "name": "Massaniga",
-      "lat": 46.4113234,
-      "lon": 10.3418199,
+      "lat": 46.4121658,
+      "lon": 10.341729,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "ele=1341",
         "name=Massaniga",
         "place=hamlet",
-        "population=15",
+        "source=CTR al tratto",
         "wikidata=Q18494420"
       ],
       "score": 70
@@ -89369,13 +89330,12 @@
     {
       "id": "node:2650768123",
       "name": "Monte",
-      "lat": 46.4037454,
-      "lon": 10.3364163,
+      "lat": 46.4037727,
+      "lon": 10.3365351,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "ele=1619",
         "name=Monte",
         "place=hamlet",
         "source=CTR al tratto",
@@ -89392,10 +89352,9 @@
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "ele=1271",
         "name=Santa Maria Maddalena",
         "place=hamlet",
-        "population=23",
+        "source=CTR al tratto",
         "wikidata=Q18494724"
       ],
       "score": 70
@@ -89403,16 +89362,15 @@
     {
       "id": "node:2650768127",
       "name": "Tiola",
-      "lat": 46.4022717,
-      "lon": 10.3397163,
+      "lat": 46.4022212,
+      "lon": 10.3399541,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "ele=1511",
         "name=Tiola",
         "place=hamlet",
-        "population=14",
+        "source=CTR al tratto",
         "wikidata=Q18494789"
       ],
       "score": 70
@@ -95776,6 +95734,24 @@
         "place=hamlet",
         "wikidata=Q1885804",
         "wikipedia=it:Lava (Malonno)"
+      ],
+      "score": 70
+    },
+    {
+      "id": "node:4192332451",
+      "name": "Tiolo",
+      "lat": 46.3124299,
+      "lon": 10.3008151,
+      "type": "borgo",
+      "borgo_type": "classico",
+      "visibility": "classica",
+      "tags": [
+        "ele=750",
+        "name=Tiolo",
+        "place=hamlet",
+        "population=380",
+        "wikidata=Q2797477",
+        "wikipedia=it:Tiolo"
       ],
       "score": 70
     },
@@ -103148,8 +103124,6 @@
       "visibility": "classica",
       "tags": [
         "name=Sankt Florian - San Floriano",
-        "name:de=Sankt Florian",
-        "name:it=San Floriano",
         "place=hamlet",
         "wikidata=Q135907001"
       ],
@@ -122709,16 +122683,14 @@
     {
       "id": "node:13482454153",
       "name": "Zinaldo",
-      "lat": 45.4931677,
-      "lon": 12.0256345,
+      "lat": 45.49299,
+      "lon": 12.0259,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "ele=10",
         "name=Zinaldo",
         "place=hamlet",
-        "population=155",
         "wikidata=Q18503793"
       ],
       "score": 70
@@ -128619,7 +128591,6 @@
       "tags": [
         "capital=6",
         "name=Pordenone / Pordenon",
-        "name:ar=بردنونة",
         "name:de=Pordenone",
         "name:eu=Pordenone",
         "name:fi=Pordenone",
@@ -128652,7 +128623,7 @@
         "place=city",
         "population=51229",
         "wikidata=Q6606",
-        "wikipedia=fur:Pordenon"
+        "wikipedia=en:Pordenone"
       ],
       "score": 65
     },
@@ -128987,7 +128958,7 @@
     },
     {
       "id": "node:66502821",
-      "name": "Fontanafredda / Fontanafredha / Fontanafreda",
+      "name": "Fontanafredda / Fontanefrede",
       "lat": 45.9733967,
       "lon": 12.5691228,
       "type": "borgo",
@@ -128996,10 +128967,9 @@
       "tags": [
         "gfoss_id=7528",
         "loc_name:fur=Fontanafredha",
-        "name=Fontanafredda / Fontanafredha / Fontanafreda",
+        "name=Fontanafredda / Fontanefrede",
         "name:fur=Fontanefrede",
         "name:it=Fontanafredda",
-        "name:vec=Fontanafreda",
         "place=town",
         "population=12195",
         "source=ISTAT"
@@ -129607,8 +129577,8 @@
     {
       "id": "relation:1684200",
       "name": "Val Müstair",
-      "lat": 46.6106208,
-      "lon": 10.3652293,
+      "lat": 46.6106346,
+      "lon": 10.3652842,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -129621,8 +129591,12 @@
         "name:rm=Val Müstair",
         "name:uk=Валь-Мюштайр",
         "population=1565",
-        "source=swissBOUNDARIES3D swisstopo 2026",
+        "source=swissBOUNDARIES3D swisstopo 2011",
+        "swisstopo:BEZIRKSNUM=1825",
         "swisstopo:BFS_NUMMER=3847",
+        "swisstopo:KANTONSNUM=18",
+        "swisstopo:OBJEKTART=Gemeindegebiet",
+        "swisstopo:SHN=CH18253847",
         "type=boundary",
         "website=https://www.cdvm.ch/",
         "wikidata=Q70513",
@@ -129965,9 +129939,7 @@
         "boundary=administrative",
         "name=Reggio Emilia",
         "name:ca=Reggio de l'Emília",
-        "name:uk=Реджо-Емілія",
         "official_name=Comune di Reggio nell'Emilia",
-        "official_name:uk=Реджо-нель-Емілія",
         "ref:ISTAT=035033",
         "ref:catasto=H223",
         "type=boundary",
@@ -148419,7 +148391,7 @@
       "id": "relation:47087",
       "name": "Grosotto",
       "lat": 46.2955955,
-      "lon": 10.2271052,
+      "lon": 10.2270954,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -148556,7 +148528,7 @@
       "id": "relation:47094",
       "name": "Grosio",
       "lat": 46.3460096,
-      "lon": 10.2248091,
+      "lon": 10.2248222,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -149578,8 +149550,8 @@
     {
       "id": "relation:47189",
       "name": "Valdidentro",
-      "lat": 46.5089095,
-      "lon": 10.282163,
+      "lat": 46.508909,
+      "lon": 10.2821375,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -150015,7 +149987,7 @@
     {
       "id": "relation:47222",
       "name": "Bormio",
-      "lat": 46.4927351,
+      "lat": 46.492726,
       "lon": 10.4151907,
       "type": "borgo",
       "borgo_type": "classico",
@@ -151025,8 +150997,8 @@
     {
       "id": "relation:47279",
       "name": "Taufers im Münstertal - Tubre",
-      "lat": 46.6602964,
-      "lon": 10.4473406,
+      "lat": 46.6602572,
+      "lon": 10.447328,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -151054,7 +151026,7 @@
       "id": "relation:47280",
       "name": "Prad am Stilfserjoch - Prato allo Stelvio",
       "lat": 46.6038834,
-      "lon": 10.5700799,
+      "lon": 10.5701953,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -151540,7 +151512,7 @@
       "id": "relation:47302",
       "name": "Mals - Malles Venosta",
       "lat": 46.7228561,
-      "lon": 10.5684512,
+      "lon": 10.5684822,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -152119,7 +152091,7 @@
     },
     {
       "id": "relation:179113",
-      "name": "Latisana / Tisane - Tisana / Łatixana",
+      "name": "Latisana / Tisane",
       "lat": 45.7368064,
       "lon": 13.0355888,
       "type": "borgo",
@@ -152128,11 +152100,9 @@
       "tags": [
         "admin_level=8",
         "boundary=administrative",
-        "loc_name:fur=Tisana",
-        "name=Latisana / Tisane - Tisana / Łatixana",
+        "name=Latisana / Tisane",
         "name:fur=Tisane",
         "name:it=Latisana",
-        "name:vec=Łatixana",
         "postal_code=33053",
         "ref:ISTAT=030046",
         "ref:catasto=E473",
@@ -153308,7 +153278,6 @@
         "admin_level=8",
         "boundary=administrative",
         "name=Pordenone / Pordenon",
-        "name:ar=بردنونة",
         "name:fur=Pordenon",
         "name:it=Pordenone",
         "name:uk=Порденоне",
@@ -154015,7 +153984,7 @@
     },
     {
       "id": "relation:179269",
-      "name": "Fontanafredda / Fontanefrede - Fontanafredha",
+      "name": "Fontanafredda / Fontanefrede",
       "lat": 45.9807054,
       "lon": 12.5462048,
       "type": "borgo",
@@ -154025,7 +153994,7 @@
         "admin_level=8",
         "boundary=administrative",
         "loc_name:fur=Fontanafredha",
-        "name=Fontanafredda / Fontanefrede - Fontanafredha",
+        "name=Fontanafredda / Fontanefrede",
         "name:fur=Fontanefrede",
         "population=12205",
         "postal_code=33074",
@@ -154969,7 +154938,7 @@
       "id": "relation:1651599",
       "name": "Cassola",
       "lat": 45.7473229,
-      "lon": 11.7833812,
+      "lon": 11.7833757,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -155241,8 +155210,8 @@
     {
       "id": "relation:4447223",
       "name": "Scuol",
-      "lat": 46.7896946,
-      "lon": 10.2729573,
+      "lat": 46.7896949,
+      "lon": 10.2730518,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -155251,8 +155220,12 @@
         "boundary=administrative",
         "name=Scuol",
         "postal_code=7550",
-        "source=swissBOUNDARIES3D swisstopo 2026",
+        "source=swissBOUNDARIES3D swisstopo 2011",
+        "swisstopo:BEZIRKSNUM=1825",
         "swisstopo:BFS_NUMMER=3762",
+        "swisstopo:KANTONSNUM=18",
+        "swisstopo:OBJEKTART=Gemeindegebiet",
+        "swisstopo:SHN=CH18253762",
         "type=boundary",
         "wikidata=Q69079",
         "wikipedia=de:Scuol"
