@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-07-14T05:39:42.960Z",
+  "generated_at": "2026-07-21T05:56:41.946Z",
   "places": [
     {
       "id": "node:2692275706",
@@ -4071,6 +4071,21 @@
       "score": 92
     },
     {
+      "id": "way:167935267",
+      "name": "Cantina sociale di Masone",
+      "lat": 44.6687867,
+      "lon": 10.715192,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "building=industrial",
+        "craft=winery",
+        "name=Cantina sociale di Masone",
+        "source=Regione Emilia Romagna"
+      ],
+      "score": 92
+    },
+    {
       "id": "way:168128038",
       "name": "Cantina sociale cooperativa di Villa Argine",
       "lat": 44.7760689,
@@ -4358,6 +4373,20 @@
         "building=yes",
         "craft=winery",
         "name=Cantina Bal del Oca"
+      ],
+      "score": 92
+    },
+    {
+      "id": "way:1539376026",
+      "name": "Cantina sociale di Masone e Campogalliano",
+      "lat": 44.6688221,
+      "lon": 10.7150602,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "craft=winery",
+        "landuse=industrial",
+        "name=Cantina sociale di Masone e Campogalliano"
       ],
       "score": 92
     },

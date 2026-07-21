@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-07-07T06:53:38.407Z",
+  "generated_at": "2026-07-21T05:56:23.426Z",
   "places": [
     {
       "id": "node:62513274",
@@ -5518,8 +5518,8 @@
     {
       "id": "node:62508795",
       "name": "Quinzano d'Oglio",
-      "lat": 45.310875,
-      "lon": 10.008568,
+      "lat": 45.3133271,
+      "lon": 10.0075917,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -7674,8 +7674,8 @@
     {
       "id": "node:64779149",
       "name": "San Germano dei Berici",
-      "lat": 45.4005843,
-      "lon": 11.4737685,
+      "lat": 45.4005884,
+      "lon": 11.4737084,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -10136,8 +10136,8 @@
     {
       "id": "node:347090069",
       "name": "Codiverno",
-      "lat": 45.4734502,
-      "lon": 11.9450355,
+      "lat": 45.4734291,
+      "lon": 11.9454713,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -11894,8 +11894,8 @@
     {
       "id": "node:563695851",
       "name": "Sant'Eufemia",
-      "lat": 45.5308192,
-      "lon": 11.9929049,
+      "lat": 45.5306261,
+      "lon": 11.993066,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -15315,8 +15315,8 @@
     {
       "id": "node:1427529273",
       "name": "San Dono",
-      "lat": 45.5543958,
-      "lon": 12.0302872,
+      "lat": 45.5544489,
+      "lon": 12.0293668,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -17928,22 +17928,6 @@
         "place=village",
         "wikidata=Q3942573",
         "wikipedia=it:Ruginello"
-      ],
-      "score": 115
-    },
-    {
-      "id": "node:2639361383",
-      "name": "Amola del Piano",
-      "lat": 44.6603728,
-      "lon": 11.1644933,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Amola del Piano",
-        "name:eml=L'Âmla",
-        "place=village",
-        "wikidata=Q16268123",
-        "wikipedia=it:Amola del Piano"
       ],
       "score": 115
     },
@@ -51328,7 +51312,7 @@
     {
       "id": "relation:47078",
       "name": "Chiesa in Valmalenco",
-      "lat": 46.2957909,
+      "lat": 46.2957878,
       "lon": 9.7990612,
       "type": "borghi",
       "visibility": "classica",
@@ -51351,7 +51335,7 @@
       "id": "relation:47079",
       "name": "Lanzada",
       "lat": 46.3125815,
-      "lon": 9.9114539,
+      "lon": 9.9114269,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -56663,6 +56647,23 @@
         "source=www.resitalica.it",
         "wikidata=Q3641456",
         "wikipedia=it:Bocca Chiavica"
+      ],
+      "score": 90
+    },
+    {
+      "id": "node:3398303435",
+      "name": "Corte Sant'Andrea",
+      "lat": 45.1322932,
+      "lon": 9.5566578,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Corte Sant'Andrea",
+        "place=hamlet",
+        "population=22",
+        "source=Censimento ISTAT 2001",
+        "wikidata=Q655461",
+        "wikipedia=it:Corte Sant'Andrea"
       ],
       "score": 90
     }
