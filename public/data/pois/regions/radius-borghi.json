@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-07-21T05:56:23.426Z",
+  "generated_at": "2026-07-28T05:52:05.723Z",
   "places": [
     {
       "id": "node:62513274",
@@ -17208,8 +17208,8 @@
     {
       "id": "node:2084587602",
       "name": "Masone",
-      "lat": 44.6746885,
-      "lon": 10.7145153,
+      "lat": 44.6692941,
+      "lon": 10.7111659,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -22857,6 +22857,7 @@
         "boundary=administrative",
         "name=Ferrara",
         "name:egl=Fràra",
+        "name:fr=Ferrare",
         "name:it=Ferrara",
         "name:la=Ferraria",
         "postal_code=44121-44124",
@@ -31042,6 +31043,7 @@
         "name:fr=Lodi",
         "name:it=Lodi",
         "name:ru=Лоди",
+        "name:uk=Лоді",
         "name:zh=洛迪",
         "population=40805",
         "ref:ISTAT=098031",

@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-07-21T05:56:41.946Z",
+  "generated_at": "2026-07-28T05:52:28.487Z",
   "places": [
     {
       "id": "node:2692275706",
@@ -2313,6 +2313,24 @@
       "score": 98
     },
     {
+      "id": "way:237948092",
+      "name": "Kellerei Tramin - Cantina",
+      "lat": 46.3452364,
+      "lon": 11.2515585,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "building=yes",
+        "craft=winery",
+        "name=Kellerei Tramin - Cantina",
+        "name:de=Kellerei Tramin",
+        "name:it=Cantina Tramin",
+        "opening_hours=Nov-Mar Mo-Fr 09:00-18:00; Nov-Mar Sa 09:00-17:00; Apr-Oct Mo-Fr 09:00-19:00; Apr-Oct Sa 09:00-17:00 ;Su, PH off",
+        "wheelchair=yes"
+      ],
+      "score": 98
+    },
+    {
       "id": "way:412935904",
       "name": "Cantina Mareno",
       "lat": 45.8448331,
@@ -4195,22 +4213,6 @@
         "building=industrial",
         "craft=winery",
         "name=Cantina di Soave"
-      ],
-      "score": 92
-    },
-    {
-      "id": "way:237948092",
-      "name": "Kellerei Tramin - Cantina",
-      "lat": 46.3452142,
-      "lon": 11.2514652,
-      "type": "cantine",
-      "visibility": "classica",
-      "tags": [
-        "building=yes",
-        "craft=winery",
-        "name=Kellerei Tramin - Cantina",
-        "name:de=Kellerei Tramin",
-        "name:it=Cantina Tramin"
       ],
       "score": 92
     },
@@ -7258,6 +7260,27 @@
       "score": 49
     },
     {
+      "id": "node:7507605277",
+      "name": "Kellerei Tramin - Cantina",
+      "lat": 46.3452272,
+      "lon": 11.2513823,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "email=shop@kellereitramin.it",
+        "name=Kellerei Tramin - Cantina",
+        "name:de=Kellerei Tramin",
+        "name:it=Cantina Tramin",
+        "opening_hours=Mo-Fr 09:00-19:00; Sa 09:00-17:00",
+        "payment:credit_cards=yes",
+        "payment:debit_cards=yes",
+        "phone=+39 0471 096634",
+        "shop=wine",
+        "wheelchair=yes"
+      ],
+      "score": 49
+    },
+    {
       "id": "node:13684289501",
       "name": "Cantina Bernardi Giovanni",
       "lat": 45.3263315,
@@ -8146,23 +8169,6 @@
         "amenity=pub",
         "name=Keller Bar Cantina",
         "opening_hours=Mo-Su 08:00-13:00,17:00-22:00",
-        "shop=wine"
-      ],
-      "score": 43
-    },
-    {
-      "id": "node:7507605277",
-      "name": "Kellerei Tramin - Cantina",
-      "lat": 46.3452272,
-      "lon": 11.2513823,
-      "type": "cantine",
-      "visibility": "classica",
-      "tags": [
-        "email=shop@kellereitramin.it",
-        "name=Kellerei Tramin - Cantina",
-        "name:de=Kellerei Tramin",
-        "name:it=Cantina Tramin",
-        "phone=+39 0471 096634",
         "shop=wine"
       ],
       "score": 43
