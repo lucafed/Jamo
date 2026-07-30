@@ -7,7 +7,7 @@
     "minLon": 10.2,
     "maxLon": 13.2
   },
-  "generated_at": "2026-07-23T05:42:24.095Z",
+  "generated_at": "2026-07-30T05:28:52.079Z",
   "places": [
     {
       "id": "node:12766026527",
@@ -3958,6 +3958,25 @@
       "beauty_score": 1
     },
     {
+      "id": "way:237948092",
+      "name": "Kellerei Tramin - Cantina",
+      "lat": 46.3452364,
+      "lon": 11.2515585,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "building=yes",
+        "craft=winery",
+        "name=Kellerei Tramin - Cantina",
+        "name:de=Kellerei Tramin",
+        "name:it=Cantina Tramin",
+        "opening_hours=Nov-Mar Mo-Fr 09:00-18:00; Nov-Mar Sa 09:00-17:00; Apr-Oct Mo-Fr 09:00-19:00; Apr-Oct Sa 09:00-17:00 ;Su, PH off",
+        "wheelchair=yes"
+      ],
+      "score": 76,
+      "beauty_score": 1
+    },
+    {
       "id": "way:258793826",
       "name": "AL MONTE DI LIVIO",
       "lat": 45.7170216,
@@ -5534,23 +5553,6 @@
         "craft=winery",
         "name=Corte Pianton",
         "operator=Andrea Sartori"
-      ],
-      "score": 70,
-      "beauty_score": 1
-    },
-    {
-      "id": "way:237948092",
-      "name": "Kellerei Tramin - Cantina",
-      "lat": 46.3452142,
-      "lon": 11.2514652,
-      "type": "cantine",
-      "visibility": "chicca",
-      "tags": [
-        "building=yes",
-        "craft=winery",
-        "name=Kellerei Tramin - Cantina",
-        "name:de=Kellerei Tramin",
-        "name:it=Cantina Tramin"
       ],
       "score": 70,
       "beauty_score": 1
