@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-07-28T05:52:28.487Z",
+  "generated_at": "2026-08-04T05:52:43.081Z",
   "places": [
     {
       "id": "node:2692275706",
@@ -148,18 +148,24 @@
     {
       "id": "node:4688379572",
       "name": "San Michael",
-      "lat": 46.1949596,
-      "lon": 11.1334633,
+      "lat": 46.1949541,
+      "lon": 11.1334896,
       "type": "cantine",
       "visibility": "classica",
       "tags": [
+        "contact:facebook=https://www.facebook.com/SpumanteSanMichael/",
+        "contact:housenumber=61",
+        "contact:instagram=spumante_san_michael",
+        "contact:street=Via Roma",
+        "contact:twitter=SpumanteSM",
         "craft=winery",
         "email=info@spumante-sanmichael.it",
         "name=San Michael",
-        "opening_hours=Sa 8:30-12:30, 14:30-18:30",
+        "opening_hours=Sa 08:30-12:30,14:30-18:30",
         "phone=+39 333 9300321",
+        "ref:vatin=IT02379800226",
         "shop=wine",
-        "website=http://www.spumante-sanmichael.it"
+        "website=https://www.spumante-sanmichael.it/"
       ],
       "score": 137
     },
@@ -1927,6 +1933,26 @@
         "operator=Egger Ramer GmbH",
         "phone=+39 0471 280541",
         "website=https://www.egger-ramer.com/"
+      ],
+      "score": 102
+    },
+    {
+      "id": "node:14071188804",
+      "name": "Ca' Sabbionare Winery",
+      "lat": 45.5874069,
+      "lon": 10.7114768,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Garda",
+        "addr:housenumber=28",
+        "addr:postcode=37016",
+        "addr:street=Via per Marciaga",
+        "contact:facebook=https://www.facebook.com/400316619839814",
+        "craft=winery",
+        "name=Ca' Sabbionare Winery",
+        "phone=+393487082712",
+        "website=http://www.vinicolombo.com/"
       ],
       "score": 102
     },
@@ -7434,7 +7460,7 @@
         "currency:EUR=yes",
         "email=info@klauslentsch.eu",
         "name=Vinothek Amperg",
-        "opening_hours=TH-FR 11:00-14:00,17:00-21:00; SA 09:00-14:00||\"on appointment\"",
+        "opening_hours=Th-Fr 11:00-14:00,17:00-21:00; Sa 09:00-14:00 || \"on appointment\"",
         "operator=Weingut Klaus Lentsch",
         "payment:cash=yes",
         "payment:mastercard=yes",
@@ -8308,8 +8334,8 @@
     {
       "id": "node:3992187905",
       "name": "Enoteca Amaduzzi",
-      "lat": 44.4998814,
-      "lon": 11.2960018,
+      "lat": 44.4998979,
+      "lon": 11.2961342,
       "type": "cantine",
       "visibility": "classica",
       "tags": [
@@ -9372,6 +9398,7 @@
         "payment:satispay=yes",
         "phone=+39 0471 964965",
         "shop=wine",
+        "wheelchair=limited",
         "wheelchair:description=Lift zum Untergeschoss. Rollstuhl-WC in der Damentoilette."
       ],
       "score": 37

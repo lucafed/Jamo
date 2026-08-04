@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-07-28T05:52:05.723Z",
+  "generated_at": "2026-08-04T05:52:23.161Z",
   "places": [
     {
       "id": "node:62513274",
@@ -11100,6 +11100,21 @@
         "place=village",
         "wikidata=Q576418",
         "wikipedia=it:Cemmo"
+      ],
+      "score": 115
+    },
+    {
+      "id": "node:447872278",
+      "name": "Ceretolo",
+      "lat": 44.4810905,
+      "lon": 11.2588619,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Ceretolo",
+        "place=village",
+        "wikidata=Q2642059",
+        "wikipedia=it:Ceretolo"
       ],
       "score": 115
     },
@@ -22555,6 +22570,7 @@
         "name:oc=Parma",
         "ref:ISTAT=034027",
         "ref:catasto=G337",
+        "source:name:oc=ieo-bdtopoc",
         "type=boundary",
         "wikidata=Q2683",
         "wikipedia=it:Parma"
@@ -56649,23 +56665,6 @@
         "source=www.resitalica.it",
         "wikidata=Q3641456",
         "wikipedia=it:Bocca Chiavica"
-      ],
-      "score": 90
-    },
-    {
-      "id": "node:3398303435",
-      "name": "Corte Sant'Andrea",
-      "lat": 45.1322932,
-      "lon": 9.5566578,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Corte Sant'Andrea",
-        "place=hamlet",
-        "population=22",
-        "source=Censimento ISTAT 2001",
-        "wikidata=Q655461",
-        "wikipedia=it:Corte Sant'Andrea"
       ],
       "score": 90
     }
