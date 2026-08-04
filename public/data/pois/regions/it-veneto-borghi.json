@@ -3,7 +3,7 @@
   "country": "IT",
   "area": "Veneto",
   "label_it": "Veneto • Borghi (turistici + piccoli)",
-  "generated_at": "2026-07-28T05:44:40.978Z",
+  "generated_at": "2026-08-04T05:43:44.366Z",
   "places": [
     {
       "id": "node:66503077",
@@ -51805,8 +51805,8 @@
     {
       "id": "node:316295176",
       "name": "Coffe",
-      "lat": 45.6538328,
-      "lon": 11.369951,
+      "lat": 45.6538116,
+      "lon": 11.3700118,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -85037,8 +85037,8 @@
     {
       "id": "node:2102825953",
       "name": "Quattrina",
-      "lat": 44.8766509,
-      "lon": 11.2830652,
+      "lat": 44.8710659,
+      "lon": 11.2828798,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -127726,6 +127726,21 @@
       "score": 70
     },
     {
+      "id": "node:14064287571",
+      "name": "Fruttarola",
+      "lat": 44.877016,
+      "lon": 11.2827201,
+      "type": "borgo",
+      "borgo_type": "classico",
+      "visibility": "classica",
+      "tags": [
+        "name=Fruttarola",
+        "place=hamlet",
+        "wikidata=Q18440999"
+      ],
+      "score": 70
+    },
+    {
       "id": "way:27797687",
       "name": "Plars",
       "lat": 46.6855246,
@@ -130126,6 +130141,7 @@
         "name:oc=Parma",
         "ref:ISTAT=034027",
         "ref:catasto=G337",
+        "source:name:oc=ieo-bdtopoc",
         "type=boundary",
         "wikidata=Q2683",
         "wikipedia=it:Parma"
