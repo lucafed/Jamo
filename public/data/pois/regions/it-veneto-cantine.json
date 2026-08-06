@@ -7,7 +7,7 @@
     "minLon": 10.2,
     "maxLon": 13.2
   },
-  "generated_at": "2026-07-30T05:28:52.079Z",
+  "generated_at": "2026-08-06T05:36:45.161Z",
   "places": [
     {
       "id": "node:12766026527",
@@ -2033,6 +2033,27 @@
         "name=Cantina Pisoni",
         "phone=+ 39 0461 563216",
         "website=http://www.pisoni.net"
+      ],
+      "score": 88,
+      "beauty_score": 1
+    },
+    {
+      "id": "node:14071188804",
+      "name": "Ca' Sabbionare Winery",
+      "lat": 45.5874069,
+      "lon": 10.7114768,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Garda",
+        "addr:housenumber=28",
+        "addr:postcode=37016",
+        "addr:street=Via per Marciaga",
+        "contact:facebook=https://www.facebook.com/400316619839814",
+        "craft=winery",
+        "name=Ca' Sabbionare Winery",
+        "phone=+393487082712",
+        "website=http://www.vinicolombo.com/"
       ],
       "score": 88,
       "beauty_score": 1
@@ -4766,6 +4787,24 @@
       "tags": [
         "craft=winery",
         "name=Gregoletto"
+      ],
+      "score": 70,
+      "beauty_score": 1
+    },
+    {
+      "id": "node:11100252091",
+      "name": "Mangia Vino",
+      "lat": 45.4903911,
+      "lon": 12.6044161,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "air_conditioning=yes",
+        "craft=winery",
+        "indoor_seating=yes",
+        "name=Mangia Vino",
+        "outdoor_seating=yes",
+        "wheelchair=yes"
       ],
       "score": 70,
       "beauty_score": 1
