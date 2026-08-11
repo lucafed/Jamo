@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-08-04T05:52:23.161Z",
+  "generated_at": "2026-08-11T04:24:32.216Z",
   "places": [
     {
       "id": "node:62513274",
@@ -5852,6 +5852,24 @@
       "score": 115
     },
     {
+      "id": "node:62512622",
+      "name": "Valgreghentino",
+      "lat": 45.7698309,
+      "lon": 9.4118637,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=7851",
+        "name=Valgreghentino",
+        "place=village",
+        "population=3021",
+        "source=geodati.gfoss.it",
+        "wikidata=Q42888",
+        "wikipedia=it:Valgreghentino"
+      ],
+      "score": 115
+    },
+    {
       "id": "node:62512713",
       "name": "Pieve di Coriano",
       "lat": 45.0337994,
@@ -10602,8 +10620,8 @@
     {
       "id": "node:391104633",
       "name": "Basilicanova",
-      "lat": 44.6970869,
-      "lon": 10.3533734,
+      "lat": 44.6971118,
+      "lon": 10.3535242,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -18910,6 +18928,21 @@
         "population=804",
         "wikidata=Q298747",
         "wikipedia=it:Pieve di Bono"
+      ],
+      "score": 115
+    },
+    {
+      "id": "node:3948495460",
+      "name": "Villa San Carlo",
+      "lat": 45.7837127,
+      "lon": 9.4166719,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Villa San Carlo",
+        "place=village",
+        "wikidata=Q48806364",
+        "wikipedia=it:Villa San Carlo (Valgreghentino)"
       ],
       "score": 115
     },
@@ -51977,7 +52010,7 @@
     {
       "id": "relation:47145",
       "name": "Deutschnofen - Nova Ponente",
-      "lat": 46.4022286,
+      "lat": 46.4022254,
       "lon": 11.4522512,
       "type": "borghi",
       "visibility": "classica",
@@ -56627,44 +56660,6 @@
         "population=29",
         "wikidata=Q3747949",
         "wikipedia=it:Forcello"
-      ],
-      "score": 90
-    },
-    {
-      "id": "node:3216443093",
-      "name": "Cassignanica",
-      "lat": 45.4561622,
-      "lon": 9.3455536,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "ele=108",
-        "loc_name=Cassgnanega",
-        "loc_name:pronunciation=kazɲaˈneːɡa",
-        "name=Cassignanica",
-        "place=hamlet",
-        "population=163",
-        "population:date=2001",
-        "wikidata=Q3662002",
-        "wikimedia_commons=Category:Cassignanica",
-        "wikipedia=it:Cassignanica"
-      ],
-      "score": 90
-    },
-    {
-      "id": "node:3329879776",
-      "name": "Bocca Chiavica",
-      "lat": 45.036916,
-      "lon": 10.5968561,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Bocca Chiavica",
-        "place=hamlet",
-        "population=17",
-        "source=www.resitalica.it",
-        "wikidata=Q3641456",
-        "wikipedia=it:Bocca Chiavica"
       ],
       "score": 90
     }
