@@ -3,7 +3,7 @@
   "country": "IT",
   "area": "Veneto",
   "label_it": "Veneto • Borghi (turistici + piccoli)",
-  "generated_at": "2026-08-04T05:43:44.366Z",
+  "generated_at": "2026-08-11T04:16:07.100Z",
   "places": [
     {
       "id": "node:66503077",
@@ -15927,8 +15927,8 @@
     {
       "id": "node:287896814",
       "name": "Lusérn - Luserna",
-      "lat": 45.9216649,
-      "lon": 11.3242901,
+      "lat": 45.921425,
+      "lon": 11.3245092,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -18228,8 +18228,8 @@
     {
       "id": "node:346175046",
       "name": "San Vito",
-      "lat": 45.4198678,
-      "lon": 11.9604533,
+      "lat": 45.4189493,
+      "lon": 11.9601772,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -23002,7 +23002,7 @@
     },
     {
       "id": "node:564669829",
-      "name": "Aprilia Marittima / Aprilie",
+      "name": "Aprilia Marittima",
       "lat": 45.6927802,
       "lon": 13.0693398,
       "type": "borgo",
@@ -23010,7 +23010,7 @@
       "visibility": "classica",
       "tags": [
         "ele=5",
-        "name=Aprilia Marittima / Aprilie",
+        "name=Aprilia Marittima",
         "name:fur=Aprilie",
         "name:it=Aprilia Marittima",
         "place=village",
@@ -43867,6 +43867,7 @@
       "tags": [
         "gfoss_id=3459",
         "name=Silea",
+        "name:vec=Melma",
         "place=town",
         "population=10167",
         "source=ISTAT",
@@ -44158,9 +44159,8 @@
         "name:tt=Йезоло",
         "name:uk=Єзоло",
         "name:ur=یسولو",
-        "name:vec=Jèzoło",
+        "name:vec=Cava Çucarina",
         "place=town",
-        "population=26122",
         "source=geodati.gfoss.it",
         "wikidata=Q30026331",
         "wikipedia=it:Jesolo"
@@ -44178,6 +44178,7 @@
       "tags": [
         "gfoss_id=3486",
         "name=Eraclea",
+        "name:vec=Grisolera",
         "place=town",
         "population=12396",
         "source=geodati.gfoss.it",
@@ -45129,7 +45130,7 @@
     },
     {
       "id": "node:66503374",
-      "name": "Latisana / Tisane - Tisana / Łatixana",
+      "name": "Latisana",
       "lat": 45.7776908,
       "lon": 12.9967006,
       "type": "borgo",
@@ -45139,10 +45140,10 @@
         "capital=8",
         "ele=7",
         "loc_name:fur=Tisana",
-        "name=Latisana / Tisane - Tisana / Łatixana",
+        "name=Latisana",
         "name:fur=Tisane",
         "name:it=Latisana",
-        "name:vec=Łatixana",
+        "name:vec=La Tisana",
         "place=town",
         "population=8896",
         "wikidata=Q53269",
@@ -84198,8 +84199,8 @@
     {
       "id": "node:1899167451",
       "name": "Stadtl",
-      "lat": 46.4038605,
-      "lon": 11.5110386,
+      "lat": 46.4036569,
+      "lon": 11.5118805,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -138706,7 +138707,7 @@
         "name:tt=Йезоло",
         "name:uk=Єзоло",
         "name:ur=یسولو",
-        "name:vec=Jèzoło",
+        "name:vec=Cava Çucarina",
         "postal_code=30016",
         "ref:ISTAT=027019",
         "ref:catasto=C388",
@@ -149028,7 +149029,7 @@
     {
       "id": "relation:47145",
       "name": "Deutschnofen - Nova Ponente",
-      "lat": 46.4022286,
+      "lat": 46.4022254,
       "lon": 11.4522512,
       "type": "borgo",
       "borgo_type": "classico",
@@ -152121,7 +152122,7 @@
     },
     {
       "id": "relation:179113",
-      "name": "Latisana / Tisane - Tisana / Łatixana",
+      "name": "Latisana",
       "lat": 45.7368064,
       "lon": 13.0355888,
       "type": "borgo",
@@ -152131,7 +152132,7 @@
         "admin_level=8",
         "boundary=administrative",
         "loc_name:fur=Tisana",
-        "name=Latisana / Tisane - Tisana / Łatixana",
+        "name=Latisana",
         "name:fur=Tisane",
         "name:it=Latisana",
         "name:vec=Łatixana",
@@ -153185,7 +153186,7 @@
     },
     {
       "id": "relation:179197",
-      "name": "Marano Lagunare / Maran",
+      "name": "Marano Lagunare",
       "lat": 45.730434,
       "lon": 13.156351,
       "type": "borgo",
@@ -153194,7 +153195,7 @@
       "tags": [
         "admin_level=8",
         "boundary=administrative",
-        "name=Marano Lagunare / Maran",
+        "name=Marano Lagunare",
         "name:fur=Maran",
         "name:it=Marano Lagunare",
         "postal_code=33050",
@@ -153741,7 +153742,7 @@
     },
     {
       "id": "relation:179238",
-      "name": "Palazzolo dello Stella / Palaçûl",
+      "name": "Palazzolo dello Stella",
       "lat": 45.7826912,
       "lon": 13.0729841,
       "type": "borgo",
@@ -153750,7 +153751,7 @@
       "tags": [
         "admin_level=8",
         "boundary=administrative",
-        "name=Palazzolo dello Stella / Palaçûl",
+        "name=Palazzolo dello Stella",
         "name:fur=Palaçûl",
         "name:it=Palazzolo dello Stella",
         "postal_code=33056",
