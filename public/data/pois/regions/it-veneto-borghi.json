@@ -3,7 +3,7 @@
   "country": "IT",
   "area": "Veneto",
   "label_it": "Veneto • Borghi (turistici + piccoli)",
-  "generated_at": "2026-08-11T04:16:07.100Z",
+  "generated_at": "2026-08-18T03:41:37.469Z",
   "places": [
     {
       "id": "node:66503077",
@@ -42792,8 +42792,8 @@
     {
       "id": "node:62513613",
       "name": "Asola",
-      "lat": 45.2211195,
-      "lon": 10.4130654,
+      "lat": 45.2211866,
+      "lon": 10.4129259,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -101197,7 +101197,7 @@
     },
     {
       "id": "node:9916760727",
-      "name": "Casabianca / Cjase Blancje",
+      "name": "Casabianca",
       "lat": 45.6674054,
       "lon": 13.06884,
       "type": "borgo",
@@ -101206,7 +101206,7 @@
       "tags": [
         "alt_name=Casa Bianca",
         "ele=4",
-        "name=Casabianca / Cjase Blancje",
+        "name=Casabianca",
         "name:fur=Cjase Blancje",
         "name:it=Casabianca",
         "place=hamlet",
@@ -127738,6 +127738,21 @@
         "name=Fruttarola",
         "place=hamlet",
         "wikidata=Q18440999"
+      ],
+      "score": 70
+    },
+    {
+      "id": "node:14096820023",
+      "name": "Ca' Orologio",
+      "lat": 45.2541095,
+      "lon": 11.8574232,
+      "type": "borgo",
+      "borgo_type": "classico",
+      "visibility": "classica",
+      "tags": [
+        "name=Ca' Orologio",
+        "place=hamlet",
+        "wikidata=Q18497470"
       ],
       "score": 70
     },
