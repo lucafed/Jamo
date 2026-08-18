@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-08-11T04:25:33.568Z",
+  "generated_at": "2026-08-18T03:50:02.526Z",
   "places": [
     {
       "id": "node:2692275706",
@@ -1952,7 +1952,28 @@
         "craft=winery",
         "name=Ca' Sabbionare Winery",
         "phone=+393487082712",
-        "website=http://www.vinicolombo.com/"
+        "website=https://www.vinicolombo.com/"
+      ],
+      "score": 102
+    },
+    {
+      "id": "node:14094423801",
+      "name": "Cartizze PDC",
+      "lat": 45.8928214,
+      "lon": 12.0334312,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=5",
+        "addr:postcode=31049",
+        "addr:street=Via Cartizze",
+        "check_date=2026-08-14",
+        "check_date:opening_hours=2026-08-14",
+        "craft=winery",
+        "name=Cartizze PDC",
+        "opening_hours=Mo-Su 09:30-18:00",
+        "phone=+393478344395",
+        "website=https://cartizzepdc.com/"
       ],
       "score": 102
     },
@@ -3402,6 +3423,27 @@
       "score": 96
     },
     {
+      "id": "node:14100946479",
+      "name": "Corte Fornaledo",
+      "lat": 45.5594274,
+      "lon": 10.9047757,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Marano di Valpolicella",
+        "addr:housenumber=1",
+        "addr:postcode=37020",
+        "addr:street=Località Fornalè",
+        "craft=winery",
+        "email=cortefornaledo@cortefornaledo.it",
+        "name=Corte Fornaledo",
+        "operator=Azienda Agricola Borghetti",
+        "phone=+393284339516",
+        "website=https://www.cortefornaledo.it"
+      ],
+      "score": 96
+    },
+    {
       "id": "way:109935476",
       "name": "Maso Thaler",
       "lat": 46.3177713,
@@ -4541,8 +4583,8 @@
     {
       "id": "node:5076726830",
       "name": "Cooperativa Triasso e Sassella",
-      "lat": 46.165853,
-      "lon": 9.8336141,
+      "lat": 46.1659046,
+      "lon": 9.8335995,
       "type": "cantine",
       "visibility": "classica",
       "tags": [
@@ -9392,8 +9434,8 @@
     {
       "id": "node:619378879",
       "name": "Weinhaus Punkt",
-      "lat": 46.4134068,
-      "lon": 11.246068,
+      "lat": 46.4134033,
+      "lon": 11.246085,
       "type": "cantine",
       "visibility": "classica",
       "tags": [
@@ -9410,7 +9452,7 @@
         "payment:credit_cards=yes",
         "payment:debit_cards=yes",
         "payment:satispay=yes",
-        "phone=+39 0471 964965",
+        "phone=+39 344 4457627",
         "shop=wine",
         "wheelchair=limited",
         "wheelchair:description=Lift zum Untergeschoss. Rollstuhl-WC in der Damentoilette."
@@ -12149,7 +12191,8 @@
       "visibility": "classica",
       "tags": [
         "name=Wein Schmiede",
-        "shop=wine"
+        "shop=wine",
+        "wheelchair=no"
       ],
       "score": 25
     },
