@@ -7,7 +7,7 @@
     "minLon": 10.2,
     "maxLon": 13.2
   },
-  "generated_at": "2026-08-06T05:36:45.161Z",
+  "generated_at": "2026-08-20T03:36:11.560Z",
   "places": [
     {
       "id": "node:12766026527",
@@ -771,6 +771,28 @@
         "operator=Egger Ramer GmbH",
         "phone=+39 0471 280541",
         "website=https://www.egger-ramer.com/"
+      ],
+      "score": 94,
+      "beauty_score": 1
+    },
+    {
+      "id": "node:14094423801",
+      "name": "Cartizze PDC",
+      "lat": 45.8928214,
+      "lon": 12.0334312,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=5",
+        "addr:postcode=31049",
+        "addr:street=Via Cartizze",
+        "check_date=2026-08-14",
+        "check_date:opening_hours=2026-08-14",
+        "craft=winery",
+        "name=Cartizze PDC",
+        "opening_hours=Mo-Su 09:30-18:00",
+        "phone=+393478344395",
+        "website=https://cartizzepdc.com/"
       ],
       "score": 94,
       "beauty_score": 1
@@ -2053,7 +2075,29 @@
         "craft=winery",
         "name=Ca' Sabbionare Winery",
         "phone=+393487082712",
-        "website=http://www.vinicolombo.com/"
+        "website=https://www.vinicolombo.com/"
+      ],
+      "score": 88,
+      "beauty_score": 1
+    },
+    {
+      "id": "node:14100946479",
+      "name": "Corte Fornaledo",
+      "lat": 45.5594274,
+      "lon": 10.9047757,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Marano di Valpolicella",
+        "addr:housenumber=1",
+        "addr:postcode=37020",
+        "addr:street=Località Fornalè",
+        "craft=winery",
+        "email=cortefornaledo@cortefornaledo.it",
+        "name=Corte Fornaledo",
+        "operator=Azienda Agricola Borghetti",
+        "phone=+393284339516",
+        "website=https://www.cortefornaledo.it"
       ],
       "score": 88,
       "beauty_score": 1
@@ -4182,6 +4226,26 @@
       "beauty_score": 1
     },
     {
+      "id": "node:3661348970",
+      "name": "Farmacia dei Sani",
+      "lat": 45.691472,
+      "lon": 13.1438859,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Lignano Sabbiadoro",
+        "addr:housenumber=44a",
+        "addr:postcode=33054",
+        "addr:street=Via Latisana",
+        "check_date=2026-08-16",
+        "craft=winery",
+        "name=Farmacia dei Sani",
+        "wheelchair=yes"
+      ],
+      "score": 70,
+      "beauty_score": 1
+    },
+    {
       "id": "node:3868646846",
       "name": "MIONETTO",
       "lat": 45.8972669,
@@ -4860,6 +4924,7 @@
       "type": "cantine",
       "visibility": "chicca",
       "tags": [
+        "check_date=2026-08-17",
         "craft=winery",
         "name=Naturnser Vinothek"
       ],
@@ -5399,6 +5464,21 @@
         "building=yes",
         "craft=winery",
         "name=Cantina La Gioiosa"
+      ],
+      "score": 70,
+      "beauty_score": 1
+    },
+    {
+      "id": "way:180716730",
+      "name": "Cantina dei Colli Morenici",
+      "lat": 45.3950295,
+      "lon": 10.6952058,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=industrial",
+        "craft=winery",
+        "name=Cantina dei Colli Morenici"
       ],
       "score": 70,
       "beauty_score": 1
