@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-08-18T03:50:02.526Z",
+  "generated_at": "2026-08-25T03:53:30.916Z",
   "places": [
     {
       "id": "node:2692275706",
@@ -2356,6 +2356,24 @@
         "opening_hours=Mo-Sa 15:00-19:00",
         "organic=yes",
         "phone=+39 346 637 8637"
+      ],
+      "score": 98
+    },
+    {
+      "id": "node:14110661001",
+      "name": "Cantina Simeoni",
+      "lat": 45.554072,
+      "lon": 10.8782775,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=3",
+        "addr:street=Località Cà Tripoli",
+        "check_date=2026-08-21",
+        "contact:instagram=az.agricola.simeoniulisse",
+        "craft=winery",
+        "name=Cantina Simeoni",
+        "phone=+393477002729"
       ],
       "score": 98
     },
@@ -14082,6 +14100,22 @@
         "addr:place=Cannaregio",
         "addr:postcode=30121",
         "name=Nave de Oro",
+        "shop=wine"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:14115669701",
+      "name": "Casetta Rossa Mogliano Veneto",
+      "lat": 45.561629,
+      "lon": 12.2354282,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=11D",
+        "addr:postcode=31021",
+        "addr:street=Via don Giovanni Bosco",
+        "name=Casetta Rossa Mogliano Veneto",
         "shop=wine"
       ],
       "score": 25

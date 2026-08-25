@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-08-18T03:49:49.503Z",
+  "generated_at": "2026-08-25T03:53:21.106Z",
   "places": [
     {
       "id": "node:62513274",
@@ -448,8 +448,8 @@
     {
       "id": "node:64778889",
       "name": "Soave",
-      "lat": 45.4202303,
-      "lon": 11.247722,
+      "lat": 45.420691,
+      "lon": 11.2475529,
       "type": "borghi",
       "visibility": "chicca",
       "tags": [
@@ -1007,10 +1007,12 @@
       "type": "borghi",
       "visibility": "classica",
       "tags": [
+        "capital=6",
         "gfoss_id=2168",
         "name=Cornalba",
         "place=village",
         "population=297",
+        "postal_code=24017",
         "source=geodati.gfoss.it",
         "wikidata=Q100410",
         "wikipedia=it:Cornalba"
