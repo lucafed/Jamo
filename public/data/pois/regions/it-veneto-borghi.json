@@ -3,7 +3,7 @@
   "country": "IT",
   "area": "Veneto",
   "label_it": "Veneto • Borghi (turistici + piccoli)",
-  "generated_at": "2026-08-18T03:41:37.469Z",
+  "generated_at": "2026-08-25T03:44:10.981Z",
   "places": [
     {
       "id": "node:66503077",
@@ -1910,7 +1910,7 @@
     },
     {
       "id": "node:66503059",
-      "name": "Spilimbergo / Spilimberc",
+      "name": "Spilimbergo",
       "lat": 46.1113355,
       "lon": 12.9016287,
       "type": "borgo",
@@ -1918,7 +1918,7 @@
       "visibility": "classica",
       "tags": [
         "gfoss_id=7549",
-        "name=Spilimbergo / Spilimberc",
+        "name=Spilimbergo",
         "name:fur=Spilimberc",
         "name:it=Spilimbergo",
         "place=town",
@@ -11886,8 +11886,8 @@
     {
       "id": "node:64778889",
       "name": "Soave",
-      "lat": 45.4202303,
-      "lon": 11.247722,
+      "lat": 45.420691,
+      "lon": 11.2475529,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -15927,8 +15927,8 @@
     {
       "id": "node:287896814",
       "name": "Lusérn - Luserna",
-      "lat": 45.921425,
-      "lon": 11.3245092,
+      "lat": 45.921417,
+      "lon": 11.3245207,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -22028,14 +22028,14 @@
     },
     {
       "id": "node:495951187",
-      "name": "Ramuscello / Ramussiel",
+      "name": "Ramuscello",
       "lat": 45.8790884,
       "lon": 12.8851771,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Ramuscello / Ramussiel",
+        "name=Ramuscello",
         "name:fur=Ramussiel",
         "name:it=Ramuscello",
         "name:source=https://arlef.it/it",
@@ -24772,7 +24772,7 @@
     },
     {
       "id": "node:749032763",
-      "name": "Villacaccia / Vilecjaze",
+      "name": "Villacaccia",
       "lat": 45.9709361,
       "lon": 13.0676614,
       "type": "borgo",
@@ -24780,7 +24780,7 @@
       "visibility": "classica",
       "tags": [
         "loc_name:fur=Vilecjasse",
-        "name=Villacaccia / Vilecjaze",
+        "name=Villacaccia",
         "name:fur=Vilecjaze",
         "name:it=Villacaccia",
         "place=village",
@@ -34666,14 +34666,14 @@
     },
     {
       "id": "node:1718164509",
-      "name": "Nespoledo / Gnespolêt",
+      "name": "Nespoledo",
       "lat": 45.9821161,
       "lon": 13.0912176,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Nespoledo / Gnespolêt",
+        "name=Nespoledo",
         "name:fur=Gnespolêt",
         "name:it=Nespoledo",
         "place=village",
@@ -45066,7 +45066,7 @@
     },
     {
       "id": "node:66503015",
-      "name": "San Vito al Tagliamento / San Vît dal Tiliment",
+      "name": "San Vito al Tagliamento",
       "lat": 45.9145042,
       "lon": 12.8565956,
       "type": "borgo",
@@ -45074,7 +45074,7 @@
       "visibility": "classica",
       "tags": [
         "gfoss_id=7546",
-        "name=San Vito al Tagliamento / San Vît dal Tiliment",
+        "name=San Vito al Tagliamento",
         "name:fur=San Vît dal Tiliment",
         "name:it=San Vito al Tagliamento",
         "place=town",
@@ -45086,7 +45086,7 @@
     },
     {
       "id": "node:66503208",
-      "name": "Codroipo / Codroip",
+      "name": "Codroipo",
       "lat": 45.9611171,
       "lon": 12.9789516,
       "type": "borgo",
@@ -45094,7 +45094,7 @@
       "visibility": "classica",
       "tags": [
         "gfoss_id=3698",
-        "name=Codroipo / Codroip",
+        "name=Codroipo",
         "name:fur=Codroip",
         "name:it=Codroipo",
         "place=town",
@@ -100907,8 +100907,8 @@
     {
       "id": "node:9649645066",
       "name": "Treponti",
-      "lat": 46.5039892,
-      "lon": 12.4574263,
+      "lat": 46.5054097,
+      "lon": 12.4574672,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -128626,7 +128626,7 @@
     },
     {
       "id": "node:66502659",
-      "name": "Pordenone / Pordenon",
+      "name": "Pordenone",
       "lat": 45.9562503,
       "lon": 12.6597197,
       "type": "borgo",
@@ -128634,7 +128634,7 @@
       "visibility": "classica",
       "tags": [
         "capital=6",
-        "name=Pordenone / Pordenon",
+        "name=Pordenone",
         "name:ar=بردنونة",
         "name:de=Pordenone",
         "name:eu=Pordenone",
@@ -129064,7 +129064,7 @@
     },
     {
       "id": "node:66503486",
-      "name": "San Daniele del Friuli / San Denêl",
+      "name": "San Daniele del Friuli",
       "lat": 46.1600501,
       "lon": 13.0105965,
       "type": "borgo",
@@ -129072,7 +129072,7 @@
       "visibility": "chicca",
       "tags": [
         "gfoss_id=3770",
-        "name=San Daniele del Friuli / San Denêl",
+        "name=San Daniele del Friuli",
         "name:fur=San Denêl",
         "name:it=San Daniele del Friuli",
         "place=town",
@@ -151903,7 +151903,7 @@
     },
     {
       "id": "relation:179088",
-      "name": "Lignano Sabbiadoro / Lignan",
+      "name": "Lignano Sabbiadoro",
       "lat": 45.6712088,
       "lon": 13.1075136,
       "type": "borgo",
@@ -151913,7 +151913,7 @@
         "admin_level=8",
         "alt_name=Lignano",
         "boundary=administrative",
-        "name=Lignano Sabbiadoro / Lignan",
+        "name=Lignano Sabbiadoro",
         "name:fur=Lignan",
         "name:it=Lignano Sabbiadoro",
         "official_name=Comune di Lignano Sabbiadoro",
@@ -151977,7 +151977,7 @@
     },
     {
       "id": "relation:179099",
-      "name": "Codroipo / Codroip",
+      "name": "Codroipo",
       "lat": 45.9545761,
       "lon": 12.9769137,
       "type": "borgo",
@@ -151986,7 +151986,7 @@
       "tags": [
         "admin_level=8",
         "boundary=administrative",
-        "name=Codroipo / Codroip",
+        "name=Codroipo",
         "name:fur=Codroip",
         "postal_code=33033",
         "ref:ISTAT=030027",
@@ -151999,7 +151999,7 @@
     },
     {
       "id": "relation:179100",
-      "name": "San Daniele del Friuli / San Denêl",
+      "name": "San Daniele del Friuli",
       "lat": 46.1685702,
       "lon": 13.0002798,
       "type": "borgo",
@@ -152008,7 +152008,7 @@
       "tags": [
         "admin_level=8",
         "boundary=administrative",
-        "name=San Daniele del Friuli / San Denêl",
+        "name=San Daniele del Friuli",
         "name:fur=San Denêl",
         "name:it=San Daniele del Friuli",
         "postal_code=33038",
@@ -152857,7 +152857,7 @@
     },
     {
       "id": "relation:179173",
-      "name": "San Vito al Tagliamento / San Vît dal Tiliment",
+      "name": "San Vito al Tagliamento",
       "lat": 45.9197882,
       "lon": 12.8628989,
       "type": "borgo",
@@ -152866,7 +152866,7 @@
       "tags": [
         "admin_level=8",
         "boundary=administrative",
-        "name=San Vito al Tagliamento / San Vît dal Tiliment",
+        "name=San Vito al Tagliamento",
         "name:fur=San Vît dal Tiliment",
         "postal_code=33078",
         "ref:ISTAT=093041",
@@ -153107,7 +153107,7 @@
     },
     {
       "id": "relation:179190",
-      "name": "Erto e Casso / Nert e Cjas",
+      "name": "Erto e Casso",
       "lat": 46.277061,
       "lon": 12.3674679,
       "type": "borgo",
@@ -153116,7 +153116,7 @@
       "tags": [
         "admin_level=8",
         "boundary=administrative",
-        "name=Erto e Casso / Nert e Cjas",
+        "name=Erto e Casso",
         "name:fur=Nert e Cjas",
         "name:it=Erto e Casso",
         "population=387",
@@ -153316,7 +153316,7 @@
     },
     {
       "id": "relation:179205",
-      "name": "Pordenone / Pordenon",
+      "name": "Pordenone",
       "lat": 45.9528019,
       "lon": 12.6566726,
       "type": "borgo",
@@ -153325,7 +153325,7 @@
       "tags": [
         "admin_level=8",
         "boundary=administrative",
-        "name=Pordenone / Pordenon",
+        "name=Pordenone",
         "name:ar=بردنونة",
         "name:fur=Pordenon",
         "name:it=Pordenone",
@@ -153665,7 +153665,7 @@
     },
     {
       "id": "relation:179229",
-      "name": "Spilimbergo / Spilimberc",
+      "name": "Spilimbergo",
       "lat": 46.108771,
       "lon": 12.8734086,
       "type": "borgo",
@@ -153674,7 +153674,7 @@
       "tags": [
         "admin_level=8",
         "boundary=administrative",
-        "name=Spilimbergo / Spilimberc",
+        "name=Spilimbergo",
         "name:fur=Spilimberc",
         "name:it=Spilimbergo",
         "postal_code=33097",
@@ -153688,7 +153688,7 @@
     },
     {
       "id": "relation:179230",
-      "name": "Forni Avoltri / For Davuatri",
+      "name": "Forni Avoltri",
       "lat": 46.5960383,
       "lon": 12.8129389,
       "type": "borgo",
@@ -153696,8 +153696,9 @@
       "visibility": "classica",
       "tags": [
         "admin_level=8",
+        "alt_name=For Davuatri",
         "boundary=administrative",
-        "name=Forni Avoltri / For Davuatri",
+        "name=Forni Avoltri",
         "name:fur=For Davôtri",
         "name:it=Forni Avoltri",
         "postal_code=33020",
@@ -153711,7 +153712,7 @@
     },
     {
       "id": "relation:179232",
-      "name": "Dignano / Dignan",
+      "name": "Dignano",
       "lat": 46.0958063,
       "lon": 12.9510182,
       "type": "borgo",
@@ -153720,7 +153721,7 @@
       "tags": [
         "admin_level=8",
         "boundary=administrative",
-        "name=Dignano / Dignan",
+        "name=Dignano",
         "name:fur=Dignan",
         "name:it=Dignano",
         "postal_code=33030",
@@ -153734,7 +153735,7 @@
     },
     {
       "id": "relation:179233",
-      "name": "San Quirino / San Quarin",
+      "name": "San Quirino",
       "lat": 46.0344045,
       "lon": 12.683714,
       "type": "borgo",
@@ -153743,7 +153744,7 @@
       "tags": [
         "admin_level=8",
         "boundary=administrative",
-        "name=San Quirino / San Quarin",
+        "name=San Quirino",
         "name:fur=San Quarin",
         "name:it=San Quirino",
         "postal_code=33080",
@@ -153780,7 +153781,7 @@
     },
     {
       "id": "relation:179241",
-      "name": "Colloredo di Monte Albano / Colorêt di Montalban",
+      "name": "Colloredo di Monte Albano",
       "lat": 46.165165,
       "lon": 13.1188659,
       "type": "borgo",
@@ -153789,7 +153790,7 @@
       "tags": [
         "admin_level=8",
         "boundary=administrative",
-        "name=Colloredo di Monte Albano / Colorêt di Montalban",
+        "name=Colloredo di Monte Albano",
         "name:fur=Colorêt di Montalban",
         "name:it=Colloredo di Monte Albano",
         "postal_code=33010",
@@ -153803,7 +153804,7 @@
     },
     {
       "id": "relation:179242",
-      "name": "Bertiolo / Bertiûl",
+      "name": "Bertiolo",
       "lat": 45.934657,
       "lon": 13.0677951,
       "type": "borgo",
@@ -153812,7 +153813,7 @@
       "tags": [
         "admin_level=8",
         "boundary=administrative",
-        "name=Bertiolo / Bertiûl",
+        "name=Bertiolo",
         "name:fur=Bertiûl",
         "name:it=Bertiolo",
         "postal_code=33032",
@@ -154033,7 +154034,7 @@
     },
     {
       "id": "relation:179269",
-      "name": "Fontanafredda / Fontanefrede - Fontanafredha",
+      "name": "Fontanafredda",
       "lat": 45.9807054,
       "lon": 12.5462048,
       "type": "borgo",
@@ -154043,7 +154044,7 @@
         "admin_level=8",
         "boundary=administrative",
         "loc_name:fur=Fontanafredha",
-        "name=Fontanafredda / Fontanefrede - Fontanafredha",
+        "name=Fontanafredda",
         "name:fur=Fontanefrede",
         "population=12205",
         "postal_code=33074",
