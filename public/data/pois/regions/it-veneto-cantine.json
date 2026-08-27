@@ -7,7 +7,7 @@
     "minLon": 10.2,
     "maxLon": 13.2
   },
-  "generated_at": "2026-08-20T03:36:11.560Z",
+  "generated_at": "2026-08-27T13:15:03.045Z",
   "places": [
     {
       "id": "node:12766026527",
@@ -1148,7 +1148,7 @@
         "addr:street:it=Via Schneckenthaler",
         "craft=winery",
         "name=Ansitz Rynnhof",
-        "opening_hours=Tu-Sa 10:00-12:00; Tu & Th 15:00-18:00",
+        "opening_hours=Tu 15:00-18:00; We-Sa 10:00-12:00; Th 10:00-12:00,15:00-18:00",
         "operator=Brunhilde & Johann Bellutti",
         "url=http://www.rynnhof.com",
         "website=https://rynnhof.com"
@@ -3957,6 +3957,25 @@
         "name=Vigne Salse",
         "operator=Billotto Marco",
         "phone=+39 329 742 6088"
+      ],
+      "score": 76,
+      "beauty_score": 1
+    },
+    {
+      "id": "node:14110661001",
+      "name": "Cantina Simeoni",
+      "lat": 45.554072,
+      "lon": 10.8782775,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=3",
+        "addr:street=Località Cà Tripoli",
+        "check_date=2026-08-21",
+        "contact:instagram=az.agricola.simeoniulisse",
+        "craft=winery",
+        "name=Cantina Simeoni",
+        "phone=+393477002729"
       ],
       "score": 76,
       "beauty_score": 1
