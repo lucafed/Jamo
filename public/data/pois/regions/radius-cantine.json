@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-08-25T03:53:30.916Z",
+  "generated_at": "2026-09-01T08:28:19.385Z",
   "places": [
     {
       "id": "node:2692275706",
@@ -703,7 +703,7 @@
         "currency:XBT=yes",
         "email=dario_rota@yahoo.com",
         "name=Cantina Rota",
-        "opening_hours=Mo-Fr 8:00-18:00",
+        "opening_hours=Mo-Fr 08:00-18:00",
         "payment:lightning=no",
         "payment:lightning_contactless=no",
         "payment:onchain=yes",
@@ -1978,6 +1978,24 @@
       "score": 102
     },
     {
+      "id": "node:14136511612",
+      "name": "Moser",
+      "lat": 46.1121464,
+      "lon": 11.11736,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=5",
+        "addr:street=Via Castel di Gardolo",
+        "craft=winery",
+        "name=Moser",
+        "opening_hours=Tu-Fr 08:30-12:30, 14:30-17:00; Mo 10:00-12:30, 14:30-17:00; Sa 09:00-12:30, 14:00-16:00",
+        "phone=+39 0461 990786",
+        "website=https://mosertrento.com"
+      ],
+      "score": 102
+    },
+    {
       "id": "way:30691638",
       "name": "Cantina Mezzacorona",
       "lat": 46.2041928,
@@ -2515,7 +2533,7 @@
         "addr:street:it=Via Schneckenthaler",
         "craft=winery",
         "name=Ansitz Rynnhof",
-        "opening_hours=Tu-Sa 10:00-12:00; Tu & Th 15:00-18:00",
+        "opening_hours=Tu 15:00-18:00; We-Sa 10:00-12:00; Th 10:00-12:00,15:00-18:00",
         "operator=Brunhilde & Johann Bellutti",
         "url=http://www.rynnhof.com",
         "website=https://rynnhof.com"
@@ -4067,7 +4085,7 @@
         "addr:street=Via Sant'Apollinare",
         "craft=winery",
         "name=Enoteca di Saint'Apollinaire",
-        "opening_hours=Su-Th 18:00-01:00; Fr-Sa 18:00-02:00; ",
+        "opening_hours=Su-Th 18:00-01:00; Fr-Sa 18:00-02:00",
         "phone=+39 346 535 5373"
       ],
       "score": 92
