@@ -7,7 +7,7 @@
     "minLon": 10.2,
     "maxLon": 13.2
   },
-  "generated_at": "2026-08-27T13:15:03.045Z",
+  "generated_at": "2026-09-03T07:25:44.874Z",
   "places": [
     {
       "id": "node:12766026527",
@@ -793,6 +793,25 @@
         "opening_hours=Mo-Su 09:30-18:00",
         "phone=+393478344395",
         "website=https://cartizzepdc.com/"
+      ],
+      "score": 94,
+      "beauty_score": 1
+    },
+    {
+      "id": "node:14136511612",
+      "name": "Moser",
+      "lat": 46.1121464,
+      "lon": 11.11736,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=5",
+        "addr:street=Via Castel di Gardolo",
+        "craft=winery",
+        "name=Moser",
+        "opening_hours=Tu-Fr 08:30-12:30, 14:30-17:00; Mo 10:00-12:30, 14:30-17:00; Sa 09:00-12:30, 14:00-16:00",
+        "phone=+39 0461 990786",
+        "website=https://mosertrento.com"
       ],
       "score": 94,
       "beauty_score": 1
@@ -5350,6 +5369,25 @@
         "it:fvg:ctrn:code=4AIN",
         "it:fvg:ctrn:revision=1AM",
         "name=Pitars S.N.C."
+      ],
+      "score": 70,
+      "beauty_score": 1
+    },
+    {
+      "id": "way:36429373",
+      "name": "Cantina Cooperativa Casarsa",
+      "lat": 45.9546975,
+      "lon": 12.8441051,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=industrial",
+        "craft=winery",
+        "height=26 m",
+        "it:fvg:ctrn:code=4AIN",
+        "it:fvg:ctrn:revision=1AM",
+        "name=Cantina Cooperativa Casarsa",
+        "product=wine"
       ],
       "score": 70,
       "beauty_score": 1
