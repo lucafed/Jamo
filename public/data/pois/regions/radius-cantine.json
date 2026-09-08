@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-09-01T08:28:19.385Z",
+  "generated_at": "2026-09-08T07:57:39.311Z",
   "places": [
     {
       "id": "node:2692275706",
@@ -4120,6 +4120,19 @@
       "score": 92
     },
     {
+      "id": "node:14159085518",
+      "name": "Cantina Cesari",
+      "lat": 46.1772708,
+      "lon": 11.8289298,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "craft=winery",
+        "name=Cantina Cesari"
+      ],
+      "score": 92
+    },
+    {
       "id": "way:30691669",
       "name": "Cantina Rotari",
       "lat": 46.202523,
@@ -4898,6 +4911,21 @@
         "name=Glassier",
         "operator=Stefan Vaja",
         "website=https://www.glassier.it/"
+      ],
+      "score": 90
+    },
+    {
+      "id": "node:12492080798",
+      "name": "Le driadi",
+      "lat": 45.7390433,
+      "lon": 9.5285495,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "contact:instagram=https://www.instagram.com/ledriadiwine/",
+        "contact:website=https://ledriadi.wine",
+        "craft=winery",
+        "name=Le driadi"
       ],
       "score": 90
     },
@@ -6260,19 +6288,6 @@
       "tags": [
         "craft=winery",
         "name=Diclared"
-      ],
-      "score": 80
-    },
-    {
-      "id": "node:12492080798",
-      "name": "Le Driadi",
-      "lat": 45.7390433,
-      "lon": 9.5285495,
-      "type": "cantine",
-      "visibility": "classica",
-      "tags": [
-        "craft=winery",
-        "name=Le Driadi"
       ],
       "score": 80
     },
@@ -14134,6 +14149,19 @@
         "addr:postcode=31021",
         "addr:street=Via don Giovanni Bosco",
         "name=Casetta Rossa Mogliano Veneto",
+        "shop=wine"
+      ],
+      "score": 25
+    },
+    {
+      "id": "node:14155426957",
+      "name": "Enoteca Mariga",
+      "lat": 45.7674352,
+      "lon": 11.7304586,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Enoteca Mariga",
         "shop=wine"
       ],
       "score": 25

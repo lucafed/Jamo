@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-09-01T08:28:04.390Z",
+  "generated_at": "2026-09-08T07:57:25.935Z",
   "places": [
     {
       "id": "node:62513274",
@@ -1087,6 +1087,25 @@
       "score": 120
     },
     {
+      "id": "node:62507993",
+      "name": "Magasa",
+      "lat": 45.781392,
+      "lon": 10.615973,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=976",
+        "gfoss_id=2268",
+        "name=Magasa",
+        "place=village",
+        "population=189",
+        "source=geodati.gfoss.it",
+        "wikidata=Q105101",
+        "wikipedia=it:Magasa"
+      ],
+      "score": 120
+    },
+    {
       "id": "node:62508205",
       "name": "Prestine",
       "lat": 45.9308588,
@@ -1108,11 +1127,12 @@
     {
       "id": "node:62508443",
       "name": "Turano",
-      "lat": 45.7605409,
-      "lon": 10.5953683,
+      "lat": 45.7604807,
+      "lon": 10.5957288,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
+        "ele=680",
         "gfoss_id=2364",
         "name=Turano",
         "place=village",
@@ -1120,6 +1140,26 @@
         "source=geodati.gfoss.it",
         "wikidata=Q18477916",
         "wikipedia=it:Turano (Valvestino)"
+      ],
+      "score": 120
+    },
+    {
+      "id": "node:62508738",
+      "name": "Capovalle",
+      "lat": 45.7544353,
+      "lon": 10.54469,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "alt_name=Hano",
+        "ele=1000",
+        "gfoss_id=2206",
+        "name=Capovalle",
+        "place=village",
+        "population=452",
+        "source=geodati.gfoss.it",
+        "wikidata=Q103763",
+        "wikipedia=it:Capovalle"
       ],
       "score": 120
     },
@@ -4283,6 +4323,7 @@
       "type": "borghi",
       "visibility": "classica",
       "tags": [
+        "ele=943",
         "name=Cadria",
         "place=village",
         "population=7",
@@ -4679,6 +4720,24 @@
         "population:date=2001-10-21",
         "wikidata=Q4015159",
         "wikipedia=it:Vittadone"
+      ],
+      "score": 120
+    },
+    {
+      "id": "node:3757040551",
+      "name": "Moerna",
+      "lat": 45.7590737,
+      "lon": 10.5816334,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=983",
+        "name=Moerna",
+        "place=village",
+        "population=70",
+        "population:date=2007",
+        "wikidata=Q3860051",
+        "wikipedia=it:Moerna"
       ],
       "score": 120
     },
@@ -12944,6 +13003,7 @@
       "type": "borghi",
       "visibility": "classica",
       "tags": [
+        "ele=822",
         "name=Bollone",
         "place=village",
         "wikidata=Q3641764",
@@ -18698,25 +18758,11 @@
       "type": "borghi",
       "visibility": "classica",
       "tags": [
+        "ele=828",
         "name=Armo",
         "place=village",
         "wikidata=Q3623146",
         "wikipedia=it:Armo (Valvestino)"
-      ],
-      "score": 115
-    },
-    {
-      "id": "node:3757040551",
-      "name": "Moerna",
-      "lat": 45.7590737,
-      "lon": 10.5816334,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Moerna",
-        "place=village",
-        "wikidata=Q3860051",
-        "wikipedia=it:Moerna"
       ],
       "score": 115
     },
@@ -18728,6 +18774,7 @@
       "type": "borghi",
       "visibility": "classica",
       "tags": [
+        "ele=898",
         "name=Persone",
         "place=village",
         "wikidata=Q3900541",
@@ -19968,6 +20015,7 @@
         "name=Lorentino",
         "place=village",
         "wikidata=Q28669793",
+        "wikimedia_commons=Category:Lorentino (Calolziocorte)",
         "wikipedia=it:Lorentino"
       ],
       "score": 115
@@ -22362,6 +22410,29 @@
         "type=boundary",
         "wikidata=Q101082",
         "wikipedia=it:Fuipiano Valle Imagna"
+      ],
+      "score": 105
+    },
+    {
+      "id": "relation:46358",
+      "name": "Songavazzo",
+      "lat": 45.8698472,
+      "lon": 10.0336628,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "admin_level=8",
+        "boundary=administrative",
+        "name=Songavazzo",
+        "population=740",
+        "population:date=2026-08-28",
+        "postal_code=24020",
+        "ref:ISTAT=016201",
+        "ref:catasto=I830",
+        "source:population=ANPR 2026",
+        "type=boundary",
+        "wikidata=Q101590",
+        "wikipedia=it:Songavazzo"
       ],
       "score": 105
     },
@@ -44844,9 +44915,12 @@
         "admin_level=8",
         "boundary=administrative",
         "name=Sabbio Chiese",
+        "population=4089",
+        "population:date=2026-08-28",
         "postal_code=25070",
         "ref:ISTAT=017168",
         "ref:catasto=H650",
+        "source:population=ANPR 2026",
         "type=boundary",
         "wikidata=Q111656",
         "wikipedia=it:Sabbio Chiese"
@@ -45658,7 +45732,7 @@
     {
       "id": "relation:45645",
       "name": "Toscolano Maderno",
-      "lat": 45.6561145,
+      "lat": 45.6561564,
       "lon": 10.6078566,
       "type": "borghi",
       "visibility": "classica",
@@ -45950,17 +46024,19 @@
       "id": "relation:45669",
       "name": "Gargnano",
       "lat": 45.703494,
-      "lon": 10.6308256,
+      "lon": 10.6307861,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
         "admin_level=8",
         "boundary=administrative",
         "name=Gargnano",
-        "population=2665",
+        "population=2619",
+        "population:date=2026-08-28",
         "postal_code=25084",
         "ref:ISTAT=017076",
         "ref:catasto=D924",
+        "source:population=ANPR 2026",
         "type=boundary",
         "wikidata=Q104628",
         "wikipedia=it:Gargnano"
@@ -49665,9 +49741,12 @@
         "admin_level=8",
         "boundary=administrative",
         "name=Collio",
+        "population=1945",
+        "population:date=2026-08-28",
         "postal_code=25060",
         "ref:ISTAT=017058",
         "ref:catasto=C883",
+        "source:population=ANPR 2026",
         "type=boundary",
         "wikidata=Q104057",
         "wikipedia=it:Collio (Italia)"
@@ -49886,9 +49965,12 @@
         "admin_level=8",
         "boundary=administrative",
         "name=Bagolino",
+        "population=3733",
+        "population:date=2026-08-28",
         "postal_code=25072",
         "ref:ISTAT=017010",
         "ref:catasto=A578",
+        "source:population=ANPR 2026",
         "type=boundary",
         "wikidata=Q103465",
         "wikipedia=it:Bagolino"
@@ -51066,26 +51148,6 @@
         "type=boundary",
         "wikidata=Q101545",
         "wikipedia=it:San Giovanni Bianco"
-      ],
-      "score": 100
-    },
-    {
-      "id": "relation:46358",
-      "name": "Songavazzo",
-      "lat": 45.8698472,
-      "lon": 10.0336628,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "admin_level=8",
-        "boundary=administrative",
-        "name=Songavazzo",
-        "postal_code=24020",
-        "ref:ISTAT=016201",
-        "ref:catasto=I830",
-        "type=boundary",
-        "wikidata=Q101590",
-        "wikipedia=it:Songavazzo"
       ],
       "score": 100
     },
@@ -55474,11 +55536,12 @@
         "boundary=administrative",
         "name=Grosio",
         "official_name=Comune di Grosio",
-        "population=4427",
-        "population:date=2020",
+        "population=4227",
+        "population:date=2026-08-28",
         "postal_code=23033",
         "ref:ISTAT=014033",
         "ref:catasto=E200",
+        "source:population=ANPR 2026",
         "type=boundary",
         "wikidata=Q40653",
         "wikipedia=it:Grosio"
@@ -56224,6 +56287,31 @@
         "type=boundary",
         "wikidata=Q504491",
         "wikipedia=it:Tires"
+      ],
+      "score": 100
+    },
+    {
+      "id": "relation:47222",
+      "name": "Bormio",
+      "lat": 46.4927351,
+      "lon": 10.4151907,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "admin_level=8",
+        "boundary=administrative",
+        "name=Bormio",
+        "name:de=Bormio",
+        "old_name:de=Worms im Veltlin",
+        "population=3867",
+        "population:date=2026-08-28",
+        "postal_code=23032",
+        "ref:ISTAT=014009",
+        "ref:catasto=B049",
+        "source:population=ANPR 2026",
+        "type=boundary",
+        "wikidata=Q40516",
+        "wikipedia=it:Bormio"
       ],
       "score": 100
     },
@@ -60383,58 +60471,6 @@
         "population=101",
         "wikidata=Q3705917",
         "wikipedia=it:Desco (Morbegno)"
-      ],
-      "score": 90
-    },
-    {
-      "id": "node:4290487932",
-      "name": "Centa San Nicolò",
-      "lat": 45.9682716,
-      "lon": 11.2325705,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=2920",
-        "loc_name=Zenta",
-        "name=Centa San Nicolò",
-        "name:cim=Tschint",
-        "name:it=Centa San Nicolò",
-        "place=hamlet",
-        "population=194",
-        "wikidata=Q267518",
-        "wikipedia=it:Centa San Nicolò"
-      ],
-      "score": 90
-    },
-    {
-      "id": "node:4429692930",
-      "name": "Santa Maria del Mare",
-      "lat": 45.3301236,
-      "lon": 12.3260529,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Santa Maria del Mare",
-        "place=hamlet",
-        "population=140",
-        "wikidata=Q2184285",
-        "wikipedia=it:San Pietro in Volta"
-      ],
-      "score": 90
-    },
-    {
-      "id": "node:4446265120",
-      "name": "Santa Maria",
-      "lat": 45.952539,
-      "lon": 11.9270915,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Santa Maria",
-        "place=hamlet",
-        "population=62",
-        "wikidata=Q17456833",
-        "wikipedia=it:Santa Maria (Quero Vas)"
       ],
       "score": 90
     }
