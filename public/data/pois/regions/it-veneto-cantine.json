@@ -7,7 +7,7 @@
     "minLon": 10.2,
     "maxLon": 13.2
   },
-  "generated_at": "2026-09-03T07:25:44.874Z",
+  "generated_at": "2026-09-10T07:33:34.639Z",
   "places": [
     {
       "id": "node:12766026527",
@@ -812,6 +812,27 @@
         "opening_hours=Tu-Fr 08:30-12:30, 14:30-17:00; Mo 10:00-12:30, 14:30-17:00; Sa 09:00-12:30, 14:00-16:00",
         "phone=+39 0461 990786",
         "website=https://mosertrento.com"
+      ],
+      "score": 94,
+      "beauty_score": 1
+    },
+    {
+      "id": "node:14166851319",
+      "name": "Bellalasta Winery BIO",
+      "lat": 45.5268834,
+      "lon": 11.0224544,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Grezzana",
+        "addr:housenumber=83",
+        "addr:postcode=37023",
+        "addr:street=Località Lastabella",
+        "craft=winery",
+        "name=Bellalasta Winery BIO",
+        "opening_hours=Mo-Sa 09:00-19:00",
+        "phone=+393404177531",
+        "website=http://www.bellalasta.com/"
       ],
       "score": 94,
       "beauty_score": 1
@@ -5301,6 +5322,20 @@
       "tags": [
         "craft=winery",
         "name=Medici Ermete e Figli"
+      ],
+      "score": 70,
+      "beauty_score": 1
+    },
+    {
+      "id": "node:14159085518",
+      "name": "Cantina Cesari",
+      "lat": 46.1772708,
+      "lon": 11.8289298,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Cantina Cesari"
       ],
       "score": 70,
       "beauty_score": 1
