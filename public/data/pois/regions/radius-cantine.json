@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-09-08T07:57:39.311Z",
+  "generated_at": "2026-09-15T08:32:23.127Z",
   "places": [
     {
       "id": "node:2692275706",
@@ -1013,6 +1013,26 @@
         "name=Cantina Pisoni",
         "phone=+ 39 0461 563216",
         "website=http://www.pisoni.net"
+      ],
+      "score": 108
+    },
+    {
+      "id": "node:14166851319",
+      "name": "Bellalasta Winery BIO",
+      "lat": 45.5268834,
+      "lon": 11.0224544,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Grezzana",
+        "addr:housenumber=83",
+        "addr:postcode=37023",
+        "addr:street=Località Lastabella",
+        "craft=winery",
+        "name=Bellalasta Winery BIO",
+        "opening_hours=Mo-Sa 09:00-19:00",
+        "phone=+393404177531",
+        "website=http://www.bellalasta.com/"
       ],
       "score": 108
     },
@@ -3937,6 +3957,25 @@
       "score": 92
     },
     {
+      "id": "node:4401669200",
+      "name": "Liquoreria Carlotto",
+      "lat": 45.6443288,
+      "lon": 11.2990668,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Valdagno",
+        "addr:housenumber=32",
+        "addr:postcode=36078",
+        "addr:street=Via Giuseppe Garibaldi",
+        "craft=winery",
+        "name=Liquoreria Carlotto",
+        "opening_hours=Mo-Fr 10:00-13:30,17:00-20:45; Sa 10:00-13:30,17:00-21:00",
+        "phone=+39 0445 480814"
+      ],
+      "score": 92
+    },
+    {
       "id": "node:5519070129",
       "name": "Cantina Lombardini",
       "lat": 44.8453137,
@@ -4129,6 +4168,21 @@
       "tags": [
         "craft=winery",
         "name=Cantina Cesari"
+      ],
+      "score": 92
+    },
+    {
+      "id": "node:14161946742",
+      "name": "Cantina Terre Rosse Vallania - Colli Bolognesi",
+      "lat": 44.4825911,
+      "lon": 11.2086005,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "craft=winery",
+        "name=Cantina Terre Rosse Vallania - Colli Bolognesi",
+        "product=wine",
+        "shop=farm"
       ],
       "score": 92
     },
@@ -5685,7 +5739,6 @@
         "addr:city=Missaglia",
         "addr:country=IT",
         "addr:housenumber=5",
-        "addr:place=Maresso",
         "addr:street=Via Cascina Pianina",
         "craft=winery",
         "name=Cascina Francesca",
@@ -9353,6 +9406,26 @@
         "name=Bacco Wine Shop",
         "shop=wine",
         "website=https://www.instagram.com/baccowineshop/"
+      ],
+      "score": 41
+    },
+    {
+      "id": "node:14174121428",
+      "name": "Enoteca Malcesine",
+      "lat": 45.7610356,
+      "lon": 10.8070612,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Malcesine",
+        "addr:housenumber=15b",
+        "addr:postcode=37018",
+        "addr:street=Viale Roma",
+        "contact:facebook=https://www.facebook.com/432369990667206",
+        "name=Enoteca Malcesine",
+        "phone=+390457401046",
+        "shop=wine",
+        "website=http://www.enotecamalcesine.it/"
       ],
       "score": 41
     },

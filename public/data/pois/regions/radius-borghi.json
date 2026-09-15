@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-09-08T07:57:25.935Z",
+  "generated_at": "2026-09-15T08:32:07.226Z",
   "places": [
     {
       "id": "node:62513274",
@@ -12194,8 +12194,8 @@
     {
       "id": "node:573424171",
       "name": "Caselle de' Ruffi",
-      "lat": 45.4896652,
-      "lon": 12.0090521,
+      "lat": 45.4897069,
+      "lon": 12.0091409,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -18753,8 +18753,8 @@
     {
       "id": "node:3757040550",
       "name": "Armo",
-      "lat": 45.7711465,
-      "lon": 10.5946738,
+      "lat": 45.7711366,
+      "lon": 10.5946455,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -38134,6 +38134,7 @@
         "admin_level=8",
         "boundary=administrative",
         "name=Peschiera del Garda",
+        "name:uk=Песк'єра-дель-Ґарда",
         "population=10962",
         "population:date=2026-08-28",
         "postal_code=37019",
@@ -43152,6 +43153,7 @@
         "admin_level=8",
         "boundary=administrative",
         "name=Salò",
+        "name:uk=Сало",
         "population=10317",
         "population:date=2026-08-28",
         "postal_code=25087",
@@ -53339,7 +53341,7 @@
     {
       "id": "relation:46784",
       "name": "Tre Ville",
-      "lat": 46.1517279,
+      "lat": 46.1515085,
       "lon": 10.8108102,
       "type": "borghi",
       "visibility": "classica",
