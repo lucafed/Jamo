@@ -7,7 +7,7 @@
     "minLon": 10.2,
     "maxLon": 13.2
   },
-  "generated_at": "2026-09-10T07:33:34.639Z",
+  "generated_at": "2026-09-17T08:02:04.130Z",
   "places": [
     {
       "id": "node:12766026527",
@@ -900,7 +900,7 @@
         "building=industrial",
         "craft=winery",
         "name=Bertani",
-        "opening_hours=Tu-Sa 9:30-13:00 14:00-18:00",
+        "opening_hours=Tu-Sa 9:30-13:00, 14:00-18:00",
         "phone=+390458658444",
         "website=https://www.bertani.net/"
       ],
@@ -1076,7 +1076,7 @@
         "building=yes",
         "craft=winery",
         "name=Le Vigne Terre di Confine",
-        "opening_hours=Fr 17:30-00:00, Sa 09-12:30 17:30-00:00, Su 17:30-00:00",
+        "opening_hours=Fr 17:30-00:00, Sa 09:00-12:30, 17:30-00:00, Su 17:30-00:00",
         "phone=+3904451670127",
         "website=https://www.levigneterrediconfine.it"
       ],
@@ -1496,6 +1496,7 @@
         "addr:housenumber=81",
         "addr:postcode=38062",
         "addr:street=Via Linfano",
+        "check_date=2026-09-16",
         "craft=winery",
         "guest_house=agritourism",
         "name=Cantina Madonna delle Vittorie;Frantoio Madonna delle Vittorie",
@@ -2903,6 +2904,26 @@
         "name=Az. Agr. Mattiazzo Leo di Mattiazzo Jessica - Il Settolo",
         "opening_hours=Sempre aperto",
         "phone=+39 335272145"
+      ],
+      "score": 82,
+      "beauty_score": 1
+    },
+    {
+      "id": "node:4401669200",
+      "name": "Liquoreria Carlotto",
+      "lat": 45.6443288,
+      "lon": 11.2990668,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Valdagno",
+        "addr:housenumber=32",
+        "addr:postcode=36078",
+        "addr:street=Via Giuseppe Garibaldi",
+        "craft=winery",
+        "name=Liquoreria Carlotto",
+        "opening_hours=Mo-Fr 10:00-13:30,17:00-20:45; Sa 10:00-13:30,17:00-21:00",
+        "phone=+39 0445 480814"
       ],
       "score": 82,
       "beauty_score": 1
@@ -5404,6 +5425,24 @@
         "it:fvg:ctrn:code=4AIN",
         "it:fvg:ctrn:revision=1AM",
         "name=Pitars S.N.C."
+      ],
+      "score": 70,
+      "beauty_score": 1
+    },
+    {
+      "id": "way:36429267",
+      "name": "Vini La Delizia",
+      "lat": 45.9529017,
+      "lon": 12.779305,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "building=industrial",
+        "craft=winery",
+        "height=9 m",
+        "it:fvg:ctrn:code=4AIN",
+        "it:fvg:ctrn:revision=1A0",
+        "name=Vini La Delizia"
       ],
       "score": 70,
       "beauty_score": 1
