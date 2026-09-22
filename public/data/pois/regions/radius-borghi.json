@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-09-15T08:32:07.226Z",
+  "generated_at": "2026-09-22T08:23:16.358Z",
   "places": [
     {
       "id": "node:62513274",
@@ -2694,6 +2694,23 @@
         "population=321",
         "wikidata=Q18447399",
         "wikipedia=it:San Ruffino (Scandiano)"
+      ],
+      "score": 120
+    },
+    {
+      "id": "node:498427674",
+      "name": "Lenzumo",
+      "lat": 45.9129054,
+      "lon": 10.7269593,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=787",
+        "name=Lenzumo",
+        "place=village",
+        "population=317",
+        "wikidata=Q18480277",
+        "wikipedia=it:Lenzumo"
       ],
       "score": 120
     },
@@ -6683,6 +6700,25 @@
       "score": 115
     },
     {
+      "id": "node:64776654",
+      "name": "Ronzo-Chienis",
+      "lat": 45.8897478,
+      "lon": 10.9502051,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=2999",
+        "loc_name=Ronž-Cianìs",
+        "name=Ronzo-Chienis",
+        "place=village",
+        "population=1010",
+        "source=geodati.gfoss.it",
+        "wikidata=Q301043",
+        "wikipedia=it:Ronzo-Chienis"
+      ],
+      "score": 115
+    },
+    {
       "id": "node:64776667",
       "name": "Strigno",
       "lat": 46.066304,
@@ -9483,6 +9519,21 @@
         "population=2102",
         "wikidata=Q3641903",
         "wikipedia=it:Bolognano (Arco)"
+      ],
+      "score": 115
+    },
+    {
+      "id": "node:299943877",
+      "name": "Ville Del Monte",
+      "lat": 45.9299831,
+      "lon": 10.8233788,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Ville Del Monte",
+        "place=village",
+        "wikidata=Q1496515",
+        "wikipedia=it:Ville del Monte"
       ],
       "score": 115
     },
@@ -16670,6 +16721,21 @@
       "score": 115
     },
     {
+      "id": "node:1778353056",
+      "name": "Manzano",
+      "lat": 45.8656484,
+      "lon": 10.9534844,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Manzano",
+        "place=village",
+        "wikidata=Q18480511",
+        "wikipedia=it:Manzano (Mori)"
+      ],
+      "score": 115
+    },
+    {
       "id": "node:1778353076",
       "name": "Nogaredo",
       "lat": 45.9120887,
@@ -16682,6 +16748,21 @@
         "population=1220",
         "wikidata=Q175406",
         "wikipedia=it:Nogaredo"
+      ],
+      "score": 115
+    },
+    {
+      "id": "node:1778353080",
+      "name": "Nomesino",
+      "lat": 45.8655003,
+      "lon": 10.9626728,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Nomesino",
+        "place=village",
+        "wikidata=Q18481415",
+        "wikipedia=it:Nomesino"
       ],
       "score": 115
     },
@@ -17414,6 +17495,22 @@
         "place=village",
         "wikidata=Q3947188",
         "wikipedia=it:San Giacomo Roncole"
+      ],
+      "score": 115
+    },
+    {
+      "id": "node:2269891807",
+      "name": "Chiarano",
+      "lat": 45.9208947,
+      "lon": 10.8704985,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "alt_name=Chirano di Arco",
+        "name=Chiarano",
+        "place=village",
+        "wikidata=Q101146630",
+        "wikipedia=it:Chiarano (Arco)"
       ],
       "score": 115
     },
@@ -60370,109 +60467,6 @@
         "source=Censimento ISTAT 2001",
         "wikidata=Q655461",
         "wikipedia=it:Corte Sant'Andrea"
-      ],
-      "score": 90
-    },
-    {
-      "id": "node:3612597622",
-      "name": "Taranta",
-      "lat": 45.5254982,
-      "lon": 9.5363446,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "loc_name=Cascina Taranta",
-        "name=Taranta",
-        "official_name=Località Taranta",
-        "place=hamlet",
-        "population=115",
-        "wikidata=Q2266879",
-        "wikipedia=it:Taranta (Cassano d'Adda)"
-      ],
-      "score": 90
-    },
-    {
-      "id": "node:3854638897",
-      "name": "Roncarolo",
-      "lat": 45.0657271,
-      "lon": 9.8440527,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "is_in=Coarso",
-        "loc_name=Roncaröl",
-        "name=Roncarolo",
-        "place=hamlet",
-        "population=87",
-        "wikidata=Q3941043",
-        "wikipedia=it:Roncarolo"
-      ],
-      "score": 90
-    },
-    {
-      "id": "node:3859038528",
-      "name": "Zerbio",
-      "lat": 45.0635139,
-      "lon": 9.8602653,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "is_in=Coarso",
-        "name=Zerbio",
-        "place=hamlet",
-        "population=226",
-        "source=www.resitalica.it",
-        "wikidata=Q191510",
-        "wikipedia=it:Zerbio"
-      ],
-      "score": 90
-    },
-    {
-      "id": "node:3891872536",
-      "name": "Enzola",
-      "lat": 44.8401507,
-      "lon": 10.4808513,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Enzola",
-        "place=hamlet",
-        "population=162",
-        "wikidata=Q3726672",
-        "wikipedia=it:Enzola"
-      ],
-      "score": 90
-    },
-    {
-      "id": "node:3891905194",
-      "name": "Casalpò",
-      "lat": 44.8336075,
-      "lon": 10.5155611,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Casalpò",
-        "place=hamlet",
-        "population=150",
-        "wikidata=Q18416872",
-        "wikipedia=it:Casalpò"
-      ],
-      "score": 90
-    },
-    {
-      "id": "node:4194185212",
-      "name": "Desco",
-      "lat": 46.1473798,
-      "lon": 9.626209,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "ele=290",
-        "name=Desco",
-        "place=hamlet",
-        "population=101",
-        "wikidata=Q3705917",
-        "wikipedia=it:Desco (Morbegno)"
       ],
       "score": 90
     }
