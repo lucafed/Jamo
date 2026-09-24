@@ -7,7 +7,7 @@
     "minLon": 10.2,
     "maxLon": 13.2
   },
-  "generated_at": "2026-09-17T08:02:04.130Z",
+  "generated_at": "2026-09-24T07:52:30.187Z",
   "places": [
     {
       "id": "node:12766026527",
@@ -838,6 +838,28 @@
       "beauty_score": 1
     },
     {
+      "id": "node:14192048602",
+      "name": "Cantina Ca' Lustra Zanovello",
+      "lat": 45.3042408,
+      "lon": 11.6966446,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Cinto Euganeo",
+        "addr:housenumber=50",
+        "addr:postcode=35030",
+        "addr:street=Via San Pietro",
+        "craft=winery",
+        "email=info@calustra.it",
+        "name=Cantina Ca' Lustra Zanovello",
+        "opening_hours=Mo-Sa 08:30-12:30, 14:30-18:30; Su 10:00-12:30, 14:30-18:30; ",
+        "phone=+39 0429 94128",
+        "website=https://calustra.it/it/"
+      ],
+      "score": 94,
+      "beauty_score": 1
+    },
+    {
       "id": "way:51676862",
       "name": "Kellerei Terlan - Cantina Terlano",
       "lat": 46.5307172,
@@ -900,7 +922,7 @@
         "building=industrial",
         "craft=winery",
         "name=Bertani",
-        "opening_hours=Tu-Sa 9:30-13:00, 14:00-18:00",
+        "opening_hours=Tu-Sa 09:30-13:00,14:00-18:00",
         "phone=+390458658444",
         "website=https://www.bertani.net/"
       ],
