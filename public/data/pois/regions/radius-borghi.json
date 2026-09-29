@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-09-22T08:23:16.358Z",
+  "generated_at": "2026-09-29T09:37:08.547Z",
   "places": [
     {
       "id": "node:62513274",
@@ -949,7 +949,7 @@
         "population=394",
         "source=geodati.gfoss.it",
         "website=https://www.comune.piazzatorre.bg.it/PortaleNet/portale/CadmoDriver?_token=SEARCHENGINESXOK&codice_comune=PIAZZATORRE&_page=pHomePage&_state=initial&_action_do_home_siscotel=1",
-        "wikidata=Q101409",
+        "wikidata=Q30028813",
         "wikipedia=it:Piazzatorre"
       ],
       "score": 120
@@ -20217,8 +20217,8 @@
         "name:de=Moor in Tirol",
         "name:it=Mori",
         "place=village",
-        "population=10048",
-        "population:date=2022-12-31",
+        "population=10211",
+        "population:date=2023-12-31",
         "source=geodati.gfoss.it",
         "type=multipolygon",
         "wikidata=Q296217",
@@ -23584,7 +23584,7 @@
     {
       "id": "relation:46800",
       "name": "Frassilongo - Garait",
-      "lat": 46.0745532,
+      "lat": 46.0742941,
       "lon": 11.3184411,
       "type": "borghi",
       "visibility": "classica",
