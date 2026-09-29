@@ -3,11 +3,11 @@
   "country": "IT",
   "area": "Veneto",
   "label_it": "Veneto • Borghi (turistici + piccoli)",
-  "generated_at": "2026-09-15T08:20:04.843Z",
+  "generated_at": "2026-09-29T09:25:25.236Z",
   "places": [
     {
       "id": "node:66503077",
-      "name": "Valvasone / Voleson",
+      "name": "Valvasone",
       "lat": 45.9961488,
       "lon": 12.8643951,
       "type": "borgo",
@@ -15,7 +15,7 @@
       "visibility": "classica",
       "tags": [
         "gfoss_id=7553",
-        "name=Valvasone / Voleson",
+        "name=Valvasone",
         "name:fur=Voleson",
         "name:it=Valvasone",
         "place=village",
@@ -1350,14 +1350,14 @@
     },
     {
       "id": "node:824987234",
-      "name": "Pieve di Rosa / Plêf",
+      "name": "Pieve di Rosa",
       "lat": 45.9169657,
       "lon": 12.9294647,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Pieve di Rosa / Plêf",
+        "name=Pieve di Rosa",
         "name:fur=Plêf",
         "name:it=Pieve di Rosa",
         "place=village",
@@ -2364,7 +2364,7 @@
     },
     {
       "id": "node:34162574",
-      "name": "Vallenoncello / Valnunciel",
+      "name": "Vallenoncello",
       "lat": 45.9323813,
       "lon": 12.6428866,
       "type": "borgo",
@@ -2372,7 +2372,7 @@
       "visibility": "classica",
       "tags": [
         "loc_name:fur=Valnunsiel",
-        "name=Vallenoncello / Valnunciel",
+        "name=Vallenoncello",
         "name:fur=Valnunciel",
         "name:it=Vallenoncello",
         "place=village",
@@ -4414,7 +4414,8 @@
         "place=village",
         "population=1010",
         "source=geodati.gfoss.it",
-        "wikidata=Q30029583"
+        "wikidata=Q301043",
+        "wikipedia=it:Ronzo-Chienis"
       ],
       "score": 85
     },
@@ -14279,7 +14280,7 @@
     },
     {
       "id": "node:66502845",
-      "name": "Arzene / Darzin",
+      "name": "Arzene",
       "lat": 46.0013275,
       "lon": 12.8469614,
       "type": "borgo",
@@ -14287,7 +14288,7 @@
       "visibility": "classica",
       "tags": [
         "gfoss_id=7509",
-        "name=Arzene / Darzin",
+        "name=Arzene",
         "name:fur=Darzin",
         "name:it=Arzene",
         "place=village",
@@ -14341,7 +14342,7 @@
     },
     {
       "id": "node:66503247",
-      "name": "Rivignano / Rivignan",
+      "name": "Rivignano",
       "lat": 45.8744266,
       "lon": 13.0413307,
       "type": "borgo",
@@ -14349,7 +14350,7 @@
       "visibility": "classica",
       "tags": [
         "gfoss_id=3767",
-        "name=Rivignano / Rivignan",
+        "name=Rivignano",
         "name:fur=Rivignan",
         "name:it=Rivignano",
         "place=village",
@@ -16495,7 +16496,8 @@
       "tags": [
         "name=Ville Del Monte",
         "place=village",
-        "wikidata=Q1496515"
+        "wikidata=Q1496515",
+        "wikipedia=it:Ville del Monte"
       ],
       "score": 85
     },
@@ -17094,7 +17096,7 @@
     },
     {
       "id": "node:312723603",
-      "name": "San Foca / San Foche",
+      "name": "San Foca",
       "lat": 46.058614,
       "lon": 12.6919131,
       "type": "borgo",
@@ -17102,7 +17104,7 @@
       "visibility": "classica",
       "tags": [
         "loc_name:fur=San Foca",
-        "name=San Foca / San Foche",
+        "name=San Foca",
         "name:fur=San Foche",
         "name:it=San Foca",
         "place=village",
@@ -18303,8 +18305,8 @@
     {
       "id": "node:347088089",
       "name": "Reschigliano",
-      "lat": 45.4786879,
-      "lon": 11.9269877,
+      "lat": 45.4784063,
+      "lon": 11.9269378,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -20869,7 +20871,7 @@
     },
     {
       "id": "node:468216285",
-      "name": "Timau / Tischlbong",
+      "name": "Timau",
       "lat": 46.5828968,
       "lon": 13.0039288,
       "type": "borgo",
@@ -20877,7 +20879,7 @@
       "visibility": "classica",
       "tags": [
         "loc_name:de=Tischlbong",
-        "name=Timau / Tischlbong",
+        "name=Timau",
         "name:bar=Tischlbong",
         "name:de=Tischelwang",
         "name:fur=Tamau",
@@ -20987,8 +20989,8 @@
     {
       "id": "node:470000985",
       "name": "Auserpèrg - San Francesco",
-      "lat": 46.1029855,
-      "lon": 11.3108581,
+      "lat": 46.1007586,
+      "lon": 11.3104331,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -21183,14 +21185,14 @@
     },
     {
       "id": "node:471640146",
-      "name": "Dardago / Dardâc",
+      "name": "Dardago",
       "lat": 46.0534695,
       "lon": 12.5345156,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Dardago / Dardâc",
+        "name=Dardago",
         "name:fur=Dardâc",
         "name:it=Dardago",
         "place=village",
@@ -21280,7 +21282,7 @@
     },
     {
       "id": "node:474375889",
-      "name": "Iutizzo / Jutiç",
+      "name": "Iutizzo",
       "lat": 45.9450196,
       "lon": 12.9693881,
       "type": "borgo",
@@ -21288,7 +21290,7 @@
       "visibility": "classica",
       "tags": [
         "loc_name:fur=Jutìs",
-        "name=Iutizzo / Jutiç",
+        "name=Iutizzo",
         "name:fur=Jutiç",
         "name:it=Iutizzo",
         "place=village",
@@ -21298,14 +21300,14 @@
     },
     {
       "id": "node:474375896",
-      "name": "Rivolto / Rivolt",
+      "name": "Rivolto",
       "lat": 45.9537388,
       "lon": 13.0205074,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Rivolto / Rivolt",
+        "name=Rivolto",
         "name:fur=Rivolt",
         "name:it=Rivolto",
         "place=village",
@@ -21738,14 +21740,14 @@
     },
     {
       "id": "node:485789222",
-      "name": "Istrago / Distrà",
+      "name": "Istrago",
       "lat": 46.1244862,
       "lon": 12.8794317,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Istrago / Distrà",
+        "name=Istrago",
         "name:fur=Distrà",
         "name:it=Istrago",
         "place=village",
@@ -21774,14 +21776,14 @@
     },
     {
       "id": "node:485813820",
-      "name": "Barbeano / Barbean",
+      "name": "Barbeano",
       "lat": 46.0851045,
       "lon": 12.8705369,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Barbeano / Barbean",
+        "name=Barbeano",
         "name:fur=Barbean",
         "name:it=Barbeano",
         "place=village",
@@ -21792,14 +21794,14 @@
     },
     {
       "id": "node:485821245",
-      "name": "Provesano / Provesan",
+      "name": "Provesano",
       "lat": 46.0666161,
       "lon": 12.886949,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Provesano / Provesan",
+        "name=Provesano",
         "name:fur=Provesan",
         "name:it=Provesano",
         "place=village",
@@ -21944,7 +21946,7 @@
     },
     {
       "id": "node:494788799",
-      "name": "San Giovanni di Casarsa / San Zuan",
+      "name": "San Giovanni di Casarsa",
       "lat": 45.9423735,
       "lon": 12.8373765,
       "type": "borgo",
@@ -21952,7 +21954,7 @@
       "visibility": "classica",
       "tags": [
         "loc_name:it=San Giovanni",
-        "name=San Giovanni di Casarsa / San Zuan",
+        "name=San Giovanni di Casarsa",
         "name:fur=San Zuan",
         "name:it=San Giovanni di Casarsa",
         "name:source=survey",
@@ -21963,7 +21965,7 @@
     },
     {
       "id": "node:494788805",
-      "name": "Versutta / Versuta",
+      "name": "Versutta",
       "lat": 45.9440266,
       "lon": 12.8571463,
       "type": "borgo",
@@ -21971,7 +21973,7 @@
       "visibility": "classica",
       "tags": [
         "loc_name:fur=Versuta",
-        "name=Versutta / Versuta",
+        "name=Versutta",
         "name:fur=Versute",
         "name:it=Versutta",
         "place=village",
@@ -21982,7 +21984,7 @@
     },
     {
       "id": "node:494797505",
-      "name": "Rosa / Rose",
+      "name": "Rosa",
       "lat": 45.9252867,
       "lon": 12.8832782,
       "type": "borgo",
@@ -21990,7 +21992,7 @@
       "visibility": "classica",
       "tags": [
         "loc_name:fur=Rosa",
-        "name=Rosa / Rose",
+        "name=Rosa",
         "name:fur=Rose",
         "name:it=Rosa",
         "place=village",
@@ -22034,7 +22036,7 @@
     },
     {
       "id": "node:495951186",
-      "name": "Bagnarola / Bagnarole",
+      "name": "Bagnarola",
       "lat": 45.867386,
       "lon": 12.8597827,
       "type": "borgo",
@@ -22042,7 +22044,7 @@
       "visibility": "classica",
       "tags": [
         "loc_name:fur=Bagnarola",
-        "name=Bagnarola / Bagnarole",
+        "name=Bagnarola",
         "name:fur=Bagnarole",
         "name:it=Bagnarola",
         "place=village",
@@ -22147,20 +22149,21 @@
         "name=Lenzumo",
         "place=village",
         "population=317",
-        "wikidata=Q18480277"
+        "wikidata=Q18480277",
+        "wikipedia=it:Lenzumo"
       ],
       "score": 85
     },
     {
       "id": "node:498732265",
-      "name": "Bannia / Banìe",
+      "name": "Bannia",
       "lat": 45.9185534,
       "lon": 12.7570575,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Bannia / Banìe",
+        "name=Bannia",
         "name:fur=Banìe",
         "name:it=Bannia",
         "place=village",
@@ -22170,14 +22173,14 @@
     },
     {
       "id": "node:498732266",
-      "name": "Pescincanna / Pissancjane",
+      "name": "Pescincanna",
       "lat": 45.9419673,
       "lon": 12.7534918,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Pescincanna / Pissancjane",
+        "name=Pescincanna",
         "name:fur=Pissancjane",
         "name:it=Pescincanna",
         "place=village",
@@ -22188,7 +22191,7 @@
     },
     {
       "id": "node:498737131",
-      "name": "Orcenico Superiore / Durcinis Disore",
+      "name": "Orcenico Superiore",
       "lat": 45.9662886,
       "lon": 12.814697,
       "type": "borgo",
@@ -22196,7 +22199,7 @@
       "visibility": "classica",
       "tags": [
         "loc_name:fur=Dursinins Disora",
-        "name=Orcenico Superiore / Durcinis Disore",
+        "name=Orcenico Superiore",
         "name:fur=Durcinins Disore",
         "name:it=Orcenico Superiore",
         "place=village",
@@ -22207,7 +22210,7 @@
     },
     {
       "id": "node:498737136",
-      "name": "Ovoledo / Dovolêt",
+      "name": "Ovoledo",
       "lat": 45.9761797,
       "lon": 12.7838875,
       "type": "borgo",
@@ -22215,7 +22218,7 @@
       "visibility": "classica",
       "tags": [
         "loc_name:fur=Dovoleit",
-        "name=Ovoledo / Dovolêt",
+        "name=Ovoledo",
         "name:fur=Dovolêt",
         "name:it=Ovoledo",
         "place=village",
@@ -22322,7 +22325,7 @@
     },
     {
       "id": "node:513792549",
-      "name": "Pozzo / Poç",
+      "name": "Pozzo",
       "lat": 46.0478819,
       "lon": 12.8879444,
       "type": "borgo",
@@ -22330,7 +22333,7 @@
       "visibility": "classica",
       "tags": [
         "loc_name:fur=Pos",
-        "name=Pozzo / Poç",
+        "name=Pozzo",
         "name:fur=Poç",
         "name:it=Pozzo",
         "place=village",
@@ -22601,14 +22604,14 @@
     },
     {
       "id": "node:524413847",
-      "name": "Piancavallo / Plancjaval",
+      "name": "Piancavallo",
       "lat": 46.1092703,
       "lon": 12.5190567,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Piancavallo / Plancjaval",
+        "name=Piancavallo",
         "name:fur=Plancjaval",
         "name:it=Piancavallo",
         "place=village",
@@ -22969,8 +22972,8 @@
     {
       "id": "node:561447015",
       "name": "Terraglione",
-      "lat": 45.4831344,
-      "lon": 11.8978033,
+      "lat": 45.4835306,
+      "lon": 11.8976211,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -24189,7 +24192,7 @@
     },
     {
       "id": "node:662571977",
-      "name": "San Odorico al Tagliamento / San Durì",
+      "name": "San Odorico al Tagliamento",
       "lat": 46.0473414,
       "lon": 12.9336858,
       "type": "borgo",
@@ -24197,7 +24200,7 @@
       "visibility": "classica",
       "tags": [
         "alt_name=Sant'Odorico / San Durì",
-        "name=San Odorico al Tagliamento / San Durì",
+        "name=San Odorico al Tagliamento",
         "name:fur=San Durì",
         "name:it=San Odorico al Tagliamento",
         "place=village",
@@ -24932,7 +24935,7 @@
     },
     {
       "id": "node:769200454",
-      "name": "Baseglia / Baselie",
+      "name": "Baseglia",
       "lat": 46.1305103,
       "lon": 12.9017091,
       "type": "borgo",
@@ -24940,7 +24943,7 @@
       "visibility": "classica",
       "tags": [
         "loc_name:fur=Baselia",
-        "name=Baseglia / Baselie",
+        "name=Baseglia",
         "name:fur=Baselie",
         "name:it=Baseglia",
         "place=village",
@@ -24951,7 +24954,7 @@
     },
     {
       "id": "node:769200455",
-      "name": "Vacile / Vacîl",
+      "name": "Vacile",
       "lat": 46.1400438,
       "lon": 12.8908412,
       "type": "borgo",
@@ -24959,7 +24962,7 @@
       "visibility": "classica",
       "tags": [
         "loc_name:fur=Vassîl",
-        "name=Vacile / Vacîl",
+        "name=Vacile",
         "name:fur=Vacîl",
         "name:it=Vacile",
         "place=village",
@@ -24970,14 +24973,14 @@
     },
     {
       "id": "node:769200456",
-      "name": "Gaio / Gjai",
+      "name": "Gaio",
       "lat": 46.1410878,
       "lon": 12.9076867,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Gaio / Gjai",
+        "name=Gaio",
         "name:fur=Gjai",
         "name:it=Gaio",
         "place=village",
@@ -24988,7 +24991,7 @@
     },
     {
       "id": "node:769200457",
-      "name": "Gradisca / Gradiscje",
+      "name": "Gradisca",
       "lat": 46.0724506,
       "lon": 12.9014231,
       "type": "borgo",
@@ -24996,7 +24999,7 @@
       "visibility": "classica",
       "tags": [
         "loc_name:fur=Gradiscja",
-        "name=Gradisca / Gradiscje",
+        "name=Gradisca",
         "name:fur=Gradiscje",
         "name:it=Gradisca",
         "place=village",
@@ -25071,14 +25074,14 @@
     },
     {
       "id": "node:775792798",
-      "name": "Sivigliano / Sivian",
+      "name": "Sivigliano",
       "lat": 45.8832886,
       "lon": 13.0602486,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Sivigliano / Sivian",
+        "name=Sivigliano",
         "name:fur=Sivian",
         "name:it=Sivigliano",
         "place=village",
@@ -25287,14 +25290,14 @@
     },
     {
       "id": "node:824997489",
-      "name": "Gradiscutta / Gridiscjute",
+      "name": "Gradiscutta",
       "lat": 45.9002974,
       "lon": 12.9639823,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Gradiscutta / Gridiscjute",
+        "name=Gradiscutta",
         "name:fur=Gridiscjute",
         "name:it=Gradiscutta",
         "place=village",
@@ -25367,14 +25370,14 @@
     },
     {
       "id": "node:834446179",
-      "name": "Toppo / Top",
+      "name": "Toppo",
       "lat": 46.2019559,
       "lon": 12.8300519,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Toppo / Top",
+        "name=Toppo",
         "name:fur=Top",
         "name:it=Toppo",
         "place=village",
@@ -25437,7 +25440,7 @@
     },
     {
       "id": "node:835550697",
-      "name": "Muris / Mures",
+      "name": "Muris",
       "lat": 46.1886822,
       "lon": 12.9973292,
       "type": "borgo",
@@ -25445,7 +25448,7 @@
       "visibility": "classica",
       "tags": [
         "loc_name:fur=Mures",
-        "name=Muris / Mures",
+        "name=Muris",
         "name:fur=Muris",
         "name:it=Muris",
         "place=village",
@@ -25486,14 +25489,14 @@
     },
     {
       "id": "node:835975129",
-      "name": "Colle / Cuel",
+      "name": "Colle",
       "lat": 46.1620434,
       "lon": 12.8089746,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Colle / Cuel",
+        "name=Colle",
         "name:fur=Cuel",
         "name:it=Colle",
         "place=village",
@@ -25704,14 +25707,14 @@
     },
     {
       "id": "node:855680405",
-      "name": "Valeriano / Valarian",
+      "name": "Valeriano",
       "lat": 46.1682736,
       "lon": 12.9206195,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Valeriano / Valarian",
+        "name=Valeriano",
         "name:fur=Valarian",
         "name:it=Valeriano",
         "place=village",
@@ -25757,14 +25760,14 @@
     },
     {
       "id": "node:859292339",
-      "name": "Coderno / Coder",
+      "name": "Coderno",
       "lat": 46.0302001,
       "lon": 12.9926891,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Coderno / Coder",
+        "name=Coderno",
         "name:fur=Coder",
         "name:it=Coderno",
         "place=village",
@@ -25809,7 +25812,7 @@
     },
     {
       "id": "node:863038229",
-      "name": "Paludea / Palugjee",
+      "name": "Paludea",
       "lat": 46.2001976,
       "lon": 12.9035234,
       "type": "borgo",
@@ -25820,7 +25823,7 @@
         "gfoss_id=34365",
         "istat_id=2147483647",
         "loc_name:fur=Palugjea",
-        "name=Paludea / Palugjee",
+        "name=Paludea",
         "name:fur=Palugjee",
         "name:it=Paludea",
         "place=village",
@@ -26465,7 +26468,7 @@
     },
     {
       "id": "node:912312678",
-      "name": "San Leonardo Valcellina / Salinart",
+      "name": "San Leonardo Valcellina",
       "lat": 46.0969706,
       "lon": 12.6822627,
       "type": "borgo",
@@ -26476,7 +26479,7 @@
         "gfoss_id=34509",
         "istat_id=2147483647",
         "loc_name:fur=Salinart",
-        "name=San Leonardo Valcellina / Salinart",
+        "name=San Leonardo Valcellina",
         "name:fur=San Lenart",
         "name:it=San Leonardo Valcellina",
         "place=village",
@@ -26489,7 +26492,7 @@
     },
     {
       "id": "node:912648824",
-      "name": "Turrida / Turide",
+      "name": "Turrida",
       "lat": 46.0287209,
       "lon": 12.9329362,
       "type": "borgo",
@@ -26499,7 +26502,7 @@
         "ele=81",
         "gfoss_id=33776",
         "istat_id=2147483647",
-        "name=Turrida / Turide",
+        "name=Turrida",
         "name:fur=Turide",
         "name:it=Turrida",
         "place=village",
@@ -26993,14 +26996,14 @@
     },
     {
       "id": "node:1027169232",
-      "name": "Cornino / Curnin",
+      "name": "Cornino",
       "lat": 46.2221937,
       "lon": 13.0015682,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Cornino / Curnin",
+        "name=Cornino",
         "name:fur=Curnin",
         "name:it=Cornino",
         "place=village",
@@ -29707,14 +29710,14 @@
     },
     {
       "id": "node:1224640231",
-      "name": "Formeaso / Fomeâs",
+      "name": "Formeaso",
       "lat": 46.4558546,
       "lon": 13.0252962,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Formeaso / Fomeâs",
+        "name=Formeaso",
         "name:fur=Formeâs",
         "name:it=Formeaso",
         "place=village",
@@ -29724,14 +29727,14 @@
     },
     {
       "id": "node:1224666033",
-      "name": "Zovello / Zuviel",
+      "name": "Zovello",
       "lat": 46.5310492,
       "lon": 12.9515575,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Zovello / Zuviel",
+        "name=Zovello",
         "name:fur=Zuviel",
         "name:it=Zovello",
         "place=village",
@@ -32410,14 +32413,14 @@
     },
     {
       "id": "node:1440147054",
-      "name": "Virco / Vuerc",
+      "name": "Virco",
       "lat": 45.9371219,
       "lon": 13.071806,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Virco / Vuerc",
+        "name=Virco",
         "name:fur=Vuerc",
         "name:it=Virco",
         "place=village",
@@ -32949,7 +32952,7 @@
     },
     {
       "id": "node:1463339808",
-      "name": "Suzzolins / Sussulins",
+      "name": "Suzzolins",
       "lat": 45.8253592,
       "lon": 12.8856606,
       "type": "borgo",
@@ -32957,7 +32960,7 @@
       "visibility": "classica",
       "tags": [
         "alt_name:fur=Suçulins",
-        "name=Suzzolins / Sussulins",
+        "name=Suzzolins",
         "name:fur=Sussulins",
         "name:it=Suzzolins",
         "place=village",
@@ -34306,14 +34309,14 @@
     },
     {
       "id": "node:1617600886",
-      "name": "Cimpello / Çumpiel",
+      "name": "Cimpello",
       "lat": 45.9119727,
       "lon": 12.6997107,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Cimpello / Çumpiel",
+        "name=Cimpello",
         "name:fur=Çumpiel",
         "name:it=Cimpello",
         "place=village",
@@ -34577,7 +34580,7 @@
     },
     {
       "id": "node:1711504796",
-      "name": "Marsure / Marsuris",
+      "name": "Marsure",
       "lat": 46.0958621,
       "lon": 12.5976733,
       "type": "borgo",
@@ -34585,7 +34588,7 @@
       "visibility": "classica",
       "tags": [
         "loc_name:fur=Marsure",
-        "name=Marsure / Marsuris",
+        "name=Marsure",
         "name:fur=Marsuris",
         "name:it=Marsure",
         "place=village",
@@ -34629,14 +34632,14 @@
     },
     {
       "id": "node:1716492442",
-      "name": "Flambro / Flambri",
+      "name": "Flambro",
       "lat": 45.9344713,
       "lon": 13.0938096,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Flambro / Flambri",
+        "name=Flambro",
         "name:fur=Flambri",
         "name:it=Flambro",
         "place=village",
@@ -34728,14 +34731,14 @@
     },
     {
       "id": "node:1722054191",
-      "name": "Ponte della Delizia / Cjasis dal Puint",
+      "name": "Ponte della Delizia",
       "lat": 45.9649863,
       "lon": 12.8936487,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Ponte della Delizia / Cjasis dal Puint",
+        "name=Ponte della Delizia",
         "name:fur=Cjasis dal Puint",
         "name:it=Ponte della Delizia",
         "place=village",
@@ -35146,7 +35149,8 @@
       "tags": [
         "name=Manzano",
         "place=village",
-        "wikidata=Q18480511"
+        "wikidata=Q18480511",
+        "wikipedia=it:Manzano (Mori)"
       ],
       "score": 85
     },
@@ -35209,7 +35213,8 @@
       "tags": [
         "name=Nomesino",
         "place=village",
-        "wikidata=Q18481415"
+        "wikidata=Q18481415",
+        "wikipedia=it:Nomesino"
       ],
       "score": 85
     },
@@ -36933,7 +36938,8 @@
         "alt_name=Chirano di Arco",
         "name=Chiarano",
         "place=village",
-        "wikidata=Q101146630"
+        "wikidata=Q101146630",
+        "wikipedia=it:Chiarano (Arco)"
       ],
       "score": 85
     },
@@ -37989,14 +37995,14 @@
     },
     {
       "id": "node:2559931394",
-      "name": "Pozzo / Poç",
+      "name": "Pozzo",
       "lat": 45.8472314,
       "lon": 12.6150898,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Pozzo / Poç",
+        "name=Pozzo",
         "name:fur=Poç",
         "name:it=Pozzo",
         "place=village",
@@ -38223,21 +38229,6 @@
         "place=village",
         "wikidata=Q3693804",
         "wikipedia=it:Corné (Brentonico)"
-      ],
-      "score": 85
-    },
-    {
-      "id": "node:2621355017",
-      "name": "Crosano",
-      "lat": 45.8203213,
-      "lon": 10.9736927,
-      "type": "borgo",
-      "borgo_type": "classico",
-      "visibility": "classica",
-      "tags": [
-        "name=Crosano",
-        "place=village",
-        "wikidata=Q18479271"
       ],
       "score": 85
     },
@@ -39643,8 +39634,8 @@
     {
       "id": "node:3420413061",
       "name": "Mitterpèrg - San Felice",
-      "lat": 46.112063,
-      "lon": 11.321818,
+      "lat": 46.1122415,
+      "lon": 11.3189022,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -41408,14 +41399,14 @@
     },
     {
       "id": "node:5472865636",
-      "name": "Villotta di Visinale / Vilote di Visinâl",
+      "name": "Villotta di Visinale",
       "lat": 45.8928414,
       "lon": 12.6322014,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Villotta di Visinale / Vilote di Visinâl",
+        "name=Villotta di Visinale",
         "name:fur=Vilote di Visinâl",
         "name:it=Villotta di Visinale",
         "place=village",
@@ -42422,6 +42413,23 @@
       "score": 85
     },
     {
+      "id": "relation:1333978",
+      "name": "Crosano",
+      "lat": 45.8199767,
+      "lon": 10.9722476,
+      "type": "borgo",
+      "borgo_type": "classico",
+      "visibility": "classica",
+      "tags": [
+        "landuse=residential",
+        "name=Crosano",
+        "place=village",
+        "type=multipolygon",
+        "wikidata=Q18479271"
+      ],
+      "score": 85
+    },
+    {
       "id": "relation:1377783",
       "name": "Cornalè",
       "lat": 45.8824774,
@@ -42489,8 +42497,8 @@
         "name:de=Moor in Tirol",
         "name:it=Mori",
         "place=village",
-        "population=10048",
-        "population:date=2022-12-31",
+        "population=10211",
+        "population:date=2023-12-31",
         "source=geodati.gfoss.it",
         "type=multipolygon",
         "wikidata=Q296217",
@@ -42624,7 +42632,9 @@
         "name:zh-Hans=梅斯特雷",
         "name:zh-Hant=梅斯特雷",
         "place=town",
-        "population=87377",
+        "population=50739",
+        "population:date=2025-12-31",
+        "population:source=https://www.comune.venezia.it/it/content/serie-storiche",
         "postal_code=30170",
         "source:population=wikipedia",
         "wikidata=Q541405",
@@ -42956,25 +42966,6 @@
       "score": 80
     },
     {
-      "id": "node:64776992",
-      "name": "Mori",
-      "lat": 45.8533795,
-      "lon": 10.9753961,
-      "type": "borgo",
-      "borgo_type": "classico",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=2987",
-        "name=Mori",
-        "place=town",
-        "population=10211",
-        "population:date=2023-12-31",
-        "wikidata=Q296217",
-        "wikipedia=it:Mori (Italia)"
-      ],
-      "score": 80
-    },
-    {
       "id": "node:64777050",
       "name": "Klausen - Chiusa",
       "lat": 46.6399237,
@@ -43122,12 +43113,14 @@
         "name=Auronzo di Cadore",
         "name:it=Auronzo di Cadore",
         "name:lld=Auronzo",
+        "old_name:de=Obrentsch",
         "place=town",
         "population=3028",
         "population:date=2025-01-01",
         "source=geodati.gfoss.it",
         "source:population=Istat",
-        "wikidata=Q40153"
+        "wikidata=Q40153",
+        "wikipedia=it:Auronzo di Cadore"
       ],
       "score": 80
     },
@@ -45013,7 +45006,7 @@
     },
     {
       "id": "node:66502887",
-      "name": "Fiume Veneto / Fiume",
+      "name": "Fiume Veneto",
       "lat": 45.9279427,
       "lon": 12.7321755,
       "type": "borgo",
@@ -45022,7 +45015,7 @@
       "tags": [
         "gfoss_id=7527",
         "loc_name:fur=Flum;Vildiflùm",
-        "name=Fiume Veneto / Fiume",
+        "name=Fiume Veneto",
         "name:fur=Vile di Flum",
         "name:it=Fiume Veneto",
         "name:vec=Fiume",
@@ -47130,14 +47123,14 @@
     },
     {
       "id": "node:1584979995",
-      "name": "Borgo Mesinis / Borc Mesinis",
+      "name": "Borgo Mesinis",
       "lat": 46.1875804,
       "lon": 12.8087425,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Borgo Mesinis / Borc Mesinis",
+        "name=Borgo Mesinis",
         "name:fur=Mesinis",
         "name:it=Borgo Mesinis",
         "place=hamlet",
@@ -58214,7 +58207,8 @@
         "ele=759",
         "name=Enguiso",
         "place=hamlet",
-        "wikidata=Q18479555"
+        "wikidata=Q18479555",
+        "wikipedia=it:Enguiso"
       ],
       "score": 70
     },
@@ -59718,14 +59712,14 @@
     },
     {
       "id": "node:604393853",
-      "name": "Cabia / Cjabie",
+      "name": "Cabia",
       "lat": 46.4655635,
       "lon": 13.036439,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Cabia / Cjabie",
+        "name=Cabia",
         "name:fur=Cjabie",
         "name:it=Cabia",
         "place=hamlet",
@@ -59996,12 +59990,13 @@
     {
       "id": "node:627297672",
       "name": "Kasar - Maso Casari",
-      "lat": 46.1108716,
-      "lon": 11.321947,
+      "lat": 46.1107938,
+      "lon": 11.321474,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
+        "addr:city=Fierozzo",
         "name=Kasar - Maso Casari",
         "name:it=Maso Casari",
         "name:mhn=Kasar",
@@ -61196,14 +61191,14 @@
     },
     {
       "id": "node:835545607",
-      "name": "Arcano Superiore / Darcjan Disore",
+      "name": "Arcano Superiore",
       "lat": 46.1446623,
       "lon": 13.038129,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Arcano Superiore / Darcjan Disore",
+        "name=Arcano Superiore",
         "name:fur=Darcjan Disore",
         "name:it=Arcano Superiore",
         "place=hamlet",
@@ -61617,14 +61612,14 @@
     },
     {
       "id": "node:859055768",
-      "name": "Costabeorchia / Cueste Beorcje",
+      "name": "Costabeorchia",
       "lat": 46.194,
       "lon": 12.9341147,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Costabeorchia / Cueste Beorcje",
+        "name=Costabeorchia",
         "name:fur=Cuestebeorcje",
         "name:it=Costabeorchia",
         "place=hamlet",
@@ -61735,7 +61730,7 @@
     },
     {
       "id": "node:863038043",
-      "name": "Vigna / Vigne",
+      "name": "Vigna",
       "lat": 46.1943916,
       "lon": 12.9017329,
       "type": "borgo",
@@ -61746,7 +61741,7 @@
         "gfoss_id=34366",
         "istat_id=2147483647",
         "loc_name:fur=Vigna",
-        "name=Vigna / Vigne",
+        "name=Vigna",
         "name:fur=Vigne",
         "name:it=Vigna",
         "place=hamlet",
@@ -61838,7 +61833,7 @@
     },
     {
       "id": "node:863043593",
-      "name": "Oltrerugo / Natarù",
+      "name": "Oltrerugo",
       "lat": 46.1918909,
       "lon": 12.9145929,
       "type": "borgo",
@@ -61848,7 +61843,7 @@
         "ele=267",
         "gfoss_id=34364",
         "istat_id=2147483647",
-        "name=Oltrerugo / Natarù",
+        "name=Oltrerugo",
         "name:fur=Natarù",
         "name:it=Oltrerugo",
         "place=hamlet",
@@ -61940,7 +61935,7 @@
     },
     {
       "id": "node:863048384",
-      "name": "Sottoforca / Sotforcje",
+      "name": "Sottoforca",
       "lat": 46.1957859,
       "lon": 12.9039687,
       "type": "borgo",
@@ -61951,7 +61946,7 @@
         "gfoss_id=34383",
         "istat_id=2147483647",
         "loc_name:fur=Sotforcja",
-        "name=Sottoforca / Sotforcje",
+        "name=Sottoforca",
         "name:fur=Sotforcje",
         "name:it=Sottoforca",
         "place=hamlet",
@@ -62025,7 +62020,7 @@
     },
     {
       "id": "node:863052673",
-      "name": "Braida / Braide",
+      "name": "Braida",
       "lat": 46.2002365,
       "lon": 12.8933826,
       "type": "borgo",
@@ -62036,7 +62031,7 @@
         "gfoss_id=34367",
         "istat_id=2147483647",
         "loc_name:fur=Braida",
-        "name=Braida / Braide",
+        "name=Braida",
         "name:fur=Braide",
         "name:it=Braida",
         "place=hamlet",
@@ -62063,7 +62058,7 @@
     },
     {
       "id": "node:865278037",
-      "name": "Campone / Cjampon",
+      "name": "Campone",
       "lat": 46.2604352,
       "lon": 12.8323089,
       "type": "borgo",
@@ -62073,7 +62068,7 @@
         "ele=436",
         "gfoss_id=34743",
         "istat_id=2147483647",
-        "name=Campone / Cjampon",
+        "name=Campone",
         "name:fur=Cjampon",
         "name:it=Campone",
         "place=hamlet",
@@ -63490,14 +63485,14 @@
     },
     {
       "id": "node:1029655358",
-      "name": "Coseanetto / Coseanet",
+      "name": "Coseanetto",
       "lat": 46.0992379,
       "lon": 13.0275214,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Coseanetto / Coseanet",
+        "name=Coseanetto",
         "name:fur=Coseanet",
         "name:it=Coseanetto",
         "place=hamlet",
@@ -69568,14 +69563,14 @@
     },
     {
       "id": "node:1184183466",
-      "name": "San Tomaso / San Tomâs",
+      "name": "San Tomaso",
       "lat": 46.178361,
       "lon": 13.0364285,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=San Tomaso / San Tomâs",
+        "name=San Tomaso",
         "name:fur=San Tomâs",
         "name:it=San Tomaso",
         "place=hamlet",
@@ -72447,14 +72442,14 @@
     },
     {
       "id": "node:1333892489",
-      "name": "Sterpo / Sterp",
+      "name": "Sterpo",
       "lat": 45.9048286,
       "lon": 13.0506659,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Sterpo / Sterp",
+        "name=Sterpo",
         "name:fur=Sterp",
         "name:it=Sterpo",
         "place=hamlet",
@@ -72805,7 +72800,8 @@
       "tags": [
         "name=Villa Banale",
         "place=hamlet",
-        "wikidata=Q18483737"
+        "wikidata=Q18483737",
+        "wikipedia=it:Villa Banale"
       ],
       "score": 70
     },
@@ -74431,7 +74427,7 @@
     },
     {
       "id": "node:1388329762",
-      "name": "Chiaulis / Cjaules",
+      "name": "Chiaulis",
       "lat": 46.4892839,
       "lon": 13.0963071,
       "type": "borgo",
@@ -74439,7 +74435,7 @@
       "visibility": "classica",
       "tags": [
         "loc_name:fur=Cjaules",
-        "name=Chiaulis / Cjaules",
+        "name=Chiaulis",
         "name:fur=Cjaulis",
         "name:it=Chiaulis",
         "place=hamlet",
@@ -76115,7 +76111,7 @@
     },
     {
       "id": "node:1440918944",
-      "name": "Fornasatte / Fornasatis",
+      "name": "Fornasatte",
       "lat": 46.1993892,
       "lon": 12.7140081,
       "type": "borgo",
@@ -76125,7 +76121,7 @@
         "ele=433",
         "gfoss_id=34484",
         "istat_id=2147483647",
-        "name=Fornasatte / Fornasatis",
+        "name=Fornasatte",
         "name:fur=Fornasatis",
         "name:it=Fornasatte",
         "place=hamlet",
@@ -76363,7 +76359,7 @@
     },
     {
       "id": "node:1444385112",
-      "name": "Molassa / Molasse",
+      "name": "Molassa",
       "lat": 46.1967405,
       "lon": 12.5915434,
       "type": "borgo",
@@ -76374,7 +76370,7 @@
         "gfoss_id=34327",
         "istat_id=2147483647",
         "loc_name:fur=Molassa",
-        "name=Molassa / Molasse",
+        "name=Molassa",
         "name:fur=Molasse",
         "name:it=Molassa",
         "place=hamlet",
@@ -77578,14 +77574,14 @@
     },
     {
       "id": "node:1463874004",
-      "name": "Pignano / Pignan",
+      "name": "Pignano",
       "lat": 46.1699906,
       "lon": 12.9879962,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Pignano / Pignan",
+        "name=Pignano",
         "name:fur=Pignan",
         "name:it=Pignano",
         "place=hamlet",
@@ -77595,7 +77591,7 @@
     },
     {
       "id": "node:1463874015",
-      "name": "San Pietro / San Pieri",
+      "name": "San Pietro",
       "lat": 46.1850043,
       "lon": 12.9625903,
       "type": "borgo",
@@ -77603,7 +77599,7 @@
       "visibility": "classica",
       "tags": [
         "loc_name:fur=Il Borc",
-        "name=San Pietro / San Pieri",
+        "name=San Pietro",
         "name:fur=San Pieri",
         "name:it=San Pietro",
         "place=hamlet",
@@ -78534,7 +78530,7 @@
     },
     {
       "id": "node:1521623857",
-      "name": "Englaro di Sopra / Denglâr Disore",
+      "name": "Englaro di Sopra",
       "lat": 46.5303403,
       "lon": 13.031088,
       "type": "borgo",
@@ -78544,7 +78540,7 @@
         "ele=656",
         "gfoss_id=33427",
         "istat_id=2147483647",
-        "name=Englaro di Sopra / Denglâr Disore",
+        "name=Englaro di Sopra",
         "name:fur=Denglâr Disore",
         "name:it=Englaro di Sopra",
         "place=hamlet",
@@ -78730,7 +78726,7 @@
     },
     {
       "id": "node:1531030061",
-      "name": "Dandolo di Sopra / Dandul",
+      "name": "Dandolo di Sopra",
       "lat": 46.1113882,
       "lon": 12.7396261,
       "type": "borgo",
@@ -78740,7 +78736,7 @@
         "ele=216",
         "gfoss_id=34496",
         "istat_id=2147483647",
-        "name=Dandolo di Sopra / Dandul",
+        "name=Dandolo di Sopra",
         "name:fur=Dandul",
         "name:it=Dandolo di Sopra",
         "place=hamlet",
@@ -78752,7 +78748,7 @@
     },
     {
       "id": "node:1531030063",
-      "name": "Molino di Campagna / Mulin di Cjampagne",
+      "name": "Molino di Campagna",
       "lat": 46.154932,
       "lon": 12.727031,
       "type": "borgo",
@@ -78763,7 +78759,7 @@
         "gfoss_id=34497",
         "istat_id=2147483647",
         "loc_name:fur=Mulin di Cjampagna",
-        "name=Molino di Campagna / Mulin di Cjampagne",
+        "name=Molino di Campagna",
         "name:fur=Mulin di Cjampagne",
         "name:it=Molino di Campagna",
         "place=hamlet",
@@ -81960,6 +81956,8 @@
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
+        "addr:city=Fierozzo",
+        "addr:suburb=San Felice",
         "name=Markln - Maso Marcheli",
         "name:it=Maso Marcheli",
         "name:mhn=Markln",
@@ -85710,14 +85708,14 @@
     },
     {
       "id": "node:2218266417",
-      "name": "Sant'Andrea / Sant'Andree",
+      "name": "Sant'Andrea",
       "lat": 45.8677172,
       "lon": 12.6461208,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Sant'Andrea / Sant'Andree",
+        "name=Sant'Andrea",
         "name:fur=Sant'Andree",
         "name:it=Sant'Andrea",
         "place=hamlet",
@@ -88321,14 +88319,14 @@
     },
     {
       "id": "node:2511695103",
-      "name": "Venzone / Vençon",
+      "name": "Venzone",
       "lat": 45.8552027,
       "lon": 12.8689752,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Venzone / Vençon",
+        "name=Venzone",
         "name:fur=Vençon",
         "name:it=Venzone",
         "place=hamlet",
@@ -88510,14 +88508,14 @@
     },
     {
       "id": "node:2535219450",
-      "name": "Villutta / Vilute",
+      "name": "Villutta",
       "lat": 45.8750139,
       "lon": 12.7727298,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Villutta / Vilute",
+        "name=Villutta",
         "name:fur=Vilute",
         "name:it=Villutta",
         "place=hamlet",
@@ -89244,7 +89242,7 @@
     },
     {
       "id": "node:2646066510",
-      "name": "Villanova / Vilanuova",
+      "name": "Villanova",
       "lat": 45.9332388,
       "lon": 12.6751644,
       "type": "borgo",
@@ -89253,7 +89251,7 @@
       "tags": [
         "alt_name=Frazione Villanova",
         "loc_name:fur=Vilanuova",
-        "name=Villanova / Vilanuova",
+        "name=Villanova",
         "name:fur=Vilegnove",
         "name:it=Villanova",
         "place=hamlet",
@@ -92391,8 +92389,8 @@
     {
       "id": "node:3292518576",
       "name": "Cantone Cisa",
-      "lat": 45.0393451,
-      "lon": 10.7467835,
+      "lat": 45.0393465,
+      "lon": 10.7467506,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -94380,7 +94378,7 @@
     },
     {
       "id": "node:3891438236",
-      "name": "Aonedis / Savonelis",
+      "name": "Aonedis",
       "lat": 46.1490716,
       "lon": 12.9631645,
       "type": "borgo",
@@ -94388,7 +94386,7 @@
       "visibility": "classica",
       "tags": [
         "loc_name:fur=Savoneles",
-        "name=Aonedis / Savonelis",
+        "name=Aonedis",
         "name:fur=Savonelis",
         "name:it=Aonedis",
         "place=hamlet",
@@ -94598,7 +94596,8 @@
       "tags": [
         "name=Prabi",
         "place=hamlet",
-        "wikidata=Q113571005"
+        "wikidata=Q113571005",
+        "wikipedia=it:Prabi"
       ],
       "score": 70
     },
@@ -96715,8 +96714,8 @@
     {
       "id": "node:4375682202",
       "name": "Fumero",
-      "lat": 46.3454319,
-      "lon": 10.3846627,
+      "lat": 46.3454911,
+      "lon": 10.3843301,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -99209,6 +99208,7 @@
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
+        "addr:city=Fierozzo",
         "name=Oubernroudler - Maso Rodleri",
         "name:it=Maso Rodleri",
         "name:mhn=Oubernroudler",
@@ -100346,14 +100346,14 @@
     },
     {
       "id": "node:9027822526",
-      "name": "Bando / Bant",
+      "name": "Bando",
       "lat": 46.0019731,
       "lon": 12.8633505,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Bando / Bant",
+        "name=Bando",
         "name:fur=Bant",
         "name:it=Bando",
         "place=hamlet",
@@ -102777,14 +102777,14 @@
     },
     {
       "id": "node:12282484053",
-      "name": "Musil / Musìl",
+      "name": "Musil",
       "lat": 45.9687439,
       "lon": 12.6934904,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Musil / Musìl",
+        "name=Musil",
         "name:fur=Musìl",
         "name:it=Musil",
         "place=hamlet",
@@ -103277,14 +103277,14 @@
     },
     {
       "id": "node:13475045793",
-      "name": "Maso",
+      "name": "Ponte Maso",
       "lat": 45.8881663,
       "lon": 11.3526836,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Maso",
+        "name=Ponte Maso",
         "place=hamlet",
         "wikidata=Q18506517"
       ],
@@ -127796,6 +127796,36 @@
       "score": 70
     },
     {
+      "id": "node:14183928828",
+      "name": "Mezzomonte di Sotto",
+      "lat": 45.9161799,
+      "lon": 11.1359686,
+      "type": "borgo",
+      "borgo_type": "classico",
+      "visibility": "classica",
+      "tags": [
+        "name=Mezzomonte di Sotto",
+        "place=hamlet",
+        "wikidata=Q18480946"
+      ],
+      "score": 70
+    },
+    {
+      "id": "node:14183928829",
+      "name": "Mezzomonte di Sopra",
+      "lat": 45.9169991,
+      "lon": 11.1386964,
+      "type": "borgo",
+      "borgo_type": "classico",
+      "visibility": "classica",
+      "tags": [
+        "name=Mezzomonte di Sopra",
+        "place=hamlet",
+        "wikidata=Q18480940"
+      ],
+      "score": 70
+    },
+    {
       "id": "way:27797687",
       "name": "Plars",
       "lat": 46.6855246,
@@ -127807,38 +127837,6 @@
         "name=Plars",
         "place=hamlet",
         "wikidata=Q18473268"
-      ],
-      "score": 70
-    },
-    {
-      "id": "way:38658081",
-      "name": "Mezzomonte di Sopra",
-      "lat": 45.9168497,
-      "lon": 11.1386347,
-      "type": "borgo",
-      "borgo_type": "classico",
-      "visibility": "classica",
-      "tags": [
-        "landuse=residential",
-        "name=Mezzomonte di Sopra",
-        "place=hamlet",
-        "wikidata=Q18480940"
-      ],
-      "score": 70
-    },
-    {
-      "id": "way:38658083",
-      "name": "Mezzomonte di Sotto",
-      "lat": 45.9160386,
-      "lon": 11.1360985,
-      "type": "borgo",
-      "borgo_type": "classico",
-      "visibility": "classica",
-      "tags": [
-        "landuse=residential",
-        "name=Mezzomonte di Sotto",
-        "place=hamlet",
-        "wikidata=Q18480946"
       ],
       "score": 70
     },
@@ -129084,7 +129082,7 @@
     },
     {
       "id": "node:66503026",
-      "name": "Porcia / Purcie",
+      "name": "Porcia",
       "lat": 45.9595119,
       "lon": 12.6133533,
       "type": "borgo",
@@ -129092,7 +129090,7 @@
       "visibility": "chicca",
       "tags": [
         "gfoss_id=7537",
-        "name=Porcia / Purcie",
+        "name=Porcia",
         "name:fur=Purcie",
         "name:it=Porcia",
         "note=riclassificato da \"suburb\" a \"town\" in quanto nonostante Porcia sia conurbata con Pordenone è un comune a sé stante. (https://wiki.openstreetmap.org/wiki/IT:Tag:place=suburb)",
@@ -148358,7 +148356,7 @@
     {
       "id": "relation:46800",
       "name": "Frassilongo - Garait",
-      "lat": 46.0745532,
+      "lat": 46.0742941,
       "lon": 11.3184411,
       "type": "borgo",
       "borgo_type": "classico",
@@ -154387,7 +154385,7 @@
     },
     {
       "id": "relation:179076",
-      "name": "Arba / Darbe",
+      "name": "Arba",
       "lat": 46.1474692,
       "lon": 12.791884,
       "type": "borgo",
@@ -154396,7 +154394,7 @@
       "tags": [
         "admin_level=8",
         "boundary=administrative",
-        "name=Arba / Darbe",
+        "name=Arba",
         "name:fur=Darbe",
         "name:it=Arba",
         "population=1352",
@@ -154518,7 +154516,7 @@
     },
     {
       "id": "relation:179087",
-      "name": "Rive d'Arcano / Rivis Darcjan",
+      "name": "Rive d'Arcano",
       "lat": 46.1268705,
       "lon": 13.0292547,
       "type": "borgo",
@@ -154527,7 +154525,7 @@
       "tags": [
         "admin_level=8",
         "boundary=administrative",
-        "name=Rive d'Arcano / Rivis Darcjan",
+        "name=Rive d'Arcano",
         "name:fur=Rivis d'Arcjan",
         "name:it=Rive d'Arcano",
         "population=2425",
@@ -154700,7 +154698,7 @@
     },
     {
       "id": "relation:179102",
-      "name": "Polcenigo / Polcenic - Al Borc",
+      "name": "Polcenigo",
       "lat": 46.042121,
       "lon": 12.4772381,
       "type": "borgo",
@@ -154709,7 +154707,7 @@
       "tags": [
         "admin_level=8",
         "boundary=administrative",
-        "name=Polcenigo / Polcenic - Al Borc",
+        "name=Polcenigo",
         "name:fur=Polcenic",
         "name:it=Polcenigo",
         "population=3103",
@@ -154753,7 +154751,7 @@
     },
     {
       "id": "relation:179108",
-      "name": "Cercivento / Çurçuvint",
+      "name": "Cercivento",
       "lat": 46.5431296,
       "lon": 12.978737,
       "type": "borgo",
@@ -154762,7 +154760,7 @@
       "tags": [
         "admin_level=8",
         "boundary=administrative",
-        "name=Cercivento / Çurçuvint",
+        "name=Cercivento",
         "name:fur=Çurçuvint",
         "population=601",
         "population:date=2026-08-28",
@@ -154778,7 +154776,7 @@
     },
     {
       "id": "relation:179112",
-      "name": "Clauzetto / Clausêt",
+      "name": "Clauzetto",
       "lat": 46.2532447,
       "lon": 12.8951437,
       "type": "borgo",
@@ -154787,7 +154785,7 @@
       "tags": [
         "admin_level=8",
         "boundary=administrative",
-        "name=Clauzetto / Clausêt",
+        "name=Clauzetto",
         "name:fur=Clausêt",
         "population=393",
         "population:date=2026-08-28",
@@ -154911,7 +154909,7 @@
     },
     {
       "id": "relation:179122",
-      "name": "Sauris / Zahre",
+      "name": "Sauris",
       "lat": 46.4669825,
       "lon": 12.689232,
       "type": "borgo",
@@ -154920,7 +154918,7 @@
       "tags": [
         "admin_level=8",
         "boundary=administrative",
-        "name=Sauris / Zahre",
+        "name=Sauris",
         "name:de=Zahre",
         "name:fur=Sauris",
         "population=371",
@@ -155012,7 +155010,7 @@
     },
     {
       "id": "relation:179130",
-      "name": "Paularo / Paulâr",
+      "name": "Paularo",
       "lat": 46.5380736,
       "lon": 13.1279202,
       "type": "borgo",
@@ -155021,7 +155019,7 @@
       "tags": [
         "admin_level=8",
         "boundary=administrative",
-        "name=Paularo / Paulâr",
+        "name=Paularo",
         "name:fur=Paulâr",
         "name:it=Paularo",
         "population=2254",
@@ -155038,7 +155036,7 @@
     },
     {
       "id": "relation:179132",
-      "name": "Cavasso Nuovo / Cjavàs",
+      "name": "Cavasso Nuovo",
       "lat": 46.18879,
       "lon": 12.7817487,
       "type": "borgo",
@@ -155047,7 +155045,7 @@
       "tags": [
         "admin_level=8",
         "boundary=administrative",
-        "name=Cavasso Nuovo / Cjavàs",
+        "name=Cavasso Nuovo",
         "name:fur=Cjavàs",
         "name:it=Cavasso Nuovo",
         "population=1514",
@@ -155089,7 +155087,7 @@
     },
     {
       "id": "relation:179135",
-      "name": "Rivignano Teor / Rivignan Teôr",
+      "name": "Rivignano Teor",
       "lat": 45.8613031,
       "lon": 13.0582113,
       "type": "borgo",
@@ -155098,7 +155096,7 @@
       "tags": [
         "admin_level=8",
         "boundary=administrative",
-        "name=Rivignano Teor / Rivignan Teôr",
+        "name=Rivignano Teor",
         "name:fur=Rivignan Teôr",
         "population=6293",
         "population:date=2026-08-28",
@@ -155216,7 +155214,7 @@
     },
     {
       "id": "relation:179142",
-      "name": "Fanna / Fana",
+      "name": "Fanna",
       "lat": 46.1745676,
       "lon": 12.757776,
       "type": "borgo",
@@ -155226,7 +155224,7 @@
         "admin_level=8",
         "boundary=administrative",
         "loc_name:fur=Fana",
-        "name=Fanna / Fana",
+        "name=Fanna",
         "name:fur=Fane",
         "name:it=Fanna",
         "population=1506",
@@ -155242,7 +155240,7 @@
     },
     {
       "id": "relation:179143",
-      "name": "Zuglio / Zui",
+      "name": "Zuglio",
       "lat": 46.4640651,
       "lon": 12.9904037,
       "type": "borgo",
@@ -155251,7 +155249,7 @@
       "tags": [
         "admin_level=8",
         "boundary=administrative",
-        "name=Zuglio / Zui",
+        "name=Zuglio",
         "name:fur=Zui",
         "name:it=Zuglio",
         "population=538",
@@ -155318,7 +155316,7 @@
     },
     {
       "id": "relation:179147",
-      "name": "Sequals / Secuals",
+      "name": "Sequals",
       "lat": 46.1547865,
       "lon": 12.8529275,
       "type": "borgo",
@@ -155327,7 +155325,7 @@
       "tags": [
         "admin_level=8",
         "boundary=administrative",
-        "name=Sequals / Secuals",
+        "name=Sequals",
         "name:fur=Secuals",
         "name:it=Sequals",
         "population=2236",
@@ -155445,7 +155443,7 @@
     },
     {
       "id": "relation:179157",
-      "name": "Cordovado / Cordovât",
+      "name": "Cordovado",
       "lat": 45.8443492,
       "lon": 12.8955227,
       "type": "borgo",
@@ -155454,7 +155452,7 @@
       "tags": [
         "admin_level=8",
         "boundary=administrative",
-        "name=Cordovado / Cordovât",
+        "name=Cordovado",
         "name:fur=Cordovât",
         "population=2668",
         "population:date=2026-08-28",
@@ -155498,7 +155496,7 @@
     },
     {
       "id": "relation:179166",
-      "name": "Lauco / Lauc",
+      "name": "Lauco",
       "lat": 46.448905,
       "lon": 12.9268041,
       "type": "borgo",
@@ -155507,7 +155505,7 @@
       "tags": [
         "admin_level=8",
         "boundary=administrative",
-        "name=Lauco / Lauc",
+        "name=Lauco",
         "name:fur=Lauc",
         "name:it=Lauco",
         "population=612",
@@ -155800,7 +155798,7 @@
     },
     {
       "id": "relation:179187",
-      "name": "San Giorgio della Richinvelda / San Zorç da la Richinvelde",
+      "name": "San Giorgio della Richinvelda",
       "lat": 46.039499,
       "lon": 12.8532188,
       "type": "borgo",
@@ -155810,7 +155808,7 @@
         "admin_level=8",
         "boundary=administrative",
         "loc_name:fur=San 'Sors",
-        "name=San Giorgio della Richinvelda / San Zorç da la Richinvelde",
+        "name=San Giorgio della Richinvelda",
         "name:fur=San Zorç da la Richinvelde",
         "name:it=San Giorgio della Richinvelda",
         "population=4542",
@@ -155853,7 +155851,7 @@
     },
     {
       "id": "relation:179189",
-      "name": "Pocenia / Pucinie",
+      "name": "Pocenia",
       "lat": 45.8512289,
       "lon": 13.1222581,
       "type": "borgo",
@@ -155862,7 +155860,7 @@
       "tags": [
         "admin_level=8",
         "boundary=administrative",
-        "name=Pocenia / Pucinie",
+        "name=Pocenia",
         "name:fur=Pucinie",
         "name:it=Pocenia",
         "population=2304",
@@ -156268,7 +156266,7 @@
     },
     {
       "id": "relation:179216",
-      "name": "Camino al Tagliamento / Cjamin dal Tiliment",
+      "name": "Camino al Tagliamento",
       "lat": 45.9213427,
       "lon": 12.9403537,
       "type": "borgo",
@@ -156277,7 +156275,7 @@
       "tags": [
         "admin_level=8",
         "boundary=administrative",
-        "name=Camino al Tagliamento / Cjamin dal Tiliment",
+        "name=Camino al Tagliamento",
         "name:fur=Cjamin dal Tiliment",
         "name:it=Camino al Tagliamento",
         "population=1507",
@@ -156344,7 +156342,7 @@
     },
     {
       "id": "relation:179220",
-      "name": "Sesto al Reghena / Siest",
+      "name": "Sesto al Reghena",
       "lat": 45.8574809,
       "lon": 12.8415293,
       "type": "borgo",
@@ -156353,7 +156351,7 @@
       "tags": [
         "admin_level=8",
         "boundary=administrative",
-        "name=Sesto al Reghena / Siest",
+        "name=Sesto al Reghena",
         "name:fur=Siest",
         "population=6291",
         "population:date=2026-08-28",
@@ -156395,7 +156393,7 @@
     },
     {
       "id": "relation:179224",
-      "name": "Flaibano / Flaiban",
+      "name": "Flaibano",
       "lat": 46.059556,
       "lon": 12.9643319,
       "type": "borgo",
@@ -156404,7 +156402,7 @@
       "tags": [
         "admin_level=8",
         "boundary=administrative",
-        "name=Flaibano / Flaiban",
+        "name=Flaibano",
         "name:fur=Flaiban",
         "name:it=Flaibano",
         "population=1124",
@@ -156706,7 +156704,7 @@
     },
     {
       "id": "relation:179247",
-      "name": "San Martino al Tagliamento / San Martin dal Tiliment",
+      "name": "San Martino al Tagliamento",
       "lat": 46.0206729,
       "lon": 12.874918,
       "type": "borgo",
@@ -156715,7 +156713,7 @@
       "tags": [
         "admin_level=8",
         "boundary=administrative",
-        "name=San Martino al Tagliamento / San Martin dal Tiliment",
+        "name=San Martino al Tagliamento",
         "name:fur=San Martin dal Tiliment",
         "population=1457",
         "population:date=2026-08-28",
@@ -156812,7 +156810,7 @@
     },
     {
       "id": "relation:179254",
-      "name": "Osoppo / Osôf",
+      "name": "Osoppo",
       "lat": 46.2471187,
       "lon": 13.0629562,
       "type": "borgo",
@@ -156821,7 +156819,7 @@
       "tags": [
         "admin_level=8",
         "boundary=administrative",
-        "name=Osoppo / Osôf",
+        "name=Osoppo",
         "name:fur=Osôf",
         "population=2820",
         "population:date=2026-08-28",
@@ -157038,7 +157036,7 @@
     },
     {
       "id": "relation:179282",
-      "name": "Zoppola / Çopule",
+      "name": "Zoppola",
       "lat": 45.981144,
       "lon": 12.7641339,
       "type": "borgo",
@@ -157047,7 +157045,7 @@
       "tags": [
         "admin_level=8",
         "boundary=administrative",
-        "name=Zoppola / Çopule",
+        "name=Zoppola",
         "name:fur=Çopule",
         "population=8454",
         "population:date=2026-08-28",
@@ -157087,7 +157085,7 @@
     },
     {
       "id": "relation:179285",
-      "name": "Cavazzo Carnico / Cjavaç",
+      "name": "Cavazzo Carnico",
       "lat": 46.3568705,
       "lon": 13.029691,
       "type": "borgo",
@@ -157096,7 +157094,7 @@
       "tags": [
         "admin_level=8",
         "boundary=administrative",
-        "name=Cavazzo Carnico / Cjavaç",
+        "name=Cavazzo Carnico",
         "name:fur=Cjavaç",
         "name:it=Cavazzo Carnico",
         "population=953",
@@ -157139,7 +157137,7 @@
     },
     {
       "id": "relation:179290",
-      "name": "Arta Terme / Darte",
+      "name": "Arta Terme",
       "lat": 46.4785737,
       "lon": 13.0612764,
       "type": "borgo",
@@ -157148,7 +157146,7 @@
       "tags": [
         "admin_level=8",
         "boundary=administrative",
-        "name=Arta Terme / Darte",
+        "name=Arta Terme",
         "name:fur=Darte",
         "name:it=Arta Terme",
         "population=1980",
@@ -158275,7 +158273,7 @@
     },
     {
       "id": "relation:4459351",
-      "name": "Valvasone Arzene / Voleson Darzin",
+      "name": "Valvasone Arzene",
       "lat": 45.9951671,
       "lon": 12.8569145,
       "type": "borgo",
@@ -158284,7 +158282,7 @@
       "tags": [
         "admin_level=8",
         "boundary=administrative",
-        "name=Valvasone Arzene / Voleson Darzin",
+        "name=Valvasone Arzene",
         "name:fur=Voleson Darzin",
         "name:it=Valvasone Arzene",
         "population=3986",
