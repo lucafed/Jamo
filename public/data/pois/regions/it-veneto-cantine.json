@@ -7,7 +7,7 @@
     "minLon": 10.2,
     "maxLon": 13.2
   },
-  "generated_at": "2026-09-24T07:52:30.187Z",
+  "generated_at": "2026-10-01T09:30:49.392Z",
   "places": [
     {
       "id": "node:12766026527",
@@ -85,6 +85,29 @@
         "website=https://campionspumanti.it/it/"
       ],
       "score": 104,
+      "beauty_score": 1
+    },
+    {
+      "id": "node:14213877092",
+      "name": "Azienda Agricola Boscaini Carlo",
+      "lat": 45.5325668,
+      "lon": 10.8421496,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Sant'Ambrogio di Valpolicella",
+        "addr:housenumber=15",
+        "addr:postcode=37015",
+        "addr:street=Via Sengia",
+        "craft=winery",
+        "description=si trova nella zona CLASSICA e storica della VALPOLICELLA, in una piccola valle vocata alla produzione di ottimi vini come l'Amarone, il Ripasso e il Valpolicella. Si  può ammirare dalla piazza del famoso paesetto di S. GIORGIO INGANNAPOLTRON",
+        "email=vino@boscainicarlo.it",
+        "name=Azienda Agricola Boscaini Carlo",
+        "opening_hours=Mo-Fr 9:00-12:00, 13:00-18:00, Sa 9:00-12:30",
+        "phone=+39 0457731412",
+        "website=https://www.boscainicarlo.it/cantina-amarone-valpolicella"
+      ],
+      "score": 102,
       "beauty_score": 1
     },
     {
@@ -723,7 +746,7 @@
         "email=info@casagiallaspumanti.it",
         "mobile=+39 348 7389217",
         "name=Casa Gialla",
-        "opening_hours=Lunedì - Domenica: 8.00 - 12.00 / 13.30 - 18.30",
+        "opening_hours=Mo-Su 08:00-12:00,13:30-18:30",
         "phone=+39 0423 981138",
         "website=https://casagiallaspumanti.it/"
       ],
@@ -852,7 +875,7 @@
         "craft=winery",
         "email=info@calustra.it",
         "name=Cantina Ca' Lustra Zanovello",
-        "opening_hours=Mo-Sa 08:30-12:30, 14:30-18:30; Su 10:00-12:30, 14:30-18:30; ",
+        "opening_hours=Mo-Sa 08:30-12:30,14:30-18:30; Su 10:00-12:30,14:30-18:30",
         "phone=+39 0429 94128",
         "website=https://calustra.it/it/"
       ],
@@ -903,6 +926,34 @@
         "smoking=outside",
         "website=https://www.martini-sohn.it/de",
         "wheelchair=yes"
+      ],
+      "score": 94,
+      "beauty_score": 1
+    },
+    {
+      "id": "way:138992386",
+      "name": "Cantine di Verona",
+      "lat": 45.4979369,
+      "lon": 11.0164805,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Verona",
+        "addr:housenumber=5/B",
+        "addr:postcode=37142",
+        "addr:street=Via Colonia Orfani di Guerra",
+        "building=yes",
+        "building:levels=1",
+        "check_date=2026-09-28",
+        "check_date:opening_hours=2026-09-28",
+        "comment=Osmveneto Import Day",
+        "contact:instagram=cantinediverona",
+        "craft=winery",
+        "name=Cantine di Verona",
+        "opening_hours=Mo-Sa 08:30-12:30, 14:30-18:30",
+        "phone=+39045550032",
+        "source=Regione_del_Veneto_LR28_16.7.1976_Formazione_CTR_auth_39164-5700-1100_23.01.2009",
+        "website=https://www.cantinediverona.it/"
       ],
       "score": 94,
       "beauty_score": 1
@@ -1926,7 +1977,7 @@
         "addr:street=Via San Giovanni",
         "craft=winery",
         "name=Val D'Oca",
-        "opening_hours=Lunedì-Sabato: 10 - 18.30 Domenica: 10 - 16",
+        "opening_hours=Mo-Sa 10:00-18:30; Su 10:00-16:00",
         "website=https://www.valdoca.com/",
         "wheelchair=yes"
       ],
@@ -2314,30 +2365,6 @@
         "craft=winery",
         "name=Conti Thun",
         "phone=+39 0365 651757"
-      ],
-      "score": 88,
-      "beauty_score": 1
-    },
-    {
-      "id": "way:138992386",
-      "name": "Cantine di Verona",
-      "lat": 45.4979369,
-      "lon": 11.0164805,
-      "type": "cantine",
-      "visibility": "classica",
-      "tags": [
-        "addr:city=Verona",
-        "addr:housenumber=5e",
-        "addr:postcode=37142",
-        "addr:street=Via Colonia Orfani di Guerra",
-        "building=yes",
-        "building:levels=1",
-        "comment=Osmveneto Import Day",
-        "craft=winery",
-        "name=Cantine di Verona",
-        "phone=+39045550032",
-        "source=Regione_del_Veneto_LR28_16.7.1976_Formazione_CTR_auth_39164-5700-1100_23.01.2009",
-        "website=https://www.cantinediverona.it/"
       ],
       "score": 88,
       "beauty_score": 1
@@ -5284,22 +5311,6 @@
       "beauty_score": 1
     },
     {
-      "id": "node:13701696901",
-      "name": "Cristina",
-      "lat": 45.1982142,
-      "lon": 10.5847989,
-      "type": "cantine",
-      "visibility": "chicca",
-      "tags": [
-        "addr:housenumber=27",
-        "addr:street=Via Giosuè Carducci",
-        "craft=winery",
-        "name=Cristina"
-      ],
-      "score": 70,
-      "beauty_score": 1
-    },
-    {
       "id": "node:13703530771",
       "name": "Gut Kaltenburg",
       "lat": 46.3892274,
@@ -6181,6 +6192,40 @@
       ],
       "score": 70,
       "beauty_score": 1
+    },
+    {
+      "id": "node:14228183101",
+      "name": "Casa",
+      "lat": 45.2027353,
+      "lon": 10.8006628,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=19",
+        "addr:postcode=46047",
+        "addr:street=Via Bersaglieri d'Italia",
+        "craft=winery",
+        "name=Casa"
+      ],
+      "score": 60,
+      "beauty_score": 0.9785714285714286
+    },
+    {
+      "id": "node:14228183201",
+      "name": "Home",
+      "lat": 45.2025952,
+      "lon": 10.8004641,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:housenumber=19",
+        "addr:postcode=46047",
+        "addr:street=Via Bersaglieri d'Italia",
+        "craft=winery",
+        "name=Home"
+      ],
+      "score": 60,
+      "beauty_score": 0.9785714285714286
     },
     {
       "id": "node:1168798656",
