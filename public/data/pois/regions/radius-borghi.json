@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-09-29T09:37:08.547Z",
+  "generated_at": "2026-10-06T09:55:51.090Z",
   "places": [
     {
       "id": "node:62513274",
@@ -3447,6 +3447,25 @@
         "source=Istat 2001 - geodati.gfoss.it",
         "wikidata=Q2089036",
         "wikipedia=it:Marrara"
+      ],
+      "score": 120
+    },
+    {
+      "id": "node:1230348971",
+      "name": "Primolo",
+      "lat": 46.2722752,
+      "lon": 9.8427557,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "ele=1274",
+        "name=Primolo",
+        "place=village",
+        "population=150",
+        "population:date=2023-07-01",
+        "source:population=wikipedia",
+        "wikidata=Q3921918",
+        "wikipedia=it:Primolo"
       ],
       "score": 120
     },
@@ -14460,21 +14479,6 @@
       "score": 115
     },
     {
-      "id": "node:1230348971",
-      "name": "Primolo",
-      "lat": 46.2722752,
-      "lon": 9.8427557,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Primolo",
-        "place=village",
-        "wikidata=Q3921918",
-        "wikipedia=it:Primolo"
-      ],
-      "score": 115
-    },
-    {
       "id": "node:1232269784",
       "name": "Rivalta sul Mincio",
       "lat": 45.1801924,
@@ -16263,8 +16267,8 @@
     {
       "id": "node:1607342214",
       "name": "Marzana",
-      "lat": 45.5027133,
-      "lon": 11.0170325,
+      "lat": 45.5009678,
+      "lon": 11.0168673,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -17530,23 +17534,6 @@
       "score": 115
     },
     {
-      "id": "node:2284054962",
-      "name": "Mancasale",
-      "lat": 44.7214768,
-      "lon": 10.6474146,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Mancasale",
-        "place=village",
-        "population=1218",
-        "ref:LOCODE=ITMNL",
-        "wikidata=Q3844259",
-        "wikipedia=it:Mancasale"
-      ],
-      "score": 115
-    },
-    {
       "id": "node:2284318123",
       "name": "Albareto",
       "lat": 44.6899327,
@@ -17772,8 +17759,8 @@
     {
       "id": "node:2420645984",
       "name": "Grazie",
-      "lat": 45.1551648,
-      "lon": 10.693944,
+      "lat": 45.1552059,
+      "lon": 10.6941331,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -40867,7 +40854,7 @@
     {
       "id": "relation:45203",
       "name": "Sant'Ambrogio di Valpolicella",
-      "lat": 45.5433239,
+      "lat": 45.5432173,
       "lon": 10.8365075,
       "type": "borghi",
       "visibility": "classica",
@@ -58449,6 +58436,22 @@
       "score": 90
     },
     {
+      "id": "node:287841801",
+      "name": "Chiesa",
+      "lat": 45.9412116,
+      "lon": 11.2514319,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Chiesa",
+        "place=hamlet",
+        "population=161",
+        "wikidata=Q247734",
+        "wikipedia=it:Lavarone"
+      ],
+      "score": 90
+    },
+    {
       "id": "node:304521001",
       "name": "Mura",
       "lat": 45.971273,
@@ -59549,8 +59552,8 @@
     {
       "id": "node:1202759992",
       "name": "Ceraino",
-      "lat": 45.5715603,
-      "lon": 10.8246932,
+      "lat": 45.5715163,
+      "lon": 10.824622,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
