@@ -3,7 +3,7 @@
   "country": "IT",
   "area": "Veneto",
   "label_it": "Veneto • Borghi (turistici + piccoli)",
-  "generated_at": "2026-09-29T09:25:25.236Z",
+  "generated_at": "2026-10-06T09:45:58.334Z",
   "places": [
     {
       "id": "node:66503077",
@@ -7832,6 +7832,29 @@
       "score": 85
     },
     {
+      "id": "node:64778140",
+      "name": "Danta di Cadore",
+      "lat": 46.566029,
+      "lon": 12.517302,
+      "type": "borgo",
+      "borgo_type": "classico",
+      "visibility": "classica",
+      "tags": [
+        "alt_name=Danta",
+        "gfoss_id=3326",
+        "loc_name=Danta",
+        "name=Danta di Cadore",
+        "name:it=Danta di Cadore",
+        "name:lld=Danta",
+        "place=village",
+        "population=552",
+        "source=geodati.gfoss.it",
+        "wikidata=Q40919",
+        "wikipedia=it:Danta di Cadore"
+      ],
+      "score": 85
+    },
+    {
       "id": "node:64778145",
       "name": "Don di Gosaldo",
       "lat": 46.221133,
@@ -12080,8 +12103,8 @@
     {
       "id": "node:64778909",
       "name": "Rivoli Veronese",
-      "lat": 45.5719818,
-      "lon": 10.8117614,
+      "lat": 45.5721038,
+      "lon": 10.8117451,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -34213,8 +34236,8 @@
     {
       "id": "node:1607342214",
       "name": "Marzana",
-      "lat": 45.5027133,
-      "lon": 11.0170325,
+      "lat": 45.5009678,
+      "lon": 11.0168673,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -37008,24 +37031,6 @@
       "score": 85
     },
     {
-      "id": "node:2284054962",
-      "name": "Mancasale",
-      "lat": 44.7214768,
-      "lon": 10.6474146,
-      "type": "borgo",
-      "borgo_type": "classico",
-      "visibility": "classica",
-      "tags": [
-        "name=Mancasale",
-        "place=village",
-        "population=1218",
-        "ref:LOCODE=ITMNL",
-        "wikidata=Q3844259",
-        "wikipedia=it:Mancasale"
-      ],
-      "score": 85
-    },
-    {
       "id": "node:2290433842",
       "name": "San Pietro in Volta",
       "lat": 45.3184489,
@@ -37507,8 +37512,8 @@
     {
       "id": "node:2420645984",
       "name": "Grazie",
-      "lat": 45.1551648,
-      "lon": 10.693944,
+      "lat": 45.1552059,
+      "lon": 10.6941331,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -49366,8 +49371,8 @@
     {
       "id": "node:287841801",
       "name": "Chiesa",
-      "lat": 45.9411213,
-      "lon": 11.2511633,
+      "lat": 45.9412116,
+      "lon": 11.2514319,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -49375,7 +49380,8 @@
         "name=Chiesa",
         "place=hamlet",
         "population=161",
-        "wikidata=Q18478875"
+        "wikidata=Q247734",
+        "wikipedia=it:Lavarone"
       ],
       "score": 70
     },
@@ -56142,6 +56148,7 @@
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
+        "alt_name=Incanal",
         "name=Canale",
         "place=hamlet",
         "wikidata=Q18504184",
@@ -69753,8 +69760,8 @@
     {
       "id": "node:1202759992",
       "name": "Ceraino",
-      "lat": 45.5715603,
-      "lon": 10.8246932,
+      "lat": 45.5715163,
+      "lon": 10.824622,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -120903,14 +120910,14 @@
     },
     {
       "id": "node:13482391031",
-      "name": "Zona Arzerini",
+      "name": "Zona Arzerini II",
       "lat": 45.28938,
       "lon": 11.96533,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Zona Arzerini",
+        "name=Zona Arzerini II",
         "place=hamlet",
         "wikidata=Q18499147"
       ],
@@ -120918,14 +120925,14 @@
     },
     {
       "id": "node:13482391032",
-      "name": "Zona Arzerini",
+      "name": "Zona Arzerini I",
       "lat": 45.28961,
       "lon": 11.97223,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Zona Arzerini",
+        "name=Zona Arzerini I",
         "place=hamlet",
         "wikidata=Q18499145"
       ],
@@ -130095,7 +130102,7 @@
     },
     {
       "id": "relation:43415",
-      "name": "Reggio Emilia",
+      "name": "Reggio nell'Emilia",
       "lat": 44.6994559,
       "lon": 10.6321796,
       "type": "borgo",
@@ -130103,12 +130110,12 @@
       "visibility": "classica",
       "tags": [
         "admin_level=8",
-        "alt_name=Reggio nell'Emilia",
+        "alt_name=Reggio Emilia",
         "boundary=administrative",
-        "name=Reggio Emilia",
+        "name=Reggio nell'Emilia",
         "name:ca=Reggio de l'Emília",
         "name:uk=Реджо-Емілія",
-        "official_name=Comune di Reggio nell'Emilia",
+        "official_name=Reggio nell'Emilia",
         "official_name:uk=Реджо-нель-Емілія",
         "population=172318",
         "population:date=2026-08-28",
@@ -140121,7 +140128,7 @@
     {
       "id": "relation:45203",
       "name": "Sant'Ambrogio di Valpolicella",
-      "lat": 45.5433239,
+      "lat": 45.5432173,
       "lon": 10.8365075,
       "type": "borgo",
       "borgo_type": "classico",
