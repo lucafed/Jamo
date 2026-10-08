@@ -7,7 +7,7 @@
     "minLon": 10.2,
     "maxLon": 13.2
   },
-  "generated_at": "2026-10-01T09:30:49.392Z",
+  "generated_at": "2026-10-08T09:36:22.442Z",
   "places": [
     {
       "id": "node:12766026527",
@@ -5510,6 +5510,29 @@
         "building=yes",
         "craft=winery",
         "name=Cantine naturali Torboli"
+      ],
+      "score": 70,
+      "beauty_score": 1
+    },
+    {
+      "id": "way:88570113",
+      "name": "Le Fontanelle",
+      "lat": 45.9197081,
+      "lon": 10.848055,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Tenno",
+        "addr:country=IT",
+        "addr:hamlet=Volta de' No'",
+        "addr:housenumber=51",
+        "addr:postcode=38060",
+        "addr:street=Località Volta di No",
+        "building=farm",
+        "craft=winery",
+        "name=Le Fontanelle",
+        "operator=Famiglia Pasini",
+        "produce=wine; oil"
       ],
       "score": 70,
       "beauty_score": 1
