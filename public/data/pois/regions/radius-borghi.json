@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-10-06T09:55:51.090Z",
+  "generated_at": "2026-10-13T10:19:52.504Z",
   "places": [
     {
       "id": "node:62513274",
@@ -4838,6 +4838,22 @@
         "population=700",
         "wikidata=Q18447401",
         "wikipedia=it:San Sisto (Poviglio)"
+      ],
+      "score": 120
+    },
+    {
+      "id": "node:3891905194",
+      "name": "Casalpò",
+      "lat": 44.8336075,
+      "lon": 10.5155611,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Casalpò",
+        "place=village",
+        "population=150",
+        "wikidata=Q18416872",
+        "wikipedia=it:Casalpò"
       ],
       "score": 120
     },
@@ -40277,7 +40293,7 @@
     {
       "id": "relation:45146",
       "name": "Pastrengo",
-      "lat": 45.4970905,
+      "lat": 45.4971061,
       "lon": 10.7982243,
       "type": "borghi",
       "visibility": "classica",
@@ -40855,7 +40871,7 @@
       "id": "relation:45203",
       "name": "Sant'Ambrogio di Valpolicella",
       "lat": 45.5432173,
-      "lon": 10.8365075,
+      "lon": 10.8365196,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -40920,8 +40936,8 @@
     {
       "id": "relation:45206",
       "name": "Cavaion Veronese",
-      "lat": 45.5313011,
-      "lon": 10.7754708,
+      "lat": 45.5312691,
+      "lon": 10.7754591,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -41264,7 +41280,7 @@
     {
       "id": "relation:45240",
       "name": "Rivoli Veronese",
-      "lat": 45.5709433,
+      "lat": 45.570887,
       "lon": 10.8065557,
       "type": "borghi",
       "visibility": "classica",
@@ -42698,7 +42714,7 @@
     {
       "id": "relation:45367",
       "name": "Costermano sul Garda",
-      "lat": 45.5896211,
+      "lat": 45.5895473,
       "lon": 10.7345208,
       "type": "borghi",
       "visibility": "classica",
@@ -43008,7 +43024,7 @@
       "id": "relation:45397",
       "name": "Dolcè",
       "lat": 45.6072051,
-      "lon": 10.8709698,
+      "lon": 10.8709765,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -60453,23 +60469,6 @@
         "source=www.resitalica.it",
         "wikidata=Q3641456",
         "wikipedia=it:Bocca Chiavica"
-      ],
-      "score": 90
-    },
-    {
-      "id": "node:3398303435",
-      "name": "Corte Sant'Andrea",
-      "lat": 45.1322932,
-      "lon": 9.5566578,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Corte Sant'Andrea",
-        "place=hamlet",
-        "population=22",
-        "source=Censimento ISTAT 2001",
-        "wikidata=Q655461",
-        "wikipedia=it:Corte Sant'Andrea"
       ],
       "score": 90
     }

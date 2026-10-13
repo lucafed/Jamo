@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-05-12T06:18:53.352Z",
+  "generated_at": "2026-10-13T10:18:56.492Z",
   "places": [
     {
       "id": "way:48528567",
@@ -35,13 +35,52 @@
       "visibility": "classica",
       "tags": [
         "amenity=public_bath",
+        "bath:open_air=no",
         "bath:type=thermal",
+        "fee=yes",
         "healthcare=doctor",
         "name=Terme San Luca - Pluricenter",
+        "operator=Mare Termale Bolognese",
         "phone=+39 051 382564",
         "website=https://www.maretermalebolognese.it/terme_san_luca_pluricenter_bologna_introduzione.htm",
         "wheelchair=yes",
         "wikidata=Q135653428"
+      ],
+      "score": 206
+    },
+    {
+      "id": "way:736654264",
+      "name": "QC Terme Dolomiti",
+      "lat": 46.4248731,
+      "lon": 11.6878104,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=San Giovanni di Fassa",
+        "addr:housenumber=21",
+        "addr:postcode=38036",
+        "addr:street=Strada dei Bagnes",
+        "amenity=public_bath",
+        "bath:open_air=yes",
+        "bath:type=thermal",
+        "brand=QC Terme",
+        "brand:wikidata=Q115543071",
+        "building=commercial",
+        "building:levels=3",
+        "charge=76 EUR/day",
+        "fee=yes",
+        "internet_access=wlan",
+        "internet_access:fee=no",
+        "name=QC Terme Dolomiti",
+        "nudism=no",
+        "opening_hours=Mo-Th 09:00-22:00, Fr-Sa 09:00-23:00, Su 09:00-22:00",
+        "payment:cards=yes",
+        "payment:cash=yes",
+        "payment:credit_cards=yes",
+        "roof:levels=0",
+        "roof:shape=flat",
+        "sauna=yes",
+        "website=https://www.qcterme.com/it/val-di-fassa/qc-terme-dolomiti"
       ],
       "score": 206
     },
@@ -77,41 +116,6 @@
         "name=Terme di Vetriolo",
         "tourism=spa_resort",
         "wikidata=Q18483654"
-      ],
-      "score": 200
-    },
-    {
-      "id": "way:736654264",
-      "name": "QC Terme Dolomiti",
-      "lat": 46.4248731,
-      "lon": 11.6878104,
-      "type": "relax",
-      "visibility": "classica",
-      "tags": [
-        "addr:city=San Giovanni di Fassa",
-        "addr:housenumber=21",
-        "addr:postcode=38036",
-        "addr:street=Strada dei Bagnes",
-        "amenity=public_bath",
-        "bath:open_air=yes",
-        "bath:type=thermal",
-        "brand=QC Terme",
-        "brand:wikidata=Q115543071",
-        "building=commercial",
-        "building:levels=3",
-        "charge=76 EUR/day",
-        "fee=yes",
-        "internet_access=wlan",
-        "internet_access:fee=no",
-        "name=QC Terme Dolomiti",
-        "nudism=no",
-        "payment:cards=yes",
-        "payment:cash=yes",
-        "payment:credit_cards=yes",
-        "roof:levels=0",
-        "roof:shape=flat",
-        "sauna=yes",
-        "website=https://www.qcterme.com/it/val-di-fassa/qc-terme-dolomiti"
       ],
       "score": 200
     },
@@ -232,7 +236,7 @@
         "contact:website=https://www.qcterme.com/it/bormio/qc-terme-bagni-vecchi",
         "fee=yes",
         "name=Bagni Vecchi",
-        "opening_hours=Mo-Su 10:00-22:00; ",
+        "opening_hours=Mo-Su 10:00-22:00",
         "operator=QC Terme",
         "operator:wikidata=Q115543071",
         "ref:vatin=IT10541980966",
@@ -436,7 +440,7 @@
         "amenity=public_bath",
         "brand=QC Terme",
         "brand:wikidata=Q115543071",
-        "check_date=2024-11-02",
+        "check_date=2026-05-27",
         "contact:website=https://www.qcterme.com/it/san-pellegrino/qc-terme-san-pellegrino",
         "name=QC Terme San Pellegrino",
         "payment:cash=yes",
@@ -568,6 +572,7 @@
         "building=yes",
         "description=SPA",
         "email=informazioni@termecomano.it",
+        "fee=yes",
         "name=Terme di Comano"
       ],
       "score": 135
@@ -665,10 +670,10 @@
       "score": 114
     },
     {
-      "id": "node:311389293",
+      "id": "way:1544504140",
       "name": "Albergo Ristorante Da Carla Failela",
-      "lat": 45.7554245,
-      "lon": 11.216721,
+      "lat": 45.755378,
+      "lon": 11.2167389,
       "type": "relax",
       "visibility": "classica",
       "tags": [
@@ -676,6 +681,7 @@
         "addr:housenumber=26",
         "addr:postcode=36030",
         "addr:street=Via Piazza Alta",
+        "building=yes",
         "contact:facebook=https://www.facebook.com/CarlaFailela/",
         "contact:phone=+39 0445 630047",
         "email=info@carlafailela.it",
@@ -705,6 +711,76 @@
       "score": 90
     },
     {
+      "id": "node:9090967272",
+      "name": "Salsa",
+      "lat": 44.6151368,
+      "lon": 10.3430003,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "name=Salsa",
+        "natural=hot_spring",
+        "water_characteristic=mud"
+      ],
+      "score": 90
+    },
+    {
+      "id": "node:9090967273",
+      "name": "Salsa",
+      "lat": 44.6152857,
+      "lon": 10.3431639,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "name=Salsa",
+        "natural=hot_spring",
+        "water_characteristic=mud"
+      ],
+      "score": 90
+    },
+    {
+      "id": "node:9090967274",
+      "name": "Salsa",
+      "lat": 44.6152247,
+      "lon": 10.3447705,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "name=Salsa",
+        "natural=hot_spring",
+        "water_characteristic=mud"
+      ],
+      "score": 90
+    },
+    {
+      "id": "node:9090967295",
+      "name": "Salsa",
+      "lat": 44.6216014,
+      "lon": 10.3365496,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "name=Salsa",
+        "natural=hot_spring",
+        "water_characteristic=mud"
+      ],
+      "score": 90
+    },
+    {
+      "id": "node:9090967296",
+      "name": "Salsa",
+      "lat": 44.6208969,
+      "lon": 10.3381616,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "name=Salsa",
+        "natural=hot_spring",
+        "water_characteristic=mud"
+      ],
+      "score": 90
+    },
+    {
       "id": "node:11381869246",
       "name": "Pozza Alta di Leonardo",
       "lat": 46.4950649,
@@ -718,19 +794,6 @@
       "score": 90
     },
     {
-      "id": "node:11381869247",
-      "name": "La pozza Bassa",
-      "lat": 46.4921832,
-      "lon": 10.358302,
-      "type": "relax",
-      "visibility": "classica",
-      "tags": [
-        "name=La pozza Bassa",
-        "natural=hot_spring"
-      ],
-      "score": 90
-    },
-    {
       "id": "way:368409443",
       "name": "Pozza \"Leonardo da Vinci\"",
       "lat": 46.492188,
@@ -739,6 +802,7 @@
       "visibility": "classica",
       "tags": [
         "access=yes",
+        "alt_name=La pozza Bassa",
         "bath:open_air=yes",
         "bath:sand_bath=no",
         "bath:type=hot_spring",
@@ -798,6 +862,36 @@
       "score": 89
     },
     {
+      "id": "node:5225491716",
+      "name": "Termeterna Resort",
+      "lat": 45.3570875,
+      "lon": 11.7698423,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Abano Terme",
+        "addr:housenumber=13",
+        "addr:postcode=35031",
+        "addr:street=Via Barbieri",
+        "contact:facebook=https://www.facebook.com/termeterna",
+        "contact:instagram=https://www.instagram.com/termeterna",
+        "email=welcome@termeterna.com",
+        "internet_access=wlan",
+        "internet_access:fee=no",
+        "name=Termeterna Resort",
+        "not:name=Hotel Orvieto",
+        "official_name=Termeterna Resort",
+        "opening_hours=24/7",
+        "phone=+39 049 8668044",
+        "reservation=required",
+        "rooms=87",
+        "stars=4",
+        "tourism=hotel",
+        "website=https://termeterna.com"
+      ],
+      "score": 85
+    },
+    {
       "id": "way:187831429",
       "name": "Albergo Pizzeria Ristorante \"alla Torre\"",
       "lat": 45.9924489,
@@ -811,6 +905,7 @@
         "addr:street=Via della Villa",
         "amenity=spa",
         "building=yes",
+        "check_date=2026-09-01",
         "cuisine=regional;pizza",
         "email=info@albergoallatorre.it",
         "name=Albergo Pizzeria Ristorante \"alla Torre\"",
@@ -1129,25 +1224,6 @@
         "tourism=hotel",
         "website=https://www.termedellenazioni.it/",
         "wheelchair=yes"
-      ],
-      "score": 79
-    },
-    {
-      "id": "node:5225491716",
-      "name": "Hotel Terme Orvieto",
-      "lat": 45.3570854,
-      "lon": 11.769843,
-      "type": "relax",
-      "visibility": "classica",
-      "tags": [
-        "addr:housenumber=13",
-        "addr:street=Via Barbieri",
-        "email=orvieto@termeorvieto.it",
-        "name=Hotel Terme Orvieto",
-        "phone=+39 049 8668044",
-        "stars=4",
-        "tourism=hotel",
-        "website=https://www.termeorvieto.it/"
       ],
       "score": 79
     },
@@ -1608,6 +1684,22 @@
       "score": 73
     },
     {
+      "id": "node:2117990334",
+      "name": "QC Terme",
+      "lat": 45.7300119,
+      "lon": 12.1892751,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "historic=manor",
+        "name=QC Terme",
+        "stars=4",
+        "tourism=hotel",
+        "website=https://www.relaismonaco.it/"
+      ],
+      "score": 73
+    },
+    {
       "id": "node:2901517155",
       "name": "Hotel Terme Millepini",
       "lat": 45.3190721,
@@ -1635,6 +1727,21 @@
         "tourism=hotel",
         "website=https://www.termeleonardo.com/",
         "wikidata=Q111412790"
+      ],
+      "score": 73
+    },
+    {
+      "id": "way:58301809",
+      "name": "Hotel Terme Nazionale",
+      "lat": 45.3558218,
+      "lon": 11.781394,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "building=yes",
+        "name=Hotel Terme Nazionale",
+        "tourism=hotel",
+        "website=https://www.termeinternazionale.it/"
       ],
       "score": 73
     },
@@ -1862,7 +1969,7 @@
         "leisure=golf_course",
         "name=Golf Club Terme di Galzignano",
         "phone=+39 049 9195100",
-        "website=http://www.golfclubgalzignano.it/"
+        "website=https://www.golfclubgalzignano.it/"
       ],
       "score": 71
     },
@@ -1882,29 +1989,6 @@
         "sport=soccer",
         "surface=sintetic_grass",
         "website=https://www.comanotermefiave.it/"
-      ],
-      "score": 71
-    },
-    {
-      "id": "way:375086940",
-      "name": "Museo Internazionale del Vetro d'Arte e delle Terme",
-      "lat": 45.3269019,
-      "lon": 11.7732693,
-      "type": "relax",
-      "visibility": "classica",
-      "tags": [
-        "addr:city=Montegrotto Terme",
-        "addr:country=IT",
-        "addr:postcode=35036",
-        "addr:street=Via Cogolo Sinistro",
-        "building=yes",
-        "contact:email=museovetro@gmail.com",
-        "contact:phone=+39 049 8910635",
-        "contact:website=http://www.museodelvetro.it/",
-        "name=Museo Internazionale del Vetro d'Arte e delle Terme",
-        "source=Regione_del_Veneto_LR28_16.7.1976_Formazione_CTR_auth_39164-5700-1100_23.01.2009",
-        "tourism=museum",
-        "wikidata=Q123009795"
       ],
       "score": 71
     },
@@ -1993,7 +2077,7 @@
     {
       "id": "relation:8607824",
       "name": "Hotel Terme Marconi",
-      "lat": 45.3233312,
+      "lat": 45.3233265,
       "lon": 11.7889067,
       "type": "relax",
       "visibility": "classica",
@@ -2004,6 +2088,62 @@
         "phone=+39 049 793144",
         "type=site",
         "website=https://termemarconi.it/"
+      ],
+      "score": 71
+    },
+    {
+      "id": "relation:12022119",
+      "name": "Bus C: Costa Volpino => Darfo Boario Terme",
+      "lat": 45.8605272,
+      "lon": 10.1461399,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "bicycle=yes",
+        "duration=18",
+        "fee=yes",
+        "from=Costa Volpino (Piano)",
+        "interval=Mo-Sa 30;2020 Dec 07, 2020 Dec 23-2021 Gen 06, 2021 Feb 15-2021 Feb 16, 2021 Apr 01-2021 Apr 06 30-60;Su,PH 09:10;school",
+        "interval:conditional=00:30 @ (Mo-Sa 05:16-06:46, 2020 Dec 07, 2020 Dec 23-2021 Gen 06, 2021 Feb 15-2021 Feb 16, 2021 Apr 01-2021 Apr 06 05:16-05:46); 60 @ (2020 Dec 07, 2020 Dec 23-2021 Gen 06, 2021 Feb 15-2021 Feb 16, 2021 Apr 01-2021 Apr 06 05:56-06:56); 09:10 @ (PH 08:16-1",
+        "name=Bus C: Costa Volpino => Darfo Boario Terme",
+        "network=Bergamo Trasporti Est",
+        "opening_hours=Mo-Sa 05:16-07:02; Su,PH 08:16-17:44; Dec 25 off",
+        "operator=SAB Autoservizi",
+        "public_transport:version=2",
+        "ref=C",
+        "roundtrip=no",
+        "route=bus",
+        "to=Darfo Boario Terme (autostazione)",
+        "type=route",
+        "website=https://arriva.it/app/uploads/sites/7/2020/12/linea-c.pdf",
+        "wheelchair=yes"
+      ],
+      "score": 71
+    },
+    {
+      "id": "relation:12022124",
+      "name": "Bus C: Darfo Boario Terme => Costa Volpino",
+      "lat": 45.8604484,
+      "lon": 10.1460458,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "bicycle=yes",
+        "duration=18",
+        "fee=yes",
+        "from=Darfo Boario Terme (autostazione)",
+        "name=Bus C: Darfo Boario Terme => Costa Volpino",
+        "network=Bergamo Trasporti Est",
+        "opening_hours=Mo-Sa open; Su PH off",
+        "operator=SAB Autoservizi",
+        "public_transport:version=2",
+        "ref=C",
+        "roundtrip=no",
+        "route=bus",
+        "to=Costa Volpino (Piano)",
+        "type=route",
+        "website=https://arriva.it/app/uploads/sites/7/2020/12/linea-c.pdf",
+        "wheelchair=yes"
       ],
       "score": 71
     },
@@ -2072,6 +2212,8 @@
         "addr:postcode=35127",
         "addr:street=Via Lisbona",
         "amenity=cafe",
+        "check_date=2026-10-08",
+        "contact:facebook=Leointermezzo",
         "contact:mobile=+39 328 6218683",
         "cuisine=italian",
         "delivery=Mo-Fr 12:00-14:30",
@@ -2314,7 +2456,7 @@
         "route=bicycle",
         "to=Iseo",
         "type=route",
-        "website=www.cicloviadelloglio.it"
+        "website=https://www.cicloviadelloglio.it"
       ],
       "score": 65
     },
@@ -2765,6 +2907,23 @@
       "score": 61
     },
     {
+      "id": "node:1771324995",
+      "name": "Bar delle Terme",
+      "lat": 45.2890568,
+      "lon": 11.7807185,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Battaglia Terme",
+        "addr:postcode=35041",
+        "addr:street=Viale Colli Euganei",
+        "amenity=cafe",
+        "name=Bar delle Terme",
+        "opening_hours=Mo-Su 06:00-02:00; PH off"
+      ],
+      "score": 61
+    },
+    {
       "id": "node:3778134304",
       "name": "C.I.S.L. - Sede di Darfo Boario Terme",
       "lat": 45.8823343,
@@ -2963,6 +3122,23 @@
       "score": 61
     },
     {
+      "id": "way:375086949",
+      "name": "Poste Italiane - Montegrotto Terme",
+      "lat": 45.3308275,
+      "lon": 11.7924026,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "amenity=post_office",
+        "building=public",
+        "name=Poste Italiane - Montegrotto Terme",
+        "opening_hours=Mo-Fr 08:15-19:00; Sa 08:15-12:30; Su off",
+        "operator=Poste Italiane",
+        "operator:wikidata=Q495026"
+      ],
+      "score": 61
+    },
+    {
       "id": "way:615557517",
       "name": "Area mercato di Sant'Omobono Terme",
       "lat": 45.8139032,
@@ -2977,56 +3153,20 @@
       "score": 61
     },
     {
-      "id": "relation:12022119",
-      "name": "Bus C: Costa Volpino => Darfo Boario Terme",
-      "lat": 45.8605272,
-      "lon": 10.1461399,
+      "id": "way:676034632",
+      "name": "Terme Service",
+      "lat": 45.2896848,
+      "lon": 11.7790341,
       "type": "relax",
       "visibility": "classica",
       "tags": [
-        "bicycle=yes",
-        "duration=18",
-        "fee=yes",
-        "from=Costa Volpino (Piano)",
-        "interval=Mo-Sa 30;2020 Dec 07, 2020 Dec 23-2021 Gen 06, 2021 Feb 15-2021 Feb 16, 2021 Apr 01-2021 Apr 06 30-60;Su,PH 09:10;school",
-        "interval:conditional=00:30 @ (Mo-Sa 05:16-06:46, 2020 Dec 07, 2020 Dec 23-2021 Gen 06, 2021 Feb 15-2021 Feb 16, 2021 Apr 01-2021 Apr 06 05:16-05:46); 60 @ (2020 Dec 07, 2020 Dec 23-2021 Gen 06, 2021 Feb 15-2021 Feb 16, 2021 Apr 01-2021 Apr 06 05:56-06:56); 09:10 @ (PH 08:16-1",
-        "name=Bus C: Costa Volpino => Darfo Boario Terme",
-        "network=Bergamo Trasporti Est",
-        "opening_hours=Mo-Sa 05:16-07:02; Su,PH 08:16-17:44; Dec 25 off",
-        "operator=SAB Autoservizi",
-        "public_transport:version=2",
-        "ref=C",
-        "roundtrip=no",
-        "route=bus",
-        "to=Darfo Boario Terme (autostazione)",
-        "type=route",
-        "wheelchair=yes"
-      ],
-      "score": 61
-    },
-    {
-      "id": "relation:12022124",
-      "name": "Bus C: Darfo Boario Terme => Costa Volpino",
-      "lat": 45.8604484,
-      "lon": 10.1460458,
-      "type": "relax",
-      "visibility": "classica",
-      "tags": [
-        "bicycle=yes",
-        "duration=18",
-        "fee=yes",
-        "from=Darfo Boario Terme (autostazione)",
-        "name=Bus C: Darfo Boario Terme => Costa Volpino",
-        "network=Bergamo Trasporti Est",
-        "opening_hours=Mo-Sa open; Su,PH off",
-        "operator=SAB Autoservizi",
-        "public_transport:version=2",
-        "ref=C",
-        "roundtrip=no",
-        "route=bus",
-        "to=Costa Volpino (Piano)",
-        "type=route",
-        "wheelchair=yes"
+        "addr:city=Battaglia Terme",
+        "addr:postcode=35041",
+        "addr:street=Viale Colli Euganei",
+        "building=yes",
+        "name=Terme Service",
+        "office=tax_advisor",
+        "opening_hours=Mo,We,Fr 09:00-13:00; Tu,Th 09:00-13:00,14:30-18:30; Sa,Su off"
       ],
       "score": 61
     },
@@ -3212,7 +3352,8 @@
         "name=Sant'Omobono Terme",
         "place=village",
         "population=3892",
-        "source=geodati.gfoss.it"
+        "source=geodati.gfoss.it",
+        "wikidata=Q30030391"
       ],
       "score": 55
     },
@@ -3434,7 +3575,8 @@
         "name:it=Montegrotto Terme",
         "name:la=Mons Aegrotorum",
         "place=town",
-        "population=11331",
+        "population=11391",
+        "population:date=2023-01-01",
         "source=ISTAT",
         "wikidata=Q30027865"
       ],
@@ -3727,6 +3869,7 @@
         "name=Garniga Terme",
         "place=village",
         "population=384",
+        "population:date=2023-01-01",
         "source=geodati.gfoss.it",
         "wikidata=Q18479921"
       ],
@@ -3771,6 +3914,7 @@
       "visibility": "classica",
       "tags": [
         "board_type=nature",
+        "check_date=2026-06-27",
         "description=Include informazioni naturalistiche e paesaggistiche",
         "information=board",
         "name=Area di sosta \"Ex-cava Monte Croce\" - Battaglia Terme",
@@ -3823,6 +3967,7 @@
       "visibility": "classica",
       "tags": [
         "board_type=history",
+        "check_date=2026-06-27",
         "description=Comprende informazioni storico-paesaggistiche",
         "information=board",
         "name=Area di Sosta \"Passeggiata Obizzi\" - Battaglia Terme",
@@ -3840,6 +3985,7 @@
       "visibility": "classica",
       "tags": [
         "board_type=history",
+        "check_date=2026-06-29",
         "description=Comprende informazioni storico-paesaggistiche",
         "information=board",
         "name=Battaglia Terme",
@@ -3874,6 +4020,7 @@
       "visibility": "classica",
       "tags": [
         "board_type=history",
+        "check_date=2026-06-27",
         "description=Comprende informazioni storico-paesaggistiche",
         "information=board",
         "name=Area di Sosta \"Stabilimento Termale Pietro D'Abano\" - Battaglia Terme",
@@ -3892,21 +4039,6 @@
       "tags": [
         "barrier=toll_booth",
         "name=Terme Euganee"
-      ],
-      "score": 55
-    },
-    {
-      "id": "node:1583359753",
-      "name": "Battaglia Terme",
-      "lat": 45.2866285,
-      "lon": 11.7832651,
-      "type": "relax",
-      "visibility": "classica",
-      "tags": [
-        "description=Map, photographs, description",
-        "information=board",
-        "name=Battaglia Terme",
-        "tourism=information"
       ],
       "score": 55
     },
@@ -3934,24 +4066,6 @@
       "tags": [
         "name=Terme",
         "place=locality"
-      ],
-      "score": 55
-    },
-    {
-      "id": "node:1771324995",
-      "name": "Bar delle Terme",
-      "lat": 45.2890568,
-      "lon": 11.7807185,
-      "type": "relax",
-      "visibility": "classica",
-      "tags": [
-        "addr:city=Battaglia Terme",
-        "addr:postcode=35041",
-        "addr:street=Viale Colli Euganei",
-        "amenity=cafe",
-        "ice_cream=yes",
-        "name=Bar delle Terme",
-        "outdoor_seating=yes"
       ],
       "score": 55
     },
@@ -4181,6 +4295,21 @@
       "score": 55
     },
     {
+      "id": "node:4072137841",
+      "name": "Area Sosta Camper - Spazio Fiore - Battaglia Terme",
+      "lat": 45.2923468,
+      "lon": 11.7747959,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "amenity=cafe",
+        "check_date:opening_hours=2026-06-28",
+        "name=Area Sosta Camper - Spazio Fiore - Battaglia Terme",
+        "opening_hours:signed=no"
+      ],
+      "score": 55
+    },
+    {
       "id": "node:4072137865",
       "name": "Carabinieri di Battaglia Terme",
       "lat": 45.2922354,
@@ -4235,8 +4364,8 @@
     {
       "id": "node:4428231881",
       "name": "Stazione seggiovia intermedia",
-      "lat": 45.7988891,
-      "lon": 10.3381567,
+      "lat": 45.7988576,
+      "lon": 10.337925,
       "type": "relax",
       "visibility": "classica",
       "tags": [
@@ -4281,7 +4410,8 @@
       "tags": [
         "direction=forward",
         "name=Montegrotto Terme",
-        "traffic_sign=city_limit"
+        "traffic_sign=city_limit",
+        "traffic_sign:direction=forward"
       ],
       "score": 55
     },
@@ -4302,14 +4432,15 @@
     {
       "id": "node:5228987923",
       "name": "Pronto Soccorso Ospedale Abano Terme",
-      "lat": 45.3493432,
-      "lon": 11.786285,
+      "lat": 45.3493947,
+      "lon": 11.78628,
       "type": "relax",
       "visibility": "classica",
       "tags": [
         "addr:city=Abano Terme",
         "addr:postcode=35031",
         "emergency=emergency_ward_entrance",
+        "entrance=yes",
         "healthcare=hospital",
         "name=Pronto Soccorso Ospedale Abano Terme"
       ],
@@ -4363,6 +4494,20 @@
       "tags": [
         "amenity=townhall",
         "name=Municipio di Miradolo Terme"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:5820656105",
+      "name": "Biblioteca comunale di Sant'Omobono Terme",
+      "lat": 45.8138032,
+      "lon": 9.5341459,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "amenity=library",
+        "name=Biblioteca comunale di Sant'Omobono Terme",
+        "wikidata=Q112940342"
       ],
       "score": 55
     },
@@ -4540,6 +4685,19 @@
       "score": 55
     },
     {
+      "id": "node:7308490153",
+      "name": "Fidenza - Salsomaggiore Terme",
+      "lat": 44.887313,
+      "lon": 10.0897952,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "barrier=toll_booth",
+        "name=Fidenza - Salsomaggiore Terme"
+      ],
+      "score": 55
+    },
+    {
       "id": "node:7369592289",
       "name": "San Pellegrino Terme Infopoint",
       "lat": 45.838314,
@@ -4547,6 +4705,7 @@
       "type": "relax",
       "visibility": "classica",
       "tags": [
+        "check_date=2026-05-27",
         "information=office",
         "name=San Pellegrino Terme Infopoint",
         "operator=OTER",
@@ -4655,9 +4814,11 @@
       "visibility": "classica",
       "tags": [
         "amenity=bench",
+        "backrest=yes",
         "brand=Big Bench Community Project",
         "brand:website=https://bigbenchcommunityproject.org/",
         "giant_furniture=bench",
+        "material=metal;wood",
         "name=Panchina Gigante di Darfo Boario Terme",
         "name:en=Big Bench",
         "ref=72",
@@ -5055,6 +5216,19 @@
       "score": 55
     },
     {
+      "id": "node:12018213933",
+      "name": "Recoaro Terme Immobiliare",
+      "lat": 45.703504,
+      "lon": 11.2232682,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "name=Recoaro Terme Immobiliare",
+        "office=estate_agent"
+      ],
+      "score": 55
+    },
+    {
       "id": "node:12072505594",
       "name": "Intermedia",
       "lat": 44.6980132,
@@ -5131,10 +5305,12 @@
       "visibility": "classica",
       "tags": [
         "amenity=bench",
+        "backrest=yes",
         "brand=Big Bench Community Project",
         "brand:website=https://bigbenchcommunityproject.org/",
         "colour=#0980F7",
         "giant_furniture=bench",
+        "material=metal;wood",
         "name=Panchina Gigante di Vallio Terme",
         "name:en=Big Bench",
         "ref=363",
@@ -5184,6 +5360,75 @@
         "historic=boundary_stone",
         "inscription=STATO DI MILANO;N 32 STATO VENETO",
         "name=Termenon"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:13973426363",
+      "name": "Battaglia Terme",
+      "lat": 45.2915045,
+      "lon": 11.7742002,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "board_type=welcome_sign",
+        "information=board",
+        "name=Battaglia Terme",
+        "tourism=information"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:13980400962",
+      "name": "Agenzia Intermedia",
+      "lat": 45.5210876,
+      "lon": 9.7550638,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "name=Agenzia Intermedia",
+        "office=estate_agent"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:14157695249",
+      "name": "Comune di Sant'Omobono Terme",
+      "lat": 45.8117194,
+      "lon": 9.5355625,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "amenity=townhall",
+        "name=Comune di Sant'Omobono Terme"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:14166996408",
+      "name": "Watermelon Party",
+      "lat": 45.728545,
+      "lon": 9.7310165,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "amenity=bar",
+        "name=Watermelon Party"
+      ],
+      "score": 55
+    },
+    {
+      "id": "node:14213563258",
+      "name": "Abano Terme",
+      "lat": 45.3436061,
+      "lon": 11.7771735,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "city_limit=begin",
+        "name=Abano Terme",
+        "traffic_sign=city_limit",
+        "traffic_sign:direction=forward"
       ],
       "score": 55
     },
@@ -5311,6 +5556,7 @@
       "visibility": "classica",
       "tags": [
         "building=hotel",
+        "building:material=plaster",
         "historic=hotel",
         "name=Imperial Grand Hotel Terme",
         "wikidata=Q56838055",
@@ -5387,10 +5633,12 @@
       "tags": [
         "access=yes",
         "amenity=parking",
+        "check_date:fee=2026-06-22",
         "fee=yes",
         "layer=-1",
         "name=Parcheggio Terme Romane",
-        "parking=underground"
+        "parking=underground",
+        "wheelchair=yes"
       ],
       "score": 55
     },
@@ -5533,16 +5781,20 @@
         "addr:street=Viale degli alpini",
         "area=yes",
         "bicycle=permissive",
+        "cabins=no",
         "charge=10 EUR per night",
+        "drinking_water=no",
         "fee=yes",
         "internet_access=no",
         "motorhome=yes",
         "name=Area camper Battaglia Terme",
         "power_supply=yes",
         "sanitary_dump_station=yes",
+        "shower=no",
         "smoothness=good",
         "surface=compacted",
         "tents=no",
+        "toilets=no",
         "tourism=caravan_site",
         "vehicle=no"
       ],
@@ -5649,6 +5901,23 @@
       "tags": [
         "building=yes",
         "name=Pubblica Assistenza Salsomaggiore Terme",
+        "source=Regione Emilia Romagna"
+      ],
+      "score": 55
+    },
+    {
+      "id": "way:182289494",
+      "name": "Salsomaggiore Terme",
+      "lat": 44.8185862,
+      "lon": 9.9880434,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "building=train_station",
+        "name=Salsomaggiore Terme",
+        "operator=Rete Ferroviaria Italiana",
+        "operator:short=RFI",
+        "operator:wikidata=Q1060049",
         "source=Regione Emilia Romagna"
       ],
       "score": 55
@@ -5812,22 +6081,6 @@
       "score": 55
     },
     {
-      "id": "way:375086949",
-      "name": "Poste Italiane - Montegrotto Terme",
-      "lat": 45.3308275,
-      "lon": 11.7924026,
-      "type": "relax",
-      "visibility": "classica",
-      "tags": [
-        "amenity=post_office",
-        "building=public",
-        "name=Poste Italiane - Montegrotto Terme",
-        "operator=Poste Italiane",
-        "operator:wikidata=Q495026"
-      ],
-      "score": 55
-    },
-    {
       "id": "way:375280305",
       "name": "Istituto comprensivo di Battaglia Terme",
       "lat": 45.2925654,
@@ -5837,6 +6090,19 @@
       "tags": [
         "amenity=school",
         "name=Istituto comprensivo di Battaglia Terme"
+      ],
+      "score": 55
+    },
+    {
+      "id": "way:375280554",
+      "name": "A.S.D. Polisportiva Real Terme",
+      "lat": 45.2915813,
+      "lon": 11.7821704,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "leisure=sports_centre",
+        "name=A.S.D. Polisportiva Real Terme"
       ],
       "score": 55
     },
@@ -5887,6 +6153,34 @@
         "designation=Istituto comprensivo statale di Battaglia Terme",
         "name=Istituto comprensivo di Battaglia Terme",
         "source=http://www.icbattagliaterme.gov.it/"
+      ],
+      "score": 55
+    },
+    {
+      "id": "way:375280837",
+      "name": "A.S.D. Polisportiva Real Terme",
+      "lat": 45.291073,
+      "lon": 11.7826762,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "building=public",
+        "leisure=sports_centre",
+        "name=A.S.D. Polisportiva Real Terme"
+      ],
+      "score": 55
+    },
+    {
+      "id": "way:375280976",
+      "name": "A.S.D. Polisportiva Real Terme",
+      "lat": 45.2920195,
+      "lon": 11.7824011,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "building=public",
+        "leisure=sports_centre",
+        "name=A.S.D. Polisportiva Real Terme"
       ],
       "score": 55
     },
@@ -6016,8 +6310,8 @@
     },
     {
       "id": "way:492188628",
-      "name": "ex-caserma Giarre di Abano Terme",
-      "lat": 45.3546936,
+      "name": "Ex-caserma Giarre di Abano Terme",
+      "lat": 45.3546968,
       "lon": 11.8130061,
       "type": "relax",
       "visibility": "classica",
@@ -6026,7 +6320,7 @@
         "addr:postcode=35031",
         "addr:street=Via dei Roveri",
         "landuse=military",
-        "name=ex-caserma Giarre di Abano Terme"
+        "name=Ex-caserma Giarre di Abano Terme"
       ],
       "score": 55
     },
@@ -6437,6 +6731,7 @@
       "visibility": "classica",
       "tags": [
         "amenity=fire_station",
+        "check_date=2026-08-01",
         "name=Vigili del Fuoco Volontari Levico Terme"
       ],
       "score": 55
@@ -6511,6 +6806,19 @@
       "score": 55
     },
     {
+      "id": "way:1539399638",
+      "name": "Piscina comunale di Abano Terme",
+      "lat": 45.3596267,
+      "lon": 11.7818024,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "building=commercial",
+        "name=Piscina comunale di Abano Terme"
+      ],
+      "score": 55
+    },
+    {
       "id": "relation:43596",
       "name": "Salsomaggiore Terme",
       "lat": 44.8028795,
@@ -6521,6 +6829,8 @@
         "admin_level=8",
         "boundary=administrative",
         "name=Salsomaggiore Terme",
+        "population=20933",
+        "population:date=2026-08-28",
         "ref:ISTAT=034032",
         "ref:catasto=H720",
         "type=boundary",
@@ -6540,8 +6850,11 @@
         "admin_level=8",
         "boundary=administrative",
         "name=Miradolo Terme",
+        "population=3981",
+        "population:date=2026-08-28",
         "ref:ISTAT=018093",
         "ref:catasto=F238",
+        "source:population=ANPR 2026",
         "type=boundary",
         "wikidata=Q40527",
         "wikipedia=it:Miradolo Terme"
@@ -6559,9 +6872,12 @@
         "admin_level=8",
         "boundary=administrative",
         "name=Galzignano Terme",
+        "population=4259",
+        "population:date=2026-08-28",
         "postal_code=35030",
         "ref:ISTAT=028040",
         "ref:catasto=D889",
+        "source:population=ANPR 2026",
         "type=boundary",
         "wikidata=Q34447",
         "wikipedia=it:Galzignano Terme"
@@ -6579,9 +6895,12 @@
         "admin_level=8",
         "boundary=administrative",
         "name=Battaglia Terme",
+        "population=3865",
+        "population:date=2026-08-28",
         "postal_code=35041",
         "ref:ISTAT=028011",
         "ref:catasto=A714",
+        "source:population=ANPR 2026",
         "type=boundary",
         "wikidata=Q34684",
         "wikipedia=it:Battaglia Terme"
@@ -6601,6 +6920,8 @@
         "name=Montegrotto Terme",
         "name:it=Montegrotto Terme",
         "name:la=Mons Aegrotorum",
+        "population=11666",
+        "population:date=2026-08-27",
         "postal_code=35036",
         "ref:ISTAT=028057",
         "ref:catasto=F529",
@@ -6621,6 +6942,8 @@
         "admin_level=8",
         "boundary=administrative",
         "name=Abano Terme",
+        "population=20769",
+        "population:date=2026-08-28",
         "postal_code=35031",
         "ref:ISTAT=028001",
         "ref:catasto=A001",
@@ -6641,6 +6964,8 @@
         "admin_level=8",
         "boundary=administrative",
         "name=Vallio Terme",
+        "population=1451",
+        "population:date=2026-08-28",
         "postal_code=25080",
         "ref:ISTAT=017193",
         "ref:catasto=L626",
@@ -6661,9 +6986,12 @@
         "admin_level=8",
         "boundary=administrative",
         "name=Recoaro Terme",
+        "population=5721",
+        "population:date=2026-08-28",
         "postal_code=36076",
         "ref:ISTAT=024084",
         "ref:catasto=H214",
+        "source:population=ANPR 2026",
         "type=boundary",
         "wikidata=Q46131",
         "wikipedia=it:Recoaro Terme"
@@ -6681,9 +7009,12 @@
         "admin_level=8",
         "boundary=administrative",
         "name=Gaverina Terme",
+        "population=896",
+        "population:date=2026-08-28",
         "postal_code=24060",
         "ref:ISTAT=016110",
         "ref:catasto=D943",
+        "source:population=ANPR 2026",
         "type=boundary",
         "wikidata=Q101117",
         "wikipedia=it:Gaverina Terme"
@@ -6701,6 +7032,8 @@
         "admin_level=8",
         "boundary=administrative",
         "name=Sant'Omobono Terme",
+        "population=3992",
+        "population:date=2026-08-28",
         "postal_code=24038",
         "ref:ISTAT=016252",
         "ref:catasto=M333",
@@ -6721,6 +7054,8 @@
         "admin_level=8",
         "boundary=administrative",
         "name=San Pellegrino Terme",
+        "population=4605",
+        "population:date=2026-08-28",
         "postal_code=24016",
         "ref:ISTAT=016190",
         "ref:catasto=I079",
@@ -6741,6 +7076,8 @@
         "admin_level=8",
         "boundary=administrative",
         "name=Darfo Boario Terme",
+        "population=16069",
+        "population:date=2026-08-28",
         "postal_code=25047",
         "ref:ISTAT=017065",
         "ref:catasto=D251",
@@ -6761,6 +7098,8 @@
         "admin_level=8",
         "boundary=administrative",
         "name=Angolo Terme",
+        "population=2310",
+        "population:date=2026-08-27",
         "postal_code=25040",
         "ref:ISTAT=017006",
         "ref:catasto=A293",
@@ -6785,8 +7124,11 @@
         "name:cim=Leve",
         "name:it=Levico Terme",
         "old_name:de=Löweneck",
+        "population=8410",
+        "population:date=2026-08-28",
         "ref:ISTAT=022104",
         "ref:catasto=E565",
+        "source:population=ANPR 2026",
         "type=boundary",
         "wikidata=Q294678",
         "wikipedia=it:Levico Terme"
@@ -6805,6 +7147,8 @@
         "admin_level=8",
         "boundary=administrative",
         "name=Garniga Terme",
+        "population=427",
+        "population:date=2026-08-27",
         "ref:ISTAT=022091",
         "ref:catasto=D928",
         "type=boundary",
@@ -6828,8 +7172,11 @@
         "name:cim=Rontschòi",
         "name:it=Roncegno Terme",
         "name:mhn=Rontschai'",
+        "population=3013",
+        "population:date=2026-08-28",
         "ref:ISTAT=022156",
         "ref:catasto=H528",
+        "source:population=ANPR 2026",
         "type=boundary",
         "wikidata=Q300962",
         "wikipedia=it:Roncegno Terme"
@@ -6848,8 +7195,11 @@
         "admin_level=8",
         "boundary=administrative",
         "name=Sant'Orsola Terme",
+        "population=1160",
+        "population:date=2026-08-28",
         "ref:ISTAT=022168",
         "ref:catasto=I354",
+        "source:population=ANPR 2026",
         "type=boundary",
         "wikidata=Q301950",
         "wikipedia=it:Sant'Orsola Terme"
@@ -6868,8 +7218,11 @@
         "admin_level=8",
         "boundary=administrative",
         "name=Caderzone Terme",
+        "population=686",
+        "population:date=2026-08-28",
         "ref:ISTAT=022029",
         "ref:catasto=B335",
+        "source:population=ANPR 2026",
         "type=boundary",
         "wikidata=Q256818",
         "wikipedia=it:Caderzone Terme"
@@ -6890,6 +7243,8 @@
         "name=Tramin an der Weinstraße - Termeno sulla Strada del Vino",
         "name:de=Tramin an der Weinstraße",
         "name:it=Termeno sulla Strada del Vino",
+        "population=3347",
+        "population:date=2026-08-28",
         "ref:ISTAT=021098",
         "ref:catasto=L111",
         "type=boundary",
@@ -6902,7 +7257,7 @@
       "id": "relation:570334",
       "name": "Comano Terme",
       "lat": 46.0558934,
-      "lon": 10.8646921,
+      "lon": 10.8642093,
       "type": "relax",
       "visibility": "classica",
       "tags": [
@@ -6910,6 +7265,8 @@
         "admin_level=8",
         "boundary=administrative",
         "name=Comano Terme",
+        "population=3082",
+        "population:date=2026-08-28",
         "ref:ISTAT=022228",
         "ref:catasto=M314",
         "type=boundary",
@@ -7145,8 +7502,8 @@
     {
       "id": "relation:11146005",
       "name": "Crevalcore-Porretta Terme",
-      "lat": 44.5260182,
-      "lon": 11.2598377,
+      "lat": 44.4500848,
+      "lon": 11.1541006,
       "type": "relax",
       "visibility": "classica",
       "tags": [
@@ -7268,6 +7625,24 @@
         "ref=21",
         "roundtrip=no",
         "route=piste",
+        "type=route"
+      ],
+      "score": 55
+    },
+    {
+      "id": "relation:21424628",
+      "name": "Strada Provinciale 38b delle Terme",
+      "lat": 45.3938874,
+      "lon": 11.1961484,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "colour=blue",
+        "name=Strada Provinciale 38b delle Terme",
+        "network=IT:VR",
+        "ref=SP38b",
+        "roundtrip=no",
+        "route=road",
         "type=route"
       ],
       "score": 55
@@ -7650,6 +8025,27 @@
       "score": 42
     },
     {
+      "id": "node:14276206143",
+      "name": "Villa De' Giacomi - Suites, SPA, Relax",
+      "lat": 45.3484735,
+      "lon": 11.6726613,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Teolo",
+        "addr:housenumber=7",
+        "addr:postcode=35037",
+        "addr:street=Via Tito Livio",
+        "guest_house=bed_and_breakfast",
+        "internet_access=yes",
+        "name=Villa De' Giacomi - Suites, SPA, Relax",
+        "phone=3294316148",
+        "tourism=guest_house",
+        "website=https://www.villadegiacomi.it/"
+      ],
+      "score": 42
+    },
+    {
       "id": "way:122798324",
       "name": "Le Blanc Hotel & Spa",
       "lat": 46.0418095,
@@ -7800,8 +8196,14 @@
       "type": "relax",
       "visibility": "classica",
       "tags": [
+        "bar=yes",
         "building=hotel",
+        "food=yes",
+        "internet_access=wlan",
+        "internet_access:fee=no",
         "name=Hotel Andes Family & Wellness",
+        "stars=4",
+        "swimming_pool=indoor",
         "tourism=hotel"
       ],
       "score": 33
@@ -7898,11 +8300,15 @@
     {
       "id": "node:1403436969",
       "name": "di Spagna",
-      "lat": 45.4423661,
-      "lon": 12.3239608,
+      "lat": 45.4423906,
+      "lon": 12.3239735,
       "type": "relax",
       "visibility": "classica",
       "tags": [
+        "addr:city=Venezia",
+        "addr:housenumber=184",
+        "addr:place=Cannaregio",
+        "addr:postcode=30121",
         "email=info@hotel-spagna.it",
         "fax=+39 041 2750256",
         "name=di Spagna",
@@ -7981,12 +8387,16 @@
         "addr:housenumber=49",
         "addr:postcode=35031",
         "addr:street=Via Pietro D'Abano",
+        "air_conditioning=yes",
         "building=yes",
         "contact:phone=+39 049 8669106",
         "contact:website=http://www.hotelmeggiorato.it",
+        "internet_access=wlan",
         "name=Palace Meggiorato",
         "spa=yes",
-        "tourism=hotel"
+        "swimming_pool=indoor;outdoor",
+        "tourism=hotel",
+        "wheelchair=yes"
       ],
       "score": 24
     },
@@ -8108,6 +8518,26 @@
       "score": 24
     },
     {
+      "id": "node:6741933845",
+      "name": "Spazio42",
+      "lat": 45.8462919,
+      "lon": 10.1454428,
+      "type": "relax",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Pian Camuno",
+        "addr:housenumber=12",
+        "addr:postcode=25050",
+        "addr:street=Via Galileo Galilei",
+        "contact:email=info@spz42.it",
+        "contact:mobile=+39 331 791 2980",
+        "contact:website=https://www.spz42.it",
+        "name=Spazio42",
+        "tourism=guest_house"
+      ],
+      "score": 18
+    },
+    {
       "id": "way:240571153",
       "name": "Gasparina",
       "lat": 45.4561578,
@@ -8154,20 +8584,6 @@
       "tags": [
         "name=Hotel Due Spade",
         "tourism=hotel"
-      ],
-      "score": 8
-    },
-    {
-      "id": "node:6741933845",
-      "name": "Spazio42",
-      "lat": 45.8462919,
-      "lon": 10.1454428,
-      "type": "relax",
-      "visibility": "classica",
-      "tags": [
-        "amenity=bar",
-        "name=Spazio42",
-        "tourism=guest_house"
       ],
       "score": 8
     },
