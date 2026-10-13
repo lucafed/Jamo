@@ -3,7 +3,7 @@
   "country": "IT",
   "area": "Veneto",
   "label_it": "Veneto • Borghi (turistici + piccoli)",
-  "generated_at": "2026-10-06T09:45:58.334Z",
+  "generated_at": "2026-10-13T10:02:47.129Z",
   "places": [
     {
       "id": "node:66503077",
@@ -8188,8 +8188,8 @@
     {
       "id": "node:64778227",
       "name": "Longarone",
-      "lat": 46.265786,
-      "lon": 12.2999366,
+      "lat": 46.2658061,
+      "lon": 12.2999238,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -15810,8 +15810,8 @@
     {
       "id": "node:280486870",
       "name": "Pecol",
-      "lat": 46.3902469,
-      "lon": 12.0956996,
+      "lat": 46.3933553,
+      "lon": 12.1003094,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -16120,8 +16120,8 @@
     {
       "id": "node:291319553",
       "name": "Kaltenbrunn - Fontanefredde",
-      "lat": 46.3301234,
-      "lon": 11.3748859,
+      "lat": 46.3300513,
+      "lon": 11.3746735,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -16130,6 +16130,9 @@
         "name:de=Kaltenbrunn",
         "name:it=Fontanefredde",
         "place=village",
+        "population=70",
+        "population:date=2026-10-10",
+        "source:population=census",
         "wikidata=Q100715537"
       ],
       "score": 85
@@ -39161,14 +39164,14 @@
     },
     {
       "id": "node:3037135186",
-      "name": "Arina",
+      "name": "Arina - Larìna",
       "lat": 46.0330003,
       "lon": 11.7217602,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Arina",
+        "name=Arina - Larìna",
         "place=village",
         "wikidata=Q18496098"
       ],
@@ -40115,6 +40118,23 @@
         "population=700",
         "wikidata=Q18447401",
         "wikipedia=it:San Sisto (Poviglio)"
+      ],
+      "score": 85
+    },
+    {
+      "id": "node:3891905194",
+      "name": "Casalpò",
+      "lat": 44.8336075,
+      "lon": 10.5155611,
+      "type": "borgo",
+      "borgo_type": "classico",
+      "visibility": "classica",
+      "tags": [
+        "name=Casalpò",
+        "place=village",
+        "population=150",
+        "wikidata=Q18416872",
+        "wikipedia=it:Casalpò"
       ],
       "score": 85
     },
@@ -74267,14 +74287,14 @@
     },
     {
       "id": "node:1383251690",
-      "name": "Campigotti - Campigöt",
+      "name": "Campigotti - I Campigöt",
       "lat": 46.0415019,
       "lon": 11.6942625,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Campigotti - Campigöt",
+        "name=Campigotti - I Campigöt",
         "place=hamlet",
         "wikidata=Q18496197"
       ],
@@ -74282,14 +74302,14 @@
     },
     {
       "id": "node:1383264001",
-      "name": "Toffoli - Tòfui",
+      "name": "Toffoli - I Tòfui",
       "lat": 46.032632,
       "lon": 11.7131093,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Toffoli - Tòfui",
+        "name=Toffoli - I Tòfui",
         "place=hamlet",
         "wikidata=Q119703404"
       ],
@@ -92846,14 +92866,14 @@
     },
     {
       "id": "node:3440144396",
-      "name": "Moggi - Moj",
+      "name": "Moggi - I Moj",
       "lat": 46.0424969,
       "lon": 11.7013623,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Moggi - Moj",
+        "name=Moggi - I Moj",
         "place=hamlet",
         "wikidata=Q18496688"
       ],
@@ -94416,23 +94436,6 @@
         "population=162",
         "wikidata=Q3726672",
         "wikipedia=it:Enzola"
-      ],
-      "score": 70
-    },
-    {
-      "id": "node:3891905194",
-      "name": "Casalpò",
-      "lat": 44.8336075,
-      "lon": 10.5155611,
-      "type": "borgo",
-      "borgo_type": "classico",
-      "visibility": "classica",
-      "tags": [
-        "name=Casalpò",
-        "place=hamlet",
-        "population=150",
-        "wikidata=Q18416872",
-        "wikipedia=it:Casalpò"
       ],
       "score": 70
     },
@@ -102960,14 +102963,14 @@
     },
     {
       "id": "node:12954773203",
-      "name": "Geronemoni - Jernamoe",
+      "name": "Geronemoni - I Jernamoe",
       "lat": 46.0387769,
       "lon": 11.7164553,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Geronemoni - Jernamoe",
+        "name=Geronemoni - I Jernamoe",
         "place=hamlet",
         "wikidata=Q18496547"
       ],
@@ -107471,8 +107474,8 @@
     {
       "id": "node:13481491003",
       "name": "Alpi",
-      "lat": 45.51674,
-      "lon": 10.78723,
+      "lat": 45.5158078,
+      "lon": 10.7882171,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -140129,7 +140132,7 @@
       "id": "relation:45203",
       "name": "Sant'Ambrogio di Valpolicella",
       "lat": 45.5432173,
-      "lon": 10.8365075,
+      "lon": 10.8365196,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -140197,8 +140200,8 @@
     {
       "id": "relation:45206",
       "name": "Cavaion Veronese",
-      "lat": 45.5313011,
-      "lon": 10.7754708,
+      "lat": 45.5312691,
+      "lon": 10.7754591,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -140429,7 +140432,7 @@
     {
       "id": "relation:45240",
       "name": "Rivoli Veronese",
-      "lat": 45.5709433,
+      "lat": 45.570887,
       "lon": 10.8065557,
       "type": "borgo",
       "borgo_type": "classico",
@@ -141255,7 +141258,7 @@
     {
       "id": "relation:45367",
       "name": "Costermano sul Garda",
-      "lat": 45.5896211,
+      "lat": 45.5895473,
       "lon": 10.7345208,
       "type": "borgo",
       "borgo_type": "classico",
@@ -141419,7 +141422,7 @@
       "id": "relation:45397",
       "name": "Dolcè",
       "lat": 45.6072051,
-      "lon": 10.8709698,
+      "lon": 10.8709765,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
