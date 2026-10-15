@@ -7,7 +7,7 @@
     "minLon": 10.2,
     "maxLon": 13.2
   },
-  "generated_at": "2026-10-08T09:36:22.442Z",
+  "generated_at": "2026-10-15T07:46:56.348Z",
   "places": [
     {
       "id": "node:12766026527",
@@ -103,7 +103,7 @@
         "description=si trova nella zona CLASSICA e storica della VALPOLICELLA, in una piccola valle vocata alla produzione di ottimi vini come l'Amarone, il Ripasso e il Valpolicella. Si  può ammirare dalla piazza del famoso paesetto di S. GIORGIO INGANNAPOLTRON",
         "email=vino@boscainicarlo.it",
         "name=Azienda Agricola Boscaini Carlo",
-        "opening_hours=Mo-Fr 9:00-12:00, 13:00-18:00, Sa 9:00-12:30",
+        "opening_hours=Mo-Fr 09:00-12:00,13:00-18:00, Sa 09:00-12:30",
         "phone=+39 0457731412",
         "website=https://www.boscainicarlo.it/cantina-amarone-valpolicella"
       ],
@@ -658,7 +658,7 @@
         "addr:street=Via Casale Vacca",
         "craft=winery",
         "name=Serre di Pederiva",
-        "opening_hours=Mo-Sa 09:30-18:00 / Su 09:30-13:30",
+        "opening_hours=Mo-Sa 09:30-18:00; Su 09:30-13:30",
         "phone=+39 351 4770880",
         "website=https://proseccoserre.com/"
       ],
@@ -2704,6 +2704,7 @@
         "addr:street:de=Klostergasse",
         "addr:street:it=Vicolo del Convento",
         "building=yes",
+        "check_date=2026-10-12",
         "craft=winery",
         "description=Kellerei",
         "email=m.fliri@rolmail.net",
@@ -5422,24 +5423,6 @@
         "craft=winery",
         "name=Cantina Rotari",
         "operator=Gruppo Mezzacorona"
-      ],
-      "score": 70,
-      "beauty_score": 1
-    },
-    {
-      "id": "way:36087605",
-      "name": "La Concha",
-      "lat": 46.1527096,
-      "lon": 12.9198572,
-      "type": "cantine",
-      "visibility": "chicca",
-      "tags": [
-        "building=yes",
-        "craft=winery",
-        "height=3 m",
-        "it:fvg:ctrn:code=4AED",
-        "it:fvg:ctrn:revision=000",
-        "name=La Concha"
       ],
       "score": 70,
       "beauty_score": 1
