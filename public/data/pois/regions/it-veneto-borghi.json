@@ -3,7 +3,7 @@
   "country": "IT",
   "area": "Veneto",
   "label_it": "Veneto • Borghi (turistici + piccoli)",
-  "generated_at": "2026-10-13T10:02:47.129Z",
+  "generated_at": "2026-10-20T08:08:47.398Z",
   "places": [
     {
       "id": "node:66503077",
@@ -355,8 +355,8 @@
     {
       "id": "node:64778403",
       "name": "Bovolenta",
-      "lat": 45.2703747,
-      "lon": 11.9350857,
+      "lat": 45.2703774,
+      "lon": 11.9361824,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -8760,8 +8760,8 @@
     {
       "id": "node:64778338",
       "name": "Candiana",
-      "lat": 45.22109,
-      "lon": 11.989114,
+      "lat": 45.2201432,
+      "lon": 11.9904496,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -47669,8 +47669,8 @@
     {
       "id": "node:13481491382",
       "name": "Borgo Piai",
-      "lat": 45.92586,
-      "lon": 12.31517,
+      "lat": 45.9258948,
+      "lon": 12.3142843,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -130105,7 +130105,7 @@
     },
     {
       "id": "relation:43415",
-      "name": "Reggio nell'Emilia",
+      "name": "Reggio Emilia",
       "lat": 44.6994559,
       "lon": 10.6321796,
       "type": "borgo",
@@ -130113,12 +130113,12 @@
       "visibility": "classica",
       "tags": [
         "admin_level=8",
-        "alt_name=Reggio Emilia",
         "boundary=administrative",
-        "name=Reggio nell'Emilia",
+        "long_name=Reggio nell'Emilia",
+        "name=Reggio Emilia",
         "name:ca=Reggio de l'Emília",
         "name:uk=Реджо-Емілія",
-        "official_name=Reggio nell'Emilia",
+        "official_name=Comune di Reggio nell'Emilia",
         "official_name:uk=Реджо-нель-Емілія",
         "population=172318",
         "population:date=2026-08-28",
@@ -139781,7 +139781,7 @@
     {
       "id": "relation:45146",
       "name": "Pastrengo",
-      "lat": 45.4970905,
+      "lat": 45.4971061,
       "lon": 10.7982243,
       "type": "borgo",
       "borgo_type": "classico",
