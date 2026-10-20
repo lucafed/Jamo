@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-09-29T09:37:23.441Z",
+  "generated_at": "2026-10-20T08:23:03.646Z",
   "places": [
     {
       "id": "node:2692275706",
@@ -457,6 +457,31 @@
         "phone=+39 0461 242044",
         "shop=wine",
         "website=http://www.ne-no.it/"
+      ],
+      "score": 131
+    },
+    {
+      "id": "way:127537140",
+      "name": "Weingut Messnerhof",
+      "lat": 46.5116653,
+      "lon": 11.3551485,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Bolzano - Bozen",
+        "addr:housenumber=7",
+        "addr:postcode=39100",
+        "addr:street=Via San Pietro - St.-Peter-Straße",
+        "building=retail",
+        "craft=winery",
+        "name=Weingut Messnerhof",
+        "name:de=Weingut Messnerhof",
+        "name:it=Tenuta Messnerhof",
+        "operator=Bernhard Pichler",
+        "phone=+393394732612",
+        "shop=wine",
+        "tourism=wine_cellar",
+        "website=https://messnerhof.net"
       ],
       "score": 131
     },
@@ -1095,7 +1120,7 @@
         "description=si trova nella zona CLASSICA e storica della VALPOLICELLA, in una piccola valle vocata alla produzione di ottimi vini come l'Amarone, il Ripasso e il Valpolicella. Si  può ammirare dalla piazza del famoso paesetto di S. GIORGIO INGANNAPOLTRON",
         "email=vino@boscainicarlo.it",
         "name=Azienda Agricola Boscaini Carlo",
-        "opening_hours=Lunedì-Venerdì 9:00-12:00/ 13:00-18:00 Sabato 9:00-12:30",
+        "opening_hours=Mo-Fr 09:00-12:00,13:00-18:00, Sa 09:00-12:30",
         "phone=+39 0457731412",
         "website=https://www.boscainicarlo.it/cantina-amarone-valpolicella"
       ],
@@ -1838,7 +1863,7 @@
         "addr:street=Via Casale Vacca",
         "craft=winery",
         "name=Serre di Pederiva",
-        "opening_hours=Mo-Sa 09:30-18:00 / Su 09:30-13:30",
+        "opening_hours=Mo-Sa 09:30-18:00; Su 09:30-13:30",
         "phone=+39 351 4770880",
         "website=https://proseccoserre.com/"
       ],
@@ -1937,7 +1962,7 @@
         "email=info@casagiallaspumanti.it",
         "mobile=+39 348 7389217",
         "name=Casa Gialla",
-        "opening_hours=Mo-Su 8:00 - 12:00 , 13:30 - 18:30",
+        "opening_hours=Mo-Su 08:00-12:00,13:30-18:30",
         "phone=+39 0423 981138",
         "website=https://casagiallaspumanti.it/"
       ],
@@ -2236,6 +2261,7 @@
         "addr:postcode=37023",
         "addr:street=Via Asiago",
         "building=industrial",
+        "contact:instagram=https://www.instagram.com/cantine_bertani/",
         "craft=winery",
         "name=Bertani",
         "opening_hours=Tu-Sa 09:30-13:00,14:00-18:00",
@@ -2380,7 +2406,7 @@
         "contact:website=https://neravini.com",
         "craft=winery",
         "name=Casa vinicola Nera",
-        "opening_hours=Mo-Su 9:00-21:00",
+        "opening_hours=Mo-Su 09:00-21:00",
         "ref:vatin=IT00141640144",
         "source=survey"
       ],
@@ -3320,7 +3346,7 @@
         "addr:street=Via San Giovanni",
         "craft=winery",
         "name=Val D'Oca",
-        "opening_hours=Mo-Sa 10:00 - 18:30; Su 10 - 16",
+        "opening_hours=Mo-Sa 10:00-18:30; Su 10:00-16:00",
         "website=https://www.valdoca.com/",
         "wheelchair=yes"
       ],
@@ -4256,6 +4282,19 @@
       "score": 92
     },
     {
+      "id": "node:14249251699",
+      "name": "Cantina Villa Giuliana",
+      "lat": 45.6055377,
+      "lon": 10.12068,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "craft=winery",
+        "name=Cantina Villa Giuliana"
+      ],
+      "score": 92
+    },
+    {
       "id": "way:30691669",
       "name": "Cantina Rotari",
       "lat": 46.202523,
@@ -4882,6 +4921,20 @@
       "score": 90
     },
     {
+      "id": "node:8071980106",
+      "name": "La Ca'",
+      "lat": 45.7179691,
+      "lon": 9.4742998,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "craft=winery",
+        "name=La Ca'",
+        "website=https://aziendaagricolalaca.com/"
+      ],
+      "score": 90
+    },
+    {
       "id": "node:8679266704",
       "name": "Azienda Vinicola Mattarelli",
       "lat": 44.8555749,
@@ -5230,6 +5283,21 @@
         "fixme=Building shape is incorrect. (They put a winery on the roof or something like that)",
         "name=Pieropan",
         "website=https://pieropan.it/tenute/soave"
+      ],
+      "score": 90
+    },
+    {
+      "id": "way:478726182",
+      "name": "Tassodine",
+      "lat": 45.7220167,
+      "lon": 9.4776146,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "building=yes",
+        "craft=winery",
+        "name=Tassodine",
+        "website=https://www.tassodine.it/prodotti"
       ],
       "score": 90
     },
@@ -6195,19 +6263,6 @@
       "score": 80
     },
     {
-      "id": "node:8071980106",
-      "name": "La Ca'",
-      "lat": 45.7179691,
-      "lon": 9.4742998,
-      "type": "cantine",
-      "visibility": "classica",
-      "tags": [
-        "craft=winery",
-        "name=La Ca'"
-      ],
-      "score": 80
-    },
-    {
       "id": "node:8564431798",
       "name": "Rarefratte",
       "lat": 45.7259341,
@@ -6703,6 +6758,28 @@
       "score": 80
     },
     {
+      "id": "way:88570113",
+      "name": "Le Fontanelle",
+      "lat": 45.9197081,
+      "lon": 10.848055,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Tenno",
+        "addr:country=IT",
+        "addr:hamlet=Volta de' No'",
+        "addr:housenumber=51",
+        "addr:postcode=38060",
+        "addr:street=Località Volta di No",
+        "building=farm",
+        "craft=winery",
+        "name=Le Fontanelle",
+        "operator=Famiglia Pasini",
+        "produce=wine; oil"
+      ],
+      "score": 80
+    },
+    {
       "id": "way:95426500",
       "name": "Oselara",
       "lat": 45.4286177,
@@ -6931,20 +7008,6 @@
         "building=yes",
         "craft=winery",
         "name=Ansitz Rynnhof"
-      ],
-      "score": 80
-    },
-    {
-      "id": "way:478726182",
-      "name": "Tassodine",
-      "lat": 45.7220167,
-      "lon": 9.4776146,
-      "type": "cantine",
-      "visibility": "classica",
-      "tags": [
-        "building=yes",
-        "craft=winery",
-        "name=Tassodine"
       ],
       "score": 80
     },
@@ -8247,7 +8310,7 @@
         "description=Azienda Agricola Vitivinicola, vendita diretta al pubblico",
         "email=pasquale-rosso@virgilio.it",
         "name=Uve e Vini",
-        "opening_hours=Tu-Sa 8:30-12:00,14:30-19:00",
+        "opening_hours=Tu-Sa 08:30-12:00,14:30-19:00",
         "operator=Pasquale Rosso",
         "phone=+39 348 245 2754",
         "shop=wine",
@@ -9173,7 +9236,7 @@
         "addr:postcode=40129",
         "addr:street=Via Giacomo Matteotti",
         "addr:unit=G",
-        "check_date=2024-10-03",
+        "check_date=2026-10-13",
         "name=Carusi",
         "phone=+39051357243",
         "shop=wine",
@@ -10414,8 +10477,10 @@
         "addr:housenumber=16",
         "addr:postcode=37024",
         "addr:street=Via Vigolo",
-        "check_date=2025-05-15",
+        "check_date=2026-10-07",
+        "check_date:opening_hours=2026-10-07",
         "name=Cantine Vogadori Vini",
+        "opening_hours:signed=no",
         "operator=Alberto Vogadori",
         "shop=wine",
         "website=https://www.vogadorivini.it"
@@ -10740,6 +10805,25 @@
       "score": 31
     },
     {
+      "id": "node:2112857603",
+      "name": "La botega del vin",
+      "lat": 46.0572898,
+      "lon": 11.1181337,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Trento",
+        "addr:country=IT",
+        "addr:housenumber=2",
+        "addr:postcode=38122",
+        "addr:street=Via dei Muredei",
+        "name=La botega del vin",
+        "opening_hours=Mo-Fr 08:45-12:00,15:00-19:00; Sa 08:45-12:00",
+        "shop=wine"
+      ],
+      "score": 31
+    },
+    {
       "id": "node:2670550450",
       "name": "Azienda Agricola Cepol",
       "lat": 45.8854839,
@@ -10848,6 +10932,21 @@
         "addr:postcode=30123",
         "name=Caffè Poggi dal 1919",
         "opening_hours=Tu-Sa 08:00-19:30; Su 09:00-19:30",
+        "shop=wine",
+        "wheelchair=no"
+      ],
+      "score": 31
+    },
+    {
+      "id": "node:4417305145",
+      "name": "Wein Schmiede",
+      "lat": 46.4140222,
+      "lon": 11.2462437,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Wein Schmiede",
+        "opening_hours=Mo-Sa 11:00-01:00, Su 16:00-23:00",
         "shop=wine",
         "wheelchair=no"
       ],
@@ -11306,6 +11405,23 @@
       "score": 31
     },
     {
+      "id": "node:6636873785",
+      "name": "Villa",
+      "lat": 45.520034,
+      "lon": 10.7524084,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "name=Villa",
+        "name:en=Villa Calicantus",
+        "name:fr=Villa Calicantus",
+        "name:it=Villa Calicantus",
+        "opening_hours=Mo-Sa 12:00-21:00; Su off",
+        "shop=wine"
+      ],
+      "score": 31
+    },
+    {
       "id": "node:6918369387",
       "name": "DANILO AGRICOLA BORGA",
       "lat": 45.4321727,
@@ -11480,8 +11596,9 @@
         "addr:housenumber=19",
         "addr:street=Piazza Pietro Gavazzi",
         "name=Antico Vinaio",
-        "opening_hours=Tu-Fr 09:30-13:00, Mo-Fr 16:00-19:30, Sa 09:30-13:00,15:30-19:00, Su 09:30-13:00",
-        "shop=wine"
+        "opening_hours=Tu-Fr 09:30-13:00, Tu-Fr 16:00-19:30, Sa 09:30-13:00,15:30-19:00, Su 09:30-13:00",
+        "shop=wine",
+        "wheelchair=yes"
       ],
       "score": 31
     },
@@ -12122,24 +12239,6 @@
       "score": 25
     },
     {
-      "id": "node:2112857603",
-      "name": "La botega del vin",
-      "lat": 46.0572898,
-      "lon": 11.1181337,
-      "type": "cantine",
-      "visibility": "classica",
-      "tags": [
-        "addr:city=Trento",
-        "addr:country=IT",
-        "addr:housenumber=2",
-        "addr:postcode=38122",
-        "addr:street=Via dei Muredei",
-        "name=La botega del vin",
-        "shop=wine"
-      ],
-      "score": 25
-    },
-    {
       "id": "node:2346006414",
       "name": "Enoteca Carmenere",
       "lat": 45.7164318,
@@ -12530,20 +12629,6 @@
         "addr:street=Via San Donà",
         "name=Enobottega",
         "shop=wine"
-      ],
-      "score": 25
-    },
-    {
-      "id": "node:4417305145",
-      "name": "Wein Schmiede",
-      "lat": 46.4140222,
-      "lon": 11.2462437,
-      "type": "cantine",
-      "visibility": "classica",
-      "tags": [
-        "name=Wein Schmiede",
-        "shop=wine",
-        "wheelchair=no"
       ],
       "score": 25
     },
@@ -13147,22 +13232,6 @@
       "visibility": "classica",
       "tags": [
         "name=Le Morette",
-        "shop=wine"
-      ],
-      "score": 25
-    },
-    {
-      "id": "node:6636873785",
-      "name": "Villa",
-      "lat": 45.520034,
-      "lon": 10.7524084,
-      "type": "cantine",
-      "visibility": "classica",
-      "tags": [
-        "name=Villa",
-        "name:en=Villa Calicantus",
-        "name:fr=Villa Calicantus",
-        "name:it=Villa Calicantus",
         "shop=wine"
       ],
       "score": 25
