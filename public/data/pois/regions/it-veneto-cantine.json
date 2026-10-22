@@ -7,7 +7,7 @@
     "minLon": 10.2,
     "maxLon": 13.2
   },
-  "generated_at": "2026-10-15T07:46:56.348Z",
+  "generated_at": "2026-10-22T08:01:56.598Z",
   "places": [
     {
       "id": "node:12766026527",
@@ -971,6 +971,7 @@
         "addr:postcode=37023",
         "addr:street=Via Asiago",
         "building=industrial",
+        "contact:instagram=https://www.instagram.com/cantine_bertani/",
         "craft=winery",
         "name=Bertani",
         "opening_hours=Tu-Sa 09:30-13:00,14:00-18:00",
@@ -5396,6 +5397,20 @@
       "beauty_score": 1
     },
     {
+      "id": "node:14300994129",
+      "name": "La Selva Planizia",
+      "lat": 45.841803,
+      "lon": 13.1831042,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=La Selva Planizia"
+      ],
+      "score": 70,
+      "beauty_score": 1
+    },
+    {
       "id": "way:30691669",
       "name": "Cantina Rotari",
       "lat": 46.202523,
@@ -5531,6 +5546,25 @@
         "building=yes",
         "craft=winery",
         "name=Oselara"
+      ],
+      "score": 70,
+      "beauty_score": 1
+    },
+    {
+      "id": "way:134644809",
+      "name": "Cantina Delai",
+      "lat": 45.5744668,
+      "lon": 10.5094138,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "addr:city=Puegnago del Garda",
+        "addr:housenumber=10",
+        "addr:postcode=25080",
+        "addr:street=Via Aldo Moro",
+        "building=yes",
+        "craft=winery",
+        "name=Cantina Delai"
       ],
       "score": 70,
       "beauty_score": 1
