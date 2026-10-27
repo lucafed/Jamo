@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-10-20T08:23:03.646Z",
+  "generated_at": "2026-10-27T08:51:41.561Z",
   "places": [
     {
       "id": "node:2692275706",
@@ -4353,6 +4353,24 @@
       "score": 92
     },
     {
+      "id": "way:134644809",
+      "name": "Cantina Delai",
+      "lat": 45.5744668,
+      "lon": 10.5094138,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Puegnago del Garda",
+        "addr:housenumber=10",
+        "addr:postcode=25080",
+        "addr:street=Via Aldo Moro",
+        "building=yes",
+        "craft=winery",
+        "name=Cantina Delai"
+      ],
+      "score": 92
+    },
+    {
       "id": "way:165645849",
       "name": "Cantina Sociale di Concordia",
       "lat": 44.9122992,
@@ -6740,6 +6758,19 @@
         "addr:street=Via Bersaglieri d'Italia",
         "craft=winery",
         "name=Home"
+      ],
+      "score": 80
+    },
+    {
+      "id": "node:14309344027",
+      "name": "Piccoli",
+      "lat": 45.4830367,
+      "lon": 10.9596562,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "craft=winery",
+        "name=Piccoli"
       ],
       "score": 80
     },
@@ -10737,6 +10768,23 @@
         "name=Edoardo Fredd International",
         "shop=wine",
         "website=https://www.edoardofreddi.it/"
+      ],
+      "score": 35
+    },
+    {
+      "id": "node:14306753901",
+      "name": "Enoteca La Fenice",
+      "lat": 45.5611349,
+      "lon": 12.2345001,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=13",
+        "addr:postcode=31021",
+        "addr:street=Via Giacomo Matteotti",
+        "name=Enoteca La Fenice",
+        "shop=wine",
+        "website=http://www.enotecalafenice.it"
       ],
       "score": 35
     },
