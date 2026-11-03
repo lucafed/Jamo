@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-10-27T08:51:41.561Z",
+  "generated_at": "2026-11-03T10:38:43.278Z",
   "places": [
     {
       "id": "node:2692275706",
@@ -3267,7 +3267,7 @@
         "addr:housenumber=1",
         "addr:postcode=36045",
         "addr:street=Via Monte Palu'",
-        "contact:facebook=https://www.facebook.com/puntozerowine/?fref=ts",
+        "contact:facebook=https://www.facebook.com/puntozerowine",
         "craft=winery",
         "email=info@puntozerowine.it",
         "name=Punto Zero",
@@ -5286,6 +5286,26 @@
       "score": 90
     },
     {
+      "id": "way:194363246",
+      "name": "Tenuta Santomè",
+      "lat": 45.6510848,
+      "lon": 12.3780399,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Biancade",
+        "addr:housenumber=71",
+        "addr:postcode=31056",
+        "addr:street=Via Carboncine",
+        "building=yes",
+        "contact:facebook=https://www.facebook.com/tenuta.santome",
+        "craft=winery",
+        "name=Tenuta Santomè",
+        "website=https://www.tenutasantome.com"
+      ],
+      "score": 90
+    },
+    {
       "id": "way:464482381",
       "name": "Pieropan",
       "lat": 45.432134,
@@ -6918,20 +6938,6 @@
         "craft=winery",
         "name=Civ & Civ",
         "source=Regione Emilia Romagna"
-      ],
-      "score": 80
-    },
-    {
-      "id": "way:194363246",
-      "name": "Tenuta Santomè",
-      "lat": 45.6510848,
-      "lon": 12.3780399,
-      "type": "cantine",
-      "visibility": "classica",
-      "tags": [
-        "building=yes",
-        "craft=winery",
-        "name=Tenuta Santomè"
       ],
       "score": 80
     },
@@ -9698,6 +9704,26 @@
       "score": 41
     },
     {
+      "id": "node:14324297501",
+      "name": "Baggio",
+      "lat": 45.6454214,
+      "lon": 12.2408379,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:housenumber=156",
+        "addr:postcode=31100",
+        "addr:street=Via Terraglio",
+        "check_date=2026-10-27",
+        "check_date:opening_hours=2026-10-27",
+        "name=Baggio",
+        "opening_hours=Mo-Fr 09:00-12:30, 15:30-19:30; Sa 09:00-13:00",
+        "shop=wine",
+        "website=https://vinoebirra.it"
+      ],
+      "score": 41
+    },
+    {
       "id": "way:81025169",
       "name": "Zeni",
       "lat": 46.1943586,
@@ -12057,7 +12083,7 @@
         "addr:city=Schio",
         "addr:housenumber=8",
         "addr:postcode=36015",
-        "addr:street=Via A. Da Schio",
+        "addr:street=Via Almerico Da Schio",
         "building=yes",
         "name=Miotto F.lli Snc",
         "operator=Miotto Paolo & C.",
