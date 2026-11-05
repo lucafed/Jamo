@@ -256,9 +256,9 @@
 
   <header class="topbar clickSafe">
     <div class="brand">
-      <div class="logoMark" aria-hidden="true">J</div>
+      <div class="logoMark jamoLogo" aria-hidden="true"><img src="/jamo-logo.svg" alt="" width="42" height="42"></div>
       <div class="brandText">
-        <div class="brandTitle">Jamo</div>
+        <div class="brandTitle">Jamo<span class="jamoGoldDot">.</span></div>
         <div class="brandSub">Scopri ciò che non ti aspetti.</div>
       </div>
     </div>
@@ -282,9 +282,29 @@
         <div class="jamoHeroActions">
           <a class="jamoHeroPrimary" href="#quickStartCard">📍 Scopri intorno a te <span aria-hidden="true">↗</span></a>
           <a class="jamoHeroSecondary" href="#searchCard">Esplora le categorie</a>
+          <a class="jamoHeroSecondary" href="#proponiTesoro">✦ Proponi un Tesoro</a>
         </div>
         <div class="jamoHeroFoot">✦ Non i soliti posti. Solo quelli che meritano.</div>
       </div>
+    </section>
+
+    <section id="proponiTesoro" class="card clickSafe jamoContribute">
+      <div class="jamoContributeEyebrow">✦ LA COMMUNITY DI JAMO</div>
+      <h2>Conosci un posto che merita di essere scoperto?</h2>
+      <p>Un borgo poco conosciuto, un panorama speciale, un angolo sorprendente. Raccontacelo: proporre un tesoro è e resterà gratuito.</p>
+      <details class="jamoProposalDetails">
+        <summary>💎 Proponi un Tesoro</summary>
+        <form id="jamoProposalForm">
+          <label for="jamoPlaceName">Nome del luogo *</label>
+          <input id="jamoPlaceName" name="place" required maxlength="120" placeholder="Come si chiama?" />
+          <label for="jamoPlaceArea">Dove si trova? *</label>
+          <input id="jamoPlaceArea" name="area" required maxlength="160" placeholder="Comune, provincia o coordinate" />
+          <label for="jamoPlaceWhy">Perché è speciale? *</label>
+          <textarea id="jamoPlaceWhy" name="why" required maxlength="1200" rows="4" placeholder="Raccontaci cosa lo rende unico"></textarea>
+          <button type="submit" class="btn btnPrimary">Copia la proposta</button>
+          <p class="jamoProposalNote" id="jamoProposalNote" role="status">Per ora puoi preparare e copiare la proposta. L'invio alla redazione e la revisione delle foto saranno attivati in una fase successiva: questo modulo non pubblica nulla.</p>
+        </form>
+      </details>
     </section>
 
     <section id="quickStartCard" class="card clickSafe">
@@ -469,6 +489,7 @@
   <script src="/lib/jamo-utils.js?v=1.0"></script>
   <script src="/events.js?v=1.0"></script>
   <script src="/app.js?v=22.3"></script>
+  <script src="/jamo-proposte.js?v=1"></script>
 
   <script>
   (() => {
