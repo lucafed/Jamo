@@ -1,0 +1,895 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Jamo — Scopri le meraviglie intorno a te</title>
+
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#174B3A">
+
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+
+  <link rel="stylesheet" href="/style.css?v=6.1" />
+
+  <style>
+    :root{
+      --bg:#121214;
+      --surface:#1A1A1F;
+      --text:#F6F6F6;
+      --muted:#B9B2A9;
+      --acc:#3B82F6;
+      --acc2:#93C5FD;
+      --border:rgba(255,255,255,.10);
+      --shadow: rgba(0,0,0,.35);
+      --chipActiveBg: rgba(59,130,246,.18);
+      --chipActiveRing: rgba(59,130,246,.32);
+      --chipActiveFg: #F6F6F6;
+      --cta1: rgba(59,130,246,1);
+      --cta2: rgba(147,197,253,1);
+      --sos1: rgba(59,130,246,.92);
+      --sos2: rgba(147,197,253,.92);
+    }
+
+    .accent{ color: var(--acc2); }
+
+    .heroTitle, .cardTitle, .brandTitle{
+      line-height: 1.12;
+      overflow-wrap:anywhere;
+      word-break: break-word;
+    }
+
+    .heroDesc, .cardHint, .small, .muted{
+      overflow-wrap:anywhere;
+      word-break: break-word;
+    }
+
+    .bgGlow{
+      background:
+        radial-gradient(700px 420px at 18% 10%, rgba(59,130,246,.14), transparent 55%),
+        radial-gradient(760px 460px at 82% 22%, rgba(147,197,253,.10), transparent 60%),
+        radial-gradient(900px 520px at 50% 92%, rgba(59,130,246,.08), transparent 60%);
+      filter: blur(6px);
+      opacity: .95;
+      pointer-events: none;
+    }
+
+    .btnPrimary{
+      background: linear-gradient(135deg, var(--cta1), var(--cta2));
+      border-color: rgba(255,255,255,.12);
+      color:#141214;
+      font-weight: 950;
+    }
+
+    .btnPrimary:active{ transform: scale(.99); }
+
+    .chip.active{
+      background: var(--chipActiveBg);
+      color: var(--chipActiveFg);
+      border-color: var(--chipActiveRing);
+      box-shadow: 0 0 0 2px rgba(0,0,0,.18) inset;
+    }
+
+    #categoryChips{
+      display:grid;
+      grid-auto-flow: column;
+      grid-template-rows: repeat(2, auto);
+      gap:10px;
+      overflow-x:auto;
+      overflow-y:hidden;
+      padding-bottom:6px;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      mask-image: linear-gradient(to right, transparent 0, black 18px, black calc(100% - 18px), transparent 100%);
+      -webkit-mask-image: linear-gradient(to right, transparent 0, black 18px, black calc(100% - 18px), transparent 100%);
+    }
+
+    #categoryChips .chip{
+      scroll-snap-align: start;
+      white-space: nowrap;
+      min-width: 150px;
+      transition: background .16s ease, border-color .16s ease, transform .12s ease;
+    }
+
+    #categoryChips .chip:active{ transform: scale(.99); }
+
+    .hScrollHint{
+      margin-top:8px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      opacity:.9;
+    }
+
+    .hScrollHint .dot{
+      width:6px;height:6px;border-radius:50%;
+      background: rgba(255,255,255,.65);
+      box-shadow: 0 0 0 3px rgba(255,255,255,.08);
+      flex:0 0 auto;
+    }
+
+    #btnWhatsThere{
+      border-color: rgba(255,255,255,.22);
+      box-shadow: 0 0 0 2px rgba(0,0,0,.18) inset;
+      font-weight: 950;
+      padding: 10px 14px;
+      background: rgba(255,255,255,.06);
+    }
+
+    #btnWhatsThere:active{ transform: scale(.99); }
+
+    .fabSOS{
+      position: fixed;
+      right: 14px;
+      bottom: 16px;
+      z-index: 9999;
+      display:none;
+      align-items:center;
+      gap:10px;
+      padding: 12px 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(26,26,31,.72);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 14px 30px rgba(0,0,0,.35);
+      color: var(--text);
+      font-weight: 950;
+      letter-spacing: .2px;
+    }
+
+    .fabSOS .b{
+      width:34px;height:34px;border-radius:12px;
+      display:flex;align-items:center;justify-content:center;
+      background: linear-gradient(135deg, var(--sos1), var(--sos2));
+      color:#141214;
+      flex:0 0 auto;
+      box-shadow: 0 10px 18px rgba(0,0,0,.25);
+    }
+
+    .fabSOS:active{ transform: scale(.99); }
+
+    .fabWhats{
+      position: fixed;
+      left: 14px;
+      bottom: 16px;
+      z-index: 9999;
+      display:none;
+      align-items:center;
+      gap:10px;
+      padding: 12px 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(26,26,31,.86);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 16px 34px rgba(0,0,0,.42);
+      color: var(--text);
+      font-weight: 950;
+      letter-spacing: .2px;
+    }
+
+    .fabWhats .b{
+      width:34px;height:34px;border-radius:12px;
+      display:flex;align-items:center;justify-content:center;
+      background: linear-gradient(135deg, var(--cta1), var(--cta2));
+      color:#141214;
+      flex:0 0 auto;
+      box-shadow: 0 10px 18px rgba(0,0,0,.25);
+    }
+
+    .fabWhats:active{ transform: scale(.99); }
+
+    .sheetMask{
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.55);
+      display:none;
+      z-index: 9998;
+    }
+
+    .sheet{
+      position: fixed;
+      left: 0; right: 0;
+      bottom: -100%;
+      z-index: 10000;
+      background: rgba(26,26,31,.92);
+      border-top: 1px solid rgba(255,255,255,.14);
+      border-top-left-radius: 18px;
+      border-top-right-radius: 18px;
+      padding: 14px 14px 18px;
+      box-shadow: 0 -18px 40px rgba(0,0,0,.45);
+      transition: bottom .22s ease;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .sheet.open{ bottom: 0; }
+
+    .sheetTop{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px;
+    }
+
+    .sheetTitle{ font-weight: 950; font-size: 16px; }
+
+    .sheetDesc{
+      margin-top:8px;
+      color: var(--muted);
+      line-height: 1.35;
+      font-size: 13px;
+    }
+
+    .sheetGrid{
+      margin-top: 12px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .ideaCard{
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      border-radius: 14px;
+      padding: 12px;
+    }
+
+    .ideaCard .t{ font-weight: 950; }
+
+    .ideaCard .d{
+      margin-top:6px;
+      color: var(--muted);
+      line-height:1.35;
+      font-size:13px;
+    }
+
+    .sheetActions{ margin-top: 12px; display:flex; gap:10px; flex-wrap:wrap; }
+
+    .ideaCard .t, .ideaCard .d{ overflow-wrap:anywhere; word-break: break-word; }
+  </style>
+  <link rel="stylesheet" href="/jamo-refresh.css?v=1.0" />
+</head>
+
+<body>
+  <div class="bgGlow" aria-hidden="true"></div>
+
+  <header class="topbar clickSafe">
+    <div class="brand">
+      <div class="logoMark" aria-hidden="true">J</div>
+      <div class="brandText">
+        <div class="brandTitle">Jamo</div>
+        <div class="brandSub">Scopri ciò che non ti aspetti.</div>
+      </div>
+    </div>
+    <div class="topActions">
+      <button id="btnResetVisited" class="btnGhost" type="button" title="Reset visitati">🧽</button>
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <section id="statusBox" class="statusBox clickSafe" style="display:none;">
+      <div class="statusDot" aria-hidden="true"></div>
+      <div id="statusText" class="statusText"></div>
+    </section>
+
+    <section class="hero clickSafe">
+      <div class="heroCard">
+        <div class="heroBadge">💎 LA SCOPERTA È QUI</div>
+        <h1 class="heroTitle">La meraviglia è <span class="accent">più vicina</span> di quanto pensi.</h1>
+        <p class="heroDesc">Tesori nascosti, luoghi sorprendenti e posti che valgono il viaggio. Vicino a casa tua o ovunque tu sia.</p>
+        <div class="jamoHeroActions">
+          <a class="jamoHeroPrimary" href="#quickStartCard">📍 Scopri intorno a te <span aria-hidden="true">↗</span></a>
+          <a class="jamoHeroSecondary" href="#searchCard">Esplora le categorie</a>
+        </div>
+        <div class="jamoHeroFoot">✦ Non i soliti posti. Solo quelli che meritano.</div>
+      </div>
+    </section>
+
+    <section id="quickStartCard" class="card clickSafe">
+      <div class="cardTitleRow">
+        <div class="cardTitle">📍 Da dove vuoi scoprire?</div>
+        <div class="cardHint">Scegli da dove parti</div>
+      </div>
+
+      <div class="field">
+        <label class="label" for="originLabel">Inserisci un luogo</label>
+        <div class="fieldRow">
+          <input id="originLabel" class="input" type="text" placeholder="Es: Bussolengo, Verona, L'Aquila..." autocomplete="off">
+          <button id="btnFindPlace" class="btn btnPrimary" type="button">Usa questo luogo</button>
+        </div>
+        <div id="originStatus" class="small muted" style="margin-top:10px; line-height:1.35;">
+          Inserisci un luogo e premi <b>Usa questo luogo</b>.
+        </div>
+      </div>
+
+      <div class="row wraprow" style="gap:10px; margin-top:12px;">
+        <button id="btnResetOrigin" class="btnGhost" type="button">🧽 Reset partenza</button>
+        <button id="btnUseGPS" class="btnGhost" type="button" style="display:none;">📡 GPS</button>
+      </div>
+
+      <input id="originLat" type="hidden" />
+      <input id="originLon" type="hidden" />
+      <input id="originCC" type="hidden" />
+    </section>
+
+    <section id="searchCard" class="card clickSafe">
+      <div class="cardTitleRow">
+        <div class="cardTitle">🧭 La tua prossima scoperta</div>
+        <div class="cardHint">Scegli ciò che ti ispira</div>
+      </div>
+
+      <div class="subTitle">⏱️ Quanto tempo hai?</div>
+      <div id="timeChips" class="chips">
+        <div class="chip" data-min="45">45m</div>
+        <div class="chip" data-min="60">1h</div>
+        <div class="chip active" data-min="90">1h 30</div>
+        <div class="chip" data-min="120">2h</div>
+        <div class="chip" data-min="180">3h</div>
+        <div class="chip" data-min="240">4h</div>
+      </div>
+
+      <div class="fieldRow" style="margin-top:10px;">
+        <div class="miniLabel">Oppure minuti precisi</div>
+        <input id="maxMinutes" class="input inputMini" type="number" min="10" max="600" step="5" value="90">
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="subTitle">🧭 Che giornata vuoi?</div>
+      <div id="categoryChips" class="chips chipsGrid">
+        <div class="chip active" data-cat="natura">🌿 Stacca la spina</div>
+        <div class="chip" data-cat="hiking">🥾 Cammina un po'</div>
+        <div class="chip" data-cat="borghi">🏰 Borghi nascosti</div>
+        <div class="chip" data-cat="storia">🏛️ Viaggio nel tempo</div>
+        <div class="chip" data-cat="montagna">🏔️ Aria di montagna</div>
+        <div class="chip" data-cat="mare">🌊 Voglia di mare</div>
+        <div class="chip" data-cat="lago">🏞️ Lago e relax</div>
+        <div class="chip" data-cat="relax">🧖 Relax vero</div>
+        <div class="chip" data-cat="family">👨‍👩‍👧‍👦 Con i bambini</div>
+        <div class="chip" data-cat="cantine">🍷 Buon vino</div>
+        <div class="chip" data-cat="eventi">🎲 Sorprendimi</div>
+      </div>
+
+      <div class="hScrollHint small muted">
+        <span class="dot" aria-hidden="true"></span>
+        Scorri a destra per vedere tutte le idee
+      </div>
+
+      <div id="eventsSubfilters" class="eventsSubfilters">
+        <div class="small">Sorprendimi: scegli il tipo di esperienza</div>
+        <div class="small muted" style="margin-top:6px;">
+          Idee WOW, filtri leggeri e link Maps precisi.
+        </div>
+
+        <div style="margin-top:12px;">
+          <div class="subTitleMini">Tipo</div>
+          <div id="eventTypeChips" class="chips">
+            <div class="chip active" data-etype="tutti">⭐ Tutti</div>
+            <div class="chip" data-etype="relax">🧠 Reset</div>
+            <div class="chip" data-etype="famiglia">👨‍👩‍👧‍👦 Bambini</div>
+            <div class="chip" data-etype="bici">🚴 Bici</div>
+            <div class="chip" data-etype="moto">🏍️ Moto</div>
+            <div class="chip" data-etype="natura">🌿 Natura</div>
+            <div class="chip" data-etype="pioggia">🌧️ Pioggia</div>
+            <div class="chip" data-etype="tramonto">🌅 Tramonto</div>
+            <div class="chip" data-etype="mangiare">🍝 Food</div>
+            <div class="chip" data-etype="1h">🕐 1h</div>
+            <div class="chip" data-etype="2h">🕑 2h</div>
+          </div>
+        </div>
+
+        <div id="eventWhenChips" class="chips" style="display:none;">
+          <div class="chip active" data-ewhen="oggi">Oggi</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="subTitle">✨ La selezione Jamo</div>
+      <p class="jamoSelectionIntro">💎 <strong>Tesori nascosti</strong> è il cuore di Jamo: posti sorprendenti da scoprire anche vicino a te.</p>
+      <div id="styleChips" class="chips">
+        <div class="chip active" data-style="chicche">💎 Tesori nascosti</div>
+        <div class="chip active" data-style="classici">⭐ Da vedere almeno una volta</div>
+      </div>
+
+      <div class="ctaRow">
+        <button id="btnFind" class="btn btnPrimary btnBig" type="button">💎 Scopri i luoghi</button>
+      </div>
+
+      <div class="small muted" style="margin-top:10px;">
+        Consiglio: se le mete sono troppo lontane, abbassa il tempo o cambia vibe.
+      </div>
+    </section>
+
+    <section id="resultCard" class="card clickSafe">
+      <div class="cardTitleRow">
+        <div class="cardTitle">📌 Risultato</div>
+        <div class="cardHint">Meta + alternative</div>
+      </div>
+
+      <div class="row wraprow" style="gap:10px; margin:10px 0 14px;">
+        <button id="btnWhatsThere" class="btnGhost" type="button">👀 Cosa c’è</button>
+      </div>
+
+      <div id="resultArea">
+        <div class="emptyState">
+          <div class="emptyIcon" aria-hidden="true">🧠⚡</div>
+          <div class="emptyTitle">Pronto quando lo sei tu.</div>
+          <div class="emptyDesc">Imposta la partenza e premi <b>CERCA</b>: la meta appare qui, con link e alternative.</div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer clickSafe">
+      <div class="footerLine">
+        <span class="dot"></span> Jamo • build UI v6.2 • discovery labels
+      </div>
+      <div class="footerLine small muted">
+        Offline-first. Nessun tracciamento GPS. Link esterni: Maps / Wiki / Foto.
+      </div>
+    </footer>
+
+  </main>
+
+  <button id="fabWhatsThere" class="fabWhats" type="button" aria-label="Cosa c’è nella destinazione">
+    <span class="b" aria-hidden="true">👀</span>
+    <span>Cosa c’è</span>
+  </button>
+
+  <button id="fabSOS" class="fabSOS" type="button" aria-label="SOS Family: idee a casa">
+    <span class="b" aria-hidden="true">🏠</span>
+    <span>SOS</span>
+  </button>
+
+  <div id="sheetMask" class="sheetMask" aria-hidden="true"></div>
+  <div id="sheetSOS" class="sheet" role="dialog" aria-modal="true" aria-label="SOS Family">
+    <div class="sheetTop">
+      <div class="sheetTitle">🏠 SOS Family — idee a casa</div>
+      <button id="btnCloseSheet" class="btnGhost" type="button">✕</button>
+    </div>
+    <div class="sheetDesc">
+      Idee pratiche, veloci e leggere per quando sei con i bambini e non vuoi impazzire.
+    </div>
+
+    <div class="row wraprow" style="gap:10px; margin-top:10px;">
+      <button id="chipSOSHome" class="chip active" type="button">🏠 Casa</button>
+      <button id="chipSOSCar" class="chip" type="button">🚗 Auto</button>
+    </div>
+
+    <div class="sheetGrid" id="sosIdeas"></div>
+
+    <div class="sheetActions">
+      <button id="btnSOSShuffle" class="btn btnPrimary" type="button">🎲 Cambia idee</button>
+      <button id="btnSOSClose2" class="btnGhost" type="button">Ok, torno alle mete</button>
+    </div>
+  </div>
+
+  <script src="/lib/jamo-utils.js?v=1.0"></script>
+  <script src="/events.js?v=1.0"></script>
+  <script src="/app.js?v=22.3"></script>
+
+  <script>
+  (() => {
+    "use strict";
+    const $ = (id) => document.getElementById(id);
+
+    let _statusTimer = null;
+    function showStatus(msg, ms = 2200){
+      const box = $("statusBox");
+      const txt = $("statusText");
+      if (!box || !txt) return;
+      txt.textContent = String(msg || "");
+      box.style.display = "flex";
+      clearTimeout(_statusTimer);
+      _statusTimer = setTimeout(() => { box.style.display = "none"; }, ms);
+    }
+
+    const scrollTo = (id, block = "start") => {
+      const el = $(id);
+      if (!el) return;
+      setTimeout(() => el.scrollIntoView({ behavior: "smooth", block }), 120);
+    };
+
+    $("btnFindPlace")?.addEventListener("click", () => setTimeout(() => scrollTo("searchCard"), 450));
+
+    $("categoryChips")?.addEventListener("click", (e) => {
+      const chip = e.target.closest(".chip");
+      if (!chip) return;
+
+      const cat = String(chip.dataset.cat || "").toLowerCase();
+
+      const fab = $("fabSOS");
+      if (fab) fab.style.display = (cat === "family") ? "flex" : "none";
+
+      applyCategoryTheme(cat);
+
+      if (cat === "eventi") {
+        setTimeout(() => $("eventsSubfilters")?.scrollIntoView({ behavior:"smooth", block:"center" }), 160);
+        return;
+      }
+      setTimeout(() => $("styleChips")?.scrollIntoView({ behavior:"smooth", block:"center" }), 140);
+    });
+
+    $("styleChips")?.addEventListener("click", (e) => {
+      const chip = e.target.closest(".chip");
+      if (!chip) return;
+      setTimeout(() => {
+        $("btnFind")?.scrollIntoView({ behavior: "smooth", block: "center" });
+        if (navigator.vibrate) navigator.vibrate(12);
+      }, 140);
+    });
+
+    $("btnFind")?.addEventListener("click", () => {
+      setTimeout(() => scrollTo("resultCard"), 250);
+      if (navigator.vibrate) navigator.vibrate(20);
+
+      setTimeout(() => {
+        syncSelectedQueryFromPrimaryCard();
+        updateWhatsThereUI();
+      }, 900);
+    });
+
+    $("btnResetVisited")?.addEventListener("click", () => setTimeout(() => scrollTo("searchCard"), 200));
+
+    const THEMES = {
+      mare:     { c1:"#3B82F6", c2:"#93C5FD", chip:"rgba(59,130,246,.12)", ring:"rgba(59,130,246,.24)" },
+      lago:     { c1:"#0EA5E9", c2:"#7DD3FC", chip:"rgba(14,165,233,.12)", ring:"rgba(14,165,233,.24)" },
+      natura:   { c1:"#22C55E", c2:"#86EFAC", chip:"rgba(34,197,94,.11)",  ring:"rgba(34,197,94,.23)" },
+      hiking:   { c1:"#84CC16", c2:"#BEF264", chip:"rgba(132,204,22,.11)", ring:"rgba(132,204,22,.23)" },
+      montagna: { c1:"#94A3B8", c2:"#CBD5E1", chip:"rgba(148,163,184,.12)",ring:"rgba(148,163,184,.24)" },
+      borghi:   { c1:"#F59E0B", c2:"#FCD34D", chip:"rgba(245,158,11,.10)", ring:"rgba(245,158,11,.22)" },
+      storia:   { c1:"#A855F7", c2:"#D8B4FE", chip:"rgba(168,85,247,.11)", ring:"rgba(168,85,247,.23)" },
+      relax:    { c1:"#14B8A6", c2:"#99F6E4", chip:"rgba(20,184,166,.11)", ring:"rgba(20,184,166,.23)" },
+      family:   { c1:"#F472B6", c2:"#FBCFE8", chip:"rgba(244,114,182,.11)",ring:"rgba(244,114,182,.23)" },
+      cantine:  { c1:"#F43F5E", c2:"#FDA4AF", chip:"rgba(244,63,94,.10)",  ring:"rgba(244,63,94,.22)" },
+      eventi:   { c1:"#EAB308", c2:"#FDE68A", chip:"rgba(234,179,8,.10)",  ring:"rgba(234,179,8,.22)" },
+      default:  { c1:"#3B82F6", c2:"#93C5FD", chip:"rgba(59,130,246,.12)", ring:"rgba(59,130,246,.24)" }
+    };
+
+    function hexToRgba(hex, a){
+      const h = (hex||"").replace("#","").trim();
+      if (h.length !== 6) return `rgba(255,255,255,${a})`;
+      const r = parseInt(h.slice(0,2),16);
+      const g = parseInt(h.slice(2,4),16);
+      const b = parseInt(h.slice(4,6),16);
+      return `rgba(${r},${g},${b},${a})`;
+    }
+
+    function setVars(t){
+      document.documentElement.style.setProperty("--acc", t.c1);
+      document.documentElement.style.setProperty("--acc2", t.c2);
+      document.documentElement.style.setProperty("--cta1", t.c1);
+      document.documentElement.style.setProperty("--cta2", t.c2);
+      document.documentElement.style.setProperty("--chipActiveBg", t.chip);
+      document.documentElement.style.setProperty("--chipActiveRing", t.ring);
+      document.documentElement.style.setProperty("--sos1", t.c1 + "E8");
+      document.documentElement.style.setProperty("--sos2", t.c2 + "E8");
+
+      const g = document.querySelector(".bgGlow");
+      if (g){
+        g.style.background =
+          `radial-gradient(700px 420px at 18% 10%, ${hexToRgba(t.c1, .14)}, transparent 55%),
+           radial-gradient(760px 460px at 82% 22%, ${hexToRgba(t.c2, .10)}, transparent 60%),
+           radial-gradient(900px 520px at 50% 92%, ${hexToRgba(t.c1, .08)}, transparent 60%)`;
+      }
+    }
+
+    function colorizeAllCategoryChips(){
+      const wrap = $("categoryChips");
+      if (!wrap) return;
+      const chips = Array.from(wrap.querySelectorAll(".chip"));
+      for (const ch of chips){
+        const cat = String(ch.dataset.cat||"default").toLowerCase();
+        const t = THEMES[cat] || THEMES.default;
+
+        if (!ch.classList.contains("active")){
+          ch.style.background = hexToRgba(t.c1, 0.06);
+          ch.style.borderColor = hexToRgba(t.c1, 0.16);
+          ch.style.color = "var(--text)";
+        } else {
+          ch.style.background = "";
+          ch.style.borderColor = "";
+          ch.style.color = "";
+        }
+      }
+    }
+
+    function applyCategoryTheme(cat){
+      const t = THEMES[cat] || THEMES.default;
+      setVars(t);
+      setTimeout(colorizeAllCategoryChips, 0);
+      if (navigator.vibrate) navigator.vibrate(8);
+    }
+
+    const active0 = document.querySelector("#categoryChips .chip.active");
+    applyCategoryTheme(String(active0?.dataset?.cat || "natura").toLowerCase());
+
+    let LAST_SELECTED_QUERY = "";
+
+    function cleanText(s){
+      return String(s || "")
+        .replace(/\s+/g, " ")
+        .replace(/^📍\s*/,"")
+        .trim();
+    }
+
+    function looksLikeCoordinates(s){
+      const t = String(s||"");
+      return /\b-?\d{1,2}\.\d{3,}\s*[,\s]\s*-?\d{1,3}\.\d{3,}\b/.test(t);
+    }
+
+    function extractTitleFromCard(card){
+      const titleEl =
+        card?.querySelector("h1,h2,h3") ||
+        card?.querySelector("[data-title]") ||
+        card?.querySelector("div[style*='font-weight:950']") ||
+        card?.querySelector("div[style*='font-weight: 950']");
+      return cleanText(titleEl?.textContent || "");
+    }
+
+    function extractWhereFromCard(card){
+      const whereEl = Array.from(card?.querySelectorAll("div,span,p") || [])
+        .find(el => (el.textContent || "").trim().startsWith("📍"));
+      return cleanText(whereEl?.textContent || "");
+    }
+
+    function bestDestinationQueryForCard(card){
+      if (!card) return "";
+      const title = extractTitleFromCard(card);
+      const where = extractWhereFromCard(card);
+      const combo = [title, where].filter(Boolean).join(", ").trim();
+
+      if (combo && /[a-zA-ZÀ-ÿ]/.test(combo) && !looksLikeCoordinates(combo)) return combo;
+      return "";
+    }
+
+    function getPrimaryResultCard(){
+      const area = $("resultArea");
+      if (!area) return null;
+      const cards = Array.from(area.querySelectorAll(".card"));
+      for (const c of cards){
+        const txt = (c.textContent || "").toLowerCase();
+        const looksLikeEmpty = txt.includes("pronto quando lo sei") || txt.includes("nessuna idea trovata");
+        if (looksLikeEmpty) continue;
+        return c;
+      }
+      return null;
+    }
+
+    function isUsableDestination(q){
+      const t = cleanText(q);
+      if (!t) return false;
+      if (t.length < 3) return false;
+      if (looksLikeCoordinates(t)) return false;
+      if (!/[a-zA-ZÀ-ÿ]/.test(t)) return false;
+      return true;
+    }
+
+    function syncSelectedQueryFromPrimaryCard(){
+      const c = getPrimaryResultCard();
+      const q = bestDestinationQueryForCard(c);
+      if (isUsableDestination(q)) LAST_SELECTED_QUERY = cleanText(q);
+    }
+
+    function openGoogleForDestination(){
+      let q = cleanText(LAST_SELECTED_QUERY);
+
+      if (!isUsableDestination(q)){
+        const c = getPrimaryResultCard();
+        q = bestDestinationQueryForCard(c);
+      }
+
+      if (!isUsableDestination(q)){
+        if (navigator.vibrate) navigator.vibrate([20,40,20]);
+        showStatus("Destinazione non chiara. Rifai CERCA 🙂", 2400);
+        return;
+      }
+
+      const full = `${q} cosa vedere cosa fare`;
+      window.open(`https://www.google.com/search?q=${encodeURIComponent(full)}`, "_blank", "noopener");
+    }
+
+    function updateWhatsThereUI(){
+      const fab = $("fabWhatsThere");
+      const ok = isUsableDestination(LAST_SELECTED_QUERY) || isUsableDestination(bestDestinationQueryForCard(getPrimaryResultCard()));
+      if (fab) fab.style.display = ok ? "flex" : "none";
+    }
+
+    $("btnWhatsThere")?.addEventListener("click", openGoogleForDestination);
+    $("fabWhatsThere")?.addEventListener("click", openGoogleForDestination);
+
+    function injectWhatIsButtons(){
+      const area = $("resultArea");
+      if (!area) return;
+
+      const cards = Array.from(area.querySelectorAll(".card"));
+      for (const c of cards) {
+        if (c.querySelector("[data-what-is-btn='1']")) continue;
+
+        const txt = (c.textContent || "").toLowerCase();
+        const looksLikeEmpty = txt.includes("pronto quando lo sei") || txt.includes("nessuna idea trovata");
+        if (looksLikeEmpty) continue;
+
+        const row = document.createElement("div");
+        row.style.display = "flex";
+        row.style.gap = "10px";
+        row.style.flexWrap = "wrap";
+        row.style.marginTop = "12px";
+
+        const b = document.createElement("button");
+        b.className = "btnGhost";
+        b.type = "button";
+        b.textContent = "👀 Cosa c’è";
+        b.setAttribute("data-what-is-btn","1");
+        b.style.fontWeight = "950";
+        b.style.borderColor = "rgba(255,255,255,.18)";
+
+        b.addEventListener("click", (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          const q = bestDestinationQueryForCard(c);
+          if (isUsableDestination(q)) LAST_SELECTED_QUERY = cleanText(q);
+          openGoogleForDestination();
+        });
+
+        row.appendChild(b);
+
+        const footer = Array.from(c.querySelectorAll("div"))
+          .find(d => (d.textContent||"").trim().toLowerCase().startsWith("fonte:"));
+        if (footer && footer.parentNode === c) c.insertBefore(row, footer);
+        else c.appendChild(row);
+      }
+    }
+
+    function enableCardSelectionCapture(){
+      const area = $("resultArea");
+      if (!area) return;
+      area.addEventListener("click", (e) => {
+        const card = e.target.closest(".card");
+        if (!card) return;
+
+        const txt = (card.textContent || "").toLowerCase();
+        const looksLikeEmpty = txt.includes("pronto quando lo sei") || txt.includes("nessuna idea trovata");
+        if (looksLikeEmpty) return;
+
+        const q = bestDestinationQueryForCard(card);
+        if (isUsableDestination(q)) LAST_SELECTED_QUERY = cleanText(q);
+        updateWhatsThereUI();
+      }, { passive:true });
+    }
+
+    const resultArea = $("resultArea");
+    if (resultArea) {
+      const mo = new MutationObserver(() => {
+        injectWhatIsButtons();
+        syncSelectedQueryFromPrimaryCard();
+        updateWhatsThereUI();
+      });
+      mo.observe(resultArea, { childList: true, subtree: true });
+
+      injectWhatIsButtons();
+      syncSelectedQueryFromPrimaryCard();
+      updateWhatsThereUI();
+      enableCardSelectionCapture();
+    }
+
+    const fabSOS = $("fabSOS");
+    const mask = $("sheetMask");
+    const sheet = $("sheetSOS");
+
+    const openSheet = () => {
+      mask.style.display = "block";
+      sheet.classList.add("open");
+      if (navigator.vibrate) navigator.vibrate(14);
+    };
+
+    const closeSheet = () => {
+      sheet.classList.remove("open");
+      setTimeout(() => { mask.style.display = "none"; }, 180);
+      if (navigator.vibrate) navigator.vibrate(10);
+    };
+
+    fabSOS?.addEventListener("click", openSheet);
+    $("btnCloseSheet")?.addEventListener("click", closeSheet);
+    $("btnSOSClose2")?.addEventListener("click", closeSheet);
+    mask?.addEventListener("click", closeSheet);
+
+    const SOS_HOME_POOL = [
+      ["🎯 Tiro al bersaglio con la carta","3 fogli appallottolati + un secchio. 10 tiri a testa. Se fai centro: scegli la prossima regola."],
+      ["🧊 Missione ghiaccio","Un cubetto su un cucchiaio: devi portarlo in cucina senza farlo cadere. Gara a tempo."],
+      ["🧦 Calcio-calzino","Palla fatta con calzino arrotolato. Porta tra sedie senza usare le mani."],
+      ["🕵️ Caccia al tesoro","Portami: una cosa morbida, una cosa rossa, una cosa che fa rumore. Chi torna prima vince."],
+      ["⏱️ Sfida 60 secondi","Timer 60s: quante mollette metti su una maglietta? Quanti tappi impili? Quanti salti fai?"],
+      ["🧱 Torre instabile","Bicchieri di plastica o rotoli carta. Torre più alta in 2 minuti."],
+      ["🧠 Indovina l’oggetto","5 oggetti in una busta. Occhi chiusi: indovina cosa tocchi in 10 secondi."],
+      ["🎭 Mimo velocissimo","1 minuto: mima lavarsi i denti, guidare, dormire, fare la spesa."],
+      ["📢 Commentatore sportivo","Uno fa una cosa normalissima, l’altro la commenta come finale mondiale."],
+      ["🚦 Semaforo","Verde cammina, giallo rallenta, rosso statua. Chi si muove perde."]
+    ];
+
+    const SOS_CAR_POOL = [
+      ["🔤 Targa Bingo","Scegli 3 lettere. Ogni targa che le contiene vale 1 punto."],
+      ["🎨 Caccia al colore","Trova 5 auto rosse o 3 camion bianchi. Timer 60s."],
+      ["👀 Occhio d’aquila","Chi vede per primo ponte, rotonda, autobus o ambulanza prende 1 punto."],
+      ["⏱️ Tre cose in 10 secondi","Tre cose blu, tre insegne, tre alberi strani. A turno."],
+      ["🧠 Catena di parole","Ogni parola deve iniziare con le ultime due lettere della precedente."],
+      ["🎙️ Speaker radio","Uno fa il DJ e presenta una canzone o una pubblicità inventata."]
+    ];
+
+    let SOS_MODE = "home";
+    const chipHome = $("chipSOSHome");
+    const chipCar = $("chipSOSCar");
+
+    let bagHome = [];
+    let bagCar = [];
+
+    function shuffleBag(arr){
+      for (let i = arr.length - 1; i > 0; i--){
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+    }
+
+    function refillHome(){ bagHome = SOS_HOME_POOL.map((_,i)=>i); shuffleBag(bagHome); }
+    function refillCar(){ bagCar = SOS_CAR_POOL.map((_,i)=>i); shuffleBag(bagCar); }
+
+    function drawUnique(pool, bag, n){
+      if (bag.length < n){
+        bag.length = 0;
+        for (let i = 0; i < pool.length; i++) bag.push(i);
+        shuffleBag(bag);
+      }
+
+      const picks = [];
+      while (picks.length < n){
+        if (bag.length === 0){
+          for (let i = 0; i < pool.length; i++) bag.push(i);
+          shuffleBag(bag);
+        }
+        picks.push(bag.pop());
+      }
+
+      return picks.map(i => pool[i]);
+    }
+
+    function renderSOS(){
+      const box = $("sosIdeas");
+      if (!box) return;
+      const pool = (SOS_MODE === "car") ? SOS_CAR_POOL : SOS_HOME_POOL;
+      const bag  = (SOS_MODE === "car") ? bagCar       : bagHome;
+      const [a,b,c] = drawUnique(pool, bag, 3);
+      box.innerHTML = `
+        <div class="ideaCard"><div class="t">${a[0]}</div><div class="d">${a[1]}</div></div>
+        <div class="ideaCard"><div class="t">${b[0]}</div><div class="d">${b[1]}</div></div>
+        <div class="ideaCard"><div class="t">${c[0]}</div><div class="d">${c[1]}</div></div>
+      `;
+    }
+
+    function setSOSMode(mode){
+      SOS_MODE = (mode === "car") ? "car" : "home";
+      chipHome?.classList.toggle("active", SOS_MODE === "home");
+      chipCar?.classList.toggle("active", SOS_MODE === "car");
+      renderSOS();
+      if (navigator.vibrate) navigator.vibrate(8);
+    }
+
+    chipHome?.addEventListener("click", () => setSOSMode("home"));
+    chipCar?.addEventListener("click", () => setSOSMode("car"));
+
+    refillHome();
+    refillCar();
+    renderSOS();
+
+    $("btnSOSShuffle")?.addEventListener("click", () => {
+      renderSOS();
+      if (navigator.vibrate) navigator.vibrate(12);
+    });
+
+    fabSOS?.addEventListener("click", () => setTimeout(renderSOS, 80));
+
+  })();
+  </script>
+</body>
+</html>
