@@ -248,7 +248,7 @@
 
     .ideaCard .t, .ideaCard .d{ overflow-wrap:anywhere; word-break: break-word; }
   </style>
-  <link rel="stylesheet" href="/jamo-refresh.css?v=1.0" />
+  <link rel="stylesheet" href="/jamo-refresh.css?v=3.0" />
 </head>
 
 <body>
@@ -267,44 +267,32 @@
     </div>
   </header>
 
-  <main class="wrap">
+  <main class="wrap" id="topJamo">
 
     <section id="statusBox" class="statusBox clickSafe" style="display:none;">
       <div class="statusDot" aria-hidden="true"></div>
       <div id="statusText" class="statusText"></div>
     </section>
 
-    <section class="hero clickSafe">
-      <div class="heroCard">
-        <div class="heroBadge">💎 LA SCOPERTA È QUI</div>
-        <h1 class="heroTitle">La meraviglia è <span class="accent">più vicina</span> di quanto pensi.</h1>
-        <p class="heroDesc">Tesori nascosti, luoghi sorprendenti e posti che valgono il viaggio. Vicino a casa tua o ovunque tu sia.</p>
-        <div class="jamoHeroActions">
-          <a class="jamoHeroPrimary" href="#quickStartCard">📍 Scopri intorno a te <span aria-hidden="true">↗</span></a>
-          <a class="jamoHeroSecondary" href="#searchCard">Esplora le categorie</a>
-          <a class="jamoHeroSecondary" href="#proponiTesoro">✦ Proponi un Tesoro</a>
-        </div>
-        <div class="jamoHeroFoot">✦ Non i soliti posti. Solo quelli che meritano.</div>
+    <section class="jamoPhotoHero clickSafe" aria-label="Scopri Jamo">
+      <div class="jamoPhotoHeroImage" role="img" aria-label="Paesaggio di montagna"></div>
+      <div class="jamoPhotoHeroBody">
+        <div class="jamoPhotoEyebrow">JAMO<span>.</span> · ESPLORA, SCOPRI, PARTI</div>
+        <h1>Il mondo merita di essere scoperto.</h1>
+        <p>Luoghi sorprendenti, vicino a te o ovunque tu sia.</p>
+        <a href="#quickStartCard" class="jamoPhotoCTA">Scopri intorno a te <span aria-hidden="true">↗</span></a>
       </div>
     </section>
 
-    <section id="proponiTesoro" class="card clickSafe jamoContribute">
-      <div class="jamoContributeEyebrow">✦ LA COMMUNITY DI JAMO</div>
-      <h2>Conosci un posto che merita di essere scoperto?</h2>
-      <p>Un borgo poco conosciuto, un panorama speciale, un angolo sorprendente. Raccontacelo: proporre un tesoro è e resterà gratuito.</p>
-      <details class="jamoProposalDetails">
-        <summary>💎 Proponi un Tesoro</summary>
-        <form id="jamoProposalForm">
-          <label for="jamoPlaceName">Nome del luogo *</label>
-          <input id="jamoPlaceName" name="place" required maxlength="120" placeholder="Come si chiama?" />
-          <label for="jamoPlaceArea">Dove si trova? *</label>
-          <input id="jamoPlaceArea" name="area" required maxlength="160" placeholder="Comune, provincia o coordinate" />
-          <label for="jamoPlaceWhy">Perché è speciale? *</label>
-          <textarea id="jamoPlaceWhy" name="why" required maxlength="1200" rows="4" placeholder="Raccontaci cosa lo rende unico"></textarea>
-          <button type="submit" class="btn btnPrimary">Copia la proposta</button>
-          <p class="jamoProposalNote" id="jamoProposalNote" role="status">Per ora puoi preparare e copiare la proposta. L'invio alla redazione e la revisione delle foto saranno attivati in una fase successiva: questo modulo non pubblica nulla.</p>
-        </form>
-      </details>
+    <section class="jamoPhotoCategories clickSafe" aria-labelledby="jamoPhotoCatTitle">
+      <div class="jamoPhotoSectionHeader"><h2 id="jamoPhotoCatTitle">Esplora per categoria</h2><span>Scopri ciò che ami</span></div>
+      <div class="jamoPhotoGrid">
+        <a class="jamoPhotoTile" href="#searchCard" data-jamo-cat="montagna"><img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&amp;fit=crop&amp;w=720&amp;q=80" alt="Paesaggio di montagne" loading="eager" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='/jamo-hero.jpg'"><strong>Montagne</strong><span>Panorami e natura</span></a>
+        <a class="jamoPhotoTile" href="#searchCard" data-jamo-cat="borghi"><img src="https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&amp;fit=crop&amp;w=720&amp;q=80" alt="Borgo italiano tra le colline" loading="eager" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='/jamo-hero.jpg'"><strong>Borghi</strong><span>Luoghi senza tempo</span></a>
+        <a class="jamoPhotoTile" href="#searchCard" data-jamo-cat="natura"><img src="https://images.unsplash.com/photo-1433086966358-54859d0ed716?auto=format&amp;fit=crop&amp;w=720&amp;q=80" alt="Cascata immersa nel bosco" loading="lazy" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='/jamo-hero.jpg'"><strong>Cascate</strong><span>Angoli da scoprire</span></a>
+        <a class="jamoPhotoTile" href="#searchCard" data-jamo-cat="lago"><img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&amp;fit=crop&amp;w=720&amp;q=80" alt="Lago tra montagne e boschi" loading="lazy" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='/jamo-hero.jpg'"><strong>Laghi</strong><span>Acqua e relax</span></a>
+      </div>
+      <p class="jamoPhotoHint">Scegli un paesaggio: Jamo preparerà la tua ricerca.</p>
     </section>
 
     <section id="quickStartCard" class="card clickSafe">
@@ -423,6 +411,21 @@
       </div>
     </section>
 
+    <section id="proponiTesoro" class="card clickSafe jamoContribute">
+      <div class="jamoContributeEyebrow">✦ LA COMMUNITY DI JAMO</div>
+      <h2>Conosci un posto speciale?</h2>
+      <p>Aiutaci a scoprire nuovi tesori. Proporre un luogo è gratuito.</p>
+      <details class="jamoProposalDetails"><summary>💎 Proponi un Tesoro</summary>
+        <form id="jamoProposalForm">
+          <label for="jamoPlaceName">Nome del luogo *</label><input id="jamoPlaceName" name="place" required maxlength="120" placeholder="Come si chiama?" />
+          <label for="jamoPlaceArea">Dove si trova? *</label><input id="jamoPlaceArea" name="area" required maxlength="160" placeholder="Comune, provincia o coordinate" />
+          <label for="jamoPlaceWhy">Perché è speciale? *</label><textarea id="jamoPlaceWhy" name="why" required maxlength="1200" rows="4" placeholder="Raccontaci cosa lo rende unico"></textarea>
+          <button type="submit" class="btn btnPrimary">Copia la proposta</button>
+          <p class="jamoProposalNote" id="jamoProposalNote" role="status">Il modulo prepara e copia la proposta: non la invia e non la pubblica ancora.</p>
+        </form>
+      </details>
+    </section>
+
     <section id="resultCard" class="card clickSafe">
       <div class="cardTitleRow">
         <div class="cardTitle">📌 Risultato</div>
@@ -486,6 +489,14 @@
     </div>
   </div>
 
+
+  <nav class="jamoBottomNav clickSafe" aria-label="Navigazione Jamo">
+    <a href="#topJamo" aria-label="Home"><span aria-hidden="true">⌂</span><small>Home</small></a>
+    <a href="#quickStartCard" aria-label="Cerca"><span aria-hidden="true">⌕</span><small>Cerca</small></a>
+    <a href="#jamoPhotoCatTitle" aria-label="Categorie"><span aria-hidden="true">◇</span><small>Esplora</small></a>
+    <a href="#resultCard" aria-label="Risultati"><span aria-hidden="true">▤</span><small>Mete</small></a>
+    <a href="#proponiTesoro" aria-label="Proponi un tesoro"><span aria-hidden="true">✧</span><small>Community</small></a>
+  </nav>
   <script src="/lib/jamo-utils.js?v=1.0"></script>
   <script src="/events.js?v=1.0"></script>
   <script src="/app.js?v=22.3"></script>
@@ -912,5 +923,14 @@
 
   })();
   </script>
+<script>
+document.querySelectorAll('[data-jamo-cat]').forEach(tile => {
+  tile.addEventListener('click', () => {
+    const cat = tile.getAttribute('data-jamo-cat');
+    const chip = [...document.querySelectorAll('#categoryChips .chip')].find(el => el.dataset.cat === cat);
+    if (chip) chip.click();
+  });
+});
+</script>
 </body>
 </html>

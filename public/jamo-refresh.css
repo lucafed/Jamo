@@ -25,3 +25,40 @@ body{background:#f5f3ec;color:var(--text);font-family:Inter,ui-sans-serif,system
 /* Jamo: brand & community proposals */
 .jamoLogo{padding:0!important;overflow:hidden}.jamoLogo img{display:block;width:100%;height:100%}.jamoGoldDot{color:#d9b86b}
 .jamoContribute{background:linear-gradient(125deg,#eff5e9,#fffdf8);border-color:#cbdccb}.jamoContributeEyebrow{font-size:11px;letter-spacing:1.4px;font-weight:850;color:#176747}.jamoContribute h2{color:#173f30;font-size:clamp(21px,3vw,28px);margin:10px 0}.jamoContribute p{color:#426454;line-height:1.55}.jamoProposalDetails{margin-top:16px}.jamoProposalDetails summary{cursor:pointer;display:inline-block;background:#176747;color:#fff;padding:13px 20px;border-radius:13px;font-weight:800;list-style:none}.jamoProposalDetails summary::-webkit-details-marker{display:none}.jamoProposalDetails form{display:grid;gap:9px;margin-top:18px;max-width:640px}.jamoProposalDetails label{font-size:13px;font-weight:750;color:#234b39}.jamoProposalDetails input,.jamoProposalDetails textarea{box-sizing:border-box;width:100%;border:1px solid #bdd1c2;border-radius:11px;background:white;color:#193a30;font:inherit;padding:12px;min-height:44px}.jamoProposalDetails button{justify-self:start;margin-top:9px}.jamoProposalDetails .jamoProposalNote{font-size:12px;margin:6px 0 0;color:#496556}.jamoHeroActions a{white-space:normal;text-align:center}
+
+/* Jamo photographic home v2 */
+.jamoPhotoHero{overflow:hidden;border-radius:25px;background:#fff;box-shadow:0 6px 24px rgba(30,50,40,.06)}
+.jamoPhotoHeroImage{height:clamp(160px,28vw,300px);background:#d9e5dc url('/jamo-hero.jpg') center 48%/cover}
+.jamoPhotoHeroBody{padding:25px 27px 27px}
+.jamoPhotoEyebrow{color:#207550;font-size:12px;font-weight:850;letter-spacing:1.6px}
+.jamoPhotoEyebrow span{color:#c6a65b}
+.jamoPhotoHero h1{font-size:clamp(30px,5vw,48px);line-height:1.13;letter-spacing:-1.3px;color:#152a21;margin:13px 0 10px;font-weight:850}
+.jamoPhotoHero p{color:#65716a;font-size:16px;margin:0 0 20px;line-height:1.45}
+.jamoPhotoCTA{display:flex;align-items:center;justify-content:space-between;background:#207550;color:white;border-radius:14px;padding:17px 20px;font-size:16px;font-weight:800;text-decoration:none}
+.jamoPhotoCategories{margin-top:25px}.jamoPhotoSectionHeader{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:0 3px 15px}.jamoPhotoSectionHeader h2{font-size:23px;margin:0;color:#173f30}.jamoPhotoSectionHeader span{font-size:12px;color:#6d7c71}
+.jamoPhotoGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.jamoPhotoTile{display:flex;flex-direction:column;min-width:0;text-decoration:none;color:#17251e}
+.jamoPhotoTile img{display:block;width:100%;aspect-ratio:1.28/1;object-fit:cover;border-radius:18px;background:linear-gradient(135deg,#b3d2b5,#e1e8d8);box-shadow:0 2px 9px rgba(0,0,0,.05)}
+.jamoPhotoTile strong{font-size:19px;letter-spacing:-.4px;margin:9px 0 2px}.jamoPhotoTile span{font-size:13px;color:#68746c}
+.jamoPhotoHint{font-size:12px;color:#6c7b71;margin:15px 3px 0}
+#quickStartCard{scroll-margin-top:90px}#searchCard{scroll-margin-top:90px}
+@media(max-width:600px){.jamoPhotoHeroImage{height:165px}.jamoPhotoHeroBody{padding:20px}.jamoPhotoHero h1{font-size:31px}.jamoPhotoGrid{gap:14px}.jamoPhotoTile img{border-radius:15px}.jamoPhotoTile strong{font-size:17px}.jamoPhotoTile span{font-size:12px}.jamoPhotoSectionHeader h2{font-size:21px}}
+
+/* Jamo photo-first app layout v3 */
+html{scroll-behavior:smooth;scroll-padding-top:90px}
+body{background:#f7f8f5}
+.wrap{padding-bottom:120px}
+.jamoPhotoHero{border:1px solid #e7ebe6;border-radius:24px}
+.jamoPhotoHeroImage{height:clamp(200px,34vw,350px);background-position:center 45%}
+.jamoPhotoHeroBody{padding:25px 25px 28px}
+.jamoPhotoCTA{background:#207550;min-height:52px;box-sizing:border-box}
+.jamoPhotoGrid{gap:18px}
+.jamoPhotoTile img{aspect-ratio:1.17/1;border-radius:19px}
+.jamoPhotoTile:focus-visible,.jamoBottomNav a:focus-visible{outline:3px solid #c7a451;outline-offset:3px}
+.jamoBottomNav{position:fixed;z-index:200;left:50%;bottom:0;transform:translateX(-50%);width:min(100%,1080px);box-sizing:border-box;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));background:rgba(255,255,253,.97);border-top:1px solid #e2e8df;padding:9px 6px calc(9px + env(safe-area-inset-bottom));box-shadow:0 -7px 25px rgba(12,38,27,.08);backdrop-filter:blur(12px)}
+.jamoBottomNav a{color:#496359;display:flex;align-items:center;flex-direction:column;justify-content:center;gap:1px;min-height:43px;text-decoration:none;font-weight:700}
+.jamoBottomNav a:first-child{color:#176747}
+.jamoBottomNav span{font-size:25px;line-height:26px}
+.jamoBottomNav small{font-size:10px}
+.fabWhats,.fabSOS{bottom:95px}
+@media(max-width:600px){.wrap{padding:12px 14px 125px}.jamoPhotoHeroImage{height:185px}.jamoPhotoHeroBody{padding:20px}.jamoPhotoHero h1{font-size:30px;line-height:1.16}.jamoPhotoCategories{margin-top:23px}.jamoPhotoGrid{gap:13px}.jamoPhotoTile img{aspect-ratio:1.12/1}.jamoPhotoTile strong{font-size:17px}.jamoPhotoTile span{font-size:12px}.jamoBottomNav small{font-size:9px}.fabWhats,.fabSOS{bottom:88px}}
