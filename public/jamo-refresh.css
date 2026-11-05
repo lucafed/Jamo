@@ -1,0 +1,23 @@
+/* JAMO — visual refresh v1.0. All original functionality and JS selectors retained. */
+:root{--bg:#f5f3ec;--surface:#fffdf8;--surface2:#f1f3ec;--text:#193a30;--muted:#60756b;--acc:#176747;--acc2:#d9b86b;--border:rgba(25,58,48,.13);--border2:rgba(23,103,71,.22);--shadow:rgba(19,57,42,.09);--chipActiveBg:#e2efe5;--chipActiveRing:#78a68a;--chipActiveFg:#174b3a;--cta1:#176747;--cta2:#27865b;--sos1:#176747;--sos2:#27865b}
+body{background:#f5f3ec;color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif}
+.bgGlow{background:radial-gradient(70% 70% at 50% 5%,rgba(171,203,167,.24),transparent 75%);opacity:1}
+.topbar{background:rgba(250,249,243,.93);border-bottom:1px solid #e3e9df;box-shadow:0 2px 16px rgba(25,58,48,.04)}
+.logoMark{background:#176747;color:#fff;border:0;box-shadow:none;border-radius:13px}
+.brandTitle{font-size:22px;letter-spacing:-.7px}.brandSub{color:#60756b;font-size:11px}
+.wrap{max-width:1080px;padding:20px 20px 70px}
+.heroCard{min-height:350px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:clamp(25px,5vw,64px);border:0;border-radius:28px;background:linear-gradient(90deg,rgba(9,44,34,.94),rgba(12,56,42,.78) 62%,rgba(12,56,42,.28)),url('/jamo-hero.jpg') center 48%/cover;box-shadow:0 18px 44px rgba(21,58,45,.18);color:#fff}
+.heroCard:before{display:none}.heroBadge{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);font-size:11px;letter-spacing:1.3px;color:#fff;padding:9px 14px}
+.heroTitle{max-width:760px;font-size:clamp(32px,5.2vw,58px);line-height:1.05;letter-spacing:-1.8px;margin:19px 0 15px;font-weight:850;color:#fff}
+.heroTitle .accent{color:#f5d993;text-shadow:none}.heroDesc{max-width:550px;color:#e8efe9;font-size:clamp(15px,1.8vw,18px);line-height:1.6}
+.jamoHeroActions{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px;position:relative}.jamoHeroActions a{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:12px 19px;border-radius:13px;font-weight:800;text-decoration:none;font-size:14px}.jamoHeroPrimary{background:#f0d08a;color:#183c2d}.jamoHeroSecondary{border:1px solid rgba(255,255,255,.55);color:#fff;background:rgba(255,255,255,.08)}.jamoHeroFoot{margin-top:20px;color:#dce9de;font-size:12px;letter-spacing:.2px;position:relative}
+.card{background:#fffdf9;border:1px solid #e1e8df;border-radius:23px;box-shadow:0 8px 30px rgba(27,59,46,.055);padding:clamp(17px,3vw,28px);margin-top:18px;backdrop-filter:none}.cardTitle{font-size:19px;letter-spacing:-.4px;color:#173f30}.cardHint,.muted,.label,.miniLabel{color:#60756b}
+.btnPrimary{background:#176747!important;color:#fff!important;border-color:#176747!important;box-shadow:0 8px 22px rgba(23,103,71,.17)}.btnGhost{background:#f2f5ef;color:#254a3b;border:1px solid #dce5db}.input{background:#fff;color:#193a30;border:1px solid #cddbd0}.input:focus{border-color:#176747;box-shadow:0 0 0 3px rgba(23,103,71,.11)}
+.chip{background:#f5f7f2;color:#315647;border-color:#dce6db}.chip.active,#categoryChips .chip.active{background:#e1eee4;color:#17553c;border-color:#8db89a;box-shadow:inset 0 0 0 1px rgba(23,103,71,.07)}
+#styleChips .chip[data-style="chicche"]{background:#e5f3e9;border-color:#b5d9bf;color:#17583e;font-weight:850}#styleChips .chip[data-style="chicche"].active{background:#cce9d4;border-color:#176747}
+.jamoSelectionIntro{background:#eff7ee;border-left:4px solid #176747;padding:13px 15px;border-radius:0 12px 12px 0;line-height:1.55;color:#315747;font-size:14px}
+.statusBox{background:#eaf5eb;border-color:#b5d9bf}.statusDot{background:#176747;box-shadow:0 0 0 6px #d7ebdb}
+#categoryChips{mask-image:none;-webkit-mask-image:none}
+.fabSOS,.fabWhats{background:#fffdf9;color:#193a30;border-color:#dce5db;box-shadow:0 10px 30px rgba(25,58,48,.16)}.fabSOS .b,.fabWhats .b{background:#176747;color:#fff}
+@media(max-width:600px){.wrap{padding:12px 12px 65px}.topbar{padding:10px 14px}.brandSub{font-size:10px}.heroCard{min-height:385px;padding:25px 21px;border-radius:22px;background-position:57% center}.heroTitle{font-size:35px;letter-spacing:-1.1px}.jamoHeroActions{width:100%}.jamoHeroActions a{width:100%}.card{padding:17px;border-radius:19px}.cardHint{font-size:11px}#categoryChips .chip{min-width:145px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important}}
