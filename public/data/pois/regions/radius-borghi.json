@@ -6,7 +6,7 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-10-27T08:48:52.478Z",
+  "generated_at": "2026-11-10T10:55:02.330Z",
   "places": [
     {
       "id": "node:62513274",
@@ -6163,8 +6163,8 @@
     {
       "id": "node:62513692",
       "name": "Sermide",
-      "lat": 45.0064835,
-      "lon": 11.2988715,
+      "lat": 45.0065688,
+      "lon": 11.2988339,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -10062,8 +10062,8 @@
     {
       "id": "node:332291096",
       "name": "Camin",
-      "lat": 45.4010804,
-      "lon": 11.9448362,
+      "lat": 45.3980777,
+      "lon": 11.9434754,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -17174,6 +17174,21 @@
         "source=Istat 2001 - geodati.gfoss.it",
         "wikidata=Q3681707",
         "wikipedia=it:Clusane"
+      ],
+      "score": 115
+    },
+    {
+      "id": "node:1968432896",
+      "name": "Colombaro",
+      "lat": 45.6433697,
+      "lon": 9.9931546,
+      "type": "borghi",
+      "visibility": "classica",
+      "tags": [
+        "name=Colombaro",
+        "place=village",
+        "wikidata=Q3683404",
+        "wikipedia=it:Colombaro (Corte Franca)"
       ],
       "score": 115
     },
@@ -38074,7 +38089,7 @@
     {
       "id": "relation:44938",
       "name": "Noventa Padovana",
-      "lat": 45.4131731,
+      "lat": 45.4131628,
       "lon": 11.9683008,
       "type": "borghi",
       "visibility": "classica",
@@ -50861,8 +50876,8 @@
         "admin_level=8",
         "boundary=administrative",
         "name=Serina",
-        "population=2099",
-        "population:date=2026-08-28",
+        "population=2095",
+        "population:date=2026-05-31",
         "postal_code=24017",
         "ref:ISTAT=016199",
         "ref:catasto=I629",
@@ -59712,7 +59727,7 @@
         "istat_id=2147483647",
         "loc_name=Cialadìć",
         "name=Celledizzo",
-        "name:it=Calledizzo",
+        "name:it=Celledizzo",
         "name:lld=Celadìć",
         "place=hamlet",
         "population=309",
@@ -60452,23 +60467,6 @@
         "wikidata=Q3662002",
         "wikimedia_commons=Category:Cassignanica",
         "wikipedia=it:Cassignanica"
-      ],
-      "score": 90
-    },
-    {
-      "id": "node:3329879776",
-      "name": "Bocca Chiavica",
-      "lat": 45.036916,
-      "lon": 10.5968561,
-      "type": "borghi",
-      "visibility": "classica",
-      "tags": [
-        "name=Bocca Chiavica",
-        "place=hamlet",
-        "population=17",
-        "source=www.resitalica.it",
-        "wikidata=Q3641456",
-        "wikipedia=it:Bocca Chiavica"
       ],
       "score": 90
     }
