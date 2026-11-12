@@ -7,7 +7,7 @@
     "minLon": 10.2,
     "maxLon": 13.2
   },
-  "generated_at": "2026-10-22T08:01:56.598Z",
+  "generated_at": "2026-11-12T10:27:27.133Z",
   "places": [
     {
       "id": "node:12766026527",
@@ -1890,7 +1890,7 @@
         "addr:housenumber=1",
         "addr:postcode=36045",
         "addr:street=Via Monte Palu'",
-        "contact:facebook=https://www.facebook.com/puntozerowine/?fref=ts",
+        "contact:facebook=https://www.facebook.com/puntozerowine",
         "craft=winery",
         "email=info@puntozerowine.it",
         "name=Punto Zero",
@@ -2103,7 +2103,7 @@
         "addr:housenumber=4",
         "addr:postcode=39040",
         "addr:street=Unter St. Stefan",
-        "contact:instagram=https://www.instagram.com/weingut_oberfurner?igsh=MXM4Z2JnZXZlZjg2cQ==",
+        "contact:instagram=https://www.instagram.com/weingut_oberfurner",
         "craft=winery",
         "email=info@oberfurner.com",
         "name=Weingut | Tenuta Oberfurner",
@@ -2388,6 +2388,28 @@
         "note=verificare se man_made=works",
         "phone=+39045982875",
         "website=https://www.cabotta.it/"
+      ],
+      "score": 88,
+      "beauty_score": 1
+    },
+    {
+      "id": "way:141966815",
+      "name": "Azienda Agricola Giovanni Ruffo",
+      "lat": 45.4550431,
+      "lon": 11.1190729,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Lavagno",
+        "addr:housenumber=33",
+        "addr:postcode=37030",
+        "addr:street=Via Alta",
+        "building=yes",
+        "craft=winery",
+        "name=Azienda Agricola Giovanni Ruffo",
+        "operator=Nella Ruffo",
+        "phone=3497309173",
+        "website=https://www.lecesete.it"
       ],
       "score": 88,
       "beauty_score": 1
@@ -3741,6 +3763,27 @@
       "beauty_score": 1
     },
     {
+      "id": "way:194363246",
+      "name": "Tenuta Santomè",
+      "lat": 45.6510848,
+      "lon": 12.3780399,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:city=Biancade",
+        "addr:housenumber=71",
+        "addr:postcode=31056",
+        "addr:street=Via Carboncine",
+        "building=yes",
+        "contact:facebook=https://www.facebook.com/tenuta.santome",
+        "craft=winery",
+        "name=Tenuta Santomè",
+        "website=https://www.tenutasantome.com"
+      ],
+      "score": 82,
+      "beauty_score": 1
+    },
+    {
       "id": "way:464482381",
       "name": "Pieropan",
       "lat": 45.432134,
@@ -3822,7 +3865,6 @@
       "type": "cantine",
       "visibility": "classica",
       "tags": [
-        "building=no",
         "craft=winery",
         "landuse=industrial",
         "name=Franc Lizêr",
@@ -4088,6 +4130,29 @@
         "craft=winery",
         "name=Cantina Simeoni",
         "phone=+393477002729"
+      ],
+      "score": 76,
+      "beauty_score": 1
+    },
+    {
+      "id": "node:14356254522",
+      "name": "Parco Del Venda",
+      "lat": 45.323241,
+      "lon": 11.6543752,
+      "type": "cantine",
+      "visibility": "classica",
+      "tags": [
+        "addr:floor=G",
+        "addr:housenumber=430",
+        "addr:street=Via Monte Venda",
+        "check_date=2026-11-07",
+        "contact:instagram=https://www.instagram.com/parcodelvendavini",
+        "craft=winery",
+        "email=parcodelvenda@gmail.com",
+        "level=0",
+        "name=Parco Del Venda",
+        "phone=+39 049 994 0188; +39 348 444 3378",
+        "wheelchair=yes"
       ],
       "score": 76,
       "beauty_score": 1
@@ -5411,6 +5476,35 @@
       "beauty_score": 1
     },
     {
+      "id": "node:14308964201",
+      "name": "Ronco Penasa",
+      "lat": 46.1455796,
+      "lon": 13.0918876,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "check_date=2026-10-22",
+        "craft=winery",
+        "name=Ronco Penasa"
+      ],
+      "score": 70,
+      "beauty_score": 1
+    },
+    {
+      "id": "node:14309344027",
+      "name": "Piccoli",
+      "lat": 45.4830367,
+      "lon": 10.9596562,
+      "type": "cantine",
+      "visibility": "chicca",
+      "tags": [
+        "craft=winery",
+        "name=Piccoli"
+      ],
+      "score": 70,
+      "beauty_score": 1
+    },
+    {
       "id": "way:30691669",
       "name": "Cantina Rotari",
       "lat": 46.202523,
@@ -5784,21 +5878,6 @@
         "craft=winery",
         "name=Cantina Produttori Campodipietra",
         "note=verificare se man_made=works"
-      ],
-      "score": 70,
-      "beauty_score": 1
-    },
-    {
-      "id": "way:194363246",
-      "name": "Tenuta Santomè",
-      "lat": 45.6510848,
-      "lon": 12.3780399,
-      "type": "cantine",
-      "visibility": "chicca",
-      "tags": [
-        "building=yes",
-        "craft=winery",
-        "name=Tenuta Santomè"
       ],
       "score": 70,
       "beauty_score": 1
