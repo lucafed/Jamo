@@ -3,29 +3,8 @@
   "country": "IT",
   "area": "Veneto",
   "label_it": "Veneto • Borghi (turistici + piccoli)",
-  "generated_at": "2026-11-03T10:26:12.236Z",
+  "generated_at": "2026-11-17T11:27:49.597Z",
   "places": [
-    {
-      "id": "node:66503077",
-      "name": "Valvasone",
-      "lat": 45.9961488,
-      "lon": 12.8643951,
-      "type": "borgo",
-      "borgo_type": "classico",
-      "visibility": "classica",
-      "tags": [
-        "gfoss_id=7553",
-        "name=Valvasone",
-        "name:fur=Voleson",
-        "name:it=Valvasone",
-        "place=village",
-        "population=1802",
-        "tourism=attraction",
-        "wikidata=Q53203",
-        "wikipedia=it:Valvasone"
-      ],
-      "score": 103
-    },
     {
       "id": "node:64776973",
       "name": "Pieve Tesino",
@@ -165,8 +144,8 @@
     {
       "id": "node:62513692",
       "name": "Sermide",
-      "lat": 45.0064835,
-      "lon": 11.2988715,
+      "lat": 45.0065688,
+      "lon": 11.2988339,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -301,7 +280,7 @@
         "name=Santa Crestina - Santa Cristina - Sankt Christina",
         "name:de=Sankt Christina in Gröden",
         "name:it=Santa Cristina Valgardena",
-        "name:lld=Santa Crestina Gherdëina",
+        "name:lld=Santa Crestina",
         "note=There is contention about the village name: sometimes it is spelled with \"e\", sometimes with \"i\". The signpost on the road says \"e\", and that is what most people will see.",
         "note_1=The signpost spells \"e\": https://commons.wikimedia.org/wiki/Category:Santa_Cristina_Gherd%C3%ABina#/media/File:Ortstafel_S._Crestina.JPG",
         "note_2=The administration spells \"i\": https://commons.wikimedia.org/wiki/Category:Santa_Cristina_Gherd%C3%ABina#/media/File:Briefkopf_scristina.jpg",
@@ -344,6 +323,7 @@
       "tags": [
         "gfoss_id=3353",
         "name=Rocca Pietore",
+        "name:lld=La Ròcia",
         "old_name:de=Rukepraun",
         "place=village",
         "population=1451",
@@ -1611,6 +1591,7 @@
         "name=Predazzo",
         "name:de=Predazzo",
         "name:it=Predazzo",
+        "name:lld=Pardac",
         "name:ru=Предаццо",
         "place=village",
         "population=4530",
@@ -1816,6 +1797,7 @@
         "loc_name=Piee",
         "name=Pieve di Cadore",
         "name:fur=Plêf di Cjadovri",
+        "name:lld=Pièe de Ciadura",
         "name:vec=Pieve de Cador",
         "place=town",
         "population=3794",
@@ -3994,6 +3976,7 @@
         "name=Cavalese",
         "name:de=Gablöss",
         "name:it=Cavalese",
+        "name:lld=Ciavaleis",
         "name:ru=Кавалезе",
         "place=village",
         "population=4100",
@@ -6669,6 +6652,7 @@
         "name=Barbian - Barbiano",
         "name:de=Barbian",
         "name:it=Barbiano",
+        "name:lld=Perbian",
         "place=village",
         "population=1520",
         "wikidata=Q18473100"
@@ -7049,6 +7033,7 @@
         "name=St. Peter - San Pietro",
         "name:de=St. Peter",
         "name:it=San Pietro",
+        "name:lld=San Piere",
         "place=village",
         "wikidata=Q30030092",
         "wikipedia=de:St. Peter (Villnöß)"
@@ -7413,6 +7398,7 @@
         "name=Waidbruck - Ponte Gardena",
         "name:de=Waidbruck",
         "name:it=Ponte Gardena",
+        "name:lld=Pruca",
         "place=village",
         "population=181",
         "wikidata=Q30029021"
@@ -7538,6 +7524,7 @@
         "name=Feldthurns - Velturno",
         "name:de=Feldthurns",
         "name:it=Velturno",
+        "name:lld=Feldthurns",
         "place=village",
         "population=2541",
         "wikidata=Q30031595"
@@ -7828,6 +7815,27 @@
         "population=1839",
         "source=geodati.gfoss.it",
         "wikidata=Q30030101"
+      ],
+      "score": 85
+    },
+    {
+      "id": "node:64778134",
+      "name": "San Nicolò di Comelico",
+      "lat": 46.582529,
+      "lon": 12.527302,
+      "type": "borgo",
+      "borgo_type": "classico",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=3355",
+        "loc_name=San Colò",
+        "name=San Nicolò di Comelico",
+        "name:it=San Nicolò di Comelico",
+        "name:lld=San Colò",
+        "place=village",
+        "population=426",
+        "source=geodati.gfoss.it",
+        "wikidata=Q18496951"
       ],
       "score": 85
     },
@@ -8558,8 +8566,8 @@
     {
       "id": "node:64778301",
       "name": "Saonara",
-      "lat": 45.370221,
-      "lon": 11.9840665,
+      "lat": 45.3701252,
+      "lon": 11.9839904,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -14343,6 +14351,26 @@
       "score": 85
     },
     {
+      "id": "node:66503077",
+      "name": "Valvasone",
+      "lat": 45.9961488,
+      "lon": 12.8643951,
+      "type": "borgo",
+      "borgo_type": "classico",
+      "visibility": "classica",
+      "tags": [
+        "gfoss_id=7553",
+        "name=Valvasone",
+        "name:fur=Voleson",
+        "name:it=Valvasone",
+        "place=village",
+        "population=1802",
+        "wikidata=Q53203",
+        "wikipedia=it:Valvasone"
+      ],
+      "score": 85
+    },
+    {
       "id": "node:66503216",
       "name": "Cavazzo Carnico",
       "lat": 46.3674902,
@@ -16636,6 +16664,7 @@
         "name=Teis - Tiso",
         "name:de=Teis",
         "name:it=Tiso",
+        "name:lld=Tëies",
         "place=village",
         "wikidata=Q1664837",
         "wikipedia=de:Teis"
@@ -17969,6 +17998,7 @@
         "name=Karersee - Carezza",
         "name:de=Karersee",
         "name:it=Carezza",
+        "name:lld=Ciarejia",
         "place=village",
         "wikidata=Q1439138",
         "wikipedia=de:Karersee (Welschnofen)"
@@ -18233,8 +18263,8 @@
     {
       "id": "node:344723200",
       "name": "Roncajette",
-      "lat": 45.3447075,
-      "lon": 11.9366347,
+      "lat": 45.344708,
+      "lon": 11.936526,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -19810,8 +19840,8 @@
     {
       "id": "node:407997894",
       "name": "Sant'Andrea",
-      "lat": 45.4958388,
-      "lon": 11.9398528,
+      "lat": 45.4962401,
+      "lon": 11.9416116,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -22397,6 +22427,7 @@
         "name=Gufidaun - Gudon",
         "name:de=Gufidaun",
         "name:it=Gudon",
+        "name:lld=Gudon",
         "place=village",
         "wikidata=Q460079",
         "wikipedia=it:Gudon"
@@ -22488,6 +22519,7 @@
         "name=Kollmann - Colma",
         "name:de=Kollmann",
         "name:it=Colma",
+        "name:lld=Kolmen",
         "place=village",
         "wikidata=Q87788646"
       ],
@@ -22525,6 +22557,7 @@
         "name=St. Georg Afers - San Giorgio di Eores",
         "name:de=St. Georg Afers",
         "name:it=San Giorgio di Eores",
+        "name:lld=San Ivuere de Eores",
         "place=village",
         "wikidata=Q18476698"
       ],
@@ -27774,8 +27807,8 @@
     {
       "id": "node:1164027951",
       "name": "Viadana",
-      "lat": 45.3721789,
-      "lon": 10.3379398,
+      "lat": 45.3720187,
+      "lon": 10.3380337,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -35066,6 +35099,7 @@
         "name=Völs am Schlern - Fiè allo Sciliar",
         "name:de=Völs am Schlern",
         "name:it=Fiè allo Sciliar",
+        "name:lld=Fie al Scilier",
         "place=village",
         "population=3038",
         "wikidata=Q381366",
@@ -35621,6 +35655,7 @@
       "tags": [
         "ele=1014",
         "name=Caprile",
+        "name:lld=Ciaurì",
         "place=village",
         "wikidata=Q3657888",
         "wikipedia=it:Caprile (Alleghe)"
@@ -38092,6 +38127,7 @@
       "visibility": "classica",
       "tags": [
         "name=Sottoguda",
+        "name:lld=Staguda",
         "place=village",
         "wikidata=Q64269487"
       ],
@@ -41499,6 +41535,7 @@
         "name=Villanders - Villandro",
         "name:de=Villanders",
         "name:it=Villandro",
+        "name:lld=Olaneres",
         "place=village",
         "population=1830",
         "wikidata=Q18510431"
@@ -43111,6 +43148,7 @@
         "name:it=Belluno",
         "name:ko=벨루노",
         "name:la=Bellunum",
+        "name:lld=Belum",
         "name:ru=Беллуно",
         "name:vec=Belun",
         "name:zh=贝卢诺",
@@ -43178,6 +43216,7 @@
       "tags": [
         "gfoss_id=3310",
         "name=Agordo",
+        "name:lld=Egort",
         "name:ru=Агордо",
         "old_name:de=Augarten",
         "place=town",
@@ -55480,6 +55519,7 @@
         "name=St. Peter - San Pietro",
         "name:de=St. Peter",
         "name:it=San Pietro",
+        "name:lld=San Piere",
         "place=hamlet",
         "wikidata=Q2322594",
         "wikipedia=de:St. Peter bei Lajen"
@@ -58543,6 +58583,7 @@
         "name=Tanirz - Tarnuza",
         "name:de=Tanirz",
         "name:it=Tarnuza",
+        "name:lld=Tanurz",
         "place=hamlet",
         "wikidata=Q18510411"
       ],
@@ -58670,6 +58711,7 @@
         "name=Außerried - Novale di Fuori",
         "name:de=Außerried",
         "name:it=Novale di Fuori",
+        "name:lld=Solaion Dedora",
         "place=hamlet",
         "wikidata=Q99839457"
       ],
@@ -58688,6 +58730,7 @@
         "name=Oberried - Novale di sopra",
         "name:de=Oberried",
         "name:it=Novale di sopra",
+        "name:lld=Solaion Dessëura",
         "place=hamlet",
         "wikidata=Q99839430"
       ],
@@ -58706,6 +58749,7 @@
         "name=Tschöfas - Ceves",
         "name:de=Tschöfas",
         "name:it=Ceves",
+        "name:lld=Cieves",
         "place=hamlet",
         "wikidata=Q18473293"
       ],
@@ -58724,6 +58768,7 @@
         "name=St. Peter im Tal - San Pietro in Valle",
         "name:de=St. Peter im Tal",
         "name:it=San Pietro in Valle",
+        "name:lld=San Piere te Val",
         "place=hamlet",
         "wikidata=Q18476884"
       ],
@@ -73299,14 +73344,14 @@
     },
     {
       "id": "node:1363025600",
-      "name": "Pezzè",
+      "name": "Pezzè - Pethé",
       "lat": 46.0469077,
       "lon": 11.7354337,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Pezzè",
+        "name=Pezzè - Pethé",
         "place=hamlet",
         "wikidata=Q18496781"
       ],
@@ -73329,14 +73374,14 @@
     },
     {
       "id": "node:1363045411",
-      "name": "Zavena",
-      "lat": 46.0583097,
-      "lon": 11.7601879,
+      "name": "Zavena - Thavéna",
+      "lat": 46.0576101,
+      "lon": 11.7592382,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Zavena",
+        "name=Zavena - Thavéna",
         "place=hamlet",
         "wikidata=Q18497190"
       ],
@@ -73359,15 +73404,15 @@
     },
     {
       "id": "node:1363045416",
-      "name": "Cies - Ziés",
+      "name": "Ciess - Thiés'",
       "lat": 46.03873,
       "lon": 11.7576077,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Cies - Ziés",
-        "name:vec=Cies - Ziés",
+        "name=Ciess - Thiés'",
+        "name:vec=Ciess - Thiés'",
         "place=hamlet",
         "wikidata=Q18496337"
       ],
@@ -73375,15 +73420,14 @@
     },
     {
       "id": "node:1363396207",
-      "name": "Chioè",
+      "name": "Chioè - Cioè",
       "lat": 46.0400342,
       "lon": 11.7247079,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Chioè",
-        "name:vec=Cioè",
+        "name=Chioè - Cioè",
         "place=hamlet",
         "wikidata=Q18496331"
       ],
@@ -74302,14 +74346,14 @@
     },
     {
       "id": "node:1381737238",
-      "name": "Furianoi",
+      "name": "Furianoi - Furianóe",
       "lat": 46.0626845,
       "lon": 11.7515673,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Furianoi",
+        "name=Furianoi - Furianóe",
         "place=hamlet",
         "wikidata=Q18496529"
       ],
@@ -92913,14 +92957,14 @@
     },
     {
       "id": "node:3440143558",
-      "name": "Barbetta",
-      "lat": 46.0303698,
-      "lon": 11.7087466,
+      "name": "Barbetta - I Barbéta",
+      "lat": 46.0299625,
+      "lon": 11.7086086,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Barbetta",
+        "name=Barbetta - I Barbéta",
         "place=hamlet",
         "wikidata=Q119703410"
       ],
@@ -92928,14 +92972,14 @@
     },
     {
       "id": "node:3440143568",
-      "name": "Chiappini - Ciapìn",
+      "name": "Chiappini - I Ciapìn",
       "lat": 46.0286643,
       "lon": 11.6936045,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Chiappini - Ciapìn",
+        "name=Chiappini - I Ciapìn",
         "place=hamlet",
         "wikidata=Q119703589"
       ],
@@ -94186,6 +94230,7 @@
         "name=Tisens - Tisana",
         "name:de=Tisens",
         "name:it=Tisana",
+        "name:lld=Tisan",
         "place=hamlet",
         "wikidata=Q22023212"
       ],
@@ -95705,6 +95750,7 @@
         "name=Unterried - Novale di Sotto",
         "name:de=Unterried",
         "name:it=Novale di Sotto",
+        "name:lld=Solaion Dessot",
         "place=hamlet",
         "wikidata=Q18475281"
       ],
@@ -100589,6 +100635,21 @@
       "score": 70
     },
     {
+      "id": "node:9268730414",
+      "name": "Lacuna",
+      "lat": 46.5800523,
+      "lon": 12.5275457,
+      "type": "borgo",
+      "borgo_type": "classico",
+      "visibility": "classica",
+      "tags": [
+        "name=Lacuna",
+        "place=hamlet",
+        "wikidata=Q18496580"
+      ],
+      "score": 70
+    },
+    {
       "id": "node:9291189315",
       "name": "Brussa",
       "lat": 45.6570964,
@@ -101514,7 +101575,7 @@
     },
     {
       "id": "node:9970551963",
-      "name": "Galline",
+      "name": "Galline - Galine",
       "lat": 46.0662368,
       "lon": 11.69662,
       "type": "borgo",
@@ -101522,7 +101583,7 @@
       "visibility": "classica",
       "tags": [
         "height=947",
-        "name=Galline",
+        "name=Galline - Galine",
         "place=hamlet",
         "wikidata=Q119823110"
       ],
@@ -101530,14 +101591,14 @@
     },
     {
       "id": "node:9970551964",
-      "name": "Le Crosere",
-      "lat": 46.0621716,
-      "lon": 11.704123,
+      "name": "Le Crosère",
+      "lat": 46.0621129,
+      "lon": 11.704149,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Le Crosere",
+        "name=Le Crosère",
         "place=hamlet",
         "wikidata=Q121889370"
       ],
@@ -103040,14 +103101,14 @@
     },
     {
       "id": "node:12924651171",
-      "name": "Correntini",
+      "name": "Correntini - Corentin",
       "lat": 46.0446096,
       "lon": 11.7384774,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
       "tags": [
-        "name=Correntini",
+        "name=Correntini - Corentin",
         "place=hamlet",
         "wikidata=Q18496415"
       ],
@@ -103294,36 +103355,6 @@
         "name:it=San Floriano",
         "place=hamlet",
         "wikidata=Q135907001"
-      ],
-      "score": 70
-    },
-    {
-      "id": "node:13464206407",
-      "name": "San Nicolò Comelico",
-      "lat": 46.58253,
-      "lon": 12.5273,
-      "type": "borgo",
-      "borgo_type": "classico",
-      "visibility": "classica",
-      "tags": [
-        "name=San Nicolò Comelico",
-        "place=hamlet",
-        "wikidata=Q18496951"
-      ],
-      "score": 70
-    },
-    {
-      "id": "node:13464206408",
-      "name": "Lacuna",
-      "lat": 46.5807,
-      "lon": 12.52578,
-      "type": "borgo",
-      "borgo_type": "classico",
-      "visibility": "classica",
-      "tags": [
-        "name=Lacuna",
-        "place=hamlet",
-        "wikidata=Q18496580"
       ],
       "score": 70
     },
@@ -112306,8 +112337,8 @@
     {
       "id": "node:13481491327",
       "name": "Casa Agostini",
-      "lat": 45.39603,
-      "lon": 12.00199,
+      "lat": 45.3951947,
+      "lon": 12.0037188,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -128350,6 +128381,7 @@
         "name:fr=Mantoue",
         "name:it=Mantova",
         "name:la=Mantua",
+        "name:lld=Mantua",
         "name:nl=Mantua",
         "name:pl=Mantua",
         "name:uk=Мантуя",
@@ -128404,7 +128436,7 @@
         "name:kn=ಟ್ರೆಂಟೋ",
         "name:ko=트렌토",
         "name:la=tridentum",
-        "name:lld=Trent",
+        "name:lld=Trënt",
         "name:lt=Trentas",
         "name:mhn=Trea't",
         "name:mk=Тренто",
@@ -128490,7 +128522,7 @@
         "name:ku=Bolzano",
         "name:la=Bauzanum",
         "name:lb=Bozen",
-        "name:lld=Bulsan",
+        "name:lld=Bulsan - Balsan",
         "name:lmo=Bulsan",
         "name:lt=Bolcāno",
         "name:lv=Bolcāno",
@@ -128947,6 +128979,7 @@
         "name:kk=Падуя",
         "name:ko=파도바",
         "name:la=Patavium",
+        "name:lld=Padua",
         "name:lt=Paduja",
         "name:lv=Paduja",
         "name:mg=Padua",
@@ -128967,8 +129000,7 @@
         "name:sr=Падова",
         "name:sv=Padua",
         "name:th=ปาโดวา",
-        "name:tl=Padua",
-        "name:tt=Падова"
+        "name:tl=Padua"
       ],
       "score": 65
     },
@@ -129273,8 +129305,8 @@
     {
       "id": "node:69301539",
       "name": "Novellara",
-      "lat": 44.8449819,
-      "lon": 10.7316465,
+      "lat": 44.8446472,
+      "lon": 10.7299084,
       "type": "borgo",
       "borgo_type": "chicca",
       "visibility": "chicca",
@@ -129743,6 +129775,7 @@
         "boundary=administrative",
         "name=Pieve di Cadore",
         "name:fur=Plêf di Cjadovri",
+        "name:lld=Pièe de Ciadura",
         "name:vec=Pieve de Cador",
         "population=3605",
         "population:date=2026-08-28",
@@ -140657,7 +140690,7 @@
       "id": "relation:45262",
       "name": "Massanzago",
       "lat": 45.5451157,
-      "lon": 12.0071402,
+      "lon": 12.0071664,
       "type": "borgo",
       "borgo_type": "classico",
       "visibility": "classica",
@@ -150591,6 +150624,8 @@
         "admin_level=8",
         "boundary=administrative",
         "name=Predazzo",
+        "name:de=Pardatsch",
+        "name:lld=Pardac",
         "population=4470",
         "population:date=2026-08-28",
         "ref:ISTAT=022147",
@@ -150761,6 +150796,7 @@
         "admin_level=8",
         "boundary=administrative",
         "name=Agordo",
+        "name:lld=Egort",
         "name:ru=Агордо",
         "population=4068",
         "population:date=2026-08-28",
@@ -151080,6 +151116,7 @@
         "admin_level=8",
         "boundary=administrative",
         "name=Falcade",
+        "name:lld=Falciade",
         "population=1727",
         "population:date=2026-08-28",
         "postal_code=32020",
@@ -153921,6 +153958,7 @@
         "name=Sexten - Sesto",
         "name:de=Sexten",
         "name:it=Sesto",
+        "name:lld=Sest",
         "population=1770",
         "population:date=2026-08-27",
         "ref:ISTAT=021092",
@@ -154409,6 +154447,7 @@
         "name=Lüsen - Luson",
         "name:de=Lüsen",
         "name:it=Luson",
+        "name:lld=Lujon",
         "population=1581",
         "population:date=2026-08-28",
         "ref:ISTAT=021044",
@@ -154460,6 +154499,7 @@
         "name=Innichen - San Candido",
         "name:de=Innichen",
         "name:it=San Candido",
+        "name:lld=Sanciana",
         "name:uk=Інніхен",
         "population=3310",
         "population:date=2026-08-28",
