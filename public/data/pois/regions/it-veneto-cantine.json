@@ -7,7 +7,7 @@
     "minLon": 10.2,
     "maxLon": 13.2
   },
-  "generated_at": "2026-11-12T10:27:27.133Z",
+  "generated_at": "2026-11-19T10:50:42.231Z",
   "places": [
     {
       "id": "node:12766026527",
@@ -341,8 +341,8 @@
     {
       "id": "node:5884901437",
       "name": "Azienda del Poggio s.s.",
-      "lat": 46.1088109,
-      "lon": 13.1276773,
+      "lat": 46.1088411,
+      "lon": 13.127454,
       "type": "cantine",
       "visibility": "classica",
       "tags": [
