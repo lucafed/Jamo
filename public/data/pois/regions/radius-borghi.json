@@ -6,13 +6,13 @@
     "lng": 10.8686,
     "radius_km": 120
   },
-  "generated_at": "2026-11-10T10:55:02.330Z",
+  "generated_at": "2026-11-24T13:27:26.556Z",
   "places": [
     {
       "id": "node:62513274",
       "name": "Sabbioneta",
-      "lat": 44.9984358,
-      "lon": 10.4885871,
+      "lat": 44.9983154,
+      "lon": 10.4898048,
       "type": "borghi",
       "visibility": "chicca",
       "tags": [
@@ -6612,6 +6612,7 @@
         "name=Cavalese",
         "name:de=Gablöss",
         "name:it=Cavalese",
+        "name:lld=Ciavaleis",
         "name:ru=Кавалезе",
         "place=village",
         "population=4100",
@@ -7516,8 +7517,8 @@
         "name=Saletto",
         "place=village",
         "population=1592",
-        "wikidata=Q30029715",
-        "wikipedia=it:Saletto"
+        "wikidata=Q34401",
+        "wikipedia=it:Saletto (Borgo Veneto)"
       ],
       "score": 115
     },
@@ -10086,6 +10087,7 @@
         "name=Karersee - Carezza",
         "name:de=Karersee",
         "name:it=Carezza",
+        "name:lld=Ciarejia",
         "place=village",
         "wikidata=Q1439138",
         "wikipedia=de:Karersee (Welschnofen)"
@@ -19295,6 +19297,7 @@
         "name=Predazzo",
         "name:de=Predazzo",
         "name:it=Predazzo",
+        "name:lld=Pardac",
         "name:ru=Предаццо",
         "place=village",
         "population=4530",
@@ -23312,7 +23315,7 @@
       "id": "relation:46707",
       "name": "Gerola Alta",
       "lat": 46.0469693,
-      "lon": 9.5516043,
+      "lon": 9.5516023,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -41495,7 +41498,7 @@
       "id": "relation:45262",
       "name": "Massanzago",
       "lat": 45.5451157,
-      "lon": 12.0071402,
+      "lon": 12.0071664,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -42995,7 +42998,7 @@
       "id": "relation:45394",
       "name": "Nave",
       "lat": 45.5906205,
-      "lon": 10.2909089,
+      "lon": 10.2909214,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -55351,6 +55354,8 @@
         "admin_level=8",
         "boundary=administrative",
         "name=Predazzo",
+        "name:de=Pardatsch",
+        "name:lld=Pardac",
         "population=4470",
         "population:date=2026-08-28",
         "ref:ISTAT=022147",
@@ -55746,6 +55751,7 @@
         "admin_level=8",
         "boundary=administrative",
         "name=Falcade",
+        "name:lld=Falciade",
         "population=1727",
         "population:date=2026-08-28",
         "postal_code=32020",
@@ -57366,7 +57372,7 @@
       "id": "relation:1651597",
       "name": "Bassano del Grappa",
       "lat": 45.7726429,
-      "lon": 11.7038199,
+      "lon": 11.7038198,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
@@ -57390,7 +57396,7 @@
       "id": "relation:1651599",
       "name": "Cassola",
       "lat": 45.7473229,
-      "lon": 11.7833812,
+      "lon": 11.7833811,
       "type": "borghi",
       "visibility": "classica",
       "tags": [
